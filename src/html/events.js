@@ -296,12 +296,31 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealign").length) {
                 $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
             }
-            if($("#" + me.pre + "atomsCustomRealign2").length) {
-                $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            }
+            //if($("#" + me.pre + "atomsCustomRealign2").length) {
+            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
+            //}
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
             $("#" + me.pre + "atomsCustomRealign").resizable();
-            $("#" + me.pre + "atomsCustomRealign2").resizable();
+            //$("#" + me.pre + "atomsCustomRealign2").resizable();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+               ic.definedSetsCls.setPredefinedInMenu();
+               ic.bSetChainsAdvancedMenu = true;
+               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+            }
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+            if($("#" + me.pre + "atomsCustomRealignByStruct").length) {
+                $("#" + me.pre + "atomsCustomRealignByStruct").html(definedAtomsHtml);
+            }
+            //if($("#" + me.pre + "atomsCustomRealign2").length) {
+            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
+            //}
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+            $("#" + me.pre + "atomsCustomRealignByStruct").resizable();
+            //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
     //    },
     //    clickApplyRealign: function() {
@@ -315,7 +334,7 @@ class Events {
 
            // save the current selection
            ic.selectionCls.saveSelectionPrep();
-           let name = 'realignSets';
+           let name = 'realignSetsBySeq';
            ic.selectionCls.saveSelection(name, name);
 
            ic.realignParserCls.realignOnSeqAlign();
@@ -326,6 +345,28 @@ class Events {
                me.htmlCls.clickMenuCls.setLogCmd("realign on seq align", true);
            }
         });
+
+        me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+            if(nameArray.length > 0) {
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+ 
+            // save the current selection
+            ic.selectionCls.saveSelectionPrep();
+            let name = 'realignSetsByStruct';
+            ic.selectionCls.saveSelection(name, name);
+ 
+            ic.realignParserCls.realignOnStructAlign();
+            if(nameArray.length > 0) {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align | " + nameArray, true);
+            }
+            else {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align", true);
+            }
+         });
     //    },
 
     // other
@@ -497,6 +538,14 @@ class Events {
             //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
          });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
+            window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', '_blank');
+          });
     //    },
     //    clickReload_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { let ic = me.icn3d;
@@ -1125,7 +1174,7 @@ class Events {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },

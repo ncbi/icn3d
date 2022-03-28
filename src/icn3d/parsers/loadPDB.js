@@ -15,7 +15,9 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+        let hAtoms = {};
+
         let bNMR = false;
         let  lines = src.split('\n');
 
@@ -74,11 +76,13 @@ class LoadPDB {
 
         let  structure = "stru";
 
+        let bHeader = false;
+
         for (let i in lines) {
             let  line = lines[i];
             let  record = line.substr(0, 6);
 
-            if (record === 'HEADER') {
+            if (record === 'HEADER' && !bHeader) {              
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 ///id = line.substr(62, 4).trim();
@@ -96,12 +100,14 @@ class LoadPDB {
 
                 structure = id;
 
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 ic.molTitle = '';
 
+                bHeader = true; // read the header once only
             } else if (record === 'TITLE ') {
                 let  name = line.substr(10);
                 ic.molTitle += name.trim() + " ";
@@ -146,42 +152,9 @@ class LoadPDB {
 
                   if(j === startResi) sheetStart.push(resid);
                   if(j === endResi) sheetEnd.push(resid);
-                }
-/*
-                sheets.push({
-                    structure: structure,
-                    chain: startChain,
-                    initialResidue: startResi,
-                    initialInscode: line.substr(26, 1),
-                    terminalResidue: endResi,
-                    terminalInscode: line.substr(37, 1),
-                });
-*/                
+                }           
             } else if (record === 'HBOND ') {
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
-    /*
-                //HBOND A 1536   N2 A   59  ND2  -19.130  83.151  52.266 -18.079  81.613  49.427    3.40
-                bCalculateHbond = false;
-
-                let  chemicalChain = line.substr(6, 1);
-                let  chemicalResi = line.substr(8, 4).trim();
-                let  chemicalAtom = line.substr(14, 4).trim();
-                let  proteinChain = line.substr(18, 1);
-                let  proteinResi = line.substr(20, 4).trim();
-                let  proteinAtom = line.substr(25, 4).trim();
-
-                let  chemical_x = parseFloat(line.substr(30, 8));
-                let  chemical_y = parseFloat(line.substr(38, 8));
-                let  chemical_z = parseFloat(line.substr(46, 8));
-                let  protein_x = parseFloat(line.substr(54, 8));
-                let  protein_y = parseFloat(line.substr(62, 8));
-                let  protein_z = parseFloat(line.substr(70, 8));
-
-                let  dist = line.substr(78, 8).trim();
-
-                ic.hbondpnts.push(new THREE.Vector3(chemical_x, chemical_y, chemical_z));
-                ic.hbondpnts.push(new THREE.Vector3(protein_x, protein_y, protein_z));
-    */
             } else if (record === 'SSBOND') {
                 ic.bSsbondProvided = true;
                 //SSBOND   1 CYS E   48    CYS E   51                          2555
@@ -264,8 +237,9 @@ class LoadPDB {
                 id = 'stru';
 
                 structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 //helices = [];
@@ -284,8 +258,9 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 let  alt = line.substr(16, 1);
@@ -385,6 +360,7 @@ class LoadPDB {
 
                 ic.dAtoms[serial] = 1;
                 ic.hAtoms[serial] = 1;
+                hAtoms[serial] = 1;
 
                 // Assign secondary structures from the input
                 // if a residue is assigned both sheet and helix, it is assigned as sheet
@@ -682,8 +658,22 @@ class LoadPDB {
         ic.oriMaxD = ic.maxD;
         ic.oriCenter = ic.center.clone();
 
+        if(type === 'target') {
+            ic.oriMaxD = ic.maxD;
+            ic.center1 = ic.center;
+        }
+        else if(type === 'query') {
+            if(ic.oriMaxD < ic.maxD) ic.oriMaxD = ic.maxD;
+
+            ic.center2 = ic.center;
+            ic.center = new THREE.Vector3(0,0,0);
+        }
+
         if(bVector) { // just need to get the vector of the largest chain
             return this.getChainCalpha(ic.chains, ic.atoms);
+        }
+        else {
+            return hAtoms;
         }
     }
 

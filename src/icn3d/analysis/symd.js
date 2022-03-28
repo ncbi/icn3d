@@ -76,7 +76,7 @@ class Symd {
           dataType: "jsonp",
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -446,7 +446,7 @@ class Symd {
           dataType: "json",
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               let symmetryArray = data.rcsb_struct_symmetry;
               let rot, centerFrom, centerTo;

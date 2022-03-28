@@ -47,7 +47,7 @@ class PdbParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -59,6 +59,9 @@ class PdbParser {
               ic.deferredOpm = $.Deferred(function() {
                   //ic.loadPdbOpmData(data, pdbid);
                   if(bAf) {
+                      // add UniProt ID into the header
+                      let header = 'HEADER                                                        ' + pdbid + '\n';
+                      data = header + data;
                       ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
                   }
                   else {
@@ -106,7 +109,7 @@ class PdbParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -152,8 +155,14 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
+    loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let  ic = this.icn3d, me = ic.icn3dui;
+        if(!bAppend && (type === undefined || type === 'target')) {
+            // if a command contains "load...", the commands should not be cleared with init()
+            let bKeepCmd = (ic.bCommandLoad) ? true : false;
+            if(!ic.bStatefile) ic.init(bKeepCmd);
+        }
+
+        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bLastQuery); // defined in the core library
 
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -189,17 +198,23 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0) {
-          ic.deferredSecondary = $.Deferred(function() {
-              let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
-              ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredSecondary.promise();
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {
+            this.applyCommandDssp(bAppend);
         }
         else {
             this.loadPdbDataRender(bAppend);
         }
+
+        return hAtoms;
+    }
+
+    applyCommandDssp(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.deferredSecondary = $.Deferred(function() {
+            let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+            ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
+        }); // end of me.deferred = $.Deferred(function() {
+
+        return ic.deferredSecondary.promise();
     }
 
     loadPdbDataRender(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;

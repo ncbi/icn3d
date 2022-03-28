@@ -106,8 +106,12 @@ class ClickMenu {
     //    },
     //    clkMn1_align: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.dialogCls.openDlg('dl_align', 'Align two 3D structures');
+           me.htmlCls.dialogCls.openDlg('dl_align', 'Align two PDB structures');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_alignaf', 'Align two AlphaFold structures');
+         });
     //    },
     //    clkMn1_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { let ic = me.icn3d;
@@ -452,13 +456,14 @@ class ClickMenu {
                    thisClass.setLogCmd("link to compounds " + ic.molTitle + ": " + url, false);
            }
            else {
+               let url;
                if(me.cfg.cid !== undefined) {
                        url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_pccompound_3d&from_uid=" + ic.inputid;
                        thisClass.setLogCmd("link to compounds with structure similar to CID " + ic.inputid + ": " + url, false);
                }
                else {
                    let idArray = ic.inputid.split('_');
-                   let url;
+                   
                    if(idArray.length === 1) {
                        url = me.htmlCls.baseUrl + "vastplus/vastplus.cgi?uid=" + ic.inputid;
                        thisClass.setLogCmd("link to structures similar to " + ic.inputid + ": " + url, false);

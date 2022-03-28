@@ -159,7 +159,7 @@ class ShowAnno {
                   dataType: 'jsonp',
                   //dataType: 'json',
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                     ic.seqStructAlignData = data;
                     thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
@@ -199,7 +199,7 @@ class ShowAnno {
                     dataType: 'jsonp', //'text',
                     cache: true,
                     tryCount : 0,
-                    retryLimit : 1,
+                    retryLimit : 0, //1
                     success: function(chainid_seq) {
                         let index = 0;
                         for(let acc in chainid_seq) {

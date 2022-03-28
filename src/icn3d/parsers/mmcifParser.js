@@ -40,7 +40,7 @@ class MmcifParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -56,7 +56,7 @@ class MmcifParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },
@@ -124,7 +124,7 @@ class MmcifParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               // notebook has a problem in posting data to mmcifparser.cgi
               if(me.cfg.notebook) {
@@ -283,7 +283,7 @@ class MmcifParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                       if(data.emd !== undefined) ic.emd = data.emd;
                       if(data.organism !== undefined) ic.organism = data.organism;

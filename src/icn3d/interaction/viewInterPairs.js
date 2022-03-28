@@ -352,7 +352,7 @@ class ViewInterPairs {
                   dataType: "script",
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                        ic.bD3 = true;
 

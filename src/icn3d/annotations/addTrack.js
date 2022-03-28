@@ -48,7 +48,7 @@ class AddTrack {
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                   thisClass.alignSequenceToStructure(chainid, data, title);
               },
@@ -85,7 +85,7 @@ class AddTrack {
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                   thisClass.alignSequenceToStructure(chainid, data, title);
               },
