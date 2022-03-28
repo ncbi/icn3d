@@ -728,7 +728,7 @@ class LoadAtomData {
         // set up sequence alignment
         // display the structure right away. load the mns and sequences later
     //        setTimeout(function(){
-        let  hAtoms = {}
+        let  hAtoms = {};
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
@@ -743,6 +743,9 @@ class LoadAtomData {
 
             $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
             $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+        }
+        else if(type === 'mmdbid' && alignType === 'target') {
+            hAtoms = ic.hAtoms;
         }
 
         if(type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
