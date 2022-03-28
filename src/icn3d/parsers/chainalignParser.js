@@ -57,7 +57,7 @@ class ChainalignParser {
             // dynamicly align pairs in ic.afChainIndexHash
             let  ajaxArray = [], indexArray = [], struArray = [];
             let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
-
+            
             for(let index in ic.afChainIndexHash) {
                 let idArray = ic.afChainIndexHash[index].split('_');
                 mmdbid_q = idArray[0];
@@ -137,13 +137,13 @@ class ChainalignParser {
         }
 */
 
-        //let hAtomsTmp = {};
+        let hAtomsTmp = {}, hAtomsAll = {};
         // set up the view of sequence alignment
         for(let i = 1, il = chainidArray.length; i < il; ++i) {
             if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-                ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
+                hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
 
-                //hAtomsTmp = me.hashUtilsCls.unionHash(hAtomsTmp, ic.hAtoms);
+                hAtomsAll = me.hashUtilsCls.unionHash(hAtomsAll, hAtomsTmp);
 
                 let  bReverse = false;
                 let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
@@ -155,7 +155,7 @@ class ChainalignParser {
         }
 
         // highlight all aligned atoms
-        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
 
         // do the rest
         if(me.cfg.resnum) {
@@ -165,7 +165,7 @@ class ChainalignParser {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
         }
         else {
-            this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
+            this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
         }
     }
 

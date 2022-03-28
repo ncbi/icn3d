@@ -251,6 +251,8 @@ class SetSeqAlign {
     }
 
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+          let hAtoms = {};
+
           //loadSeqAlignment
           let  alignedAtoms = {};
           let mmdbid1, mmdbid2, chain1, chain2, chainid1, chainid2, pos1, pos2;
@@ -451,6 +453,9 @@ class SetSeqAlign {
                       ic.nconsHash2[chainid2 + '_' + resi2] = 1;
                   }
 
+                  hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.residues[chainid1 + '_' + resi1]);
+                  hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.residues[chainid2 + '_' + resi2]);
+
                   // mapping, use the firstsequence as the reference structure
                   ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
                   ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;
@@ -467,6 +472,8 @@ class SetSeqAlign {
               prevIndex1 = end1;
               prevIndex2 = end2;
           } // end for(let i
+
+          return hAtoms;
     }
 
     setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
