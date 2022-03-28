@@ -25557,7 +25557,7 @@ var icn3d = (function (exports) {
 
             let  mmdbid_t;
             let  ajaxArray = [];
-            let  url = (bStructure) ? me.htmlCls.baseUrl + 'vastdyn/vastdyn.cgi' : me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
+            let  url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
             let  predefinedResArray, predefinedRes;
 
@@ -25789,46 +25789,54 @@ var icn3d = (function (exports) {
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }
 
-            // calculate secondary structures with applyCommandDssp
-            $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
-                // dynamicly align pairs in ic.afChainIndexHash
-                let  ajaxArray = [], indexArray = [], struArray = [];
-                let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
-                
-                for(let index in ic.afChainIndexHash) {
-                    let idArray = ic.afChainIndexHash[index].split('_');
-                    mmdbid_q = idArray[0];
-                    let chain_q = idArray[1];
-                    mmdbid_t = idArray[2];
-                    let chain_t = idArray[3];
+            if(me.cfg.resnum) {
+                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
+            }
+            else if(me.cfg.resdef) {
+                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
+            }
+            else {
+                // calculate secondary structures with applyCommandDssp
+                $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+                    // dynamicly align pairs in ic.afChainIndexHash
+                    let  ajaxArray = [], indexArray = [], struArray = [];
+                    let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
 
-                    let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
+                    for(let index in ic.afChainIndexHash) {
+                        let idArray = ic.afChainIndexHash[index].split('_');
+                        mmdbid_q = idArray[0];
+                        let chain_q = idArray[1];
+                        mmdbid_t = idArray[2];
+                        let chain_t = idArray[3];
 
-                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
-                        
-                    let alignAjax = $.ajax({
-                        url: urlalign,
-                        type: 'POST',
-                        data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                        dataType: 'jsonp',
-                        cache: true
-                    });
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
 
-                    ajaxArray.push(alignAjax);
-                    indexArray.push(index - 1);
-                    struArray.push(mmdbid_q);
-                }
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                            
+                        let alignAjax = $.ajax({
+                            url: urlalign,
+                            type: 'POST',
+                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                            dataType: 'jsonp',
+                            cache: true
+                        });
 
-                //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-                //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-                $.when.apply(undefined, ajaxArray).then(function() {
-                    let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
-                    thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
-                })
-                .fail(function() {
-                    alert("These structures can NOT be aligned to each other...");
-                });    
-            });
+                        ajaxArray.push(alignAjax);
+                        indexArray.push(index - 1);
+                        struArray.push(mmdbid_q);
+                    }
+
+                    //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+                    //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+                    $.when.apply(undefined, ajaxArray).then(function() {
+                        let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
+                        thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
+                    })
+                    .fail(function() {
+                        alert("These structures can NOT be aligned to each other...");
+                    });    
+                });
+            }
         }
 
         downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -25895,15 +25903,7 @@ var icn3d = (function (exports) {
             ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
 
             // do the rest
-            if(me.cfg.resnum) {
-                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
-            }
-            else if(me.cfg.resdef) {
-                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
-            }
-            else {
-                this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
-            }
+            this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
         }
 
         downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -26313,7 +26313,7 @@ var icn3d = (function (exports) {
         processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
             let bAligned = false;
             if(!align && !bNoAlert) {
-                alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+                alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again.");
                 return bAligned;
             }
 
