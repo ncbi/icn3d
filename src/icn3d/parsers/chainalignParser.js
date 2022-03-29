@@ -387,6 +387,8 @@ class ChainalignParser {
         ic.opts['proteins'] = 'c alpha trace';
 
         let  alignArray = chainalign.split(',');
+        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
+        if(domainArray.length < alignArray.length) domainArray = [];
 
         for(let i = 0, il = alignArray.length; i < il; ++i) {
             let  chainid = alignArray[i];
@@ -469,9 +471,17 @@ class ChainalignParser {
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
                 let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
+                let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
                 if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
-                    let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    let  urlalign;
+                    
+                    if(domainArray.length > 0) {
+                        urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?domainpairs=" + domainalign;
+                    }
+                    else {
+                        urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    }
                     
                     let  alignAjax = $.ajax({
                         url: urlalign,

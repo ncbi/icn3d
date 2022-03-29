@@ -96,6 +96,19 @@ class SetDialog {
 
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
 
+        html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
+        html += 'Note: You can search similar PDB structures for any input PDB chain as specified below. (To input a custom PDB file, you can use the <a href="https://www.ncbi.nlm.nih.gov/Structure/VAST/vastsearch.html" target="_blank">VAST Search</a>.) <br><br>Once you see the structure neighbors, you can "View 3D Alignment" using "iCn3D".<br><br>'; 
+        html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='1HHO' size=8> &nbsp;&nbsp;";
+        html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
+        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
+        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of chain IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The AlphaFold chain IDs are the UniProt ID plus "_A". For example, the UniProt ID for the record name "AF-P69905-F1-model_v2" is "P69905".<br><br>'; 
+        html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905_A,P01942_A,1HHO_A' size=30> ";
+        html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
         html += "MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmtf'>Load</button>";

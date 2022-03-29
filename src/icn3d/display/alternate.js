@@ -74,8 +74,10 @@ class Alternate {
         } 
 
         if(viewSelectionAtomsCount < allAtomsCount) {
-            //ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
+            let tmpAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
+            if(Object.keys(tmpAtoms).length > 0) {
+                ic.dAtoms = me.hashUtilsCls.cloneHash(tmpAtoms);
+            }
 
             ic.bShowHighlight = false;
             ic.opts['rotationcenter'] = 'highlight center';
