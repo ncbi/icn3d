@@ -434,7 +434,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
-            window.open(hostUrl + 'full.html?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+            window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
