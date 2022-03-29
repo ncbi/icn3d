@@ -26117,6 +26117,8 @@ class ChainalignParser {
         ic.opts['proteins'] = 'c alpha trace';
 
         let  alignArray = chainalign.split(',');
+        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
+        if(domainArray.length < alignArray.length) domainArray = [];
 
         for(let i = 0, il = alignArray.length; i < il; ++i) {
             let  chainid = alignArray[i];
@@ -26199,9 +26201,17 @@ class ChainalignParser {
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
                 let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
+                let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
                 if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
-                    let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    let  urlalign;
+                    
+                    if(domainArray.length > 0) {
+                        urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?domainpairs=" + domainalign;
+                    }
+                    else {
+                        urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    }
                     
                     let  alignAjax = $.ajax({
                         url: urlalign,
@@ -46465,6 +46475,14 @@ class ClickMenu {
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
+        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input PDB ID and chain name');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Please input AlphaFold Uniprot ID or PDB ID');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input MMTF ID');
         });
@@ -48892,6 +48910,13 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
         html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+
+        html += "<li><span>Search Similar</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
         html += "<li><span>Retrieve by ID</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
@@ -49843,9 +49868,9 @@ class SetMenu {
             }
 
             //if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
-            if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+            //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>');
-            }
+            //}
         }
         else {
             //if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -50885,6 +50910,19 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
+
+        html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
+        html += 'Note: You can search similar PDB structures for any input PDB chain as specified below. (To input a custom PDB file, you can use the <a href="https://www.ncbi.nlm.nih.gov/Structure/VAST/vastsearch.html" target="_blank">VAST Search</a>.) <br><br>Once you see the structure neighbors, you can "View 3D Alignment" using "iCn3D".<br><br>'; 
+        html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='1HHO' size=8> &nbsp;&nbsp;";
+        html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
+        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
+        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of chain IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The AlphaFold chain IDs are the UniProt ID plus "_A". For example, the UniProt ID for the record name "AF-P69905-F1-model_v2" is "P69905".<br><br>'; 
+        html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905_A,P01942_A,1HHO_A' size=30> ";
+        html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
+        html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
         html += "MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
@@ -52164,6 +52202,20 @@ class Events {
 
     //    },
     //    clickReload_mmtf: function() {
+        me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("vast search " + $("#" + me.pre + "vastpdbid").val() + "_" + $("#" + me.pre + "vastchainid").val(), false);
+            window.open('https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=' + $("#" + me.pre + "vastpdbid").val() + '&chain=' + $("#" + me.pre + "vastchainid").val(), '_blank');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_foldseek", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
+            window.open(hostUrl + 'full.html?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -55169,8 +55221,10 @@ class Alternate {
         } 
 
         if(viewSelectionAtomsCount < allAtomsCount) {
-            //ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
+            let tmpAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
+            if(Object.keys(tmpAtoms).length > 0) {
+                ic.dAtoms = me.hashUtilsCls.cloneHash(tmpAtoms);
+            }
 
             ic.bShowHighlight = false;
             ic.opts['rotationcenter'] = 'highlight center';

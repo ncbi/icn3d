@@ -85,6 +85,14 @@ class ClickMenu {
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
+        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input PDB ID and chain name');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Please input AlphaFold Uniprot ID or PDB ID');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input MMTF ID');
         });

@@ -391,6 +391,13 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
         html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+
+        html += "<li><span>Search Similar</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
         html += "<li><span>Retrieve by ID</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
@@ -1342,9 +1349,9 @@ class SetMenu {
             }
 
             //if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
-            if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+            //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>');
-            }
+            //}
         }
         else {
             //if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');

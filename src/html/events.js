@@ -423,6 +423,20 @@ class Events {
 
     //    },
     //    clickReload_mmtf: function() {
+        me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("vast search " + $("#" + me.pre + "vastpdbid").val() + "_" + $("#" + me.pre + "vastchainid").val(), false);
+            window.open('https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=' + $("#" + me.pre + "vastpdbid").val() + '&chain=' + $("#" + me.pre + "vastchainid").val(), '_blank');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_foldseek", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
+            window.open(hostUrl + 'full.html?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
