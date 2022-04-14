@@ -330,7 +330,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         let id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
         // reload only if viewing the same structure
         if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
-          || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign) {
+          || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
             ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
             return;
         }
@@ -521,6 +521,20 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
+    }
+    else if(me.cfg.mmdbafid !== undefined) {
+        ic.bNCBI = true;
+
+        ic.bMmdbafid = true;
+        ic.inputid = me.cfg.mmdbafid;
+        if(me.cfg.bu == 1) {
+            ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
+        }
+        else {
+            ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
+        }
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;

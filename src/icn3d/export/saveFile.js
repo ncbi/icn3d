@@ -750,6 +750,12 @@ class SaveFile {
 
                 $("#" + ic.pre + "title").html(title);
             }
+            else if(me.cfg.mmdbafid !== undefined) {
+                let structureArray = me.cfg.mmdbafid.split(',');
+                title = 'Multiple structures: ' + structureArray;
+
+                $("#" + ic.pre + "title").html(title);
+            }
             else {
                 let url = this.getLinkToStructureSummary();
 

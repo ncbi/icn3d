@@ -14258,7 +14258,7 @@ class DefinedSets {
           this.setProtNuclLigInMenu();
 
           // show 3d domains for mmdbid
-          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined  || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) {
               for(let tddomainName in ic.tddomains) {
                   ic.selectionCls.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
               }
@@ -19000,9 +19000,11 @@ class SetColor {
                 }
 
                 let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-                $("#" + me.pre + "legend").removeClass('icn3d-legend');
-                $("#" + me.pre + "legend").addClass('icn3d-legend2');
-                $("#" + me.pre + "legend").html(legendHtml).show();
+                //$("#" + me.pre + "legend").removeClass('icn3d-legend');
+                //$("#" + me.pre + "legend").addClass('icn3d-legend2');
+                //$("#" + me.pre + "legend").html(legendHtml).show();
+                $("#" + me.pre + "dl_legend").html(legendHtml);
+                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color legend');
 
                 break;
 
@@ -21549,7 +21551,7 @@ class LoadPDB {
                         chainsTmp = {};
 
                         if(ic.structures[structure.toString()] === undefined) ic.structures[structure.toString()] = [];
-                        ic.structures[structure.toString()].push(chainNum);
+                        if(!ic.structures[structure.toString()].includes(chainNum)) ic.structures[structure.toString()].push(chainNum);
 
                         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
@@ -22286,7 +22288,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef && chainIndex) {
                     atm = ic.chainalignParserCls.transformAtom(atm, chainIndex, alignType);
                 }
             }
@@ -22682,17 +22684,23 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
-            ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined 
+            && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
+            if(chainIndex) {
+                ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
-            let  bReverse = false;
-            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-            let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
-            hAtoms = ic.hAtoms;
+                hAtoms = ic.hAtoms;
 
-            $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+            else {
+                hAtoms = ic.hAtoms;
+            }
         }
         else if(type === 'mmdbid' && alignType === 'target') {
             hAtoms = ic.hAtoms;
@@ -25065,7 +25073,7 @@ class MmdbParser {
             }
         }
 
-        if((me.cfg.align === undefined || me.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
+        if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
             if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -25127,7 +25135,7 @@ class MmdbParser {
 
         if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
 
-        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.blast_rep_id);
+        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
 
         for(let molid in data.domains) {
             let chain = data.domains[molid].chain;
@@ -25246,7 +25254,7 @@ class RealignParser {
 
         ic.selectionCls.saveSelection(name, name);
 
-        let  structHash = {};
+        let  structHash = {}, struct2chain = {};
         ic.realignResid = {};
         let  lastStruResi = '';
         for(let serial in ic.hAtoms) {
@@ -25266,6 +25274,8 @@ class RealignParser {
 
                 ic.realignResid[atom.structure].push({'resid': atom.structure + '_' + atom.chain + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
 
+                struct2chain[atom.structure] = atom.structure + '_' + atom.chain;
+
                 lastStruResi = atom.structure + '_' + atom.resi;
             }
         }
@@ -25280,7 +25290,8 @@ class RealignParser {
         let  coordsTo = structHash[toStruct];
 
         let  bKeepSeq = true;
-        ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+        //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+        ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
 
         ic.hlUpdateCls.updateHlAll();
     }
@@ -25428,11 +25439,13 @@ class RealignParser {
               if(fromStruct === undefined && !me.cfg.command) {
                  alert('Please do not align residues in the same structure');
               }
-              else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
-                 alert('These sequences are too short for alignment');
-              }
-              else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
-                 alert('These sequences can not be aligned to each other');
+              else if(seq1 && seq2) {
+                if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+                    alert('These sequences are too short for alignment');
+                }
+                else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+                    alert('These sequences can not be aligned to each other');
+                }
               }
           }
 
@@ -25912,6 +25925,7 @@ class ChainalignParser {
 
         let mmdbid2cnt = {}, mmdbidpairHash = {};
              
+        let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             let align = dataArray[i][0];
 
@@ -25924,6 +25938,8 @@ class ChainalignParser {
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
+                bFoundAlignment = true;
+
                 let chainpair = chainidPairArray[i].split(',');
                 let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
                 let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
@@ -25937,6 +25953,12 @@ class ChainalignParser {
                     mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
                 }
             }
+        }
+
+        if(!bFoundAlignment) {
+            if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+            alert("These structures can NOT be aligned...");
+            return;
         }
 /*
         // find the max aligned mmdbid as mmdbid_t
@@ -26319,8 +26341,8 @@ class ChainalignParser {
 
     processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
-        if(!align && !bNoAlert) {
-            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again.");
+        if((!align || align.length == 0) && !bNoAlert) {
+            alert("These chains can not be aligned by VAST server.");
             return bAligned;
         }
 
@@ -26355,6 +26377,12 @@ class ChainalignParser {
                 ic.q_trans_sub[index] = align[0].q_trans_sub;
                 ic.q_rotation[index] = align[0].q_rotation;
                 ic.qt_start_end[index] = align[0].segs;
+
+                let  rmsd = align[0].super_rmsd;
+
+                me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment: " + rmsd.toPrecision(4), false);
+                $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 
                 bAligned = true;
             }
@@ -26434,6 +26462,108 @@ class ChainalignParser {
               }
             });
         }
+    }
+
+    downloadMmdbAf(idlist) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+
+        ic.structArray = idlist.split(',');
+
+        let  ajaxArray = [];
+
+        for(let i = 0, il = ic.structArray.length; i < il; ++i) {
+            let  url_t, targetAjax;
+            let structure = ic.structArray[i];
+console.log("structure: " + structure);
+
+            if(isNaN(structure) && structure.length > 4) {
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
+console.log("af structure");
+                targetAjax = $.ajax({
+                    url: url_t,
+                    dataType: 'text',
+                    cache: true
+                });
+            }
+            else {
+console.log("pdb structure");                
+                url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
+                if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
+
+                targetAjax = $.ajax({
+                    url: url_t,
+                    dataType: 'jsonp',
+                    cache: true
+                });
+            }
+
+            ajaxArray.push(targetAjax);
+        }
+
+        ic.ParserUtilsCls.setYourNote(ic.structArray + ' in iCn3D');
+        ic.bCid = undefined;
+
+        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+        $.when.apply(undefined, ajaxArray).then(function() {
+          let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseMMdbAfData(dataArray, ic.structArray);
+        })
+        .fail(function() {
+            alert("There are some problems in retrieving the coordinates...");
+        });
+    }
+
+    parseMMdbAfData(dataArray, structArray) { let  ic = this.icn3d, me = ic.icn3dui;
+
+        let queryDataArray = [];
+        for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
+            let  queryData = dataArray[index][0];
+            let header = 'HEADER                                                        ' + structArray[index] + '\n';
+            if(structArray[index].length > 4) queryData = header + queryData;
+
+            
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+                ) {
+                queryDataArray.push(queryData);
+            }
+            else {
+                alert("The coordinate data can NOT be retrieved for the structure " + structArray[index] + "...");
+                return;
+            }
+        }
+
+        if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+        
+        let  hAtoms = {}, hAtomsTmp = {};
+        let  bLastQuery = false;
+
+        for(let i = 0, il = structArray.length; i < il; ++i) {
+            if(i == structArray.length - 1) bLastQuery = true;
+
+            let targetOrQuery, bAppend;
+            if(i == 0) {
+                targetOrQuery = 'target';
+                bAppend = false; 
+            }
+            else {
+                targetOrQuery = 'query';
+                bAppend = true; 
+            }
+
+            if(structArray[i].length > 4) {
+                let bNoDssp = true;
+                hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
+            }
+            else {
+                let bNoSeqalign = true;
+                hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
+            }
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+        }
+
+        // calculate secondary structures with applyCommandDssp
+        ic.pdbParserCls.applyCommandDssp(true);
     }
 }
 
@@ -28388,6 +28518,18 @@ class LoadScript {
   
             ic.mmdbParserCls.downloadMmdb(id);
         }
+        else if(command.indexOf('load mmdbaf1') !== -1) {
+            me.cfg.mmdbafid = id;
+            me.cfg.bu = 1;
+  
+            ic.mmdbParserCls.downloadMmdbAf(id);
+        }
+        else if(command.indexOf('load mmdbaf0') !== -1) {
+            me.cfg.mmdbafid = id;
+            me.cfg.bu = 0;
+
+            ic.mmdbParserCls.downloadMmdbAf(id);
+        }
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
@@ -30175,7 +30317,7 @@ class ShowSeq {
     showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d, me = ic.icn3dui;
         let bNonMmdb = false;
         let giSeq;
-        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
+        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
             bNonMmdb = true;
             giSeq = [];
             for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
@@ -30216,7 +30358,7 @@ class ShowSeq {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
             }
             else {
@@ -30551,7 +30693,7 @@ class ShowSeq {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp = '<div class="icn3d-dl_sequence">';
                 htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -30641,7 +30783,7 @@ class ShowSeq {
                 }
             }
         }
-        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
+        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
             if(ic.chainid2title[chnid] !== undefined) {
                 fullProteinName = ic.chainid2title[chnid];
             }
@@ -31625,7 +31767,9 @@ class AddTrack {
 
                 let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
 
-                $("#" + me.pre + "legend").html(legendHtml);
+                //$("#" + me.pre + "legend").html(legendHtml);
+                $("#" + me.pre + "dl_legend").html(legendHtml);
+                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');
@@ -34043,7 +34187,9 @@ class ApplyCommand {
             ic.endColor = colorArray[3];
 
             let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
-            $("#" + me.pre + "legend").html(legendHtml).show();
+            //$("#" + me.pre + "legend").html(legendHtml).show();
+            $("#" + me.pre + "dl_legend").html(legendHtml);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
     }
 
@@ -35522,7 +35668,6 @@ class SetSeqAlign {
     }
 
     setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
-
           //var chainid_t = ic.chainidArray[0];
 
     //      let  structureArray = Object.keys(ic.structures);
@@ -35772,19 +35917,25 @@ class ParserUtils {
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
+              let chainDone = {};
               for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
                   let  chainidTmp = ic.structures[secondStruct][i];
+                  // some chains were pushed twice in some cases
+                  if(chainDone.hasOwnProperty(chainidTmp)) continue;
 
                   for(let j in ic.chains[chainidTmp]) {
                     let  atom = ic.atoms[j];
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
                   }
+
+                  chainDone[chainidTmp] = 1;
               }
 
               ic.bRealign = true;
 
-              if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
-
+              //if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
+              ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
+         
               let  bShowHighlight = false;
               let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
@@ -37092,6 +37243,7 @@ class HlSeq {
 
                             // protein chains
                             let residueid, from, to;
+                            let structure = chainid.substr(0, chainid.indexOf('_'));
                             for(let i = 0, il = fromArray.length; i < il; ++i) {
                                 from = parseInt(fromArray[i]);
                                 to = parseInt(toArray[i]);
@@ -37099,7 +37251,13 @@ class HlSeq {
                                 for(let j = from; j <= to; ++j) {
                                     if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
-                                        residueid = ic.residNCBI2resid[residNCBI];
+                                        // AlphaFold domains calculated on-the-fly have no conversion
+                                        if(structure.length > 4) {
+                                            residueid = residNCBI;
+                                        }
+                                        else {
+                                            residueid = ic.residNCBI2resid[residNCBI];
+                                        }
                                     }
                                     else {
                                         residueid = chainid + '_' + (j+1).toString();
@@ -37133,11 +37291,18 @@ class HlSeq {
 
                             //var  atomHash = {}, residueidHash = {}
                             let residueid;
+                            let structure = chainid.substr(0, chainid.indexOf('_'));
                             for(let i = 0, il = posArray.length; i < il; ++i) {
                                 if($(that).attr('site') !== undefined) {
                                     if(ic.bNCBI) {
                                         let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
-                                        residueid = ic.residNCBI2resid[residNCBI];
+                                        // AlphaFold domains calculated on-the-fly have no conversion
+                                        if(structure.length > 4) {
+                                            residueid = residNCBI;
+                                        }
+                                        else {
+                                            residueid = ic.residNCBI2resid[residNCBI];
+                                        }
                                     }
                                     else {
                                         residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
@@ -46361,6 +46526,12 @@ class SaveFile {
 
                 $("#" + ic.pre + "title").html(title);
             }
+            else if(me.cfg.mmdbafid !== undefined) {
+                let structureArray = me.cfg.mmdbafid.split(',');
+                title = 'Multiple structures: ' + structureArray;
+
+                $("#" + ic.pre + "title").html(title);
+            }
             else {
                 let url = this.getLinkToStructureSummary();
 
@@ -46453,9 +46624,9 @@ class ClickMenu {
     }
 
     setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
-        let legendHtml;
+        let legendHtml = "<br>";
         if(bAf) {
-            legendHtml = this.setAlphaFoldLegend();
+            legendHtml += this.setAlphaFoldLegend();
         }
         else {
             let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
@@ -46463,7 +46634,7 @@ class ClickMenu {
             let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
             let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
 
-            legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+            legendHtml += "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
         }
 
         return legendHtml;
@@ -46528,7 +46699,7 @@ class ClickMenu {
         });
         me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile_app", "click", function(e) { me.icn3d;
            //me = me.setIcn3dui($(this).attr('id'));
-           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB File');
+           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
         });
     //    },
     //    clkMn1_mol2file: function() {
@@ -46580,6 +46751,10 @@ class ClickMenu {
     //    clkMn1_mmdbid: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbafid", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input MMDB, PDB, or AlphaFold UniProt IDs');
         });
     //    },
     //    clkMn1_blast_rep_id: function() {
@@ -47562,7 +47737,9 @@ class ClickMenu {
            ic.endColor = $("#" + me.pre + "endColor").val();
 
            let legendHtml = thisClass.setLegendHtml();
-           $("#" + me.pre + "legend").html(legendHtml).show();
+           //$("#" + me.pre + "legend").html(legendHtml).show();
+           $("#" + me.pre + "dl_legend").html(legendHtml);
+           me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
 
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
         });
@@ -48584,7 +48761,8 @@ class SetMenu {
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
-        html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
+        // deprecated, use the dialog dl_legend instead
+        //html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
 
         html += me.htmlCls.divStr + "mnLogSection'>";
         html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
@@ -48913,8 +49091,8 @@ class SetMenu {
 
         html += "<li><span>Search Similar</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST ' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -48923,20 +49101,22 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'Multiple IDs' + me.htmlCls.wifiStr);
         if(!me.cfg.simplemenu) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
         }
-        html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr);
+        
         html += "</ul>";
         html += "</li>";
         html += "<li><span>Open File</span>";
         html += "<ul>";
 //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
 //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (appendable)');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB Files (appendable)');
         if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
@@ -49476,7 +49656,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
+        if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
             if(!me.cfg.simplemenu) {
                 html += "<li>-</li>";
 
@@ -50712,6 +50892,9 @@ class Dialog {
                 else if(id === me.pre + 'dl_rmsd') {
                     position ={ my: "left top", at: "right bottom-90", of: "#" + me.pre + "canvas", collision: "none" };
                 }
+                else if(id === me.pre + 'dl_legend') {
+                    position ={ my: "right top", at: "right-20 top+60", of: "#" + me.pre + "canvas", collision: "none" };
+                }
                 else if(id === me.pre + 'dl_symd') {
                     position ={ my: "left top", at: "right-200 bottom-200", of: "#" + me.pre + "canvas", collision: "none" };
                 }
@@ -50958,7 +51141,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pdbfile_app' class='" + dialogClass + "'>";
-        html += "PDB File: " + me.htmlCls.inputFileStr + " id='" + me.pre + "pdbfile_app' size=8> ";
+        html += "Multiple PDB Files: <input type='file' multiple id='" + me.pre + "pdbfile_app' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdbfile_app'>Append</button>";
         html += "</div>";
 
@@ -51088,6 +51271,18 @@ class SetDialog {
           + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
 
         html += me.htmlCls.divStr + "asu_bu' style='display:none;'>";
+        html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
+
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "List of MMDB, PDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' value='1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdbaf_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+        html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
+        + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+        + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
+
+        html += me.htmlCls.divStr + "asu_bu2' style='display:none;'>";
         html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
 
         html += "</div>";
@@ -51298,7 +51493,7 @@ class SetDialog {
         html += "</select></div>";
 
         html += "</td></tr></table>";
-
+/*
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
             html += "<div>4. <b>Cross Structure Interactions</b>: <select id='" + me.pre + "crossstrucinter'>";
             html += me.htmlCls.optionStr + "'1'>Yes</option>";
@@ -51307,8 +51502,9 @@ class SetDialog {
             html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
         }
         else {
+*/            
             html += "<div>4. " + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
-        }
+//        }
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.htmlCls.buttonStr + "sortSet1'> Set 1</button>" + me.htmlCls.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
@@ -51814,6 +52010,9 @@ class SetDialog {
         html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbybfactor'>Apply</button><br/><br/>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "</div>";
+
         html += "</div>";
         html += "<!--/form-->";
 
@@ -51870,40 +52069,62 @@ class Events {
        else {
            ic.resizeCanvasCls.closeDialogs();
        }
-       let file = $("#" + me.pre + fileId)[0].files[0];
-       if(!file) {
+       let files = $("#" + me.pre + fileId)[0].files;
+       if(!files[0]) {
          alert("Please select a file before clicking 'Load'");
        }
        else {
-         me.htmlCls.setHtmlCls.fileSupport();
-         let reader = new FileReader();
-         reader.onload = function(e) {
-           let dataStr = e.target.result; // or = reader.result;
-           me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-           ic.molTitle = "";
-           //ic.initUI();
-           if(!bAppend) {
-               ic.init();
-           }
-           else {
-               ic.resetConfig();
-               ic.hAtoms = {};
-               ic.dAtoms = {};
-               ic.bResetAnno = true;
-               ic.bResetSets = true;
-           }
+            me.htmlCls.setHtmlCls.fileSupport();
+            ic.molTitle = "";
 
-           ic.bInputfile = true;
-           ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
-           ic.InputfileType = 'pdb';
-           ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
+            ic.fileCnt = Object.keys(files).length;
+            ic.loadedFileCnt = 0;
 
-           if(bAppend) {
-               if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-               if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
-           }
-         };
-         reader.readAsText(file);
+            ic.InputfileData = '';
+
+            for(let i in files) {
+                let file = files[i];
+                
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    ++ic.loadedFileCnt;
+
+                    let dataStr = e.target.result; // or = reader.result;
+                    //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+                    me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
+
+                    if(!bAppend) {
+                        ic.init();
+                    }
+                    else {
+                        ic.resetConfig();
+                        //ic.hAtoms = {};
+                        //ic.dAtoms = {};
+                        ic.bResetAnno = true;
+                        ic.bResetSets = true;
+                    }
+
+                    ic.bInputfile = true;
+                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+                    ic.InputfileType = 'pdb';
+                    if(ic.fileCnt == ic.loadedFileCnt) {
+                        if(bAppend) {
+                            ic.hAtoms = {};
+                            ic.dAtoms = {};
+                        }
+                        ic.pdbParserCls.loadPdbData(ic.InputfileData, undefined, undefined, bAppend);
+                    }
+                };
+
+                if (typeof file === "object") {
+                    reader.readAsText(file);
+                }
+            }
+
+            if(bAppend) {
+                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+            }
        }
     }
 
@@ -52461,7 +52682,21 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
             window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
-         });
+        });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + $("#" + me.pre + "mmdbafid").val(), false);
+            window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=1', '_blank');
+        });
+ 
+         me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { me.icn3d;
+             e.preventDefault();
+             //if(!me.cfg.notebook) dialog.dialog( "close" );
+             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
+             window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+        });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
            if (e.keyCode === 13) {
@@ -58715,7 +58950,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         let id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
         // reload only if viewing the same structure
         if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
-          || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign) {
+          || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
             ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
             return;
         }
@@ -58906,6 +59141,20 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
+    }
+    else if(me.cfg.mmdbafid !== undefined) {
+        ic.bNCBI = true;
+
+        ic.bMmdbafid = true;
+        ic.inputid = me.cfg.mmdbafid;
+        if(me.cfg.bu == 1) {
+            ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
+        }
+        else {
+            ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
+        }
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;

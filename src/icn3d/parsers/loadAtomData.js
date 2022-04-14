@@ -334,7 +334,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef && chainIndex) {
                     atm = ic.chainalignParserCls.transformAtom(atm, chainIndex, alignType);
                 }
             }
@@ -732,17 +732,23 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
-            ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined 
+            && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
+            if(chainIndex) {
+                ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
-            let  bReverse = false;
-            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-            let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
-            hAtoms = ic.hAtoms;
+                hAtoms = ic.hAtoms;
 
-            $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+            else {
+                hAtoms = ic.hAtoms;
+            }
         }
         else if(type === 'mmdbid' && alignType === 'target') {
             hAtoms = ic.hAtoms;

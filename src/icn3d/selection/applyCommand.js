@@ -1409,7 +1409,9 @@ class ApplyCommand {
             ic.endColor = colorArray[3];
 
             let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
-            $("#" + me.pre + "legend").html(legendHtml).show();
+            //$("#" + me.pre + "legend").html(legendHtml).show();
+            $("#" + me.pre + "dl_legend").html(legendHtml);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
     }
 

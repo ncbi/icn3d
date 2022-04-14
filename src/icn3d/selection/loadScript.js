@@ -779,6 +779,18 @@ class LoadScript {
   
             ic.mmdbParserCls.downloadMmdb(id);
         }
+        else if(command.indexOf('load mmdbaf1') !== -1) {
+            me.cfg.mmdbafid = id;
+            me.cfg.bu = 1;
+  
+            ic.mmdbParserCls.downloadMmdbAf(id);
+        }
+        else if(command.indexOf('load mmdbaf0') !== -1) {
+            me.cfg.mmdbafid = id;
+            me.cfg.bu = 0;
+
+            ic.mmdbParserCls.downloadMmdbAf(id);
+        }
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);

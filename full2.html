@@ -114,7 +114,7 @@
               icn3dui2.show3DStructure();
               window.icn3duiHash['div1'] = icn3dui2;
           }
-          else if(cfg.chainalign !== undefined) {
+          else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
               cfg.width = '49%'; //width,
               cfg.mobilemenu = true; //mobilemenu,
               cfg.closepopup = true; //closepopup,
@@ -122,9 +122,9 @@
               cfg.bSidebyside = true;
 
               cfg.divid = 'div0';
-              cfg.chainalign = cfg.chainalign;
-              cfg.resnum = cfg.resnum;
-              cfg.showalignseq = cfg.showalignseq;
+              //cfg.chainalign = cfg.chainalign;
+              //cfg.resnum = cfg.resnum;
+              //cfg.showalignseq = cfg.showalignseq;
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
               icn3dui.show3DStructure();

@@ -102,11 +102,8 @@
 
               icn3dui.show3DStructure();
           }
-          else if(cfg.chainalign !== undefined) {
+          else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
               cfg.divid = 'div0';
-              //cfg.chainalign = cfg.chainalign;
-              //cfg.resnum = cfg.resnum;
-              //cfg.showalignseq = cfg.showalignseq;
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
 

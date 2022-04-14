@@ -433,7 +433,7 @@ class LoadPDB {
                         chainsTmp = {}
 
                         if(ic.structures[structure.toString()] === undefined) ic.structures[structure.toString()] = [];
-                        ic.structures[structure.toString()].push(chainNum);
+                        if(!ic.structures[structure.toString()].includes(chainNum)) ic.structures[structure.toString()].push(chainNum);
 
                         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 

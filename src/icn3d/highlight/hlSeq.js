@@ -291,6 +291,7 @@ class HlSeq {
 
                             // protein chains
                             let residueid, from, to;
+                            let structure = chainid.substr(0, chainid.indexOf('_'));
                             for(let i = 0, il = fromArray.length; i < il; ++i) {
                                 from = parseInt(fromArray[i]);
                                 to = parseInt(toArray[i]);
@@ -298,7 +299,13 @@ class HlSeq {
                                 for(let j = from; j <= to; ++j) {
                                     if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
-                                        residueid = ic.residNCBI2resid[residNCBI];
+                                        // AlphaFold domains calculated on-the-fly have no conversion
+                                        if(structure.length > 4) {
+                                            residueid = residNCBI;
+                                        }
+                                        else {
+                                            residueid = ic.residNCBI2resid[residNCBI];
+                                        }
                                     }
                                     else {
                                         residueid = chainid + '_' + (j+1).toString();
@@ -332,11 +339,18 @@ class HlSeq {
 
                             //var  atomHash = {}, residueidHash = {}
                             let residueid;
+                            let structure = chainid.substr(0, chainid.indexOf('_'));
                             for(let i = 0, il = posArray.length; i < il; ++i) {
                                 if($(that).attr('site') !== undefined) {
                                     if(ic.bNCBI) {
                                         let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
-                                        residueid = ic.residNCBI2resid[residNCBI];
+                                        // AlphaFold domains calculated on-the-fly have no conversion
+                                        if(structure.length > 4) {
+                                            residueid = residNCBI;
+                                        }
+                                        else {
+                                            residueid = ic.residNCBI2resid[residNCBI];
+                                        }
                                     }
                                     else {
                                         residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();

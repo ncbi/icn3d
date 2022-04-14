@@ -103,6 +103,13 @@
 
               icn3dui.show3DStructure();
           }
+          else if(params.mmdbafid !== undefined) {
+              cfg.divid = 'div0';
+
+              var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+
+              icn3dui.show3DStructure();
+          }
           else {
               setupViewer('', '', cfg, params);
           }

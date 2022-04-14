@@ -997,7 +997,9 @@ class AddTrack {
 
                 let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
 
-                $("#" + me.pre + "legend").html(legendHtml);
+                //$("#" + me.pre + "legend").html(legendHtml);
+                $("#" + me.pre + "dl_legend").html(legendHtml);
+                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');

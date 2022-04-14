@@ -439,9 +439,11 @@ class SetColor {
                 }
 
                 let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-                $("#" + me.pre + "legend").removeClass('icn3d-legend');
-                $("#" + me.pre + "legend").addClass('icn3d-legend2');
-                $("#" + me.pre + "legend").html(legendHtml).show();
+                //$("#" + me.pre + "legend").removeClass('icn3d-legend');
+                //$("#" + me.pre + "legend").addClass('icn3d-legend2');
+                //$("#" + me.pre + "legend").html(legendHtml).show();
+                $("#" + me.pre + "dl_legend").html(legendHtml);
+                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color legend');
 
                 break;
 

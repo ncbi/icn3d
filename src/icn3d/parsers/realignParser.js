@@ -29,8 +29,8 @@ class RealignParser {
 
         ic.selectionCls.saveSelection(name, name);
 
-        let  structHash = {}
-        ic.realignResid = {}
+        let  structHash = {}, struct2chain = {};
+        ic.realignResid = {};
         let  lastStruResi = '';
         for(let serial in ic.hAtoms) {
             let  atom = ic.atoms[serial];
@@ -49,6 +49,8 @@ class RealignParser {
 
                 ic.realignResid[atom.structure].push({'resid': atom.structure + '_' + atom.chain + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
 
+                struct2chain[atom.structure] = atom.structure + '_' + atom.chain;
+
                 lastStruResi = atom.structure + '_' + atom.resi;
             }
         }
@@ -63,7 +65,8 @@ class RealignParser {
         let  coordsTo = structHash[toStruct];
 
         let  bKeepSeq = true;
-        ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+        //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+        ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
 
         ic.hlUpdateCls.updateHlAll();
     }
@@ -218,11 +221,13 @@ class RealignParser {
               if(fromStruct === undefined && !me.cfg.command) {
                  alert('Please do not align residues in the same structure');
               }
-              else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
-                 alert('These sequences are too short for alignment');
-              }
-              else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
-                 alert('These sequences can not be aligned to each other');
+              else if(seq1 && seq2) {
+                if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+                    alert('These sequences are too short for alignment');
+                }
+                else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+                    alert('These sequences can not be aligned to each other');
+                }
               }
           }
 

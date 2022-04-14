@@ -143,7 +143,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pdbfile_app' class='" + dialogClass + "'>";
-        html += "PDB File: " + me.htmlCls.inputFileStr + " id='" + me.pre + "pdbfile_app' size=8> ";
+        html += "Multiple PDB Files: <input type='file' multiple id='" + me.pre + "pdbfile_app' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdbfile_app'>Append</button>";
         html += "</div>";
 
@@ -273,6 +273,18 @@ class SetDialog {
           + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
 
         html += me.htmlCls.divStr + "asu_bu' style='display:none;'>";
+        html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
+
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "List of MMDB, PDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' value='1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdbaf_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+        html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
+        + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+        + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
+
+        html += me.htmlCls.divStr + "asu_bu2' style='display:none;'>";
         html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
 
         html += "</div>";
@@ -483,7 +495,7 @@ class SetDialog {
         html += "</select></div>";
 
         html += "</td></tr></table>";
-
+/*
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
             html += "<div>4. <b>Cross Structure Interactions</b>: <select id='" + me.pre + "crossstrucinter'>";
             html += me.htmlCls.optionStr + "'1'>Yes</option>";
@@ -492,8 +504,9 @@ class SetDialog {
             html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
         }
         else {
+*/            
             html += "<div>4. " + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
-        }
+//        }
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.htmlCls.buttonStr + "sortSet1'> Set 1</button>" + me.htmlCls.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
@@ -997,6 +1010,9 @@ class SetDialog {
         html += "<b>Min B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
         html += "<b>Max B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
         html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbybfactor'>Apply</button><br/><br/>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px'>";
         html += "</div>";
 
         html += "</div>";
