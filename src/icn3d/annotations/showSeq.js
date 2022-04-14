@@ -17,7 +17,7 @@ class ShowSeq {
     showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d, me = ic.icn3dui;
         let bNonMmdb = false;
         let giSeq;
-        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
+        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
             bNonMmdb = true;
             giSeq = [];
             for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
@@ -58,7 +58,7 @@ class ShowSeq {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
             }
             else {
@@ -394,7 +394,7 @@ class ShowSeq {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp = '<div class="icn3d-dl_sequence">';
                 htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -485,7 +485,7 @@ class ShowSeq {
                 }
             }
         }
-        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
+        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
             if(ic.chainid2title[chnid] !== undefined) {
                 fullProteinName = ic.chainid2title[chnid];
             }

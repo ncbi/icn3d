@@ -63,9 +63,9 @@ class ClickMenu {
     }
 
     setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
-        let legendHtml;
+        let legendHtml = "<br>";
         if(bAf) {
-            legendHtml = this.setAlphaFoldLegend();
+            legendHtml += this.setAlphaFoldLegend();
         }
         else {
             let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
@@ -73,7 +73,7 @@ class ClickMenu {
             let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
             let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
 
-            legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+            legendHtml += "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
         }
 
         return legendHtml;
@@ -138,7 +138,7 @@ class ClickMenu {
         });
         me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile_app", "click", function(e) { let ic = me.icn3d;
            //me = me.setIcn3dui($(this).attr('id'));
-           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB File');
+           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
         });
     //    },
     //    clkMn1_mol2file: function() {
@@ -190,6 +190,10 @@ class ClickMenu {
     //    clkMn1_mmdbid: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbafid", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input MMDB, PDB, or AlphaFold UniProt IDs');
         });
     //    },
     //    clkMn1_blast_rep_id: function() {
@@ -1173,7 +1177,9 @@ class ClickMenu {
            ic.endColor = $("#" + me.pre + "endColor").val();
 
            let legendHtml = thisClass.setLegendHtml();
-           $("#" + me.pre + "legend").html(legendHtml).show();
+           //$("#" + me.pre + "legend").html(legendHtml).show();
+           $("#" + me.pre + "dl_legend").html(legendHtml);
+           me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
 
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
         });

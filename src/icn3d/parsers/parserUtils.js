@@ -54,19 +54,25 @@ class ParserUtils {
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
+              let chainDone = {};
               for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
                   let  chainidTmp = ic.structures[secondStruct][i];
+                  // some chains were pushed twice in some cases
+                  if(chainDone.hasOwnProperty(chainidTmp)) continue;
 
                   for(let j in ic.chains[chainidTmp]) {
                     let  atom = ic.atoms[j];
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
                   }
+
+                  chainDone[chainidTmp] = 1;
               }
 
               ic.bRealign = true;
 
-              if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
-
+              //if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
+              ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
+         
               let  bShowHighlight = false;
               let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 

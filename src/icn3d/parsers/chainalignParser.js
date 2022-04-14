@@ -178,6 +178,7 @@ class ChainalignParser {
 
         let mmdbid2cnt = {}, mmdbidpairHash = {};
              
+        let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             let align = dataArray[i][0];
 
@@ -190,6 +191,8 @@ class ChainalignParser {
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
+                bFoundAlignment = true;
+
                 let chainpair = chainidPairArray[i].split(',');
                 let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
                 let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
@@ -203,6 +206,12 @@ class ChainalignParser {
                     mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
                 }
             }
+        }
+
+        if(!bFoundAlignment) {
+            if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+            alert("These structures can NOT be aligned...");
+            return;
         }
 /*
         // find the max aligned mmdbid as mmdbid_t
@@ -590,8 +599,8 @@ class ChainalignParser {
 
     processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
-        if(!align && !bNoAlert) {
-            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again.");
+        if((!align || align.length == 0) && !bNoAlert) {
+            alert("These chains can not be aligned by VAST server.");
             return bAligned;
         }
 
@@ -626,6 +635,12 @@ class ChainalignParser {
                 ic.q_trans_sub[index] = align[0].q_trans_sub;
                 ic.q_rotation[index] = align[0].q_rotation;
                 ic.qt_start_end[index] = align[0].segs;
+
+                let  rmsd = align[0].super_rmsd;
+
+                me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment: " + rmsd.toPrecision(4), false);
+                $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 
                 bAligned = true;
             }
@@ -705,6 +720,109 @@ class ChainalignParser {
               }
             });
         }
+    }
+
+    downloadMmdbAf(idlist) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+
+        ic.structArray = idlist.split(',');
+
+        let  ajaxArray = [];
+
+        for(let i = 0, il = ic.structArray.length; i < il; ++i) {
+            let  url_t, targetAjax;
+            let structure = ic.structArray[i];
+console.log("structure: " + structure);
+
+            if(isNaN(structure) && structure.length > 4) {
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
+console.log("af structure");
+                targetAjax = $.ajax({
+                    url: url_t,
+                    dataType: 'text',
+                    cache: true
+                });
+            }
+            else {
+console.log("pdb structure");                
+                url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
+                if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
+
+                targetAjax = $.ajax({
+                    url: url_t,
+                    dataType: 'jsonp',
+                    cache: true
+                });
+            }
+
+            ajaxArray.push(targetAjax);
+        }
+
+        ic.ParserUtilsCls.setYourNote(ic.structArray + ' in iCn3D');
+        ic.bCid = undefined;
+
+        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+        $.when.apply(undefined, ajaxArray).then(function() {
+          let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseMMdbAfData(dataArray, ic.structArray);
+        })
+        .fail(function() {
+            alert("There are some problems in retrieving the coordinates...");
+        });
+    }
+
+    parseMMdbAfData(dataArray, structArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+
+        let queryDataArray = [];
+        for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
+            let  queryData = dataArray[index][0];
+            let header = 'HEADER                                                        ' + structArray[index] + '\n';
+            if(structArray[index].length > 4) queryData = header + queryData;
+
+            
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+                ) {
+                queryDataArray.push(queryData);
+            }
+            else {
+                alert("The coordinate data can NOT be retrieved for the structure " + structArray[index] + "...");
+                return;
+            }
+        }
+
+        if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+        
+        let  hAtoms = {}, hAtomsTmp = {};
+        let  bLastQuery = false;
+
+        for(let i = 0, il = structArray.length; i < il; ++i) {
+            if(i == structArray.length - 1) bLastQuery = true;
+
+            let targetOrQuery, bAppend;
+            if(i == 0) {
+                targetOrQuery = 'target';
+                bAppend = false; 
+            }
+            else {
+                targetOrQuery = 'query';
+                bAppend = true; 
+            }
+
+            if(structArray[i].length > 4) {
+                let bNoDssp = true;
+                hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
+            }
+            else {
+                let bNoSeqalign = true;
+                hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
+            }
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+        }
+
+        // calculate secondary structures with applyCommandDssp
+        ic.pdbParserCls.applyCommandDssp(true);
     }
 }
 

@@ -91,40 +91,62 @@ class Events {
        else {
            ic.resizeCanvasCls.closeDialogs();
        }
-       let file = $("#" + me.pre + fileId)[0].files[0];
-       if(!file) {
+       let files = $("#" + me.pre + fileId)[0].files;
+       if(!files[0]) {
          alert("Please select a file before clicking 'Load'");
        }
        else {
-         me.htmlCls.setHtmlCls.fileSupport();
-         let reader = new FileReader();
-         reader.onload = function(e) {
-           let dataStr = e.target.result; // or = reader.result;
-           me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-           ic.molTitle = "";
-           //ic.initUI();
-           if(!bAppend) {
-               ic.init();
-           }
-           else {
-               ic.resetConfig();
-               ic.hAtoms = {};
-               ic.dAtoms = {};
-               ic.bResetAnno = true;
-               ic.bResetSets = true;
-           }
+            me.htmlCls.setHtmlCls.fileSupport();
+            ic.molTitle = "";
 
-           ic.bInputfile = true;
-           ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
-           ic.InputfileType = 'pdb';
-           ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
+            ic.fileCnt = Object.keys(files).length;
+            ic.loadedFileCnt = 0;
 
-           if(bAppend) {
-               if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-               if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
-           }
-         }
-         reader.readAsText(file);
+            ic.InputfileData = '';
+
+            for(let i in files) {
+                let file = files[i];
+                
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    ++ic.loadedFileCnt;
+
+                    let dataStr = e.target.result; // or = reader.result;
+                    //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+                    me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
+
+                    if(!bAppend) {
+                        ic.init();
+                    }
+                    else {
+                        ic.resetConfig();
+                        //ic.hAtoms = {};
+                        //ic.dAtoms = {};
+                        ic.bResetAnno = true;
+                        ic.bResetSets = true;
+                    }
+
+                    ic.bInputfile = true;
+                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+                    ic.InputfileType = 'pdb';
+                    if(ic.fileCnt == ic.loadedFileCnt) {
+                        if(bAppend) {
+                            ic.hAtoms = {};
+                            ic.dAtoms = {};
+                        }
+                        ic.pdbParserCls.loadPdbData(ic.InputfileData, undefined, undefined, bAppend);
+                    }
+                }
+
+                if (typeof file === "object") {
+                    reader.readAsText(file);
+                }
+            }
+
+            if(bAppend) {
+                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+            }
        }
     }
 
@@ -682,7 +704,21 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
             window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
-         });
+        });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + $("#" + me.pre + "mmdbafid").val(), false);
+            window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=1', '_blank');
+        });
+ 
+         me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
+             e.preventDefault();
+             //if(!me.cfg.notebook) dialog.dialog( "close" );
+             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
+             window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+        });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {

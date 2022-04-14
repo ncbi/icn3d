@@ -65,7 +65,8 @@ class SetMenu {
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
-        html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
+        // deprecated, use the dialog dl_legend instead
+        //html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
 
         html += me.htmlCls.divStr + "mnLogSection'>";
         html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
@@ -394,8 +395,8 @@ class SetMenu {
 
         html += "<li><span>Search Similar</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST ' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -404,20 +405,22 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'Multiple IDs' + me.htmlCls.wifiStr);
         if(!me.cfg.simplemenu) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
         }
-        html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr);
+        
         html += "</ul>";
         html += "</li>";
         html += "<li><span>Open File</span>";
         html += "<ul>";
 //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
 //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (appendable)');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB Files (appendable)');
         if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
@@ -957,7 +960,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
+        if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
             if(!me.cfg.simplemenu) {
                 html += "<li>-</li>";
 

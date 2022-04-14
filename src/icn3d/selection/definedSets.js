@@ -92,7 +92,7 @@ class DefinedSets {
           this.setProtNuclLigInMenu();
 
           // show 3d domains for mmdbid
-          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined  || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) {
               for(let tddomainName in ic.tddomains) {
                   ic.selectionCls.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
               }

@@ -296,7 +296,7 @@ class MmdbParser {
             }
         }
 
-        if((me.cfg.align === undefined || me.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
+        if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
             if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -358,7 +358,7 @@ class MmdbParser {
 
         if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
 
-        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.blast_rep_id);
+        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
 
         for(let molid in data.domains) {
             let chain = data.domains[molid].chain;

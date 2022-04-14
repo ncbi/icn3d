@@ -478,8 +478,7 @@ class SetSeqAlign {
 
     setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          let  alignedAtoms = {}
-
+          let  alignedAtoms = {};
           //var chainid_t = ic.chainidArray[0];
 
     //      let  structureArray = Object.keys(ic.structures);
@@ -491,14 +490,14 @@ class SetSeqAlign {
           ic.conservedName1 = structure1 + '_cons';
           ic.conservedName2 = structure2 + '_cons';
 
-          ic.consHash1 = {}
-          ic.consHash2 = {}
+          ic.consHash1 = {};
+          ic.consHash2 = {};
 
-          ic.alnChainsAnTtl = {}
-          ic.alnChainsAnno = {}
+          ic.alnChainsAnTtl = {};
+          ic.alnChainsAnno = {};
 
-          if(ic.alnChainsSeq === undefined) ic.alnChainsSeq = {}
-          ic.alnChains = {}
+          if(ic.alnChainsSeq === undefined) ic.alnChainsSeq = {};
+          ic.alnChains = {};
 
           ic.alnChainsSeq[chainid_t] = [];
           ic.alnChains[chainid_t] = {}
@@ -506,13 +505,13 @@ class SetSeqAlign {
           ic.alnChainsAnTtl[chainid_t] = [];
 
           ic.alnChainsSeq[chainid] = [];
-          ic.alnChains[chainid] = {}
+          ic.alnChains[chainid] = {};
 
     //      let  emptyResObject = {resid: '', resn:'', resi: 0, aligned: false}
 
     //      let  prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
-          let  residuesHash = {}
+          let  residuesHash = {};
           if(!ic.chainsMapping[chainid_t]) ic.chainsMapping[chainid_t] = {};
           if(!ic.chainsMapping[chainid]) ic.chainsMapping[chainid] = {};
 

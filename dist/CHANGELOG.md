@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-3.11.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.1.zip) was release on March 28, 2022. Users can align AlphaFold structures or PDB structures with the menu "File > Align > Multiple Chains" or "File > Align > Structure to Structure > Two AlphaFold Structures". Users can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the meu "File > Realign Selection > by Structure Alignment".
+[icn3d-3.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.1.zip) was release on April 13, 2022. Users can input multiple PDB, MMDB, or AlphaFold IDs with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". Users can also load multiple PDB files at the same time with the menu "File > Open File > PDB Files (appendable)". The color legend became draggable.
+
+[icn3d-3.11.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.0.zip) was release on March 28, 2022. Users can align AlphaFold structures or PDB structures with the menu "File > Align > Multiple Chains" or "File > Align > Structure to Structure > Two AlphaFold Structures". Users can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the meu "File > Realign Selection > by Structure Alignment".
 
 [icn3d-3.10.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.1.zip) was release on March 9, 2022. Added the color option "Structure" and the style option "Hydrogens". Fixed some bugs on loading PDB files without headers.
 
