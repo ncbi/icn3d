@@ -25286,15 +25286,18 @@ var icn3d = (function (exports) {
             let  structArray = Object.keys(structHash);
 
             let  toStruct = structArray[0];
-            let  fromStruct = structArray[1];
 
-            // transform from the second structure to the first structure
-            let  coordsFrom = structHash[fromStruct];
-            let  coordsTo = structHash[toStruct];
+            for(let i = 1, il = structArray.length; i < il; ++i) {
+                let  fromStruct = structArray[i];
 
-            let  bKeepSeq = true;
-            //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
-            ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
+                // transform from the second structure to the first structure
+                let  coordsFrom = structHash[fromStruct];
+                let  coordsTo = structHash[toStruct];
+
+                let  bKeepSeq = true;
+                //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+                ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
+            }
 
             ic.hlUpdateCls.updateHlAll();
         }
@@ -26477,11 +26480,10 @@ var icn3d = (function (exports) {
             for(let i = 0, il = ic.structArray.length; i < il; ++i) {
                 let  url_t, targetAjax;
                 let structure = ic.structArray[i];
-    console.log("structure: " + structure);
 
                 if(isNaN(structure) && structure.length > 4) {
                     url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
-    console.log("af structure");
+
                     targetAjax = $.ajax({
                         url: url_t,
                         dataType: 'text',
@@ -26489,7 +26491,6 @@ var icn3d = (function (exports) {
                     });
                 }
                 else {
-    console.log("pdb structure");                
                     url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
                     if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
@@ -26506,11 +26507,14 @@ var icn3d = (function (exports) {
             ic.ParserUtilsCls.setYourNote(ic.structArray + ' in iCn3D');
             ic.bCid = undefined;
 
+            ic.ParserUtilsCls.showLoading();
+
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
               let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
               thisClass.parseMMdbAfData(dataArray, ic.structArray);
+              ic.ParserUtilsCls.hideLoading();
             })
             .fail(function() {
                 alert("There are some problems in retrieving the coordinates...");
@@ -30255,11 +30259,11 @@ var icn3d = (function (exports) {
 
     					let residFrom = chnid + "_" + from;
     					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
-    					if(!ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
+    					if(!atomFrom || !ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
 
     					let residTo = chnid + "_" + to;
     					let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
-    					if(!ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
+    					if(!atomTo || !ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
 
     					if(from >= start && to <= end) {
     						if(ssCnt > 0) jsonStr += ', ';
@@ -31900,6 +31904,76 @@ var icn3d = (function (exports) {
                ic.drawCls.draw();
            }
         }
+
+        measureDistManySets(nameArray, nameArray2) {var ic = this.icn3d, me = ic.icn3dui;
+            if(nameArray.length == 0 || nameArray2.length == 0) {
+                alert("Please select sets for distance calculation...");
+            }
+            else {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+                let distHash = {};
+                
+                for(let i = 0, il = nameArray.length; i < il; ++i) {
+                    let set1 = nameArray[i];
+                    let array1 = [set1];
+                    distHash[set1] = {};
+
+                    for(let j = i + 1, jl = nameArray2.length; j < jl; ++j) {
+                        let set2 = nameArray2[j];
+                        let array2 = [set2];
+
+                        let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(array1);
+                        let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(array2);
+            
+                        let posArray1 = ic.contactCls.getExtent(atomSet1);
+                        let posArray2 = ic.contactCls.getExtent(atomSet2);
+            
+                        let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+                        let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+            
+                        let distance = pos1.distanceTo(pos2);
+
+                        distHash[set1][set2] = distance.toFixed(2);
+                    }
+                }
+
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+
+                let tableHtml = 'Note: Click on the distance to show a dashed line in 3D view.<br><br>';
+                tableHtml += '<table align=center border=1 cellpadding=10 cellspacing=0><tr><th></th>';
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+                    tableHtml += '<th><b>' + set2 + '</b></th>';
+                }
+                tableHtml += '</tr>';
+
+                for(let i = 0, il = nameArray.length; i < il; ++i) {
+                    let set1 = nameArray[i];
+                    tableHtml += '<tr><th><b>' + set1 + '</b></th>';
+
+                    for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                        let set2 = nameArray2[j];
+
+                        if(distHash[set1] && distHash[set1][set2]) {
+                            tableHtml += '<td><span class="icn3d-distance" sets="' + set1 + '|' + set2 + '">' + distHash[set1][set2] + '</span></td>';
+                        }
+                        else if(distHash[set2] && distHash[set2][set1]) {
+                            tableHtml += '<td><span class="icn3d-distance" sets="' + set2 + '|' + set1 + '">' + distHash[set2][set1] + '</span></td>';
+                        }
+                        else {
+                            tableHtml += '<td>0</td>';
+                        }
+                    }
+
+                    tableHtml += '</tr>';
+                }
+
+                tableHtml += '</table><br><br>';
+
+                $("#" + me.pre + "dl_disttable").html(tableHtml);
+            }
+         }
 
         //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
         //The line can be dashed if "dashed" is set true.
@@ -33685,7 +33759,7 @@ var icn3d = (function (exports) {
                 }
             }
           }
-          else if(commandOri.indexOf('dist') == 0) {
+          else if(commandOri.indexOf('dist ') == 0) {
             let  paraArray = commandOri.split(' | ');
             if(paraArray.length == 2) {
                 let  setNameArray = paraArray[1].split(' ');
@@ -33695,6 +33769,19 @@ var icn3d = (function (exports) {
                     let  nameArray2 = setNameArray[1].split(',');
 
                     ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
+                }
+            }
+          }
+          else if(commandOri.indexOf('disttable') == 0) {
+            let  paraArray = commandOri.split(' | ');
+            if(paraArray.length == 2) {
+                let  setNameArray = paraArray[1].split(' ');
+
+                if(setNameArray.length == 2) {
+                    let  nameArray = setNameArray[0].split(',');
+                    let  nameArray2 = setNameArray[1].split(',');
+
+                    ic.analysisCls.measureDistManySets(nameArray, nameArray2);
                 }
             }
           }
@@ -41686,9 +41773,15 @@ var icn3d = (function (exports) {
           let  nameCommandArray = dataStr.trim().split('\n');
 
           for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
-              let  nameCommand = nameCommandArray[i].split('\t');
-              let  name = nameCommand[0];
-              let  command = nameCommand[1];
+              //let  nameCommand = nameCommandArray[i].split('\t');
+              //let  name = nameCommand[0];
+              //let  command = nameCommand[1];
+
+              let  nameCommand = nameCommandArray[i].replace(/\t/g, ' ');
+              let pos1 = nameCommand.indexOf(' ');
+              
+              let  name = nameCommand.substr(0, pos1);
+              let  command = nameCommand.substr(pos1 + 1);
 
               let  pos = command.indexOf(' '); // select ...
 
@@ -46643,6 +46736,34 @@ var icn3d = (function (exports) {
             return legendHtml;
         }
 
+        SetChainsAdvancedMenu() { let me = this.icn3dui, ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                ic.definedSetsCls.setPredefinedInMenu();
+                ic.bSetChainsAdvancedMenu = true;
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+            }
+        }
+
+        setSetsMenus(bTable) { let me = this.icn3dui, ic = me.icn3d;
+            this.SetChainsAdvancedMenu();
+
+            let id1 = (bTable) ? 'atomsCustomDistTable' : 'atomsCustomDist';
+            let id2 = (bTable) ? 'atomsCustomDistTable2' : 'atomsCustomDist2';
+
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+            if($("#" + me.pre + id1).length) {
+                $("#" + me.pre + id1).html("  <option value='selected'>selected</option>" + definedAtomsHtml);
+            }
+            if($("#" + me.pre + id2).length) {
+                $("#" + me.pre + id2).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
+            }
+
+            $("#" + me.pre + id1).resizable();
+            $("#" + me.pre + id2).resizable();
+        }
+
+
         clickMenu1() { let me = this.icn3dui; me.icn3d;
             if(me.bNode) return;
 
@@ -46971,12 +47092,9 @@ var icn3d = (function (exports) {
         //    clkMn1_exportSelections: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d;
                thisClass.setLogCmd("export all selections", false);
-              if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                   ic.definedSetsCls.setPredefinedInMenu();
-                   ic.bSetChainsAdvancedMenu = true;
-                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-              }
+              
+               thisClass.SetChainsAdvancedMenu();
+
                let text = ic.saveFileCls.exportCustomAtoms();
                let file_pref =(ic.inputid) ? ic.inputid : "custom";
                ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
@@ -46984,12 +47102,9 @@ var icn3d = (function (exports) {
 
             me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d;
                thisClass.setLogCmd("export all selections with details", false);
-              if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                   ic.definedSetsCls.setPredefinedInMenu();
-                   ic.bSetChainsAdvancedMenu = true;
-                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-              }
+              
+               thisClass.SetChainsAdvancedMenu();
+
                let bDetails = true;
                let text = ic.saveFileCls.exportCustomAtoms(bDetails);
                let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -47341,12 +47456,8 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn2_aroundsphere: function() {
             me.myEventCls.onIds("#" + me.pre + "mn2_aroundsphere", "click", function(e) { let ic = me.icn3d;
-                if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                   ic.definedSetsCls.setPredefinedInMenu();
-                   ic.bSetChainsAdvancedMenu = true;
-                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-                }
+                thisClass.SetChainsAdvancedMenu();
+
                 let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
                 if($("#" + me.pre + "atomsCustomSphere").length) {
                     $("#" + me.pre + "atomsCustomSphere").html("  <option value='non-selected' selected>non-selected</option><option value='selected'>selected</option>" + definedAtomsHtml);
@@ -48204,22 +48315,15 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d;
                 me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
-                if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                   ic.definedSetsCls.setPredefinedInMenu();
-                   ic.bSetChainsAdvancedMenu = true;
-                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-                }
-                let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
-                if($("#" + me.pre + "atomsCustomDist").length) {
-                    $("#" + me.pre + "atomsCustomDist").html("  <option value='selected'>selected</option>" + definedAtomsHtml);
-                }
-                if($("#" + me.pre + "atomsCustomDist2").length) {
-                    $("#" + me.pre + "atomsCustomDist2").html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
-                }
+                thisClass.setSetsMenus();
 
-               $("#" + me.pre + "atomsCustomDist").resizable();
-               $("#" + me.pre + "atomsCustomDist2").resizable();
+               ic.bMeasureDistance = true;
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
+
+                thisClass.setSetsMenus(true);
 
                ic.bMeasureDistance = true;
             });
@@ -48516,12 +48620,8 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn6_hbondsYes: function() {
             me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d;
-                if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                   ic.definedSetsCls.setPredefinedInMenu();
-                   ic.bSetChainsAdvancedMenu = true;
-                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-                }
+                thisClass.SetChainsAdvancedMenu();
+
                 let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
                 if($("#" + me.pre + "atomsCustomHbond").length) {
                     $("#" + me.pre + "atomsCustomHbond").html("  <option value='non-selected' selected>non-selected</option><option value='selected'>selected</option>" + definedAtomsHtml);
@@ -49104,7 +49204,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'Multiple IDs' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'MMDB or AlphaFold IDs' + me.htmlCls.wifiStr);
             if(!me.cfg.simplemenu) {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
                 html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
@@ -50164,6 +50264,7 @@ var icn3d = (function (exports) {
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
             html += "</ul>";
             html += "</li>";
@@ -51781,6 +51882,25 @@ var icn3d = (function (exports) {
             html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applydist2'>Display</button></span>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_distmanysets' class='" + dialogClass + "'>";
+            html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise distances</span><br/>";
+            html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+            html += me.htmlCls.divNowrapStr + "First sets:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDistTable2' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td><td>";
+
+            html += me.htmlCls.divNowrapStr + "Second sets:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDistTable' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td></tr></table>";
+
+            html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applydisttable'>Distances in Table</button></span>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
             if(me.utilsCls.isMobile()) {
                 html += me.htmlCls.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
@@ -52016,6 +52136,9 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px'>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_disttable' class='" + dialogClass + "'>";
+            html += "</div>";
+
             html += "</div>";
             html += "<!--/form-->";
 
@@ -52083,7 +52206,7 @@ var icn3d = (function (exports) {
                 ic.fileCnt = Object.keys(files).length;
                 ic.loadedFileCnt = 0;
 
-                ic.InputfileData = '';
+                let dataStrAll = '';
 
                 for(let i in files) {
                     let file = files[i];
@@ -52108,14 +52231,16 @@ var icn3d = (function (exports) {
                         }
 
                         ic.bInputfile = true;
-                        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                         ic.InputfileType = 'pdb';
+                        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+                        dataStrAll += (dataStrAll != '') ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
+
                         if(ic.fileCnt == ic.loadedFileCnt) {
                             if(bAppend) {
                                 ic.hAtoms = {};
                                 ic.dAtoms = {};
                             }
-                            ic.pdbParserCls.loadPdbData(ic.InputfileData, undefined, undefined, bAppend);
+                            ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
                         }
                     };
 
@@ -53761,6 +53886,33 @@ var icn3d = (function (exports) {
 
                ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
                me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+            });
+
+            $(document).on("click", ".icn3d-distance", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                ic.bMeasureDistance = false;
+
+                let sets = $(this).attr('sets').split('|');
+     
+                let nameArray = [sets[0]];
+                let nameArray2 = [sets[1]];
+     
+                ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
+                me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+             });
+
+            me.myEventCls.onIds("#" + me.pre + "applydisttable", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.bMeasureDistance = false;
+     
+                let nameArray = $("#" + me.pre + "atomsCustomDistTable").val();
+                let nameArray2 = $("#" + me.pre + "atomsCustomDistTable2").val();
+     
+                ic.analysisCls.measureDistManySets(nameArray, nameArray2);
+                me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
+
+                me.htmlCls.clickMenuCls.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
             });
 
         //    clickApply_thickness: function() {
@@ -58780,6 +58932,8 @@ var icn3d = (function (exports) {
         }
 
         if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
+        if(me.cfg.mmdbafid !== undefined) this.opts['color'] = 'structure';
+
         if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
     };
 
@@ -58795,7 +58949,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.11.0';
+        this.REVISION = '3.11.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

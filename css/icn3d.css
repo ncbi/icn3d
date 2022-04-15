@@ -270,3 +270,5 @@ input:checked + .icn3d-slider:before {
 .icn3d-license {width:16px; display:inline-block; background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}
 
 .icn3d-square { display:inline-block; width:15px;}
+
+.icn3d-distance {color:#1c94c4; cursor: pointer;}

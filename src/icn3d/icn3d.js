@@ -754,6 +754,8 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
     }
 
     if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
+    if(me.cfg.mmdbafid !== undefined) this.opts['color'] = 'structure';
+
     if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
 };
 

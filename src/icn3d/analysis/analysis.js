@@ -124,6 +124,76 @@ class Analysis {
        }
     }
 
+    measureDistManySets(nameArray, nameArray2) {var ic = this.icn3d, me = ic.icn3dui;
+        if(nameArray.length == 0 || nameArray2.length == 0) {
+            alert("Please select sets for distance calculation...");
+        }
+        else {
+            let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+            let distHash = {};
+            
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                let set1 = nameArray[i];
+                let array1 = [set1];
+                distHash[set1] = {};
+
+                for(let j = i + 1, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+                    let array2 = [set2];
+
+                    let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(array1);
+                    let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(array2);
+        
+                    let posArray1 = ic.contactCls.getExtent(atomSet1);
+                    let posArray2 = ic.contactCls.getExtent(atomSet2);
+        
+                    let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+                    let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+        
+                    let distance = pos1.distanceTo(pos2);
+
+                    distHash[set1][set2] = distance.toFixed(2);
+                }
+            }
+
+            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+
+            let tableHtml = 'Note: Click on the distance to show a dashed line in 3D view.<br><br>';
+            tableHtml += '<table align=center border=1 cellpadding=10 cellspacing=0><tr><th></th>';
+            for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                let set2 = nameArray2[j];
+                tableHtml += '<th><b>' + set2 + '</b></th>';
+            }
+            tableHtml += '</tr>';
+
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                let set1 = nameArray[i];
+                tableHtml += '<tr><th><b>' + set1 + '</b></th>';
+
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+
+                    if(distHash[set1] && distHash[set1][set2]) {
+                        tableHtml += '<td><span class="icn3d-distance" sets="' + set1 + '|' + set2 + '">' + distHash[set1][set2] + '</span></td>';
+                    }
+                    else if(distHash[set2] && distHash[set2][set1]) {
+                        tableHtml += '<td><span class="icn3d-distance" sets="' + set2 + '|' + set1 + '">' + distHash[set2][set1] + '</span></td>';
+                    }
+                    else {
+                        tableHtml += '<td>0</td>';
+                    }
+                }
+
+                tableHtml += '</tr>';
+            }
+
+            tableHtml += '</table><br><br>';
+
+            $("#" + me.pre + "dl_disttable").html(tableHtml);
+        }
+     }
+
     //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
     //The line can be dashed if "dashed" is set true.
     addLine(x1, y1, z1, x2, y2, z2, color, dashed, type) {var ic = this.icn3d, me = ic.icn3dui;

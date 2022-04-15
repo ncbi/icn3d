@@ -418,9 +418,15 @@ class Selection {
       let  nameCommandArray = dataStr.trim().split('\n');
 
       for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
-          let  nameCommand = nameCommandArray[i].split('\t');
-          let  name = nameCommand[0];
-          let  command = nameCommand[1];
+          //let  nameCommand = nameCommandArray[i].split('\t');
+          //let  name = nameCommand[0];
+          //let  command = nameCommand[1];
+
+          let  nameCommand = nameCommandArray[i].replace(/\t/g, ' ');
+          let pos1 = nameCommand.indexOf(' ');
+          
+          let  name = nameCommand.substr(0, pos1)
+          let  command = nameCommand.substr(pos1 + 1)
 
           let  pos = command.indexOf(' '); // select ...
 

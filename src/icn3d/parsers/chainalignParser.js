@@ -732,11 +732,10 @@ class ChainalignParser {
         for(let i = 0, il = ic.structArray.length; i < il; ++i) {
             let  url_t, targetAjax;
             let structure = ic.structArray[i];
-console.log("structure: " + structure);
 
             if(isNaN(structure) && structure.length > 4) {
                 url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
-console.log("af structure");
+
                 targetAjax = $.ajax({
                     url: url_t,
                     dataType: 'text',
@@ -744,7 +743,6 @@ console.log("af structure");
                 });
             }
             else {
-console.log("pdb structure");                
                 url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
                 if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
@@ -761,11 +759,14 @@ console.log("pdb structure");
         ic.ParserUtilsCls.setYourNote(ic.structArray + ' in iCn3D');
         ic.bCid = undefined;
 
+        ic.ParserUtilsCls.showLoading();
+
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
           let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parseMMdbAfData(dataArray, ic.structArray);
+          ic.ParserUtilsCls.hideLoading();
         })
         .fail(function() {
             alert("There are some problems in retrieving the coordinates...");
