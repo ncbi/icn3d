@@ -271,6 +271,8 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-square { display:inline-block; width:15px;}
 
+.icn3d-distance {color:#1c94c4; cursor: pointer;}
+
 .color-picker,
 .color-picker:before,
 .color-picker:after,

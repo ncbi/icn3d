@@ -405,7 +405,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'Multiple IDs' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'MMDB or AlphaFold IDs' + me.htmlCls.wifiStr);
         if(!me.cfg.simplemenu) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
@@ -1465,6 +1465,7 @@ class SetMenu {
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets');
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
         html += "</ul>";
         html += "</li>";

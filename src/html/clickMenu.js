@@ -79,6 +79,34 @@ class ClickMenu {
         return legendHtml;
     }
 
+    SetChainsAdvancedMenu() { let me = this.icn3dui, ic = me.icn3d;
+        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+            let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+            ic.definedSetsCls.setPredefinedInMenu();
+            ic.bSetChainsAdvancedMenu = true;
+            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+        }
+    }
+
+    setSetsMenus(bTable) { let me = this.icn3dui, ic = me.icn3d;
+        this.SetChainsAdvancedMenu();
+
+        let id1 = (bTable) ? 'atomsCustomDistTable' : 'atomsCustomDist';
+        let id2 = (bTable) ? 'atomsCustomDistTable2' : 'atomsCustomDist2';
+
+        let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+        if($("#" + me.pre + id1).length) {
+            $("#" + me.pre + id1).html("  <option value='selected'>selected</option>" + definedAtomsHtml);
+        }
+        if($("#" + me.pre + id2).length) {
+            $("#" + me.pre + id2).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
+        }
+
+        $("#" + me.pre + id1).resizable();
+        $("#" + me.pre + id2).resizable();
+    }
+
+
     clickMenu1() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
@@ -407,12 +435,9 @@ class ClickMenu {
     //    clkMn1_exportSelections: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("export all selections", false);
-          if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-          }
+          
+           thisClass.SetChainsAdvancedMenu();
+
            let text = ic.saveFileCls.exportCustomAtoms();
            let file_pref =(ic.inputid) ? ic.inputid : "custom";
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
@@ -420,12 +445,9 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("export all selections with details", false);
-          if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-          }
+          
+           thisClass.SetChainsAdvancedMenu();
+
            let bDetails = true;
            let text = ic.saveFileCls.exportCustomAtoms(bDetails);
            let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -778,12 +800,8 @@ class ClickMenu {
     //    },
     //    clkMn2_aroundsphere: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_aroundsphere", "click", function(e) { let ic = me.icn3d;
-            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-            }
+            thisClass.SetChainsAdvancedMenu();
+
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
             if($("#" + me.pre + "atomsCustomSphere").length) {
                 $("#" + me.pre + "atomsCustomSphere").html("  <option value='non-selected' selected>non-selected</option><option value='selected'>selected</option>" + definedAtomsHtml);
@@ -1641,22 +1659,15 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d;
             me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
-            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-            }
-            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
-            if($("#" + me.pre + "atomsCustomDist").length) {
-                $("#" + me.pre + "atomsCustomDist").html("  <option value='selected'>selected</option>" + definedAtomsHtml);
-            }
-            if($("#" + me.pre + "atomsCustomDist2").length) {
-                $("#" + me.pre + "atomsCustomDist2").html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
-            }
+            thisClass.setSetsMenus();
 
-           $("#" + me.pre + "atomsCustomDist").resizable();
-           $("#" + me.pre + "atomsCustomDist2").resizable();
+           ic.bMeasureDistance = true;
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
+
+            thisClass.setSetsMenus(true);
 
            ic.bMeasureDistance = true;
         });
@@ -1955,12 +1966,8 @@ class ClickMenu {
     //    },
     //    clkMn6_hbondsYes: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d;
-            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-            }
+            thisClass.SetChainsAdvancedMenu();
+
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
             if($("#" + me.pre + "atomsCustomHbond").length) {
                 $("#" + me.pre + "atomsCustomHbond").html("  <option value='non-selected' selected>non-selected</option><option value='selected'>selected</option>" + definedAtomsHtml);

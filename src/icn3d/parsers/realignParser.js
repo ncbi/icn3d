@@ -58,15 +58,18 @@ class RealignParser {
         let  structArray = Object.keys(structHash);
 
         let  toStruct = structArray[0];
-        let  fromStruct = structArray[1];
 
-        // transform from the second structure to the first structure
-        let  coordsFrom = structHash[fromStruct];
-        let  coordsTo = structHash[toStruct];
+        for(let i = 1, il = structArray.length; i < il; ++i) {
+            let  fromStruct = structArray[i];
 
-        let  bKeepSeq = true;
-        //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
-        ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
+            // transform from the second structure to the first structure
+            let  coordsFrom = structHash[fromStruct];
+            let  coordsTo = structHash[toStruct];
+
+            let  bKeepSeq = true;
+            //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+            ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
+        }
 
         ic.hlUpdateCls.updateHlAll();
     }

@@ -102,7 +102,7 @@ class Events {
             ic.fileCnt = Object.keys(files).length;
             ic.loadedFileCnt = 0;
 
-            ic.InputfileData = '';
+            let dataStrAll = '';
 
             for(let i in files) {
                 let file = files[i];
@@ -127,14 +127,16 @@ class Events {
                     }
 
                     ic.bInputfile = true;
-                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                     ic.InputfileType = 'pdb';
+                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+                    dataStrAll += (dataStrAll != '') ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
+
                     if(ic.fileCnt == ic.loadedFileCnt) {
                         if(bAppend) {
                             ic.hAtoms = {};
                             ic.dAtoms = {};
                         }
-                        ic.pdbParserCls.loadPdbData(ic.InputfileData, undefined, undefined, bAppend);
+                        ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
                     }
                 }
 
@@ -1782,6 +1784,33 @@ class Events {
 
            ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
            me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+        });
+
+        $(document).on("click", ".icn3d-distance", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bMeasureDistance = false;
+
+            let sets = $(this).attr('sets').split('|');
+ 
+            let nameArray = [sets[0]];
+            let nameArray2 = [sets[1]];
+ 
+            ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
+            me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "applydisttable", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.bMeasureDistance = false;
+ 
+            let nameArray = $("#" + me.pre + "atomsCustomDistTable").val();
+            let nameArray2 = $("#" + me.pre + "atomsCustomDistTable2").val();
+ 
+            ic.analysisCls.measureDistManySets(nameArray, nameArray2);
+            me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
+
+            me.htmlCls.clickMenuCls.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
         });
 
     //    clickApply_thickness: function() {

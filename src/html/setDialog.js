@@ -780,6 +780,25 @@ class SetDialog {
         html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applydist2'>Display</button></span>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_distmanysets' class='" + dialogClass + "'>";
+        html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise distances</span><br/>";
+        html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+        html += me.htmlCls.divNowrapStr + "First sets:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDistTable2' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td><td>";
+
+        html += me.htmlCls.divNowrapStr + "Second sets:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDistTable' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td></tr></table>";
+
+        html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applydisttable'>Distances in Table</button></span>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
         if(me.utilsCls.isMobile()) {
             html += me.htmlCls.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
@@ -1013,6 +1032,9 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_disttable' class='" + dialogClass + "'>";
         html += "</div>";
 
         html += "</div>";

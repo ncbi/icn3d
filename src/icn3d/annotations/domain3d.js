@@ -1091,11 +1091,11 @@ class Domain3d {
 
 					let residFrom = chnid + "_" + from;
 					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
-					if(!ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
+					if(!atomFrom || !ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
 
 					let residTo = chnid + "_" + to;
 					let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
-					if(!ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
+					if(!atomTo || !ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
 
 					if(from >= start && to <= end) {
 						if(ssCnt > 0) jsonStr += ', ';

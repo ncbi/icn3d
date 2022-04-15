@@ -904,7 +904,7 @@ class ApplyCommand {
             }
         }
       }
-      else if(commandOri.indexOf('dist') == 0) {
+      else if(commandOri.indexOf('dist ') == 0) {
         let  paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
             let  setNameArray = paraArray[1].split(' ');
@@ -914,6 +914,19 @@ class ApplyCommand {
                 let  nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
+            }
+        }
+      }
+      else if(commandOri.indexOf('disttable') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let  setNameArray = paraArray[1].split(' ');
+
+            if(setNameArray.length == 2) {
+                let  nameArray = setNameArray[0].split(',');
+                let  nameArray2 = setNameArray[1].split(',');
+
+                ic.analysisCls.measureDistManySets(nameArray, nameArray2);
             }
         }
       }
