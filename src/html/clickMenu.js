@@ -2139,7 +2139,8 @@ class ClickMenu {
           }
       }
       if(ic.bAddLogs && me.cfg.showcommand) {
-          ic.logs.push(str);
+          let finalStr = (bSetCommand) ? str : '[comment] ' + str;
+          ic.logs.push(finalStr);
           // move cursor to the end, and scroll to the end
           $("#" + me.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
       }

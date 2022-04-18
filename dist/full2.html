@@ -19,11 +19,11 @@
   <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.12.1.min.css">
-  <link rel="stylesheet" href="icn3d_3.11.1.css">
+  <link rel="stylesheet" href="icn3d_3.11.2.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.12.1.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.11.1.min.js"></script>
+  <script src="icn3d_3.11.2.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(function() {
@@ -40,7 +40,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.11.1.min.js', function() {
+          //$.getScript('icn3d_3.11.2.min.js', function() {
             var version = 3;
             launchIcn3d(version);
           //});
@@ -208,7 +208,7 @@
         var cfg = {};
 
         if(!bNopara) {
-            var decodeSearch = decodeURIComponent(search);
+            var decodeSearch = decodeURIComponent(search).replace(/\+/g, ' ');
 
             // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
             var commandPos = decodeSearch.indexOf('&command=');
@@ -293,8 +293,8 @@
         cfg.shownote = 1; //cfg.shownote;
         cfg.options = (cfg.options !== undefined) ? JSON.parse(cfg.options) : undefined;
 
-        // default to show asymmetric units
-        if(cfg.bu === undefined) cfg.bu = 0;
+        // default to show biological unit
+        if(cfg.bu === undefined) cfg.bu = 1; //0;
         if(cfg.buidx !== undefined) cfg.bu = cfg.buidx;
 
         return cfg;

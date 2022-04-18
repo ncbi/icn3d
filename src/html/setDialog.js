@@ -200,12 +200,12 @@ class SetDialog {
     */
         html += "<div style='width:550px'>";
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID_chain (e.g., P69905_A for AlphaFold structures).<br/><br/>";
-        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A,2HCO_A' size=50><br/><br/>";
+        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905_A,P01942_A,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
         html += "<b>Optional 3</b>, predefined alignment with residue numbers in each chain specified (one chain per line): <br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50\n1,5,10-50\n1,5,10-50'></textarea><br/><br/>";
         html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
-        html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
+        html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";

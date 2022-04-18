@@ -208,7 +208,7 @@
         var cfg = {};
 
         if(!bNopara) {
-            var decodeSearch = decodeURIComponent(search);
+            var decodeSearch = decodeURIComponent(search).replace(/\+/g, ' ');
 
             // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
             var commandPos = decodeSearch.indexOf('&command=');
@@ -293,8 +293,8 @@
         cfg.shownote = 1; //cfg.shownote;
         cfg.options = (cfg.options !== undefined) ? JSON.parse(cfg.options) : undefined;
 
-        // default to show asymmetric units
-        if(cfg.bu === undefined) cfg.bu = 0;
+        // default to show biological unit
+        if(cfg.bu === undefined) cfg.bu = 1; //0;
         if(cfg.buidx !== undefined) cfg.bu = cfg.buidx;
 
         return cfg;

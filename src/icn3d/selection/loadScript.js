@@ -44,7 +44,7 @@ class LoadScript {
 
       ic.bRender = false;
       ic.bStopRotate = true;
-
+      
       // firebase dynamic links replace " " with "+". So convert it back
       dataStr =(bStatefile) ? dataStr.replace(/\+/g, ' ') : dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
 
@@ -1225,6 +1225,8 @@ class LoadScript {
 
           $("#" + ic.pre + "replay_cmd").html('Cmd: ' + cmdStr);
           $("#" + ic.pre + "replay_menu").html('Menu: ' + menuStr);
+
+          me.htmlCls.clickMenuCls.setLogCmd(cmdStrOri, true);
 
           ic.bCommandLoad = false;
 

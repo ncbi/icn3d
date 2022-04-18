@@ -1888,6 +1888,9 @@ class Events {
                   let menuStr = ic.applyCommandCls.getMenuFromCmd(cmdStr);
                   $("#" + me.pre + "replay_cmd").html('Cmd: ' + cmdStr);
                   $("#" + me.pre + "replay_menu").html('Menu: ' + menuStr);
+
+                  me.htmlCls.clickMenuCls.setLogCmd(cmdStrOri, true);
+
                   ic.drawCls.draw();
              }
         });

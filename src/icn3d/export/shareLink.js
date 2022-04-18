@@ -230,6 +230,11 @@ class ShareLink {
                let command_tf2 = command_tf[0].split('&command=');
                let commandStr = command_tf2[0].trim();
 
+               // only one load command
+               //if(prevCommandStr.substr(0, 5) == 'load ' && commandStr.substr(0, 5) == 'load ') {
+               //    continue;
+               //}
+
                //statefile += ic.commands[i] + "\n";
 
                // only output the most recent 'select saved atoms...' without " | name ..."
