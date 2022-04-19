@@ -927,6 +927,7 @@ class ApplyCommand {
                 let  nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistManySets(nameArray, nameArray2);
+                me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
             }
         }
       }

@@ -88,19 +88,20 @@ class RealignParser {
       ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
       for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
+          let chainpair = chainidArray[0] + ',' + chainidArray[index + 1];
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
-          let  seq1 = struct2SeqHash[toStruct];
-          let  seq2 = struct2SeqHash[fromStruct];
+          let  seq1 = struct2SeqHash[chainpair][toStruct];
+          let  seq2 = struct2SeqHash[chainpair][fromStruct];
 
-          let  coord1 = struct2CoorHash[toStruct];
-          let  coord2 = struct2CoorHash[fromStruct];
+          let  coord1 = struct2CoorHash[chainpair][toStruct];
+          let  coord2 = struct2CoorHash[chainpair][fromStruct];
 
-          let  residArray1 = struct2resid[toStruct];
-          let  residArray2 = struct2resid[fromStruct];
+          let  residArray1 = struct2resid[chainpair][toStruct];
+          let  residArray2 = struct2resid[chainpair][fromStruct];
 
           // transform from the second structure to the first structure
           let  coordsTo = [];
@@ -356,23 +357,24 @@ class RealignParser {
 
         let jsonStr_q, jsonStr_t;
 
-        let  mmdbid_t;
+        let  mmdbid_t, chainid_t, base_t;
         let  ajaxArray = [];
         let  url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
-        let  predefinedResArray, predefinedRes;
+        let  predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(' | ');
+            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split('; ');
 
-            if(predefinedResArray.length != chainidArray.length) {
+            if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
             }
         }
 
+        let result;
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
-            if(bPredefined) predefinedRes = predefinedResArray[i].trim();
+            //if(bPredefined) predefinedRes = predefinedResArray[i].trim();
 
             let  pos = chainidArray[i].indexOf('_');
             let  mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
@@ -386,6 +388,7 @@ class RealignParser {
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
+            if(i == 0) chainid_t = chainid;
 
             if(!ic.chainsSeq[chainid]) {
                 //alert("Please select one chain per structure and try it again...");
@@ -394,7 +397,7 @@ class RealignParser {
                 continue;
             }
 
-            if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
+            if(!struct2SeqHash.hasOwnProperty(mmdbid) && !bPredefined) {
                 struct2SeqHash[mmdbid] = '';
                 struct2CoorHash[mmdbid] = [];
                 struct2resid[mmdbid] = [];
@@ -402,6 +405,7 @@ class RealignParser {
 
             if(i == 0 || bPredefined) { // master
                 let base = parseInt(ic.chainsSeq[chainid][0].resi);
+                if(i == 0) base_t = base;
 
                 let resiArray = [];
                 if(bRealign) {
@@ -415,50 +419,48 @@ class RealignParser {
                     }
                 }
                 else if(bPredefined) {
-                    resiArray = predefinedRes.split(",");
+                    if(i > 0) {
+                        predefinedResPair = predefinedResArray[i - 1].split(' | ');
+
+                        let chainidpair = chainid_t + ',' + chainid;
+                        if(!struct2SeqHash[chainidpair]) struct2SeqHash[chainidpair] = {};
+                        if(!struct2CoorHash[chainidpair]) struct2CoorHash[chainidpair] = {};
+                        if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
+
+                        // master
+                        resiArray = predefinedResPair[0].split(",");
+                        result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+
+                        if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
+                        if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
+                        if(!struct2resid[chainidpair][mmdbid_t]) struct2resid[chainidpair][mmdbid_t] = [];
+
+                        struct2SeqHash[chainidpair][mmdbid_t] += result.seq;
+                        struct2CoorHash[chainidpair][mmdbid_t] = struct2CoorHash[chainidpair][mmdbid_t].concat(result.coor);
+                        struct2resid[chainidpair][mmdbid_t] = struct2resid[chainidpair][mmdbid_t].concat(result.resid);
+
+                        // slave
+                        resiArray = predefinedResPair[1].split(",");
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                        
+                        if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
+                        if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
+                        if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
+
+                        struct2SeqHash[chainidpair][mmdbid] += result.seq;
+                        struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
+                        struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
+                    }
                 }
                 else {
                     resiArray = me.cfg.resnum.split(",");
                 }
 
-                for(let j = 0, jl = resiArray.length; j < jl; ++j) {
-                    if(resiArray[j].indexOf('-') != -1) {
-                        let  startEnd = resiArray[j].split('-');
-
-                        for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                            let seqIndex = k - base;
-                            if(ic.bNCBI) {
-                                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                                if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                            }
-
-                            // don't align solvent or chemicals
-                            if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
-
-                            struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
-
-                            struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
-
-                            struct2resid[mmdbid].push(chainid + '_' + k);
-                        }
-                    }
-                    else { // one residue
-                        let  k = parseInt(resiArray[j]);
-
-                        let seqIndex = k - base;
-                        if(ic.bNCBI) {
-                            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                            if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                        }
-
-                        if(!ic.chainsSeq[chainid][seqIndex]) continue;
-
-                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
-
-                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
-
-                        struct2resid[mmdbid].push(chainid + '_' + k);
-                    }
+                if(!bPredefined) {
+                    result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                    struct2SeqHash[mmdbid] += result.seq;
+                    struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
+                    struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
                 }
             }
             else {
@@ -529,6 +531,57 @@ class RealignParser {
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }
+    }
+
+    getSeqCoorResid(resiArray, chainid, base) { let  ic = this.icn3d, me = ic.icn3dui;
+        let seq = '', coorArray = [], residArray = [];
+
+        for(let j = 0, jl = resiArray.length; j < jl; ++j) {
+            if(resiArray[j].indexOf('-') != -1) {
+                let  startEnd = resiArray[j].split('-');
+
+                for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
+                    // from VAST neighbor page, use NCBI residue number
+                    //if(me.cfg.usepdbnum === false) k += base - 1;
+
+                    let seqIndex = k - base;
+                    if(ic.bNCBI) {
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                        if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                    }
+
+                    // don't align solvent or chemicals
+                    if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
+
+                    seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
+
+                    coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
+
+                    residArray.push(chainid + '_' + k);
+                }
+            }
+            else { // one residue
+                let  k = parseInt(resiArray[j]);
+                // from VAST neighbor page, use NCBI residue number
+                //if(me.cfg.usepdbnum === false) k += base - 1;
+
+                let seqIndex = k - base;
+                if(ic.bNCBI) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                    if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                }
+
+                if(!ic.chainsSeq[chainid][seqIndex]) continue;
+
+                seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
+
+                coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
+
+                residArray.push(chainid + '_' + k);
+            }
+        }
+
+        return {seq: seq, coor: coorArray, resid: residArray};
     }
 
     getResCoorArray(resid) { let  ic = this.icn3d, me = ic.icn3dui;
