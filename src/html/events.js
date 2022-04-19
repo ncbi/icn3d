@@ -592,9 +592,9 @@ class Events {
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
            let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
@@ -610,8 +610,8 @@ class Events {
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
            let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
-           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
@@ -1789,6 +1789,10 @@ class Events {
         $(document).on("click", ".icn3d-distance", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.bMeasureDistance = false;
+
+            ic.distPnts = [];
+            ic.labels['distance'] = [];
+            ic.lines['distance'] = [];
 
             let sets = $(this).attr('sets').split('|');
  

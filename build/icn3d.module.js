@@ -25317,19 +25317,20 @@ class RealignParser {
       ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
       for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
+          let chainpair = chainidArray[0] + ',' + chainidArray[index + 1];
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
-          let  seq1 = struct2SeqHash[toStruct];
-          let  seq2 = struct2SeqHash[fromStruct];
+          let  seq1 = struct2SeqHash[chainpair][toStruct];
+          let  seq2 = struct2SeqHash[chainpair][fromStruct];
 
-          let  coord1 = struct2CoorHash[toStruct];
-          let  coord2 = struct2CoorHash[fromStruct];
+          let  coord1 = struct2CoorHash[chainpair][toStruct];
+          let  coord2 = struct2CoorHash[chainpair][fromStruct];
 
-          let  residArray1 = struct2resid[toStruct];
-          let  residArray2 = struct2resid[fromStruct];
+          let  residArray1 = struct2resid[chainpair][toStruct];
+          let  residArray2 = struct2resid[chainpair][fromStruct];
 
           ic.realignResid[toStruct] = [];
           ic.realignResid[fromStruct] = [];
@@ -25573,23 +25574,24 @@ class RealignParser {
         let  struct2CoorHash = {};
         let  struct2resid = {};
 
-        let  mmdbid_t;
+        let  mmdbid_t, chainid_t, base_t;
         let  ajaxArray = [];
         let  url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
-        let  predefinedResArray, predefinedRes;
+        let  predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(' | ');
+            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split('; ');
 
-            if(predefinedResArray.length != chainidArray.length) {
+            if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
             }
         }
 
+        let result;
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
-            if(bPredefined) predefinedRes = predefinedResArray[i].trim();
+            //if(bPredefined) predefinedRes = predefinedResArray[i].trim();
 
             let  pos = chainidArray[i].indexOf('_');
             let  mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
@@ -25603,6 +25605,7 @@ class RealignParser {
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
+            if(i == 0) chainid_t = chainid;
 
             if(!ic.chainsSeq[chainid]) {
                 //alert("Please select one chain per structure and try it again...");
@@ -25611,7 +25614,7 @@ class RealignParser {
                 continue;
             }
 
-            if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
+            if(!struct2SeqHash.hasOwnProperty(mmdbid) && !bPredefined) {
                 struct2SeqHash[mmdbid] = '';
                 struct2CoorHash[mmdbid] = [];
                 struct2resid[mmdbid] = [];
@@ -25619,6 +25622,7 @@ class RealignParser {
 
             if(i == 0 || bPredefined) { // master
                 let base = parseInt(ic.chainsSeq[chainid][0].resi);
+                if(i == 0) base_t = base;
 
                 let resiArray = [];
                 if(bRealign) {
@@ -25632,50 +25636,48 @@ class RealignParser {
                     }
                 }
                 else if(bPredefined) {
-                    resiArray = predefinedRes.split(",");
+                    if(i > 0) {
+                        predefinedResPair = predefinedResArray[i - 1].split(' | ');
+
+                        let chainidpair = chainid_t + ',' + chainid;
+                        if(!struct2SeqHash[chainidpair]) struct2SeqHash[chainidpair] = {};
+                        if(!struct2CoorHash[chainidpair]) struct2CoorHash[chainidpair] = {};
+                        if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
+
+                        // master
+                        resiArray = predefinedResPair[0].split(",");
+                        result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+
+                        if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
+                        if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
+                        if(!struct2resid[chainidpair][mmdbid_t]) struct2resid[chainidpair][mmdbid_t] = [];
+
+                        struct2SeqHash[chainidpair][mmdbid_t] += result.seq;
+                        struct2CoorHash[chainidpair][mmdbid_t] = struct2CoorHash[chainidpair][mmdbid_t].concat(result.coor);
+                        struct2resid[chainidpair][mmdbid_t] = struct2resid[chainidpair][mmdbid_t].concat(result.resid);
+
+                        // slave
+                        resiArray = predefinedResPair[1].split(",");
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                        
+                        if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
+                        if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
+                        if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
+
+                        struct2SeqHash[chainidpair][mmdbid] += result.seq;
+                        struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
+                        struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
+                    }
                 }
                 else {
                     resiArray = me.cfg.resnum.split(",");
                 }
 
-                for(let j = 0, jl = resiArray.length; j < jl; ++j) {
-                    if(resiArray[j].indexOf('-') != -1) {
-                        let  startEnd = resiArray[j].split('-');
-
-                        for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                            let seqIndex = k - base;
-                            if(ic.bNCBI) {
-                                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                                if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                            }
-
-                            // don't align solvent or chemicals
-                            if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
-
-                            struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
-
-                            struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
-
-                            struct2resid[mmdbid].push(chainid + '_' + k);
-                        }
-                    }
-                    else { // one residue
-                        let  k = parseInt(resiArray[j]);
-
-                        let seqIndex = k - base;
-                        if(ic.bNCBI) {
-                            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                            if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                        }
-
-                        if(!ic.chainsSeq[chainid][seqIndex]) continue;
-
-                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
-
-                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
-
-                        struct2resid[mmdbid].push(chainid + '_' + k);
-                    }
+                if(!bPredefined) {
+                    result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                    struct2SeqHash[mmdbid] += result.seq;
+                    struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
+                    struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
                 }
             }
             else {
@@ -25746,6 +25748,57 @@ class RealignParser {
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }
+    }
+
+    getSeqCoorResid(resiArray, chainid, base) { let  ic = this.icn3d, me = ic.icn3dui;
+        let seq = '', coorArray = [], residArray = [];
+
+        for(let j = 0, jl = resiArray.length; j < jl; ++j) {
+            if(resiArray[j].indexOf('-') != -1) {
+                let  startEnd = resiArray[j].split('-');
+
+                for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
+                    // from VAST neighbor page, use NCBI residue number
+                    //if(me.cfg.usepdbnum === false) k += base - 1;
+
+                    let seqIndex = k - base;
+                    if(ic.bNCBI) {
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                        if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                    }
+
+                    // don't align solvent or chemicals
+                    if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
+
+                    seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
+
+                    coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
+
+                    residArray.push(chainid + '_' + k);
+                }
+            }
+            else { // one residue
+                let  k = parseInt(resiArray[j]);
+                // from VAST neighbor page, use NCBI residue number
+                //if(me.cfg.usepdbnum === false) k += base - 1;
+
+                let seqIndex = k - base;
+                if(ic.bNCBI) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                    if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                }
+
+                if(!ic.chainsSeq[chainid][seqIndex]) continue;
+
+                seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
+
+                coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
+
+                residArray.push(chainid + '_' + k);
+            }
+        }
+
+        return {seq: seq, coor: coorArray, resid: residArray};
     }
 
     getResCoorArray(resid) { let ic = this.icn3d; ic.icn3dui;
@@ -31914,22 +31967,25 @@ class Analysis {
             alert("Please select sets for distance calculation...");
         }
         else {
+
             let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
             let distHash = {};
-            
+
             for(let i = 0, il = nameArray.length; i < il; ++i) {
                 let set1 = nameArray[i];
                 let array1 = [set1];
                 distHash[set1] = {};
 
-                for(let j = i + 1, jl = nameArray2.length; j < jl; ++j) {
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
                     let set2 = nameArray2[j];
                     let array2 = [set2];
 
+                    if(set1 == set2) continue;
+
                     let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(array1);
                     let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(array2);
-        
+
                     let posArray1 = ic.contactCls.getExtent(atomSet1);
                     let posArray2 = ic.contactCls.getExtent(atomSet2);
         
@@ -31948,22 +32004,19 @@ class Analysis {
             tableHtml += '<table align=center border=1 cellpadding=10 cellspacing=0><tr><th></th>';
             for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
                 let set2 = nameArray2[j];
-                tableHtml += '<th><b>' + set2 + '</b></th>';
+                tableHtml += '<th><b>' + set2 + '</b> (&#8491;)</th>';
             }
             tableHtml += '</tr>';
 
             for(let i = 0, il = nameArray.length; i < il; ++i) {
                 let set1 = nameArray[i];
-                tableHtml += '<tr><th><b>' + set1 + '</b></th>';
+                tableHtml += '<tr><th><b>' + set1 + '</b> (&#8491;)</th>';
 
                 for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
                     let set2 = nameArray2[j];
 
                     if(distHash[set1] && distHash[set1][set2]) {
                         tableHtml += '<td><span class="icn3d-distance" sets="' + set1 + '|' + set2 + '">' + distHash[set1][set2] + '</span></td>';
-                    }
-                    else if(distHash[set2] && distHash[set2][set1]) {
-                        tableHtml += '<td><span class="icn3d-distance" sets="' + set2 + '|' + set1 + '">' + distHash[set2][set1] + '</span></td>';
                     }
                     else {
                         tableHtml += '<td>0</td>';
@@ -33786,6 +33839,7 @@ class ApplyCommand {
                 let  nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistManySets(nameArray, nameArray2);
+                me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
             }
         }
       }
@@ -51310,7 +51364,7 @@ class SetDialog {
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905_A,P01942_A,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
-        html += "<b>Optional 3</b>, predefined alignment with residue numbers in each chain specified (one chain per line): <br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50\n1,5,10-50\n1,5,10-50'></textarea><br/><br/>";
+        html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50\n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
         html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
         html += "</div></div>";
@@ -52701,9 +52755,9 @@ class Events {
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
            let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
@@ -52719,8 +52773,8 @@ class Events {
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
            let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
-           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
@@ -53896,6 +53950,10 @@ class Events {
         $(document).on("click", ".icn3d-distance", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.bMeasureDistance = false;
+
+            ic.distPnts = [];
+            ic.labels['distance'] = [];
+            ic.lines['distance'] = [];
 
             let sets = $(this).attr('sets').split('|');
  
