@@ -4991,6 +4991,8 @@ class ParasCls {
             "ALA": 1, "ARG": 4, "ASN": 7, "ASP": 10, "CYS": 13, "GLN": 16, "GLU": 19, "GLY": 22, "HIS": 25, "ILE": 28, "LEU": 31, "LYS": 34, "MET": 37, "PHE": 40, "PRO": 43, "SER": 46, "THR": 49, "TRP": 52, "TYR": 55, "VAL": 58
         };
 
+        this.nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+
         // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
         this.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F',
             'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24
@@ -12748,7 +12750,7 @@ class ShareLink {
 
                 if(key === 'simplemenu' && value === false) continue;
                 if(key === 'mobilemenu' && value === false) continue;
-                if(key === 'closepopup' && value === false) continue;
+                //if(key === 'closepopup' && value === false) continue;
                 if(key === 'showanno' && value === false) continue;
                 if(key === 'showseq' && value === false) continue;
                 if(key === 'showalignseq' && value === false) continue;
@@ -21243,7 +21245,7 @@ class LoadPDB {
 
                 ic.molTitle = '';
 
-                bHeader = true; // read the header once only
+                bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
                 let  name = line.substr(10);
                 ic.molTitle += name.trim() + " ";
@@ -21383,6 +21385,8 @@ class LoadPDB {
                     helixStart = [];
                     helixEnd = [];
                 }
+
+                bHeader = false; // reinitialize to read structure name from the header
             } else if (record === 'JRNL  ') {
                 if(line.substr(12, 4) === 'PMID') {
                     ic.pmid = line.substr(19).trim();
@@ -21699,6 +21703,10 @@ class LoadPDB {
                     ic.nucleotidesO3[atom.serial] = 1;
 
                     ic.secondaries[atom.structure + '_' + atom.chain + '_' + atom.resi] = 'o'; // nucleotide
+                }
+
+                if(me.parasCls.nuclMainArray.indexOf(atom.name) === -1) {
+                    ic.ntbase[atom.serial] = 1;
                 }
               }
               else {
@@ -22350,6 +22358,10 @@ class LoadAtomData {
                   if(atm.name == "O3'" || atm.name == "O3*" ||(bPhosphorusOnly && atm.name == 'P') ) {
                       ic.nucleotidesO3[serial] = 1;
                   }
+
+                  if(me.parasCls.nuclMainArray.indexOf(atm.name) === -1) {
+                      ic.ntbase[serial] = 1;
+                  }
                 }
 
                 atm.het = false;
@@ -22525,6 +22537,10 @@ class LoadAtomData {
 
                   if(atm.name == "O3'" || atm.name == "O3*" ||(bPhosphorusOnly && atm.name == 'P') ) {
                       ic.nucleotidesO3[serial] = 1;
+                  }
+
+                  if(me.parasCls.nuclMainArray.indexOf(atm.name) === -1) {
+                    ic.ntbase[serial] = 1;
                   }
                 }
             }
@@ -24135,6 +24151,10 @@ class MmtfParser {
                       }
                       else if(!bFull && atomName == 'P') {
                           ic.nucleotidesO3[serial] = 1;
+                      }
+
+                      if(me.parasCls.nuclMainArray.indexOf(atomName) === -1) {
+                        ic.ntbase[serial] = 1;
                       }
                     }
                     else {
@@ -29209,9 +29229,11 @@ class ResizeCanvas {
     }
 
     closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
-        let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
-            'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
-            'dl_symmetry', 'dl_symd'];
+        //let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
+        //    'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
+        //    'dl_symmetry', 'dl_symd', 'dl_rmsd', 'dl_legend', 'dl_disttable'];
+        let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_uniprotid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteraction', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterplotcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
+
         for(let i in itemArray) {
             let  item = itemArray[i];
             if(!me.cfg.notebook) {
@@ -41053,6 +41075,8 @@ class HlUpdate {
            //[id$= is expensive
            //if($("[id$=" + ic.pre + pickedResidue + "]").length !== 0) {
              let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[pickedResidue]);
+             if(!atom) continue;
+
              let colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
              let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
              // annotations will have their own color, only the chain will have the changed color
@@ -41589,13 +41613,13 @@ class Selection {
     selectSideChains() { let  ic = this.icn3d, me = ic.icn3dui;
         let  currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-        let  nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+        //let  nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
 
         ic.hAtoms = {};
         for(let i in currHAtoms) {
             if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
               && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") )
-              ||(ic.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
+              ||(ic.nucleotides.hasOwnProperty(i) && me.parasCls.nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
                 ic.hAtoms[i] = 1;
             }
         }
@@ -42124,6 +42148,9 @@ class SetOption {
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.nucleotides);
               if(Object.keys(ic.hAtoms).length < Object.keys(ic.nucleotides).length) ;
               break;
+          case 'ntbase':
+              atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.ntbase);
+              break;
           case 'chemicals':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chemicals);
               break;
@@ -42135,7 +42162,7 @@ class SetOption {
               break;
       }
       // draw sidec separatedly
-      if(selectionType === 'sidec') {
+      if(selectionType === 'sidec' || selectionType === 'ntbase') {
           for(let i in atoms) {
             ic.atoms[i].style2 = style;
           }
@@ -42187,10 +42214,12 @@ class SetOption {
            let atom = ic.atoms[i];
            if(atom.colorSave !== undefined) {
                atom.color = atom.colorSave.clone();
+               ic.atomPrevColors[i] = atom.color;
            }
        }
-       ic.drawCls.draw();
+       
        ic.hlUpdateCls.changeSeqColor(Object.keys(ic.residues));
+       ic.drawCls.draw();
     }
 }
 
@@ -42249,6 +42278,14 @@ class SetStyle {
             for(let i in selectedAtoms) {
               ic.atoms[i].style2 = options.sidec.toLowerCase();
             }
+        }
+
+        if (options.ntbase !== undefined && options.ntbase !== 'nothing') {
+          selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.ntbase);
+
+          for(let i in selectedAtoms) {
+            ic.atoms[i].style2 = options.ntbase.toLowerCase();
+          }
         }
 
         if (options.chemicals !== undefined) {
@@ -42772,11 +42809,15 @@ class CartoonNucl {
              start = null; end = null;
           }
           if (atom.name === 'O3\'' || atom.name === 'O3*') start = atom;
-          if (atom.resn === '  A' || atom.resn === '  G' || atom.resn === ' DA' || atom.resn === ' DG') {
-             if (atom.name === 'N1')  end = atom; //  N1(AG), N3(CTU)
-          } else if (atom.name === 'N3') {
+
+          if (atom.resn.trim() === 'A' || atom.resn.trim() === 'G' || atom.resn.trim() === 'DA' || atom.resn.trim() === 'DG') {
+             //if (atom.name === 'N1')  end = atom; //  N1(AG), N3(CTU)
+             if (atom.name === 'N9')  end = atom; //  N1(AG), N3(CTU)
+          //} else if (atom.name === 'N3') {
+          } else if (atom.name === 'N1') {
              end = atom;
           }
+
           currentResi = atom.resi; currentChain = atom.chain;
        }
        if (start !== null && end !== null)
@@ -43302,7 +43343,7 @@ class ApplyDisplay {
           else if(style === 'custom tube') {
             ic.tubeCls.createTube(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 'CA', null, bHighlight, true, true);
           }
-          else if(style === 'lines') {
+          else if(style === 'lines' || style === 'lines2') {
             if(bHighlight === 1) {
                 ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.hlLineRadius, ic.hlLineRadius, undefined, bHighlight);
             }
@@ -43312,7 +43353,7 @@ class ApplyDisplay {
 
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
-          else if(style === 'stick') {
+          else if(style === 'stick' || style === 'stick2') {
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius, undefined, bHighlight, undefined);
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
@@ -43320,11 +43361,11 @@ class ApplyDisplay {
             atomHash = this.selectMainChainSubset(atomHash);
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius, undefined, bHighlight, undefined);
           }
-          else if(style === 'ball and stick') {
+          else if(style === 'ball and stick' || style === 'ball and stick2') {
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius * 0.5, ic.dotSphereScale, bHighlight, undefined);
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
-          else if(style === 'sphere') {
+          else if(style === 'sphere' || style === 'sphere2') {
             ic.sphereCls.createSphereRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.sphereRadius, undefined, undefined, bHighlight);
           }
           else if(style === 'dot') {
@@ -47616,26 +47657,26 @@ class ClickMenu {
     //    },
     //    clkMn3_sidecLines: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'lines');
-           thisClass.setLogCmd('style sidec lines', true);
+           ic.setOptionCls.setStyle('sidec', 'lines2');
+           thisClass.setLogCmd('style sidec lines2', true);
         });
     //    },
     //    clkMn3_sidecStick: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'stick');
-           thisClass.setLogCmd('style sidec stick', true);
+           ic.setOptionCls.setStyle('sidec', 'stick2');
+           thisClass.setLogCmd('style sidec stick2', true);
         });
     //    },
     //    clkMn3_sidecBallstick: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'ball and stick');
-           thisClass.setLogCmd('style sidec ball and stick', true);
+           ic.setOptionCls.setStyle('sidec', 'ball and stick2');
+           thisClass.setLogCmd('style sidec ball and stick2', true);
         });
     //    },
     //    clkMn3_sidecSphere: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'sphere');
-           thisClass.setLogCmd('style sidec sphere', true);
+           ic.setOptionCls.setStyle('sidec', 'sphere2');
+           thisClass.setLogCmd('style sidec sphere2', true);
         });
     //    },
     //    clkMn3_sidecNo: function() {
@@ -47643,6 +47684,31 @@ class ClickMenu {
            ic.setOptionCls.setStyle('sidec', 'nothing');
            thisClass.setLogCmd('style sidec nothing', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'lines2');
+            thisClass.setLogCmd('style ntbase lines2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'stick2');
+            thisClass.setLogCmd('style ntbase stick2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'ball and stick2');
+            thisClass.setLogCmd('style ntbase ball and stick2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'sphere2');
+            thisClass.setLogCmd('style ntbase sphere2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'nothing');
+            thisClass.setLogCmd('style ntbase nothing', true);
+         });
     //    },
     //    clkMn3_nuclCartoon: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d;
@@ -49726,6 +49792,17 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclNo', 'Hide');
             html += "</ul>";
             html += "</li>";
+
+            html += "<li><span>Nucl. Bases</span>";
+            html += "<ul>";
+
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseLines', 'Lines');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseStick', 'Stick');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseBallstick', 'Ball and Stick');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseSphere', 'Sphere');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseNo', 'Hide', true);
+            html += "</ul>";
+            html += "</li>";
         }
 
         html += "<li><span>Chemicals</span>";
@@ -51364,7 +51441,7 @@ class SetDialog {
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905_A,P01942_A,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
-        html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50\n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
+        html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
         html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
         html += "</div></div>";
@@ -58615,9 +58692,11 @@ class iCn3D {
     this.optsOri['background']         = 'black';              //transparent, black, grey, white
     this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
     this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
-    this.optsOri['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
+    this.optsOri['sidec']              = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
     this.optsOri['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
                                                               // nucleotides ball and stick, sphere, nothing
+    this.optsOri['ntbase']             = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
+
     this.optsOri['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     this.optsOri['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     this.optsOri['wireframe']          = 'no';                 //yes, no
@@ -58897,6 +58976,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.hAtoms = {};
     this.proteins = {};
     this.sidec = {};
+    this.ntbase = {};
     this.nucleotides = {};
     this.nucleotidesO3 = {};
 
@@ -59015,7 +59095,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.2';
+    this.REVISION = '3.11.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

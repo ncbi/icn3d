@@ -391,6 +391,10 @@ class LoadAtomData {
                   if(atm.name == "O3'" || atm.name == "O3*" ||(bPhosphorusOnly && atm.name == 'P') ) {
                       ic.nucleotidesO3[serial] = 1;
                   }
+
+                  if(me.parasCls.nuclMainArray.indexOf(atm.name) === -1) {
+                      ic.ntbase[serial] = 1;
+                  }
                 }
 
                 atm.het = false;
@@ -568,6 +572,10 @@ class LoadAtomData {
 
                   if(atm.name == "O3'" || atm.name == "O3*" ||(bPhosphorusOnly && atm.name == 'P') ) {
                       ic.nucleotidesO3[serial] = 1;
+                  }
+
+                  if(me.parasCls.nuclMainArray.indexOf(atm.name) === -1) {
+                    ic.ntbase[serial] = 1;
                   }
                 }
             }

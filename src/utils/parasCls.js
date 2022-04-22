@@ -351,6 +351,8 @@ class ParasCls {
             "ALA": 1, "ARG": 4, "ASN": 7, "ASP": 10, "CYS": 13, "GLN": 16, "GLU": 19, "GLY": 22, "HIS": 25, "ILE": 28, "LEU": 31, "LYS": 34, "MET": 37, "PHE": 40, "PRO": 43, "SER": 46, "THR": 49, "TRP": 52, "TYR": 55, "VAL": 58
         };
 
+        this.nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+
         // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
         this.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F',
             'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24

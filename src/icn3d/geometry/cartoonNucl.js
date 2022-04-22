@@ -125,11 +125,15 @@ class CartoonNucl {
              start = null; end = null;
           }
           if (atom.name === 'O3\'' || atom.name === 'O3*') start = atom;
-          if (atom.resn === '  A' || atom.resn === '  G' || atom.resn === ' DA' || atom.resn === ' DG') {
-             if (atom.name === 'N1')  end = atom; //  N1(AG), N3(CTU)
-          } else if (atom.name === 'N3') {
+
+          if (atom.resn.trim() === 'A' || atom.resn.trim() === 'G' || atom.resn.trim() === 'DA' || atom.resn.trim() === 'DG') {
+             //if (atom.name === 'N1')  end = atom; //  N1(AG), N3(CTU)
+             if (atom.name === 'N9')  end = atom; //  N1(AG), N3(CTU)
+          //} else if (atom.name === 'N3') {
+          } else if (atom.name === 'N1') {
              end = atom;
           }
+
           currentResi = atom.resi; currentChain = atom.chain;
        }
        if (start !== null && end !== null)

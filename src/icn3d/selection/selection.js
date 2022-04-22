@@ -176,13 +176,13 @@ class Selection {
     selectSideChains() { let  ic = this.icn3d, me = ic.icn3dui;
         let  currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-        let  nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+        //let  nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
 
         ic.hAtoms = {}
         for(let i in currHAtoms) {
             if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
               && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") )
-              ||(ic.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
+              ||(ic.nucleotides.hasOwnProperty(i) && me.parasCls.nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
                 ic.hAtoms[i] = 1;
             }
         }

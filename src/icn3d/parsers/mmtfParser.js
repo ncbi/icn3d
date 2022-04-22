@@ -367,6 +367,10 @@ class MmtfParser {
                       else if(!bFull && atomName == 'P') {
                           ic.nucleotidesO3[serial] = 1;
                       }
+
+                      if(me.parasCls.nuclMainArray.indexOf(atomName) === -1) {
+                        ic.ntbase[serial] = 1;
+                      }
                     }
                     else {
                       if(elem.toLowerCase() === resn.toLowerCase()) {
