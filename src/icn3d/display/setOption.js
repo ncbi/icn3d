@@ -114,6 +114,9 @@ class SetOption {
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.nucleotides);
               if(Object.keys(ic.hAtoms).length < Object.keys(ic.nucleotides).length) bAll = false;
               break;
+          case 'ntbase':
+              atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.ntbase);
+              break;
           case 'chemicals':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chemicals);
               break;
@@ -125,7 +128,7 @@ class SetOption {
               break;
       }
       // draw sidec separatedly
-      if(selectionType === 'sidec') {
+      if(selectionType === 'sidec' || selectionType === 'ntbase') {
           for(let i in atoms) {
             ic.atoms[i].style2 = style;
           }
@@ -177,10 +180,12 @@ class SetOption {
            let atom = ic.atoms[i];
            if(atom.colorSave !== undefined) {
                atom.color = atom.colorSave.clone();
+               ic.atomPrevColors[i] = atom.color;
            }
        }
-       ic.drawCls.draw();
+       
        ic.hlUpdateCls.changeSeqColor(Object.keys(ic.residues));
+       ic.drawCls.draw();
     }
 }
 

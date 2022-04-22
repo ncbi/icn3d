@@ -902,26 +902,26 @@ class ClickMenu {
     //    },
     //    clkMn3_sidecLines: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'lines');
-           thisClass.setLogCmd('style sidec lines', true);
+           ic.setOptionCls.setStyle('sidec', 'lines2');
+           thisClass.setLogCmd('style sidec lines2', true);
         });
     //    },
     //    clkMn3_sidecStick: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'stick');
-           thisClass.setLogCmd('style sidec stick', true);
+           ic.setOptionCls.setStyle('sidec', 'stick2');
+           thisClass.setLogCmd('style sidec stick2', true);
         });
     //    },
     //    clkMn3_sidecBallstick: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'ball and stick');
-           thisClass.setLogCmd('style sidec ball and stick', true);
+           ic.setOptionCls.setStyle('sidec', 'ball and stick2');
+           thisClass.setLogCmd('style sidec ball and stick2', true);
         });
     //    },
     //    clkMn3_sidecSphere: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d;
-           ic.setOptionCls.setStyle('sidec', 'sphere');
-           thisClass.setLogCmd('style sidec sphere', true);
+           ic.setOptionCls.setStyle('sidec', 'sphere2');
+           thisClass.setLogCmd('style sidec sphere2', true);
         });
     //    },
     //    clkMn3_sidecNo: function() {
@@ -929,6 +929,31 @@ class ClickMenu {
            ic.setOptionCls.setStyle('sidec', 'nothing');
            thisClass.setLogCmd('style sidec nothing', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'lines2');
+            thisClass.setLogCmd('style ntbase lines2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'stick2');
+            thisClass.setLogCmd('style ntbase stick2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'ball and stick2');
+            thisClass.setLogCmd('style ntbase ball and stick2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'sphere2');
+            thisClass.setLogCmd('style ntbase sphere2', true);
+         });
+ 
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setStyle('ntbase', 'nothing');
+            thisClass.setLogCmd('style ntbase nothing', true);
+         });
     //    },
     //    clkMn3_nuclCartoon: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d;

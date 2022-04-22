@@ -284,7 +284,7 @@ class ApplyDisplay {
           else if(style === 'custom tube') {
             ic.tubeCls.createTube(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 'CA', null, bHighlight, true, true);
           }
-          else if(style === 'lines') {
+          else if(style === 'lines' || style === 'lines2') {
             if(bHighlight === 1) {
                 ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.hlLineRadius, ic.hlLineRadius, undefined, bHighlight);
             }
@@ -294,7 +294,7 @@ class ApplyDisplay {
 
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
-          else if(style === 'stick') {
+          else if(style === 'stick' || style === 'stick2') {
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius, undefined, bHighlight, undefined);
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
@@ -302,11 +302,11 @@ class ApplyDisplay {
             atomHash = this.selectMainChainSubset(atomHash);
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius, undefined, bHighlight, undefined);
           }
-          else if(style === 'ball and stick') {
+          else if(style === 'ball and stick' || style === 'ball and stick2') {
             ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderRadius, ic.cylinderRadius * 0.5, ic.dotSphereScale, bHighlight, undefined);
             ic.lineCls.createConnCalphSidechain(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), style);
           }
-          else if(style === 'sphere') {
+          else if(style === 'sphere' || style === 'sphere2') {
             ic.sphereCls.createSphereRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.sphereRadius, undefined, undefined, bHighlight);
           }
           else if(style === 'dot') {

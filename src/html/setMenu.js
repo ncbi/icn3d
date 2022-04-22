@@ -868,6 +868,17 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclNo', 'Hide');
             html += "</ul>";
             html += "</li>";
+
+            html += "<li><span>Nucl. Bases</span>";
+            html += "<ul>";
+
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseLines', 'Lines');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseStick', 'Stick');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseBallstick', 'Ball and Stick');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseSphere', 'Sphere');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseNo', 'Hide', true);
+            html += "</ul>";
+            html += "</li>";
         }
 
         html += "<li><span>Chemicals</span>";

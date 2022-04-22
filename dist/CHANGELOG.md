@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.11.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.3.zip) was release on April 22, 2022. Added the menu "Style > Nucl. Bases" to display the bases of nucleotides.
+
 [icn3d-3.11.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.2.zip) was release on April 18, 2022. Added "[comment]" in front of logs to diferentiate from commands in the command window. If "mmdbid" is the input and the parameter "bu" is not defined, set "bu" as 1 (biological unit).
 
 [icn3d-3.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.1.zip) was release on April 13, 2022. Users can input multiple PDB, MMDB, or AlphaFold IDs with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". Users can also load multiple PDB files at the same time with the menu "File > Open File > PDB Files (appendable)". The color legend became draggable.

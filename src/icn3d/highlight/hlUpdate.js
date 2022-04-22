@@ -48,6 +48,8 @@ class HlUpdate {
            //[id$= is expensive
            //if($("[id$=" + ic.pre + pickedResidue + "]").length !== 0) {
              let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[pickedResidue]);
+             if(!atom) continue;
+
              let colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
              let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
              // annotations will have their own color, only the chain will have the changed color

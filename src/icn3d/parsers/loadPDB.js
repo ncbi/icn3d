@@ -107,7 +107,7 @@ class LoadPDB {
 
                 ic.molTitle = '';
 
-                bHeader = true; // read the header once only
+                bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
                 let  name = line.substr(10);
                 ic.molTitle += name.trim() + " ";
@@ -252,6 +252,8 @@ class LoadPDB {
                     helixStart = [];
                     helixEnd = [];
                 }
+
+                bHeader = false; // reinitialize to read structure name from the header
             } else if (record === 'JRNL  ') {
                 if(line.substr(12, 4) === 'PMID') {
                     ic.pmid = line.substr(19).trim();
@@ -578,6 +580,10 @@ class LoadPDB {
                     ic.nucleotidesO3[atom.serial] = 1;
 
                     ic.secondaries[atom.structure + '_' + atom.chain + '_' + atom.resi] = 'o'; // nucleotide
+                }
+
+                if(me.parasCls.nuclMainArray.indexOf(atom.name) === -1) {
+                    ic.ntbase[atom.serial] = 1;
                 }
               }
               else {

@@ -129,7 +129,7 @@ class ShareLink {
 
                 if(key === 'simplemenu' && value === false) continue;
                 if(key === 'mobilemenu' && value === false) continue;
-                if(key === 'closepopup' && value === false) continue;
+                //if(key === 'closepopup' && value === false) continue;
                 if(key === 'showanno' && value === false) continue;
                 if(key === 'showseq' && value === false) continue;
                 if(key === 'showalignseq' && value === false) continue;

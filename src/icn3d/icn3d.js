@@ -370,9 +370,11 @@ class iCn3D {
     this.optsOri['background']         = 'black';              //transparent, black, grey, white
     this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
     this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
-    this.optsOri['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
+    this.optsOri['sidec']              = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
     this.optsOri['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
                                                               // nucleotides ball and stick, sphere, nothing
+    this.optsOri['ntbase']             = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
+
     this.optsOri['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     this.optsOri['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     this.optsOri['wireframe']          = 'no';                 //yes, no
@@ -653,6 +655,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.hAtoms = {};
     this.proteins = {};
     this.sidec = {};
+    this.ntbase = {};
     this.nucleotides = {};
     this.nucleotidesO3 = {};
 

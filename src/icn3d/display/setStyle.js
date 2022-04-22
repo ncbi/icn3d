@@ -65,6 +65,14 @@ class SetStyle {
             }
         }
 
+        if (options.ntbase !== undefined && options.ntbase !== 'nothing') {
+          selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.ntbase);
+
+          for(let i in selectedAtoms) {
+            ic.atoms[i].style2 = options.ntbase.toLowerCase();
+          }
+        }
+
         if (options.chemicals !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chemicals);
             for(let i in selectedAtoms) {
