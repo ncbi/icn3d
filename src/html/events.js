@@ -77,9 +77,56 @@ class Events {
        me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
+    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d;
+        let thisClass = this;
+
+        let file = files[index];
+        let commandName = (bAppend) ? 'append': 'load';
+        
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            //++ic.loadedFileCnt;
+
+            let dataStr = e.target.result; // or = reader.result;
+            //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+            me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
+
+            if(!bAppend) {
+                ic.init();
+            }
+            else {
+                ic.resetConfig();
+                //ic.hAtoms = {};
+                //ic.dAtoms = {};
+                ic.bResetAnno = true;
+                ic.bResetSets = true;
+            }
+
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+
+            dataStrAll = (index > 0) ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
+
+            if(Object.keys(files).length == index + 1) {
+                if(bAppend) {
+                    ic.hAtoms = {};
+                    ic.dAtoms = {};
+                }
+                ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+            }
+            else {
+                thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+            }
+        }
+
+        if (typeof file === "object") {
+            reader.readAsText(file);
+        }
+    }
+
     loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
        let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
-       let commandName = (bAppend) ? 'append': 'load';
 
        //me = ic.setIcn3dui(this.id);
        ic.bInitial = true;
@@ -99,51 +146,12 @@ class Events {
             me.htmlCls.setHtmlCls.fileSupport();
             ic.molTitle = "";
 
-            ic.fileCnt = Object.keys(files).length;
-            ic.loadedFileCnt = 0;
+            //ic.fileCnt = Object.keys(files).length;
+            //ic.loadedFileCnt = 0;
 
-            let dataStrAll = '';
+            ic.dataStrAll = '';
 
-            for(let i in files) {
-                let file = files[i];
-                
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    ++ic.loadedFileCnt;
-
-                    let dataStr = e.target.result; // or = reader.result;
-                    //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-                    me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
-
-                    if(!bAppend) {
-                        ic.init();
-                    }
-                    else {
-                        ic.resetConfig();
-                        //ic.hAtoms = {};
-                        //ic.dAtoms = {};
-                        ic.bResetAnno = true;
-                        ic.bResetSets = true;
-                    }
-
-                    ic.bInputfile = true;
-                    ic.InputfileType = 'pdb';
-                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
-                    dataStrAll += (dataStrAll != '') ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
-
-                    if(ic.fileCnt == ic.loadedFileCnt) {
-                        if(bAppend) {
-                            ic.hAtoms = {};
-                            ic.dAtoms = {};
-                        }
-                        ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
-                    }
-                }
-
-                if (typeof file === "object") {
-                    reader.readAsText(file);
-                }
-            }
+            this.readFile(bAppend, files, 0, '');
 
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();

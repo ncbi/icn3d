@@ -21,6 +21,7 @@ class RealignParser {
         this.icn3d = icn3d;
     }
 
+    // realign based on sequence
     realign() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
