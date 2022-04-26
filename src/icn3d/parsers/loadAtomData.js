@@ -52,7 +52,6 @@ class LoadAtomData {
 */
 
         ic.pmid = data.pubmedId;
-
         if(ic.chainid2title === undefined) ic.chainid2title = {};
         if(ic.chainid2sid === undefined) ic.chainid2sid = {};
 
@@ -113,7 +112,6 @@ class LoadAtomData {
         }
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;
-
             if(type === 'mmdbid') {
               let  pdbidTmp = data.pdbId;
               let  chainHash = {};
@@ -171,7 +169,7 @@ class LoadAtomData {
               }
             }
         }
-
+        
         let  atomid2serial = {};
         let  prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
         let  structureNum = '', chainNum = '', residueNum = '';
@@ -189,7 +187,7 @@ class LoadAtomData {
         let  bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
         let  miscCnt = 0;
         let  CSerial, prevCSerial, OSerial, prevOSerial;
-
+        
         let  biopolymerChainsHash = {};
         for(let i in atoms) {
             ++serial;
@@ -545,7 +543,7 @@ class LoadAtomData {
             prevMolid = molid;
             prevmmdbId = mmdbId;
         }
-
+        
         //ic.lastTargetSerial = serial;
 
         // adjust biopolymer type

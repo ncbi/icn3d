@@ -172,7 +172,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.3';
+    this.REVISION = '3.11.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -215,7 +215,7 @@ class iCn3DUI {
 }
 
 // show3DStructure is the main function to show 3D structure
-iCn3DUI.prototype.show3DStructure = function() { let me = this;
+iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
   let thisClass = this;
   me.deferred = $.Deferred(function() {
     if(me.cfg.menuicon) {
@@ -337,7 +337,49 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     }
     ic.molTitle = '';
     ic.loadCmd;
-    if(me.cfg.url !== undefined) {
+
+    if(pdbStr) { // input pdbStr
+        ic.init();
+        ic.pdbParserCls.loadPdbData(pdbStr);
+
+        if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
+            let structureArray = Object.keys(ic.structures);
+            let chainArray = me.cfg.chains.split(' | ');
+            let chainidArray = [];
+            if(structureArray.length == chainArray.length) {
+                for(let i = 0, il = structureArray.length; i  < il; ++i) {
+                    chainidArray.push(structureArray[i] + '_' + chainArray[i]);
+                }
+                
+                let bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, undefined, bPredefined);
+            }
+        }
+        else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+            let stru_t = Object.keys(ic.structures)[0];
+            let chain_t = stru_t + '_' + me.cfg.masterchain;
+            let chainidArray = me.cfg.matchedchains.split(',');
+            let mmdbafid = '';
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                if(i > 0) mmdbafid += ',';
+                mmdbafid += chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
+            }
+
+            // load multiple PDBs
+            ic.bNCBI = true;
+            ic.bMmdbafid = true;
+            
+            ic.loadCmd = 'load mmdbaf0 ' + mmdbafid;
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+
+            let bQuery = true;
+            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+
+            // realign
+            ic.chainidArray = [chain_t].concat(chainidArray);
+        }
+    }
+    else if(me.cfg.url !== undefined) {
         ic.bInputUrlfile = true;
 
         let type_url = me.cfg.url.split('|');

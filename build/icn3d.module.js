@@ -22031,7 +22031,6 @@ class LoadAtomData {
 */
 
         ic.pmid = data.pubmedId;
-
         if(ic.chainid2title === undefined) ic.chainid2title = {};
         if(ic.chainid2sid === undefined) ic.chainid2sid = {};
 
@@ -22092,7 +22091,6 @@ class LoadAtomData {
         }
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;
-
             if(type === 'mmdbid') {
               let  pdbidTmp = data.pdbId;
               let  chainHash = {};
@@ -22150,7 +22148,7 @@ class LoadAtomData {
               }
             }
         }
-
+        
         let  atomid2serial = {};
         let  prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
         let  structureNum = '', chainNum = '', residueNum = '';
@@ -22162,7 +22160,7 @@ class LoadAtomData {
         let  bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
         let  miscCnt = 0;
         let  CSerial, prevCSerial, OSerial, prevOSerial;
-
+        
         let  biopolymerChainsHash = {};
         for(let i in atoms) {
             ++serial;
@@ -22510,7 +22508,7 @@ class LoadAtomData {
 
             prevMolid = molid;
         }
-
+        
         //ic.lastTargetSerial = serial;
 
         // adjust biopolymer type
@@ -25271,6 +25269,7 @@ class RealignParser {
         this.icn3d = icn3d;
     }
 
+    // realign based on sequence
     realign() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
@@ -25889,6 +25888,17 @@ class ChainalignParser {
         else {
             // calculate secondary structures with applyCommandDssp
             $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+                // align PDB chains
+                for(let index in ic.pdbChainIndexHash) {
+                    let idArray = ic.pdbChainIndexHash[index].split('_');
+                    mmdbid_q = idArray[0];
+                    idArray[1];
+                    mmdbid_t = idArray[2];
+                    idArray[3];
+
+                    thisClass.transformStructure(mmdbid_q, index-1, 'query');
+                }
+
                 // dynamicly align pairs in ic.afChainIndexHash
                 let  ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
@@ -26268,6 +26278,7 @@ class ChainalignParser {
         if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
         ic.afChainIndexHash = {};
+        ic.pdbChainIndexHash = {};
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let  pos2 = alignArray[index].indexOf('_');
             ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
@@ -26323,6 +26334,8 @@ class ChainalignParser {
                     });
 
                     ajaxArray.push(alignAjax);
+
+                    ic.pdbChainIndexHash[index] = ic.mmdbid_q + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                 }
                 else {
                     // get the dynamic alignment after loading the structures
@@ -26545,7 +26558,7 @@ class ChainalignParser {
         }
     }
 
-    downloadMmdbAf(idlist) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         ic.structArray = idlist.split(',');
@@ -26588,7 +26601,7 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
           let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parseMMdbAfData(dataArray, ic.structArray);
+          thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery);
           ic.ParserUtilsCls.hideLoading();
         })
         .fail(function() {
@@ -26596,7 +26609,7 @@ class ChainalignParser {
         });
     }
 
-    parseMMdbAfData(dataArray, structArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseMMdbAfData(dataArray, structArray, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
 
         let queryDataArray = [];
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
@@ -26604,7 +26617,6 @@ class ChainalignParser {
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
             if(structArray[index].length > 4) queryData = header + queryData;
 
-            
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
                 queryDataArray.push(queryData);
@@ -26615,7 +26627,7 @@ class ChainalignParser {
             }
         }
 
-        if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+        if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
         
         let  hAtoms = {}, hAtomsTmp = {};
         let  bLastQuery = false;
@@ -26624,7 +26636,7 @@ class ChainalignParser {
             if(i == structArray.length - 1) bLastQuery = true;
 
             let targetOrQuery, bAppend;
-            if(i == 0) {
+            if(i == 0 && !bQuery) {
                 targetOrQuery = 'target';
                 bAppend = false; 
             }
@@ -26637,15 +26649,24 @@ class ChainalignParser {
                 let bNoDssp = true;
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
             }
-            else {
+            else {              
                 let bNoSeqalign = true;
                 hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
             }
+                    
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
         // calculate secondary structures with applyCommandDssp
-        ic.pdbParserCls.applyCommandDssp(true);
+        if(bQuery && me.cfg.masterchain) {
+            $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+                let bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, undefined, bPredefined);
+           });
+        }
+        else {
+            ic.pdbParserCls.applyCommandDssp(true);
+        }
     }
 }
 
@@ -51130,7 +51151,7 @@ class Dialog {
                     height = 500;
                 }
                 else if(id === me.pre + 'dl_rmsd') {
-                    position ={ my: "left top", at: "right bottom-90", of: "#" + me.pre + "canvas", collision: "none" };
+                    position ={ my: "right top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
                 }
                 else if(id === me.pre + 'dl_legend') {
                     position ={ my: "right top", at: "right-20 top+60", of: "#" + me.pre + "canvas", collision: "none" };
@@ -52317,9 +52338,56 @@ class Events {
        me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
+    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d;
+        let thisClass = this;
+
+        let file = files[index];
+        let commandName = (bAppend) ? 'append': 'load';
+        
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            //++ic.loadedFileCnt;
+
+            let dataStr = e.target.result; // or = reader.result;
+            //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+            me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
+
+            if(!bAppend) {
+                ic.init();
+            }
+            else {
+                ic.resetConfig();
+                //ic.hAtoms = {};
+                //ic.dAtoms = {};
+                ic.bResetAnno = true;
+                ic.bResetSets = true;
+            }
+
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
+
+            dataStrAll = (index > 0) ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
+
+            if(Object.keys(files).length == index + 1) {
+                if(bAppend) {
+                    ic.hAtoms = {};
+                    ic.dAtoms = {};
+                }
+                ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+            }
+            else {
+                thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+            }
+        };
+
+        if (typeof file === "object") {
+            reader.readAsText(file);
+        }
+    }
+
     loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
        let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
-       let commandName = (bAppend) ? 'append': 'load';
 
        //me = ic.setIcn3dui(this.id);
        ic.bInitial = true;
@@ -52339,51 +52407,12 @@ class Events {
             me.htmlCls.setHtmlCls.fileSupport();
             ic.molTitle = "";
 
-            ic.fileCnt = Object.keys(files).length;
-            ic.loadedFileCnt = 0;
+            //ic.fileCnt = Object.keys(files).length;
+            //ic.loadedFileCnt = 0;
 
-            let dataStrAll = '';
+            ic.dataStrAll = '';
 
-            for(let i in files) {
-                let file = files[i];
-                
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    ++ic.loadedFileCnt;
-
-                    let dataStr = e.target.result; // or = reader.result;
-                    //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-                    me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
-
-                    if(!bAppend) {
-                        ic.init();
-                    }
-                    else {
-                        ic.resetConfig();
-                        //ic.hAtoms = {};
-                        //ic.dAtoms = {};
-                        ic.bResetAnno = true;
-                        ic.bResetSets = true;
-                    }
-
-                    ic.bInputfile = true;
-                    ic.InputfileType = 'pdb';
-                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
-                    dataStrAll += (dataStrAll != '') ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
-
-                    if(ic.fileCnt == ic.loadedFileCnt) {
-                        if(bAppend) {
-                            ic.hAtoms = {};
-                            ic.dAtoms = {};
-                        }
-                        ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
-                    }
-                };
-
-                if (typeof file === "object") {
-                    reader.readAsText(file);
-                }
-            }
+            this.readFile(bAppend, files, 0, '');
 
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
@@ -59095,7 +59124,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.3';
+    this.REVISION = '3.11.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -59138,7 +59167,7 @@ class iCn3DUI {
 }
 
 // show3DStructure is the main function to show 3D structure
-iCn3DUI.prototype.show3DStructure = function() { let me = this;
+iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
   let thisClass = this;
   me.deferred = $.Deferred(function() {
     if(me.cfg.menuicon) {
@@ -59260,7 +59289,49 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     }
     ic.molTitle = '';
     ic.loadCmd;
-    if(me.cfg.url !== undefined) {
+
+    if(pdbStr) { // input pdbStr
+        ic.init();
+        ic.pdbParserCls.loadPdbData(pdbStr);
+
+        if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
+            let structureArray = Object.keys(ic.structures);
+            let chainArray = me.cfg.chains.split(' | ');
+            let chainidArray = [];
+            if(structureArray.length == chainArray.length) {
+                for(let i = 0, il = structureArray.length; i  < il; ++i) {
+                    chainidArray.push(structureArray[i] + '_' + chainArray[i]);
+                }
+                
+                let bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, undefined, bPredefined);
+            }
+        }
+        else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+            let stru_t = Object.keys(ic.structures)[0];
+            let chain_t = stru_t + '_' + me.cfg.masterchain;
+            let chainidArray = me.cfg.matchedchains.split(',');
+            let mmdbafid = '';
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                if(i > 0) mmdbafid += ',';
+                mmdbafid += chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
+            }
+
+            // load multiple PDBs
+            ic.bNCBI = true;
+            ic.bMmdbafid = true;
+            
+            ic.loadCmd = 'load mmdbaf0 ' + mmdbafid;
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+
+            let bQuery = true;
+            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+
+            // realign
+            ic.chainidArray = [chain_t].concat(chainidArray);
+        }
+    }
+    else if(me.cfg.url !== undefined) {
         ic.bInputUrlfile = true;
 
         let type_url = me.cfg.url.split('|');
