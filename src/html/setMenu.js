@@ -395,8 +395,9 @@ class SetMenu {
 
         html += "<li><span>Search Similar</span>";
         html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AalphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -1281,6 +1282,7 @@ class SetMenu {
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowSets', 'for Sets');
             html += "</ul>";
 
             if(!me.cfg.simplemenu) {
@@ -1289,6 +1291,7 @@ class SetMenu {
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumSets', 'for Sets');
                 html += "</ul>";
             }
 
@@ -1558,7 +1561,7 @@ class SetMenu {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
 
-              if(me.cfg.bu == 0) {
+              if(!me.cfg.bu) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
               }

@@ -198,24 +198,23 @@ class ChainalignParser {
 
             let queryData = {}; // check whether undefined
 
+            let chainpair = chainidPairArray[i].split(',');
+            let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
+            let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
+            if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
+                continue;
+            }
+
             let bNoAlert = true;
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
                 bFoundAlignment = true;
 
-                let chainpair = chainidPairArray[i].split(',');
-                let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
-                let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
-                if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
-                    continue;
-                }
-                else {
-                    mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
-                    mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
+                mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
+                mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
 
-                    mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
-                }
+                mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
             }
         }
 
@@ -224,7 +223,7 @@ class ChainalignParser {
             alert("These structures can NOT be aligned...");
             return;
         }
-/*
+
         // find the max aligned mmdbid as mmdbid_t
         let cnt = 0, mmdbid_t;
         for(let mmdbidpair in mmdbidpairHash) {
@@ -238,21 +237,44 @@ class ChainalignParser {
                 mmdbid_t = mmdbidArray[1];
             }
         }
-*/
+
         let aligType;
         // transform all pairs 
-        let allChainidHash = {}, hAtoms = {};
+        let allChainidHash = {}, hAtoms = {}, alignMMdbids = {}, mmdbidpairFinalHash = {};
         for(let mmdbidpair in mmdbidpairHash) {
             let mmdbidArray = mmdbidpair.split('_');
             let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
             let index = chainidArray[2];
 
-            // chainid2 is target
-            aligType = 'query';
-            this.transformStructure(mmdbidArray[0], index, aligType);
+            let target, query;
+            if(mmdbid_t == mmdbidArray[0]) {
+                target = mmdbidArray[0];
+                query = mmdbidArray[1];
+            } 
+            else if(mmdbid_t == mmdbidArray[1]) {
+                target = mmdbidArray[1];
+                query = mmdbidArray[0];               
+            }
+            else {
+                target = mmdbidArray[0];
+                query = mmdbidArray[1];               
+            }
 
+            // If all chains align to the same target, just check the query.
+            // If there are different targets, also just check the query. The taget should not appear again in the query.
+            alignMMdbids[target] = 1;
+              
+            if(alignMMdbids.hasOwnProperty(query)) continue;
+            alignMMdbids[query] = 1;
+
+            mmdbidpairFinalHash[mmdbidpair] = mmdbidpairHash[mmdbidpair];
+
+            // chainid1 is target
             aligType = 'target';
-            this.transformStructure(mmdbidArray[1], index, aligType);
+            this.transformStructure(target, index, aligType);
+
+            aligType = 'query';
+            this.transformStructure(query, index, aligType);
 
             allChainidHash[chainidArray[0]] = 1;
             allChainidHash[chainidArray[1]] = 1;
@@ -262,9 +284,11 @@ class ChainalignParser {
         }
 
         // set up the view of sequence alignment for each pair
-        for(let mmdbidpair in mmdbidpairHash) {           
+        for(let mmdbidpair in mmdbidpairFinalHash) {           
             if(ic.q_rotation !== undefined) {
-                let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+                let chainidArrayTmp = mmdbidpairFinalHash[mmdbidpair].split(',');
+                // switch these two chains
+                let chainidArray = [chainidArrayTmp[1], chainidArrayTmp[0], chainidArrayTmp[2]];
 
                 ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
 
@@ -737,8 +761,9 @@ class ChainalignParser {
     }
 
     downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+      let  thisClass = this;
 
+      ic.deferredMmdbaf = $.Deferred(function() {
         ic.structArray = idlist.split(',');
 
         let  ajaxArray = [];
@@ -785,6 +810,9 @@ class ChainalignParser {
         .fail(function() {
             alert("There are some problems in retrieving the coordinates...");
         });
+      });
+    
+      return ic.deferredMmdbaf.promise();
     }
 
     parseMMdbAfData(dataArray, structArray, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -839,8 +867,15 @@ class ChainalignParser {
         // calculate secondary structures with applyCommandDssp
         if(bQuery && me.cfg.masterchain) {
             $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
-                let bPredefined = true;
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, undefined, bPredefined);
+                let bRealign = true, bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+                // reset annotations
+                $("#" + ic.pre + "dl_annotations").html("");
+                ic.bAnnoShown = false;
+                if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
+                    $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
+                }
            });
         }
         else {

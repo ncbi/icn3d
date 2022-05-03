@@ -96,11 +96,28 @@ class SetDialog {
 
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
 
+        html += me.htmlCls.divStr + "dl_vastplus' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "Note: <b>VAST+</b> finds other macromolecular structures that have a similar biological unit. To do this, VAST+ takes into consideration the complete set of 3D domains that VAST identified within a query structure, throughout all of its component protein molecules, and finds other macromolecular structures that have a similar set of proteins/3D domains.<br><br>"; 
+        html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpluspdbid' value='1HHO' size=8><br>";
+        html += me.htmlCls.buttonStr + "reload_vastplus'>VAST+</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
-        html += 'Note: You can search similar PDB structures for any input PDB chain as specified below. (To input a custom PDB file, you can use the <a href="https://www.ncbi.nlm.nih.gov/Structure/VAST/vastsearch.html" target="_blank">VAST Search</a>.) <br><br>Once you see the structure neighbors, you can "View 3D Alignment" using "iCn3D".<br><br>'; 
+        html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
+        html += '<b>Optione 1</b>, search with PDB ID and chain name:<br>'; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='1HHO' size=8> &nbsp;&nbsp;";
         html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
-        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button>";
+        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
+
+        html += '<b>Optione 2</b>, search with a PDB file:<br>'; 
+        html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" name="newvs" target="_blank">';
+        html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
+        html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
+        // the submit value has to be "Submit" in order to make the backend cgi works
+        //html += '<input type="submit" name="cmdVSMmdb" value="VAST Search"></input>';
+        html += '<input type="submit" name="cmdVSMmdb" value="Submit"></input>';
+        html += "</form>";
+
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
@@ -536,7 +553,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realign' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
@@ -545,12 +562,32 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
         html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_colorspectrumbysets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrum' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorSpectrumBySets'>Spectrum Color for Sets</button></div><br>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_colorrainbowbysets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbow' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorRainbowBySets'>Rainbow Color for Sets</button></div><br>";
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";
         html += "</div>";

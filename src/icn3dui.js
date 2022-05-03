@@ -172,7 +172,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.4';
+    this.REVISION = '3.11.5';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -351,8 +351,8 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
                     chainidArray.push(structureArray[i] + '_' + chainArray[i]);
                 }
                 
-                let bPredefined = true;
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, undefined, bPredefined);
+                let bRealign = true, bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
         }
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
@@ -576,7 +576,10 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
             ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
+
+        $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {
+            ic.loadScriptCls.loadScript(me.cfg.command);
+        });
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;

@@ -69,12 +69,12 @@ class LoadPDB {
 
         //let  chainMissingResidueArray = {}
 
-        let  id = (pdbid) ? pdbid : 'stru';
+        let  id = (pdbid) ? pdbid : 'STRU';
 
         let  maxMissingResi = 0, prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;
 
-        let  structure = "stru";
+        let  structure = "STRU";
 
         let bHeader = false;
 
@@ -90,18 +90,18 @@ class LoadPDB {
 
                 if(id == '') {
                     if(bAppend) {
-                        id = "stru";
+                        id = "STRU";
                     }
                     else {
-                        //if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = 'STRU';
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "STRU"; //ic.filename.substr(0, 4);
                     }
                 }
 
                 structure = id;
 
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -234,11 +234,11 @@ class LoadPDB {
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
-                id = 'stru';
+                id = 'STRU';
 
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -260,8 +260,8 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 

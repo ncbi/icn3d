@@ -25,7 +25,7 @@ class Dssp {
       let ajaxArray = [];
 
       //let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-      let url = "../mmcifparser/mmcifparser.cgi";
+      let url = "/Structure/mmcifparser/mmcifparser.cgi";
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
 ///           pdbStr += ic.saveFileCls.getPDBHeader(i);
@@ -177,6 +177,7 @@ class Dssp {
 
         ic.pdbParserCls.loadPdbDataRender(bAppend);
 
+        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }
 }

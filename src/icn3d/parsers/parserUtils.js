@@ -471,7 +471,7 @@ class ParserUtils {
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
+      pdbid =(pdbid) ? pdbid.toUpperCase() : 'STRU';
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {}
@@ -597,7 +597,7 @@ class ParserUtils {
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          ic.loadScriptCls.loadScript(me.cfg.command);
+          if(me.cfg.mmdbafid === undefined) ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
           if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();

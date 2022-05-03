@@ -5511,13 +5511,21 @@ class RmsdSuprCls {
 
         // read in and reformat the coordinates
         // calculate the centroids
+        let finalCnt = n;
         for (i = 0; i < n; i++) {
+            if(co1[i] === undefined || co2[i] === undefined) {
+                --finalCnt;
+                continue;
+            }
             ap.push(co1[i].clone());
             bp.push(co2[i].clone());
 
             cp.add(co1[i]);
             cq.add(co2[i]);
         }
+
+        n = finalCnt;
+        if (n <= 1) return {'rot': undefined, 'trans1': undefined, 'trans2': undefined, 'rmsd': 999};
 
         cp.multiplyScalar(1.0 / n);
         cq.multiplyScalar(1.0 / n);
@@ -12641,7 +12649,7 @@ class ShareLink {
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
            //var inputid =(ic.inputid) ? ic.inputid : "custom";
            let inputid = Object.keys(ic.structures).join('_');
-           if(inputid == 'stru') {
+           if(inputid == 'STRU') {
                if(ic.filename) {
                    inputid = ic.filename;
                }
@@ -18630,6 +18638,31 @@ class SetColor {
         }
     }
 
+    setColorBySets(nameArray, bSpectrum) { let ic = this.icn3d, me = ic.icn3dui;
+        let idx = 0;
+        let cnt = nameArray.length;
+
+        let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+        for(let i = 0, il = nameArray.length; i < il; ++i) {
+            let atomSet = ic.definedSetsCls.getAtomsFromNameArray([nameArray[i]]);
+            for (let serial in atomSet) {
+                let atom = ic.atoms[serial];
+
+                if(bSpectrum) {
+                    atom.color = me.parasCls.thr().setHSL(3 / 4 * (1 - idx * lastTerSerialInv), 1, 0.45);
+                }
+                else { // rainbow
+                    atom.color = me.parasCls.thr().setHSL(3 / 4 *  idx * lastTerSerialInv, 1, 0.45);
+                }
+
+                ic.atomPrevColors[serial] = atom.color;
+            }
+            ++idx;
+        }
+
+        ic.drawCls.draw();
+    }
+
     //Set atom color according to the definition in options (options.color).
     setColorByOptions(options, atoms, bUseInputColor) { let ic = this.icn3d, me = ic.icn3dui;
      if(options !== undefined) {
@@ -21207,12 +21240,12 @@ class LoadPDB {
 
         //let  chainMissingResidueArray = {}
 
-        let  id = (pdbid) ? pdbid : 'stru';
+        let  id = (pdbid) ? pdbid : 'STRU';
 
         let prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;
 
-        let  structure = "stru";
+        let  structure = "STRU";
 
         let bHeader = false;
 
@@ -21228,18 +21261,18 @@ class LoadPDB {
 
                 if(id == '') {
                     if(bAppend) {
-                        id = "stru";
+                        id = "STRU";
                     }
                     else {
-                        //if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = 'STRU';
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "STRU"; //ic.filename.substr(0, 4);
                     }
                 }
 
                 structure = id;
 
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -21367,11 +21400,11 @@ class LoadPDB {
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
-                id = 'stru';
+                id = 'STRU';
 
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -21393,8 +21426,8 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -23408,7 +23441,7 @@ class Dssp {
       let ajaxArray = [];
 
       //let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-      let url = "../mmcifparser/mmcifparser.cgi";
+      let url = "/Structure/mmcifparser/mmcifparser.cgi";
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
 ///           pdbStr += ic.saveFileCls.getPDBHeader(i);
@@ -23560,6 +23593,7 @@ class Dssp {
 
         ic.pdbParserCls.loadPdbDataRender(bAppend);
 
+        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }
 }
@@ -24725,7 +24759,7 @@ class OpmParser {
         let  thisClass = this;
         let  url, dataType;
 
-        if(!pdbid) pdbid = 'stru';
+        if(!pdbid) pdbid = 'STRU';
 
         url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
         dataType = "jsonp";
@@ -25326,7 +25360,6 @@ class RealignParser {
     parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { let  ic = this.icn3d, me = ic.icn3dui;
 
       let  toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
-      toStruct = toStruct.toUpperCase();
 
       let  hAtoms = {};
 
@@ -25338,9 +25371,10 @@ class RealignParser {
       for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
           let chainpair = chainidArray[0] + ',' + chainidArray[index + 1];
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
-          fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+
+          if(!struct2SeqHash[chainpair]) continue;
 
           let  seq1 = struct2SeqHash[chainpair][toStruct];
           let  seq2 = struct2SeqHash[chainpair][fromStruct];
@@ -25520,6 +25554,7 @@ class RealignParser {
         // each 3D domain should have at least 3 secondary structures
         let minSseCnt = 3;
         let struct2domain = {};
+
         for(let struct in ic.structures) {
             struct2domain[struct] = {};
             let chainidArray = ic.structures[struct];
@@ -25554,8 +25589,8 @@ class RealignParser {
                     for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                         let chainid2 = chainidArray2[j];
 
-                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
-                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                       
                         let alignAjax = $.ajax({
                             url: urlalign,
@@ -25593,7 +25628,7 @@ class RealignParser {
         let  struct2CoorHash = {};
         let  struct2resid = {};
 
-        let  mmdbid_t, chainid_t, base_t;
+        let  mmdbid_t, chainid_t, base_t, base;
         let  ajaxArray = [];
         let  url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
@@ -25608,12 +25643,13 @@ class RealignParser {
             }
         }
 
-        let result;
+        let result, resiArray;
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             //if(bPredefined) predefinedRes = predefinedResArray[i].trim();
 
             let  pos = chainidArray[i].indexOf('_');
             let  mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
+
             if(!bRealign) mmdbid =  mmdbid.toUpperCase();
 
             if(i == 0) {
@@ -25638,118 +25674,122 @@ class RealignParser {
                 struct2CoorHash[mmdbid] = [];
                 struct2resid[mmdbid] = [];
             }
+ 
+            if(bPredefined) {
+                base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-            if(i == 0 || bPredefined) { // master
-                let base = parseInt(ic.chainsSeq[chainid][0].resi);
-                if(i == 0) base_t = base;
-
-                let resiArray = [];
-                if(bRealign) {
-                    //resiArray = [resRange];
-                    let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
-                    for(var resid in residHash) {
-                        let resi = resid.substr(resid.lastIndexOf('_') + 1);
-
-                        let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
-                        if(chainidTmp == chainid) resiArray.push(resi);
-                    }
-                }
-                else if(bPredefined) {
-                    if(i > 0) {
-                        predefinedResPair = predefinedResArray[i - 1].split(' | ');
-
-                        let chainidpair = chainid_t + ',' + chainid;
-                        if(!struct2SeqHash[chainidpair]) struct2SeqHash[chainidpair] = {};
-                        if(!struct2CoorHash[chainidpair]) struct2CoorHash[chainidpair] = {};
-                        if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
-
-                        // master
-                        resiArray = predefinedResPair[0].split(",");
-                        result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
-
-                        if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
-                        if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
-                        if(!struct2resid[chainidpair][mmdbid_t]) struct2resid[chainidpair][mmdbid_t] = [];
-
-                        struct2SeqHash[chainidpair][mmdbid_t] += result.seq;
-                        struct2CoorHash[chainidpair][mmdbid_t] = struct2CoorHash[chainidpair][mmdbid_t].concat(result.coor);
-                        struct2resid[chainidpair][mmdbid_t] = struct2resid[chainidpair][mmdbid_t].concat(result.resid);
-
-                        // slave
-                        resiArray = predefinedResPair[1].split(",");
-                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
-                        
-                        if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
-                        if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
-                        if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
-
-                        struct2SeqHash[chainidpair][mmdbid] += result.seq;
-                        struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
-                        struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
-                    }
+                if(i == 0) { // master
+                    base_t = base;
                 }
                 else {
-                    resiArray = me.cfg.resnum.split(",");
-                }
+                    predefinedResPair = predefinedResArray[i - 1].split(' | ');
 
-                if(!bPredefined) {
+                    let chainidpair = chainid_t + ',' + chainid;
+                    if(!struct2SeqHash[chainidpair]) struct2SeqHash[chainidpair] = {};
+                    if(!struct2CoorHash[chainidpair]) struct2CoorHash[chainidpair] = {};
+                    if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
+
+                    // master
+                    resiArray = predefinedResPair[0].split(",");
+                    result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+
+                    if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
+                    if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
+                    if(!struct2resid[chainidpair][mmdbid_t]) struct2resid[chainidpair][mmdbid_t] = [];
+
+                    struct2SeqHash[chainidpair][mmdbid_t] += result.seq;
+                    struct2CoorHash[chainidpair][mmdbid_t] = struct2CoorHash[chainidpair][mmdbid_t].concat(result.coor);
+                    struct2resid[chainidpair][mmdbid_t] = struct2resid[chainidpair][mmdbid_t].concat(result.resid);
+
+                    // slave
+                    resiArray = predefinedResPair[1].split(",");
                     result = thisClass.getSeqCoorResid(resiArray, chainid, base);
-                    struct2SeqHash[mmdbid] += result.seq;
-                    struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
-                    struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
+                    
+                    if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
+                    if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
+                    if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
+
+                    struct2SeqHash[chainidpair][mmdbid] += result.seq;
+                    struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
+                    struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
                 }
             }
             else {
-                // if selected both chains
-                let bSelectedBoth = false;
-                if(bRealign) {
-                    //resiArray = [resRange];
-                    let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
-                    for(var resid in residHash) {
-                        //let resi = resid.substr(resid.lastIndexOf('_') + 1);
-                        let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
-                        if(chainidTmp == chainid) {
-                            bSelectedBoth = true;
+                if(i == 0) { // master
+                    base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-                            let resn = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn;
-                            struct2SeqHash[mmdbid] += me.utilsCls.residueName2Abbr(resn);
+                    resiArray = [];
+                    if(bRealign) {
+                        //resiArray = [resRange];
+                        let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                        for(var resid in residHash) {
+                            let resi = resid.substr(resid.lastIndexOf('_') + 1);
+
+                            let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
+                            if(chainidTmp == chainid) resiArray.push(resi);
+                        }
+                    }
+                    else if(me.cfg.resnum) {
+                        resiArray = me.cfg.resnum.split(",");
+                    }
+
+                    //if(!bPredefined) {
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                        struct2SeqHash[mmdbid] += result.seq;
+                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
+                        struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
+                    //}
+                }
+                else {
+                    // if selected both chains
+                    let bSelectedBoth = false;
+                    if(bRealign) {
+                        //resiArray = [resRange];
+                        let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                        for(var resid in residHash) {
+                            //let resi = resid.substr(resid.lastIndexOf('_') + 1);
+                            let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
+                            if(chainidTmp == chainid) {
+                                bSelectedBoth = true;
+
+                                let resn = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn;
+                                struct2SeqHash[mmdbid] += me.utilsCls.residueName2Abbr(resn);
+
+                                struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(resid));
+
+                                struct2resid[mmdbid].push(resid);
+                            }
+                        }
+                    }
+
+                    if(!bSelectedBoth) {
+                        for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                            struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
+                            let  resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
 
                             struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(resid));
 
                             struct2resid[mmdbid].push(resid);
                         }
                     }
+
+                    let  toStruct = mmdbid_t;
+                    let  fromStruct = mmdbid;
+
+                    let  seq1 = struct2SeqHash[toStruct];
+                    let  seq2 = struct2SeqHash[fromStruct];
+
+                    let  queryAjax = $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data : {'targets': seq1, 'queries': seq2},
+                        dataType: 'jsonp',
+                        cache: true
+                    });
+
+                    ajaxArray.push(queryAjax);
                 }
-
-                if(!bSelectedBoth) {
-                    for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
-                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
-                        let  resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
-
-                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(resid));
-
-                        struct2resid[mmdbid].push(resid);
-                    }
-                }
-            }
-
-            if(i > 0 && !bPredefined) {
-                let  toStruct = mmdbid_t;
-                let  fromStruct = mmdbid;
-
-                let  seq1 = struct2SeqHash[toStruct];
-                let  seq2 = struct2SeqHash[fromStruct];
-
-                let  queryAjax = $.ajax({
-                url: url,
-                type: 'POST',
-                data : {'targets': seq1, 'queries': seq2},
-                dataType: 'jsonp',
-                cache: true
-                });
-
-                ajaxArray.push(queryAjax);
-            }
+            }        
         } // for
 
         if(bPredefined) {
@@ -25787,7 +25827,7 @@ class RealignParser {
                     }
 
                     // don't align solvent or chemicals
-                    if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
+                    if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
 
                     seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
@@ -25809,9 +25849,12 @@ class RealignParser {
 
                 if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
+                let resCoorArray = this.getResCoorArray(chainid + '_' + k);
+                //if(resCoorArray.length == 1 && resCoorArray[0] === undefined) continue;
+
                 seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
-                coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
+                coorArray = coorArray.concat(resCoorArray);
 
                 residArray.push(chainid + '_' + k);
             }
@@ -26025,24 +26068,23 @@ class ChainalignParser {
 
             let queryData = {}; // check whether undefined
 
+            let chainpair = chainidPairArray[i].split(',');
+            let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
+            let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
+            if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
+                continue;
+            }
+
             let bNoAlert = true;
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
                 bFoundAlignment = true;
 
-                let chainpair = chainidPairArray[i].split(',');
-                let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
-                let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
-                if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
-                    continue;
-                }
-                else {
-                    mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
-                    mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
+                mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
+                mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
 
-                    mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
-                }
+                mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
             }
         }
 
@@ -26051,7 +26093,7 @@ class ChainalignParser {
             alert("These structures can NOT be aligned...");
             return;
         }
-/*
+
         // find the max aligned mmdbid as mmdbid_t
         let cnt = 0, mmdbid_t;
         for(let mmdbidpair in mmdbidpairHash) {
@@ -26065,21 +26107,44 @@ class ChainalignParser {
                 mmdbid_t = mmdbidArray[1];
             }
         }
-*/
+
         let aligType;
         // transform all pairs 
-        let allChainidHash = {}, hAtoms = {};
+        let allChainidHash = {}, hAtoms = {}, alignMMdbids = {}, mmdbidpairFinalHash = {};
         for(let mmdbidpair in mmdbidpairHash) {
             let mmdbidArray = mmdbidpair.split('_');
             let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
             let index = chainidArray[2];
 
-            // chainid2 is target
-            aligType = 'query';
-            this.transformStructure(mmdbidArray[0], index, aligType);
+            let target, query;
+            if(mmdbid_t == mmdbidArray[0]) {
+                target = mmdbidArray[0];
+                query = mmdbidArray[1];
+            } 
+            else if(mmdbid_t == mmdbidArray[1]) {
+                target = mmdbidArray[1];
+                query = mmdbidArray[0];               
+            }
+            else {
+                target = mmdbidArray[0];
+                query = mmdbidArray[1];               
+            }
 
+            // If all chains align to the same target, just check the query.
+            // If there are different targets, also just check the query. The taget should not appear again in the query.
+            alignMMdbids[target] = 1;
+              
+            if(alignMMdbids.hasOwnProperty(query)) continue;
+            alignMMdbids[query] = 1;
+
+            mmdbidpairFinalHash[mmdbidpair] = mmdbidpairHash[mmdbidpair];
+
+            // chainid1 is target
             aligType = 'target';
-            this.transformStructure(mmdbidArray[1], index, aligType);
+            this.transformStructure(target, index, aligType);
+
+            aligType = 'query';
+            this.transformStructure(query, index, aligType);
 
             allChainidHash[chainidArray[0]] = 1;
             allChainidHash[chainidArray[1]] = 1;
@@ -26089,9 +26154,11 @@ class ChainalignParser {
         }
 
         // set up the view of sequence alignment for each pair
-        for(let mmdbidpair in mmdbidpairHash) {           
+        for(let mmdbidpair in mmdbidpairFinalHash) {           
             if(ic.q_rotation !== undefined) {
-                let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+                let chainidArrayTmp = mmdbidpairFinalHash[mmdbidpair].split(',');
+                // switch these two chains
+                let chainidArray = [chainidArrayTmp[1], chainidArrayTmp[0], chainidArrayTmp[2]];
 
                 ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
 
@@ -26559,8 +26626,9 @@ class ChainalignParser {
     }
 
     downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+      let  thisClass = this;
 
+      ic.deferredMmdbaf = $.Deferred(function() {
         ic.structArray = idlist.split(',');
 
         let  ajaxArray = [];
@@ -26607,6 +26675,9 @@ class ChainalignParser {
         .fail(function() {
             alert("There are some problems in retrieving the coordinates...");
         });
+      });
+    
+      return ic.deferredMmdbaf.promise();
     }
 
     parseMMdbAfData(dataArray, structArray, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -26660,8 +26731,15 @@ class ChainalignParser {
         // calculate secondary structures with applyCommandDssp
         if(bQuery && me.cfg.masterchain) {
             $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
-                let bPredefined = true;
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, undefined, bPredefined);
+                let bRealign = true, bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+                // reset annotations
+                $("#" + ic.pre + "dl_annotations").html("");
+                ic.bAnnoShown = false;
+                if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
+                    $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
+                }
            });
         }
         else {
@@ -34108,6 +34186,24 @@ class ApplyCommand {
 
         ic.pickingCls.showPicking(ic.pAtom);
       }
+      else if(commandOri.indexOf('set color spectrum') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let  nameArray = paraArray[1].split(',');
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+        }
+      }
+      else if(commandOri.indexOf('set color rainbow') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let  nameArray = paraArray[1].split(',');
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+        }
+      }
       else if(commandOri.indexOf('color') == 0) {
         let  strArray = commandOri.split(" | ");
         let  color = strArray[0].substr(strArray[0].indexOf(' ') + 1);
@@ -36521,7 +36617,7 @@ class ParserUtils {
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
+      pdbid =(pdbid) ? pdbid.toUpperCase() : 'STRU';
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {};
@@ -36644,7 +36740,7 @@ class ParserUtils {
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          ic.loadScriptCls.loadScript(me.cfg.command);
+          if(me.cfg.mmdbafid === undefined) ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
           if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
@@ -37065,7 +37161,7 @@ class MmcifParser {
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
     loadMmcifData(data, mmcifid) { let ic = this.icn3d; ic.icn3dui;
         if(!mmcifid) mmcifid = data.mmcif;
-        if(!mmcifid) mmcifid = 'stru';
+        if(!mmcifid) mmcifid = 'STRU';
 
         if(data.atoms !== undefined) {
             ic.init();
@@ -37653,6 +37749,7 @@ class ShowAnno {
 
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             let chainArray = Object.keys(ic.chains);
+
             if(ic.giSeq === undefined) ic.giSeq = {};
             if(ic.currClin === undefined) ic.currClin = {};
             if(ic.resi2disease_nonempty === undefined) ic.resi2disease_nonempty = {};
@@ -45609,13 +45706,9 @@ class Draw {
 
         ic.setColorCls.applyPrevColor();
 
-        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-            // show bioassembly in two cases
-            // 1. asymmetric unit: me.cfg.bu == 0
-            // 2. biological unit with less than ic.maxatomcnt atom: 
-            // me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length < ic.maxatomcnt
-            if(ic.bAssembly && Object.keys(ic.structures).length == 1 && (me.cfg.bu == 0 
-              || (me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
+        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {        
+            if(ic.bAssembly && Object.keys(ic.structures).length == 1 && ((me.cfg.mmdbid === undefined && me.cfg.bu == 1)
+              || (me.cfg.mmdbid !== undefined && me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
                 ic.instancingCls.drawSymmetryMates();
             }
             else {
@@ -46890,8 +46983,12 @@ class ClickMenu {
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
+        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_vastplus', 'Please input PDB ID for VAST+');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { me.icn3d;
-            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input PDB ID and chain name');
+            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input chain or PDB file for VAST');
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { me.icn3d;
@@ -47900,6 +47997,39 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'spectrum for chains');
            thisClass.setLogCmd('color spectrum for chains', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                ic.definedSetsCls.setPredefinedInMenu();
+                ic.bSetChainsAdvancedMenu = true;
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+             }
+             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+             if($("#" + me.pre + "atomsCustomColorSpectrum").length) {
+                 $("#" + me.pre + "atomsCustomColorSpectrum").html(definedAtomsHtml);
+             }
+
+             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_colorspectrumbysets', 'Please select sets to apply spectrum color');
+             $("#" + me.pre + "atomsCustomColorSpectrum").resizable();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                ic.definedSetsCls.setPredefinedInMenu();
+                ic.bSetChainsAdvancedMenu = true;
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+             }
+             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+             if($("#" + me.pre + "atomsCustomColorRainbow").length) {
+                 $("#" + me.pre + "atomsCustomColorRainbow").html(definedAtomsHtml);
+             }
+
+             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_colorrainbowbysets', 'Please select sets to apply rainbow color');
+             $("#" + me.pre + "atomsCustomColorRainbow").resizable();
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
@@ -49340,8 +49470,9 @@ class SetMenu {
 
         html += "<li><span>Search Similar</span>";
         html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AalphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -50226,6 +50357,7 @@ class SetMenu {
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowSets', 'for Sets');
             html += "</ul>";
 
             if(!me.cfg.simplemenu) {
@@ -50234,6 +50366,7 @@ class SetMenu {
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumSets', 'for Sets');
                 html += "</ul>";
             }
 
@@ -50503,7 +50636,7 @@ class SetMenu {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
 
-              if(me.cfg.bu == 0) {
+              if(!me.cfg.bu) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
               }
@@ -51355,11 +51488,28 @@ class SetDialog {
 
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
 
+        html += me.htmlCls.divStr + "dl_vastplus' class='" + dialogClass + "' style='max-width:500px'>";
+        html += "Note: <b>VAST+</b> finds other macromolecular structures that have a similar biological unit. To do this, VAST+ takes into consideration the complete set of 3D domains that VAST identified within a query structure, throughout all of its component protein molecules, and finds other macromolecular structures that have a similar set of proteins/3D domains.<br><br>"; 
+        html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpluspdbid' value='1HHO' size=8><br>";
+        html += me.htmlCls.buttonStr + "reload_vastplus'>VAST+</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
-        html += 'Note: You can search similar PDB structures for any input PDB chain as specified below. (To input a custom PDB file, you can use the <a href="https://www.ncbi.nlm.nih.gov/Structure/VAST/vastsearch.html" target="_blank">VAST Search</a>.) <br><br>Once you see the structure neighbors, you can "View 3D Alignment" using "iCn3D".<br><br>'; 
+        html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
+        html += '<b>Optione 1</b>, search with PDB ID and chain name:<br>'; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='1HHO' size=8> &nbsp;&nbsp;";
         html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
-        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button>";
+        html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
+
+        html += '<b>Optione 2</b>, search with a PDB file:<br>'; 
+        html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" name="newvs" target="_blank">';
+        html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
+        html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
+        // the submit value has to be "Submit" in order to make the backend cgi works
+        //html += '<input type="submit" name="cmdVSMmdb" value="VAST Search"></input>';
+        html += '<input type="submit" name="cmdVSMmdb" value="Submit"></input>';
+        html += "</form>";
+
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
@@ -51795,7 +51945,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realign' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
@@ -51804,12 +51954,32 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
         html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_colorspectrumbysets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrum' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorSpectrumBySets'>Spectrum Color for Sets</button></div><br>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_colorrainbowbysets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbow' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorRainbowBySets'>Rainbow Color for Sets</button></div><br>";
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";
         html += "</div>";
@@ -52662,6 +52832,36 @@ class Events {
          });
     //    },
 
+        me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumBySets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorSpectrum").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+
+            me.htmlCls.clickMenuCls.setLogCmd("set color spectrum | " + nameArray, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applyColorRainbowBySets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorRainbow").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+
+            me.htmlCls.clickMenuCls.setLogCmd("set color rainbow | " + nameArray, true);
+        });
+
     // other
     //    clickViewswitch: function() {
         me.myEventCls.onIds("#" + me.pre + "anno_summary", "click", function(e) { let ic = me.icn3d;
@@ -52716,6 +52916,13 @@ class Events {
 
     //    },
     //    clickReload_mmtf: function() {
+        me.myEventCls.onIds("#" + me.pre + "reload_vastplus", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("vast+ search " + $("#" + me.pre + "vastpluspdbid").val(), false);
+            window.open('https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=' + $("#" + me.pre + "vastpluspdbid").val(), '_blank');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -56486,7 +56693,7 @@ class ContactMap {
 
         let graphStr = '{\n';
 
-        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
+        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'STRU';
         let len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         let factor = 1;
@@ -58944,7 +59151,7 @@ iCn3D.prototype.init = function (bKeepCmd) {
     //this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
     this.biomtMatrices = [];
-    this.bAssembly = false; //true;
+    this.bAssembly = true; //false; 
 
     this.bDrawn = false;
     this.bSecondaryStructure = false;
@@ -59083,7 +59290,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 
-    ic.bAssembly = false; //true;
+    ic.bAssembly = true; //false;
 };
 
 iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
@@ -59124,7 +59331,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.4';
+    this.REVISION = '3.11.5';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -59303,8 +59510,8 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
                     chainidArray.push(structureArray[i] + '_' + chainArray[i]);
                 }
                 
-                let bPredefined = true;
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, undefined, bPredefined);
+                let bRealign = true, bPredefined = true;
+                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
         }
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
@@ -59528,7 +59735,10 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
             ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid + ' | parameters ' + me.cfg.inpara;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
+
+        $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {
+            ic.loadScriptCls.loadScript(me.cfg.command);
+        });
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
