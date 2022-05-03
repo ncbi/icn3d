@@ -38,13 +38,21 @@ class RmsdSuprCls {
 
         // read in and reformat the coordinates
         // calculate the centroids
+        let finalCnt = n;
         for (i = 0; i < n; i++) {
+            if(co1[i] === undefined || co2[i] === undefined) {
+                --finalCnt;
+                continue;
+            }
             ap.push(co1[i].clone());
             bp.push(co2[i].clone());
 
             cp.add(co1[i]);
             cq.add(co2[i]);
         }
+
+        n = finalCnt;
+        if (n <= 1) return {'rot': undefined, 'trans1': undefined, 'trans2': undefined, 'rmsd': 999};
 
         cp.multiplyScalar(1.0 / n);
         cq.multiplyScalar(1.0 / n);

@@ -58,6 +58,31 @@ class SetColor {
         }
     }
 
+    setColorBySets(nameArray, bSpectrum) { let ic = this.icn3d, me = ic.icn3dui;
+        let idx = 0;
+        let cnt = nameArray.length;
+
+        let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+        for(let i = 0, il = nameArray.length; i < il; ++i) {
+            let atomSet = ic.definedSetsCls.getAtomsFromNameArray([nameArray[i]]);
+            for (let serial in atomSet) {
+                let atom = ic.atoms[serial];
+
+                if(bSpectrum) {
+                    atom.color = me.parasCls.thr().setHSL(3 / 4 * (1 - idx * lastTerSerialInv), 1, 0.45);
+                }
+                else { // rainbow
+                    atom.color = me.parasCls.thr().setHSL(3 / 4 *  idx * lastTerSerialInv, 1, 0.45);
+                }
+
+                ic.atomPrevColors[serial] = atom.color;
+            }
+            ++idx;
+        }
+
+        ic.drawCls.draw();
+    }
+
     //Set atom color according to the definition in options (options.color).
     setColorByOptions(options, atoms, bUseInputColor) { let ic = this.icn3d, me = ic.icn3dui;
      if(options !== undefined) {

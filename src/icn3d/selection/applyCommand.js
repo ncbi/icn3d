@@ -1153,6 +1153,24 @@ class ApplyCommand {
 
         ic.pickingCls.showPicking(ic.pAtom);
       }
+      else if(commandOri.indexOf('set color spectrum') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let  nameArray = paraArray[1].split(',');
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+        }
+      }
+      else if(commandOri.indexOf('set color rainbow') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let  nameArray = paraArray[1].split(',');
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+        }
+      }
       else if(commandOri.indexOf('color') == 0) {
         let  strArray = commandOri.split(" | ");
         let  color = strArray[0].substr(strArray[0].indexOf(' ') + 1);

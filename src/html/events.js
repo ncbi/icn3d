@@ -401,6 +401,36 @@ class Events {
          });
     //    },
 
+        me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumBySets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorSpectrum").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+
+            me.htmlCls.clickMenuCls.setLogCmd("set color spectrum | " + nameArray, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applyColorRainbowBySets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorRainbow").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorBySets(nameArray, bSpectrum);
+
+            me.htmlCls.clickMenuCls.setLogCmd("set color rainbow | " + nameArray, true);
+        });
+
     // other
     //    clickViewswitch: function() {
         me.myEventCls.onIds("#" + me.pre + "anno_summary", "click", function(e) { let ic = me.icn3d;
@@ -455,6 +485,13 @@ class Events {
 
     //    },
     //    clickReload_mmtf: function() {
+        me.myEventCls.onIds("#" + me.pre + "reload_vastplus", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("vast+ search " + $("#" + me.pre + "vastpluspdbid").val(), false);
+            window.open('https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=' + $("#" + me.pre + "vastpluspdbid").val(), '_blank');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );

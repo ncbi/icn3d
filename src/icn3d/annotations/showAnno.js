@@ -47,6 +47,7 @@ class ShowAnno {
 
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             let chainArray = Object.keys(ic.chains);
+
             if(ic.giSeq === undefined) ic.giSeq = {}
             if(ic.currClin === undefined) ic.currClin = {}
             if(ic.resi2disease_nonempty === undefined) ic.resi2disease_nonempty = {}

@@ -594,7 +594,7 @@ iCn3D.prototype.init = function (bKeepCmd) {
     //this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
     this.biomtMatrices = [];
-    this.bAssembly = false; //true;
+    this.bAssembly = true; //false; 
 
     this.bDrawn = false;
     this.bSecondaryStructure = false;
@@ -733,7 +733,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 
-    ic.bAssembly = false; //true;
+    ic.bAssembly = true; //false;
 };
 
 iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;

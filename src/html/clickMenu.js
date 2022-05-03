@@ -113,8 +113,12 @@ class ClickMenu {
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
+        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_vastplus', 'Please input PDB ID for VAST+');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { let ic = me.icn3d;
-            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input PDB ID and chain name');
+            me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input chain or PDB file for VAST');
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { let ic = me.icn3d;
@@ -1124,6 +1128,39 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'spectrum for chains');
            thisClass.setLogCmd('color spectrum for chains', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                ic.definedSetsCls.setPredefinedInMenu();
+                ic.bSetChainsAdvancedMenu = true;
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+             }
+             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+             if($("#" + me.pre + "atomsCustomColorSpectrum").length) {
+                 $("#" + me.pre + "atomsCustomColorSpectrum").html(definedAtomsHtml);
+             }
+
+             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_colorspectrumbysets', 'Please select sets to apply spectrum color');
+             $("#" + me.pre + "atomsCustomColorSpectrum").resizable();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                ic.definedSetsCls.setPredefinedInMenu();
+                ic.bSetChainsAdvancedMenu = true;
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+             }
+             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+             if($("#" + me.pre + "atomsCustomColorRainbow").length) {
+                 $("#" + me.pre + "atomsCustomColorRainbow").html(definedAtomsHtml);
+             }
+
+             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_colorrainbowbysets', 'Please select sets to apply rainbow color');
+             $("#" + me.pre + "atomsCustomColorRainbow").resizable();
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
