@@ -245,8 +245,8 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-legend2 {display:none; position:absolute; z-index:99; bottom:50px; right:20px; background-color:#DDDDDD; width:200px; height:60px; padding:6px;}
 
-.icn3d-saveicon, .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:20px;}
-.icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:40px;}
+.icn3d-saveicon {cursor:pointer; position:absolute; top:8px; right:20px; }
+.icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:40px; }
 
 .icn3d-border tr th, .icn3d-border tr td {border-right: solid 1px;}
 

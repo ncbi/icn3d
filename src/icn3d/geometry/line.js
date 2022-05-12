@@ -125,8 +125,10 @@ class Line {
                 for(let i = 0, il = atom.bonds.length; i < il; ++i) {
                     let bondAtom = ic.atoms[atom.bonds[i]];
                     // hydrogen connected to Calpha: HA
-                    if(bondAtom.name === 'HA' || (bondAtom.name !== 'C' && bondAtom.name !== 'N'
-                      && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) ) {
+                    //if(bondAtom.name === 'HA' || (bondAtom.name !== 'C' && bondAtom.name !== 'N'
+                    //  && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) ) {
+                    if(bondAtom.name !== 'C' && bondAtom.name !== 'N'
+                        && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) {
                         coordArray.push(atom.coord);
                         coordArray.push(bondAtom.coord);
 
@@ -135,14 +137,14 @@ class Line {
                     }
                 }
             }
-
+/*
             // hydrogen connected to N: H
             atom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid], 'N');
 
             if(atom !== undefined) {
                 for(let i = 0, il = atom.bonds.length; i < il; ++i) {
                     let bondAtom = ic.atoms[atom.bonds[i]];
-                    // hydrogen connected to Calpha: HA
+                    // hydrogen connected to N: H
                     if(bondAtom.name === 'H') {
                         coordArray.push(atom.coord);
                         coordArray.push(bondAtom.coord);
@@ -152,14 +154,15 @@ class Line {
                     }
                 }
             }
+*/            
         }
 
         for(let i = 0, il = coordArray.length; i < il; i += 2) {
-            if(style === 'ball and stick' || style === 'stick') {
-                let radius = (style === 'stick') ? ic.cylinderRadius : ic.cylinderRadius * 0.5;
+            if(style === 'ball and stick' || style === 'stick' || style === 'ball and stick2' || style === 'stick2') {
+                let radius = (style === 'stick' || style === 'stick2') ? ic.cylinderRadius : ic.cylinderRadius * 0.5;
                 ic.cylinderCls.createCylinder(coordArray[i], coordArray[i+1], radius, colorArray[i+1]);
             }
-            else if(style === 'lines') {
+            else if(style === 'lines' || style === 'lines2') {
                 let line = this.createSingleLine(coordArray[i], coordArray[i+1], colorArray[i+1], false, 0.5);
                 ic.mdl.add(line);
             }

@@ -605,11 +605,11 @@ class ParserUtils {
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
-          $("#" + ic.pre + "mn2_realignWrap").show();
+          //$("#" + ic.pre + "mn2_realignWrap").show();
       }
       else {
           $("#" + ic.pre + "mn2_alternateWrap").hide();
-          $("#" + ic.pre + "mn2_realignWrap").hide();
+          //$("#" + ic.pre + "mn2_realignWrap").hide();
       }
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){

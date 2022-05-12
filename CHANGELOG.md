@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.11.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.6.zip) was release on May 11, 2022. Fixed a bug in the dynamic VAST alignment in iCn3D with the menu "File > Realign Selection > by Structure Alignment".
+
 [icn3d-3.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.5.zip) was release on May 3, 2022. Added VAST+ and VAST Search interface in the menu "File > Search Similar". Enabled to assign rainbow/spectrum colors for a list of sets in the menu "Color > Rainbow/Spectrum > for Sets".
 
 [icn3d-3.11.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.4.zip) was release on April 26, 2022. Added two examples in https://ww.ncbi.nlm.nih.gov/Structure/icn3d/example.html to show the predefined alignment of two PDB files, or the predefined alignment of one PDB file to other chains.

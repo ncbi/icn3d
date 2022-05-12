@@ -312,12 +312,22 @@ class Events {
     //    },
     //    clickRealign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
+            
            ic.realignParserCls.realign();
            me.htmlCls.clickMenuCls.setLogCmd("realign", true);
         });
     //    },
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
+
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
                ic.definedSetsCls.setPredefinedInMenu();
@@ -337,6 +347,10 @@ class Events {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
                ic.definedSetsCls.setPredefinedInMenu();

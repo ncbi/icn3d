@@ -517,22 +517,7 @@ class LoadPDB {
 
         // calculate disulfide bonds for PDB files
         if(!ic.bSsbondProvided) {
-            // get all Cys residues
-            let  structure2cys_resid = {}
-            for(let chainid in ic.chainsSeq) {
-                let  seq = ic.chainsSeq[chainid];
-                let  structure = chainid.substr(0, chainid.indexOf('_'));
-
-                for(let i = 0, il = seq.length; i < il; ++i) {
-                    // each seq[i] = {"resi": 1, "name":"C"}
-                    if(seq[i].name == 'C') {
-                        if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
-                        structure2cys_resid[structure].push(chainid + '_' + seq[i].resi);
-                    }
-                }
-            }
-
-            this.setSsbond(structure2cys_resid);
+            this.setSsbond();
         }
 
         // remove the reference
@@ -593,7 +578,7 @@ class LoadPDB {
 
                 ic.proteins[atom.serial] = 1;
                 if (atom.name === 'CA') ic.calphas[atom.serial] = 1;
-                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') ic.sidec[atom.serial] = 1;
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') ic.sidec[atom.serial] = 1;
               }
             }
             else if(atom.het) {
@@ -641,7 +626,7 @@ class LoadPDB {
 
                 delete ic.proteins[atom.serial];
                 if (atom.name === 'CA') delete ic.calphas[atom.serial];
-                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
             }
         }
 
@@ -755,7 +740,23 @@ class LoadPDB {
         }
     }
 
-    setSsbond(structure2cys_resid) { let  ic = this.icn3d, me = ic.icn3dui;
+    setSsbond() { let  ic = this.icn3d, me = ic.icn3dui;
+        // get all Cys residues
+        let  structure2cys_resid = {};
+
+        for(let chainid in ic.chainsSeq) {
+            let  seq = ic.chainsSeq[chainid];
+            let  structure = chainid.substr(0, chainid.indexOf('_'));
+
+            for(let i = 0, il = seq.length; i < il; ++i) {
+                // each seq[i] = {"resi": 1, "name":"C"}
+                if(seq[i].name == 'C') {
+                    if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
+                    structure2cys_resid[structure].push(chainid + '_' + seq[i].resi);
+                }
+            }
+        }
+
         // determine whether there are disulfide bonds
         // disulfide bond is about 2.05 angstrom
         let  distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7

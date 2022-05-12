@@ -180,8 +180,9 @@ class Selection {
 
         ic.hAtoms = {}
         for(let i in currHAtoms) {
-            if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
-              && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") )
+            if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "H" 
+              && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
+              && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") && ic.atoms[i].name !== "HA")
               ||(ic.nucleotides.hasOwnProperty(i) && me.parasCls.nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
                 ic.hAtoms[i] = 1;
             }

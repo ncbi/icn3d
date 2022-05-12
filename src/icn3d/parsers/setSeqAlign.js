@@ -253,11 +253,13 @@ class SetSeqAlign {
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
           let hAtoms = {};
 
+          let bRealign = (chainidArray) ? true : false;
+
           //loadSeqAlignment
           let  alignedAtoms = {};
           let mmdbid1, mmdbid2, chain1, chain2, chainid1, chainid2, pos1, pos2;
 
-          if(chainidArray) { 
+          if(bRealign) { 
             // originally chainid2 is target,chainid1 is query
             // switch them so that chainid1 is the target
             chainid1 = chainidArray[1];
@@ -328,7 +330,11 @@ class SetSeqAlign {
           ic.alnChains = {}
 
           ic.alnChainsSeq[chainid1] = [];
-          ic.alnChains[chainid1] = {}
+          ic.alnChains[chainid1] = {};
+
+          ic.alnChainsSeq[chainid2] = [];
+          ic.alnChains[chainid2] = {};
+          
           ic.alnChainsAnno[chainid1] = [];
           ic.alnChainsAnTtl[chainid1] = [];
 
@@ -353,7 +359,7 @@ class SetSeqAlign {
           let  color, color2, classname;
           let  firstIndex1 = 0;
           let  firstIndex2 = 0;
-          let  prevIndex1, prevIndex2;
+          let  prevIndex1 = 0, prevIndex2 = 0;
 
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
@@ -366,17 +372,27 @@ class SetSeqAlign {
               //var end1 = ic.qt_start_end[chainIndex][i].q_end - 1;
               //var end2 = ic.qt_start_end[chainIndex][i].t_end - 1;
 
-              let  start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
-              let  start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
-              let  end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-              let  end2 = ic.qt_start_end[chainIndex][i].q_end - 1;
-
+              let  start1, start2, end1, end2;
+              if(bRealign) { // realresidue numbers are stored
+                start1 = ic.qt_start_end[chainIndex][i].t_start;
+                start2 = ic.qt_start_end[chainIndex][i].q_start;
+                end1 = ic.qt_start_end[chainIndex][i].t_end;
+                end2 = ic.qt_start_end[chainIndex][i].q_end;  
+              }
+              else {
+                start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
+                start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
+                end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
+                end2 = ic.qt_start_end[chainIndex][i].q_end - 1;  
+              }
+/*
               if(i > 0) {
                   let  index1 = alignIndex;
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
                       if(ic.chainsSeq[chainid1] === undefined) break;
                       let  resi = ic.chainsSeq[chainid1][j].resi;
                       let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
+
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
@@ -426,17 +442,32 @@ class SetSeqAlign {
                       }
                   }
               }
-
+*/
 
               for(let j = 0; j <= end1 - start1; ++j) {
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
-                  if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+                  let  resi1, resi2, resn1, resn2;
+                  if(bRealign) {
+                    resi1 = j + start1;
+                    resi2 = j + start2;
 
-                  let  resi1 = ic.chainsSeq[chainid1][j + start1].resi;
-                  let  resi2 = ic.chainsSeq[chainid2][j + start2].resi;
-                  let  resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
-                  let  resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                    let resid1 = chainid1 + '_' + resi1;
+                    let resid2 = chainid2 + '_' + resi2;
+
+                    if(ic.residues[resid1] === undefined || ic.residues[resid2] === undefined) continue;
+
+                    resn1 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]).resn.substr(0, 3));
+                    resn2 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]).resn.substr(0, 3));
+                  }
+                  else {
+                    if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+
+                    resi1 = ic.chainsSeq[chainid1][j + start1].resi;
+                    resi2 = ic.chainsSeq[chainid2][j + start2].resi;
+                    resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
+                    resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                  }
 
                   if(resn1 === resn2) {
                       color = '#FF0000';

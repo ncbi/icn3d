@@ -39,7 +39,8 @@ class Dialog {
 
         // adda save button
         if(this.dialogHashSave === undefined || !this.dialogHashSave.hasOwnProperty(id)) {
-            $("#" + id).parent().children('.ui-dialog-titlebar').append("<span pid='" + id + "' class='icn3d-saveicon ui-icon ui-icon-disk' title='Save as an HTML file'></span>");
+            $("#" + id).parent().children('.ui-dialog-titlebar')
+            .append("<div pid='" + id + "' class='icn3d-saveicon ui-icon ui-icon-disk' title='Save as an HTML file' style='background-color:white; background-image: url(&quot;https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png&quot;);'></div>");
 
             if(this.dialogHashSave === undefined) this.dialogHashSave = {}
             this.dialogHashSave[id] = 1;
@@ -51,7 +52,8 @@ class Dialog {
 
         // adda save button
         if(this.dialogHashHide === undefined || !this.dialogHashHide.hasOwnProperty(id)) {
-            $("#" + id).parent().children('.ui-dialog-titlebar').append("<span pid='" + id + "' class='icn3d-hideicon ui-icon ui-icon-arrowthick-2-ne-sw' title='Resize the window'></span>");
+            $("#" + id).parent().children('.ui-dialog-titlebar')
+            .append("<div pid='" + id + "' class='icn3d-hideicon ui-icon ui-icon-arrowthick-2-ne-sw' title='Resize the window' style='background-color:white; background-image: url(&quot;https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png&quot;);'></div>");
 
             if(this.dialogHashHide === undefined) this.dialogHashHide = {}
             this.dialogHashHide[id] = 1;
