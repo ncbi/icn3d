@@ -8856,8 +8856,10 @@ class Line {
                 for(let i = 0, il = atom.bonds.length; i < il; ++i) {
                     let bondAtom = ic.atoms[atom.bonds[i]];
                     // hydrogen connected to Calpha: HA
-                    if(bondAtom.name === 'HA' || (bondAtom.name !== 'C' && bondAtom.name !== 'N'
-                      && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) ) {
+                    //if(bondAtom.name === 'HA' || (bondAtom.name !== 'C' && bondAtom.name !== 'N'
+                    //  && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) ) {
+                    if(bondAtom.name !== 'C' && bondAtom.name !== 'N'
+                        && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) {
                         coordArray.push(atom.coord);
                         coordArray.push(bondAtom.coord);
 
@@ -8866,14 +8868,14 @@ class Line {
                     }
                 }
             }
-
+/*
             // hydrogen connected to N: H
             atom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid], 'N');
 
             if(atom !== undefined) {
                 for(let i = 0, il = atom.bonds.length; i < il; ++i) {
                     let bondAtom = ic.atoms[atom.bonds[i]];
-                    // hydrogen connected to Calpha: HA
+                    // hydrogen connected to N: H
                     if(bondAtom.name === 'H') {
                         coordArray.push(atom.coord);
                         coordArray.push(bondAtom.coord);
@@ -8883,14 +8885,15 @@ class Line {
                     }
                 }
             }
+*/            
         }
 
         for(let i = 0, il = coordArray.length; i < il; i += 2) {
-            if(style === 'ball and stick' || style === 'stick') {
-                let radius = (style === 'stick') ? ic.cylinderRadius : ic.cylinderRadius * 0.5;
+            if(style === 'ball and stick' || style === 'stick' || style === 'ball and stick2' || style === 'stick2') {
+                let radius = (style === 'stick' || style === 'stick2') ? ic.cylinderRadius : ic.cylinderRadius * 0.5;
                 ic.cylinderCls.createCylinder(coordArray[i], coordArray[i+1], radius, colorArray[i+1]);
             }
-            else if(style === 'lines') {
+            else if(style === 'lines' || style === 'lines2') {
                 let line = this.createSingleLine(coordArray[i], coordArray[i+1], colorArray[i+1], false, 0.5);
                 ic.mdl.add(line);
             }
@@ -21673,22 +21676,7 @@ class LoadPDB {
 
         // calculate disulfide bonds for PDB files
         if(!ic.bSsbondProvided) {
-            // get all Cys residues
-            let  structure2cys_resid = {};
-            for(let chainid in ic.chainsSeq) {
-                let  seq = ic.chainsSeq[chainid];
-                let  structure = chainid.substr(0, chainid.indexOf('_'));
-
-                for(let i = 0, il = seq.length; i < il; ++i) {
-                    // each seq[i] = {"resi": 1, "name":"C"}
-                    if(seq[i].name == 'C') {
-                        if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
-                        structure2cys_resid[structure].push(chainid + '_' + seq[i].resi);
-                    }
-                }
-            }
-
-            this.setSsbond(structure2cys_resid);
+            this.setSsbond();
         }
 
         // remove the reference
@@ -21749,7 +21737,7 @@ class LoadPDB {
 
                 ic.proteins[atom.serial] = 1;
                 if (atom.name === 'CA') ic.calphas[atom.serial] = 1;
-                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') ic.sidec[atom.serial] = 1;
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') ic.sidec[atom.serial] = 1;
               }
             }
             else if(atom.het) {
@@ -21797,7 +21785,7 @@ class LoadPDB {
 
                 delete ic.proteins[atom.serial];
                 if (atom.name === 'CA') delete ic.calphas[atom.serial];
-                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
             }
         }
 
@@ -21911,7 +21899,23 @@ class LoadPDB {
         }
     }
 
-    setSsbond(structure2cys_resid) { let ic = this.icn3d; ic.icn3dui;
+    setSsbond() { let ic = this.icn3d; ic.icn3dui;
+        // get all Cys residues
+        let  structure2cys_resid = {};
+
+        for(let chainid in ic.chainsSeq) {
+            let  seq = ic.chainsSeq[chainid];
+            let  structure = chainid.substr(0, chainid.indexOf('_'));
+
+            for(let i = 0, il = seq.length; i < il; ++i) {
+                // each seq[i] = {"resi": 1, "name":"C"}
+                if(seq[i].name == 'C') {
+                    if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
+                    structure2cys_resid[structure].push(chainid + '_' + seq[i].resi);
+                }
+            }
+        }
+
         // determine whether there are disulfide bonds
         // disulfide bond is about 2.05 angstrom
         let  distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
@@ -22380,7 +22384,7 @@ class LoadAtomData {
                   ic.proteins[serial] = 1;
 
                   if(atm.name === 'CA') ic.calphas[serial] = 1;
-                  if(atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
+                  if(atm.name !== 'N' && atm.name !== 'H' && atm.name !== 'CA' && atm.name !== 'HA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
                 }
                 else if(bNucleotide) {
                   ic.nucleotides[serial] = 1;
@@ -22560,7 +22564,7 @@ class LoadAtomData {
                   ic.proteins[serial] = 1;
 
                   if(atm.name === 'CA') ic.calphas[serial] = 1;
-                  if(atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
+                  if(atm.name !== 'N' && atm.name !== 'H' && atm.name !== 'CA' && atm.name !== 'HA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
                 }
                 else if(biopolymerChainsHash[chainid] === 'nucleotide') {
                   ic.nucleotides[serial] = 1;
@@ -22644,7 +22648,12 @@ class LoadAtomData {
         ic.oriMaxD = ic.maxD;
 
         // set up disulfide bonds
-        if(type === 'mmdbid') {
+        if(type === 'align' || bLastQuery) { // calculate disulfide bonds
+            ic.ssbondpnts = {};
+
+            ic.loadPDBCls.setSsbond();
+        }
+        if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
@@ -22668,7 +22677,7 @@ class LoadAtomData {
                 }
             }
         }
-        else if(type === 'mmcifid') {
+        else if(type === 'mmcifid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
@@ -22677,7 +22686,7 @@ class LoadAtomData {
                 for(let i = 0, il = disulfideArray.length; i < il; ++i) {
                     let  resid1 = disulfideArray[i][0];
                     let  resid2 = disulfideArray[i][1];
-
+                  
                     ic.ssbondpnts[id].push(resid1);
                     ic.ssbondpnts[id].push(resid2);
                 }
@@ -22695,31 +22704,10 @@ class LoadAtomData {
                         let  ori_resid = ic.ssbondpnts[id][j];
                         let  pos = ori_resid.indexOf('_');
                         let  resid = structure + ori_resid.substr(pos);
-
                         ic.ssbondpnts[structure].push(resid);
                     }
                 }
             }
-        }
-        else if(type === 'align') { // calculate disulfide bonds
-            // get all Cys residues
-            let  structure2cys_resid = {};
-            for(let chainid in ic.chainid2seq) {
-                if(chainid2kind[chainid] == 'protein') {
-                    let  seq = ic.chainid2seq[chainid];
-                    let  structure = chainid.substr(0, chainid.indexOf('_'));
-
-                    for(let i = 0, il = seq.length; i < il; ++i) {
-                        // each seq[i] = ["1","V","VAL NH3+"], //[1,"1","V","VAL NH3+"],
-                        if(seq[i][1] == 'C') {
-                            if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
-                            structure2cys_resid[structure].push(chainid + '_' + seq[i][0]);
-                        }
-                    }
-                }
-            }
-
-            ic.loadPDBCls.setSsbond(structure2cys_resid);
         }
 
         if(type === 'mmcifid') {
@@ -24173,7 +24161,7 @@ class MmtfParser {
                       ic.proteins[serial] = 1;
 
                       if(atomName === 'CA') ic.calphas[serial] = 1;
-                      if(atomName !== 'N' && atomName !== 'CA' && atomName !== 'C' && atomName !== 'O') ic.sidec[serial] = 1;
+                      if(atomName !== 'N' && atomName !== 'H' && atomName !== 'CA' && atomName !== 'HA' && atomName !== 'C' && atomName !== 'O') ic.sidec[serial] = 1;
                     }
                     else if(bNucleotide) {
                       ic.nucleotides[serial] = 1;
@@ -35735,9 +35723,11 @@ class SetSeqAlign {
 
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
           let hAtoms = {};
+
+          let bRealign = (chainidArray) ? true : false;
           let mmdbid1, mmdbid2, chain1, chain2, chainid1, chainid2, pos1, pos2;
 
-          if(chainidArray) { 
+          if(bRealign) { 
             // originally chainid2 is target,chainid1 is query
             // switch them so that chainid1 is the target
             chainid1 = chainidArray[1];
@@ -35809,6 +35799,10 @@ class SetSeqAlign {
 
           ic.alnChainsSeq[chainid1] = [];
           ic.alnChains[chainid1] = {};
+
+          ic.alnChainsSeq[chainid2] = [];
+          ic.alnChains[chainid2] = {};
+          
           ic.alnChainsAnno[chainid1] = [];
           ic.alnChainsAnTtl[chainid1] = [];
 
@@ -35831,7 +35825,6 @@ class SetSeqAlign {
           ic.alnChainsAnTtl[chainid1][6].push("");
 
           let  color, color2, classname;
-          let  prevIndex1, prevIndex2;
 
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
@@ -35844,17 +35837,27 @@ class SetSeqAlign {
               //var end1 = ic.qt_start_end[chainIndex][i].q_end - 1;
               //var end2 = ic.qt_start_end[chainIndex][i].t_end - 1;
 
-              let  start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
-              let  start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
-              let  end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-              let  end2 = ic.qt_start_end[chainIndex][i].q_end - 1;
-
+              let start1, start2, end1;
+              if(bRealign) { // realresidue numbers are stored
+                start1 = ic.qt_start_end[chainIndex][i].t_start;
+                start2 = ic.qt_start_end[chainIndex][i].q_start;
+                end1 = ic.qt_start_end[chainIndex][i].t_end;
+                ic.qt_start_end[chainIndex][i].q_end;  
+              }
+              else {
+                start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
+                start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
+                end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
+                ic.qt_start_end[chainIndex][i].q_end - 1;  
+              }
+/*
               if(i > 0) {
                   let  index1 = alignIndex;
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
                       if(ic.chainsSeq[chainid1] === undefined) break;
                       let  resi = ic.chainsSeq[chainid1][j].resi;
                       let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
+
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
@@ -35904,17 +35907,32 @@ class SetSeqAlign {
                       }
                   }
               }
-
+*/
 
               for(let j = 0; j <= end1 - start1; ++j) {
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
-                  if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+                  let  resi1, resi2, resn1, resn2;
+                  if(bRealign) {
+                    resi1 = j + start1;
+                    resi2 = j + start2;
 
-                  let  resi1 = ic.chainsSeq[chainid1][j + start1].resi;
-                  let  resi2 = ic.chainsSeq[chainid2][j + start2].resi;
-                  let  resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
-                  let  resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                    let resid1 = chainid1 + '_' + resi1;
+                    let resid2 = chainid2 + '_' + resi2;
+
+                    if(ic.residues[resid1] === undefined || ic.residues[resid2] === undefined) continue;
+
+                    resn1 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]).resn.substr(0, 3));
+                    resn2 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]).resn.substr(0, 3));
+                  }
+                  else {
+                    if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+
+                    resi1 = ic.chainsSeq[chainid1][j + start1].resi;
+                    resi2 = ic.chainsSeq[chainid2][j + start2].resi;
+                    resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
+                    resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                  }
 
                   if(resn1 === resn2) {
                       color = '#FF0000';
@@ -35946,9 +35964,6 @@ class SetSeqAlign {
 
                   ++alignIndex;
               } // end for(let j
-
-              prevIndex1 = end1;
-              prevIndex2 = end2;
           } // end for(let i
 
           return hAtoms;
@@ -36748,11 +36763,11 @@ class ParserUtils {
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
-          $("#" + ic.pre + "mn2_realignWrap").show();
+          //$("#" + ic.pre + "mn2_realignWrap").show();
       }
       else {
           $("#" + ic.pre + "mn2_alternateWrap").hide();
-          $("#" + ic.pre + "mn2_realignWrap").hide();
+          //$("#" + ic.pre + "mn2_realignWrap").hide();
       }
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
@@ -41735,8 +41750,9 @@ class Selection {
 
         ic.hAtoms = {};
         for(let i in currHAtoms) {
-            if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
-              && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") )
+            if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "H" 
+              && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
+              && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") && ic.atoms[i].name !== "HA")
               ||(ic.nucleotides.hasOwnProperty(i) && me.parasCls.nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
                 ic.hAtoms[i] = 1;
             }
@@ -50796,7 +50812,11 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(!me.cfg.simplemenu) html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
+        if(!me.cfg.simplemenu) {
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
+
+            html += liStr + "https://support.nlm.nih.gov/support/create-case/' target='_blank'>Write to Help Desk</a></li>";
+        }
 
         html += "<li><br/></li>";
         html += "</ul>";
@@ -50858,7 +50878,8 @@ class Dialog {
 
         // adda save button
         if(this.dialogHashSave === undefined || !this.dialogHashSave.hasOwnProperty(id)) {
-            $("#" + id).parent().children('.ui-dialog-titlebar').append("<span pid='" + id + "' class='icn3d-saveicon ui-icon ui-icon-disk' title='Save as an HTML file'></span>");
+            $("#" + id).parent().children('.ui-dialog-titlebar')
+            .append("<div pid='" + id + "' class='icn3d-saveicon ui-icon ui-icon-disk' title='Save as an HTML file' style='background-color:white; background-image: url(&quot;https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png&quot;);'></div>");
 
             if(this.dialogHashSave === undefined) this.dialogHashSave = {};
             this.dialogHashSave[id] = 1;
@@ -50870,7 +50891,8 @@ class Dialog {
 
         // adda save button
         if(this.dialogHashHide === undefined || !this.dialogHashHide.hasOwnProperty(id)) {
-            $("#" + id).parent().children('.ui-dialog-titlebar').append("<span pid='" + id + "' class='icn3d-hideicon ui-icon ui-icon-arrowthick-2-ne-sw' title='Resize the window'></span>");
+            $("#" + id).parent().children('.ui-dialog-titlebar')
+            .append("<div pid='" + id + "' class='icn3d-hideicon ui-icon ui-icon-arrowthick-2-ne-sw' title='Resize the window' style='background-color:white; background-image: url(&quot;https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png&quot;);'></div>");
 
             if(this.dialogHashHide === undefined) this.dialogHashHide = {};
             this.dialogHashHide[id] = 1;
@@ -52743,12 +52765,22 @@ class Events {
     //    },
     //    clickRealign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
+            
            ic.realignParserCls.realign();
            me.htmlCls.clickMenuCls.setLogCmd("realign", true);
         });
     //    },
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
+
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
                ic.definedSetsCls.setPredefinedInMenu();
@@ -52768,6 +52800,10 @@ class Events {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(Object.keys(ic.structures).length < 2) {
+                alert("At least two structuresare required for alignment...");
+                return;
+            }
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
                ic.definedSetsCls.setPredefinedInMenu();
@@ -59331,7 +59367,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.5';
+    this.REVISION = '3.11.6';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

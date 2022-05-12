@@ -1721,7 +1721,11 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(!me.cfg.simplemenu) html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
+        if(!me.cfg.simplemenu) {
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
+
+            html += liStr + "https://support.nlm.nih.gov/support/create-case/' target='_blank'>Write to Help Desk</a></li>";
+        }
 
         html += "<li><br/></li>";
         html += "</ul>";

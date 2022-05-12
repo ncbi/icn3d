@@ -380,7 +380,7 @@ class LoadAtomData {
                   ic.proteins[serial] = 1;
 
                   if(atm.name === 'CA') ic.calphas[serial] = 1;
-                  if(atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
+                  if(atm.name !== 'N' && atm.name !== 'H' && atm.name !== 'CA' && atm.name !== 'HA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
                 }
                 else if(bNucleotide) {
                   ic.nucleotides[serial] = 1;
@@ -562,7 +562,7 @@ class LoadAtomData {
                   ic.proteins[serial] = 1;
 
                   if(atm.name === 'CA') ic.calphas[serial] = 1;
-                  if(atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
+                  if(atm.name !== 'N' && atm.name !== 'H' && atm.name !== 'CA' && atm.name !== 'HA' && atm.name !== 'C' && atm.name !== 'O') ic.sidec[serial] = 1;
                 }
                 else if(biopolymerChainsHash[chainid] === 'nucleotide') {
                   ic.nucleotides[serial] = 1;
@@ -646,7 +646,12 @@ class LoadAtomData {
         ic.oriMaxD = ic.maxD;
 
         // set up disulfide bonds
-        if(type === 'mmdbid') {
+        if(type === 'align' || bLastQuery) { // calculate disulfide bonds
+            ic.ssbondpnts = {};
+
+            ic.loadPDBCls.setSsbond();
+        }
+        if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
@@ -670,7 +675,7 @@ class LoadAtomData {
                 }
             }
         }
-        else if(type === 'mmcifid') {
+        else if(type === 'mmcifid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
@@ -679,7 +684,7 @@ class LoadAtomData {
                 for(let i = 0, il = disulfideArray.length; i < il; ++i) {
                     let  resid1 = disulfideArray[i][0];
                     let  resid2 = disulfideArray[i][1];
-
+                  
                     ic.ssbondpnts[id].push(resid1);
                     ic.ssbondpnts[id].push(resid2);
                 }
@@ -697,31 +702,10 @@ class LoadAtomData {
                         let  ori_resid = ic.ssbondpnts[id][j];
                         let  pos = ori_resid.indexOf('_');
                         let  resid = structure + ori_resid.substr(pos);
-
                         ic.ssbondpnts[structure].push(resid);
                     }
                 }
             }
-        }
-        else if(type === 'align') { // calculate disulfide bonds
-            // get all Cys residues
-            let  structure2cys_resid = {}
-            for(let chainid in ic.chainid2seq) {
-                if(chainid2kind[chainid] == 'protein') {
-                    let  seq = ic.chainid2seq[chainid];
-                    let  structure = chainid.substr(0, chainid.indexOf('_'));
-
-                    for(let i = 0, il = seq.length; i < il; ++i) {
-                        // each seq[i] = ["1","V","VAL NH3+"], //[1,"1","V","VAL NH3+"],
-                        if(seq[i][1] == 'C') {
-                            if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
-                            structure2cys_resid[structure].push(chainid + '_' + seq[i][0]);
-                        }
-                    }
-                }
-            }
-
-            ic.loadPDBCls.setSsbond(structure2cys_resid);
         }
 
         if(type === 'mmcifid') {
