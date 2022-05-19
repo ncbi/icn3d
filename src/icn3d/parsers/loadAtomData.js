@@ -187,7 +187,7 @@ class LoadAtomData {
         let  bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
         let  miscCnt = 0;
         let  CSerial, prevCSerial, OSerial, prevOSerial;
-        
+      
         let  biopolymerChainsHash = {};
         for(let i in atoms) {
             ++serial;
@@ -332,9 +332,9 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef && chainIndex) {
-                    atm = ic.chainalignParserCls.transformAtom(atm, chainIndex, alignType);
-                }
+                //if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef && chainIndex) {
+                //    atm = ic.chainalignParserCls.transformAtom(atm, chainIndex, alignType);
+                //}
             }
             else {
                 atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
@@ -543,7 +543,7 @@ class LoadAtomData {
             prevMolid = molid;
             prevmmdbId = mmdbId;
         }
-        
+
         //ic.lastTargetSerial = serial;
 
         // adjust biopolymer type
@@ -719,11 +719,13 @@ class LoadAtomData {
         // display the structure right away. load the mns and sequences later
     //        setTimeout(function(){
         let  hAtoms = {};
+    
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
         else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined 
             && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
+
             if(chainIndex) {
                 ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
@@ -736,7 +738,7 @@ class LoadAtomData {
                 $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
                 $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
             }
-            else {
+            else {            
                 hAtoms = ic.hAtoms;
             }
         }
