@@ -276,8 +276,9 @@ var allnodejs = [
 
 var allmodulejs = [
     "tmpdir/third.js",
-    "tmpdir/icn3d_rollup_module.js",
-    "src/thirdparty/moduleExport.js"
+    "tmpdir/icn3d_rollup_module.js"
+    //,
+    //"src/thirdparty/moduleExport.js"
 ];
 
 // Create the gulp tasks for simple and full:
@@ -295,6 +296,7 @@ gulp.task("allmin",
         .pipe(concat('icn3d.min.js'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build))
+        .pipe(gulp.dest(icn3dnpm))
         .pipe(rename('icn3d_' + package.version + '.min.js'))
         .pipe(gulp.dest(dist));
   });
@@ -312,7 +314,8 @@ gulp.task("allmodule",
     return gulp.src(allmodulejs)
         .pipe(concat('icn3d.module.js'))
         .pipe(gulp.dest(dist))
-        .pipe(gulp.dest(build));
+        .pipe(gulp.dest(build))
+        .pipe(gulp.dest(icn3dnpm));
   });
 
 /*

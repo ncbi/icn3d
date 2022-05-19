@@ -119,7 +119,7 @@ class MmdbParser {
 
             return;
         }
-        else {
+        else {        
             this.parseMmdbDataPart1(data, type);
 
             let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;

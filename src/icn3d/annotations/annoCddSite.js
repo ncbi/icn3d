@@ -23,7 +23,7 @@ class AnnoCddSite {
         let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
         // live search
-//        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+        //let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // precalculated
         let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
         // live search for AlphaFold structures
@@ -68,7 +68,8 @@ class AnnoCddSite {
                seq = seq.replace(/O/g, '');
 
                //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
-               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+               //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + seq;
 
                let cdd = $.ajax({
                   url: url,

@@ -69,7 +69,7 @@ class ChainalignParser {
                     mmdbid_t = idArray[2];
                     let chain_t = idArray[3];
 
-                    thisClass.transformStructure(mmdbid_q, index-1, 'query');
+                    thisClass.transformStructure(mmdbid_q, index-1, 'query');                
                 }
 
                 // dynamicly align pairs in ic.afChainIndexHash
@@ -104,6 +104,7 @@ class ChainalignParser {
                 //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
                 $.when.apply(undefined, ajaxArray).then(function() {
                     let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
+
                     thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
                 })
                 .fail(function() {
@@ -114,7 +115,7 @@ class ChainalignParser {
     }
 
     downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
+        //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
         // modify the previous trans and rotation matrix
         for(let i = 0, il = dataArray.length; i < il; ++i) {
@@ -130,11 +131,11 @@ class ChainalignParser {
 
             this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
         }
-
-        // transform the target if not yet
-        if(!bTargetTransformed) {
-            this.transformStructure(mmdbid_t, indexArray[0], 'target');
-        }
+       
+        // do not transform the target
+        //if(!bTargetTransformed) {
+        //    this.transformStructure(mmdbid_t, indexArray[0], 'target');
+        //}
 
         // transform the rest
         for(let i = 0, il = dataArray.length; i < il; ++i) {
@@ -158,6 +159,7 @@ class ChainalignParser {
 
         let hAtomsTmp = {}, hAtomsAll = {};
         // set up the view of sequence alignment
+        
         for(let i = 1, il = chainidArray.length; i < il; ++i) {
             if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                 hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
@@ -172,6 +174,20 @@ class ChainalignParser {
                 $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
             }
         }
+
+/*
+        if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+            //hAtomsAll = ic.setSeqAlignCls.setSeqAlignChain(chainidArray);
+            hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray);
+
+            let  bReverse = false;
+            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+            let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+            $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+        }
+*/
 
         // highlight all aligned atoms
         ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
@@ -320,7 +336,7 @@ class ChainalignParser {
 
     transformStructure(mmdbid, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
-       
+
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
@@ -330,6 +346,8 @@ class ChainalignParser {
                 }
             }
         }
+
+
     }
 
     transformAtom(atm, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;

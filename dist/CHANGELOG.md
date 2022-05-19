@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.11.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.7.zip) was release on May 18, 2022. Enabled to import "icn3d.module.js" from npm icn3d to work with React.
+
 [icn3d-3.11.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.6.zip) was release on May 11, 2022. Fixed a bug in the dynamic VAST alignment in iCn3D with the menu "File > Realign Selection > by Structure Alignment".
 
 [icn3d-3.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.5.zip) was release on May 3, 2022. Added VAST+ and VAST Search interface in the menu "File > Search Similar". Enabled to assign rainbow/spectrum colors for a list of sets in the menu "Color > Rainbow/Spectrum > for Sets".
