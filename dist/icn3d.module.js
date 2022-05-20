@@ -26019,7 +26019,7 @@ class ChainalignParser {
 
         let hAtomsTmp = {}, hAtomsAll = {};
         // set up the view of sequence alignment
-        
+       
         for(let i = 1, il = chainidArray.length; i < il; ++i) {
             if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                 hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
@@ -36553,7 +36553,7 @@ console.log(index + " chainid: " + chainid);
               }
           }
     }
-*/
+*/    
 }
 
 /**
@@ -59738,7 +59738,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.11.7';
+    this.REVISION = '3.11.8';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

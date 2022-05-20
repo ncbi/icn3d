@@ -41,6 +41,16 @@ gulp.task('libs-three',
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy three.module.js into icn3dnpm',
+gulp.task('libs-three-module',
+//gulp.series('clean'),
+function() {
+  return gulp.src([
+          "node_modules/three/build/three.module.js"
+      ])
+      .pipe(gulp.dest(icn3dnpm));
+});
+
 //  'Copy jquery.min.js into dist/libs',
 gulp.task('libs-jquery',
   //gulp.series('clean'),
@@ -129,6 +139,7 @@ gulp.task('copy-rename2',
         ])
         .pipe(concat('icn3d.css'))
         .pipe(gulp.dest(dist))
+        .pipe(gulp.dest(icn3dnpm))
         .pipe(rename('icn3d_' + package.version + '.css'))
         .pipe(gulp.dest(dist));
   });
@@ -376,7 +387,7 @@ gulp.task("html3",
 
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
-  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
+  gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
     'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
     'html','html2','html3')

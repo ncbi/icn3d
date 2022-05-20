@@ -1068,7 +1068,7 @@ console.log(index + " chainid: " + chainid);
               }
           }
     }
-*/
+*/    
 }
 
 export {SetSeqAlign}

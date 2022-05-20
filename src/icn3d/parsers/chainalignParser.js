@@ -159,7 +159,7 @@ class ChainalignParser {
 
         let hAtomsTmp = {}, hAtomsAll = {};
         // set up the view of sequence alignment
-        
+       
         for(let i = 1, il = chainidArray.length; i < il; ++i) {
             if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                 hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
