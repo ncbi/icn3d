@@ -168,7 +168,7 @@ class ClickMenu {
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile_app", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { let ic = me.icn3d;
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
         });
@@ -220,7 +220,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn1_mmdbid: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbid", "#" + me.pre + "tool_mmdbid"], "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         });
 
@@ -268,7 +268,7 @@ class ClickMenu {
         });
     //    },
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2", "#" + me.pre + "tool_delphi"], "click", function(e) { let ic = me.icn3d;
            ic.loadPhiFrom = 'delphi';
            $("#" + me.pre + "dl_delphi_tabs").tabs();
            me.htmlCls.dialogCls.openDlg('dl_delphi', 'Please set parameters to display DelPhi potential map');
@@ -460,7 +460,7 @@ class ClickMenu {
 
     //    },
     //    clkMn1_sharelink: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_sharelink", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", function(e) { let ic = me.icn3d;
             ic.shareLinkCls.shareLink();
         });
     //    },
@@ -586,7 +586,7 @@ class ClickMenu {
         let thisClass = this;
     // mn 2
     //    clkMn2_selectannotations: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn6_selectannotations", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", function(e) { let ic = me.icn3d;
            ic.showAnnoCls.showAnnotations();
            thisClass.setLogCmd("view annotations", true);
            //thisClass.setLogCmd("window annotations", true);
@@ -727,7 +727,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn2_definedsets: function() {
-        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2", "#" + me.pre + "tool_definedsets"], "click", function(e) { let ic = me.icn3d;
            ic.definedSetsCls.showSets();
            thisClass.setLogCmd('defined sets', true);
            //thisClass.setLogCmd('window defined sets', true);
@@ -803,7 +803,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn2_aroundsphere: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn2_aroundsphere", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn2_aroundsphere", "#" + me.pre + "tool_aroundsphere"], "click", function(e) { let ic = me.icn3d;
             thisClass.SetChainsAdvancedMenu();
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
@@ -833,7 +833,7 @@ class ClickMenu {
         let thisClass = this;
     // mn 3
     //    clkMn3_proteinsRibbon: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsRibbon", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsRibbon","#" + me.pre + "tool_proteinsRibbon"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'ribbon');
            thisClass.setLogCmd('style proteins ribbon', true);
         });
@@ -887,13 +887,13 @@ class ClickMenu {
         });
     //    },
     //    clkMn3_proteinsBallstick: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBallstick", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsBallstick", "#" + me.pre + "tool_proteinsBallstick"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'ball and stick');
            thisClass.setLogCmd('style proteins ball and stick', true);
         });
     //    },
     //    clkMn3_proteinsSphere: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsSphere", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsSphere", "#" + me.pre + "tool_proteinsSphere"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'sphere');
            thisClass.setLogCmd('style proteins sphere', true);
         });
@@ -1165,13 +1165,13 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowChain", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow for chains');
            thisClass.setLogCmd('color rainbow for chains', true);
         });
     //    },
     //    clkMn4_clrChain: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrChain", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrChain", "#" + me.pre + "tool_clrChain"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'chain');
            thisClass.setLogCmd('color chain', true);
         });
@@ -1193,7 +1193,7 @@ class ClickMenu {
 
     //    },
     //    clkMn4_clrSSGreen: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSGreen", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrSSGreen", "#" + me.pre + "tool_clrSSGreen"], "click", function(e) { let ic = me.icn3d;
            ic.sheetcolor = 'green';
            ic.setOptionCls.setOption('color', 'secondary structure green');
            thisClass.setLogCmd('color secondary structure green', true);
@@ -1294,7 +1294,7 @@ class ClickMenu {
 
     //    },
     //    clkMn4_clrAtom: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrAtom", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'atom');
            thisClass.setLogCmd('color atom', true);
         });
@@ -1404,7 +1404,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn5_surfaceVDW: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceVDW", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn5_surfaceVDW", "#" + me.pre + "tool_surfaceVDW"], "click", function(e) { let ic = me.icn3d;
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'Van der Waals surface');
            thisClass.setLogCmd('set surface Van der Waals surface', true);
@@ -1668,7 +1668,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn2_saveselection: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn2_saveselection", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn2_saveselection","#" + me.pre + "tool_saveselection"], "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_saveselection', 'Save the selected');
         });
     //    },
@@ -1747,7 +1747,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn2_selectedcenter: function() {
-        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d;
            //thisClass.setLogCmd('zoom selection', true);
            ic.transformCls.zoominSelection();
            ic.drawCls.draw();
@@ -1763,7 +1763,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn6_resetOrientation: function() {
-        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation", "#" + me.pre + "tool_resetOrientation"], "click", function(e) { let ic = me.icn3d;
            //thisClass.setLogCmd('reset orientation', true);
            ic.transformCls.resetOrientation();
            //ic.setColorCls.applyOriginalColor();
@@ -1887,6 +1887,17 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_bkgdBlack", "click", function(e) { let ic = me.icn3d;
            ic.setStyleCls.setBackground('black');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "tool_bkgd", "click", function(e) { let ic = me.icn3d;
+            if(ic.opts['background'] == 'black') {
+                ic.setStyleCls.setBackground('white');
+            }
+            else {
+                ic.setStyleCls.setBackground('black');
+            }
+         });
+
+        ic.opts['background'] 
     //    },
     //    clkMn6_bkgdGrey: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_bkgdGrey", "click", function(e) { let ic = me.icn3d;
@@ -1894,7 +1905,7 @@ class ClickMenu {
         });
     //    },
     //    clkMn6_bkgdWhite: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdWhite", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "mn6_bkgdWhite", "#" + me.pre + "tool_bkgdWhite"], "click", function(e) { let ic = me.icn3d;
            ic.setStyleCls.setBackground('white');
         });
     //    },

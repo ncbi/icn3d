@@ -159,7 +159,7 @@ class ChainalignParser {
 
         let hAtomsTmp = {}, hAtomsAll = {};
         // set up the view of sequence alignment
-       
+/*       
         for(let i = 1, il = chainidArray.length; i < il; ++i) {
             if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                 hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
@@ -174,26 +174,49 @@ class ChainalignParser {
                 $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
             }
         }
-
-/*
-        if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-            //hAtomsAll = ic.setSeqAlignCls.setSeqAlignChain(chainidArray);
-            hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray);
-
-            let  bReverse = false;
-            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-            let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
-
-            $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-        }
 */
 
+        if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+            // set multiple seqeunce alignment from ic.qt_start_end
+            hAtomsAll = this.setMsa(chainidArray);
+        }
+
         // highlight all aligned atoms
-        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsAll);
+
+        ic.transformCls.zoominSelection();
 
         // do the rest
         this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
+    }
+
+    setMsa(chainidArray, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+        // get aligned length for each pair
+        let index_alignLen = [];
+        for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+            let alignLen = 0;
+            for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
+                alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+            }
+            index_alignLen.push({index: index, alignLen: alignLen});
+        }
+        index_alignLen.sort(function(a,b){
+            return b.alignLen - a.alignLen;
+        });
+
+        let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
+
+        let  bReverse = false;
+        let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+        let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+        $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+        $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+        me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+
+        return hAtomsAll;
     }
 
     downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -295,18 +318,19 @@ class ChainalignParser {
             allChainidHash[chainidArray[0]] = 1;
             allChainidHash[chainidArray[1]] = 1;
 
-            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
-            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
+            //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
+            //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
         }
 
         // set up the view of sequence alignment for each pair
         for(let mmdbidpair in mmdbidpairFinalHash) {           
             if(ic.q_rotation !== undefined) {
-                let chainidArrayTmp = mmdbidpairFinalHash[mmdbidpair].split(',');
+                let chainidArrayTmp = mmdbidpairFinalHash[mmdbidpair].split(','); // chainid_chainid_index
                 // switch these two chains
                 let chainidArray = [chainidArrayTmp[1], chainidArrayTmp[0], chainidArrayTmp[2]];
 
-                ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
+                let hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
+                hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
 
                 let  bReverse = false;
                 let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
@@ -319,8 +343,11 @@ class ChainalignParser {
 
         //this.downloadChainalignmentPart3(undefined, Object.keys(allChainidHash), hAtoms);
 
-        ic.dAtoms = hAtoms;
-        ic.hAtoms = hAtoms;
+        ic.dAtoms = me.hashUtilsCls.cloneHash(hAtoms);
+        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
+
+        let name = 'protein_aligned';
+        ic.selectionCls.saveSelection(name, name);
 
         ic.opts['color'] = 'identity';
         //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
@@ -395,8 +422,10 @@ class ChainalignParser {
         // memebrane is determined by one structure. But transform both structures
         if(chainresiCalphaHash2 !== undefined) ic.ParserUtilsCls.transformToOpmOriForAlign(ic.selectedPdbid, chainresiCalphaHash2, true);
 
-        ic.dAtoms = hAtoms;
-        ic.hAtoms = hAtoms;
+        //ic.dAtoms = hAtoms;
+        //ic.hAtoms = hAtoms;
+        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
+        ic.dAtoms = me.hashUtilsCls.cloneHash(hAtoms);
 
         ic.ParserUtilsCls.renderStructure();
 
@@ -424,7 +453,7 @@ class ChainalignParser {
 
         // by default, open the seq alignment window
          //if(me.cfg.showalignseq) {
-            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+//            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         //}
 
         if(me.cfg.show2d && ic.bFullUi) {

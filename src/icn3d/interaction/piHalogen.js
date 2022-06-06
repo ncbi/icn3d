@@ -561,7 +561,7 @@ class PiHalogen {
             }
 
             //if(cnt == 5 || cnt == 6) {
-            if(cnt >= 3 && cnt <= 6) { // two neighboring cycles 5 and 6 in caffeine (CID 2519) will get reported as 5 and 4 atoms. The shared two atoms are reported only once.
+            if(cnt >= 3 && cnt <= 6 && coordArray[0] && coordArray[1] && coordArray[2] && coordArray[3]) { // two neighboring cycles 5 and 6 in caffeine (CID 2519) will get reported as 5 and 4 atoms. The shared two atoms are reported only once.
                 let v1 = coordArray[0].clone().sub(coordArray[1]).normalize();
                 let v2 = coordArray[1].clone().sub(coordArray[2]).normalize();
                 let v3 = coordArray[2].clone().sub(coordArray[3]).normalize();

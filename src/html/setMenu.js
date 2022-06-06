@@ -49,7 +49,7 @@ class SetMenu {
             html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
             html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
 
-            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" style="display:block;" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
 
             html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
         //}
@@ -252,15 +252,16 @@ class SetMenu {
 
         let html = "";
 
-        html += me.htmlCls.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
-        html += "<table style='margin-top: 3px; width:100px;'><tr valign='center'>";
+        html += me.htmlCls.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 0px;'>";
+        //html += "<table style='margin-top: 3px; width:100px;'>";
+        html += "<table style='margin-top: 3px; width:770px; background-color:#EEE;'>";
 
         html += this.setTools_base();
 
         // add custom buttons here
         // ...
 
-        html += "</tr></table>";
+        html += "</table>";
         html += "</div></div>";
 
         return html;
@@ -274,12 +275,84 @@ class SetMenu {
         return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap;" + color + "' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
     }
 
+    setIcon(iconType, id, title, iconStyle, url, bText) { let me = this.icn3dui;
+        if(me.bNode) return '';
+
+        let color = 'color:#1c94c4; ';
+        let bkgdColor = ' background-color:#EEE; ';
+        let cssCursor = (iconType == 'text') ? '' : 'cursor:pointer;';
+
+        //let iconHtml = '<i id="' + me.pre + id + '" class="fa fa-' + iconStyle + '" title="' + title + '" style="font-size:20px; ' + color + bkgdColor + cssCursor + cssBorder + '"></i>';
+        let iconHtml;
+        if(bText) {
+            iconHtml = '<div id="' + me.pre + id + '" title="' + title + '" style="font-family: Arial, Helvetica, sans-serif; font-size:16px; width:16px; height:16px;' + color + bkgdColor + cssCursor + '">' + iconStyle + '</div>';
+        }
+        else {
+            iconHtml = '<i id="' + me.pre + id + '" class="las la-' + iconStyle + '" title="' + title + '" style="width:16px; height:16px;' + color + bkgdColor + cssCursor + '"></i>';
+        }
+
+        if(iconType == 'link') {
+            return '<a href="' + url + '" target="_blank">' + iconHtml + '</a>';
+        }
+        else {
+            return iconHtml;
+        }
+    }
+
     setTools_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
         // second row
-        let html = "";
+        let html = "<tr valign='center'>";
 
+        let iconType = 'regular';
+        let tdStr = "<td valign='top' align='center'>";
+        let tdStrBorder = "<td valign='top' align='center' style='border-left: solid 1px #888888'>";
+
+        // line-awesome: https://icons8.com/line-awesome
+        // File menu
+        html += tdStr + this.setIcon(iconType, 'tool_mmdbid', 'Input PDB or MMDB ID', 'id', undefined, true) + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_pdbfile', 'Input PDB Files (appendable)', 'file-alt') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_sharelink', 'Get Share Link', 'link') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'saveimage', 'Save iCn3D PNG Image', 'camera') + "</td>";
+
+        // Select menu
+        html += tdStrBorder + this.setIcon(iconType, 'tool_definedsets', 'Defined Sets', 'object-group') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_aroundsphere', 'Select by Distance', 'dot-circle') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_saveselection', 'Save Selection as a Set', 'save') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'toggleHighlight', 'Toggle Highlight', 'highlighter') + "</td>";
+
+        // View menu
+        html += tdStrBorder + this.setIcon(iconType, 'show_selected', 'View Selection', 'eye') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_selectedcenter', 'Zoom in Selection', 'search-plus') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'alternate', "Alternate the Structures by keying the letter 'a'", 'a', undefined, true) + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_resetOrientation', 'Reset Orientation', 'undo-alt') + "</td>";
+
+        // Style menu
+        html += tdStrBorder + this.setIcon(iconType, 'tool_proteinsRibbon', 'Style Ribbon', 'dna') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_proteinsSphere', 'Style Sphere', 'volleyball-ball') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_surfaceVDW', 'Show Van der Waals Surface', 'cloud') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_bkgd', 'Toggle Background Color', 'adjust') + "</td>";
+
+        // Color menu
+        html += tdStrBorder + this.setIcon(iconType, 'tool_clrRainbowChain', 'Color Rainbow for Chains', 'rainbow') + "</td>"; 
+        html += tdStr + this.setIcon(iconType, 'tool_clrSSGreen', 'Color by Secondary Structures', 'ring') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_clrChain', 'Color by Chains', 'layer-group') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_clrAtom', 'Color by Atoms', 'atom') + "</td>";
+
+        // Analysis menu
+        html += tdStrBorder + this.setIcon(iconType, 'tool_selectannotations', 'Sequences & Annotations', 'grip-lines') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'hbondsYes', 'Interactions', 'users') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_delphi', 'Delphi Potentials', 'cloud-meatball') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'removeLabels', 'Remove Labels', 'remove-format') + "</td>";
+
+        // Help menu
+        html += tdStrBorder + this.setIcon('link', 'tool-gallery', 'Gallery', 'image', 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery') + "</td>";
+        html += tdStr + this.setIcon('link', 'tool-video', 'Videos', 'file-video', 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos') + "</td>";
+        html += tdStr + this.setIcon('link', 'tool-github', 'iCn3D GitHub', 'code', 'https://github.com/ncbi/icn3d') + "</td>";
+        html += tdStr + this.setIcon('text', 'tool-hints', 'Transform Hints: use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation.', 'info-circle') + "</td>";
+
+        /*
         let buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
         let tdStr = "<td valign='top'>";
 
@@ -300,6 +373,8 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += tdStr + this.setButton(buttonStyle, 'removeLabels', 'Remove Labels', 'Remove<br/>Labels') + "</td>";
         }
+*/
+        html += "</tr>";
 
         return html;
     }

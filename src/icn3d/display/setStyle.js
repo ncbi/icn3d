@@ -103,6 +103,7 @@ class SetStyle {
     }
 
     setBackground(color) {var ic = this.icn3d, me = ic.icn3dui;
+      
        ic.setOptionCls.setOption('background', color);
        me.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
        //let titleColor =(color == 'black' || color == 'transparent') ? me.htmlCls.GREYD : 'black';

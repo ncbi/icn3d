@@ -260,10 +260,10 @@ class Transform {
        para.update = true;
 
        if(ic.bControlGl && !me.bNode) {
-          window.controls.update(para);
+          if(window.controls) window.controls.update(para);
        }
        else {
-          ic.controls.update(para);
+          if(ic.controls) ic.controls.update(para);
        }
 
        if(atoms === undefined) {

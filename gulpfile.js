@@ -97,7 +97,7 @@ gulp.task('libs-jquery-ui-images1',
         .pipe(gulp.dest(dist + '/lib'));
   });
 
-//  'Copy jquery-ui images into dist/libs',
+//  'Copy jquery-ui images into dist/lib',
 gulp.task('libs-jquery-ui-images2',
   //gulp.series('clean'),
   function() {
@@ -106,6 +106,16 @@ gulp.task('libs-jquery-ui-images2',
         ])
         .pipe(gulp.dest(dist + '/lib/images'));
   });
+
+//  'Copy line-awesome fonts into dist/lib',
+gulp.task('libs-line-awesome-fonts',
+//gulp.series('clean'),
+function() {
+  return gulp.src([
+          "node_modules/line-awesome/dist/line-awesome/fonts/**"
+      ])
+      .pipe(gulp.dest(dist + '/lib/fonts'));
+});
 
 //  'Copy images to show secondary structures into dist/ssimages',
 gulp.task('ssimages',
@@ -129,13 +139,23 @@ gulp.task('copy',
         .pipe(gulp.dest(dist));
   });
 
+//  'modify line-awesome',
+gulp.task('mod-line-awesome',
+//gulp.series('clean'),
+function() {
+  return gulp.src(["node_modules/line-awesome/dist/line-awesome/css/line-awesome.min.css"])
+      .pipe(replace('../fonts/', 'lib/fonts/'))
+      .pipe(gulp.dest(tmpdir))
+    });
+
 //  'Copy and rename css files',
 gulp.task('copy-rename2',
   //gulp.series('clean'),
   function() {
     return gulp.src([
             "css/icn3d.css",
-            "src/thirdparty/color-pick/color-picker.css"
+            "src/thirdparty/color-pick/color-picker.css",
+            "./tmpdir/line-awesome.min.css",
         ])
         .pipe(concat('icn3d.css'))
         .pipe(gulp.dest(dist))
@@ -161,7 +181,7 @@ var common_js = [
     "src/thirdparty/three/TrackballControls.js",
     "src/thirdparty/three/OrthographicTrackballControls.js",
 
-    "src/thirdparty/mmtfRcsbMod.js",
+    "src/thirdparty/mmtfRcsbMod.js"
 ];
 
 var third_node_js = ["src/thirdparty/defineWindow.js"].concat(common_js);
@@ -254,6 +274,57 @@ gulp.task('rollupmodule', () => {
   });
 });
 
+
+
+gulp.task('rollupvr', () => {
+  return rollup.rollup({
+    input: 'src/thirdparty/three/vr/vr.js',
+    plugins: [
+      resolve(),
+      //terser(),
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      name: 'vr',
+      file: './tmpdir/icn3d_rollup_vr.js',
+      format: 'iife',
+    });
+  });
+});
+
+gulp.task('rollupvrmin', () => {
+  return rollup.rollup({
+    input: 'src/thirdparty/three/vr/vr.js',
+    plugins: [
+      resolve(),
+      terser(),
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      name: 'vr',
+      file: './tmpdir/icn3d_rollup_vr.min.js',
+      format: 'iife',
+    });
+  });
+});
+
+gulp.task('rollupvrmodule', () => {
+  return rollup.rollup({
+    input: 'src/thirdparty/three/vr/vr.js',
+    plugins: [
+      resolve(),
+      //terser(),
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      name: 'vr',
+      file: './tmpdir/icn3d_rollup_vr_module.js',
+      format: 'es',
+    });
+  });
+});
+
+/*
 gulp.task('rollupmodulemin', () => {
   return rollup.rollup({
     input: 'src/icn3dui.js',
@@ -269,13 +340,16 @@ gulp.task('rollupmodulemin', () => {
     });
   });
 });
+*/
 
 var alljs = [
+    "tmpdir/icn3d_rollup_vr.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup.js"
 ];
 
 var allminjs = [
+    "tmpdir/icn3d_rollup_vr.min.js",
     "tmpdir/third.min.js",
     "tmpdir/icn3d_rollup.min.js"
 ];
@@ -286,6 +360,7 @@ var allnodejs = [
 ];
 
 var allmodulejs = [
+    "tmpdir/icn3d_rollup_vr_module.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup_module.js"
     //,
@@ -388,15 +463,10 @@ gulp.task("html3",
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
-    'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
-    'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
+    'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
+    'rollupnode','rollupmodule','rollupvr','rollupvrmin',
+    'rollupvrmodule','all','allmin','allnode','allmodule',
     'html','html2','html3')
-/*
-  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
-    'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
-    'all','allmin',
-    'html','html2','html3','html4')
-*/
 );
 
 //  'Zip up the dist into icn3d-<version>.zip',

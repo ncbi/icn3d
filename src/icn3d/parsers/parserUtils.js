@@ -70,6 +70,12 @@ class ParserUtils {
 
               ic.bRealign = true;
 
+              if(!bChainAlign) {
+                ic.opts['color'] = 'identity';
+                ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+              }
+
+/*
               //if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
               ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
          
@@ -81,19 +87,54 @@ class ParserUtils {
               $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
               me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+*/
+              // assign ic.qt_start_end
+              if(!ic.qt_start_end) ic.qt_start_end = [];
 
-              if(!bChainAlign) {
-                  ic.opts['color'] = 'identity';
-                  ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
-              }
-
-              //ic.drawCls.draw();
+              let curr_qt_start_end = this.getQtStartEndFromRealignResid(chainid_t, chainid);
+              ic.qt_start_end.push(curr_qt_start_end);
 
               hAtoms = ic.hAtoms;
           }
       }
 
       return hAtoms;
+    }
+
+    getQtStartEndFromRealignResid(chainid_t, chainid_q) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  struct_t = chainid_t.substr(0, chainid_t.indexOf('_')); 
+        let  struct_q = chainid_q.substr(0, chainid_q.indexOf('_')); 
+
+        let qt_start_end = [];
+
+        let resi2pos_t = {};
+        for(let i = 0, il = ic.chainsSeq[chainid_t].length; i < il; ++i) {
+            let resi = ic.chainsSeq[chainid_t][i].resi;
+            resi2pos_t[resi] = i + 1;
+        }
+
+        let resi2pos_q = {};
+        for(let i = 0, il = ic.chainsSeq[chainid_q].length; i < il; ++i) {
+            let resi = ic.chainsSeq[chainid_q][i].resi;
+            resi2pos_q[resi] = i + 1;
+        }
+
+        for(let i = 0, il = ic.realignResid[struct_t].length; i < il; ++i) {
+            let resid_t = ic.realignResid[struct_t][i].resid;
+            let pos_t = resid_t.lastIndexOf('_');
+            let resi_t = parseInt(resid_t.substr(pos_t + 1));
+
+            let resid_q = ic.realignResid[struct_q][i].resid;
+            let pos_q = resid_q.lastIndexOf('_');
+            let resi_q = parseInt(resid_q.substr(pos_q + 1));
+
+            let resiPos_t = resi2pos_t[resi_t];
+            let resiPos_q = resi2pos_q[resi_q];
+
+            qt_start_end.push({"q_start": resiPos_q, "q_end": resiPos_q, "t_start": resiPos_t, "t_end": resiPos_t}); 
+        }
+
+        return qt_start_end;
     }
 
     getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
