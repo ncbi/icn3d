@@ -53,12 +53,13 @@ class UtilsCls {
     isCalphaPhosOnly(atomlist) { let me = this.icn3dui;
           let bCalphaPhosOnly = false;
 
-          let index = 0, testLength = 50; //30
+          let index = 0, testLength = 100; //30
           //var bOtherAtoms = false;
           let nOtherAtoms = 0;
           for(let i in atomlist) {
             if(index < testLength) {
-              if(atomlist[i].name !== "CA" && atomlist[i].name !== "P" && atomlist[i].name !== "O3'" && atomlist[i].name !== "O3*") {
+              let atomName = atomlist[i].name.trim();        
+              if(atomName !== "CA" && atomName !== "P" && atomName !== "O3'" && atomName !== "O3*") {
                 //bOtherAtoms = true;
                 //break;
                 ++nOtherAtoms;

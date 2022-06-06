@@ -59,6 +59,7 @@ class Selection {
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.ALTERNATE_STRUCTURE = -1
     }
 
     //Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".
@@ -295,6 +296,7 @@ class Selection {
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.ALTERNATE_STRUCTURE = -1;
 
         let  centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;

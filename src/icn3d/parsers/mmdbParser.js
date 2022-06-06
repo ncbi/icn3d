@@ -394,9 +394,9 @@ class MmdbParser {
 
                     for(let j = domainFrom; j <= domainTo; ++j) {
                         let resid;
+                        let residNCBI = chainid + '_' +(j+1).toString();
 
-                        if(bNCBI) {
-                            let residNCBI = chainid + '_' +(j+1).toString();
+                        if(bNCBI && ic.residNCBI2resid[residNCBI]) {
                             resid = ic.residNCBI2resid[residNCBI];
                         }
                         else {

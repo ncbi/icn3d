@@ -187,7 +187,7 @@ class LoadAtomData {
         let  bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
         let  miscCnt = 0;
         let  CSerial, prevCSerial, OSerial, prevOSerial;
-      
+
         let  biopolymerChainsHash = {};
         for(let i in atoms) {
             ++serial;
@@ -313,7 +313,7 @@ class LoadAtomData {
                     //atm.resi = parseInt(atm.resi);
                 }
             }
-
+            
             if(chainNum !== prevChainNum) {
                 missingResIndex = 0;
                 prevResi = 0;

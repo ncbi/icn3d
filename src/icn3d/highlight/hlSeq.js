@@ -303,8 +303,11 @@ class HlSeq {
                                         if(structure.length > 4) {
                                             residueid = residNCBI;
                                         }
-                                        else {
+                                        else if(ic.residNCBI2resid[residNCBI]) {
                                             residueid = ic.residNCBI2resid[residNCBI];
+                                        }
+                                        else {
+                                            residueid = residNCBI;
                                         }
                                     }
                                     else {
@@ -323,7 +326,6 @@ class HlSeq {
                             else {
                                 ic.selectionCls.selectResidueList(residueidHash, commandname, commanddescr, false);
                             }
-
                             //ic.hlUpdateCls.updateHlAll();
 
                             residueid = chainid + '_' + parseInt((from + to)/2).toString();
@@ -348,8 +350,11 @@ class HlSeq {
                                         if(structure.length > 4) {
                                             residueid = residNCBI;
                                         }
-                                        else {
+                                        else if(ic.residNCBI2resid[residNCBI]) {
                                             residueid = ic.residNCBI2resid[residNCBI];
+                                        }
+                                        else {
+                                            residueid = residNCBI;
                                         }
                                     }
                                     else {

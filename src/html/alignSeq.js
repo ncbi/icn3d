@@ -74,7 +74,22 @@ class AlignSeq {
             let structure = oriChainid.substr(0, dashPos);
             let chain = oriChainid.substr(dashPos + 1);
 
-            let startResi = (ic.alnChainsSeq[i][0] !== undefined) ? ic.alnChainsSeq[i][0].resi : '';
+            //let startResi = (ic.alnChainsSeq[i][0] !== undefined) ? ic.alnChainsSeq[i][0].resi : '';
+            let startResi, endResi;
+            for (let k = 0, kl = seqLength; k < kl; ++k) {
+                if(ic.alnChainsSeq[i][k].resn != '-') {
+                    startResi = ic.alnChainsSeq[i][k].resi;
+                    break;
+                }
+            }
+
+            for (let k = seqLength - 1; k >= 0; --k) {
+                if(ic.alnChainsSeq[i][k].resn != '-') {
+                    endResi = ic.alnChainsSeq[i][k].resi;
+                    break;
+                }
+            }
+
             seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + startResi + "</span>";
             bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(oriChainid)) ? true : false;
 
@@ -133,16 +148,20 @@ class AlignSeq {
                 }
 
             }
-            let endResi = (ic.alnChainsSeq[i][seqLength - 1] !== undefined) ? ic.alnChainsSeq[i][seqLength - 1].resi : '';
+            //let endResi = (ic.alnChainsSeq[i][seqLength - 1] !== undefined) ? ic.alnChainsSeq[i][seqLength - 1].resi : '';
             seqHtml += "<span class='icn3d-residueNum' title='ending residue number'>" + endResi + "</span>";
 
+            let n = alignChainArray.length;
+
             // the first chain stores all annotations
+            // secondary: n, labels: 2, title: n, empty line: 1
             let annoLength = (ic.alnChainsAnno[i] !== undefined) ? ic.alnChainsAnno[i].length : 0;
 
             for (let j = 0, jl = annoLength; j < jl; ++j) {
                 resiHtmlArray[j] = "";
 
-                let chainid = (j == 0 && annoLength >= 7) ? ic.alnChainsAnTtl[i][4][0] : oriChainid; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
+                //let chainid = (j == 0 && annoLength >= 7) ? ic.alnChainsAnTtl[i][4][0] : oriChainid; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
+                let chainid = (j < n) ?  alignChainArray[n - 1 - j] : oriChainid; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
 
                 resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
                 for (let k = 0, kl = ic.alnChainsAnno[i][j].length; k < kl; ++k) {
@@ -158,7 +177,6 @@ class AlignSeq {
                             }
                         } else if (text == 'E') {
                             if (ic.alnChainsSeq[chainid][k] !== undefined) {
-                                //var resiId = ic.alnChainsSeq[i][k].resi;
                                 let resiId = ic.alnChainsSeq[chainid][k].resi;
                                 let resIdFull = chainid + "_" + resiId;
 
@@ -171,12 +189,18 @@ class AlignSeq {
                                         resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                                     }
                                 }
+                                else {
+                                    resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
+                                }
+                            }
+                            else {
+                                //resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                             }
                         } else if (text == 'c') {
                             resiHtmlArray[j] += '<span class="icn3d-coil">&nbsp;</span>';
                         } else if (text == 'o') {
                             resiHtmlArray[j] += '<span class="icn3d-other">&nbsp;</span>';
-                        } else {
+                        } else {                          
                             resiHtmlArray[j] += "<span></span>";
                         }
                     } else {

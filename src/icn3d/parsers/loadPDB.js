@@ -615,7 +615,7 @@ class LoadPDB {
         } // end of for
 
         // reset lipid
-        for(resid in lipidResidHash) {
+        for(let resid in lipidResidHash) {
             let  atomHash = ic.residues[resid];
             for(serial in atomHash) {
                 let  atom = ic.atoms[serial];

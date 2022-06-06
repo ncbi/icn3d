@@ -63,7 +63,7 @@ class Tube {
 
                                     pnts.push(nextAtom.coord);
                                     if(bCustom) {
-                                        radii.push(Tube.getCustomtubesize(nextoneResid));
+                                        radii.push(this.getCustomtubesize(nextoneResid));
                                     }
                                     else {
                                         radii.push(this.getRadius(radius, nextAtom));
@@ -113,7 +113,7 @@ class Tube {
                         if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
                             pnts.push(prevAtom.coord);
                             if(bCustom) {
-                                radii.push(Tube.getCustomtubesize(prevoneResid));
+                                radii.push(this.getCustomtubesize(prevoneResid));
                             }
                             else {
                                 radii.push(this.getRadius(radius, prevAtom));
@@ -127,7 +127,7 @@ class Tube {
 
                 let radiusFinal;
                 if(bCustom) {
-                    radiusFinal = Tube.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
+                    radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
                 }
                 else {
                     radiusFinal = this.getRadius(radius, atom);

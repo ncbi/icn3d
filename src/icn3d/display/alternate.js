@@ -16,7 +16,8 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
-        if(!ic.viewSelectionAtoms) {
+        // default ic.ALTERNATE_STRUCTURE = -1
+        if(ic.ALTERNATE_STRUCTURE == -1) {
             ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
         }
 
@@ -78,9 +79,9 @@ class Alternate {
             if(Object.keys(tmpAtoms).length > 0) {
                 ic.dAtoms = me.hashUtilsCls.cloneHash(tmpAtoms);
             }
-
+            
             ic.bShowHighlight = false;
-            ic.opts['rotationcenter'] = 'highlight center';
+//            ic.opts['rotationcenter'] = 'highlight center';
         }
 
         // also alternating the surfaces
@@ -115,7 +116,7 @@ class Alternate {
         ic.drawCls.draw();
 
         ic.bShowHighlight = true;
-        ic.opts['rotationcenter'] = 'molecule center';
+//        ic.opts['rotationcenter'] = 'molecule center';
     }
 
     alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;

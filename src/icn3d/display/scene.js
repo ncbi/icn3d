@@ -14,6 +14,12 @@ import {ApplyDisplay} from '../display/applyDisplay.js';
 import {ApplyOther} from '../display/applyOther.js';
 import {ApplySsbonds} from '../display/applySsbonds.js';
 
+// The following four files are for VR view:
+import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
+import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
+import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
+import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
+
 class Scene {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -170,7 +176,20 @@ class Scene {
         // highlight on impostors
         ic.mdl_ghost = new THREE.Object3D();  // Impostor display
         ic.scene_ghost.add(ic.mdl_ghost);
+        
+        // for VR view
+        let controller = ic.renderer.xr.getController( 0 ); 
+        ic.scene.add( controller );
 
+        let controllerModelFactory = new XRControllerModelFactory();
+        let controllerGrip = ic.renderer.xr.getControllerGrip( 0 );
+        controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
+        ic.scene.add( controllerGrip );
+
+        $("#" + me.pre + "VRButton").remove();
+        //document.body.appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+        
         // related to pk
         ic.objects = []; // define objects for pk, not all elements are used for pk
         ic.objects_ghost = []; // define objects for pk, not all elements are used for pk

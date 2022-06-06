@@ -21,7 +21,7 @@ class RealignParser {
         this.icn3d = icn3d;
     }
 
-    // realign based on sequence
+    // realign, residue by residue
     realign() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
@@ -60,6 +60,10 @@ class RealignParser {
 
         let  toStruct = structArray[0];
 
+        let chainidArray = [];
+        ic.qt_start_end = []; // reset the alignment
+
+        chainidArray.push(struct2chain[toStruct]);
         for(let i = 1, il = structArray.length; i < il; ++i) {
             let  fromStruct = structArray[i];
 
@@ -70,7 +74,16 @@ class RealignParser {
             let  bKeepSeq = true;
             //ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
             ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq, struct2chain[toStruct], struct2chain[fromStruct]);
+            chainidArray.push(struct2chain[fromStruct]);
         }
+
+              // align seq
+        ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+
+        name = 'protein_aligned';
+        ic.selectionCls.saveSelection(name, name);
+      
+        ic.transformCls.zoominSelection();
 
         ic.hlUpdateCls.updateHlAll();
     }
@@ -124,11 +137,17 @@ class RealignParser {
           let  chainFrom = chainidArray[index + 1];
 
           let  bChainAlign = true;
+          // set ic.qt_start_end in alignCoords()
           let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
           hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
       }
 
-      ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
+      // align seq
+      ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+      
+      ic.transformCls.zoominSelection();
+
+      ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
     }
 
     parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -244,19 +263,34 @@ class RealignParser {
       }
 
       if(bRealign) {
-          ic.dAtoms = hAtoms;
-          ic.hAtoms = hAtoms;
+        // align seq
+        //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, bRealign);
+        ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+        
+        ic.transformCls.zoominSelection();
 
-          ic.opts['color'] = 'identity';
-          //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-          ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
-          ic.drawCls.draw();
-          ic.hlUpdateCls.updateHlAll();
-          if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
+        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms); //hAtoms;
+        //ic.hAtoms = hAtoms;
+
+        ic.opts['color'] = 'identity';
+        //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+        let name = 'protein_aligned';
+        ic.selectionCls.saveSelection(name, name);
+
+        ic.drawCls.draw();
+        ic.hlUpdateCls.updateHlAll();
+        if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
       }
       else {
-          ic.chainalignParserCls.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
+        // align seq
+        ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+        
+        ic.transformCls.zoominSelection();
+
+        ic.chainalignParserCls.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
       }
     }
 

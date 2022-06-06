@@ -220,7 +220,9 @@ class ApplyDisplay {
           // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
           let atomHash = ic.style2atoms[style];
           //var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "P");
-          let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+          //let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+          let nucleotidesAtoms = me.hashUtilsCls.intHash(atomHash, ic.nucleotides);
+          let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(nucleotidesAtoms, ic.atoms));
 
           if(style === 'ribbon') {
           //if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {

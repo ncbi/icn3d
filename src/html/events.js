@@ -379,11 +379,12 @@ class Events {
            }
 
            // save the current selection
-           ic.selectionCls.saveSelectionPrep();
-           let name = 'realignSetsBySeq';
-           ic.selectionCls.saveSelection(name, name);
+           //ic.selectionCls.saveSelectionPrep();
+           //let name = 'realignSetsBySeq';
+           //ic.selectionCls.saveSelection(name, name);
 
            ic.realignParserCls.realignOnSeqAlign();
+
            if(nameArray.length > 0) {
                me.htmlCls.clickMenuCls.setLogCmd("realign on seq align | " + nameArray, true);
            }
@@ -401,9 +402,9 @@ class Events {
             }
  
             // save the current selection
-            ic.selectionCls.saveSelectionPrep();
-            let name = 'realignSetsByStruct';
-            ic.selectionCls.saveSelection(name, name);
+            //ic.selectionCls.saveSelectionPrep();
+            //let name = 'realignSetsByStruct';
+            //ic.selectionCls.saveSelection(name, name);
  
             ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {

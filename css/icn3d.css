@@ -52,7 +52,7 @@ accordion ul li {cursor:default!important; white-space:nowrap;}
 .icn3d-residueNum {color: green; width:40px!important; text-align:center; white-space:nowrap;}
 
 .icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px; text-align:center;}
-.icn3d-dl_2ddgm {} //{min-width: 150px!important; min-height: 150px!important;}
+.icn3d-dl_2ddgm {}
 .icn3d-chemical {width:30px!important;} 
  
 button, select, input { font-size: 10px; }
@@ -167,7 +167,7 @@ input:checked + .icn3d-slider:before {
    for jquery tooltip */
 .icn3d-tooltip {
   display: inline-block;
-  width: 200px; // 5em;
+  width: 200px;
 }
 
 .snptip {
@@ -177,7 +177,7 @@ input:checked + .icn3d-slider:before {
 
 .ui-widget {
   font-family: Arial,Helvetica,sans-serif;
-  font-size: 12px!important; // 0.9em is a little too large
+  font-size: 12px!important; /* 0.9em is a little too large */
 }
 .ui-menu-item {
   position: relative;
@@ -224,11 +224,11 @@ input:checked + .icn3d-slider:before {
 }
 .icn3d-rad > input + .ui-icon{ /* IMAGE STYLES */
   cursor:pointer;
-  //border:2px solid transparent;
+  /*border:2px solid transparent;*/
 }
 .icn3d-rad > input:checked + .ui-icon{ /* (RADIO CHECKED) IMAGE STYLES */
-  //border:2px solid #f00;
-  background-position: -64px -144px; //ui-icon-check 
+  /*border:2px solid #f00;*/
+  background-position: -64px -144px; /*ui-icon-check */
 }
 
 .ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
