@@ -307,6 +307,7 @@ class RealignParser {
         }
 
         let  bRealign = true;
+        ic.qt_start_end = []; // reset the alignment
 
         this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
     }
@@ -375,6 +376,7 @@ class RealignParser {
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
             let  dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
+            ic.qt_start_end = []; // reset the alignment
             ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);
         })
         .fail(function() {
