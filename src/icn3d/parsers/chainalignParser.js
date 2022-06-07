@@ -196,8 +196,10 @@ class ChainalignParser {
         let index_alignLen = [];
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
             let alignLen = 0;
-            for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
-                alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+            if(ic.qt_start_end && ic.qt_start_end[index - 1]) {
+                for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
+                    alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+                }
             }
             index_alignLen.push({index: index, alignLen: alignLen});
         }
