@@ -30677,6 +30677,7 @@ var icn3d = (function (exports) {
             }
 
             let  bRealign = true;
+            ic.qt_start_end = []; // reset the alignment
 
             this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
         }
@@ -30742,6 +30743,7 @@ var icn3d = (function (exports) {
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
                 let  dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
+                ic.qt_start_end = []; // reset the alignment
                 ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);
             })
             .fail(function() {
@@ -60481,8 +60483,8 @@ var icn3d = (function (exports) {
             html += tdStr + this.setIcon(iconType, 'tool_resetOrientation', 'Reset Orientation', 'undo-alt') + "</td>";
 
             // Style menu
-            html += tdStrBorder + this.setIcon(iconType, 'tool_proteinsRibbon', 'Style Ribbon', 'dna') + "</td>";
-            html += tdStr + this.setIcon(iconType, 'tool_proteinsSphere', 'Style Sphere', 'volleyball-ball') + "</td>";
+            html += tdStrBorder + this.setIcon(iconType, 'tool_proteinsRibbon', 'Style Ribbon for proteins', 'dna') + "</td>";
+            html += tdStr + this.setIcon(iconType, 'tool_proteinsSphere', 'Style Sphere for proteins', 'volleyball-ball') + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_surfaceVDW', 'Show Van der Waals Surface', 'cloud') + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_bkgd', 'Toggle Background Color', 'adjust') + "</td>";
 
@@ -60502,7 +60504,7 @@ var icn3d = (function (exports) {
             html += tdStrBorder + this.setIcon('link', 'tool-gallery', 'Gallery', 'image', 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery') + "</td>";
             html += tdStr + this.setIcon('link', 'tool-video', 'Videos', 'file-video', 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos') + "</td>";
             html += tdStr + this.setIcon('link', 'tool-github', 'iCn3D GitHub', 'code', 'https://github.com/ncbi/icn3d') + "</td>";
-            html += tdStr + this.setIcon('text', 'tool-hints', 'Transform Hints: use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation.', 'info-circle') + "</td>";
+            html += tdStr + this.setIcon('link', 'tool-hints', 'Transform Hints', 'info-circle', 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#useicn3d') + "</td>";
 
             /*
             let buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
@@ -67084,7 +67086,7 @@ var icn3d = (function (exports) {
         this.simulation = undefined;
 
         //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
-        this.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+        this.baseUrl = "https://test.ncbi.nlm.nih.gov/Structure/";
         this.divStr = "<div id='" + this.icn3dui.pre;
         this.divNowrapStr = "<div style='white-space:nowrap'>";
         this.spanNowrapStr = "<span style='white-space:nowrap'>";
