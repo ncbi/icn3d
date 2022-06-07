@@ -35,7 +35,7 @@ class AnnoContact {
         let chainArray = Object.keys(ic.chains);
         let chainid = chnid;
         let pos = Math.round(chainid.indexOf('_'));
-        if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
+//        if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
         let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
         if(ic.chainname2residues[chainid] === undefined) {
             ic.chainname2residues[chainid] = {}

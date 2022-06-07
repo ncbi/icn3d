@@ -93,27 +93,31 @@ class Draw {
     render() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
-        ic.renderer.setAnimationLoop( function() { let ic = thisClass.icn3d, me = ic.icn3dui;
-            if(me.bNode) return;
-
-            let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
-
-            if(ic.directionalLight) {
-                let quaternion = new THREE.Quaternion();
-                quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
-
-                ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
-                ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
-                ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
-            }
-
-            ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-            if(ic.scene) {
-                ic.renderer.render(ic.scene, cam);
-            }
+        ic.renderer.setAnimationLoop( function() {
+            thisClass.render_base();
         });
     }
 
+    //Render the scene and objects into pixels.
+    render_base() { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
+
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
+
+        if(ic.directionalLight) {
+            let quaternion = new THREE.Quaternion();
+            quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
+
+            ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
+            ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
+            ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+        }
+
+        ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+        if(ic.scene) {
+            ic.renderer.render(ic.scene, cam);
+        }
+    }
 }
 
 export {Draw}

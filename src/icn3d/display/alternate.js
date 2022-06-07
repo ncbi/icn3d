@@ -116,7 +116,7 @@ class Alternate {
         ic.drawCls.draw();
 
         ic.bShowHighlight = true;
-//        ic.opts['rotationcenter'] = 'molecule center';
+        ic.opts['rotationcenter'] = 'molecule center';
     }
 
     alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;

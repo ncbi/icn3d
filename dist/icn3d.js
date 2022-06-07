@@ -31199,8 +31199,10 @@ var icn3d = (function (exports) {
             let index_alignLen = [];
             for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
                 let alignLen = 0;
-                for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
-                    alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+                if(ic.qt_start_end && ic.qt_start_end[index - 1]) {
+                    for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
+                        alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+                    }
                 }
                 index_alignLen.push({index: index, alignLen: alignLen});
             }
@@ -44186,7 +44188,7 @@ var icn3d = (function (exports) {
             let chainArray = Object.keys(ic.chains);
             let chainid = chnid;
             let pos = Math.round(chainid.indexOf('_'));
-            if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
+    //        if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
             ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
             if(ic.chainname2residues[chainid] === undefined) {
                 ic.chainname2residues[chainid] = {};
@@ -48782,7 +48784,7 @@ var icn3d = (function (exports) {
                 context.lineWidth = borderThickness;
 
                 if(bSchematic) {
-                    let r = width * 0.35;
+                    let r = width * 0.4; //width * 0.35;
                     this.circle(context, 0, 0, width, height, r);
                 }
                 else {
@@ -48852,7 +48854,7 @@ var icn3d = (function (exports) {
 
         circle(ctx, x, y, w, h, r) {
             ctx.beginPath();
-            ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
+            ctx.arc(x+w/2, (y+h/2) * 0.9, r, 0, 2*Math.PI, true); // adjust the y by 0.9
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
@@ -56840,27 +56842,31 @@ var icn3d = (function (exports) {
         render() { let ic = this.icn3d; ic.icn3dui;
             let thisClass = this;
             // setAnimationLoop is required for VR
-            ic.renderer.setAnimationLoop( function() { let ic = thisClass.icn3d, me = ic.icn3dui;
-                if(me.bNode) return;
-
-                let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
-
-                if(ic.directionalLight) {
-                    let quaternion = new THREE.Quaternion();
-                    quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
-
-                    ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
-                    ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
-                    ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
-                }
-
-                ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-                if(ic.scene) {
-                    ic.renderer.render(ic.scene, cam);
-                }
+            ic.renderer.setAnimationLoop( function() {
+                thisClass.render_base();
             });
         }
 
+        //Render the scene and objects into pixels.
+        render_base() { let ic = this.icn3d, me = ic.icn3dui;
+            if(me.bNode) return;
+
+            let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
+
+            if(ic.directionalLight) {
+                let quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
+
+                ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
+                ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
+                ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+            }
+
+            ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+            if(ic.scene) {
+                ic.renderer.render(ic.scene, cam);
+            }
+        }
     }
 
     /**
@@ -57211,7 +57217,7 @@ var icn3d = (function (exports) {
                 let height = $("#" + ic.pre + "canvas").height();
                 ic.applyCenterCls.setWidthHeight(width, height);
 
-                if(ic.bRender) ic.drawCls.render();
+                if(ic.bRender) ic.drawCls.render_base();
 
                 let bAddURL = true;
                 if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -57279,7 +57285,7 @@ var icn3d = (function (exports) {
                 ic.scaleFactor = 1.0;
                 ic.applyCenterCls.setWidthHeight(width, height);
 
-                if(ic.bRender) ic.drawCls.render();
+                if(ic.bRender) ic.drawCls.render_base();
             }
             else if(type === 'html') {
                 let dataStr = text;
@@ -62695,9 +62701,9 @@ var icn3d = (function (exports) {
             let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
 
             html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
-            html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
-                + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Half PAE Map</button>"
-                + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
+            html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button><br><br>"; 
+            html += "PAE Map: " + me.htmlCls.buttonStr + "reload_afmap'>Load Half</button>"
+                + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full (slow)</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -67228,7 +67234,7 @@ var icn3d = (function (exports) {
             ic.drawCls.draw();
 
             ic.bShowHighlight = true;
-    //        ic.opts['rotationcenter'] = 'molecule center';
+            ic.opts['rotationcenter'] = 'molecule center';
         }
 
         alternateWrapper() { let ic = this.icn3d; ic.icn3dui;

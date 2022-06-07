@@ -96,7 +96,7 @@ class TextSprite {
             context.lineWidth = borderThickness;
 
             if(bSchematic) {
-                let r = width * 0.35;
+                let r = width * 0.4; //width * 0.35;
                 this.circle(context, 0, 0, width, height, r);
             }
             else {
@@ -166,7 +166,7 @@ class TextSprite {
 
     circle(ctx, x, y, w, h, r) {
         ctx.beginPath();
-        ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
+        ctx.arc(x+w/2, (y+h/2) * 0.9, r, 0, 2*Math.PI, true); // adjust the y by 0.9
         ctx.closePath();
         ctx.fill();
         ctx.stroke();

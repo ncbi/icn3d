@@ -143,9 +143,9 @@ class SetDialog {
         let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
-        html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
-            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Half PAE Map</button>"
-            + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
+        html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button><br><br>" 
+        html += "PAE Map: " + me.htmlCls.buttonStr + "reload_afmap'>Load Half</button>"
+            + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
