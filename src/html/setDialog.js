@@ -216,8 +216,8 @@ class SetDialog {
         html += "</div>";
     */
         html += "<div style='width:550px'>";
-        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID_chain (e.g., P69905_A for AlphaFold structures).<br/><br/>";
-        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905_A,P01942_A,1HHO_A' size=50><br/><br/>";
+        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
+        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
         html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
