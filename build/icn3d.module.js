@@ -62757,8 +62757,8 @@ class SetDialog {
         html += "</div>";
     */
         html += "<div style='width:550px'>";
-        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID_chain (e.g., P69905_A for AlphaFold structures).<br/><br/>";
-        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905_A,P01942_A,1HHO_A' size=50><br/><br/>";
+        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
+        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
         html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
@@ -64231,17 +64231,23 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign + " | resdef " + predefinedres, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
@@ -64249,16 +64255,22 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
@@ -70555,7 +70567,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.0';
+    this.REVISION = '3.12.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

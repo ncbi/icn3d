@@ -651,17 +651,23 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign + " | resdef " + predefinedres, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
@@ -669,16 +675,22 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
     //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-           if(predefinedres && alignment.split(',').length - 1 != predefinedres.split('; ').length) {
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
