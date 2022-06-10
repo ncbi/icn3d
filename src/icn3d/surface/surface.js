@@ -58,7 +58,7 @@ class Surface {
         //var sigmafofc = 3.0;
         let  maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
 
-        //let  ic.transparentRenderOrder = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
+        let  bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
 
         let  ps;
 
@@ -548,7 +548,7 @@ class Surface {
                 wireframe: wireframe,
                 opacity: opacity,
                 transparent: true,
-                depthWrite: false, // important to make the transparency work
+                depthWrite: (parseInt(10*opacity) != 10) ? false : true, // important to make the transparency work
                 side: THREE.DoubleSide
                 //depthTest: (ic.ic.transparentRenderOrder) ? false : true
             }));
