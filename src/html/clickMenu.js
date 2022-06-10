@@ -1464,10 +1464,20 @@ class ClickMenu {
     */
 
         $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d;
-           let value = $(this).attr('v');
+            ic.transparentRenderOrder = false;
+
+            let value = $(this).attr('v');
            ic.setOptionCls.setOption('opacity', value);
            thisClass.setLogCmd('set surface opacity ' + value, true);
         });
+
+        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d;
+            ic.transparentRenderOrder = true;
+
+            let value = $(this).attr('v');
+            ic.setOptionCls.setOption('opacity', value);
+            thisClass.setLogCmd('set surface2 opacity ' + value, true);
+         });
 
     //    clkMn5_wireframeYes: function() {
         me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d;

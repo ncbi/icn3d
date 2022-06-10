@@ -636,6 +636,16 @@ class ApplyCommand {
         //ic.hlUpdateCls.updateHlAll();
       }
       else if(command.indexOf('set surface opacity') == 0) {
+        ic.transparentRenderOrder = false;
+
+        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        ic.opts['opacity'] = parseFloat(value);
+        ic.applyMapCls.applySurfaceOptions();
+
+        if(parseInt(100*value) < 100) ic.bTransparentSurface = true;
+      }
+      else if(command.indexOf('set surface2 opacity') == 0) {
+        ic.transparentRenderOrder = true;
         let  value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['opacity'] = parseFloat(value);
         ic.applyMapCls.applySurfaceOptions();

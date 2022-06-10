@@ -263,6 +263,8 @@ class iCn3D {
     this.chainMissingResidueArray = {};
     this._zoomFactor = 1.0;
 
+    this.transparentRenderOrder = false; // false: regular transparency; true: expensive renderOrder for each face
+
     if(!this.icn3dui.bNode) {
         if ( bWebGL2 && bVR) { 
             // if(bVR) { // Meta browser (VR) has problems with imposter. The positions are wrong.
