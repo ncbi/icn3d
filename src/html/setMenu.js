@@ -1033,6 +1033,9 @@ class SetMenu {
 
         html += "<li><span>Surface Opacity</span>";
         html += "<ul>";
+
+        html += "<li><span>Fast Transparency</span>";
+        html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true);
 
         for(let i = 9; i > 0; --i) {
@@ -1040,6 +1043,19 @@ class SetMenu {
         }
         html += "</ul>";
         html += "</li>";
+
+        html += "<li><span>Slow Transparency</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow10', '1.0', true);
+
+        for(let i = 9; i > 0; --i) {
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow0' + i, '0.' + i);
+        }
+        html += "</ul>";
+        html += "</li>";
+
+        html += "</ul>"; // end of Surface Opacity
+
         html += "<li><span>Surface Wireframe</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes');

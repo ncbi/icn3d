@@ -58,7 +58,7 @@ class Surface {
         //var sigmafofc = 3.0;
         let  maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
 
-        let  bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
+        //let  ic.transparentRenderOrder = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
 
         let  ps;
 
@@ -153,7 +153,7 @@ class Surface {
                 atomsToShow: Object.keys(atomsToShow),
                 extendedAtoms: extendedAtoms,
                 type: realType,
-                threshbox: (bTransparent) ? 60 : ic.threshbox,
+                threshbox: (ic.transparentRenderOrder) ? 60 : ic.threshbox,
                 bCalcArea: ic.bCalcArea
             };
 
@@ -357,8 +357,8 @@ class Surface {
         geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
         // use the regular way to show transparency for type == 15 (surface with potential)
-    //    if(bTransparent && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
-        if(bTransparent) { // WebGL has some ordering problem when dealing with transparency
+    //    if(ic.transparentRenderOrder && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
+        if(ic.transparentRenderOrder) { // WebGL has some ordering problem when dealing with transparency
           //var normalArrayIn = JSON.parse(JSON.stringify(geo)).data.normals;
           //var normalArrayIn = geo.getAttribute('normal').array;
 
@@ -539,7 +539,7 @@ class Surface {
             }
           } // for(let va
         }
-        else {
+        else {         
             let  mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 20, //10, //30,
@@ -548,8 +548,9 @@ class Surface {
                 wireframe: wireframe,
                 opacity: opacity,
                 transparent: true,
+                depthWrite: false, // important to make the transparency work
                 side: THREE.DoubleSide
-                //depthTest: (ic.bTransparent) ? false : true
+                //depthTest: (ic.ic.transparentRenderOrder) ? false : true
             }));
 
             //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
@@ -570,7 +571,7 @@ class Surface {
                 ic.prevSurfaces.push(mesh);
             }
         }
-
+        
         // remove the reference
         ps = null;
         verts = null;

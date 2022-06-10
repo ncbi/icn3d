@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.12.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.2.zip) was release on June 10, 2022. Made two kinds of transparent surfaces available in the menu "Style > Surface Opacity": "Fast Transparency" and "Slow Transparency".
+
 [icn3d-3.12.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.1.zip) was release on June 8, 2022. Fixed the bug about exporting iCn3D PNG Image.
 
 [icn3d-3.12.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.0.zip) was release on June 6, 2022. Users now can have Virtual Reality (VR) view on any iCn3D display; enabled to view multiple seqeunce alignment (MSA) instead of pairwise alignment; changed the tools in toolbar from buttons to icons; switched to WegGL2 from WebGL1.

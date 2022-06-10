@@ -17120,7 +17120,7 @@ class Surface {
         //var sigmafofc = 3.0;
         let  maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
 
-        let  bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
+        //let  ic.transparentRenderOrder = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
 
         let  ps;
 
@@ -17215,7 +17215,7 @@ class Surface {
                 atomsToShow: Object.keys(atomsToShow),
                 extendedAtoms: extendedAtoms,
                 type: realType,
-                threshbox: (bTransparent) ? 60 : ic.threshbox,
+                threshbox: (ic.transparentRenderOrder) ? 60 : ic.threshbox,
                 bCalcArea: ic.bCalcArea
             };
 
@@ -17418,8 +17418,8 @@ class Surface {
         geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
         // use the regular way to show transparency for type == 15 (surface with potential)
-    //    if(bTransparent && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
-        if(bTransparent) { // WebGL has some ordering problem when dealing with transparency
+    //    if(ic.transparentRenderOrder && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
+        if(ic.transparentRenderOrder) { // WebGL has some ordering problem when dealing with transparency
           //var normalArrayIn = JSON.parse(JSON.stringify(geo)).data.normals;
           //var normalArrayIn = geo.getAttribute('normal').array;
 
@@ -17600,7 +17600,7 @@ class Surface {
             }
           } // for(let va
         }
-        else {
+        else {         
             let  mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 20, //10, //30,
@@ -17609,8 +17609,9 @@ class Surface {
                 wireframe: wireframe,
                 opacity: opacity,
                 transparent: true,
+                depthWrite: false, // important to make the transparency work
                 side: THREE.DoubleSide
-                //depthTest: (ic.bTransparent) ? false : true
+                //depthTest: (ic.ic.transparentRenderOrder) ? false : true
             }));
 
             //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
@@ -17631,7 +17632,7 @@ class Surface {
                 ic.prevSurfaces.push(mesh);
             }
         }
-
+        
         // remove the reference
         ps = null;
         verts = null;
@@ -38837,6 +38838,16 @@ class ApplyCommand {
         //ic.hlUpdateCls.updateHlAll();
       }
       else if(command.indexOf('set surface opacity') == 0) {
+        ic.transparentRenderOrder = false;
+
+        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        ic.opts['opacity'] = parseFloat(value);
+        ic.applyMapCls.applySurfaceOptions();
+
+        if(parseInt(100*value) < 100) ic.bTransparentSurface = true;
+      }
+      else if(command.indexOf('set surface2 opacity') == 0) {
+        ic.transparentRenderOrder = true;
         let  value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['opacity'] = parseFloat(value);
         ic.applyMapCls.applySurfaceOptions();
@@ -59390,10 +59401,20 @@ class ClickMenu {
     */
 
         $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d;
-           let value = $(this).attr('v');
+            ic.transparentRenderOrder = false;
+
+            let value = $(this).attr('v');
            ic.setOptionCls.setOption('opacity', value);
            thisClass.setLogCmd('set surface opacity ' + value, true);
         });
+
+        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d;
+            ic.transparentRenderOrder = true;
+
+            let value = $(this).attr('v');
+            ic.setOptionCls.setOption('opacity', value);
+            thisClass.setLogCmd('set surface2 opacity ' + value, true);
+         });
 
     //    clkMn5_wireframeYes: function() {
         me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d;
@@ -61176,6 +61197,9 @@ class SetMenu {
 
         html += "<li><span>Surface Opacity</span>";
         html += "<ul>";
+
+        html += "<li><span>Fast Transparency</span>";
+        html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true);
 
         for(let i = 9; i > 0; --i) {
@@ -61183,6 +61207,19 @@ class SetMenu {
         }
         html += "</ul>";
         html += "</li>";
+
+        html += "<li><span>Slow Transparency</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow10', '1.0', true);
+
+        for(let i = 9; i > 0; --i) {
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow0' + i, '0.' + i);
+        }
+        html += "</ul>";
+        html += "</li>";
+
+        html += "</ul>"; // end of Surface Opacity
+
         html += "<li><span>Surface Wireframe</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes');
@@ -70017,6 +70054,8 @@ class iCn3D {
     this.chainMissingResidueArray = {};
     this._zoomFactor = 1.0;
 
+    this.transparentRenderOrder = false; // false: regular transparency; true: expensive renderOrder for each face
+
     if(!this.icn3dui.bNode) {
         if ( bWebGL2 && bVR) { 
             // if(bVR) { // Meta browser (VR) has problems with imposter. The positions are wrong.
@@ -70567,7 +70606,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.1';
+    this.REVISION = '3.12.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
