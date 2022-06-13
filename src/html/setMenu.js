@@ -788,6 +788,12 @@ class SetMenu {
 
         html += "<li>-</li>";
 
+        html += "<li><span>VR & AR Hints</span>";
+        html += "<ul>";
+        html += "<li><span>VR: VR Headsets</span>";
+        html += "<li><span>AR: Chrome in Android</span>";
+        html += "</ul>";
+
         html += me.htmlCls.setHtmlCls.getLink('mn6_sidebyside', 'Side by Side');
 
         html += "<li><span>Rotate</span>";
