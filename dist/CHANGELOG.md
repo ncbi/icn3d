@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.12.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.3.zip) was release on June 13, 2022. Users now can have Augmented Reality (AR) view on any iCn3D display by clicking the "START AR" button. Currently the AR view is only available to Chrome browser in an Android phone.
+
 [icn3d-3.12.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.2.zip) was release on June 10, 2022. Made two kinds of transparent surfaces available in the menu "Style > Surface Opacity": "Fast Transparency" and "Slow Transparency".
 
 [icn3d-3.12.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.1.zip) was release on June 8, 2022. Fixed the bug about exporting iCn3D PNG Image.

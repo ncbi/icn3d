@@ -10150,6 +10150,14 @@ class UtilsCls {
         return /Mac/i.test(window.navigator.userAgent);
     }
 
+    isAndroid() { this.icn3dui;
+      return /android/i.test(window.navigator.userAgent.toLowerCase());
+    }
+
+    isChrome() { this.icn3dui;
+      return navigator.userAgent.includes("Chrome") && navigator.vendor.includes("Google Inc");
+    }
+
     //Determine whether Session Storage is supported in your browser. Session Storage is not supported in Safari.
     isSessionStorageSupported() { this.icn3dui;
         return window.sessionStorage;
@@ -50106,7 +50114,8 @@ class VRButton {
                 ic.bImpo = false;
                 //ic.bInstanced = false;
                 
-                ic.drawCls.draw();
+                const bVr = true;
+                ic.drawCls.draw(bVr);
 
                 if ( currentSession === null ) {
 
@@ -50253,6 +50262,250 @@ class VRButton {
         }
 
     }
+
+}
+
+class ARButton {
+    constructor(icn3d) {
+        this.icn3d = icn3d;
+
+        //static xrSessionIsGranted = false;
+        this.xrSessionIsGranted = false;
+    }
+
+	//static createButton( renderer, sessionInit = {} ) {
+    createButton( renderer, sessionInit = {} ) { let ic = this.icn3d, me = ic.icn3dui;
+
+		const button = document.createElement( 'button' );
+
+		function showStartAR( /*device*/ ) {
+
+			if ( sessionInit.domOverlay === undefined ) {
+
+				const overlay = document.createElement( 'div' );
+				overlay.style.display = 'none';
+				document.body.appendChild( overlay );
+
+				const svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+				svg.setAttribute( 'width', 38 );
+				svg.setAttribute( 'height', 38 );
+				svg.style.position = 'absolute';
+				svg.style.right = '20px';
+				svg.style.top = '20px';
+				svg.addEventListener( 'click', function () {
+
+					currentSession.end();
+
+				} );
+				overlay.appendChild( svg );
+
+				const path = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+				path.setAttribute( 'd', 'M 12,12 L 28,28 M 28,12 12,28' );
+				path.setAttribute( 'stroke', '#fff' );
+				path.setAttribute( 'stroke-width', 2 );
+				svg.appendChild( path );
+
+				if ( sessionInit.optionalFeatures === undefined ) {
+
+					sessionInit.optionalFeatures = [];
+
+				}
+
+				sessionInit.optionalFeatures.push( 'dom-overlay' );
+				sessionInit.domOverlay = { root: overlay };
+
+			}
+
+			//
+
+			let currentSession = null;
+
+			async function onSessionStarted( session ) {
+
+				session.addEventListener( 'end', onSessionEnded );
+
+				renderer.xr.setReferenceSpaceType( 'local' );
+
+				await renderer.xr.setSession( session );
+
+				button.textContent = 'STOP AR';
+				sessionInit.domOverlay.root.style.display = '';
+
+				currentSession = session;
+
+			}
+
+			function onSessionEnded( /*event*/ ) {
+
+				currentSession.removeEventListener( 'end', onSessionEnded );
+
+				button.textContent = 'START AR';
+				sessionInit.domOverlay.root.style.display = 'none';
+
+				currentSession = null;
+
+			}
+
+			//
+
+			button.style.display = '';
+
+			button.style.cursor = 'pointer';
+			button.style.left = 'calc(50% - 50px)';
+			button.style.width = '100px';
+
+			button.textContent = 'START AR';
+
+			button.onmouseenter = function () {
+
+				button.style.opacity = '1.0';
+
+			};
+
+			button.onmouseleave = function () {
+
+				button.style.opacity = '0.8'; //'0.5';
+
+			};
+
+			button.onclick = function () {
+                // imposter didn't work well in VR
+                //ic.bImpo = false;
+
+                ic.opts['background'] = 'transparent';
+                
+                const bVr = true;
+                ic.drawCls.draw(bVr);
+
+				if ( currentSession === null ) {
+
+					navigator.xr.requestSession( 'immersive-ar', sessionInit ).then( onSessionStarted );
+
+				} else {
+
+					currentSession.end();
+
+				}
+
+			};
+
+		}
+
+		function disableButton() {
+
+			button.style.display = '';
+
+			button.style.cursor = 'auto';
+			button.style.left = 'calc(50% - 75px)';
+			button.style.width = '150px';
+
+			button.onmouseenter = null;
+			button.onmouseleave = null;
+
+			button.onclick = null;
+
+		}
+
+		function showARNotSupported() {
+
+			disableButton();
+
+			//button.textContent = 'AR NOT SUPPORTED';
+            button.style.display = 'none';
+
+		}
+
+        function showARAndroidPhone() {
+
+			disableButton();
+
+			//button.textContent = 'Chrome in Android Required';
+            button.style.display = 'none';
+
+		}
+
+		function showARNotAllowed( exception ) {
+
+			disableButton();
+
+			console.warn( 'Exception when trying to call xr.isSessionSupported', exception );
+
+			//button.textContent = 'AR NOT ALLOWED';
+            button.style.display = 'none';
+
+		}
+
+		function stylizeElement( element ) {
+
+			element.style.position = 'absolute';
+			element.style.bottom = '20px';
+			element.style.padding = '12px 6px';
+			element.style.border = '1px solid #fff';
+			element.style.borderRadius = '4px';
+			element.style.background = '#000'; //'rgba(0,0,0,0.1)';
+			element.style.color = '#f8b84e'; //'#fff';
+			element.style.font = 'bold 13px sans-serif';
+			element.style.textAlign = 'center';
+			element.style.opacity = '0.8'; //'0.5';
+			element.style.outline = 'none';
+			element.style.zIndex = '999';
+
+		}
+
+		if(!me.utilsCls.isAndroid() || !me.utilsCls.isChrome()) {
+            button.id = me.pre + 'ARButton'; //'ARButton';
+			button.style.display = 'none';
+
+			stylizeElement( button );
+
+            showARAndroidPhone();
+
+            return button;
+        }
+        else if ( 'xr' in navigator ) {
+
+			button.id = me.pre + 'ARButton'; //'ARButton';
+			button.style.display = 'none';
+
+			stylizeElement( button );
+
+			navigator.xr.isSessionSupported( 'immersive-ar' ).then( function ( supported ) {
+
+				supported ? showStartAR() : showARNotSupported();
+
+			} ).catch( showARNotAllowed );
+
+			return button;
+
+		} else {
+/*            
+			const message = document.createElement( 'a' );
+
+			if ( window.isSecureContext === false ) {
+
+				message.href = document.location.href.replace( /^http:/, 'https:' );
+				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
+
+			} else {
+
+				message.href = 'https://immersiveweb.dev/';
+				message.innerHTML = 'WEBXR NOT AVAILABLE';
+
+			}
+
+			message.style.left = 'calc(50% - 90px)';
+			message.style.width = '180px';
+			message.style.textDecoration = 'none';
+
+			stylizeElement( message );
+
+			return message;
+*/
+            const message = document.createElement( 'span' );
+            return message;
+		}
+
+	}
 
 }
 
@@ -55516,7 +55769,10 @@ class Scene {
         $("#" + me.pre + "VRButton").remove();
         //document.body.appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
         $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-        
+   
+        $("#" + me.pre + "ARButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+ 
         // related to pk
         ic.objects = []; // define objects for pk, not all elements are used for pk
         ic.objects_ghost = []; // define objects for pk, not all elements are used for pk
@@ -56762,7 +57018,7 @@ class Draw {
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw() { let ic = this.icn3d, me = ic.icn3dui;
+    draw(bVr) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -56800,7 +57056,7 @@ class Draw {
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
-          this.render();
+          this.render(bVr);
         }
 
         ic.impostorCls.clearImpostors();
@@ -56833,12 +57089,17 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render() { let ic = this.icn3d; ic.icn3dui;
+    render(bVr) { let ic = this.icn3d; ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
-        ic.renderer.setAnimationLoop( function() {
+        if(bVr) {
+            ic.renderer.setAnimationLoop( function() {
+                thisClass.render_base();
+            });
+        }
+        else {
             thisClass.render_base();
-        });
+        }
     }
 
     //Render the scene and objects into pixels.
@@ -57211,7 +57472,7 @@ class SaveFile {
             let height = $("#" + ic.pre + "canvas").height();
             ic.applyCenterCls.setWidthHeight(width, height);
 
-            if(ic.bRender) ic.drawCls.render_base();
+            if(ic.bRender) ic.drawCls.render();
 
             let bAddURL = true;
             if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -57279,7 +57540,7 @@ class SaveFile {
             ic.scaleFactor = 1.0;
             ic.applyCenterCls.setWidthHeight(width, height);
 
-            if(ic.bRender) ic.drawCls.render_base();
+            if(ic.bRender) ic.drawCls.render();
         }
         else if(type === 'html') {
             let dataStr = text;
@@ -70408,6 +70669,7 @@ class iCn3D {
     this.pickingCls = new Picking(this);
 
     this.VRButtonCls = new VRButton(this);
+    this.ARButtonCls = new ARButton(this);
 
     // set this.matShader
     //This defines the highlight color using the outline method. It can be defined using the function setOutlineColor().
@@ -70606,7 +70868,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.2';
+    this.REVISION = '3.12.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -71140,4 +71402,4 @@ class printMsg {
   }
 }
 
-export { AddTrack, AlignParser, AlignSW, AlignSeq, Alternate, Analysis, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Annotation, ApplyCenter, ApplyClbonds, ApplyCommand, ApplyDisplay, ApplyMap, ApplyOther, ApplySsbonds, ApplySymd, Axes, Box, Brick, Camera, CartoonNucl, ChainalignParser, ClickMenu, Contact, Control, ConvertTypeCls, Curve, CurveStripArrow, Cylinder, DefinedSets, Delphi, DensityCifParser, Diagram2d, Dialog, Domain3d, Draw, DrawGraph, Dsn6Parser, Dssp, ElectronMap, Events, Export3D, FirstAtomObj, Fog, GetGraph, Glycan, HBond, HashUtilsCls, HlObjects, HlSeq, HlUpdate, Html, Impostor, Instancing, Label, Line$1 as Line, LineGraph, LoadAtomData, LoadPDB, LoadScript, MarchingCube, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, MyEventCls, OpmParser, ParasCls, ParserUtils, PdbParser, PiHalogen, Picking, ProteinSurface, Ray, RealignParser, ReprSub, Resid2spec, ResidueLabels, ResizeCanvas, RmsdSuprCls, Saltbridge, SaveFile, Scap, Scene, SdfParser, SelectByCommand, Selection, SetColor, SetDialog, SetHtml, SetMenu, SetOption, SetSeqAlign, SetStyle, ShareLink, ShowAnno, ShowInter, ShowSeq, Sphere$1 as Sphere, Stick, Strand, Strip, SubdivideCls, Surface, Symd, ThreeDPrint, Transform, Tube, UtilsCls, VRButton, ViewInterPairs, XyzParser, iCn3D, iCn3DUI, printMsg };
+export { ARButton, AddTrack, AlignParser, AlignSW, AlignSeq, Alternate, Analysis, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Annotation, ApplyCenter, ApplyClbonds, ApplyCommand, ApplyDisplay, ApplyMap, ApplyOther, ApplySsbonds, ApplySymd, Axes, Box, Brick, Camera, CartoonNucl, ChainalignParser, ClickMenu, Contact, Control, ConvertTypeCls, Curve, CurveStripArrow, Cylinder, DefinedSets, Delphi, DensityCifParser, Diagram2d, Dialog, Domain3d, Draw, DrawGraph, Dsn6Parser, Dssp, ElectronMap, Events, Export3D, FirstAtomObj, Fog, GetGraph, Glycan, HBond, HashUtilsCls, HlObjects, HlSeq, HlUpdate, Html, Impostor, Instancing, Label, Line$1 as Line, LineGraph, LoadAtomData, LoadPDB, LoadScript, MarchingCube, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, MyEventCls, OpmParser, ParasCls, ParserUtils, PdbParser, PiHalogen, Picking, ProteinSurface, Ray, RealignParser, ReprSub, Resid2spec, ResidueLabels, ResizeCanvas, RmsdSuprCls, Saltbridge, SaveFile, Scap, Scene, SdfParser, SelectByCommand, Selection, SetColor, SetDialog, SetHtml, SetMenu, SetOption, SetSeqAlign, SetStyle, ShareLink, ShowAnno, ShowInter, ShowSeq, Sphere$1 as Sphere, Stick, Strand, Strip, SubdivideCls, Surface, Symd, ThreeDPrint, Transform, Tube, UtilsCls, VRButton, ViewInterPairs, XyzParser, iCn3D, iCn3DUI, printMsg };

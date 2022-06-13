@@ -33,6 +33,14 @@ class UtilsCls {
         return /Mac/i.test(window.navigator.userAgent);
     }
 
+    isAndroid() { let me = this.icn3dui;
+      return /android/i.test(window.navigator.userAgent.toLowerCase());
+    }
+
+    isChrome() { let me = this.icn3dui;
+      return navigator.userAgent.includes("Chrome") && navigator.vendor.includes("Google Inc");
+    }
+
     //Determine whether Session Storage is supported in your browser. Session Storage is not supported in Safari.
     isSessionStorageSupported() { let me = this.icn3dui;
         return window.sessionStorage;

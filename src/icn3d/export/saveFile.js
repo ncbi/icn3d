@@ -58,7 +58,7 @@ class SaveFile {
             let height = $("#" + ic.pre + "canvas").height();
             ic.applyCenterCls.setWidthHeight(width, height);
 
-            if(ic.bRender) ic.drawCls.render_base();
+            if(ic.bRender) ic.drawCls.render();
 
             let bAddURL = true;
             if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -126,7 +126,7 @@ class SaveFile {
             ic.scaleFactor = 1.0;
             ic.applyCenterCls.setWidthHeight(width, height);
 
-            if(ic.bRender) ic.drawCls.render_base();
+            if(ic.bRender) ic.drawCls.render();
         }
         else if(type === 'html') {
             let dataStr = text;

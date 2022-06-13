@@ -74,7 +74,8 @@ class VRButton {
                 ic.bImpo = false;
                 //ic.bInstanced = false;
                 
-                ic.drawCls.draw();
+                const bVr = true;
+                ic.drawCls.draw(bVr);
 
                 if ( currentSession === null ) {
 
