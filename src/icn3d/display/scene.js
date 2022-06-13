@@ -16,6 +16,7 @@ import {ApplySsbonds} from '../display/applySsbonds.js';
 
 // The following four files are for VR view:
 import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
+import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
 import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
 import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
 import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
@@ -189,7 +190,10 @@ class Scene {
         $("#" + me.pre + "VRButton").remove();
         //document.body.appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
         $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-        
+   
+        $("#" + me.pre + "ARButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+ 
         // related to pk
         ic.objects = []; // define objects for pk, not all elements are used for pk
         ic.objects_ghost = []; // define objects for pk, not all elements are used for pk

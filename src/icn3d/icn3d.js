@@ -131,6 +131,7 @@ import {Control} from './picking/control.js';
 import {Picking} from './picking/picking.js';
 
 import {VRButton} from "../thirdparty/three/vr/VRButton.js";
+import {ARButton} from "../thirdparty/three/vr/ARButton.js";
 
 class iCn3D {
   constructor(icn3dui) { let me = icn3dui;
@@ -617,6 +618,7 @@ class iCn3D {
     this.pickingCls = new Picking(this);
 
     this.VRButtonCls = new VRButton(this);
+    this.ARButtonCls = new ARButton(this);
 
     // set this.matShader
     //This defines the highlight color using the outline method. It can be defined using the function setOutlineColor().

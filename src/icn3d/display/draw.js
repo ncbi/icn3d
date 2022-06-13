@@ -19,7 +19,7 @@ class Draw {
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw() { let ic = this.icn3d, me = ic.icn3dui;
+    draw(bVr) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -57,7 +57,7 @@ class Draw {
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
-          this.render();
+          this.render(bVr);
         }
 
         ic.impostorCls.clearImpostors();
@@ -90,12 +90,17 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render() { let ic = this.icn3d, me = ic.icn3dui;
+    render(bVr) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
-        ic.renderer.setAnimationLoop( function() {
+        if(bVr) {
+            ic.renderer.setAnimationLoop( function() {
+                thisClass.render_base();
+            });
+        }
+        else {
             thisClass.render_base();
-        });
+        }
     }
 
     //Render the scene and objects into pixels.
