@@ -178,12 +178,14 @@ class Events {
 
         if(me.bNode) return;
 
-        //let hostUrl = document.URL;
-        //let pos = hostUrl.indexOf("?");
-        //hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
+        let hostUrl = document.URL;
+        let pos = hostUrl.indexOf("?");
+        hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
 
         // some URLs from VAST search are like https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/
-        let hostUrl = me.baseUrl + 'icn3d';
+        if(hostUrl == 'https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/') {
+            hostUrl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/';
+        }
 
         ic.definedSetsCls.clickCustomAtoms();
         ic.definedSetsCls.clickCommand_apply();

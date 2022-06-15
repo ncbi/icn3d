@@ -32529,7 +32529,19 @@ class AnnoCddSite {
                             }
                         }
                     }
-                    let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+
+                    let bCoordinates = false;
+                    for(let i = 0, il = adjustedResPosArray.length; i < il; ++i) {
+                        let resid = chnid + "_" + adjustedResPosArray[i];
+                        if(ic.residues.hasOwnProperty(resid)) {
+                            bCoordinates = true;
+                            break;
+                        }
+                    }
+    
+                    let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
+
+                    let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                     let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                     let htmlTmp = '<span class="icn3d-seqLine">';
                     html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -32685,7 +32697,25 @@ class AnnoCddSite {
                 if(bDomain) pssmid2fromArray[pssmid] = fromArray;
                 if(bDomain) pssmid2toArray[pssmid] = toArray;
 
-                let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                let bCoordinates = false;
+                for(let i = 0, il = fromArray.length; i < il; ++i) {
+                    let from = fromArray[i], to = toArray[i];
+                    for(let j = from; j <= to; ++j) {
+                        let resid = chnid + "_" + j;
+                        if(ic.residues.hasOwnProperty(resid)) {
+                            bCoordinates = true;
+                            break;
+                        }
+                    }
+
+                    if(bCoordinates) {
+                        break;
+                    }
+                }
+
+                let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
+
+                let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                 html3 += htmlTmp2 + htmlTmp3 + '<br>';
                 let htmlTmp = '<span class="icn3d-seqLine">';
@@ -32693,7 +32723,7 @@ class AnnoCddSite {
                 if(bDomain) {
                     html2 += '<div style="width:20px; display:inline-block;"><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
                 }
-                html2 += '<div style="width:' + titleSpace + 'px!important;" class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                html2 += '<div style="width:' + titleSpace + 'px!important;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 html2 += htmlTmp3 + htmlTmp;
                 let pre = type + index.toString();
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
@@ -32719,7 +32749,7 @@ class AnnoCddSite {
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" domain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
                 }
                 else { // with potential gaps
@@ -32738,7 +32768,7 @@ class AnnoCddSite {
                         html2 += ic.showSeqCls.insertGapOverview(chnid, fromArray2[i]);
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray2[i] - ic.baseResi[chnid] - 1) /(ic.maxAnnoLength + ic.nTotalGap)) : Math.round(ic.seqAnnWidth *(fromArray2[i] - toArray2[i-1] - 1) /(ic.maxAnnoLength + ic.nTotalGap));
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' +(index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle ' + linkStr + '" domain="' +(index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
                 }
                 htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
@@ -58976,12 +59006,14 @@ class Events {
 
         if(me.bNode) return;
 
-        //let hostUrl = document.URL;
-        //let pos = hostUrl.indexOf("?");
-        //hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
+        let hostUrl = document.URL;
+        let pos = hostUrl.indexOf("?");
+        hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
 
         // some URLs from VAST search are like https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/
-        let hostUrl = me.baseUrl + 'icn3d';
+        if(hostUrl == 'https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/') {
+            hostUrl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/';
+        }
 
         ic.definedSetsCls.clickCustomAtoms();
         ic.definedSetsCls.clickCommand_apply();
