@@ -104,7 +104,8 @@ gulp.task('libs-jquery-ui-images2',
     return gulp.src([
             "node_modules/jquery-ui/themes/ui-lightness/images/**"
         ])
-        .pipe(gulp.dest(dist + '/lib/images'));
+        .pipe(gulp.dest(dist + '/lib/images'))
+        .pipe(gulp.dest(icn3dnpm + '/css/lib/images'));
   });
 
 //  'Copy line-awesome fonts into dist/lib',
@@ -114,7 +115,8 @@ function() {
   return gulp.src([
           "node_modules/line-awesome/dist/line-awesome/fonts/**"
       ])
-      .pipe(gulp.dest(dist + '/lib/fonts'));
+      .pipe(gulp.dest(dist + '/lib/fonts'))
+      .pipe(gulp.dest(icn3dnpm + '/css/lib/fonts'));
 });
 
 //  'Copy images to show secondary structures into dist/ssimages',
@@ -159,7 +161,7 @@ gulp.task('copy-rename2',
         ])
         .pipe(concat('icn3d.css'))
         .pipe(gulp.dest(dist))
-        .pipe(gulp.dest(icn3dnpm))
+        .pipe(gulp.dest(icn3dnpm + '/css'))
         .pipe(rename('icn3d_' + package.version + '.css'))
         .pipe(gulp.dest(dist));
   });
@@ -274,82 +276,14 @@ gulp.task('rollupmodule', () => {
   });
 });
 
-
-
-gulp.task('rollupvr', () => {
-  return rollup.rollup({
-    input: 'src/thirdparty/three/vr/vr.js',
-    plugins: [
-      resolve(),
-      //terser(),
-    ]
-  }).then(bundle => {
-    return bundle.write({
-      name: 'vr',
-      file: './tmpdir/icn3d_rollup_vr.js',
-      format: 'iife',
-    });
-  });
-});
-
-gulp.task('rollupvrmin', () => {
-  return rollup.rollup({
-    input: 'src/thirdparty/three/vr/vr.js',
-    plugins: [
-      resolve(),
-      terser(),
-    ]
-  }).then(bundle => {
-    return bundle.write({
-      name: 'vr',
-      file: './tmpdir/icn3d_rollup_vr.min.js',
-      format: 'iife',
-    });
-  });
-});
-
-gulp.task('rollupvrmodule', () => {
-  return rollup.rollup({
-    input: 'src/thirdparty/three/vr/vr.js',
-    plugins: [
-      resolve(),
-      //terser(),
-    ]
-  }).then(bundle => {
-    return bundle.write({
-      name: 'vr',
-      file: './tmpdir/icn3d_rollup_vr_module.js',
-      format: 'es',
-    });
-  });
-});
-
-/*
-gulp.task('rollupmodulemin', () => {
-  return rollup.rollup({
-    input: 'src/icn3dui.js',
-    plugins: [
-      resolve(),
-      terser(),
-    ]
-  }).then(bundle => {
-    return bundle.write({
-      name: 'icn3d',
-      file: './tmpdir/icn3d_rollup_module.min.js',
-      format: 'es',
-    });
-  });
-});
-*/
-
 var alljs = [
-    "tmpdir/icn3d_rollup_vr.js",
+    //"tmpdir/icn3d_rollup_vr.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup.js"
 ];
 
 var allminjs = [
-    "tmpdir/icn3d_rollup_vr.min.js",
+    //"tmpdir/icn3d_rollup_vr.min.js",
     "tmpdir/third.min.js",
     "tmpdir/icn3d_rollup.min.js"
 ];
@@ -360,7 +294,7 @@ var allnodejs = [
 ];
 
 var allmodulejs = [
-    "tmpdir/icn3d_rollup_vr_module.js",
+    //"tmpdir/icn3d_rollup_vr_module.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup_module.js"
     //,
@@ -404,36 +338,6 @@ gulp.task("allmodule",
         .pipe(gulp.dest(icn3dnpm));
   });
 
-/*
-//  'Rewrite the link and script tags in the html',
-gulp.task('html',
-  //gulp.series('clean'),
-  function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html', 'example.html'])
-        .pipe(dom(function() {
-            var elems = this.querySelectorAll(
-                "script[src],link[rel='stylesheet']");
-            for (i = 0; i < elems.length; ++i) {
-                var e = elems[i];
-                var src_attr = (e.tagName == "SCRIPT") ? "src" : "href";
-                var src_file = e.getAttribute(src_attr);
-
-                var new_src, m, set_attr = true;
-                if (m = src_file.match(/^(icn3d)\.css$/))
-                    new_src = m[1] + "_" + package.version + ".css";
-                else if (m = src_file.match(/^(icn3d)\.min\.js/))
-                    new_src = m[1] + "_" + package.version + ".min.js";
-                else if (m = src_file.match(/^(.*)$/)) {
-                    new_src = m[1];
-                }
-                if (set_attr) e.setAttribute(src_attr, new_src);
-            }
-            return this;
-        }))
-        .pipe(gulp.dest(dist));
-  });
-*/
-
 gulp.task("html",
   function() {
     return gulp.src(['index.html', 'full.html'])
@@ -464,8 +368,7 @@ gulp.task("html3",
 gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
-    'rollupnode','rollupmodule','rollupvr','rollupvrmin',
-    'rollupvrmodule','all','allmin','allnode','allmodule',
+    'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
     'html','html2','html3')
 );
 
