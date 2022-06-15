@@ -266,7 +266,7 @@ class RealignParser {
         // align seq
         //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, bRealign);
         ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
-        
+
         ic.transformCls.zoominSelection();
 
 
@@ -276,12 +276,13 @@ class RealignParser {
         ic.opts['color'] = 'identity';
         //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
-
+        
         let name = 'protein_aligned';
         ic.selectionCls.saveSelection(name, name);
-
+        
         ic.drawCls.draw();
         ic.hlUpdateCls.updateHlAll();
+               
         if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
       }
       else {
@@ -434,7 +435,6 @@ class RealignParser {
             if(!ic.chainsSeq[chainid]) {
                 //alert("Please select one chain per structure and try it again...");
                 //return;
-
                 continue;
             }
 

@@ -649,7 +649,7 @@ class SetSeqAlign {
 
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }      
-    
+          
         // 3. assign the varaible ic.alnChainsAnno
         for(let i = 0; i < 3 + 2*n; ++i) {
             if(ic.alnChainsAnno[chainid1][i] === undefined ) ic.alnChainsAnno[chainid1][i] = [];
@@ -726,7 +726,7 @@ class SetSeqAlign {
             resi = resiPos;
         }
         else {
-            if(ic.chainsSeq[chainid][resiPos] === undefined) {
+            if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
                 resi = '';
             }
             else {
@@ -751,7 +751,7 @@ class SetSeqAlign {
             }
         }
         else {
-            if(ic.chainsSeq[chainid][resiPos] === undefined) {
+            if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
                 resn = '';
             }
             else {
@@ -767,18 +767,21 @@ class SetSeqAlign {
         let nGap = 0;
 
         let pos_t; // position to add gap
-        for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
-            //add gap before the mapping region       
-            if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == resi_t) {
-                pos_t = j;
-                break;
-            }
 
-            if(ic.alnChainsSeq[chainid1][j].resn == '-') {
-                ++nGap;
-            }
-            else {
-                nGap = 0;
+        if(ic.alnChainsSeq[chainid1]) {
+            for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
+                //add gap before the mapping region       
+                if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == resi_t) {
+                    pos_t = j;
+                    break;
+                }
+
+                if(ic.alnChainsSeq[chainid1][j].resn == '-') {
+                    ++nGap;
+                }
+                else {
+                    nGap = 0;
+                }
             }
         }
 
@@ -837,8 +840,8 @@ class SetSeqAlign {
         pos2 = chainid.indexOf('_');
 
         //mmdbid1 = ic.mmdbid_t; 
-        mmdbid1 = chainidArray[0].substr(0, pos1).toUpperCase();
-        mmdbid2 = chainid.substr(0, pos2).toUpperCase();
+        mmdbid1 = chainidArray[0].substr(0, pos1); //.toUpperCase();
+        mmdbid2 = chainid.substr(0, pos2); //.toUpperCase();
 
         chain1 = chainidArray[0].substr(pos1 + 1);
         chain2 = chainid.substr(pos2 + 1);

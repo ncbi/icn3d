@@ -99,7 +99,7 @@ class Html {
     this.simulation = undefined;
 
     //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
-    this.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+    this.baseUrl = "https://test.ncbi.nlm.nih.gov/Structure/";
     this.divStr = "<div id='" + this.icn3dui.pre;
     this.divNowrapStr = "<div style='white-space:nowrap'>";
     this.spanNowrapStr = "<span style='white-space:nowrap'>";
