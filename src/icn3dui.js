@@ -343,6 +343,11 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
 
     if(pdbStr) { // input pdbStr
         ic.init();
+
+        ic.bInputfile = true;
+        ic.InputfileType = 'pdb';
+        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
+        
         ic.pdbParserCls.loadPdbData(pdbStr);
 
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {

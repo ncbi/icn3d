@@ -45,7 +45,7 @@ class SetSeqAlign {
               let  chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
               let  chainid1 = mmdbid1 + '_' + chain1;
 
-              let  id2aligninfo = {}
+              let  id2aligninfo = {};
               let  start = alignData.sequence.length, end = -1;
               let  bStart = false;
               for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
@@ -220,14 +220,14 @@ class SetSeqAlign {
                   let  residueid2 = chainid2 + '_' + resi;
                   let  ss1 = ic.secondaries[residueid1];
                   let  ss2 = ic.secondaries[residueid2];
-                  if(ss2 !== undefined) {
+                  if(ss2) {
                       ic.alnChainsAnno[chainid1][0].push(ss2);
                   }
                   else {
                       ic.alnChainsAnno[chainid1][0].push('-');
                   }
 
-                  if(ss1 !== undefined) {
+                  if(ss1) {
                       ic.alnChainsAnno[chainid1][1].push(ss1);
                   }
                   else {
@@ -244,10 +244,10 @@ class SetSeqAlign {
                   ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
                   ++alignIndex;
-              } // end for(let j
+              } // end for(let j           
           } // end for(let i
 
-          seqalign = {}
+          seqalign = {};
     }
 
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;

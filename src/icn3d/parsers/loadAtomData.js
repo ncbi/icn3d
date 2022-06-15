@@ -209,7 +209,7 @@ class LoadAtomData {
             let  bSetResi = false;
 
             //if(mmdbId !== prevmmdbId) resiArray = [];
-            if(atm.chain === undefined &&(type === 'mmdbid' || type === 'align')) {
+            if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
                 if(type === 'mmdbid') {
                   molid = atm.ids.m;
 
@@ -626,7 +626,7 @@ class LoadAtomData {
         }
 
         // remove the reference
-        data.atoms = {}
+        data.atoms = {};
 
         //ic.cnt =(alignType === undefined || alignType === 'target') ? serial : serial - ic.lastTargetSerial;
         ic.cnt = serial;
@@ -651,6 +651,7 @@ class LoadAtomData {
 
             ic.loadPDBCls.setSsbond();
         }
+        
         if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 

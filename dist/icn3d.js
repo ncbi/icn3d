@@ -22232,7 +22232,7 @@ var icn3d = (function (exports) {
                 let  bSetResi = false;
 
                 //if(mmdbId !== prevmmdbId) resiArray = [];
-                if(atm.chain === undefined &&(type === 'mmdbid' || type === 'align')) {
+                if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
                     if(type === 'mmdbid') {
                       molid = atm.ids.m;
 
@@ -22666,6 +22666,7 @@ var icn3d = (function (exports) {
 
                 ic.loadPDBCls.setSsbond();
             }
+            
             if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
                 let  disulfideArray = data.disulfides;
 
@@ -35834,14 +35835,14 @@ var icn3d = (function (exports) {
                       let  residueid2 = chainid2 + '_' + resi;
                       let  ss1 = ic.secondaries[residueid1];
                       let  ss2 = ic.secondaries[residueid2];
-                      if(ss2 !== undefined) {
+                      if(ss2) {
                           ic.alnChainsAnno[chainid1][0].push(ss2);
                       }
                       else {
                           ic.alnChainsAnno[chainid1][0].push('-');
                       }
 
-                      if(ss1 !== undefined) {
+                      if(ss1) {
                           ic.alnChainsAnno[chainid1][1].push(ss1);
                       }
                       else {
@@ -35858,7 +35859,7 @@ var icn3d = (function (exports) {
                       ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
                       ++alignIndex;
-                  } // end for(let j
+                  } // end for(let j           
               } // end for(let i
 
               seqalign = {};
@@ -37454,7 +37455,7 @@ var icn3d = (function (exports) {
                       $("#" + id + "_shrink").show();
 
                       if(me.cfg.align !== undefined) {
-                          let  bShowHighlight = false;
+                          let  bShowHighlight = false;                  
                           let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                           $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                           $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -61189,6 +61190,7 @@ var icn3d = (function (exports) {
             let index = 0,
                 prevResCnt2nd = 0;
             let firstChainid, oriChainid;
+
             //  for(let i in ic.alnChains) {
             for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
                 let i = alignChainArray[m];
@@ -61336,6 +61338,9 @@ var icn3d = (function (exports) {
                                     else {
                                         resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                                     }
+                                }
+                                else {
+                                    resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                                 }
                             } else if (text == 'c') {
                                 resiHtmlArray[j] += '<span class="icn3d-coil">&nbsp;</span>';
@@ -65994,6 +65999,11 @@ var icn3d = (function (exports) {
 
         if(pdbStr) { // input pdbStr
             ic.init();
+
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
+            
             ic.pdbParserCls.loadPdbData(pdbStr);
 
             if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {

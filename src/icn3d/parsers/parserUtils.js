@@ -666,7 +666,7 @@ class ParserUtils {
                   $("#" + id + "_shrink").show();
 
                   if(me.cfg.align !== undefined) {
-                      let  bShowHighlight = false;
+                      let  bShowHighlight = false;                  
                       let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                       $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
