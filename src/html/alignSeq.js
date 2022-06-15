@@ -44,6 +44,7 @@ class AlignSeq {
         let index = 0,
             prevResCnt2nd = 0;
         let firstChainid, oriChainid;
+
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
@@ -194,7 +195,7 @@ class AlignSeq {
                                 }
                             }
                             else {
-                                //resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
+                                resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                             }
                         } else if (text == 'c') {
                             resiHtmlArray[j] += '<span class="icn3d-coil">&nbsp;</span>';

@@ -22229,7 +22229,7 @@ class LoadAtomData {
             let  bSetResi = false;
 
             //if(mmdbId !== prevmmdbId) resiArray = [];
-            if(atm.chain === undefined &&(type === 'mmdbid' || type === 'align')) {
+            if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
                 if(type === 'mmdbid') {
                   molid = atm.ids.m;
 
@@ -22663,6 +22663,7 @@ class LoadAtomData {
 
             ic.loadPDBCls.setSsbond();
         }
+        
         if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
             let  disulfideArray = data.disulfides;
 
@@ -35831,14 +35832,14 @@ class SetSeqAlign {
                   let  residueid2 = chainid2 + '_' + resi;
                   let  ss1 = ic.secondaries[residueid1];
                   let  ss2 = ic.secondaries[residueid2];
-                  if(ss2 !== undefined) {
+                  if(ss2) {
                       ic.alnChainsAnno[chainid1][0].push(ss2);
                   }
                   else {
                       ic.alnChainsAnno[chainid1][0].push('-');
                   }
 
-                  if(ss1 !== undefined) {
+                  if(ss1) {
                       ic.alnChainsAnno[chainid1][1].push(ss1);
                   }
                   else {
@@ -35855,7 +35856,7 @@ class SetSeqAlign {
                   ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
                   ++alignIndex;
-              } // end for(let j
+              } // end for(let j           
           } // end for(let i
 
           seqalign = {};
@@ -37451,7 +37452,7 @@ class ParserUtils {
                   $("#" + id + "_shrink").show();
 
                   if(me.cfg.align !== undefined) {
-                      let  bShowHighlight = false;
+                      let  bShowHighlight = false;                  
                       let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                       $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -61186,6 +61187,7 @@ class AlignSeq {
         let index = 0,
             prevResCnt2nd = 0;
         let firstChainid, oriChainid;
+
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
@@ -61333,6 +61335,9 @@ class AlignSeq {
                                 else {
                                     resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                                 }
+                            }
+                            else {
+                                resiHtmlArray[j] += '<span class="icn3d-sheet">&nbsp;</span>';
                             }
                         } else if (text == 'c') {
                             resiHtmlArray[j] += '<span class="icn3d-coil">&nbsp;</span>';
@@ -65991,6 +65996,11 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
 
     if(pdbStr) { // input pdbStr
         ic.init();
+
+        ic.bInputfile = true;
+        ic.InputfileType = 'pdb';
+        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
+        
         ic.pdbParserCls.loadPdbData(pdbStr);
 
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
