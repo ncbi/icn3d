@@ -391,7 +391,7 @@ class AddTrack {
 
            //this.showNewTrack(chainid, title, text);
            //me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
-           let result = this.getFullText(text);
+           let result = thisClass.getFullText(text);
 
            thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 

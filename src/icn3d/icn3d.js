@@ -486,6 +486,8 @@ class iCn3D {
     this.bNotLoadStructure = false;
 
     this.InputfileData = '';
+    this.bVr = false; // cflag to indicate whether in VR state
+    this.bAr = false; // cflag to indicate whether in VR state
 
     // default color range for Add Custom Color button in the Sequence & Annotation window
     this.startColor = 'blue';

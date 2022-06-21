@@ -31440,7 +31440,7 @@ class AddTrack {
 
            //this.showNewTrack(chainid, title, text);
            //me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
-           let result = this.getFullText(text);
+           let result = thisClass.getFullText(text);
 
            thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 
@@ -44983,6 +44983,8 @@ class ApplySsbonds {
     }
 }
 
+//https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
+
 class VRButton {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -45018,10 +45020,12 @@ class VRButton {
             }
 
             function onSessionEnded( /*event*/ ) {
-                // the display is weird somehow
                 // reset orientation after VR
                 ic.transformCls.resetOrientation();
-                //ic.transformCls.zoominSelection();
+                
+                ic.bVr = false;
+                //ic.mdl.scale.copy(new THREE.Vector3( 1, 1, 1 )); 
+
                 ic.drawCls.draw();
 
                 currentSession.removeEventListener( 'end', onSessionEnded );
@@ -45059,8 +45063,10 @@ class VRButton {
                 ic.bImpo = false;
                 //ic.bInstanced = false;
                 
-                const bVr = true;
-                ic.drawCls.draw(bVr);
+                ic.bVr = true;
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
+
+                ic.drawCls.draw(ic.bVr);
 
                 if ( currentSession === null ) {
 
@@ -45210,6 +45216,8 @@ class VRButton {
 
 }
 
+//https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+
 class ARButton {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -45281,6 +45289,13 @@ class ARButton {
 			}
 
 			function onSessionEnded( /*event*/ ) {
+				// reset orientation after VR
+				ic.transformCls.resetOrientation();
+
+				ic.bAr = false;
+				//ic.mdl.scale.copy(new THREE.Vector3( 1, 1, 1 ));
+
+				ic.drawCls.draw();
 
 				currentSession.removeEventListener( 'end', onSessionEnded );
 
@@ -45314,13 +45329,16 @@ class ARButton {
 			};
 
 			button.onclick = function () {
-                // imposter didn't work well in VR
-                //ic.bImpo = false;
+                // imposter didn't work well in AR
+                ic.bImpo = false;
 
-                ic.opts['background'] = 'transparent';
+                // important to keet the background transparent
+				ic.opts['background'] = 'transparent';
                 
-                const bVr = true;
-                ic.drawCls.draw(bVr);
+                ic.bAr = true;
+				//ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
+
+                ic.drawCls.draw(ic.bAr);
 
 				if ( currentSession === null ) {
 
@@ -50541,6 +50559,217 @@ class XRControllerModelFactory {
 
 }
 
+//import * as THREE from './three/three.module.js';
+
+class ControllerGestures extends THREE.EventDispatcher{
+    constructor( renderer ){
+        super();
+        
+        if (renderer === undefined){
+            console.error('ControllerGestures must be passed a renderer');
+            return;
+        }
+        
+        const clock = new THREE.Clock();
+        
+        this.controller1 = renderer.xr.getController(0);
+        this.controller1.userData.gestures = { index: 0 };
+        this.controller1.userData.selectPressed = false;
+        this.controller1.addEventListener( 'selectstart', onSelectStart );
+        this.controller1.addEventListener( 'selectend', onSelectEnd );
+        
+        this.controller2 = renderer.xr.getController(1);
+        this.controller2.userData.gestures = { index: 1 };
+        this.controller2.userData.selectPressed = false;
+        this.controller2.addEventListener( 'selectstart', onSelectStart );
+        this.controller2.addEventListener( 'selectend', onSelectEnd );
+        
+        this.doubleClickLimit = 0.2;
+        this.pressMinimum = 0.4;
+        this.right = new THREE.Vector3(1,0,0);
+        this.up = new THREE.Vector3(0,1,0);
+        
+        this.type = 'unknown';
+        this.touchCount = 0;
+        
+        this.clock = clock;
+        
+        const self = this;
+        
+        function onSelectStart( ){
+            const data = this.userData.gestures;
+            
+            data.startPosition = undefined;
+            data.startTime = clock.getElapsedTime();
+            
+            if ( self.type.indexOf('tap') == -1) data.taps = 0;
+            
+            self.type = 'unknown';
+            this.userData.selectPressed = true;
+            
+            self.touchCount++;
+            
+            console.log( `onSelectStart touchCount: ${ self.touchCount }` );
+        }
+        
+        function onSelectEnd( ){
+            const data = this.userData.gestures;
+            
+            data.endTime = clock.getElapsedTime();
+            const startToEnd = data.endTime - data.startTime;
+            
+            //console.log(`ControllerGestures.onSelectEnd: startToEnd:${startToEnd.toFixed(2)} taps:${data.taps}`);
+            
+            if (self.type === 'swipe'){
+                const direction = ( self.controller1.position.y < data.startPosition.y) ? "DOWN" : "UP";
+                self.dispatchEvent( { type:'swipe', direction } );
+                self.type = 'unknown';
+            }else if (self.type !== "pinch" && self.type !== "rotate" && self.type !== 'pan'){
+                if ( startToEnd < self.doubleClickLimit ){
+                    self.type = "tap";
+                    data.taps++;
+                }else if ( startToEnd > self.pressMinimum ){
+                    self.dispatchEvent( { type: 'press', position: self.controller1.position, matrixWorld: self.controller1.matrixWorld }   );
+                    self.type = 'unknown';
+                }
+            }else {
+                self.type = 'unknown';
+            }
+            
+            this.userData.selectPressed = false;
+            data.startPosition = undefined;
+            
+            self.touchCount--;
+        }
+    }
+    
+    get multiTouch(){
+        let result;
+        if ( this.controller1 === undefined || this.controller2 === undefined ){   
+            result = false;
+        }else {
+            result = this.controller1.userData.selectPressed && this.controller2.userData.selectPressed;
+        }
+        const self = this;
+        console.log( `ControllerGestures multiTouch: ${result} touchCount:${self.touchCount}`);
+        return result;
+    }
+    
+    get touch(){
+        let result;
+        if ( this.controller1 === undefined || this.controller2 === undefined ){   
+            result = false;
+        }else {
+            result = this.controller1.userData.selectPressed || this.controller2.userData.selectPressed;
+        }
+        //console.log( `ControllerGestures touch: ${result}`);
+        return result;
+    }
+    
+    get debugMsg(){
+        return this.type;
+    }
+    
+    update(){
+        const data1 = this.controller1.userData.gestures;
+        const data2 = this.controller2.userData.gestures;
+        const currentTime = this.clock.getElapsedTime();
+        
+        let elapsedTime;
+        
+        if (this.controller1.userData.selectPressed && data1.startPosition === undefined){
+            elapsedTime = currentTime - data1.startTime;
+            if (elapsedTime > 0.05 ) data1.startPosition = this.controller1.position.clone();
+        }
+        
+        if (this.controller2.userData.selectPressed && data2.startPosition === undefined){
+            elapsedTime = currentTime - data2.startTime;
+            if (elapsedTime > 0.05 ) data2.startPosition = this.controller2.position.clone();
+        }
+        
+        if (!this.controller1.userData.selectPressed && this.type === 'tap' ){
+            //Only dispatch event after double click limit is passed
+            elapsedTime = this.clock.getElapsedTime() - data1.endTime;
+            if (elapsedTime > this.doubleClickLimit){
+                console.log( `ControllerGestures.update dispatchEvent taps:${data1.taps}` );
+                switch( data1.taps ){
+                    case 1:
+                        this.dispatchEvent( { type: 'tap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
+                        break;
+                    case 2:
+                        this.dispatchEvent( { type: 'doubletap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
+                        break;
+                    case 3:
+                        this.dispatchEvent( { type: 'tripletap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
+                        break;
+                    case 4:
+                        this.dispatchEvent( { type: 'quadtap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld }  );
+                        break;
+                }
+                this.type = "unknown";
+                data1.taps = 0;
+            }
+        }
+        
+        if (this.type === 'unknown' && this.touch){
+            if (data1.startPosition !== undefined){
+                if (this.multiTouch){
+                    if (data2.startPosition !== undefined){
+                        //startPosition is undefined for 1/20 sec
+                        //test for pinch or rotate
+                        const startDistance = data1.startPosition.distanceTo( data2.startPosition );
+                        const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
+                        const delta = currentDistance - startDistance;
+                        if ( Math.abs(delta) > 0.01 ){
+                            this.type = 'pinch';
+                            this.startDistance = this.controller1.position.distanceTo( this.controller2.position );
+                            this.dispatchEvent( { type: 'pinch', delta: 0, scale: 1, initialise: true } );
+                        }else {
+                            const v1 = data2.startPosition.clone().sub( data1.startPosition ).normalize();
+                            const v2 = this.controller2.position.clone().sub( this.controller1.position ).normalize();
+                            const theta = v1.angleTo( v2 );
+                            if (Math.abs(theta) > 0.2){
+                                this.type = 'rotate';
+                                this.startVector = v2.clone();
+                                this.dispatchEvent( { type: 'rotate', theta: 0, initialise: true } );
+                            }
+                        }
+                    }
+                }else {
+                    //test for swipe or pan
+                    let dist = data1.startPosition.distanceTo( this.controller1.position );
+                    elapsedTime = this.clock.getElapsedTime() - data1.startTime;
+                    const velocity = dist/elapsedTime;
+                    //console.log(`dist:${dist.toFixed(3)} velocity:${velocity.toFixed(3)}`);
+                    if ( dist > 0.01 && velocity > 0.1 ){
+                        const v = this.controller1.position.clone().sub( data1.startPosition );
+                        let maxY = (Math.abs(v.y) > Math.abs(v.x)) && (Math.abs(v.y) > Math.abs(v.z));
+                        if ( maxY )this.type = "swipe";
+                    }else if (dist > 0.006 && velocity < 0.03){
+                        this.type = "pan";
+                        this.startPosition = this.controller1.position.clone();
+                        this.dispatchEvent( { type: 'pan', delta: new THREE.Vector3(), initialise: true } );
+                    }
+                }
+            }
+        }else if (this.type === 'pinch'){
+            const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
+            const delta = currentDistance - this.startDistance;
+            const scale = currentDistance/this.startDistance;
+            this.dispatchEvent( { type: 'pinch', delta, scale });
+        }else if (this.type === 'rotate'){
+            const v = this.controller2.position.clone().sub( this.controller1.position ).normalize();
+            let theta = this.startVector.angleTo( v );
+            const cross = this.startVector.clone().cross( v );
+            if (this.up.dot(cross) > 0) theta = -theta;
+            this.dispatchEvent( { type: 'rotate', theta } );
+        }else if (this.type === 'pan'){
+            const delta = this.controller1.position.clone().sub( this.startPosition );
+            this.dispatchEvent( { type: 'pan', delta } );
+        }
+    }
+}
+
 /**
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
@@ -50560,6 +50789,8 @@ class Scene {
         ic.fogCls.setFog();
 
         ic.cameraCls.setCamera();
+
+        this.setVrAr();
 
         if(ic.bSkipChemicalbinding === undefined || !ic.bSkipChemicalbinding) {
             ic.applyOtherCls.applyChemicalbindingOptions();
@@ -50701,22 +50932,6 @@ class Scene {
         // highlight on impostors
         ic.mdl_ghost = new THREE.Object3D();  // Impostor display
         ic.scene_ghost.add(ic.mdl_ghost);
-        
-        // for VR view
-        let controller = ic.renderer.xr.getController( 0 ); 
-        ic.scene.add( controller );
-
-        let controllerModelFactory = new XRControllerModelFactory();
-        let controllerGrip = ic.renderer.xr.getControllerGrip( 0 );
-        controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
-        ic.scene.add( controllerGrip );
-
-        $("#" + me.pre + "VRButton").remove();
-        //document.body.appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-   
-        $("#" + me.pre + "ARButton").remove();
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
  
         // related to pk
         ic.objects = []; // define objects for pk, not all elements are used for pk
@@ -50748,8 +50963,193 @@ class Scene {
         ic.cams = {
             perspective: ic.perspectiveCamera,
             orthographic: ic.orthographicCamera,
-        };
+        };       
     };
+
+    setVrAr() { let ic = this.icn3d, me = ic.icn3dui;
+
+        // https://github.com/NikLever/Learn-WebXR/tree/master/start
+        // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+        // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
+
+        if(ic.bVr) {
+/*            
+            ic.raycasterVR = new THREE.Raycaster();
+            ic.workingMatrix = new THREE.Matrix4();
+            ic.workingVector = new THREE.Vector3();
+            ic.origin = new THREE.Vector3();
+
+            let radius = 0.08;
+            let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
+            ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
+            ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
+*/
+            // add dolly to move camera
+            ic.dolly = new THREE.Object3D();
+            ic.dolly.position.z = 5;
+            ic.dolly.add(ic.cam);
+            ic.scene.add(ic.dolly);
+
+            ic.dummyCam = new THREE.Object3D();
+            ic.cam.add(ic.dummyCam);
+
+            ic.clock = new THREE.Clock();
+
+            //controllers
+            ic.controllers = this.getControllers();
+
+            function onSelectStart() {
+//                this.children[0].scale.z = 10;
+                this.userData.selectPressed = true;
+            }
+    
+            function onSelectEnd() {
+//                this.children[0].scale.z = 0;
+//                ic.highlightVR.visible = false;
+                this.userData.selectPressed = false;
+            }
+/*
+            function buildController( data ) {
+                let geometry, material;
+            
+                switch ( data.targetRayMode ) {
+                    case 'tracked-pointer':
+                        geometry = new THREE.BufferGeometry();
+                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
+                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
+            
+                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
+            
+                        return new THREE.Line( geometry, material );
+            
+                    case 'gaze':
+                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
+                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
+                        return new THREE.Mesh( geometry, material );
+                }
+            }
+*/
+            ic.controllers.forEach( (controller) => {
+                controller.addEventListener( 'selectstart', onSelectStart );
+                controller.addEventListener( 'selectend', onSelectEnd );
+/*                
+                controller.addEventListener( 'connected', function ( event ) {
+                    const mesh = buildController(event.data);
+                    mesh.scale.z = 0;
+                    this.add( mesh );
+                } );
+                controller.addEventListener( 'disconnected', function () {
+                    this.remove( this.children[ 0 ] );
+                    ic.controllers.forEach( (controllerTmp) => {
+                        controllerTmp = null;
+                    });
+                    //self.controllerGrip = null;
+                } );
+*/                
+            });         
+        }      
+        else if(ic.bAr) {
+            //Add gestures here
+            ic.gestures = new ControllerGestures(ic.renderer);
+            ic.scene.add(ic.gestures.controller1);
+            ic.scene.add(ic.gestures.controller2);
+
+            ic.gestures.addEventListener('tap', (ev) => {
+                //if(!ic.mdl.visible) {
+                //    ic.mdl.visible = true;
+                //}
+
+                const controller = ic.gestures.controller1; 
+                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.1));
+                ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
+            });
+
+            ic.gestures.addEventListener('doubletap', (ev) => {
+                const controller = ic.gestures.controller1; 
+                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(10));
+                ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
+            });
+/*
+            ic.gestures.addEventListener('swipe', (ev) => {
+                // if(ic.mdl.visible) {
+                //     ic.mdl.visible = false;
+                // }
+            });
+  
+            ic.gestures.addEventListener('pan', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startPosition = ic.mdl.position.clone();
+                // }
+                // else {
+                //     const pos = thisClass.startPosition.clone().add(ev.delta.multiplyScalar(3));
+                //     ic.mdl.position.copy(pos);
+                // }
+            });
+
+            ic.gestures.addEventListener('pinch', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startScale = ic.mdl.scale.clone();                   
+                // }
+                // else {
+                //     const scale = thisClass.startScale.clone().multiplyScalar(ev.scale);                  
+                //     ic.mdl.scale.copy(scale);
+                // }
+            });
+ 
+            ic.gestures.addEventListener('rotate', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                // }
+                // else {
+                //     ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                //     ic.mdl.rotateY(ev.theta);
+                // }
+            });  
+*/                            
+        }
+
+        $("#" + me.pre + "VRButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+
+        $("#" + me.pre + "ARButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+    }
+
+    getControllers() { let ic = this.icn3d; ic.icn3dui;
+        const controllerModelFactory = new XRControllerModelFactory();
+/*        
+        const geometry = new THREE.BufferGeometry().setFromPoints( [
+            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(0,0,-1)
+        ]);
+        const line = new THREE.Line( geometry );
+        line.name = 'line';
+        line.scale.z = 0;
+*/
+
+        const controllers = [];
+        
+        for(let i=0; i<=1; i++){
+            const controller = ic.renderer.xr.getController( i );
+            ic.dolly.add( controller );
+
+//            controller.add( line.clone() );
+            controller.userData.selectPressed = false;
+            ic.scene.add(controller);
+            
+            controllers.push( controller );
+            
+            const grip = ic.renderer.xr.getControllerGrip( i );
+            grip.add( controllerModelFactory.createControllerModel( grip ));
+            ic.scene.add( grip );
+        }
+        
+        return controllers;
+    }
 }
 
 /**
@@ -51963,7 +52363,7 @@ class Draw {
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw(bVr) { let ic = this.icn3d, me = ic.icn3dui;
+    draw(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -52001,7 +52401,7 @@ class Draw {
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
-          this.render(bVr);
+          this.render(bVrAr);
         }
 
         ic.impostorCls.clearImpostors();
@@ -52034,10 +52434,10 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render(bVr) { let ic = this.icn3d; ic.icn3dui;
+    render(bVrAr) { let ic = this.icn3d; ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
-        if(bVr) {
+        if(bVrAr) {
             ic.renderer.setAnimationLoop( function() {
                 thisClass.render_base();
             });
@@ -52047,8 +52447,38 @@ class Draw {
         }
     }
 
+    handleController( controller, dt) { let ic = this.icn3d; ic.icn3dui;
+        if (controller.userData.selectPressed ){
+/*            
+            ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
+
+            ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+            ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+
+            const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+
+            if (intersects.length>0){
+                intersects[0].object.add(ic.highlightVR);
+                ic.highlightVR.visible = true;
+            }else{
+                ic.highlightVR.visible = false;
+            }
+*/            
+            const speed = 5; //2;
+            const quaternion = ic.dolly.quaternion.clone();
+            //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
+            ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
+            ic.dolly.translateZ(-dt * speed);
+            //ic.dolly.position.y = 0; // limit to a plane
+            ic.dolly.quaternion.copy(quaternion); 
+                    
+        }
+    }
+
     //Render the scene and objects into pixels.
     render_base() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
         if(me.bNode) return;
 
         let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
@@ -52063,6 +52493,24 @@ class Draw {
         }
 
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+
+        if(ic.bVr) {
+            let dt = ic.clock.getDelta();
+
+            if (ic.controllers ){
+                for(let i = 0, il = ic.controllers.length; i < il; ++i) {
+                    let controller = ic.controllers[i];
+                    dt = (i % 2 == 0) ? dt : -dt;
+                    thisClass.handleController( controller, dt ); 
+                }
+            }
+        }
+        else if(ic.bAr) {
+            if ( ic.renderer.xr.isPresenting ){    
+                ic.gestures.update();
+            }
+        }
+
         if(ic.scene) {
             ic.renderer.render(ic.scene, cam);
         }
@@ -53139,6 +53587,9 @@ class SaveFile {
        if(me.cfg.cid !== undefined) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
        }
+       else if(me.cfg.afid !== undefined) {
+           url = "https://alphafold.ebi.ac.uk/search/text/";
+       }
        else {
            //if(ic.inputid.indexOf(",") !== -1) {
            if(Object.keys(ic.structures).length > 1) {
@@ -53158,11 +53609,17 @@ class SaveFile {
 
            if(idArray.length === 1) {
                url += ic.inputid;
-               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to " + ic.inputid + ": " + url, false);
            }
            else if(idArray.length === 2) {
-               url += idArray[0] + " OR " + idArray[1];
-               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+                if(me.cfg.afid) {
+                    url += idArray[0] + " " + idArray[1];
+                }
+                else {
+                    url += idArray[0] + " OR " + idArray[1];
+                }
+
+                if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
            }
        }
 
@@ -55842,7 +56299,7 @@ class SetMenu {
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AalphaFold)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -56158,11 +56615,22 @@ class SetMenu {
 
         html += "<li>-</li>";
 
+        let liStr = "<li><a href='";
+
         html += "<li><span>VR & AR Hints</span>";
         html += "<ul>";
-        html += "<li><span>VR: VR Headsets</span>";
-        html += "<li><span>AR: Chrome in Android</span>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#vr' target='_blank'>VR: VR Headsets</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#ar' target='_blank'>AR: Chrome in Android</a></li>";
         html += "</ul>";
+/*
+        let liStr = "<li><a href='";
+
+        html += "<ul class='icn3d-mn-item'>";
+
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
+*/
 
         html += me.htmlCls.setHtmlCls.getLink('mn6_sidebyside', 'Side by Side');
 
@@ -58686,7 +59154,7 @@ class SetDialog {
         html += "</div>";
         html += me.htmlCls.divStr + "tracktab4'>";
         html += "Track Title: " + me.htmlCls.inputTextStr + "id='" + me.pre + "track_title' placeholder='track title' size=16> <br><br>";
-        html += "Track Text(e.g., \"152 G, 155-156 RR\" defines a character \"G\" at the position 152 and two continuous characters \"RR\" at positions from 155 to 156. The starting position is 1): <br>";
+        html += "Track Text (e.g., \"2 G, 5-6 RR\" defines a character \"G\" at the position 2 and two continuous characters \"RR\" at positions from 5 to 6. The starting position is 1): <br>";
         html += "<textarea id='" + me.pre + "track_text' rows='5' style='width: 100%; height: " +(2*me.htmlCls.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
         html += me.htmlCls.buttonStr + "addtrack_button4'>Add Track</button>";
         html += "</div>";
@@ -65497,6 +65965,8 @@ class iCn3D {
     this.bNotLoadStructure = false;
 
     this.InputfileData = '';
+    this.bVr = false; // cflag to indicate whether in VR state
+    this.bAr = false; // cflag to indicate whether in VR state
 
     // default color range for Add Custom Color button in the Sequence & Annotation window
     this.startColor = 'blue';
@@ -65828,7 +66298,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.3';
+    this.REVISION = '3.12.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
