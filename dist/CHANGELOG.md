@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.12.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.4.zip) was release on June 21, 2022. Added some basic navigation controls in VR and AR views. In the VR view, users can use the right trigger to move forward and the left trigger to move backward. In the AR view, users can tap once on the screen to locate a minimized 3D structure in the tapped location, and tap twice quickly to scale the 3D structure 10 times more.
+
 [icn3d-3.12.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.3.zip) was release on June 13, 2022. Users now can have Augmented Reality (AR) view on any iCn3D display by clicking the "START AR" button. Currently the AR view is only available to Chrome browser in an Android phone.
 
 [icn3d-3.12.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.2.zip) was release on June 10, 2022. Made two kinds of transparent surfaces available in the menu "Style > Surface Opacity": "Fast Transparency" and "Slow Transparency".

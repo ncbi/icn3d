@@ -13,9 +13,11 @@
     The most important point about using iCn3D is the current selection. Any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.
     
 * <b>VR and AR views in iCn3D</b>: 
-    You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "Enter VR" at the bottom center of your browser to enter the [VR view](https://youtu.be/2VOPlldGbUA). 
+    The Virtual Reality (VR) and Augmented Reality (AR) views are shown in this [video](https://youtu.be/qzhuomrJPnI).
 
-    The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. 
+    You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "Enter VR" at the bottom center of your browser to enter the VR view. You can use the right trigger to move forward and use the left trigger tomove backward.
+
+    The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap once on the screen to locate a minimized 3D structure in your tapped location, and tap twice quickly to scale up the 3D structure.  
 
 * <b>Create custom 3D view</b>: 
     You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. 

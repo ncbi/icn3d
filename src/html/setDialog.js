@@ -896,7 +896,7 @@ class SetDialog {
         html += "</div>";
         html += me.htmlCls.divStr + "tracktab4'>";
         html += "Track Title: " + me.htmlCls.inputTextStr + "id='" + me.pre + "track_title' placeholder='track title' size=16> <br><br>";
-        html += "Track Text(e.g., \"152 G, 155-156 RR\" defines a character \"G\" at the position 152 and two continuous characters \"RR\" at positions from 155 to 156. The starting position is 1): <br>";
+        html += "Track Text (e.g., \"2 G, 5-6 RR\" defines a character \"G\" at the position 2 and two continuous characters \"RR\" at positions from 5 to 6. The starting position is 1): <br>";
         html += "<textarea id='" + me.pre + "track_text' rows='5' style='width: 100%; height: " +(2*me.htmlCls.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
         html += me.htmlCls.buttonStr + "addtrack_button4'>Add Track</button>";
         html += "</div>";

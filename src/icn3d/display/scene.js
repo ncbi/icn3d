@@ -20,6 +20,7 @@ import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
 import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
 import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
 import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
+import {ControllerGestures} from "../../thirdparty/three/vr/ControllerGestures.js";
 
 class Scene {
     constructor(icn3d) {
@@ -36,6 +37,8 @@ class Scene {
         ic.fogCls.setFog();
 
         ic.cameraCls.setCamera();
+
+        this.setVrAr();
 
         if(ic.bSkipChemicalbinding === undefined || !ic.bSkipChemicalbinding) {
             ic.applyOtherCls.applyChemicalbindingOptions();
@@ -177,22 +180,6 @@ class Scene {
         // highlight on impostors
         ic.mdl_ghost = new THREE.Object3D();  // Impostor display
         ic.scene_ghost.add(ic.mdl_ghost);
-        
-        // for VR view
-        let controller = ic.renderer.xr.getController( 0 ); 
-        ic.scene.add( controller );
-
-        let controllerModelFactory = new XRControllerModelFactory();
-        let controllerGrip = ic.renderer.xr.getControllerGrip( 0 );
-        controllerGrip.add( controllerModelFactory.createControllerModel( controllerGrip ) );
-        ic.scene.add( controllerGrip );
-
-        $("#" + me.pre + "VRButton").remove();
-        //document.body.appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
-   
-        $("#" + me.pre + "ARButton").remove();
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
  
         // related to pk
         ic.objects = []; // define objects for pk, not all elements are used for pk
@@ -224,8 +211,194 @@ class Scene {
         ic.cams = {
             perspective: ic.perspectiveCamera,
             orthographic: ic.orthographicCamera,
-        };
+        };       
     };
+
+    setVrAr() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        // https://github.com/NikLever/Learn-WebXR/tree/master/start
+        // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+        // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
+
+        if(ic.bVr) {
+/*            
+            ic.raycasterVR = new THREE.Raycaster();
+            ic.workingMatrix = new THREE.Matrix4();
+            ic.workingVector = new THREE.Vector3();
+            ic.origin = new THREE.Vector3();
+
+            let radius = 0.08;
+            let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
+            ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
+            ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
+*/
+            // add dolly to move camera
+            ic.dolly = new THREE.Object3D();
+            ic.dolly.position.z = 5;
+            ic.dolly.add(ic.cam);
+            ic.scene.add(ic.dolly);
+
+            ic.dummyCam = new THREE.Object3D();
+            ic.cam.add(ic.dummyCam);
+
+            ic.clock = new THREE.Clock();
+
+            //controllers
+            ic.controllers = this.getControllers();
+
+            function onSelectStart() {
+//                this.children[0].scale.z = 10;
+                this.userData.selectPressed = true;
+            }
+    
+            function onSelectEnd() {
+//                this.children[0].scale.z = 0;
+//                ic.highlightVR.visible = false;
+                this.userData.selectPressed = false;
+            }
+/*
+            function buildController( data ) {
+                let geometry, material;
+            
+                switch ( data.targetRayMode ) {
+                    case 'tracked-pointer':
+                        geometry = new THREE.BufferGeometry();
+                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
+                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
+            
+                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
+            
+                        return new THREE.Line( geometry, material );
+            
+                    case 'gaze':
+                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
+                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
+                        return new THREE.Mesh( geometry, material );
+                }
+            }
+*/
+            ic.controllers.forEach( (controller) => {
+                controller.addEventListener( 'selectstart', onSelectStart );
+                controller.addEventListener( 'selectend', onSelectEnd );
+/*                
+                controller.addEventListener( 'connected', function ( event ) {
+                    const mesh = buildController(event.data);
+                    mesh.scale.z = 0;
+                    this.add( mesh );
+                } );
+                controller.addEventListener( 'disconnected', function () {
+                    this.remove( this.children[ 0 ] );
+                    ic.controllers.forEach( (controllerTmp) => {
+                        controllerTmp = null;
+                    });
+                    //self.controllerGrip = null;
+                } );
+*/                
+            });         
+        }      
+        else if(ic.bAr) {
+            //Add gestures here
+            ic.gestures = new ControllerGestures(ic.renderer);
+            ic.scene.add(ic.gestures.controller1);
+            ic.scene.add(ic.gestures.controller2);
+
+            ic.gestures.addEventListener('tap', (ev) => {
+                //if(!ic.mdl.visible) {
+                //    ic.mdl.visible = true;
+                //}
+
+                const controller = ic.gestures.controller1; 
+                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.1));
+                ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
+            });
+
+            ic.gestures.addEventListener('doubletap', (ev) => {
+                const controller = ic.gestures.controller1; 
+                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(10));
+                ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
+            });
+/*
+            ic.gestures.addEventListener('swipe', (ev) => {
+                // if(ic.mdl.visible) {
+                //     ic.mdl.visible = false;
+                // }
+            });
+  
+            ic.gestures.addEventListener('pan', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startPosition = ic.mdl.position.clone();
+                // }
+                // else {
+                //     const pos = thisClass.startPosition.clone().add(ev.delta.multiplyScalar(3));
+                //     ic.mdl.position.copy(pos);
+                // }
+            });
+
+            ic.gestures.addEventListener('pinch', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startScale = ic.mdl.scale.clone();                   
+                // }
+                // else {
+                //     const scale = thisClass.startScale.clone().multiplyScalar(ev.scale);                  
+                //     ic.mdl.scale.copy(scale);
+                // }
+            });
+ 
+            ic.gestures.addEventListener('rotate', (ev) => {
+                // if(ev.initialise !== undefined) {
+                //     thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                // }
+                // else {
+                //     ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                //     ic.mdl.rotateY(ev.theta);
+                // }
+            });  
+*/                            
+        }
+
+        $("#" + me.pre + "VRButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+
+        $("#" + me.pre + "ARButton").remove();
+        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+    }
+
+    getControllers() { let ic = this.icn3d, me = ic.icn3dui;
+        const controllerModelFactory = new XRControllerModelFactory();
+/*        
+        const geometry = new THREE.BufferGeometry().setFromPoints( [
+            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(0,0,-1)
+        ]);
+        const line = new THREE.Line( geometry );
+        line.name = 'line';
+        line.scale.z = 0;
+*/
+
+        const controllers = [];
+        
+        for(let i=0; i<=1; i++){
+            const controller = ic.renderer.xr.getController( i );
+            ic.dolly.add( controller );
+
+//            controller.add( line.clone() );
+            controller.userData.selectPressed = false;
+            ic.scene.add(controller);
+            
+            controllers.push( controller );
+            
+            const grip = ic.renderer.xr.getControllerGrip( i );
+            grip.add( controllerModelFactory.createControllerModel( grip ));
+            ic.scene.add( grip );
+        }
+        
+        return controllers;
+    }
 }
 
 export {Scene}

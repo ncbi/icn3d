@@ -472,7 +472,7 @@ class SetMenu {
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AalphaFold)' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
         html += "</ul>";
 
         html += "<li><span>Retrieve by ID</span>";
@@ -788,11 +788,22 @@ class SetMenu {
 
         html += "<li>-</li>";
 
+        let liStr = "<li><a href='";
+
         html += "<li><span>VR & AR Hints</span>";
         html += "<ul>";
-        html += "<li><span>VR: VR Headsets</span>";
-        html += "<li><span>AR: Chrome in Android</span>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#vr' target='_blank'>VR: VR Headsets</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#ar' target='_blank'>AR: Chrome in Android</a></li>";
         html += "</ul>";
+/*
+        let liStr = "<li><a href='";
+
+        html += "<ul class='icn3d-mn-item'>";
+
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
+*/
 
         html += me.htmlCls.setHtmlCls.getLink('mn6_sidebyside', 'Side by Side');
 

@@ -19,7 +19,7 @@ class Draw {
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw(bVr) { let ic = this.icn3d, me = ic.icn3dui;
+    draw(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -57,7 +57,7 @@ class Draw {
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
-          this.render(bVr);
+          this.render(bVrAr);
         }
 
         ic.impostorCls.clearImpostors();
@@ -90,10 +90,10 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render(bVr) { let ic = this.icn3d, me = ic.icn3dui;
+    render(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
-        if(bVr) {
+        if(bVrAr) {
             ic.renderer.setAnimationLoop( function() {
                 thisClass.render_base();
             });
@@ -103,8 +103,38 @@ class Draw {
         }
     }
 
+    handleController( controller, dt) { let ic = this.icn3d, me = ic.icn3dui;
+        if (controller.userData.selectPressed ){
+/*            
+            ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
+
+            ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+            ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+
+            const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+
+            if (intersects.length>0){
+                intersects[0].object.add(ic.highlightVR);
+                ic.highlightVR.visible = true;
+            }else{
+                ic.highlightVR.visible = false;
+            }
+*/            
+            const speed = 5; //2;
+            const quaternion = ic.dolly.quaternion.clone();
+            //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
+            ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
+            ic.dolly.translateZ(-dt * speed);
+            //ic.dolly.position.y = 0; // limit to a plane
+            ic.dolly.quaternion.copy(quaternion); 
+                    
+        }
+    }
+
     //Render the scene and objects into pixels.
     render_base() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
         if(me.bNode) return;
 
         let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
@@ -119,6 +149,24 @@ class Draw {
         }
 
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+
+        if(ic.bVr) {
+            let dt = ic.clock.getDelta();
+
+            if (ic.controllers ){
+                for(let i = 0, il = ic.controllers.length; i < il; ++i) {
+                    let controller = ic.controllers[i];
+                    dt = (i % 2 == 0) ? dt : -dt;
+                    thisClass.handleController( controller, dt ) 
+                }
+            }
+        }
+        else if(ic.bAr) {
+            if ( ic.renderer.xr.isPresenting ){    
+                ic.gestures.update();
+            }
+        }
+
         if(ic.scene) {
             ic.renderer.render(ic.scene, cam);
         }

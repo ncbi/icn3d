@@ -1,3 +1,5 @@
+//https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
+
 class VRButton {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -33,10 +35,12 @@ class VRButton {
             }
 
             function onSessionEnded( /*event*/ ) {
-                // the display is weird somehow
                 // reset orientation after VR
                 ic.transformCls.resetOrientation();
-                //ic.transformCls.zoominSelection();
+                
+                ic.bVr = false;
+                //ic.mdl.scale.copy(new THREE.Vector3( 1, 1, 1 )); 
+
                 ic.drawCls.draw();
 
                 currentSession.removeEventListener( 'end', onSessionEnded );
@@ -74,8 +78,10 @@ class VRButton {
                 ic.bImpo = false;
                 //ic.bInstanced = false;
                 
-                const bVr = true;
-                ic.drawCls.draw(bVr);
+                ic.bVr = true;
+                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
+
+                ic.drawCls.draw(ic.bVr);
 
                 if ( currentSession === null ) {
 

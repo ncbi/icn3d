@@ -780,6 +780,9 @@ class SaveFile {
        if(me.cfg.cid !== undefined) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
        }
+       else if(me.cfg.afid !== undefined) {
+           url = "https://alphafold.ebi.ac.uk/search/text/";
+       }
        else {
            //if(ic.inputid.indexOf(",") !== -1) {
            if(Object.keys(ic.structures).length > 1) {
@@ -799,11 +802,17 @@ class SaveFile {
 
            if(idArray.length === 1) {
                url += ic.inputid;
-               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to " + ic.inputid + ": " + url, false);
            }
            else if(idArray.length === 2) {
-               url += idArray[0] + " OR " + idArray[1];
-               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+                if(me.cfg.afid) {
+                    url += idArray[0] + " " + idArray[1];
+                }
+                else {
+                    url += idArray[0] + " OR " + idArray[1];
+                }
+
+                if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
            }
        }
 

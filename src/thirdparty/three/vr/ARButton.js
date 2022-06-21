@@ -1,3 +1,5 @@
+//https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+
 class ARButton {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -69,6 +71,13 @@ class ARButton {
 			}
 
 			function onSessionEnded( /*event*/ ) {
+				// reset orientation after VR
+				ic.transformCls.resetOrientation();
+
+				ic.bAr = false;
+				//ic.mdl.scale.copy(new THREE.Vector3( 1, 1, 1 ));
+
+				ic.drawCls.draw();
 
 				currentSession.removeEventListener( 'end', onSessionEnded );
 
@@ -102,13 +111,16 @@ class ARButton {
 			};
 
 			button.onclick = function () {
-                // imposter didn't work well in VR
-                //ic.bImpo = false;
+                // imposter didn't work well in AR
+                ic.bImpo = false;
 
-                ic.opts['background'] = 'transparent';
+                // important to keet the background transparent
+				ic.opts['background'] = 'transparent';
                 
-                const bVr = true;
-                ic.drawCls.draw(bVr);
+                ic.bAr = true;
+				//ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
+
+                ic.drawCls.draw(ic.bAr);
 
 				if ( currentSession === null ) {
 
