@@ -282,8 +282,7 @@ class SetSeqAlign {
             }
 
             if(mmdbid2 !== undefined && mmdbid2 === mmdbid1) {
-                //chainid1 += me.htmlCls.postfix;
-                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+                //chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
             }
           }
           else {
@@ -306,8 +305,7 @@ class SetSeqAlign {
             chainid2 = mmdbid2 + "_" + chain2;
 
             if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-                //chainid1 += me.htmlCls.postfix;
-                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+                //chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
             }
          }
 
@@ -857,7 +855,7 @@ class SetSeqAlign {
         chainid2 = mmdbid2 + "_" + chain2;
 
         if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-            chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+            //chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
         }
 
         //ic.alnChainsSeq[chainid2] = [];
