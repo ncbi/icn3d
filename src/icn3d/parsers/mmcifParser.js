@@ -357,7 +357,7 @@ class MmcifParser {
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
     loadMmcifData(data, mmcifid) { let  ic = this.icn3d, me = ic.icn3dui;
         if(!mmcifid) mmcifid = data.mmcif;
-        if(!mmcifid) mmcifid = 'STRU';
+        if(!mmcifid) mmcifid = 'stru';
 
         if(data.atoms !== undefined) {
             ic.init();

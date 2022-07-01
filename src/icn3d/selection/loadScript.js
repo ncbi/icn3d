@@ -767,7 +767,7 @@ class LoadScript {
           me.cfg.mmcifid = id;
           ic.mmcifParserCls.downloadMmcif(id);
         }
-        else if(command.indexOf('load mmdb') !== -1 || command.indexOf('load mmdb1') !== -1) {
+        else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
           me.cfg.mmdbid = id;
           me.cfg.bu = 1;
 
@@ -783,13 +783,13 @@ class LoadScript {
             me.cfg.mmdbafid = id;
             me.cfg.bu = 1;
   
-            ic.mmdbParserCls.downloadMmdbAf(id);
+            ic.chainalignParserCls.downloadMmdbAf(id);
         }
         else if(command.indexOf('load mmdbaf0') !== -1) {
             me.cfg.mmdbafid = id;
             me.cfg.bu = 0;
 
-            ic.mmdbParserCls.downloadMmdbAf(id);
+            ic.chainalignParserCls.downloadMmdbAf(id);
         }
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;

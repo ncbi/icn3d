@@ -113,12 +113,13 @@ class LoadAtomData {
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;
             if(type === 'mmdbid') {
-              let  pdbidTmp = data.pdbId;
+              let  pdbidTmp = (isNaN(id)) ? id : data.pdbId;
               let  chainHash = {};
 
               if(ic.alignmolid2color === undefined) ic.alignmolid2color = [];
 
               let  molidCnt = 1;
+           
               for(let molid in data.moleculeInfor) {
                   if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
 
@@ -138,6 +139,8 @@ class LoadAtomData {
                       chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
                   }
 
+                  //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
+ 
                   let  kind = data.moleculeInfor[molid].kind;
                   let  color = data.moleculeInfor[molid].color;
                   let  sid = data.moleculeInfor[molid].sid;
@@ -276,13 +279,14 @@ class LoadAtomData {
 
                 if(type === 'mmdbid' &&((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t))
                   && alignType === 'query') {
-                    atm.structure += me.htmlCls.postfix;
+                    //atm.structure += me.htmlCls.postfix;
                 }
             }
 
             structureNum = atm.structure;
 
             chainNum = structureNum + '_' + atm.chain;
+
             //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += me.htmlCls.postfix;
 
             //var resiCorrection = 0;
@@ -595,7 +599,7 @@ class LoadAtomData {
 
                     if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
                         //chainid += me.htmlCls.postfix;
-                        chainid = id + me.htmlCls.postfix + '_' + chain;
+                        //chainid = id + me.htmlCls.postfix + '_' + chain;
                     }
 
                     ic.ParserUtilsCls.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq

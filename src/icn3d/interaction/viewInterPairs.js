@@ -341,7 +341,7 @@ class ViewInterPairs {
            ic.bGraph = true;
            // show only displayed set in 2D graph
            if(Object.keys(atomSet2).length + Object.keys(atomSet1).length > Object.keys(ic.dAtoms).length) {
-               ic.graphStr = ic.getGraphCls.getGraphDataForDisplayed();
+               ic.graphStr = ic.selectionCls.getGraphDataForDisplayed();
            }
 
            if(ic.bD3 === undefined) {

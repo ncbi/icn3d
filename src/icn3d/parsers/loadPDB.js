@@ -34,23 +34,23 @@ class LoadPDB {
         }
         else {
             // remove the last structure
-            if(ic.alertAlt) {
-                let  nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
-                let   chainArray = ic.structures[nStru - 1];
-                for(let i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
-                    for(let j in ic.chains[chainArray[i]]) {
-                        delete ic.atoms[j];
-                        delete ic.hAtoms[j];
-                        delete ic.dAtoms[j];
-                    }
-                    delete ic.chains[chainArray[i]];
-                }
+            // if(ic.alertAlt) {
+            //     let  nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
+            //     let   chainArray = ic.structures[nStru - 1];
+            //     for(let i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
+            //         for(let j in ic.chains[chainArray[i]]) {
+            //             delete ic.atoms[j];
+            //             delete ic.hAtoms[j];
+            //             delete ic.dAtoms[j];
+            //         }
+            //         delete ic.chains[chainArray[i]];
+            //     }
 
-                delete ic.structures[nStru - 1];
-            }
-            else {
+            //     delete ic.structures[nStru - 1];
+            // }
+            // else {
                 ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
-            }
+            // }
 
             moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
             // Concatenation of two pdbs will have several atoms for the same serial
@@ -69,12 +69,12 @@ class LoadPDB {
 
         //let  chainMissingResidueArray = {}
 
-        let  id = (pdbid) ? pdbid : 'STRU';
+        let  id = (pdbid) ? pdbid : 'stru';
 
         let  maxMissingResi = 0, prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;
 
-        let  structure = "STRU";
+        let  structure = "stru";
 
         let bHeader = false;
 
@@ -90,18 +90,19 @@ class LoadPDB {
 
                 if(id == '') {
                     if(bAppend) {
-                        id = "STRU";
+                        id = "stru";
                     }
                     else {
-                        //if(!ic.inputid) ic.inputid = 'STRU';
-                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "STRU"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = 'stru';
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
                     }
                 }
 
                 structure = id;
 
-                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -171,17 +172,17 @@ class LoadPDB {
                 ic.ssbondpnts[id].push(resid1);
                 ic.ssbondpnts[id].push(resid2);
             } else if (record === 'REMARK') {
-                 let  type = parseInt(line.substr(7, 3));
+                 let  remarkType = parseInt(line.substr(7, 3));
 
                  if(line.indexOf('1/2 of bilayer thickness:') !== -1) { // OPM transmembrane protein
                     ic.halfBilayerSize = parseFloat(line.substr(line.indexOf(':') + 1).trim());
                  }
-                 else if (type == 210) {
+                 else if (remarkType == 210) {
                      if((line.substr(11, 32).trim() == 'EXPERIMENT TYPE') && line.substr(45).trim() == 'NMR') {
                         bNMR = true;
                      }
                  }
-                 else if (type == 350 && line.substr(13, 5) == 'BIOMT') {
+                 else if (remarkType == 350 && line.substr(13, 5) == 'BIOMT') {
                     let  n = parseInt(line[18]) - 1;
                     //var m = parseInt(line.substr(21, 2));
                     let  m = parseInt(line.substr(21, 2)) - 1; // start from 1
@@ -193,7 +194,7 @@ class LoadPDB {
                     ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 14));
                  }
                  // missing residues
-                 else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
+                 else if (remarkType == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
                     let  resn = line.substr(15, 3);
                     //let  chain = line.substr(19, 1);
                     let  chain = line.substr(18, 2).trim();
@@ -224,7 +225,7 @@ class LoadPDB {
                     }
 
                  }
-                 else if (type == 900 && ic.emd === undefined && line.substr(34).trim() == 'RELATED DB: EMDB') {
+                 else if (remarkType == 900 && ic.emd === undefined && line.substr(34).trim() == 'RELATED DB: EMDB') {
                      //REMARK 900 RELATED ID: EMD-3906   RELATED DB: EMDB
                      ic.emd = line.substr(23, 11).trim();
                  }
@@ -234,11 +235,12 @@ class LoadPDB {
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
-                id = 'STRU';
+                id = 'stru';
 
                 structure = id;
-                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -260,8 +262,9 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -523,23 +526,9 @@ class LoadPDB {
         // remove the reference
         lines = null;
 
-        let  curChain, curResi, curInsc, curResAtoms = [];
-        // refresh for atoms in each residue
-        let  refreshBonds = function(f) {
-            let  n = curResAtoms.length;
-            for (let j = 0; j < n; ++j) {
-                let  atom0 = curResAtoms[j];
-                for (let k = j + 1; k < n; ++k) {
-                    let  atom1 = curResAtoms[k];
-                    if (atom0.alt === atom1.alt && me.utilsCls.hasCovalentBond(atom0, atom1)) {
-                    //if (me.utilsCls.hasCovalentBond(atom0, atom1)) {
-                        atom0.bonds.push(atom1.serial);
-                        atom1.bonds.push(atom0.serial);
-                    }
-                }
-                f && f(atom0);
-            }
-        }
+        let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.hAtoms);
+        let  curChain = firstAtom.chain, curResi = firstAtom.resi, curInsc, curResAtoms = [];
+      
         let  pmin = new THREE.Vector3( 9999, 9999, 9999);
         let  pmax = new THREE.Vector3(-9999,-9999,-9999);
         let  psum = new THREE.Vector3();
@@ -549,7 +538,9 @@ class LoadPDB {
         let  lipidResidHash = {}
 
         // assign atoms
-        for (let i in ic.atoms) {
+        let prevCarbonArray = [firstAtom]; // add a dummy atom
+        //for (let i in ic.atoms) {
+        for (let i in ic.hAtoms) {    
             let  atom = ic.atoms[i];
             let  coord = atom.coord;
             psum.add(coord);
@@ -598,21 +589,27 @@ class LoadPDB {
               atom.color = me.parasCls.atomColors[atom.elem];
             }
 
-            if (!(curChain === atom.chain && curResi === atom.resi)) {
-                // a new residue, add the residue-residue bond beides the regular bonds
-                refreshBonds(function (atom0) {
-                    if (((atom0.name === 'C' && atom.name === 'N') || (atom0.name === 'O3\'' && atom.name === 'P')) && me.utilsCls.hasCovalentBond(atom0, atom)) {
-                        atom0.bonds.push(atom.serial);
-                        atom.bonds.push(atom0.serial);
-                    }
-                });
+            if(!(curChain === atom.chain && curResi === atom.resi)) {
+                // a new residue, add the residue-residue bond beides the regular bonds               
+                this.refreshBonds(curResAtoms, prevCarbonArray[0]);
+
+                prevCarbonArray.splice(0, 1); // remove the first carbon
+
                 curChain = atom.chain;
                 curResi = atom.resi;
                 //curInsc = atom.insc;
                 curResAtoms.length = 0;
             }
             curResAtoms.push(atom);
+
+            if(atom.name === 'C' || atom.name === 'O3\'') {
+                prevCarbonArray.push(atom);
+            }
         } // end of for
+
+        // last residue
+        //refreshBonds();
+        this.refreshBonds(curResAtoms, prevCarbonArray[0]);
 
         // reset lipid
         for(let resid in lipidResidHash) {
@@ -629,9 +626,6 @@ class LoadPDB {
                 if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
             }
         }
-
-        // last residue
-        refreshBonds();
 
         ic.pmin = pmin;
         ic.pmax = pmax;
@@ -665,6 +659,28 @@ class LoadPDB {
         }
         else {
             return hAtoms;
+        }
+    }
+
+    // refresh for atoms in each residue
+    refreshBonds(curResAtoms, prevCarbon) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  n = curResAtoms.length;
+        for (let j = 0; j < n; ++j) {
+            let  atom0 = curResAtoms[j];
+            for (let k = j + 1; k < n; ++k) {
+                let  atom1 = curResAtoms[k];
+                if (atom0.alt === atom1.alt && me.utilsCls.hasCovalentBond(atom0, atom1)) {
+                //if (me.utilsCls.hasCovalentBond(atom0, atom1)) {
+                    atom0.bonds.push(atom1.serial);
+                    atom1.bonds.push(atom0.serial);
+                }
+            }
+
+            //f && f(atom0);
+            if (prevCarbon && (prevCarbon.name === 'C' || prevCarbon.name === 'O3\'') && (atom0.name === 'N' || atom0.name === 'P') && me.utilsCls.hasCovalentBond(atom0, prevCarbon)) {
+                atom0.bonds.push(prevCarbon.serial);
+                prevCarbon.bonds.push(atom0.serial);
+            }
         }
     }
 

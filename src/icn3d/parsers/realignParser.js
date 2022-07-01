@@ -100,13 +100,20 @@ class RealignParser {
 
       ic.opts['color'] = 'grey';
       ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
-      for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
-          let chainpair = chainidArray[0] + ',' + chainidArray[index + 1];
+      
+      for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+
+          let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
+          let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+
+          chainidArray[0] = chainTo;
+          chainidArray[index + 1] = chainFrom;
+
+          let chainpair =  chainTo + ',' + chainFrom;
 
           if(!struct2SeqHash[chainpair]) continue;
 
@@ -133,11 +140,9 @@ class RealignParser {
               ic.realignResid[fromStruct].push({'resid':residArray2[i], 'resn':seq2[i]});
           }
 
-          let  chainTo = chainidArray[0];
-          let  chainFrom = chainidArray[index + 1];
-
           let  bChainAlign = true;
           // set ic.qt_start_end in alignCoords()
+
           let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
           hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
       }
@@ -174,6 +179,12 @@ class RealignParser {
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+
+          let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
+          let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+
+          chainidArray[0] = chainTo;
+          chainidArray[index + 1] = chainFrom;
 
           let  seq1 = struct2SeqHash[toStruct];
           let  seq2 = struct2SeqHash[fromStruct];
@@ -231,8 +242,8 @@ class RealignParser {
                   }
               }
 
-              let  chainTo = chainidArray[0];
-              let  chainFrom = chainidArray[index + 1];
+              //let  chainTo = chainidArray[0];
+              //let  chainFrom = chainidArray[index + 1];
 
               let  bChainAlign = true;
               let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
@@ -472,8 +483,8 @@ class RealignParser {
 
                     // slave
                     resiArray = predefinedResPair[1].split(",");
-                    result = thisClass.getSeqCoorResid(resiArray, chainid, base);
-                    
+                    result = thisClass.getSeqCoorResid(resiArray, chainid, base); 
+
                     if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
                     if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
                     if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
@@ -638,8 +649,11 @@ class RealignParser {
         let  bFound = false;
         for(let serial in ic.residues[resid]) {
             let  atom = ic.atoms[serial];
+
             if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
               ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
+            //if((atom.name == "CA" && atom.elem == "C")
+            //  ||((atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                 struct2CoorArray.push(atom.coord.clone());
                 bFound = true;
                 break;

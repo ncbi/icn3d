@@ -548,6 +548,7 @@ class SetSeqAlign {
         let resi2range_t = {}; // aaccumulative aligned residues in the template chain
         // start and end of MSA
         let start_t = 9999, end_t = -1;
+
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
             let chainIndex = index - 1;
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -789,14 +790,15 @@ class SetSeqAlign {
     }
 
     addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resi_t, len) { let  ic = this.icn3d, me = ic.icn3dui;    
-        let result = this.getResiPosInTemplate(chainid1, resi_t);
-        let nGap = result.ngap, pos_t = result.pos;
+        // let result = this.getResiPosInTemplate(chainid1, resi_t);
+        // let nGap = result.ngap, pos_t = result.pos;
 
         // add gaps for all previously aligned sequences, not the current sequence, which is the last one
         for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
             let chainidTmp = chainidArray[alignedChainIndice[j]];
             let gapResObject = this.getResObject(chainidTmp, true);
-            for(let k = 0, kl = len - nGap; k < kl; ++k) {
+            //for(let k = 0, kl = len - nGap; k < kl; ++k) {
+            for(let k = 0, kl = len; k < kl; ++k) {
                 ic.alnChainsSeq[chainidTmp].splice(pos_t, 0, gapResObject);
             }
         }

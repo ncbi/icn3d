@@ -28,7 +28,7 @@ class ChainalignParser {
         let mmdbid_t, mmdbid_q;
         mmdbid_t = chainidArray[0].substr(0, chainidArray[0].indexOf('_'));
         let  bLastQuery = false;
-        if(mmdbid_t.length > 4) { 
+        if(mmdbid_t.length > 5) { 
             let bAppend = false, bNoDssp = true;
             hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
         }
@@ -41,7 +41,10 @@ class ChainalignParser {
             if(i == data2Array.length - 1) bLastQuery = true;
             // each alignment has a chainIndex i
             mmdbid_q = chainidArray[i + 1].substr(0, chainidArray[i + 1].indexOf('_'));
-            if(mmdbid_q.length > 4) {
+            //mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfixfor same PDB IDs
+
+            //if(mmdbid_q.length > 4) {
+            if(mmdbid_q.length > 5) {  // PDB ID plus postfix could be 5 
                 let bAppend = true, bNoDssp = true;
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
             }
@@ -483,10 +486,21 @@ class ChainalignParser {
         let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
         if(domainArray.length < alignArray.length) domainArray = [];
 
+        let struct2cnt = {};
         for(let i = 0, il = alignArray.length; i < il; ++i) {
             let  chainid = alignArray[i];
             let  pos = chainid.indexOf('_');
-            alignArray[i] = chainid.substr(0, pos).toUpperCase() + chainid.substr(pos);
+            let struct = chainid.substr(0, pos).toUpperCase();
+            if(!struct2cnt.hasOwnProperty(struct)) {
+                struct2cnt[struct] = 1;
+            }
+            else {
+                ++struct2cnt[struct];
+            }
+
+            struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
+
+            alignArray[i] = struct + chainid.substr(pos);
         }
 
         ic.chainidArray = alignArray;
@@ -499,7 +513,7 @@ class ChainalignParser {
         let  targetAjax;
 
         let  url_t;
-        if(ic.mmdbid_t.length > 4) {
+        if(ic.mmdbid_t.length > 5) {
             url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v2.pdb";
 
             targetAjax = $.ajax({
@@ -531,11 +545,13 @@ class ChainalignParser {
         ic.pdbChainIndexHash = {};
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let  pos2 = alignArray[index].indexOf('_');
-            ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+            let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
+            ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
+
             ic.chain_q = alignArray[index].substr(pos2+1);
 
             let  url_q, queryAjax;
-            if(ic.mmdbid_q.length > 4) {
+            if(ic.mmdbid_q.length > 5) {
                 url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v2.pdb";
 
                 queryAjax = $.ajax({
@@ -560,7 +576,9 @@ class ChainalignParser {
         
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let  pos2 = alignArray[index].indexOf('_');
-            ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+            let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
+            ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
+
             ic.chain_q = alignArray[index].substr(pos2+1);
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
@@ -585,7 +603,7 @@ class ChainalignParser {
 
                     ajaxArray.push(alignAjax);
 
-                    ic.pdbChainIndexHash[index] = ic.mmdbid_q + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
+                    ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                 }
                 else {
                     // get the dynamic alignment after loading the structures
@@ -616,7 +634,7 @@ class ChainalignParser {
         // index = 0: the mmdb data of target
         let  targetData = dataArray[0][0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
-        if(mmdbid_t.length > 4) targetData = header + targetData;
+        if(mmdbid_t.length > 5) targetData = header + targetData;
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -635,7 +653,7 @@ class ChainalignParser {
             let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
             let header = 'HEADER                                                        ' + mmdbid_q + '\n';
-            if(mmdbid_q.length > 4) queryData = header + queryData;
+            if(mmdbid_q.length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -810,9 +828,9 @@ class ChainalignParser {
     }
 
     downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+        let  thisClass = this;
 
-      ic.deferredMmdbaf = $.Deferred(function() {
+        ic.deferredMmdbaf = $.Deferred(function() {
         ic.structArray = idlist.split(',');
 
         let  ajaxArray = [];
@@ -821,7 +839,7 @@ class ChainalignParser {
             let  url_t, targetAjax;
             let structure = ic.structArray[i];
 
-            if(isNaN(structure) && structure.length > 4) {
+            if(isNaN(structure) && structure.length > 5) {
                 url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
 
                 targetAjax = $.ajax({
@@ -871,7 +889,7 @@ class ChainalignParser {
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
-            if(structArray[index].length > 4) queryData = header + queryData;
+            if(structArray[index].length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -901,7 +919,8 @@ class ChainalignParser {
                 bAppend = true; 
             }
 
-            if(structArray[i].length > 4) {
+            //if(structArray[i].length > 4) {
+            if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 let bNoDssp = true;
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
             }

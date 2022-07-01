@@ -314,7 +314,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -459,8 +459,18 @@ class SaveFile {
         let molNum = 1, prevStru = '';
         //pdbStr += '\n';
 
+        let addedChainResiHash = {};
         for(let i in atomHash) {
             let atom = ic.atoms[i];
+
+            let chainResi = atom.chain + '_' + atom.resi;
+            if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
+                if(!addedChainResiHash.hasOwnProperty(chainResi)) {
+                    pdbStr += chainResi2pdb[chainResi];
+                    addedChainResiHash[chainResi] = 1;
+                }
+                continue;
+            }
 
             // remove chemicals
             if(bNoChem && atom.het) continue;
@@ -474,8 +484,9 @@ class SaveFile {
 
                 if(bMulStruc) pdbStr += 'MODEL        ' + molNum + '\n';
 
-                // add header
-                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header);
+                // add header            
+                let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
+                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo);
 
                 prevStru = atom.structure;
                 ++molNum;
@@ -703,21 +714,25 @@ class SaveFile {
 
        return pdbStr;
     }
-    getPDBHeader(struNum, stru2header) { let ic = this.icn3d, me = ic.icn3dui;
+    getPDBHeader(struNum, stru2header, mutantInfo) { let ic = this.icn3d, me = ic.icn3dui;
        if(struNum === undefined) struNum = 0;
 
        let pdbStr = '';
        let stru = Object.keys(ic.structures)[struNum];
-       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + stru + '\n';
+       let id = (mutantInfo) ? stru + '2' : stru;
+       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + id + '\n';
 
        if(struNum == 0) {
            let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
            // remove quotes
            if(title.indexOf('"') != -1) title = '';
+           if(mutantInfo) {
+               title = mutantInfo + title;
+           }
            pdbStr += 'TITLE     ' + title + '\n';
        }
 
-       if(stru2header) {
+       if(stru2header && stru2header[stru]) {
            pdbStr += stru2header[stru];
        }
 

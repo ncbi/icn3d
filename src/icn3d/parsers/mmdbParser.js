@@ -123,6 +123,7 @@ class MmdbParser {
             this.parseMmdbDataPart1(data, type);
 
             let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+            if(chainid) id = chainid.substr(0, chainid.indexOf('_'));
 
             let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
 

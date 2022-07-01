@@ -67,13 +67,14 @@ class Scap {
         //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
         let snpStr = '';
         let snpArray = snp.split(','); //stru_chain_resi_snp
-        let atomHash = {}, snpResidArray = [];
+        let atomHash = {}, snpResidArray = [], chainResi2pdb = {};
         for(let i = 0, il = snpArray.length; i < il; ++i) {
             let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
 
             let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
             atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);
             snpResidArray.push(resid);
+            chainResi2pdb[idArray[1] + '_' + idArray[2]] = '';
 
             snpStr += idArray[1] + '_' + idArray[2] + '_' + idArray[3];
             if(i != il -1) snpStr += ',';
@@ -107,7 +108,7 @@ class Scap {
 ///        let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
         let pdbStr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
-        let url = "https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi";
+        let url = me.htmlCls.baseUrl + "scap/scap.cgi";
 
         let pdbid = Object.keys(ic.structures)[0]; //Object.keys(ic.structures).toString();
         let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'v': '2'}
@@ -147,19 +148,64 @@ class Scap {
                   ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
               }
 
-              ic.hAtoms = {}
-              ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
-              let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              //ic.hAtoms = {};
+              //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
+              //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-              ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, hAtom1);
-              ic.dAtoms = ic.hAtoms;
+              // get the mutant pdb
+              let lines = pdbData.split('\n');
+              let allChainResiHash = {};
+              for (let i in lines) {
+                  let  line = lines[i];
+                  let  record = line.substr(0, 6);
+                  
+                  if (record === 'ATOM  ' || record === 'HETATM') {
+                      let  chain = line.substr(20, 2).trim();
+                      if(chain === '') chain = 'A';
+      
+                      let  resi = line.substr(22, 5).trim();
+                      let chainResi = chain + '_' + resi;
+                      
+                      if(chainResi2pdb.hasOwnProperty(chainResi)) {
+                          chainResi2pdb[chainResi] += line + '\n';
+                      }  
+
+                      allChainResiHash[chainResi] = 1;
+                  }
+              }
+
+              // get the full mutatnt PDB
+              let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+              ic.hAtoms = {};
+              let bMutation = true;
+              ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
+              //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              
+              ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+              ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+              // get the mutant residues in the sphere
+              let hAtom2 = {};
+              for(let serial in ic.hAtoms) {
+                let atom = ic.atoms[serial];
+                let chainResi = atom.chain + '_' + atom.resi;
+                if(allChainResiHash.hasOwnProperty(chainResi)) {
+                  hAtom2[serial] = 1;
+                }
+              }
+
+              ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
+              //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
+              ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              //ic.dAtoms = ic.hAtoms;
 
               ic.transformCls.zoominSelection();
               ic.setOptionCls.setStyle('proteins', 'stick');
 
-              ic.opts['color'] = 'chain';
-              ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+              //ic.opts['color'] = 'chain';
+              //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
               for(let serial in hAtom2) {
+              //for(let serial in allAtoms2) {
                   let atom = ic.atoms[serial];
                   if(!atom.het) {
                       // use the same color as the wild type
@@ -186,13 +232,19 @@ class Scap {
                   }
               }
 
+              // ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtoms2);
+              // ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              // //ic.dAtoms = ic.hAtoms;
+
+              // ic.transformCls.zoominSelection();
+              // ic.setOptionCls.setStyle('proteins', 'stick');
+
               if(bPdb) {
-                 let pdbStr = '';
-///                 pdbStr += ic.saveFileCls.getPDBHeader();
-                 pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                 //let pdbStr = '';
+                 //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
                  let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                 ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbStr]);
+                 ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
 
                  ic.drawCls.draw();
               }

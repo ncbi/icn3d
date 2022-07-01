@@ -214,7 +214,7 @@ class ContactMap {
 
         let graphStr = '{\n';
 
-        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'STRU';
+        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
         let len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         let factor = 1;

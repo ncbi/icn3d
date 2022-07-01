@@ -71,7 +71,7 @@ class OpmParser {
         let  thisClass = this;
         let  url, dataType;
 
-        if(!pdbid) pdbid = 'STRU';
+        if(!pdbid) pdbid = 'stru';
 
         url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
         dataType = "jsonp";

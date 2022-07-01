@@ -24,17 +24,20 @@ class Alternate {
         let viewSelectionAtomsCount = Object.keys(ic.viewSelectionAtoms).length;
         let allAtomsCount = Object.keys(ic.atoms).length;
 
-        ic.dAtoms = {};
+        //ic.dAtoms = {};
 
-        // alternate all displayed structures
-        let moleculeArray = Object.keys(ic.structures);
-        // only alternate selected structures
-        // let structureHash = {};
-        // for(let i in ic.hAtoms) {
-        //     let structure = ic.atoms[i].structure;
-        //     structureHash[structure] = 1;
-        // }
-        // let moleculeArray = Object.keys(structureHash);
+        // 1. alternate all structures
+        //let moleculeArray = Object.keys(ic.structures);
+
+        // 2. only alternate displayed structures
+        let structureHash = {};
+        for(let i in ic.viewSelectionAtoms) {
+            let structure = ic.atoms[i].structure;
+            structureHash[structure] = 1;
+        }
+        let moleculeArray = Object.keys(structureHash);
+
+        ic.dAtoms = {};
 
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];

@@ -1,5 +1,8 @@
 //import * as THREE from './three/three.module.js';
 
+// copied from https://github.com/NikLever/Learn-WebXR/blob/master/libs/ControllerGestures.js
+// created by Nik Lever
+
 class ControllerGestures extends THREE.EventDispatcher{
     constructor( renderer ){
         super();

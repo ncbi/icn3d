@@ -12665,7 +12665,7 @@ var icn3d = (function (exports) {
                if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
                //var inputid =(ic.inputid) ? ic.inputid : "custom";
                let inputid = Object.keys(ic.structures).join('_');
-               if(inputid == 'STRU') {
+               if(inputid == 'stru') {
                    if(ic.filename) {
                        inputid = ic.filename;
                    }
@@ -17714,7 +17714,7 @@ var icn3d = (function (exports) {
                ic.bGraph = true;
                // show only displayed set in 2D graph
                if(Object.keys(atomSet2).length + Object.keys(atomSet1).length > Object.keys(ic.dAtoms).length) {
-                   ic.graphStr = ic.getGraphCls.getGraphDataForDisplayed();
+                   ic.graphStr = ic.selectionCls.getGraphDataForDisplayed();
                }
 
                if(ic.bD3 === undefined) {
@@ -20397,13 +20397,14 @@ var icn3d = (function (exports) {
             //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
             let snpStr = '';
             let snpArray = snp.split(','); //stru_chain_resi_snp
-            let atomHash = {}, snpResidArray = [];
+            let atomHash = {}, snpResidArray = [], chainResi2pdb = {};
             for(let i = 0, il = snpArray.length; i < il; ++i) {
                 let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
 
                 let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
                 atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);
                 snpResidArray.push(resid);
+                chainResi2pdb[idArray[1] + '_' + idArray[2]] = '';
 
                 snpStr += idArray[1] + '_' + idArray[2] + '_' + idArray[3];
                 if(i != il -1) snpStr += ',';
@@ -20437,7 +20438,7 @@ var icn3d = (function (exports) {
     ///        let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
             let pdbStr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
-            let url = "https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi";
+            let url = me.htmlCls.baseUrl + "scap/scap.cgi";
 
             let pdbid = Object.keys(ic.structures)[0]; //Object.keys(ic.structures).toString();
             let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'v': '2'};
@@ -20477,19 +20478,64 @@ var icn3d = (function (exports) {
                       ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
                   }
 
-                  ic.hAtoms = {};
-                  ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
-                  let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                  //ic.hAtoms = {};
+                  //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
+                  //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-                  ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, hAtom1);
-                  ic.dAtoms = ic.hAtoms;
+                  // get the mutant pdb
+                  let lines = pdbData.split('\n');
+                  let allChainResiHash = {};
+                  for (let i in lines) {
+                      let  line = lines[i];
+                      let  record = line.substr(0, 6);
+                      
+                      if (record === 'ATOM  ' || record === 'HETATM') {
+                          let  chain = line.substr(20, 2).trim();
+                          if(chain === '') chain = 'A';
+          
+                          let  resi = line.substr(22, 5).trim();
+                          let chainResi = chain + '_' + resi;
+                          
+                          if(chainResi2pdb.hasOwnProperty(chainResi)) {
+                              chainResi2pdb[chainResi] += line + '\n';
+                          }  
+
+                          allChainResiHash[chainResi] = 1;
+                      }
+                  }
+
+                  // get the full mutatnt PDB
+                  let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+                  ic.hAtoms = {};
+                  let bMutation = true;
+                  ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
+                  //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                  
+                  ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+                  ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+                  // get the mutant residues in the sphere
+                  let hAtom2 = {};
+                  for(let serial in ic.hAtoms) {
+                    let atom = ic.atoms[serial];
+                    let chainResi = atom.chain + '_' + atom.resi;
+                    if(allChainResiHash.hasOwnProperty(chainResi)) {
+                      hAtom2[serial] = 1;
+                    }
+                  }
+
+                  ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
+                  //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
+                  ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                  //ic.dAtoms = ic.hAtoms;
 
                   ic.transformCls.zoominSelection();
                   ic.setOptionCls.setStyle('proteins', 'stick');
 
-                  ic.opts['color'] = 'chain';
-                  ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+                  //ic.opts['color'] = 'chain';
+                  //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
                   for(let serial in hAtom2) {
+                  //for(let serial in allAtoms2) {
                       let atom = ic.atoms[serial];
                       if(!atom.het) {
                           // use the same color as the wild type
@@ -20516,13 +20562,19 @@ var icn3d = (function (exports) {
                       }
                   }
 
+                  // ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtoms2);
+                  // ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                  // //ic.dAtoms = ic.hAtoms;
+
+                  // ic.transformCls.zoominSelection();
+                  // ic.setOptionCls.setStyle('proteins', 'stick');
+
                   if(bPdb) {
-                     let pdbStr = '';
-    ///                 pdbStr += ic.saveFileCls.getPDBHeader();
-                     pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                     //let pdbStr = '';
+                     //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
                      let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                     ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbStr]);
+                     ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
 
                      ic.drawCls.draw();
                   }
@@ -21223,23 +21275,23 @@ var icn3d = (function (exports) {
             }
             else {
                 // remove the last structure
-                if(ic.alertAlt) {
-                    let  nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
-                    let   chainArray = ic.structures[nStru - 1];
-                    for(let i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
-                        for(let j in ic.chains[chainArray[i]]) {
-                            delete ic.atoms[j];
-                            delete ic.hAtoms[j];
-                            delete ic.dAtoms[j];
-                        }
-                        delete ic.chains[chainArray[i]];
-                    }
+                // if(ic.alertAlt) {
+                //     let  nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
+                //     let   chainArray = ic.structures[nStru - 1];
+                //     for(let i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
+                //         for(let j in ic.chains[chainArray[i]]) {
+                //             delete ic.atoms[j];
+                //             delete ic.hAtoms[j];
+                //             delete ic.dAtoms[j];
+                //         }
+                //         delete ic.chains[chainArray[i]];
+                //     }
 
-                    delete ic.structures[nStru - 1];
-                }
-                else {
+                //     delete ic.structures[nStru - 1];
+                // }
+                // else {
                     ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
-                }
+                // }
 
                 moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
                 // Concatenation of two pdbs will have several atoms for the same serial
@@ -21256,12 +21308,12 @@ var icn3d = (function (exports) {
 
             //let  chainMissingResidueArray = {}
 
-            let  id = (pdbid) ? pdbid : 'STRU';
+            let  id = (pdbid) ? pdbid : 'stru';
 
             let prevMissingChain = '';
             let  CSerial, prevCSerial, OSerial, prevOSerial;
 
-            let  structure = "STRU";
+            let  structure = "stru";
 
             let bHeader = false;
 
@@ -21277,18 +21329,19 @@ var icn3d = (function (exports) {
 
                     if(id == '') {
                         if(bAppend) {
-                            id = "STRU";
+                            id = "stru";
                         }
                         else {
-                            //if(!ic.inputid) ic.inputid = 'STRU';
-                            id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "STRU"; //ic.filename.substr(0, 4);
+                            //if(!ic.inputid) ic.inputid = 'stru';
+                            id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
                         }
                     }
 
                     structure = id;
 
-                    //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -21358,17 +21411,17 @@ var icn3d = (function (exports) {
                     ic.ssbondpnts[id].push(resid1);
                     ic.ssbondpnts[id].push(resid2);
                 } else if (record === 'REMARK') {
-                     let  type = parseInt(line.substr(7, 3));
+                     let  remarkType = parseInt(line.substr(7, 3));
 
                      if(line.indexOf('1/2 of bilayer thickness:') !== -1) { // OPM transmembrane protein
                         ic.halfBilayerSize = parseFloat(line.substr(line.indexOf(':') + 1).trim());
                      }
-                     else if (type == 210) {
+                     else if (remarkType == 210) {
                          if((line.substr(11, 32).trim() == 'EXPERIMENT TYPE') && line.substr(45).trim() == 'NMR') {
                             bNMR = true;
                          }
                      }
-                     else if (type == 350 && line.substr(13, 5) == 'BIOMT') {
+                     else if (remarkType == 350 && line.substr(13, 5) == 'BIOMT') {
                         let  n = parseInt(line[18]) - 1;
                         //var m = parseInt(line.substr(21, 2));
                         let  m = parseInt(line.substr(21, 2)) - 1; // start from 1
@@ -21380,7 +21433,7 @@ var icn3d = (function (exports) {
                         ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 14));
                      }
                      // missing residues
-                     else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
+                     else if (remarkType == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
                         let  resn = line.substr(15, 3);
                         //let  chain = line.substr(19, 1);
                         let  chain = line.substr(18, 2).trim();
@@ -21406,7 +21459,7 @@ var icn3d = (function (exports) {
                         }
 
                      }
-                     else if (type == 900 && ic.emd === undefined && line.substr(34).trim() == 'RELATED DB: EMDB') {
+                     else if (remarkType == 900 && ic.emd === undefined && line.substr(34).trim() == 'RELATED DB: EMDB') {
                          //REMARK 900 RELATED ID: EMD-3906   RELATED DB: EMDB
                          ic.emd = line.substr(23, 11).trim();
                      }
@@ -21416,11 +21469,12 @@ var icn3d = (function (exports) {
                     ic.organism = ic.organism.substr(0, ic.organism.length - 1);
                 } else if (record === 'ENDMDL') {
                     ++moleculeNum;
-                    id = 'STRU';
+                    id = 'stru';
 
                     structure = id;
-                    //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -21442,8 +21496,9 @@ var icn3d = (function (exports) {
                     }
                 } else if (record === 'ATOM  ' || record === 'HETATM') {
                     structure = id;
-                    //if(id == 'STRU' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    if(id == 'STRU' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -21695,23 +21750,9 @@ var icn3d = (function (exports) {
             // remove the reference
             lines = null;
 
-            let curChain, curResi, curResAtoms = [];
-            // refresh for atoms in each residue
-            let  refreshBonds = function(f) {
-                let  n = curResAtoms.length;
-                for (let j = 0; j < n; ++j) {
-                    let  atom0 = curResAtoms[j];
-                    for (let k = j + 1; k < n; ++k) {
-                        let  atom1 = curResAtoms[k];
-                        if (atom0.alt === atom1.alt && me.utilsCls.hasCovalentBond(atom0, atom1)) {
-                        //if (me.utilsCls.hasCovalentBond(atom0, atom1)) {
-                            atom0.bonds.push(atom1.serial);
-                            atom1.bonds.push(atom0.serial);
-                        }
-                    }
-                    f && f(atom0);
-                }
-            };
+            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.hAtoms);
+            let curChain = firstAtom.chain, curResi = firstAtom.resi, curResAtoms = [];
+          
             let  pmin = new THREE.Vector3( 9999, 9999, 9999);
             let  pmax = new THREE.Vector3(-9999,-9999,-9999);
             let  psum = new THREE.Vector3();
@@ -21721,7 +21762,9 @@ var icn3d = (function (exports) {
             let  lipidResidHash = {};
 
             // assign atoms
-            for (let i in ic.atoms) {
+            let prevCarbonArray = [firstAtom]; // add a dummy atom
+            //for (let i in ic.atoms) {
+            for (let i in ic.hAtoms) {    
                 let  atom = ic.atoms[i];
                 let  coord = atom.coord;
                 psum.add(coord);
@@ -21770,21 +21813,27 @@ var icn3d = (function (exports) {
                   atom.color = me.parasCls.atomColors[atom.elem];
                 }
 
-                if (!(curChain === atom.chain && curResi === atom.resi)) {
-                    // a new residue, add the residue-residue bond beides the regular bonds
-                    refreshBonds(function (atom0) {
-                        if (((atom0.name === 'C' && atom.name === 'N') || (atom0.name === 'O3\'' && atom.name === 'P')) && me.utilsCls.hasCovalentBond(atom0, atom)) {
-                            atom0.bonds.push(atom.serial);
-                            atom.bonds.push(atom0.serial);
-                        }
-                    });
+                if(!(curChain === atom.chain && curResi === atom.resi)) {
+                    // a new residue, add the residue-residue bond beides the regular bonds               
+                    this.refreshBonds(curResAtoms, prevCarbonArray[0]);
+
+                    prevCarbonArray.splice(0, 1); // remove the first carbon
+
                     curChain = atom.chain;
                     curResi = atom.resi;
                     //curInsc = atom.insc;
                     curResAtoms.length = 0;
                 }
                 curResAtoms.push(atom);
+
+                if(atom.name === 'C' || atom.name === 'O3\'') {
+                    prevCarbonArray.push(atom);
+                }
             } // end of for
+
+            // last residue
+            //refreshBonds();
+            this.refreshBonds(curResAtoms, prevCarbonArray[0]);
 
             // reset lipid
             for(let resid in lipidResidHash) {
@@ -21801,9 +21850,6 @@ var icn3d = (function (exports) {
                     if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
                 }
             }
-
-            // last residue
-            refreshBonds();
 
             ic.pmin = pmin;
             ic.pmax = pmax;
@@ -21837,6 +21883,28 @@ var icn3d = (function (exports) {
             }
             else {
                 return hAtoms;
+            }
+        }
+
+        // refresh for atoms in each residue
+        refreshBonds(curResAtoms, prevCarbon) { let  ic = this.icn3d, me = ic.icn3dui;
+            let  n = curResAtoms.length;
+            for (let j = 0; j < n; ++j) {
+                let  atom0 = curResAtoms[j];
+                for (let k = j + 1; k < n; ++k) {
+                    let  atom1 = curResAtoms[k];
+                    if (atom0.alt === atom1.alt && me.utilsCls.hasCovalentBond(atom0, atom1)) {
+                    //if (me.utilsCls.hasCovalentBond(atom0, atom1)) {
+                        atom0.bonds.push(atom1.serial);
+                        atom1.bonds.push(atom0.serial);
+                    }
+                }
+
+                //f && f(atom0);
+                if (prevCarbon && (prevCarbon.name === 'C' || prevCarbon.name === 'O3\'') && (atom0.name === 'N' || atom0.name === 'P') && me.utilsCls.hasCovalentBond(atom0, prevCarbon)) {
+                    atom0.bonds.push(prevCarbon.serial);
+                    prevCarbon.bonds.push(atom0.serial);
+                }
             }
         }
 
@@ -22142,12 +22210,13 @@ var icn3d = (function (exports) {
             else { // mmdbid or mmcifid
                 if(data.descr !== undefined) ic.molTitle += data.descr.name;
                 if(type === 'mmdbid') {
-                  let  pdbidTmp = data.pdbId;
+                  let  pdbidTmp = (isNaN(id)) ? id : data.pdbId;
                   let  chainHash = {};
 
                   if(ic.alignmolid2color === undefined) ic.alignmolid2color = [];
 
                   let  molidCnt = 1;
+               
                   for(let molid in data.moleculeInfor) {
                       if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
 
@@ -22167,6 +22236,8 @@ var icn3d = (function (exports) {
                           chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
                       }
 
+                      //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
+     
                       let  kind = data.moleculeInfor[molid].kind;
                       let  color = data.moleculeInfor[molid].color;
                       let  sid = data.moleculeInfor[molid].sid;
@@ -22298,14 +22369,13 @@ var icn3d = (function (exports) {
                     atm.structure = mmdbId;
 
                     if(type === 'mmdbid' &&((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t))
-                      && alignType === 'query') {
-                        atm.structure += me.htmlCls.postfix;
-                    }
+                      && alignType === 'query') ;
                 }
 
                 structureNum = atm.structure;
 
                 chainNum = structureNum + '_' + atm.chain;
+
                 //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += me.htmlCls.postfix;
 
                 //var resiCorrection = 0;
@@ -22608,10 +22678,7 @@ var icn3d = (function (exports) {
                         let  seqArray = data.sequences[chain];
                         let  chainid = id + '_' + chain;
 
-                        if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                            //chainid += me.htmlCls.postfix;
-                            chainid = id + me.htmlCls.postfix + '_' + chain;
-                        }
+                        if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') ;
 
                         ic.ParserUtilsCls.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq
                     }
@@ -24763,7 +24830,7 @@ var icn3d = (function (exports) {
             let  thisClass = this;
             let  url, dataType;
 
-            if(!pdbid) pdbid = 'STRU';
+            if(!pdbid) pdbid = 'stru';
 
             url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
             dataType = "jsonp";
@@ -24961,6 +25028,7 @@ var icn3d = (function (exports) {
                 this.parseMmdbDataPart1(data, type);
 
                 let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+                if(chainid) id = chainid.substr(0, chainid.indexOf('_'));
 
                 let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
 
@@ -25384,12 +25452,19 @@ var icn3d = (function (exports) {
 
           ic.opts['color'] = 'grey';
           ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
-          for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
-              let chainpair = chainidArray[0] + ',' + chainidArray[index + 1];
+          
+          for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
               let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
 
               if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+
+              let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
+              let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+
+              chainidArray[0] = chainTo;
+              chainidArray[index + 1] = chainFrom;
+
+              let chainpair =  chainTo + ',' + chainFrom;
 
               if(!struct2SeqHash[chainpair]) continue;
 
@@ -25410,11 +25485,9 @@ var icn3d = (function (exports) {
                   ic.realignResid[fromStruct].push({'resid':residArray2[i], 'resn':seq2[i]});
               }
 
-              let  chainTo = chainidArray[0];
-              let  chainFrom = chainidArray[index + 1];
-
               let  bChainAlign = true;
               // set ic.qt_start_end in alignCoords()
+
               let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
               hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
           }
@@ -25451,6 +25524,12 @@ var icn3d = (function (exports) {
               if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
               if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+
+              let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
+              let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+
+              chainidArray[0] = chainTo;
+              chainidArray[index + 1] = chainFrom;
 
               let  seq1 = struct2SeqHash[toStruct];
               let  seq2 = struct2SeqHash[fromStruct];
@@ -25508,8 +25587,8 @@ var icn3d = (function (exports) {
                       }
                   }
 
-                  let  chainTo = chainidArray[0];
-                  let  chainFrom = chainidArray[index + 1];
+                  //let  chainTo = chainidArray[0];
+                  //let  chainFrom = chainidArray[index + 1];
 
                   let  bChainAlign = true;
                   let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
@@ -25743,8 +25822,8 @@ var icn3d = (function (exports) {
 
                         // slave
                         resiArray = predefinedResPair[1].split(",");
-                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
-                        
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base); 
+
                         if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
                         if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
                         if(!struct2resid[chainidpair][mmdbid]) struct2resid[chainidpair][mmdbid] = [];
@@ -25909,8 +25988,11 @@ var icn3d = (function (exports) {
             let  bFound = false;
             for(let serial in ic.residues[resid]) {
                 let  atom = ic.atoms[serial];
+
                 if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
                   ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
+                //if((atom.name == "CA" && atom.elem == "C")
+                //  ||((atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                     struct2CoorArray.push(atom.coord.clone());
                     bFound = true;
                     break;
@@ -25938,7 +26020,7 @@ var icn3d = (function (exports) {
             let mmdbid_t, mmdbid_q;
             mmdbid_t = chainidArray[0].substr(0, chainidArray[0].indexOf('_'));
             let  bLastQuery = false;
-            if(mmdbid_t.length > 4) { 
+            if(mmdbid_t.length > 5) { 
                 let bAppend = false, bNoDssp = true;
                 hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
             }
@@ -25951,7 +26033,10 @@ var icn3d = (function (exports) {
                 if(i == data2Array.length - 1) bLastQuery = true;
                 // each alignment has a chainIndex i
                 mmdbid_q = chainidArray[i + 1].substr(0, chainidArray[i + 1].indexOf('_'));
-                if(mmdbid_q.length > 4) {
+                //mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfixfor same PDB IDs
+
+                //if(mmdbid_q.length > 4) {
+                if(mmdbid_q.length > 5) {  // PDB ID plus postfix could be 5 
                     let bAppend = true, bNoDssp = true;
                     hAtomsTmp = ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
                 }
@@ -26389,10 +26474,21 @@ var icn3d = (function (exports) {
             let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
             if(domainArray.length < alignArray.length) domainArray = [];
 
+            let struct2cnt = {};
             for(let i = 0, il = alignArray.length; i < il; ++i) {
                 let  chainid = alignArray[i];
                 let  pos = chainid.indexOf('_');
-                alignArray[i] = chainid.substr(0, pos).toUpperCase() + chainid.substr(pos);
+                let struct = chainid.substr(0, pos).toUpperCase();
+                if(!struct2cnt.hasOwnProperty(struct)) {
+                    struct2cnt[struct] = 1;
+                }
+                else {
+                    ++struct2cnt[struct];
+                }
+
+                struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
+
+                alignArray[i] = struct + chainid.substr(pos);
             }
 
             ic.chainidArray = alignArray;
@@ -26405,7 +26501,7 @@ var icn3d = (function (exports) {
             let  targetAjax;
 
             let  url_t;
-            if(ic.mmdbid_t.length > 4) {
+            if(ic.mmdbid_t.length > 5) {
                 url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v2.pdb";
 
                 targetAjax = $.ajax({
@@ -26437,11 +26533,13 @@ var icn3d = (function (exports) {
             ic.pdbChainIndexHash = {};
             for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
                 let  pos2 = alignArray[index].indexOf('_');
-                ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+                let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
+                ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
+
                 ic.chain_q = alignArray[index].substr(pos2+1);
 
                 let  url_q, queryAjax;
-                if(ic.mmdbid_q.length > 4) {
+                if(ic.mmdbid_q.length > 5) {
                     url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v2.pdb";
 
                     queryAjax = $.ajax({
@@ -26466,7 +26564,9 @@ var icn3d = (function (exports) {
             
             for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
                 let  pos2 = alignArray[index].indexOf('_');
-                ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+                let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
+                ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
+
                 ic.chain_q = alignArray[index].substr(pos2+1);
 
                 if(!me.cfg.resnum && !me.cfg.resdef) {
@@ -26491,7 +26591,7 @@ var icn3d = (function (exports) {
 
                         ajaxArray.push(alignAjax);
 
-                        ic.pdbChainIndexHash[index] = ic.mmdbid_q + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
+                        ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                     }
                     else {
                         // get the dynamic alignment after loading the structures
@@ -26521,7 +26621,7 @@ var icn3d = (function (exports) {
             // index = 0: the mmdb data of target
             let  targetData = dataArray[0][0];
             let header = 'HEADER                                                        ' + mmdbid_t + '\n';
-            if(mmdbid_t.length > 4) targetData = header + targetData;
+            if(mmdbid_t.length > 5) targetData = header + targetData;
 
             ic.t_trans_add = [];
             ic.q_trans_sub = [];
@@ -26540,7 +26640,7 @@ var icn3d = (function (exports) {
                 let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
                 let header = 'HEADER                                                        ' + mmdbid_q + '\n';
-                if(mmdbid_q.length > 4) queryData = header + queryData;
+                if(mmdbid_q.length > 5) queryData = header + queryData;
 
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                     ) {
@@ -26715,9 +26815,9 @@ var icn3d = (function (exports) {
         }
 
         downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
-          let  thisClass = this;
+            let  thisClass = this;
 
-          ic.deferredMmdbaf = $.Deferred(function() {
+            ic.deferredMmdbaf = $.Deferred(function() {
             ic.structArray = idlist.split(',');
 
             let  ajaxArray = [];
@@ -26726,7 +26826,7 @@ var icn3d = (function (exports) {
                 let  url_t, targetAjax;
                 let structure = ic.structArray[i];
 
-                if(isNaN(structure) && structure.length > 4) {
+                if(isNaN(structure) && structure.length > 5) {
                     url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
 
                     targetAjax = $.ajax({
@@ -26775,7 +26875,7 @@ var icn3d = (function (exports) {
             for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
                 let  queryData = dataArray[index][0];
                 let header = 'HEADER                                                        ' + structArray[index] + '\n';
-                if(structArray[index].length > 4) queryData = header + queryData;
+                if(structArray[index].length > 5) queryData = header + queryData;
 
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                     ) {
@@ -26805,7 +26905,8 @@ var icn3d = (function (exports) {
                     bAppend = true; 
                 }
 
-                if(structArray[i].length > 4) {
+                //if(structArray[i].length > 4) {
+                if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                     let bNoDssp = true;
                     hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
                 }
@@ -28776,7 +28877,7 @@ var icn3d = (function (exports) {
               me.cfg.mmcifid = id;
               ic.mmcifParserCls.downloadMmcif(id);
             }
-            else if(command.indexOf('load mmdb') !== -1 || command.indexOf('load mmdb1') !== -1) {
+            else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
               me.cfg.mmdbid = id;
               me.cfg.bu = 1;
 
@@ -28792,13 +28893,13 @@ var icn3d = (function (exports) {
                 me.cfg.mmdbafid = id;
                 me.cfg.bu = 1;
       
-                ic.mmdbParserCls.downloadMmdbAf(id);
+                ic.chainalignParserCls.downloadMmdbAf(id);
             }
             else if(command.indexOf('load mmdbaf0') !== -1) {
                 me.cfg.mmdbafid = id;
                 me.cfg.bu = 0;
 
-                ic.mmdbParserCls.downloadMmdbAf(id);
+                ic.chainalignParserCls.downloadMmdbAf(id);
             }
             else if(command.indexOf('load gi') !== -1) {
               me.cfg.gi = id;
@@ -36158,6 +36259,7 @@ var icn3d = (function (exports) {
             let resi2range_t = {}; // aaccumulative aligned residues in the template chain
             // start and end of MSA
             let start_t = 9999, end_t = -1;
+
             for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
                 let chainIndex = index - 1;
                 for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -36399,14 +36501,15 @@ var icn3d = (function (exports) {
         }
 
         addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resi_t, len) { let ic = this.icn3d; ic.icn3dui;    
-            let result = this.getResiPosInTemplate(chainid1, resi_t);
-            let nGap = result.ngap, pos_t = result.pos;
+            // let result = this.getResiPosInTemplate(chainid1, resi_t);
+            // let nGap = result.ngap, pos_t = result.pos;
 
             // add gaps for all previously aligned sequences, not the current sequence, which is the last one
             for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
                 let chainidTmp = chainidArray[alignedChainIndice[j]];
                 let gapResObject = this.getResObject(chainidTmp, true);
-                for(let k = 0, kl = len - nGap; k < kl; ++k) {
+                //for(let k = 0, kl = len - nGap; k < kl; ++k) {
+                for(let k = 0, kl = len; k < kl; ++k) {
                     ic.alnChainsSeq[chainidTmp].splice(pos_t, 0, gapResObject);
                 }
             }
@@ -37304,7 +37407,7 @@ var icn3d = (function (exports) {
 
           //var dxymax = npoint / 2.0 * step;
 
-          pdbid =(pdbid) ? pdbid.toUpperCase() : 'STRU';
+          pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
 
           ic.structures[pdbid].push(pdbid + '_MEM');
           ic.chains[pdbid + '_MEM'] = {};
@@ -37848,7 +37951,7 @@ var icn3d = (function (exports) {
         //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
         loadMmcifData(data, mmcifid) { let ic = this.icn3d; ic.icn3dui;
             if(!mmcifid) mmcifid = data.mmcif;
-            if(!mmcifid) mmcifid = 'STRU';
+            if(!mmcifid) mmcifid = 'stru';
 
             if(data.atoms !== undefined) {
                 ic.init();
@@ -38226,7 +38329,7 @@ var icn3d = (function (exports) {
                                         if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                             let residNCBI = chainid + '_' + (j+1).toString();
                                             // AlphaFold domains calculated on-the-fly have no conversion
-                                            if(structure.length > 4) {
+                                            if(structure.length > 5) {
                                                 residueid = residNCBI;
                                             }
                                             else if(ic.residNCBI2resid[residNCBI]) {
@@ -38273,7 +38376,7 @@ var icn3d = (function (exports) {
                                         if(ic.bNCBI) {
                                             let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                             // AlphaFold domains calculated on-the-fly have no conversion
-                                            if(structure.length > 4) {
+                                            if(structure.length > 5) {
                                                 residueid = residNCBI;
                                             }
                                             else if(ic.residNCBI2resid[residNCBI]) {
@@ -45170,29 +45273,6 @@ var icn3d = (function (exports) {
                 return button;
 
             } else {
-    /*
-                const message = document.createElement( 'a' );
-
-                if ( window.isSecureContext === false ) {
-
-                    message.href = document.location.href.replace( /^http:/, 'https:' );
-                    message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
-
-                } else {
-
-                    message.href = 'https://immersiveweb.dev/';
-                    message.innerHTML = 'WEBXR NOT AVAILABLE';
-
-                }
-
-                message.style.left = 'calc(50% - 90px)';
-                message.style.width = '180px';
-                message.style.textDecoration = 'none';
-
-                stylizeElement( message );
-
-                return message;
-    */
                 const message = document.createElement( 'span' );
                 return message;
             }
@@ -50564,6 +50644,9 @@ var icn3d = (function (exports) {
 
     //import * as THREE from './three/three.module.js';
 
+    // copied from https://github.com/NikLever/Learn-WebXR/blob/master/libs/ControllerGestures.js
+    // created by Nik Lever
+
     class ControllerGestures extends THREE.EventDispatcher{
         constructor( renderer ){
             super();
@@ -50987,6 +51070,7 @@ var icn3d = (function (exports) {
                 ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
                 ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
     */
+                // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
                 // add dolly to move camera
                 ic.dolly = new THREE.Object3D();
                 ic.dolly.position.z = 5;
@@ -51000,6 +51084,8 @@ var icn3d = (function (exports) {
 
                 //controllers
                 ic.controllers = this.getControllers();
+
+                ic.getInputSources = true; // default
 
                 function onSelectStart() {
     //                this.children[0].scale.z = 10;
@@ -52450,8 +52536,9 @@ var icn3d = (function (exports) {
             }
         }
 
-        handleController( controller, dt) { let ic = this.icn3d; ic.icn3dui;
-            if (controller.userData.selectPressed ){
+        handleController( controller, dt, selectPressed) { let ic = this.icn3d; ic.icn3dui;
+            // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
+            if ( selectPressed ){
     /*            
                 ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
@@ -52498,13 +52585,18 @@ var icn3d = (function (exports) {
             ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
             if(ic.bVr) {
-                let dt = ic.clock.getDelta();
+                let dt = 0.04; // ic.clock.getDelta();
 
-                if (ic.controllers ){
+                if (ic.controllers){
+                    // let result = this.getThumbStickMove();
+                    // let y = result.y * -1;
+                    // let pressed = result.pressed;
+
                     for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                         let controller = ic.controllers[i];
-                        dt = (i % 2 == 0) ? dt : -dt;
-                        thisClass.handleController( controller, dt ); 
+                        dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
+                        thisClass.handleController( controller, dt, controller.userData.selectPressed );
+                        //thisClass.handleController( controller, dt, pressed );
                     }
                 }
             }
@@ -52517,6 +52609,61 @@ var icn3d = (function (exports) {
             if(ic.scene) {
                 ic.renderer.render(ic.scene, cam);
             }
+        }
+
+        getThumbStickMove() { let ic = this.icn3d; ic.icn3dui;
+            let y = 0;
+            let btnPressed = false;
+
+            if ( ic.renderer.xr.isPresenting ){
+                const session = ic.renderer.xr.getSession();
+                const inputSources = session.inputSources;
+              
+                if ( ic.getInputSources ){    
+                    //const info = [];
+                    
+                    inputSources.forEach( inputSource => {
+                        const gp = inputSource.gamepad;
+                        gp.axes;
+                        gp.buttons;
+                        const mapping = gp.mapping;
+                        ic.useStandard = (mapping == 'xr-standard');
+                        inputSource.handedness;
+                        const profiles = inputSource.profiles;
+                        ic.gamepadType = "";
+                        profiles.forEach( profile => {
+                            if (profile.indexOf('touchpad')!=-1) ic.gamepadType = 'touchpad';
+                            if (profile.indexOf('thumbstick')!=-1) ic.gamepadType = 'thumbstick';
+                        });
+                        inputSource.targetRayMode;
+                        //info.push({ gamepad, handedness, profiles, targetRayMode });
+                    });
+                        
+                    //console.log( JSON.stringify(info) );
+                     
+                    ic.getInputSources = false;
+                }else if (ic.useStandard && ic.gamepadType != ""){
+                    inputSources.forEach( inputSource => {
+                        const gp = inputSource.gamepad;
+                        const thumbstick = (ic.gamepadType=='thumbstick');
+                        //{"trigger":{"button":0},"touchpad":{"button":2,"xAxis":0,"yAxis":1}},
+                        //"squeeze":{"button":1},"thumbstick":{"button":3,"xAxis":2,"yAxis":3},"button":{"button":6}}}
+                        const xaxisOffset = (thumbstick) ? 2 : 0;
+                        const btnIndex = (thumbstick) ? 3 : 2;
+                        btnPressed = gp.buttons[btnIndex].pressed;
+                        // if ( inputSource.handedness == 'right') {
+                        // } else if ( inputSource.handedness == 'left') {
+                        // }
+
+                        //https://beej.us/blog/data/javascript-gamepad/
+                        // x,y-axis values are between -1 and 1
+                        gp.axes[xaxisOffset];
+                        y = gp.axes[xaxisOffset + 1]; 
+                    });
+                }
+            }
+
+            return {'y': y, 'pressed': btnPressed};
         }
     }
 
@@ -53124,7 +53271,7 @@ var icn3d = (function (exports) {
         }
 
         //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader) { let ic = this.icn3d, me = ic.icn3dui;
+        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb) { let ic = this.icn3d, me = ic.icn3dui;
             let pdbStr = '';
 
             // get all phosphate groups in lipids
@@ -53269,8 +53416,18 @@ var icn3d = (function (exports) {
             let molNum = 1, prevStru = '';
             //pdbStr += '\n';
 
+            let addedChainResiHash = {};
             for(let i in atomHash) {
                 let atom = ic.atoms[i];
+
+                let chainResi = atom.chain + '_' + atom.resi;
+                if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
+                    if(!addedChainResiHash.hasOwnProperty(chainResi)) {
+                        pdbStr += chainResi2pdb[chainResi];
+                        addedChainResiHash[chainResi] = 1;
+                    }
+                    continue;
+                }
 
                 // remove chemicals
                 if(bNoChem && atom.het) continue;
@@ -53284,8 +53441,9 @@ var icn3d = (function (exports) {
 
                     if(bMulStruc) pdbStr += 'MODEL        ' + molNum + '\n';
 
-                    // add header
-                    if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header);
+                    // add header            
+                    let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
+                    if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo);
 
                     prevStru = atom.structure;
                     ++molNum;
@@ -53513,21 +53671,25 @@ var icn3d = (function (exports) {
 
            return pdbStr;
         }
-        getPDBHeader(struNum, stru2header) { let ic = this.icn3d; ic.icn3dui;
+        getPDBHeader(struNum, stru2header, mutantInfo) { let ic = this.icn3d; ic.icn3dui;
            if(struNum === undefined) struNum = 0;
 
            let pdbStr = '';
            let stru = Object.keys(ic.structures)[struNum];
-           pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + stru + '\n';
+           let id = (mutantInfo) ? stru + '2' : stru;
+           pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + id + '\n';
 
            if(struNum == 0) {
                let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
                // remove quotes
                if(title.indexOf('"') != -1) title = '';
+               if(mutantInfo) {
+                   title = mutantInfo + title;
+               }
                pdbStr += 'TITLE     ' + title + '\n';
            }
 
-           if(stru2header) {
+           if(stru2header && stru2header[stru]) {
                pdbStr += stru2header[stru];
            }
 
@@ -62866,17 +63028,20 @@ var icn3d = (function (exports) {
             let viewSelectionAtomsCount = Object.keys(ic.viewSelectionAtoms).length;
             let allAtomsCount = Object.keys(ic.atoms).length;
 
-            ic.dAtoms = {};
+            //ic.dAtoms = {};
 
-            // alternate all displayed structures
-            let moleculeArray = Object.keys(ic.structures);
-            // only alternate selected structures
-            // let structureHash = {};
-            // for(let i in ic.hAtoms) {
-            //     let structure = ic.atoms[i].structure;
-            //     structureHash[structure] = 1;
-            // }
-            // let moleculeArray = Object.keys(structureHash);
+            // 1. alternate all structures
+            //let moleculeArray = Object.keys(ic.structures);
+
+            // 2. only alternate displayed structures
+            let structureHash = {};
+            for(let i in ic.viewSelectionAtoms) {
+                let structure = ic.atoms[i].structure;
+                structureHash[structure] = 1;
+            }
+            let moleculeArray = Object.keys(structureHash);
+
+            ic.dAtoms = {};
 
             for(let i = 0, il = moleculeArray.length; i < il; ++i) {
                 let structure = moleculeArray[i];
@@ -63620,7 +63785,7 @@ var icn3d = (function (exports) {
 
             let graphStr = '{\n';
 
-            let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'STRU';
+            let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
             let len1 = nodeArray1.length,
                 len2 = nodeArray2.length;
             let factor = 1;
@@ -66301,7 +66466,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.12.4';
+        this.REVISION = '3.12.5';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
