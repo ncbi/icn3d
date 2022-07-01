@@ -36501,8 +36501,8 @@ var icn3d = (function (exports) {
         }
 
         addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resi_t, len) { let ic = this.icn3d; ic.icn3dui;    
-            // let result = this.getResiPosInTemplate(chainid1, resi_t);
-            // let nGap = result.ngap, pos_t = result.pos;
+            let result = this.getResiPosInTemplate(chainid1, resi_t);
+            result.ngap; let pos_t = result.pos;
 
             // add gaps for all previously aligned sequences, not the current sequence, which is the last one
             for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
