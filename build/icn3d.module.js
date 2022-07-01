@@ -22432,7 +22432,6 @@ class LoadAtomData {
             ic.pmin.min(atm.coord);
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
-console.log("chainNum: " + chainNum);
 
             let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
             let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
