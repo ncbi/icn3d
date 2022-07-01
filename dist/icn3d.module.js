@@ -22228,10 +22228,7 @@ class LoadAtomData {
                       chainHash[chain] = 1;
                   }
 
-                  if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                      //chainid += me.htmlCls.postfix;
-                      chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
-                  }
+                  if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') ;
 
                   //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
  
@@ -22435,6 +22432,7 @@ class LoadAtomData {
             ic.pmin.min(atm.coord);
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
+console.log("chainNum: " + chainNum);
 
             let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
             let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
@@ -25453,7 +25451,7 @@ class RealignParser {
       for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+          //if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
           let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
@@ -25520,7 +25518,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+          //if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
           let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
@@ -25771,9 +25769,6 @@ class RealignParser {
 
             if(i == 0) {
                 mmdbid_t = mmdbid;
-            }
-            else if(mmdbid_t == mmdbid) {
-                mmdbid += me.htmlCls.postfix;
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
@@ -35990,11 +35985,6 @@ class SetSeqAlign {
                 let  chainLen = ic.chainsSeq[mmdbid2 + '_' + chain2].length;
                 ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen};
             }
-
-            if(mmdbid2 !== undefined && mmdbid2 === mmdbid1) {
-                //chainid1 += me.htmlCls.postfix;
-                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
-            }
           }
           else {
             //var chainidArray = me.cfg.chainalign.split(',');
@@ -36015,10 +36005,7 @@ class SetSeqAlign {
             chainid1 = mmdbid1 + "_" + chain1;
             chainid2 = mmdbid2 + "_" + chain2;
 
-            if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-                //chainid1 += me.htmlCls.postfix;
-                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
-            }
+            if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) ;
          }
 
           ic.conservedName1 = chainid1 + '_cons';
@@ -36564,9 +36551,7 @@ class SetSeqAlign {
         chainid1 = mmdbid1 + "_" + chain1;
         chainid2 = mmdbid2 + "_" + chain2;
 
-        if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-            chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
-        }
+        if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) ;
 
         //ic.alnChainsSeq[chainid2] = [];
         ic.alnChains[chainid2] = {};
@@ -40968,10 +40953,7 @@ class Diagram2d {
 
               let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let chainid = mmdbid + '_' + chainNameFinal;
-              if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) {
-                  //chainid += me.htmlCls.postfix;
-                  chainid = mmdbid + me.htmlCls.postfix + '_' + chainNameFinal;
-              }
+              if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) ;
 
               molid2chain[molid] = chainid;
               molid2color[molid] = color;

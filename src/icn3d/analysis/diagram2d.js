@@ -49,8 +49,7 @@ class Diagram2d {
               let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let chainid = mmdbid + '_' + chainNameFinal;
               if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) {
-                  //chainid += me.htmlCls.postfix;
-                  chainid = mmdbid + me.htmlCls.postfix + '_' + chainNameFinal;
+                  //chainid = mmdbid + me.htmlCls.postfix + '_' + chainNameFinal;
               }
 
               molid2chain[molid] = chainid;

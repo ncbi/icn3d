@@ -105,7 +105,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+          //if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
           let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
@@ -178,7 +178,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
+          //if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
           let  chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
@@ -437,7 +437,7 @@ class RealignParser {
                 mmdbid_t = mmdbid;
             }
             else if(mmdbid_t == mmdbid) {
-                mmdbid += me.htmlCls.postfix;
+                //mmdbid += me.htmlCls.postfix;
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);

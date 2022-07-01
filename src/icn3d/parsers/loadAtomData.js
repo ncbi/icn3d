@@ -135,8 +135,7 @@ class LoadAtomData {
                   }
 
                   if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                      //chainid += me.htmlCls.postfix;
-                      chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
+                      //chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
                   }
 
                   //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
@@ -355,6 +354,7 @@ class LoadAtomData {
             ic.pmin.min(atm.coord);
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
+console.log("chainNum: " + chainNum);
 
             let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
             let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
