@@ -25986,10 +25986,10 @@ class RealignParser {
         for(let serial in ic.residues[resid]) {
             let  atom = ic.atoms[serial];
 
-            if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
-              ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
-            //if((atom.name == "CA" && atom.elem == "C")
-            //  ||((atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
+            //if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
+            //  ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
+            if((atom.name == "CA" && atom.elem == "C")
+              ||((atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                 struct2CoorArray.push(atom.coord.clone());
                 bFound = true;
                 break;
