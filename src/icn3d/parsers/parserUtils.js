@@ -33,7 +33,7 @@ class ParserUtils {
       //var n = coordsFrom.length;
       let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      let  hAtoms = {}
+      let  hAtoms = {};
 
       if(n < 4) alert("Please select at least four residues in each structure...");
       if(n >= 4) {
@@ -512,7 +512,7 @@ class ParserUtils {
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid =(pdbid) ? pdbid.toUpperCase() : 'STRU';
+      pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {}

@@ -233,6 +233,7 @@ class Scene {
             ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
             ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
 */
+            // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
             ic.dolly = new THREE.Object3D();
             ic.dolly.position.z = 5;
@@ -246,6 +247,8 @@ class Scene {
 
             //controllers
             ic.controllers = this.getControllers();
+
+            ic.getInputSources = true; // default
 
             function onSelectStart() {
 //                this.children[0].scale.z = 10;

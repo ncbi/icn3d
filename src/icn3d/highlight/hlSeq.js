@@ -300,7 +300,7 @@ class HlSeq {
                                     if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
-                                        if(structure.length > 4) {
+                                        if(structure.length > 5) {
                                             residueid = residNCBI;
                                         }
                                         else if(ic.residNCBI2resid[residNCBI]) {
@@ -347,7 +347,7 @@ class HlSeq {
                                     if(ic.bNCBI) {
                                         let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
-                                        if(structure.length > 4) {
+                                        if(structure.length > 5) {
                                             residueid = residNCBI;
                                         }
                                         else if(ic.residNCBI2resid[residNCBI]) {

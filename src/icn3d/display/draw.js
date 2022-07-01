@@ -103,8 +103,9 @@ class Draw {
         }
     }
 
-    handleController( controller, dt) { let ic = this.icn3d, me = ic.icn3dui;
-        if (controller.userData.selectPressed ){
+    handleController( controller, dt, selectPressed) { let ic = this.icn3d, me = ic.icn3dui;
+        // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
+        if ( selectPressed ){
 /*            
             ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
@@ -151,13 +152,18 @@ class Draw {
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
         if(ic.bVr) {
-            let dt = ic.clock.getDelta();
+            let dt = 0.04; // ic.clock.getDelta();
 
-            if (ic.controllers ){
+            if (ic.controllers){
+                // let result = this.getThumbStickMove();
+                // let y = result.y * -1;
+                // let pressed = result.pressed;
+
                 for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                     let controller = ic.controllers[i];
-                    dt = (i % 2 == 0) ? dt : -dt;
-                    thisClass.handleController( controller, dt ) 
+                    dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
+                    thisClass.handleController( controller, dt, controller.userData.selectPressed );
+                    //thisClass.handleController( controller, dt, pressed );
                 }
             }
         }
@@ -170,6 +176,62 @@ class Draw {
         if(ic.scene) {
             ic.renderer.render(ic.scene, cam);
         }
+    }
+
+    getThumbStickMove() { let ic = this.icn3d, me = ic.icn3dui;
+        let x = 0, y = 0;
+        let btnPressed = false;
+
+        if ( ic.renderer.xr.isPresenting ){
+            const session = ic.renderer.xr.getSession();
+            const inputSources = session.inputSources;
+          
+            if ( ic.getInputSources ){    
+                //const info = [];
+                
+                inputSources.forEach( inputSource => {
+                    const gp = inputSource.gamepad;
+                    const axes = gp.axes;
+                    const buttons = gp.buttons;
+                    const mapping = gp.mapping;
+                    ic.useStandard = (mapping == 'xr-standard');
+                    const gamepad = { axes, buttons, mapping };
+                    const handedness = inputSource.handedness;
+                    const profiles = inputSource.profiles;
+                    ic.gamepadType = "";
+                    profiles.forEach( profile => {
+                        if (profile.indexOf('touchpad')!=-1) ic.gamepadType = 'touchpad';
+                        if (profile.indexOf('thumbstick')!=-1) ic.gamepadType = 'thumbstick';
+                    });
+                    const targetRayMode = inputSource.targetRayMode;
+                    //info.push({ gamepad, handedness, profiles, targetRayMode });
+                });
+                    
+                //console.log( JSON.stringify(info) );
+                 
+                ic.getInputSources = false;
+            }else if (ic.useStandard && ic.gamepadType != ""){
+                inputSources.forEach( inputSource => {
+                    const gp = inputSource.gamepad;
+                    const thumbstick = (ic.gamepadType=='thumbstick');
+                    //{"trigger":{"button":0},"touchpad":{"button":2,"xAxis":0,"yAxis":1}},
+                    //"squeeze":{"button":1},"thumbstick":{"button":3,"xAxis":2,"yAxis":3},"button":{"button":6}}}
+                    const xaxisOffset = (thumbstick) ? 2 : 0;
+                    const btnIndex = (thumbstick) ? 3 : 2;
+                    btnPressed = gp.buttons[btnIndex].pressed;
+                    // if ( inputSource.handedness == 'right') {
+                    // } else if ( inputSource.handedness == 'left') {
+                    // }
+
+                    //https://beej.us/blog/data/javascript-gamepad/
+                    // x,y-axis values are between -1 and 1
+                    x = gp.axes[xaxisOffset];
+                    y = gp.axes[xaxisOffset + 1]; 
+                })
+            }
+        }
+
+        return {'y': y, 'pressed': btnPressed};
     }
 }
 
