@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.12.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.6.zip) was release on July 5, 2022. Enabled to load a mmCIF file from a URL in the menu "File > Open File > URL(Same Host)".
+
 [icn3d-3.12.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.5.zip) was release on July 1, 2022. Output the full mutant PDB file in mutation analysis, and fixed the alignment of same chain IDs.
 
 [icn3d-3.12.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.4.zip) was release on June 21, 2022. Added some basic navigation controls in VR and AR views. In the VR view, users can use the right trigger to move forward and the left trigger to move backward. In the AR view, users can tap once on the screen to locate a minimized 3D structure in the tapped location, and tap twice quickly to scale up the 3D structure.

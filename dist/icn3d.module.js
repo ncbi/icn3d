@@ -23773,6 +23773,9 @@ class PdbParser {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command);
             }
+            else if(type === 'mmcif') {
+                ic.mmcifParserCls.parseMmcifData(data, undefined, command);
+            }
             else if(type === 'mol2') {
                 ic.mol2ParserCls.loadMol2Data(data);
             }
@@ -37600,7 +37603,7 @@ class MmcifParser {
 
     //Ajax call was used to get the atom data from the "mmcifid". This function was deferred
     //so that it can be chained together with other deferred functions for sequential execution.
-    downloadMmcif(mmcifid) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadMmcif(mmcifid) { let ic = this.icn3d; ic.icn3dui;
        let  thisClass = this;
 
        let  url, dataType;
@@ -37626,34 +37629,7 @@ class MmcifParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'mmciffile': data},
-                  dataType: 'jsonp',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  beforeSend: function() {
-                      ic.ParserUtilsCls.showLoading();
-                  },
-                  complete: function() {
-                      //ic.ParserUtilsCls.hideLoading();
-                  },
-                  success: function(data) {
-                      thisClass.loadMmcifData(data, mmcifid);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    return;
-                  }
-                });
+            thisClass.parseMmcifData(data, mmcifid);
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -37665,6 +37641,40 @@ class MmcifParser {
             return;
           }
         });
+    }
+
+    parseMmcifData(data, mmcifid, command) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+        
+        let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        $.ajax({
+           url: url,
+           type: 'POST',
+           data : {'mmciffile': data},
+           dataType: 'jsonp',
+           cache: true,
+           tryCount : 0,
+           retryLimit : 0, //1
+           beforeSend: function() {
+               ic.ParserUtilsCls.showLoading();
+           },
+           complete: function() {
+               //ic.ParserUtilsCls.hideLoading();
+           },
+           success: function(data) {
+               thisClass.loadMmcifData(data, mmcifid);
+               if(command) ic.loadScriptCls.loadScript(command);
+           },
+           error : function(xhr, textStatus, errorThrown ) {
+             this.tryCount++;
+             if(this.tryCount <= this.retryLimit) {
+                 //try again
+                 $.ajax(this);
+                 return;
+             }
+             return;
+           }
+         });
     }
 
     downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d; ic.icn3dui;
@@ -58664,6 +58674,7 @@ class SetDialog {
         html += "File type: ";
         html += "<select id='" + me.pre + "filetype'>";
         html += me.htmlCls.optionStr + "'pdb' selected>PDB</option>";
+        html += me.htmlCls.optionStr + "'mmcif'>mmCIF</option>";
         html += me.htmlCls.optionStr + "'mol2'>Mol2</option>";
         html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
         html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
@@ -66444,7 +66455,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.5';
+    this.REVISION = '3.12.6';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

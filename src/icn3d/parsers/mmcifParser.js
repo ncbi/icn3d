@@ -48,34 +48,7 @@ class MmcifParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'mmciffile': data},
-                  dataType: 'jsonp',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  beforeSend: function() {
-                      ic.ParserUtilsCls.showLoading();
-                  },
-                  complete: function() {
-                      //ic.ParserUtilsCls.hideLoading();
-                  },
-                  success: function(data) {
-                      thisClass.loadMmcifData(data, mmcifid);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    return;
-                  }
-                });
+            thisClass.parseMmcifData(data, mmcifid);
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -87,6 +60,40 @@ class MmcifParser {
             return;
           }
         });
+    }
+
+    parseMmcifData(data, mmcifid, command) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+        
+        let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        $.ajax({
+           url: url,
+           type: 'POST',
+           data : {'mmciffile': data},
+           dataType: 'jsonp',
+           cache: true,
+           tryCount : 0,
+           retryLimit : 0, //1
+           beforeSend: function() {
+               ic.ParserUtilsCls.showLoading();
+           },
+           complete: function() {
+               //ic.ParserUtilsCls.hideLoading();
+           },
+           success: function(data) {
+               thisClass.loadMmcifData(data, mmcifid);
+               if(command) ic.loadScriptCls.loadScript(command);
+           },
+           error : function(xhr, textStatus, errorThrown ) {
+             this.tryCount++;
+             if(this.tryCount <= this.retryLimit) {
+                 //try again
+                 $.ajax(this);
+                 return;
+             }
+             return;
+           }
+         });
     }
 
     downloadMmcifSymmetry(mmcifid, type) { let  ic = this.icn3d, me = ic.icn3dui;
