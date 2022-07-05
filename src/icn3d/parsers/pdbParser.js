@@ -124,6 +124,9 @@ class PdbParser {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command);
             }
+            else if(type === 'mmcif') {
+                ic.mmcifParserCls.parseMmcifData(data, undefined, command);
+            }
             else if(type === 'mol2') {
                 ic.mol2ParserCls.loadMol2Data(data);
             }

@@ -263,6 +263,7 @@ class SetDialog {
         html += "File type: ";
         html += "<select id='" + me.pre + "filetype'>";
         html += me.htmlCls.optionStr + "'pdb' selected>PDB</option>";
+        html += me.htmlCls.optionStr + "'mmcif'>mmCIF</option>";
         html += me.htmlCls.optionStr + "'mol2'>Mol2</option>";
         html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
         html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
