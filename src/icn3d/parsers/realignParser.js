@@ -30,6 +30,8 @@ class RealignParser {
 
         ic.selectionCls.saveSelection(name, name);
 
+        me.htmlCls.clickMenuCls.setLogCmd("realign", true);
+
         let  structHash = {}, struct2chain = {};
         ic.realignResid = {};
         let  lastStruResi = '';
@@ -149,7 +151,7 @@ class RealignParser {
 
       // align seq
       ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
-      
+
       ic.transformCls.zoominSelection();
 
       ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
@@ -462,6 +464,8 @@ class RealignParser {
                     base_t = base;
                 }
                 else {
+                    let hAtoms = {};
+
                     predefinedResPair = predefinedResArray[i - 1].split(' | ');
 
                     let chainidpair = chainid_t + ',' + chainid;
@@ -472,6 +476,8 @@ class RealignParser {
                     // master
                     resiArray = predefinedResPair[0].split(",");
                     result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+
+                    hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
                     if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
                     if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
@@ -484,6 +490,7 @@ class RealignParser {
                     // slave
                     resiArray = predefinedResPair[1].split(",");
                     result = thisClass.getSeqCoorResid(resiArray, chainid, base); 
+                    hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
                     if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
                     if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
@@ -492,6 +499,18 @@ class RealignParser {
                     struct2SeqHash[chainidpair][mmdbid] += result.seq;
                     struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
                     struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
+
+                    // let  residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
+                    // let  residueArray = Object.keys(residueHash);
+        
+                    // let  commandname = chainidpair;
+                    // let  commanddescr = 'aligned ' + chainidpair;
+                    // let  select = "select " + ic.resid2specCls.residueids2spec(residueArray);
+        
+                    // ic.selectionCls.addCustomSelection(residueArray, commandname, commanddescr, select, true);
+        
+                    // me.htmlCls.clickMenuCls.setLogCmd(select + " | name " + commandname, true);
+                    // me.htmlCls.clickMenuCls.setLogCmd("realign", true);
                 }
             }
             else {
@@ -591,6 +610,7 @@ class RealignParser {
 
     getSeqCoorResid(resiArray, chainid, base) { let  ic = this.icn3d, me = ic.icn3dui;
         let seq = '', coorArray = [], residArray = [];
+        let hAtoms = {};
 
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
             if(resiArray[j].indexOf('-') != -1) {
@@ -640,7 +660,11 @@ class RealignParser {
             }
         }
 
-        return {seq: seq, coor: coorArray, resid: residArray};
+        for(let i = 0, il = residArray.length; i < il; ++i) {
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.residues[residArray[i]]);
+        }
+
+        return {seq: seq, coor: coorArray, resid: residArray, hAtoms: hAtoms};
     }
 
     getResCoorArray(resid) { let  ic = this.icn3d, me = ic.icn3dui;

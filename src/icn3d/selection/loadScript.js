@@ -791,6 +791,21 @@ class LoadScript {
 
             ic.chainalignParserCls.downloadMmdbAf(id);
         }
+        /*
+        else if(command.indexOf('load vastsearch') !== -1) {
+            let idArray = loadStr.split(' || ');
+            let mmdbafid = idArray[1].substr(idArray[1].indexOf(' ') + 1);
+            ic.chainidArray = idArray[2].substr(idArray[2].indexOf(' ') + 1);
+            me.cfg.matchedchains = ic.chainidArray;
+
+            // load multiple PDBs
+            ic.bNCBI = true;
+            ic.bMmdbafid = true;
+
+            let bQuery = true;
+            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+        }
+        */
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);

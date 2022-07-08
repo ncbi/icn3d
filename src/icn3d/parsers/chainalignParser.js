@@ -431,17 +431,12 @@ class ChainalignParser {
         //ic.hAtoms = hAtoms;
         ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
         ic.dAtoms = me.hashUtilsCls.cloneHash(hAtoms);
-
+        
         ic.ParserUtilsCls.renderStructure();
 
         //if(ic.chainidArray.length > 2) {
         if(chainidArray.length > 2) {
-            let  residuesHash = {}
-            for(let i in hAtoms) {
-                let  atom = ic.atoms[i];
-                let  resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-                residuesHash[resid] = 1;
-            }
+            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
 
             let  commandname = 'protein_aligned';
             let  commanddescr = 'protein aligned';
@@ -477,18 +472,10 @@ class ChainalignParser {
         //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
-    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-
-        ic.opts['proteins'] = 'c alpha trace';
-
-        let  alignArray = chainalign.split(',');
-        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
-        if(domainArray.length < alignArray.length) domainArray = [];
-
+    addPostfixForChainids(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let struct2cnt = {};
-        for(let i = 0, il = alignArray.length; i < il; ++i) {
-            let  chainid = alignArray[i];
+        for(let i = 0, il = chainidArray.length; i < il; ++i) {
+            let  chainid = chainidArray[i];
             let  pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos).toUpperCase();
             if(!struct2cnt.hasOwnProperty(struct)) {
@@ -500,10 +487,22 @@ class ChainalignParser {
 
             struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
 
-            alignArray[i] = struct + chainid.substr(pos);
+            chainidArray[i] = struct + chainid.substr(pos);
         }
 
-        ic.chainidArray = alignArray;
+        return chainidArray;
+    }
+
+    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+
+        ic.opts['proteins'] = 'c alpha trace';
+
+        let  alignArray = chainalign.split(',');
+        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
+        if(domainArray.length < alignArray.length) domainArray = [];
+
+        ic.chainidArray = this.addPostfixForChainids(alignArray);
 
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
@@ -933,11 +932,10 @@ class ChainalignParser {
         }
 
         // calculate secondary structures with applyCommandDssp
-        if(bQuery && me.cfg.masterchain) {
+        if(bQuery && me.cfg.matchedchains) {
             $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
-
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");
                 ic.bAnnoShown = false;

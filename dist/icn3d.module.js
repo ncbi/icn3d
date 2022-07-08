@@ -14310,15 +14310,7 @@ class DefinedSets {
                 dAtoms = me.hashUtilsCls.unionHash(dAtoms, ic.alnChains[alignChain]);
             }
 
-            let  residuesHash = {}, chains = {};
-            for(let i in dAtoms) {
-                let  atom = ic.atoms[i];
-
-                let  chainid = atom.structure + '_' + atom.chain;
-                let  resid = chainid + '_' + atom.resi;
-                residuesHash[resid] = 1;
-                chains[chainid] = 1;
-            }
+            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(dAtoms);
 
             let  commandname = 'protein_aligned';
             let  commanddescr = 'aligned protein and nucleotides';
@@ -25381,6 +25373,8 @@ class RealignParser {
 
         ic.selectionCls.saveSelection(name, name);
 
+        me.htmlCls.clickMenuCls.setLogCmd("realign", true);
+
         let  structHash = {}, struct2chain = {};
         ic.realignResid = {};
         let  lastStruResi = '';
@@ -25491,7 +25485,7 @@ class RealignParser {
 
       // align seq
       ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
-      
+
       ic.transformCls.zoominSelection();
 
       ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
@@ -25795,6 +25789,8 @@ class RealignParser {
                     base_t = base;
                 }
                 else {
+                    let hAtoms = {};
+
                     predefinedResPair = predefinedResArray[i - 1].split(' | ');
 
                     let chainidpair = chainid_t + ',' + chainid;
@@ -25805,6 +25801,8 @@ class RealignParser {
                     // master
                     resiArray = predefinedResPair[0].split(",");
                     result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+
+                    hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
                     if(!struct2SeqHash[chainidpair][mmdbid_t]) struct2SeqHash[chainidpair][mmdbid_t] = '';
                     if(!struct2CoorHash[chainidpair][mmdbid_t]) struct2CoorHash[chainidpair][mmdbid_t] = [];
@@ -25817,6 +25815,7 @@ class RealignParser {
                     // slave
                     resiArray = predefinedResPair[1].split(",");
                     result = thisClass.getSeqCoorResid(resiArray, chainid, base); 
+                    hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
                     if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
                     if(!struct2CoorHash[chainidpair][mmdbid]) struct2CoorHash[chainidpair][mmdbid] = [];
@@ -25825,6 +25824,18 @@ class RealignParser {
                     struct2SeqHash[chainidpair][mmdbid] += result.seq;
                     struct2CoorHash[chainidpair][mmdbid] = struct2CoorHash[chainidpair][mmdbid].concat(result.coor);
                     struct2resid[chainidpair][mmdbid] = struct2resid[chainidpair][mmdbid].concat(result.resid);
+
+                    // let  residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
+                    // let  residueArray = Object.keys(residueHash);
+        
+                    // let  commandname = chainidpair;
+                    // let  commanddescr = 'aligned ' + chainidpair;
+                    // let  select = "select " + ic.resid2specCls.residueids2spec(residueArray);
+        
+                    // ic.selectionCls.addCustomSelection(residueArray, commandname, commanddescr, select, true);
+        
+                    // me.htmlCls.clickMenuCls.setLogCmd(select + " | name " + commandname, true);
+                    // me.htmlCls.clickMenuCls.setLogCmd("realign", true);
                 }
             }
             else {
@@ -25924,6 +25935,7 @@ class RealignParser {
 
     getSeqCoorResid(resiArray, chainid, base) { let  ic = this.icn3d, me = ic.icn3dui;
         let seq = '', coorArray = [], residArray = [];
+        let hAtoms = {};
 
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
             if(resiArray[j].indexOf('-') != -1) {
@@ -25973,7 +25985,11 @@ class RealignParser {
             }
         }
 
-        return {seq: seq, coor: coorArray, resid: residArray};
+        for(let i = 0, il = residArray.length; i < il; ++i) {
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.residues[residArray[i]]);
+        }
+
+        return {seq: seq, coor: coorArray, resid: residArray, hAtoms: hAtoms};
     }
 
     getResCoorArray(resid) { let ic = this.icn3d; ic.icn3dui;
@@ -26413,17 +26429,12 @@ class ChainalignParser {
         //ic.hAtoms = hAtoms;
         ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
         ic.dAtoms = me.hashUtilsCls.cloneHash(hAtoms);
-
+        
         ic.ParserUtilsCls.renderStructure();
 
         //if(ic.chainidArray.length > 2) {
         if(chainidArray.length > 2) {
-            let  residuesHash = {};
-            for(let i in hAtoms) {
-                let  atom = ic.atoms[i];
-                let  resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-                residuesHash[resid] = 1;
-            }
+            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
 
             let  commandname = 'protein_aligned';
             let  commanddescr = 'protein aligned';
@@ -26459,18 +26470,10 @@ class ChainalignParser {
         //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
-    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-
-        ic.opts['proteins'] = 'c alpha trace';
-
-        let  alignArray = chainalign.split(',');
-        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
-        if(domainArray.length < alignArray.length) domainArray = [];
-
+    addPostfixForChainids(chainidArray) { let ic = this.icn3d; ic.icn3dui;
         let struct2cnt = {};
-        for(let i = 0, il = alignArray.length; i < il; ++i) {
-            let  chainid = alignArray[i];
+        for(let i = 0, il = chainidArray.length; i < il; ++i) {
+            let  chainid = chainidArray[i];
             let  pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos).toUpperCase();
             if(!struct2cnt.hasOwnProperty(struct)) {
@@ -26482,10 +26485,22 @@ class ChainalignParser {
 
             struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
 
-            alignArray[i] = struct + chainid.substr(pos);
+            chainidArray[i] = struct + chainid.substr(pos);
         }
 
-        ic.chainidArray = alignArray;
+        return chainidArray;
+    }
+
+    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+
+        ic.opts['proteins'] = 'c alpha trace';
+
+        let  alignArray = chainalign.split(',');
+        let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
+        if(domainArray.length < alignArray.length) domainArray = [];
+
+        ic.chainidArray = this.addPostfixForChainids(alignArray);
 
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
@@ -26913,11 +26928,10 @@ class ChainalignParser {
         }
 
         // calculate secondary structures with applyCommandDssp
-        if(bQuery && me.cfg.masterchain) {
+        if(bQuery && me.cfg.matchedchains) {
             $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
-
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");
                 ic.bAnnoShown = false;
@@ -28895,6 +28909,21 @@ class LoadScript {
 
             ic.chainalignParserCls.downloadMmdbAf(id);
         }
+        /*
+        else if(command.indexOf('load vastsearch') !== -1) {
+            let idArray = loadStr.split(' || ');
+            let mmdbafid = idArray[1].substr(idArray[1].indexOf(' ') + 1);
+            ic.chainidArray = idArray[2].substr(idArray[2].indexOf(' ') + 1);
+            me.cfg.matchedchains = ic.chainidArray;
+
+            // load multiple PDBs
+            ic.bNCBI = true;
+            ic.bMmdbafid = true;
+
+            let bQuery = true;
+            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+        }
+        */
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
@@ -34537,7 +34566,23 @@ class ApplyCommand {
         let  id = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.eventsCls.saveHtml(id);
       }
+      else if(command.indexOf('resdef') == 0) {
+        me.cfg.resdef = command.substr(command.indexOf(' ') + 1);
+      }
+      else if(command.indexOf('vast_search_chainid') == 0) {
+        ic.chainidArray = commandOri.substr(commandOri.indexOf(' ') + 1).split(',');
 
+        let bRealign = true, bPredefined = true;
+        ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+        // reset annotations
+        // $("#" + ic.pre + "dl_annotations").html("");
+        // ic.bAnnoShown = false;
+        // if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
+        //     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
+        // }
+      }
+      
     // special, select ==========
 
       else if(command.indexOf('select displayed set') !== -1) {
@@ -37002,7 +37047,7 @@ class ParserUtils {
             resi2pos_q[resi] = i + 1;
         }
 
-        for(let i = 0, il = ic.realignResid[struct_t].length; i < il; ++i) {
+        for(let i = 0, il = ic.realignResid[struct_t].length; i < il && i < ic.realignResid[struct_q].length; ++i) {
             let resid_t = ic.realignResid[struct_t][i].resid;
             let pos_t = resid_t.lastIndexOf('_');
             let resi_t = parseInt(resid_t.substr(pos_t + 1));
@@ -66455,7 +66500,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.12.6';
+    this.REVISION = '3.12.7';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -66639,6 +66684,8 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
                     chainidArray.push(structureArray[i] + '_' + chainArray[i]);
                 }
                 
+                chainidArray = ic.chainalignParserCls.addPostfixForChainids(chainidArray);
+                
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
@@ -66646,25 +66693,40 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
             let stru_t = Object.keys(ic.structures)[0];
             let chain_t = stru_t + '_' + me.cfg.masterchain;
-            let chainidArray = me.cfg.matchedchains.split(',');
+            let domainidArray = me.cfg.matchedchains.split(',');
+            let chainidArray = [];
+            for(let i = 0, il = domainidArray.length; i  < il; ++i) {
+                let pos = domainidArray[i].lastIndexOf('_');
+                let lastId = domainidArray[i].substr(pos + 1);
+                if(!isNaN(lastId)) { // lastId is domain id
+                    chainidArray.push(domainidArray[i].substr(0, pos));
+                }
+                else {
+                    chainidArray.push(domainidArray[i]);
+                }
+            }
+
             let mmdbafid = '';
             for(let i = 0, il = chainidArray.length; i < il; ++i) {
                 if(i > 0) mmdbafid += ',';
                 mmdbafid += chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
             }
+            
+            // realign
+            ic.chainidArray = [chain_t].concat(chainidArray);
+            ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
+
+            me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
+
+            ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
             // load multiple PDBs
             ic.bNCBI = true;
             ic.bMmdbafid = true;
             
-            ic.loadCmd = 'load mmdbaf0 ' + mmdbafid;
-            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-
             let bQuery = true;
             ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
-
-            // realign
-            ic.chainidArray = [chain_t].concat(chainidArray);
         }
     }
     else if(me.cfg.url !== undefined) {

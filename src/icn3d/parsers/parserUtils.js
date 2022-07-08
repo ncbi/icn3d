@@ -119,7 +119,7 @@ class ParserUtils {
             resi2pos_q[resi] = i + 1;
         }
 
-        for(let i = 0, il = ic.realignResid[struct_t].length; i < il; ++i) {
+        for(let i = 0, il = ic.realignResid[struct_t].length; i < il && i < ic.realignResid[struct_q].length; ++i) {
             let resid_t = ic.realignResid[struct_t][i].resid;
             let pos_t = resid_t.lastIndexOf('_');
             let resi_t = parseInt(resid_t.substr(pos_t + 1));

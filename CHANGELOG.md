@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.12.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.7.zip) was release on July 7, 2022. Fixed the iCn3D view from VAST search.
+
 [icn3d-3.12.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.6.zip) was release on July 5, 2022. Enabled to load a mmCIF file from a URL in the menu "File > Open File > URL(Same Host)".
 
 [icn3d-3.12.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.5.zip) was release on July 1, 2022. Output the full mutant PDB file in mutation analysis, and fixed the alignment of same chain IDs.
