@@ -1287,7 +1287,23 @@ class ApplyCommand {
         let  id = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.eventsCls.saveHtml(id);
       }
+      else if(command.indexOf('resdef') == 0) {
+        me.cfg.resdef = command.substr(command.indexOf(' ') + 1);
+      }
+      else if(command.indexOf('vast_search_chainid') == 0) {
+        ic.chainidArray = commandOri.substr(commandOri.indexOf(' ') + 1).split(',');
 
+        let bRealign = true, bPredefined = true;
+        ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+        // reset annotations
+        // $("#" + ic.pre + "dl_annotations").html("");
+        // ic.bAnnoShown = false;
+        // if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
+        //     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
+        // }
+      }
+      
     // special, select ==========
 
       else if(command.indexOf('select displayed set') !== -1) {

@@ -116,15 +116,7 @@ class DefinedSets {
                 dAtoms = me.hashUtilsCls.unionHash(dAtoms, ic.alnChains[alignChain]);
             }
 
-            let  residuesHash = {}, chains = {}
-            for(let i in dAtoms) {
-                let  atom = ic.atoms[i];
-
-                let  chainid = atom.structure + '_' + atom.chain;
-                let  resid = chainid + '_' + atom.resi;
-                residuesHash[resid] = 1;
-                chains[chainid] = 1;
-            }
+            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(dAtoms);
 
             let  commandname = 'protein_aligned';
             let  commanddescr = 'aligned protein and nucleotides';
