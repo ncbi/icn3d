@@ -54,6 +54,7 @@ class ShowSeq {
         html3 += '<div class="icn3d-dl_sequence">';
         // html to display protein positions(10, 20, etc)
         //if(Object.keys(ic.chains[chnid]).length > 10) {
+
         if(ic.giSeq[chnid].length > 10) {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
@@ -430,6 +431,56 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }
+/*            
+            else if(chnid == '4YHY_B') {
+                // test reference num
+                let resid2refnum = {};
+
+                let refData = {6: 'A1050', 22: 'B2050', 36: 'C3050', 48: 'C`3250', 61: 'C``3750', 70: 'D4050', 81: 'E5050', 96: 'F6050', 112: 'G7050'};
+
+                //ic.chainsMapping[chnid][chnid + '_' + resObject2.resi] = resObject1.resn + resObject1.resi;
+                for(let resi in refData) {
+                    let resid = chnid + '_' + resi;
+                    resid2refnum[resid] = refData[resi];
+                }
+
+
+                htmlTmp = '<div class="icn3d-dl_sequence">';
+                htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
+                htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Ig Reference Numbers">Ig Reference Numbers</div>';
+                htmlTmp += '<span class="icn3d-residueNum"></span>';
+                html3 += htmlTmp + '<br>';
+                html += htmlTmp + '<span class="icn3d-seqLine">';
+                for(let i = 0, il = giSeq.length; i < il; ++i) {
+                    html += this.insertGap(chnid, i, '-');
+                    if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                      let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                      let residueid = chnid + '_' + currResi;
+                      if(!ic.residues.hasOwnProperty(residueid)) {
+                          html += '<span></span>';
+                      }
+                      else {
+                          let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                          let resi_ori = atom.resi_ori;
+                          html += '<span>';
+                          if( resid2refnum.hasOwnProperty(residueid)) {
+                            html += resid2refnum[residueid] + ' ';
+                          }
+                          html += '</span>';
+                      }
+                    }
+                    else {
+                      html += '<span></span>';
+                    }
+                }
+                html += '<span class="icn3d-residueNum"></span>';
+                html += '</span>';
+                html += '<br>';
+                html += '</div>';
+                html += '</div>';
+                html3 += '</div></div>';
+            }
+*/
         }
         $("#" + ic.pre + 'dt_giseq_' + chnid).html(html);
         $("#" + ic.pre + 'ov_giseq_' + chnid).html(html2);

@@ -941,31 +941,7 @@ class SetDialog {
         html += "</div>";
         html += "</div>";
 
-        html += "<div class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
-        let tmpStr1 = "<td style='min-width:110px;'><span style='white-space:nowrap'>";
-        let tmpStr2 = "<td style='min-width:130px;'><span style='white-space:nowrap'>";
-
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_all'>All" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_binding'>Functional Sites" + me.htmlCls.space2 + "</span></td>";
-        html += "</tr><tr>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
-        html += "<td></td>";
-        html += "</tr><tr>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
-        if(me.cfg.opmid !== undefined) {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
-        else {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none; white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
-        html += "<td></td>";
-        html += "</tr></table></div>";
+        html += this.getAnnoHeader();
 
         html += "<button style='white-space:nowrap; margin-left:5px;' id='" + me.pre + "showallchains'>Show All Chains</button><br>";
 
@@ -1077,6 +1053,39 @@ class SetDialog {
 
         html += "</div>";
         html += "<!--/form-->";
+
+        return html;
+    }
+
+    getAnnoHeader() { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
+
+        html += "<div id='" + me.pre + "annoHeaderSection' class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br>";
+        html += "<div id='" + me.pre + "annoHeader'><table border=0><tr>";
+        let tmpStr1 = "<td style='min-width:110px;'><span style='white-space:nowrap'>";
+        let tmpStr2 = "<td style='min-width:130px;'><span style='white-space:nowrap'>";
+
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_all'>All" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_binding'>Functional Sites" + me.htmlCls.space2 + "</span></td>";
+        html += "</tr><tr>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
+        html += "<td></td>";
+        html += "</tr><tr>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
+        if(me.cfg.opmid !== undefined) {
+            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
+        }
+        else {
+            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none; white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
+        }
+        html += "<td></td>";
+        html += "</tr></table></div></div>";
 
         return html;
     }

@@ -360,8 +360,14 @@ gulp.task("html2",
 
 gulp.task("html3",
   function() {
-    return gulp.src(['icn3d.html', 'share.html', 'example.html', 'module.html'])
+    return gulp.src(['icn3d.html', 'share.html'])
       .pipe(gulp.dest(dist));
+  });
+
+gulp.task("html4",
+  function() {
+    return gulp.src(['example/example.html'])
+      .pipe(gulp.dest(dist + '/example'));
   });
 
 //  'Prepare all the distribution files (except the .zip).',
@@ -369,7 +375,7 @@ gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
     'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
-    'html','html2','html3')
+    'html','html2','html3','html4')
 );
 
 //  'Zip up the dist into icn3d-<version>.zip',

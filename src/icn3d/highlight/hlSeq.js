@@ -199,6 +199,7 @@ class HlSeq {
 
       if($(that).hasClass('icn3d-seqTitle')) {
         let chainid = $(that).attr('chain');
+        let resn = $(that).attr('resn');
 
         if(ic.bAlignSeq) {
             ic.bSelectAlignResidue = false;
@@ -223,19 +224,23 @@ class HlSeq {
         }
 
         $(that).toggleClass('icn3d-highlightSeq');
-
         let commandname, commanddescr, position;
-        if(!ic.bAnnotations) {
-            if(ic.bAlignSeq) {
-                commandname = "align_" + chainid;
-            }
-            else {
-                commandname = chainid;
-            }
+        if(resn) {
+            commandname = resn; 
         }
         else {
-            commandname = $(that).attr('setname');
-            commanddescr = $(that).attr('title');
+            if(!ic.bAnnotations) {
+                if(ic.bAlignSeq) {
+                    commandname = "align_" + chainid;
+                }
+                else {
+                    commandname = chainid;           
+                }
+            }
+            else {
+                commandname = $(that).attr('setname');
+                commanddescr = $(that).attr('title');
+            }
         }
 
         if($(that).hasClass('icn3d-highlightSeq')) {
@@ -246,14 +251,13 @@ class HlSeq {
                 }
                 else {
                     ic.currSelectedSets = [commandname];
-                    //ic.selectionCls.selectAChain(chainid, commandname, true);
                     ic.selectionCls.selectAChain(chainid, commandname, ic.bAlignSeq);
                 }
 
                 if(ic.bAlignSeq) {
                     me.htmlCls.clickMenuCls.setLogCmd('select alignChain ' + chainid, true);
                 }
-                else {
+                else {   
                     me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
                 }
 
@@ -268,14 +272,35 @@ class HlSeq {
                     if($(that).attr('gi') !== undefined) {
                         if(ic.bCtrl || ic.bShift) {
                             ic.currSelectedSets.push(chainid);
-                            ic.selectionCls.selectAChain(chainid, chainid, false, true);
+                            if(resn) {
+                                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                                let bNoUpdateAll = true;
+                                ic.selByCommCls.selectBySpec('select :3' + resn, commandname, commandname, false, bNoUpdateAll);
+                                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, prevHAtoms);
+                                ic.hlUpdateCls.updateHlAll(resn, undefined, true, true);
+                            }
+                            else {
+                                ic.selectionCls.selectAChain(chainid, chainid, false, true);
+                            }
                         }
                         else {
                             ic.currSelectedSets = [chainid];
-                            ic.selectionCls.selectAChain(chainid, chainid, false);
+                            if(resn) {
+                                let bNoUpdateAll = true;
+                                ic.selByCommCls.selectBySpec('select :3' + resn, commandname, commandname, false, bNoUpdateAll);
+                                ic.hlUpdateCls.updateHlAll(resn, undefined, true, true);
+                            }
+                            else {
+                                ic.selectionCls.selectAChain(chainid, chainid, false);
+                            }
                         }
 
-                        me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                        if(resn) {
+                            me.htmlCls.clickMenuCls.setLogCmd('select :3' + resn, true);
+                        }
+                        else {
+                            me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                        }
 
                         let setNames = ic.currSelectedSets.join(' or ');
                         //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);

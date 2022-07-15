@@ -103,6 +103,10 @@ class AnnoCddSite {
 
         let chainWithData = {};
 
+        if(me.bNode) {
+            if(!ic.resid2cdd) ic.resid2cdd = {};
+            if(!ic.resid2site) ic.resid2site = {};
+        }
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             let data = (bSeq) ? dataArray[i][0] : dataArray[i];
 
@@ -118,6 +122,7 @@ class AnnoCddSite {
                 let html2 = html;
                 let html3 = html;
                 let domainArray = cddData.doms;
+                if(me.bNode && !ic.resid2cdd[chnid]) ic.resid2cdd[chnid] = [];
                 let result = thisClass.setDomainFeature(domainArray, chnid, true, html, html2, html3);
 
                 ic.chainid2pssmid[chnid] = {pssmid2name: result.pssmid2name, pssmid2fromArray: result.pssmid2fromArray, pssmid2toArray: result.pssmid2toArray};
@@ -136,6 +141,7 @@ class AnnoCddSite {
 
                 // features
                 let featuteArray = cddData.motifs;
+                if(me.bNode && !ic.resid2site[chnid]) ic.resid2site[chnid] = [];
                 result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3, acc2domain);
 
                 html = result.html; // + '</div>';
@@ -200,6 +206,12 @@ class AnnoCddSite {
                           let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
 
                         html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                        if(me.bNode) {
+                            let obj = {};
+                            obj[chnid + '_' + pos] = 'site: ' + siteArray[index].title;
+                            ic.resid2site[chnid].push(obj);
+                        }
+
                         html2 += ic.showSeqCls.insertGapOverview(chnid, i);
                         let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                         //if(emptyWidth < 0) emptyWidth = 0;
@@ -373,6 +385,16 @@ class AnnoCddSite {
                       //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
                       let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
                       html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                      if(me.bNode) {
+                        let obj = {};
+                        obj[chnid + '_' + pos] = fulltitle;
+                        if(bDomain) {
+                            ic.resid2cdd[chnid].push(obj);
+                        }
+                        else {
+                            ic.resid2site[chnid].push(obj);
+                        }
+                      }
                   }
                   else {
                       html += '<span>-</span>'; //'<span>-</span>';
@@ -469,29 +491,56 @@ class AnnoCddSite {
               let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
               if(type == 'ssbond') {
                   title = 'Residue ' + resid + ' has disulfide bond with';
+                  let sstitle = '';
                   if(resid2resids[resid] !== undefined) {
                       for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
-                          title += ' residue ' + resid2resids[resid][j];
+                        sstitle += ' residue ' + resid2resids[resid][j];
                       }
+                  }
+                  title += sstitle;
+
+                  if(me.bNode) {
+                    let obj = {};
+                    obj[resid] = 'disulfide bond with' + sstitle;
+                    ic.resid2ssbond[chnid].push(obj);
                   }
               }
               else if(type == 'crosslink') {
                   title = 'Residue ' + resid + ' has cross-linkage with';
+                  let cltitle = '';
                   if(resid2resids[resid] !== undefined) {
                       for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
-                          title += ' residue ' + resid2resids[resid][j];
+                        cltitle += ' residue ' + resid2resids[resid][j];
                       }
                   }
+                  title += cltitle;
+
+                  if(me.bNode) {
+                    let obj = {};
+                    obj[resid] = 'cross-linkage with' + cltitle;
+                    ic.resid2crosslink[chnid].push(obj);
+                  }
               }
+              else {
+                title = 'Residue ' + resid + ' has connection with';
+                let cltitle = '';
+                if(resid2resids[resid] !== undefined) {
+                    for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                      cltitle += ' residue ' + resid2resids[resid][j];
+                    }
+                }
+                title += cltitle;
+              }
+
               html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
               html2 += ic.showSeqCls.insertGapOverview(chnid, i);
               let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                 //if(emptyWidth < 0) emptyWidth = 0;
                 if(emptyWidth >= 0) {
-                html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
-                prevEmptyWidth += emptyWidth;
-                prevLineWidth += widthPerRes;
+                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+                    html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
+                    prevEmptyWidth += emptyWidth;
+                    prevLineWidth += widthPerRes;
                 }
           }
           else {

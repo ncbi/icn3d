@@ -225,14 +225,13 @@ class Label {
                     }
                     else {
                         let factor = (label.factor) ? oriFactor * label.factor : oriFactor;
-
                         bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                     }
                 }
 
                 let labelOffset = (name == 'schematic' || name == 'residue') ? 0 : ic.coilWidth; // 0.3
-                bb.position.set(label.position.x + labelOffset, label.position.y + labelOffset, label.position.z + labelOffset);
-                ic.mdl.add(bb);
+                bb.position.set(parseFloat(label.position.x) + labelOffset, parseFloat(label.position.y) + labelOffset, parseFloat(label.position.z) + labelOffset);
+                ic.mdl.add(bb);          
                 // do not add labels to objects for pk
             }
         }

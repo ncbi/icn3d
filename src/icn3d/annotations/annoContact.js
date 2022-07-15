@@ -29,6 +29,10 @@ class AnnoContact {
         }
     }
     showInteraction_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) {
+            if(!ic.resid2contact) ic.resid2contact = {};
+            if(!ic.resid2contact[chnid]) ic.resid2contact[chnid] = [];
+        }
         // set interaction
         if(ic.chainname2residues === undefined) ic.chainname2residues = {}
         let radius = 4;
@@ -38,7 +42,7 @@ class AnnoContact {
 //        if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
         let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
         if(ic.chainname2residues[chainid] === undefined) {
-            ic.chainname2residues[chainid] = {}
+            ic.chainname2residues[chainid] = {};
             let jl = chainArray.length;
             if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
             //if(jl > 100) {
@@ -138,6 +142,12 @@ class AnnoContact {
     //            let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
                   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
                   html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
+                  if(me.bNode) {
+                      let obj = {};
+                      obj[chnid + '_' + pos] = fulltitle;
+                      ic.resid2contact[chnid].push(obj);
+                  }
+                  
                   html2 += ic.showSeqCls.insertGapOverview(chnid, i);
                   let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;

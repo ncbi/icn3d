@@ -22,10 +22,16 @@ class AnnoCrossLink {
         }
     }
     showCrosslink_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) {
+            if(!ic.resid2crosslink) ic.resid2crosslink = {};
+            if(!ic.resid2crosslink[chnid]) ic.resid2crosslink[chnid] = [];
+        }
+
         let chainid = chnidBase;
         let resid2resids = {}
         let structure = chainid.substr(0, chainid.indexOf('_'));
         let clbondArray = ic.clbondpnts[structure];
+
         if(clbondArray === undefined) {
             $("#" + ic.pre + "dt_crosslink_" + chnid).html('');
             $("#" + ic.pre + "ov_crosslink_" + chnid).html('');
