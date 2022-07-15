@@ -366,7 +366,7 @@ gulp.task("html3",
 
 gulp.task("html4",
   function() {
-    return gulp.src(['example/example.html'])
+    return gulp.src(['example/example.html', 'example/module.html', 'example/loadStateFile.js', 'example/addAnnoLocal.html', 'example/annoLocal.js'])
       .pipe(gulp.dest(dist + '/example'));
   });
 
