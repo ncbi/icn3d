@@ -20,9 +20,9 @@ class AnnoDomain {
         let pdbArray = Object.keys(ic.structures);
         // show 3D domains
         let pdbid = pdbArray[index];
-        let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+        //let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
-        if(index == 0 && ic.mmdb_data !== undefined) {
+        if(index == 0 && ic.mmdb_data !== undefined) {      
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
                     this.showDomainWithData(chnid, ic.mmdb_data);
@@ -36,7 +36,7 @@ class AnnoDomain {
                 }
             }
         }
-        else {                  
+        else {
             // calculate 3D domains on-the-fly
             //ic.protein_chainid[chainArray[i]] 
             let data = {};
@@ -93,6 +93,7 @@ class AnnoDomain {
         for(let i = 0, il = pdbArray.length; i < il; ++i) {
             ic.bAjaxDoneArray[i] = false;
         }
+
         for(let i = 0, il = pdbArray.length; i < il; ++i) {
             this.showDomainPerStructure(i);
         }
@@ -137,6 +138,7 @@ class AnnoDomain {
             let fromArray = [], toArray = [];
             let resiHash = {}
             let resCnt = 0
+
             for(let i = 0, il = subdomainArray.length; i < il; ++i) {
                 let domainFrom = Math.round(subdomainArray[i][0]) - 1; // convert 1-based to 0-based
                 let domainTo = Math.round(subdomainArray[i][1]) - 1;
@@ -163,6 +165,25 @@ class AnnoDomain {
                     resiHash[j+1] = 1;
                 }
             }
+
+            // save 3D domain info for node.js script
+            if(me.bNode) {
+                let domainName = '3D domain ' +(index+1).toString();
+                            
+                if(!ic.resid2domain) ic.resid2domain = {};
+                if(!ic.resid2domain[chnid]) ic.resid2domain[chnid] = [];
+                for(let i = 0, il = fromArray.length; i < il; ++i) {
+                    let from = fromArray[i];
+                    let to = toArray[i];
+                    for(let j = from; j <= to; ++j) {
+                        // 0-based
+                        let obj = {};
+                        obj[chnid + '_' + (j+1).toString()] = domainName;
+                        ic.resid2domain[chnid].push(obj);
+                    }
+                }
+            }
+
             let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
             let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
             html3 += htmlTmp2 + htmlTmp3 + '<br>';

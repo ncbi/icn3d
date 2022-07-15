@@ -1225,18 +1225,16 @@ To find icn3d commands and functions, you can first generate a custom view in iC
 <b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <div>
     In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
-    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C":
+    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,LV,3LeuVal,chemicals@CA,C":
     <ul>
         <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
-            <li>".A,B,C" uses "." to indicate chain selection.<br/>
-                <li>":5-10,KRDE,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter IUPAC abbreviations (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and
-                    "water". IUPAC abbreviations can be written either as a contiguous string (e.g., ":KRDE"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., ":K,R,D,E") to select all residues
-                    of a given type in the structure (in the latter case, select all Lysine, Arginine, Aspartic Acid, and Glutamic Acid in the structure). <br/>
-                    <li>"@CA,C" uses "@" to indicate atom selection.<br/>
-                        <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
-                            <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects
-                                all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
-                                <li>The wild card character \"X\" or \"x\" can be used to represent any character.
+        <li>".A,B,C" uses "." to indicate chain selection.<br/>
+        <li>":5-10,LV,3LeuVal,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number(5-10), one-letter IUPAC residue name abbreviations(LV), three-letter residue names(AlaVal, "3" indicates each residue name has three letters), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water". IUPAC abbreviations can be written either as a contiguous string(e.g., ":LV"), in order to find all instances of that sequence in the structure, or they can be separated by commas(e.g., ":L,V") to select all residues of a given type in the structure(in the latter case, select all Leucine and Valine in the structure).<br/>
+        <li>"@CA,C" uses "@" to indicate atom selection.<br/>
+        <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
+        <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects
+        all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
+        <li>The wild card character \"X\" or \"x\" can be used to represent any character.
     </ul>
     <b>Set Operation:</b>
     <ul>
@@ -2423,7 +2421,7 @@ To find icn3d commands and functions, you can first generate a custom view in iC
 
 <li><a name="embedJS"></a><b>Embed as a Javascript Widget</b><br>
 
-<p>To embed iCn3D Structure Viewer in your own HTML page using the distribution files on NCBI servers, simply follow these 3 steps. Note the changes to iCn3D version 3 are colored in red. (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)</p>
+<p>To embed iCn3D Structure Viewer in your own HTML page using the distribution files on NCBI servers, simply follow these 3 steps. Note the changes to iCn3D version 3 are colored in red. (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example/example.html">example page</a> for reference)</p>
 
 <ol>
     <li><a name="HowToUseStep1"></a><b>Include the CSS and JavaScript libraries in the &lt;head&gt; of your html page, as shown here.</b></li>
@@ -2648,7 +2646,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <a name="addclass"></a>
 
 <h3>Add New Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
-To contribute new classes to iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/module.html">"module.html"</a>. You need to do the following steps:<br>
+To contribute new classes to iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example/module/module.html">"module.html"</a>. You need to do the following steps:<br>
 <ol>
 <li>Comment out icn3d library: &lt;!--script src="icn3d.min.js"&gt;&lt;/script--&gt;</li>
 <li>Script type should be "module": &lt;script type="module"&gt; </li>
@@ -2697,7 +2695,7 @@ To contribute new classes to iCn3D, you can follow the example of <a href="https
 <a name="modifyfunction"></a>
 
 <h3>Modify Functions in Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
-To modify functions in some classes of iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example.html">"example.html"</a>. You can add the modified functions after the line containing "icn3d.min.js". The line to define the function starts with the global variable "icn3d", then the class name (e.g., "Picking"), then the keyword "prototype", then the function name. One example is as follows:<br>
+To modify functions in some classes of iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example/example.html">"example.html"</a>. You can add the modified functions after the line containing "icn3d.min.js". The line to define the function starts with the global variable "icn3d", then the class name (e.g., "Picking"), then the keyword "prototype", then the function name. One example is as follows:<br>
 <pre>
     icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
         // 1. copy the function showPicking() here

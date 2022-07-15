@@ -23,6 +23,11 @@ class AnnoSsbond {
         }
     }
     showSsbond_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) {
+            if(!ic.resid2ssbond) ic.resid2ssbond = {};
+            if(!ic.resid2ssbond[chnid]) ic.resid2ssbond[chnid] = [];
+        }
+
         let chainid = chnidBase;
         let resid2resids = {}
         let structure = chainid.substr(0, chainid.indexOf('_'));

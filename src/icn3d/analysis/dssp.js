@@ -57,8 +57,11 @@ class Dssp {
           thisClass.parseDsspData(dataArray, struArray, bAppend);
       })
       .fail(function() {
+          console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
+
           ic.pdbParserCls.loadPdbDataRender(bAppend);
 
+          if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
           if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
       });
     }

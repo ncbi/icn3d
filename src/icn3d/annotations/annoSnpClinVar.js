@@ -21,6 +21,59 @@ class AnnoSnpClinVar {
         this.icn3d = icn3d;
     }
 
+    showSnp(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        this.showSnpClinvar(chnid, chnidBase, true);
+    }
+    showClinvar(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        this.showSnpClinvar(chnid, chnidBase, false);
+    }
+
+    //Show the annotations of SNPs and ClinVar.
+    showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
+
+       // get gi from acc
+       //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
+       let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+       $.ajax({
+          url: url2,
+          dataType: 'jsonp', //'text',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 0, //1
+          success: function(data2) {
+            //ic.chainid2repgi = JSON.parse(data2);
+            //var gi = ic.chainid2repgi[chnidBase];
+            let snpgi = data2.snpgi;
+            let gi = data2.gi;
+            if(bSnpOnly) {
+                thisClass.showSnpPart2(chnid, chnidBase, snpgi);
+            }
+            else {
+                let specialGiArray = [6137708,1942289,224510717,2624886,253723219,2554905,75765331,3660278,312207882,319443632,342350956,1827805,109157826,1065265,40889086,6730307,163931185,494469,163931091,60594093,55669745,18655489,17942684,6980537,166235465,6435586,4139398,4389047,364506122,78101667,262118402,20664221,2624640,158430173,494395,28948777,34810587,13399647,3660342,261278854,342350965,384482350,378792570,15988303,213424334,4558333,2098365,10835631,3318817,374074330,332639529,122919696,4389286,319443573,2781341,67464020,194709238,210061039,364506106,28949044,40889076,161172338,17943181,4557976,62738484,365813173,6137343,350610552,17942703,576308,223674070,15826518,1310997,93279697,4139395,255311799,157837067,361132363,357380836,146387678,383280379,1127268,299856826,13786789,1311054,46015217,3402130,381353319,30750059,218766885,340707375,27065817,355333104,2624634,62738384,241913553,304446010];
+                let giUsed = snpgi;
+                if(specialGiArray.includes(gi)) giUsed = gi;
+                thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
+            }
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if(this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+            if(bSnpOnly) {
+                thisClass.processNoSnp(chnid);
+            }
+            else {
+                thisClass.processNoClinvar(chnid);
+            }
+            return;
+          }
+       });
+    }
+
     navClinVar(chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         ic.currClin[chnid] = - 1;
@@ -478,6 +531,16 @@ class AnnoSnpClinVar {
         let resi2clinAllele = {}
         let posHash = {}, posClinHash = {}
         let prevSnpStr = '';
+        if(me.bNode) {
+            if(bSnpOnly) {
+                if(!ic.resid2snp) ic.resid2snp = {};
+                if(!ic.resid2snp[chnid]) ic.resid2snp[chnid] = [];
+            }
+            else {
+                if(!ic.resid2clinvar) ic.resid2clinvar = {};
+                if(!ic.resid2clinvar[chnid]) ic.resid2clinvar[chnid] = [];
+            }
+        }
         for(let i = 0, il = lineArray.length; i < il; ++i) {
          //bSnpOnly: false
          //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
@@ -491,6 +554,19 @@ class AnnoSnpClinVar {
           prevSnpStr = snpStr;
           let resiStr = snpStr.substr(0, snpStr.length - 3);
           let resi = Math.round(resiStr);
+
+          if(me.bNode) {
+              let obj = {};
+              obj[chnid + '_' + resi] = snpStr;
+                
+              if(bSnpOnly) {
+                ic.resid2snp[chnid].push(obj);
+              }
+              else {
+                ic.resid2clinvar[chnid].push(obj);
+              }
+          }
+
           let currRes = snpStr.substr(snpStr.length - 3, 1);
           let snpRes = snpStr.substr(snpStr.indexOf('>') + 1); //snpStr.substr(snpStr.length - 1, 1);
           //var rsnum = bSnpOnly ? '' : fieldArray[4];
@@ -618,58 +694,7 @@ class AnnoSnpClinVar {
           }
         });
     }
-    showSnp(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-        this.showSnpClinvar(chnid, chnidBase, true);
-    }
-    showClinvar(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-        this.showSnpClinvar(chnid, chnidBase, false);
-    }
 
-    //Show the annotations of SNPs and ClinVar.
-    showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
-
-       // get gi from acc
-       //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-       let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
-       $.ajax({
-          url: url2,
-          dataType: 'jsonp', //'text',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          success: function(data2) {
-            //ic.chainid2repgi = JSON.parse(data2);
-            //var gi = ic.chainid2repgi[chnidBase];
-            let snpgi = data2.snpgi;
-            let gi = data2.gi;
-            if(bSnpOnly) {
-                thisClass.showSnpPart2(chnid, chnidBase, snpgi);
-            }
-            else {
-                let specialGiArray = [6137708,1942289,224510717,2624886,253723219,2554905,75765331,3660278,312207882,319443632,342350956,1827805,109157826,1065265,40889086,6730307,163931185,494469,163931091,60594093,55669745,18655489,17942684,6980537,166235465,6435586,4139398,4389047,364506122,78101667,262118402,20664221,2624640,158430173,494395,28948777,34810587,13399647,3660342,261278854,342350965,384482350,378792570,15988303,213424334,4558333,2098365,10835631,3318817,374074330,332639529,122919696,4389286,319443573,2781341,67464020,194709238,210061039,364506106,28949044,40889076,161172338,17943181,4557976,62738484,365813173,6137343,350610552,17942703,576308,223674070,15826518,1310997,93279697,4139395,255311799,157837067,361132363,357380836,146387678,383280379,1127268,299856826,13786789,1311054,46015217,3402130,381353319,30750059,218766885,340707375,27065817,355333104,2624634,62738384,241913553,304446010];
-                let giUsed = snpgi;
-                if(specialGiArray.includes(gi)) giUsed = gi;
-                thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
-            }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            if(bSnpOnly) {
-                thisClass.processNoSnp(chnid);
-            }
-            else {
-                thisClass.processNoClinvar(chnid);
-            }
-            return;
-          }
-       });
-    }
     showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         if(gi !== undefined) {

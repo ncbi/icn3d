@@ -70,9 +70,8 @@ class SelectByCommand {
            }
     }
 
-    selectBySpec(select, commandname, commanddesc, bDisplay) { let  ic = this.icn3d, me = ic.icn3dui;
+    selectBySpec(select, commandname, commanddesc, bDisplay, bNoUpdateAll) { let  ic = this.icn3d, me = ic.icn3dui;
        select =(select.trim().substr(0, 6) === 'select') ? select.trim().substr(7) : select.trim();
-
        ic.hAtoms = {}
 
        // selection definition is similar to Chimera: https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/midas/frameatom_spec.html
@@ -386,8 +385,8 @@ class SelectByCommand {
        if(commandname != "") {
            ic.selectionCls.addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues);
 
-           let  nameArray = [commandname];
-           ic.definedSetsCls.changeCustomAtoms(nameArray);
+           let  nameArray = [commandname];          
+           if(!bNoUpdateAll) ic.definedSetsCls.changeCustomAtoms(nameArray);
        }
     }
 }

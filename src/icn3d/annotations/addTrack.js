@@ -76,12 +76,24 @@ class AddTrack {
            //var title = 'fasta ' + fasta.substr(0, 5);
            let title = $("#" + ic.pre + "fasta_title").val();
 
+           let structure = chainid.substr(0, chainid.indexOf('_'));
+           let targets = chainid;
+           if(structure.length == 5) { // e.g., 1TUP2
+              targets = targets.substr(0,4);
+           }
+           else if(structure.length > 5) { // AlphaFold UniProt
+              targets = '';
+              for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                targets += ic.chainsSeq[chainid][i].name;
+              }
+           }
+
            //var text = $("#" + ic.pre + "track_text").val();
            let url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
            $.ajax({
               url: url,
               type: 'POST',
-              data : {'targets': chainid, 'queries': fasta},
+              data : {'targets': targets, 'queries': fasta},
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
@@ -667,12 +679,14 @@ class AddTrack {
     }
 
     alignSequenceToStructure(chainid, data, title) { let ic = this.icn3d, me = ic.icn3dui;
-      let query, target;
+      let query, target, firstKey;
 
       if(data.data !== undefined) {
           query = data.data[0].query;
           //target = data.data[0].targets[chainid.replace(/_/g, '')];
-          target = data.data[0].targets[chainid];
+          //target = data.data[0].targets[chainid];
+          firstKey = Object.keys(data.data[0].targets)[0];
+          target = data.data[0].targets[firstKey];
 
           target = target.hsps[0];
       }
@@ -688,7 +702,8 @@ class AddTrack {
           let bitscore = target.scores.bit_score;
 
           //var targetSeq = data.targets[chainid.replace(/_/g, '')].seqdata;
-          let targetSeq = data.targets[chainid].seqdata;
+          //let targetSeq = data.targets[chainid].seqdata;
+          let targetSeq = data.targets[firstKey].seqdata;
           let querySeq = query.seqdata;
 
           let segArray = target.segs;

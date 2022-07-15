@@ -791,12 +791,11 @@ class ApplyCommand {
         let  bPosition = false;
         for(let i = 1, il = paraArray.length; i < il; ++i) {
             let  wordArray = paraArray[i].split(' ');
-
             if(wordArray[0] == 'x') {
                 bPosition = true;
-                x = wordArray[1];
-                y = wordArray[3];
-                z = wordArray[5];
+                x = parseFloat(wordArray[1]);
+                y = parseFloat(wordArray[3]);
+                z = parseFloat(wordArray[5]);
             }
             else if(wordArray[0] == 'size') {
                 size = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
@@ -814,9 +813,9 @@ class ApplyCommand {
 
         if(!bPosition) {
           let  position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms));
-          x = position.center.x;
-          y = position.center.y;
-          z = position.center.z;
+          x = parseFloat(position.center.x);
+          y = parseFloat(position.center.y);
+          z = parseFloat(position.center.z);
         }
 
         ic.analysisCls.addLabel(text, x,y,z, size, color, background, type);

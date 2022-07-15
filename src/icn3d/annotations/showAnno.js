@@ -22,7 +22,7 @@ class ShowAnno {
     }
 
     //show annotations such as SNPs, ClinVar, domains, binding sites, etc.
-    showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
+    showAnnotations_part1() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         me.htmlCls.dialogCls.openDlg('dl_selectannotations', 'Sequences and Annotations');
         // add note about assembly
@@ -45,15 +45,24 @@ class ShowAnno {
             ic.annotationCls.setAnnoView('overview');
         }
 
+        let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {}
+        ic.protein_chainid = {};
+
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             let chainArray = Object.keys(ic.chains);
 
-            if(ic.giSeq === undefined) ic.giSeq = {}
-            if(ic.currClin === undefined) ic.currClin = {}
-            if(ic.resi2disease_nonempty === undefined) ic.resi2disease_nonempty = {}
-            if(ic.baseResi === undefined) ic.baseResi = {}
-            if(ic.matchedPos === undefined) ic.matchedPos = {}
-            let dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
+            if(ic.giSeq === undefined) ic.giSeq = {};
+            if(ic.currClin === undefined) ic.currClin = {};
+            if(ic.resi2disease_nonempty === undefined) ic.resi2disease_nonempty = {};
+            if(ic.baseResi === undefined) ic.baseResi = {};
+            if(ic.matchedPos === undefined) ic.matchedPos = {};
+            let dialogWidth;
+            if(me.bNode) { // no $().dialog
+                dialogWidth = 500;
+            }
+            else {
+                dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
+            }
             ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
             ic.maxAnnoLength = 1;
             for(let chainid in ic.chainsSeq) {
@@ -61,8 +70,7 @@ class ShowAnno {
                     ic.maxAnnoLength = ic.chainsSeq[chainid].length;
                 }
             }
-            let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {}
-            ic.protein_chainid = {}
+
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 let pos = Math.round(chainArray[i].indexOf('_'));
                 //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
@@ -120,7 +128,21 @@ class ShowAnno {
                     } // for(let r = 0
                 } // if(me.cfg.mmdbid
             } // for(let i = 0
+        }
 
+        return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
+    }
+
+    showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        let result = this.showAnnotations_part1();
+
+        let nucleotide_chainid = result.nucleotide_chainid;
+        let chemical_chainid = result.chemical_chainid;
+        let chemical_set = result.chemical_set;
+            
+        if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                    if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
@@ -236,8 +258,10 @@ class ShowAnno {
         }
         ic.bAnnoShown = true;
     }
+
     showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
-        this.getAnnotationData();
+        if(!me.bNode) this.getAnnotationData();
+
         let i = 0;
         for(let chain in nucleotide_chainid) {
             this.getSequenceData(chain, nucleotide_chainid[chain], 'nucleotide', i);
@@ -260,12 +284,15 @@ class ShowAnno {
             this.getCombinedSequenceData(name, chemical_set[name], i);
             ++i;
         }
-        this.enableHlSeq();
 
-        setTimeout(function(){
-          ic.annotationCls.hideAllAnno();
-          ic.annotationCls.clickCdd();
-        }, 0);
+        if(!me.bNode) {
+            this.enableHlSeq();
+
+            setTimeout(function(){
+            ic.annotationCls.hideAllAnno();
+            ic.annotationCls.clickCdd();
+            }, 0);
+        }
     }
 
     getAnnotationData() { let ic = this.icn3d, me = ic.icn3dui;
@@ -302,15 +329,17 @@ class ShowAnno {
             $("#" + ic.pre + "anno_" + chnid).append("<br><hr><br>");
             ++index;
         }
-        ic.annoCddSiteCls.setToolTip();
+        
+        if(!me.bNode) ic.annoCddSiteCls.setToolTip();
+
         // show the sequence and 3D structure
         //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
         let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
-        if(ic.chainid_seq !== undefined) {
+        if(ic.chainid_seq !== undefined) {     
             this.processSeqData(ic.chainid_seq);
         }
-        else {
+        else {       
             $.ajax({
               url: url,
               dataType: 'jsonp', //'text',
@@ -385,7 +414,7 @@ class ShowAnno {
         let firstChainid = residArray[0].substr(0, pos);
         let sid =(me.cfg.mmdbid !== undefined && ic.chainid2sid !== undefined) ? ic.chainid2sid[firstChainid] : undefined;
         if(sid !== undefined) {
-            chemName = "<b><a class='icn3d-blue' href='https://pubchem.ncbi.nlm.nih.gov/substance/" + sid + "#section=2D-Structure' target='_blank'>" + name + " <img src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?sid=" + sid + "'></a></b>";
+            chemName = "<b>" + name + " <a class='icn3d-blue' href='https://pubchem.ncbi.nlm.nih.gov/substance/" + sid + "#section=2D-Structure' target='_blank'><img src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?sid=" + sid + "'></a></b>";
         }
         else {
             chemName = "<b>" + name + "</b>";
@@ -397,7 +426,8 @@ class ShowAnno {
         // sequence, detailed view
         let htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
         let chainType = 'Chem.', chainTypeFull = 'Chemical';
-        htmlTmp += '<div class="icn3d-seqTitle2" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
+        //htmlTmp += '<div class="icn3d-seqTitle2" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
+        htmlTmp += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" anno="sequence" gi="' + name + '" resn="' + name + '"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
         htmlTmp += '<span class="icn3d-residueNum" style="width:60px!important;" title="starting protein sequence number">Count: ' + residArray.length + '</span>';
         htmlTmp += '<span class="icn3d-seqLine">';
         // sequence, overview
@@ -643,9 +673,12 @@ class ShowAnno {
               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
             } // align seq to structure
         } // for loop
-        this.enableHlSeq();
-        // get CDD/Binding sites
-        ic.annoCddSiteCls.showCddSiteAll();
+        
+        if(!me.bNode) {
+            this.enableHlSeq();
+            // get CDD/Binding sites
+            ic.annoCddSiteCls.showCddSiteAll();
+        }
     }
 
     enableHlSeq() { let ic = this.icn3d, me = ic.icn3dui;
