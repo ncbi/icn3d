@@ -30,7 +30,17 @@ Examples
 
         5R7Y, 5R7Y_A, 164, H, 3C-like proteinase, JFM
         ...
-        
+
+* <b>Retrieve Annotations such as SNP, ClinVar, Domain, etc</b>
+
+    In the command line, run the following command with the annotation type defined as: "1" for SNPs, "2 for ClinVar, "3" for Conserved Domains, "4" for Functional Sites, "5" for 3D Domains, "6" for Interactions, "7" for Disulfide Bonds, and "8" for Cross-Linkages. 
+
+        node annotation.js 1TUP 1
+
+    This retrieves the SNP annotations for the PDB ID 1TUP. The output listed the residues with SNPs for each chain:
+
+        1TUP_B  [{"1TUP_B_4":"4V>D"},{"1TUP_B_4":"4V>L"},{"1TUP_B_6":"6S>R"}...
+
 * <b>Protein-Protein Interactions</b>
 
     In the command line, run the following:
