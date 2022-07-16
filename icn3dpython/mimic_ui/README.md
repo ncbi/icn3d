@@ -1,7 +1,7 @@
 Python Scripts by Following Interactive Steps 
 =============================================
 
-You can open iCn3D in a browser to generate a URL (or shortened URL), then follow the example scripts below to replace the original URL with your URL. Next, you can run the script with "python3 [your script].py" to get the same exported files as you do in a web browser.
+Python Scripts can mimic a user to click on different menus and output data. An example script is shown below with the following clicks. Once a structure is loaded, the script first clicks the menu "Analysis > Interaction". It then selects two sets from the popup window, and clicks "2D Interaction Network". In the resulting page, it clicks the button "JSON" to output the JSON file for the interaction. A sharable link for all steps except the last one is [https://structure.ncbi.nlm.nih.gov/icn3d/share.html?yZkg6dofei1AZwVC6](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?yZkg6dofei1AZwVC6). The last button click has no associated commands, and thus can not be reproduced in the sharable link.
 
 Installation
 ------------
