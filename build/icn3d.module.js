@@ -39036,7 +39036,7 @@ class ShowAnno {
                     return;
                 }
                 thisClass.enableHlSeq();
-                console.log( "No data were found for the protein " + chnidBaseArray + "..." );
+                if(!me.bNode) console.log( "No data were found for the protein " + chnidBaseArray + "..." );
                 for(let chnid in ic.protein_chainid) {
                     let chnidBase = ic.protein_chainid[chnid];
                     ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
@@ -39162,7 +39162,7 @@ class ShowAnno {
                 }
             }
             else {
-                console.log( "No data were found for the protein " + chnid + "..." );
+                if(!me.bNode) console.log( "No data were found for the protein " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
             if(me.cfg.blast_rep_id != chnid) {
