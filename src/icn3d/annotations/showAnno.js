@@ -46,9 +46,11 @@ class ShowAnno {
         }
 
         let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {}
-        ic.protein_chainid = {};
+        //ic.protein_chainid = {};
 
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
+            ic.protein_chainid = {};
+
             let chainArray = Object.keys(ic.chains);
 
             if(ic.giSeq === undefined) ic.giSeq = {};
@@ -89,6 +91,7 @@ class ShowAnno {
                     chainidBase = chainArray[i];
                 }
                 //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
+
                 if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
