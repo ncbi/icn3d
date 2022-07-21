@@ -78,6 +78,7 @@ class ChainalignParser {
                 // dynamicly align pairs in ic.afChainIndexHash
                 let  ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -86,17 +87,31 @@ class ChainalignParser {
                     mmdbid_t = idArray[2];
                     let chain_t = idArray[3];
 
-                    let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
-
-                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
-                        
-                    let alignAjax = $.ajax({
-                        url: urlalign,
-                        type: 'POST',
-                        data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                        dataType: 'jsonp',
-                        cache: true
-                    });
+                    let alignAjax;
+                    if(me.cfg.aligntool != 'tmalign') {
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                            
+                        alignAjax = $.ajax({
+                            url: urlalign,
+                            type: 'POST',
+                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                            dataType: 'jsonp',
+                            cache: true
+                        });
+                    }
+                    else {
+                        let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
+                        let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
+                            
+                        alignAjax = $.ajax({
+                            url: urltmalign,
+                            type: 'POST',
+                            data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
+                            dataType: 'jsonp',
+                            cache: true
+                        });                        
+                    }
 
                     ajaxArray.push(alignAjax);
                     indexArray.push(index - 1);
@@ -228,6 +243,9 @@ class ChainalignParser {
         // set trans and rotation matrix
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
+
+        if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
         ic.q_rotation = [];
         ic.qt_start_end = [];
 
@@ -372,14 +390,12 @@ class ChainalignParser {
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
-                //atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                //if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                if(ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                     atm = this.transformAtom(atm, index, alignType);
                 }
             }
         }
-
-
     }
 
     transformAtom(atm, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -389,17 +405,26 @@ class ChainalignParser {
             // atm.coord.z += ic.t_trans_add[index].z;
         }
         else if(alignType === 'query') {
-            atm.coord.x -= ic.q_trans_sub[index].x;
-            atm.coord.y -= ic.q_trans_sub[index].y;
-            atm.coord.z -= ic.q_trans_sub[index].z;
+            if(me.cfg.aligntool != 'tmalign') {
+                atm.coord.x -= ic.q_trans_sub[index].x;
+                atm.coord.y -= ic.q_trans_sub[index].y;
+                atm.coord.z -= ic.q_trans_sub[index].z;
+            }
 
             let  x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
             let  y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
             let  z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
 
-            x -= ic.t_trans_add[index].x;
-            y -= ic.t_trans_add[index].y;
-            z -= ic.t_trans_add[index].z;
+            if(me.cfg.aligntool != 'tmalign') {
+                x -= ic.t_trans_add[index].x;
+                y -= ic.t_trans_add[index].y;
+                z -= ic.t_trans_add[index].z;
+            }
+            else {
+                x += ic.q_trans_add[index].x;
+                y += ic.q_trans_add[index].y;
+                z += ic.q_trans_add[index].z;
+            }
 
             atm.coord.x = x;
             atm.coord.y = y;
@@ -584,7 +609,8 @@ class ChainalignParser {
                 let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
                 let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
-                if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+                // TM-align (me.cfg.aligntool == 'tmalign') needs to input PDB
+                if(me.cfg.aligntool != 'tmalign' && ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
                     let  urlalign;
                     
                     if(domainArray.length > 0) {
@@ -618,7 +644,8 @@ class ChainalignParser {
           thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
         })
         .fail(function() {
-            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+            let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+            alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
 //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
         });
     }
@@ -637,6 +664,9 @@ class ChainalignParser {
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
+
+        if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
         ic.q_rotation = [];
         ic.qt_start_end = [];
 
@@ -682,6 +712,9 @@ class ChainalignParser {
                     // need to pass C-alpha coords and get transformation matrix from backend
                     ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
                     ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+
+                    if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+
                     ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
                     ic.qt_start_end[index-1] = undefined;
                 }
@@ -704,7 +737,8 @@ class ChainalignParser {
     processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
         if((!align || align.length == 0) && !bNoAlert) {
-            alert("These chains can not be aligned by VAST server.");
+            let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+            alert("These chains can not be aligned by " + serverName + ".");
             return bAligned;
         }
 
@@ -737,13 +771,20 @@ class ChainalignParser {
                 */
                 ic.t_trans_add[index] = align[0].t_trans_add;
                 ic.q_trans_sub[index] = align[0].q_trans_sub;
+
+                if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index] = align[0].q_trans_add;
+
                 ic.q_rotation[index] = align[0].q_rotation;
                 ic.qt_start_end[index] = align[0].segs;
 
                 let  rmsd = align[0].super_rmsd;
 
-                me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment: " + rmsd.toPrecision(4), false);
-                $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
+                if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
+                me.htmlCls.clickMenuCls.setLogCmd(logStr, false);
+                let html = "<br><b>Alignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br>";
+                if(me.cfg.aligntool == 'tmalign') html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
+                $("#" + ic.pre + "dl_rmsd").html(html);
                 if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 
                 bAligned = true;

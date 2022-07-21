@@ -275,10 +275,10 @@ class SetMenu {
         return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap;" + color + "' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
     }
 
-    setIcon(iconType, id, title, iconStyle, url, bText) { let me = this.icn3dui;
+    setIcon(iconType, id, title, iconStyle, url, bText, bHighlight) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        let color = 'color:#1c94c4; ';
+        let color = (bHighlight) ? 'color:#f8b84e; ' : 'color:#1c94c4; ';
         let bkgdColor = ' background-color:#EEE; ';
         let cssCursor = (iconType == 'text') ? '' : 'cursor:pointer;';
 
@@ -325,7 +325,7 @@ class SetMenu {
         // View menu
         html += tdStrBorder + this.setIcon(iconType, 'show_selected', 'View Selection', 'eye') + "</td>";
         html += tdStr + this.setIcon(iconType, 'tool_selectedcenter', 'Zoom in Selection', 'search-plus') + "</td>";
-        html += tdStr + this.setIcon(iconType, 'alternate', "Alternate the Structures by keying the letter 'a'", 'a', undefined, true) + "</td>";
+        html += tdStr + this.setIcon(iconType, 'alternate', "Alternate the Structures by keying the letter 'a'", 'a', undefined, true, true) + "</td>";
         html += tdStr + this.setIcon(iconType, 'tool_resetOrientation', 'Reset Orientation', 'undo-alt') + "</td>";
 
         // Style menu
@@ -539,7 +539,9 @@ class SetMenu {
 
         html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, true);
+
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr);
+
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
         html += "</ul>";

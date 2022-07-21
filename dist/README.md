@@ -104,7 +104,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 
 ## Tools based on
 
-* **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: The drawing of 3D objects is based on iview.
+* **[iview](https://github.com/HongjianLi/iview)**: The drawing of 3D objects is based on iview.
 * **[GLmol](https://webglmol.osdn.jp/index-en.html)**: The drawing of nucleotides cartoon is based on GLmol.
 * **[3Dmol](https://3dmol.csb.pitt.edu/)**: The surface generation and labeling are based on 3Dmol.
 * **[NGL Viewer](https://github.com/arose/ngl)**: The Imposter shaders are based on NGL Viewer.

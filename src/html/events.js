@@ -172,6 +172,24 @@ class Events {
         ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
     }
 
+    getAlignParas() { let me = this.icn3dui, ic = me.icn3d;
+        let alignment = $("#" + me.pre + "chainalignids").val();
+        let idArray = alignment.split(',');
+        let alignment_final = '';
+        for(let i = 0, il = idArray.length; i < il; ++i) {
+            alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+            if(i < il - 1) alignment_final += ',';
+        }
+        let resalign = $("#" + me.pre + "resalignids").val();
+        let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+        if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+            alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+            return;
+        }
+
+        return {"alignment": alignment_final, "resalign": resalign, "predefinedres": predefinedres};
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -419,6 +437,25 @@ class Events {
                 me.htmlCls.clickMenuCls.setLogCmd("realign on structure align", true);
             }
          });
+
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+            if(nameArray.length > 0) {
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            me.cfg.aligntool = 'tmalign';
+ 
+            ic.realignParserCls.realignOnStructAlign();
+            if(nameArray.length > 0) {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
+            }
+            else {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign", true);
+            }
+         });
     //    },
 
         me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumBySets", "click", function(e) { let ic = me.icn3d;
@@ -642,61 +679,52 @@ class Events {
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
             window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', '_blank');
           });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_alignaf_tmalign", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef | align tmalign", false);
+            window.open(hostUrl + '?chainalign=' + alignment + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1', '_blank');
+          });
     //    },
     //    clickReload_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-    //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
-           let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
-           let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
-               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-               return;
-           }
+           let result = thisClass.getAlignParas();
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " | residues " + result.resalign + " | resdef " + result.predefinedres, false);
+           window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-    //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
-           let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
-           let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
-               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-               return;
-           }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+           let result = thisClass.getAlignParas();
+
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres, false);
+           window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            let result = thisClass.getAlignParas();
+ 
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres + " | align tmalign", false);
+            window.open(hostUrl + '?chainalign=' + result.alignment + '&aligntool=tmalign&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();

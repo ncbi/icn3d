@@ -507,6 +507,24 @@ class LoadScript {
 
             return;
           }
+          else if(ic.commands[i].trim().indexOf('realign on tmalign') == 0) {
+            let  strArray = ic.commands[i].split("|||");
+            let  command = strArray[0].trim();
+
+            let  paraArray = command.split(' | ');
+            if(paraArray.length == 2) {
+                let  nameArray = paraArray[1].split(',');
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            me.cfg.aligntool = 'tmalign';
+
+            $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
           else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
@@ -695,6 +713,17 @@ class LoadScript {
                         }
                         thisClass.applyCommandRealignByStruct(lastCommand);
                     }
+                    else if(lastCommand.indexOf('realign on tmalign') == 0) {
+                        let  paraArray = lastCommand.split(' | ');
+                        if(paraArray.length == 2) {
+                            let  nameArray = paraArray[1].split(',');
+                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                        }
+                        
+                        me.cfg.aligntool = 'tmalign';
+
+                        thisClass.applyCommandRealignByStruct(lastCommand);
+                    }
                     else if(lastCommand.indexOf('graph interaction pairs') == 0) {
                         thisClass.applyCommandGraphinteraction(lastCommand);
                     }
@@ -827,14 +856,20 @@ class LoadScript {
           ic.alignParserCls.downloadAlignment(id);
         }
         else if(command.indexOf('load chainalignment') !== -1) {
-          //load chainalignment [id] | resnum [resnum] | parameters [inpara]
+          //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
           let  urlArray = command.split(" | ");
-          if(urlArray[1].indexOf('resnum') != -1) {
-              me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+          if(urlArray.length > 1 && urlArray[1].indexOf('resnum') != -1) {
+                me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+          }
+          if(urlArray.length > 2 && urlArray[2].indexOf('resdef') != -1) {
+                me.cfg.resdef = urlArray[2].substr(urlArray[1].indexOf('resdef') + 7);
+          }
+          if(urlArray.length > 3 && urlArray[3].indexOf('aligntool') != -1) {
+                me.cfg.aligntool = urlArray[3].substr(urlArray[1].indexOf('aligntool') + 10);
           }
 
           me.cfg.chainalign = id;
-          ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum);
+          ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
         }
         else if(command.indexOf('load url') !== -1) {
             let  typeStr = load_parameters[1]; // type pdb
