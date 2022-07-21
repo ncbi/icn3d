@@ -50,7 +50,7 @@ class ParserUtils {
 
               if(rmsd) {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-                  $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                  $("#" + ic.pre + "dl_rmsd").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
@@ -424,7 +424,7 @@ class ParserUtils {
                   let  rmsd = ic.rmsd_supr.rmsd;
 
                   me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
-                  $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                  $("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let  dxymaxsq = 0;

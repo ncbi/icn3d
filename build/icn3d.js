@@ -25690,6 +25690,7 @@ var icn3d = (function (exports) {
 
             let ajaxArray = [], chainidPairArray = [];
             let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
             let structArray = Object.keys(struct2domain);
             for(let s = 0, sl = structArray.length; s < sl; ++s) {
                 let struct1 = structArray[s];
@@ -25705,16 +25706,32 @@ var icn3d = (function (exports) {
                         for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                             let chainid2 = chainidArray2[j];
 
-                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
-                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-                          
-                            let alignAjax = $.ajax({
-                                url: urlalign,
-                                type: 'POST',
-                                data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                                dataType: 'jsonp',
-                                cache: true
-                            });
+                            let alignAjax;
+
+                            if(me.cfg.aligntool != 'tmalign') {
+                                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                            
+                                alignAjax = $.ajax({
+                                    url: urlalign,
+                                    type: 'POST',
+                                    data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                                    dataType: 'jsonp',
+                                    cache: true
+                                });
+                            }
+                            else {
+                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1]);
+                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2]);
+                            
+                                alignAjax = $.ajax({
+                                    url: urltmalign,
+                                    type: 'POST',
+                                    data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
+                                    dataType: 'jsonp',
+                                    cache: true
+                                });                            
+                            }
 
                             ajaxArray.push(alignAjax);
                             chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target
@@ -26086,6 +26103,7 @@ var icn3d = (function (exports) {
                     // dynamicly align pairs in ic.afChainIndexHash
                     let  ajaxArray = [], indexArray = [], struArray = [];
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+                    let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
                     for(let index in ic.afChainIndexHash) {
                         let idArray = ic.afChainIndexHash[index].split('_');
@@ -26094,17 +26112,31 @@ var icn3d = (function (exports) {
                         mmdbid_t = idArray[2];
                         let chain_t = idArray[3];
 
-                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
-
-                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
-                            
-                        let alignAjax = $.ajax({
-                            url: urlalign,
-                            type: 'POST',
-                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                            dataType: 'jsonp',
-                            cache: true
-                        });
+                        let alignAjax;
+                        if(me.cfg.aligntool != 'tmalign') {
+                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
+                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                                
+                            alignAjax = $.ajax({
+                                url: urlalign,
+                                type: 'POST',
+                                data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                                dataType: 'jsonp',
+                                cache: true
+                            });
+                        }
+                        else {
+                            let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
+                            let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
+                                
+                            alignAjax = $.ajax({
+                                url: urltmalign,
+                                type: 'POST',
+                                data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
+                                dataType: 'jsonp',
+                                cache: true
+                            });                        
+                        }
 
                         ajaxArray.push(alignAjax);
                         indexArray.push(index - 1);
@@ -26236,6 +26268,9 @@ var icn3d = (function (exports) {
             // set trans and rotation matrix
             ic.t_trans_add = [];
             ic.q_trans_sub = [];
+
+            if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
             ic.q_rotation = [];
             ic.qt_start_end = [];
 
@@ -26380,30 +26415,37 @@ var icn3d = (function (exports) {
             for(let i = 0, il = chainidArray.length; i < il; ++i) {
                 for(let serial in ic.chains[chainidArray[i]]) {
                     let atm = ic.atoms[serial];
-                    //atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                    if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                    //if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                    if(ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
                         atm = this.transformAtom(atm, index, alignType);
                     }
                 }
             }
-
-
         }
 
-        transformAtom(atm, index, alignType) { let ic = this.icn3d; ic.icn3dui;
+        transformAtom(atm, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
             if(alignType === 'target') ;
             else if(alignType === 'query') {
-                atm.coord.x -= ic.q_trans_sub[index].x;
-                atm.coord.y -= ic.q_trans_sub[index].y;
-                atm.coord.z -= ic.q_trans_sub[index].z;
+                if(me.cfg.aligntool != 'tmalign') {
+                    atm.coord.x -= ic.q_trans_sub[index].x;
+                    atm.coord.y -= ic.q_trans_sub[index].y;
+                    atm.coord.z -= ic.q_trans_sub[index].z;
+                }
 
                 let  x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
                 let  y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
                 let  z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
 
-                x -= ic.t_trans_add[index].x;
-                y -= ic.t_trans_add[index].y;
-                z -= ic.t_trans_add[index].z;
+                if(me.cfg.aligntool != 'tmalign') {
+                    x -= ic.t_trans_add[index].x;
+                    y -= ic.t_trans_add[index].y;
+                    z -= ic.t_trans_add[index].z;
+                }
+                else {
+                    x += ic.q_trans_add[index].x;
+                    y += ic.q_trans_add[index].y;
+                    z += ic.q_trans_add[index].z;
+                }
 
                 atm.coord.x = x;
                 atm.coord.y = y;
@@ -26588,7 +26630,8 @@ var icn3d = (function (exports) {
                     let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
                     let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
-                    if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+                    // TM-align (me.cfg.aligntool == 'tmalign') needs to input PDB
+                    if(me.cfg.aligntool != 'tmalign' && ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
                         let  urlalign;
                         
                         if(domainArray.length > 0) {
@@ -26622,7 +26665,8 @@ var icn3d = (function (exports) {
               thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
             })
             .fail(function() {
-                alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+                let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+                alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
     //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
             });
         }
@@ -26640,6 +26684,9 @@ var icn3d = (function (exports) {
 
             ic.t_trans_add = [];
             ic.q_trans_sub = [];
+
+            if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
             ic.q_rotation = [];
             ic.qt_start_end = [];
 
@@ -26685,6 +26732,9 @@ var icn3d = (function (exports) {
                         // need to pass C-alpha coords and get transformation matrix from backend
                         ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
                         ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+
+                        if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+
                         ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
                         ic.qt_start_end[index-1] = undefined;
                     }
@@ -26707,7 +26757,8 @@ var icn3d = (function (exports) {
         processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
             let bAligned = false;
             if((!align || align.length == 0) && !bNoAlert) {
-                alert("These chains can not be aligned by VAST server.");
+                let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+                alert("These chains can not be aligned by " + serverName + ".");
                 return bAligned;
             }
 
@@ -26740,13 +26791,20 @@ var icn3d = (function (exports) {
                     */
                     ic.t_trans_add[index] = align[0].t_trans_add;
                     ic.q_trans_sub[index] = align[0].q_trans_sub;
+
+                    if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index] = align[0].q_trans_add;
+
                     ic.q_rotation[index] = align[0].q_rotation;
                     ic.qt_start_end[index] = align[0].segs;
 
                     let  rmsd = align[0].super_rmsd;
 
-                    me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment: " + rmsd.toPrecision(4), false);
-                    $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                    let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
+                    if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
+                    me.htmlCls.clickMenuCls.setLogCmd(logStr, false);
+                    let html = "<br><b>Alignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br>";
+                    if(me.cfg.aligntool == 'tmalign') html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
+                    $("#" + ic.pre + "dl_rmsd").html(html);
                     if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 
                     bAligned = true;
@@ -28632,6 +28690,24 @@ var icn3d = (function (exports) {
 
                 return;
               }
+              else if(ic.commands[i].trim().indexOf('realign on tmalign') == 0) {
+                let  strArray = ic.commands[i].split("|||");
+                let  command = strArray[0].trim();
+
+                let  paraArray = command.split(' | ');
+                if(paraArray.length == 2) {
+                    let  nameArray = paraArray[1].split(',');
+                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                }
+
+                me.cfg.aligntool = 'tmalign';
+
+                $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+                   thisClass.execCommandsBase(i + 1, end, steps);
+                });
+
+                return;
+              }
               else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
                 let  strArray = ic.commands[i].split("|||");
                 let  command = strArray[0].trim();
@@ -28820,6 +28896,17 @@ var icn3d = (function (exports) {
                             }
                             thisClass.applyCommandRealignByStruct(lastCommand);
                         }
+                        else if(lastCommand.indexOf('realign on tmalign') == 0) {
+                            let  paraArray = lastCommand.split(' | ');
+                            if(paraArray.length == 2) {
+                                let  nameArray = paraArray[1].split(',');
+                                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                            }
+                            
+                            me.cfg.aligntool = 'tmalign';
+
+                            thisClass.applyCommandRealignByStruct(lastCommand);
+                        }
                         else if(lastCommand.indexOf('graph interaction pairs') == 0) {
                             thisClass.applyCommandGraphinteraction(lastCommand);
                         }
@@ -28951,14 +29038,20 @@ var icn3d = (function (exports) {
               ic.alignParserCls.downloadAlignment(id);
             }
             else if(command.indexOf('load chainalignment') !== -1) {
-              //load chainalignment [id] | resnum [resnum] | parameters [inpara]
+              //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
               let  urlArray = command.split(" | ");
-              if(urlArray[1].indexOf('resnum') != -1) {
-                  me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+              if(urlArray.length > 1 && urlArray[1].indexOf('resnum') != -1) {
+                    me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+              }
+              if(urlArray.length > 2 && urlArray[2].indexOf('resdef') != -1) {
+                    me.cfg.resdef = urlArray[2].substr(urlArray[1].indexOf('resdef') + 7);
+              }
+              if(urlArray.length > 3 && urlArray[3].indexOf('aligntool') != -1) {
+                    me.cfg.aligntool = urlArray[3].substr(urlArray[1].indexOf('aligntool') + 10);
               }
 
               me.cfg.chainalign = id;
-              ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum);
+              ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
             }
             else if(command.indexOf('load url') !== -1) {
                 let  typeStr = load_parameters[1]; // type pdb
@@ -37102,7 +37195,7 @@ var icn3d = (function (exports) {
 
                   if(rmsd) {
                       me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-                      $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                      $("#" + ic.pre + "dl_rmsd").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                       if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
                   }
 
@@ -37472,7 +37565,7 @@ var icn3d = (function (exports) {
                       let  rmsd = ic.rmsd_supr.rmsd;
 
                       me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
-                      $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
+                      $("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                       if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                       let  dxymaxsq = 0;
@@ -56542,10 +56635,10 @@ var icn3d = (function (exports) {
             return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap;" + color + "' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
         }
 
-        setIcon(iconType, id, title, iconStyle, url, bText) { let me = this.icn3dui;
+        setIcon(iconType, id, title, iconStyle, url, bText, bHighlight) { let me = this.icn3dui;
             if(me.bNode) return '';
 
-            let color = 'color:#1c94c4; ';
+            let color = (bHighlight) ? 'color:#f8b84e; ' : 'color:#1c94c4; ';
             let bkgdColor = ' background-color:#EEE; ';
             let cssCursor = (iconType == 'text') ? '' : 'cursor:pointer;';
 
@@ -56592,7 +56685,7 @@ var icn3d = (function (exports) {
             // View menu
             html += tdStrBorder + this.setIcon(iconType, 'show_selected', 'View Selection', 'eye') + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_selectedcenter', 'Zoom in Selection', 'search-plus') + "</td>";
-            html += tdStr + this.setIcon(iconType, 'alternate', "Alternate the Structures by keying the letter 'a'", 'a', undefined, true) + "</td>";
+            html += tdStr + this.setIcon(iconType, 'alternate', "Alternate the Structures by keying the letter 'a'", 'a', undefined, true, true) + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_resetOrientation', 'Reset Orientation', 'undo-alt') + "</td>";
 
             // Style menu
@@ -56806,7 +56899,9 @@ var icn3d = (function (exports) {
 
             html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, true);
+
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr);
+
             html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
             html += "</ul>";
@@ -58590,10 +58685,10 @@ var icn3d = (function (exports) {
                         height = 500;
                     }
                     else if(id === me.pre + 'dl_rmsd') {
-                        position ={ my: "right top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
+                        position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" };
                     }
                     else if(id === me.pre + 'dl_legend') {
-                        position ={ my: "right top", at: "right-20 top+60", of: "#" + me.pre + "canvas", collision: "none" };
+                        position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" };
                     }
                     else if(id === me.pre + 'dl_symd') {
                         position ={ my: "left top", at: "right-200 bottom-200", of: "#" + me.pre + "canvas", collision: "none" };
@@ -58903,23 +58998,19 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
             html += "Enter two <a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> IDs: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid1' value='P41327' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid2' value='P41331' size=8><br/><br/>";
-            html += me.htmlCls.buttonStr + "reload_alignaf'>Align</button>";
+            html += me.htmlCls.buttonStr + "reload_alignaf_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_alignaf' style='margin-left:30px'>Align with VAST</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_chainalign' class='" + dialogClass + "'>";
-        /*
-            html += "Enter the PDB chain IDs in the form of pdbid_chain(e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
-            html += me.htmlCls.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
-            html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
-            html += "</div>";
-        */
             html += "<div style='width:550px'>";
             html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
             html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
             html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
             html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
             html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
-            html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
+            //html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
+            html += me.htmlCls.buttonStr + "reload_chainalign_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align with VAST</button><br/><br/>";
+
             html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
             html += "</div></div>";
 
@@ -59265,7 +59356,7 @@ var icn3d = (function (exports) {
             html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
             html += "</select></div>";
 
-            html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
+            html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
             html += "</div>";
 
 
@@ -59723,7 +59814,7 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_rmsd' class='" + dialogClass + "'>";
-            html += "<br><b>Alignment RMSD</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
+            
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_buriedarea' class='" + dialogClass + "'>";
@@ -59917,6 +60008,24 @@ var icn3d = (function (exports) {
             let structureStr = Object.keys(ic.structures)[0];
             if(Object.keys(ic.structures).length > 1) structureStr += '-' + Object.keys(ic.structures)[1];
             ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
+        }
+
+        getAlignParas() { let me = this.icn3dui; me.icn3d;
+            let alignment = $("#" + me.pre + "chainalignids").val();
+            let idArray = alignment.split(',');
+            let alignment_final = '';
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+                if(i < il - 1) alignment_final += ',';
+            }
+            let resalign = $("#" + me.pre + "resalignids").val();
+            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                return;
+            }
+
+            return {"alignment": alignment_final, "resalign": resalign, "predefinedres": predefinedres};
         }
 
         //Hold all functions related to click events.
@@ -60166,6 +60275,25 @@ var icn3d = (function (exports) {
                     me.htmlCls.clickMenuCls.setLogCmd("realign on structure align", true);
                 }
              });
+
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+                if(nameArray.length > 0) {
+                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                }
+
+                me.cfg.aligntool = 'tmalign';
+     
+                ic.realignParserCls.realignOnStructAlign();
+                if(nameArray.length > 0) {
+                    me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
+                }
+                else {
+                    me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign", true);
+                }
+             });
         //    },
 
             me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumBySets", "click", function(e) { let ic = me.icn3d;
@@ -60389,61 +60517,52 @@ var icn3d = (function (exports) {
                 window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
              });
 
-             me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
                 window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', '_blank');
               });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_alignaf_tmalign", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
+                me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef | align tmalign", false);
+                window.open(hostUrl + '?chainalign=' + alignment + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1', '_blank');
+              });
         //    },
         //    clickReload_chainalign: function() {
             me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-        //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
-               let alignment = $("#" + me.pre + "chainalignids").val();
-               let idArray = alignment.split(',');
-               let alignment_final = '';
-               for(let i = 0, il = idArray.length; i < il; ++i) {
-                   alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                   if(i < il - 1) alignment_final += ',';
-               }
-               let resalign = $("#" + me.pre + "resalignids").val();
-               let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
 
-               if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
-                   alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-                   return;
-               }
+               let result = thisClass.getAlignParas();
 
-               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
-               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+               me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " | residues " + result.resalign + " | resdef " + result.predefinedres, false);
+               window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-        //       let alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
-               let alignment = $("#" + me.pre + "chainalignids").val();
-               let idArray = alignment.split(',');
-               let alignment_final = '';
-               for(let i = 0, il = idArray.length; i < il; ++i) {
-                   alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                   if(i < il - 1) alignment_final += ',';
-               }
-               let resalign = $("#" + me.pre + "resalignids").val();
-               let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-               if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
-                   alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-                   return;
-               }
 
-               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
-               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+               let result = thisClass.getAlignParas();
+
+               me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres, false);
+               window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
             });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+
+                let result = thisClass.getAlignParas();
+     
+                me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres + " | align tmalign", false);
+                window.open(hostUrl + '?chainalign=' + result.alignment + '&aligntool=tmalign&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
+             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
                e.preventDefault();
@@ -66751,7 +66870,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.12.8';
+        this.REVISION = '3.13.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -67161,7 +67280,7 @@ var icn3d = (function (exports) {
 
             ic.bChainAlign = true;
             ic.inputid = me.cfg.chainalign;
-            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | parameters ' + me.cfg.inpara;
+            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
             ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
         }

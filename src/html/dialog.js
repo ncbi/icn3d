@@ -467,10 +467,10 @@ class Dialog {
                     height = 500;
                 }
                 else if(id === me.pre + 'dl_rmsd') {
-                    position ={ my: "right top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" }
+                    position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" }
                 }
                 else if(id === me.pre + 'dl_legend') {
-                    position ={ my: "right top", at: "right-20 top+60", of: "#" + me.pre + "canvas", collision: "none" }
+                    position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" }
                 }
                 else if(id === me.pre + 'dl_symd') {
                     position ={ my: "left top", at: "right-200 bottom-200", of: "#" + me.pre + "canvas", collision: "none" }

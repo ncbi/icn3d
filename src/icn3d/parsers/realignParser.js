@@ -350,6 +350,7 @@ class RealignParser {
 
         let  ajaxArray = [], chainidPairArray = [], struArray = [];
         let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
         let cnt = 0;
         let structArray = Object.keys(struct2domain);
@@ -367,16 +368,32 @@ class RealignParser {
                     for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                         let chainid2 = chainidArray2[j];
 
-                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
-                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-                      
-                        let alignAjax = $.ajax({
-                            url: urlalign,
-                            type: 'POST',
-                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                            dataType: 'jsonp',
-                            cache: true
-                        });
+                        let alignAjax;
+
+                        if(me.cfg.aligntool != 'tmalign') {
+                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                        
+                            alignAjax = $.ajax({
+                                url: urlalign,
+                                type: 'POST',
+                                data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                                dataType: 'jsonp',
+                                cache: true
+                            });
+                        }
+                        else {
+                            let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1]);
+                            let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2]);
+                        
+                            alignAjax = $.ajax({
+                                url: urltmalign,
+                                type: 'POST',
+                                data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
+                                dataType: 'jsonp',
+                                cache: true
+                            });                            
+                        }
 
                         ajaxArray.push(alignAjax);
                         chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target

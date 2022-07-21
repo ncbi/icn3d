@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.13.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.0.zip) was release on July 21, 2022. In addition to "VAST" alignment, users can also use "TM-align" to align two chains. The feature is available in the menus "File > Align > Multiple Chains" and "File > Realign Selection > by Structure Alignment".
+
 [icn3d-3.12.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.8.zip) was release on July 15, 2022. Expanded Python scripts to download any output in iCn3D; Added a new Node.js script to retrieve all annotations (e.g., SNP, ClinVar, domain, etc) from iCn3D; added an exmaple to add users' own annotation and hide default annotations at https://github.com/ncbi/icn3d/tree/master/example/addAnnoLocal.html.
 
 [icn3d-3.12.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.7.zip) was release on July 7, 2022. Fixed the iCn3D view from VAST search.

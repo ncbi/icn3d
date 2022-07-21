@@ -205,23 +205,19 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
         html += "Enter two <a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> IDs: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid1' value='P41327' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid2' value='P41331' size=8><br/><br/>";
-        html += me.htmlCls.buttonStr + "reload_alignaf'>Align</button>";
+        html += me.htmlCls.buttonStr + "reload_alignaf_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_alignaf' style='margin-left:30px'>Align with VAST</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_chainalign' class='" + dialogClass + "'>";
-    /*
-        html += "Enter the PDB chain IDs in the form of pdbid_chain(e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
-        html += me.htmlCls.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
-        html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
-        html += "</div>";
-    */
         html += "<div style='width:550px'>";
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
         html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
-        html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
+        //html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
+        html += me.htmlCls.buttonStr + "reload_chainalign_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align with VAST</button><br/><br/>";
+
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
         html += "</div></div>";
 
@@ -567,7 +563,7 @@ class SetDialog {
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
         html += "</div>";
 
 
@@ -1025,7 +1021,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_rmsd' class='" + dialogClass + "'>";
-        html += "<br><b>Alignment RMSD</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
+        
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_buriedarea' class='" + dialogClass + "'>";
