@@ -59005,11 +59005,14 @@ class SetDialog {
         html += "<div style='width:550px'>";
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
-        html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
-        html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
-        html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/><br/>";
+        html += "<b>Optional 1</b>, full chains are used for structure alignment<br/>";
+        html += me.htmlCls.buttonStr + "reload_chainalign_tmalign'><b>Align with TM-align</b></button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'><b>Align with VAST</b></button><br/><br/>";
+        html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/>";
+        html += me.htmlCls.buttonStr + "reload_chainalign_asym2' style='margin-top:3px;'><b>Align by Sequence Alignment</b></button><br/><br/>";
+        
+        html += "<b>Optional 3</b>, predefined alignment with the first chain as the master. The rest chains are aligned to the master chain. Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50'></textarea><br/>";
+        html += me.htmlCls.buttonStr + "reload_chainalign_asym3'><b>Align Residue by Residue</b></button><br/><br/>";
         //html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
-        html += me.htmlCls.buttonStr + "reload_chainalign_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align with VAST</button><br/><br/>";
 
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
         html += "</div></div>";
@@ -60184,6 +60187,8 @@ class Events {
     //    },
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
+            
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structuresare required for alignment...");
                 return;
@@ -60199,15 +60204,14 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealign").length) {
                 $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
             }
-            //if($("#" + me.pre + "atomsCustomRealign2").length) {
-            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            //}
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
+            
             $("#" + me.pre + "atomsCustomRealign").resizable();
             //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structuresare required for alignment...");
                 return;
@@ -60222,10 +60226,7 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealignByStruct").length) {
                 $("#" + me.pre + "atomsCustomRealignByStruct").html(definedAtomsHtml);
             }
-            //if($("#" + me.pre + "atomsCustomRealign2").length) {
-            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            //}
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+            
             $("#" + me.pre + "atomsCustomRealignByStruct").resizable();
             //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
@@ -60544,7 +60545,7 @@ class Events {
            window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1', '_blank');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "reload_chainalign_asym", "#" + me.pre + "reload_chainalign_asym2", "#" + me.pre + "reload_chainalign_asym3"], "click", function(e) { me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
