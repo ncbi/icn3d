@@ -32677,7 +32677,7 @@ class AnnoCddSite {
         let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
         // live search
-        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;
+        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;     
         // precalculated
         //let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // live search for AlphaFold structures
@@ -32723,7 +32723,7 @@ class AnnoCddSite {
 
                //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
                // live searchE
-               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;
+               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;             
                // precalculated
                //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
 
@@ -38817,9 +38817,11 @@ class ShowAnno {
         }
 
         let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {};
-        ic.protein_chainid = {};
+        //ic.protein_chainid = {};
 
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
+            ic.protein_chainid = {};
+
             let chainArray = Object.keys(ic.chains);
 
             if(ic.giSeq === undefined) ic.giSeq = {};
@@ -38860,6 +38862,7 @@ class ShowAnno {
                     chainidBase = chainArray[i];
                 }
                 //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
+
                 if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
