@@ -346,6 +346,8 @@ class Events {
     //    },
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
+            
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structuresare required for alignment...");
                 return;
@@ -361,15 +363,14 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealign").length) {
                 $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
             }
-            //if($("#" + me.pre + "atomsCustomRealign2").length) {
-            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            //}
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
+            
             $("#" + me.pre + "atomsCustomRealign").resizable();
             //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structuresare required for alignment...");
                 return;
@@ -384,10 +385,7 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealignByStruct").length) {
                 $("#" + me.pre + "atomsCustomRealignByStruct").html(definedAtomsHtml);
             }
-            //if($("#" + me.pre + "atomsCustomRealign2").length) {
-            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            //}
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+            
             $("#" + me.pre + "atomsCustomRealignByStruct").resizable();
             //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
@@ -706,7 +704,7 @@ class Events {
            window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1', '_blank');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "reload_chainalign_asym", "#" + me.pre + "reload_chainalign_asym2", "#" + me.pre + "reload_chainalign_asym3"], "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
