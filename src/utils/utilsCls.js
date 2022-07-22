@@ -99,7 +99,11 @@ class UtilsCls {
         let dz = atom0.coord.z - atom1.coord.z;
         let distSq = dx*dx + dy*dy + dz*dz;
 
-        return distSq < 1.3 * r * r;
+        // r(N) = 0.71, r(H) = 0.31, N-H in residues are about 1.5
+        // factor = (1.5 / 1.02) * (1.5 / 1.02) = 2.16
+        let factor = ((atom0.elem == 'N' && atom1.elem.substr(0,1) == 'H') || (atom1.elem == 'N' && atom0.elem.substr(0,1) == 'H')) ? 2.2 : 1.3;
+
+        return distSq < factor * r * r;
     }
 
     //Convert a three-letter residue name to a one-letter residue abbreviation, e.g., 'LYS' to 'K', or ' A' to 'A' for nucleotides.

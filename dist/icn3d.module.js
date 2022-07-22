@@ -5127,7 +5127,11 @@ class UtilsCls {
         let dz = atom0.coord.z - atom1.coord.z;
         let distSq = dx*dx + dy*dy + dz*dz;
 
-        return distSq < 1.3 * r * r;
+        // r(N) = 0.71, r(H) = 0.31, N-H in residues are about 1.5
+        // factor = (1.5 / 1.02) * (1.5 / 1.02) = 2.16
+        let factor = ((atom0.elem == 'N' && atom1.elem.substr(0,1) == 'H') || (atom1.elem == 'N' && atom0.elem.substr(0,1) == 'H')) ? 2.2 : 1.3;
+
+        return distSq < factor * r * r;
     }
 
     //Convert a three-letter residue name to a one-letter residue abbreviation, e.g., 'LYS' to 'K', or ' A' to 'A' for nucleotides.
@@ -18350,7 +18354,7 @@ class ShowInter {
                         for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
                             let serial = ic.atoms[atom.serial].bonds[j];
                             //if(ic.atoms[serial].name === 'H') {
-                            if(atom.elem.substr(0, 1) === 'H') {
+                            if(ic.atoms[serial].elem.substr(0, 1) === 'H') {
                                 ic.dAtoms[serial] = 1;
                                 ic.hAtoms[serial] = 1;
                             }
@@ -18359,11 +18363,29 @@ class ShowInter {
             }
         }
         else {
+            // for(let serial in ic.atoms) {
+            //     ic.dAtoms[serial] = 1;
+            //     ic.hAtoms[serial] = 1;
+            // }  
+
+            // add bonds in heavy atoms
+            //for(let serial in ic.hAtoms) {
             for(let serial in ic.atoms) {
-                ic.dAtoms[serial] = 1;
-                ic.hAtoms[serial] = 1;
-            }            
+                let atom = ic.atoms[serial];
+                //if(atom.name === 'H') {
+                if(atom.elem.substr(0, 1) === 'H') {                   
+                    if(ic.atoms[serial].bonds.length > 0) {
+                        let otherSerial = ic.atoms[serial].bonds[0];
+                        ic.atoms[otherSerial].bonds.push(atom.serial);
+                        if(ic.atoms[otherSerial].bondOrder) ic.atoms[otherSerial].bondOrder.push(1);
+                    }        
+                    
+                    ic.dAtoms[serial] = 1;
+                }
+            }
         }
+
+        ic.bShowHighlight = false;
     }
 
     hideHydrogens() { let ic = this.icn3d; ic.icn3dui;
@@ -21803,7 +21825,7 @@ class LoadPDB {
             }
 
             if(!(curChain === atom.chain && curResi === atom.resi)) {
-                // a new residue, add the residue-residue bond beides the regular bonds               
+                // a new residue, add the residue-residue bond besides the regular bonds               
                 this.refreshBonds(curResAtoms, prevCarbonArray[0]);
 
                 prevCarbonArray.splice(0, 1); // remove the first carbon
@@ -37811,7 +37833,7 @@ class ParserUtils {
               if(me.cfg.showanno) {
                    let  cmd = "view annotations";
                    me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
-                   ic.showAnnoCls.showAnnotations();
+                   ic.showAnnoCls.showAnnotations(); 
               }
               if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
@@ -54470,6 +54492,12 @@ class ClickMenu {
            thisClass.setLogCmd("export pqr", true);
         });
 
+        me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { me.icn3d;
+            let bPdb = true;
+            me.htmlCls.setHtmlCls.exportPqr(bPdb);
+            thisClass.setLogCmd("export pdbh", false);
+         });
+
     //    clkMn1_exportStl: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("export stl file", false);
@@ -56968,6 +56996,7 @@ class SetMenu {
     */
 
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB');
+        html += me.htmlCls.setHtmlCls.getLink('delphipdbh', 'PDB with Hydrogens');
 
         if(me.cfg.cid === undefined) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure');
@@ -62943,7 +62972,7 @@ class SetHtml {
         return html;
     }
 
-    exportPqr() { let me = this.icn3dui, ic = me.icn3d;
+    exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
        let ionHash = {};
        let atomHash = {};
     /*
@@ -62975,13 +63004,15 @@ class SetHtml {
            }
        }
 
+       let fileExt = (bPdb) ? 'pdb' : 'pqr';
        if(me.cfg.cid) {
           let pqrStr = '';
 ///          pqrStr += ic.saveFileCls.getPDBHeader();
-          pqrStr += ic.saveFileCls.getAtomPDB(atomHash, true) + ic.saveFileCls.getAtomPDB(ionHash, true);
+          let bPqr = (bPdb) ? false : true;
+          pqrStr += ic.saveFileCls.getAtomPDB(atomHash, bPqr) + ic.saveFileCls.getAtomPDB(ionHash, bPqr);
 
           let file_pref =(ic.inputid) ? ic.inputid : "custom";
-          ic.saveFileCls.saveFile(file_pref + '_icn3d.pqr', 'text', [pqrStr]);
+          ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
        }
        else {
            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
@@ -63017,8 +63048,40 @@ class SetHtml {
               success: function(data) {
                   let pqrStr = data;
 
+                  if(bPdb) {
+                    let lineArray = pqrStr.split('\n');
+
+                    let pdbStr = '';
+                    for(let i = 0, il = lineArray.length; i < il; ++i) {
+                        let line = lineArray[i];
+                        if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
+                            let atomName = line.substr(12, 4).trim();
+                            let elem;
+                            if(line.substr(0, 6) == 'ATOM  ') {
+                                elem = atomName.substr(0, 1);
+                            }
+                            else {
+                                let twochar = atomName.substr(0, 2);
+                                if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
+                                    elem = twochar;
+                                }
+                                else {
+                                    elem = atomName.substr(0, 1);
+                                }
+                            }
+
+                            pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
+                        }
+                        else {
+                            pdbStr += line + '\n';
+                        }
+                    }
+
+                    pqrStr = pdbStr;
+                  }
+
                   let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                  ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pqr', 'text', [pqrStr]);
+                  ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;

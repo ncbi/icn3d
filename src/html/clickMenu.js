@@ -336,6 +336,12 @@ class ClickMenu {
            thisClass.setLogCmd("export pqr", true);
         });
 
+        me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { let ic = me.icn3d;
+            let bPdb = true;
+            me.htmlCls.setHtmlCls.exportPqr(bPdb);
+            thisClass.setLogCmd("export pdbh", false);
+         });
+
     //    clkMn1_exportStl: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("export stl file", false);

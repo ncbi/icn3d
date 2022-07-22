@@ -590,7 +590,7 @@ class LoadPDB {
             }
 
             if(!(curChain === atom.chain && curResi === atom.resi)) {
-                // a new residue, add the residue-residue bond beides the regular bonds               
+                // a new residue, add the residue-residue bond besides the regular bonds               
                 this.refreshBonds(curResAtoms, prevCarbonArray[0]);
 
                 prevCarbonArray.splice(0, 1); // remove the first carbon
