@@ -608,6 +608,7 @@ class SetMenu {
     */
 
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB');
+        html += me.htmlCls.setHtmlCls.getLink('delphipdbh', 'PDB with Hydrogens');
 
         if(me.cfg.cid === undefined) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure');

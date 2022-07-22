@@ -546,7 +546,7 @@ class SetHtml {
         return html;
     }
 
-    exportPqr() { let me = this.icn3dui, ic = me.icn3d;
+    exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
        let chainHash = {}, ionHash = {}
        let atomHash = {}
     /*
@@ -578,13 +578,15 @@ class SetHtml {
            }
        }
 
+       let fileExt = (bPdb) ? 'pdb' : 'pqr';
        if(me.cfg.cid) {
           let pqrStr = '';
 ///          pqrStr += ic.saveFileCls.getPDBHeader();
-          pqrStr += ic.saveFileCls.getAtomPDB(atomHash, true) + ic.saveFileCls.getAtomPDB(ionHash, true);
+          let bPqr = (bPdb) ? false : true;
+          pqrStr += ic.saveFileCls.getAtomPDB(atomHash, bPqr) + ic.saveFileCls.getAtomPDB(ionHash, bPqr);
 
           let file_pref =(ic.inputid) ? ic.inputid : "custom";
-          ic.saveFileCls.saveFile(file_pref + '_icn3d.pqr', 'text', [pqrStr]);
+          ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
        }
        else {
            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
@@ -620,8 +622,40 @@ class SetHtml {
               success: function(data) {
                   let pqrStr = data;
 
+                  if(bPdb) {
+                    let lineArray = pqrStr.split('\n');
+
+                    let pdbStr = '';
+                    for(let i = 0, il = lineArray.length; i < il; ++i) {
+                        let line = lineArray[i];
+                        if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
+                            let atomName = line.substr(12, 4).trim();
+                            let elem;
+                            if(line.substr(0, 6) == 'ATOM  ') {
+                                elem = atomName.substr(0, 1);
+                            }
+                            else {
+                                let twochar = atomName.substr(0, 2);
+                                if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
+                                    elem = twochar;
+                                }
+                                else {
+                                    elem = atomName.substr(0, 1);
+                                }
+                            }
+
+                            pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
+                        }
+                        else {
+                            pdbStr += line + '\n';
+                        }
+                    }
+
+                    pqrStr = pdbStr;
+                  }
+
                   let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                  ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pqr', 'text', [pqrStr]);
+                  ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;

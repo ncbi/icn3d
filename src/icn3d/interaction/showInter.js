@@ -155,7 +155,7 @@ class ShowInter {
                         for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
                             let serial = ic.atoms[atom.serial].bonds[j];
                             //if(ic.atoms[serial].name === 'H') {
-                            if(atom.elem.substr(0, 1) === 'H') {
+                            if(ic.atoms[serial].elem.substr(0, 1) === 'H') {
                                 ic.dAtoms[serial] = 1;
                                 ic.hAtoms[serial] = 1;
                             }
@@ -164,11 +164,29 @@ class ShowInter {
             }
         }
         else {
+            // for(let serial in ic.atoms) {
+            //     ic.dAtoms[serial] = 1;
+            //     ic.hAtoms[serial] = 1;
+            // }  
+
+            // add bonds in heavy atoms
+            //for(let serial in ic.hAtoms) {
             for(let serial in ic.atoms) {
-                ic.dAtoms[serial] = 1;
-                ic.hAtoms[serial] = 1;
-            }            
+                let atom = ic.atoms[serial];
+                //if(atom.name === 'H') {
+                if(atom.elem.substr(0, 1) === 'H') {                   
+                    if(ic.atoms[serial].bonds.length > 0) {
+                        let otherSerial = ic.atoms[serial].bonds[0];
+                        ic.atoms[otherSerial].bonds.push(atom.serial);
+                        if(ic.atoms[otherSerial].bondOrder) ic.atoms[otherSerial].bondOrder.push(1);
+                    }        
+                    
+                    ic.dAtoms[serial] = 1;
+                }
+            }
         }
+
+        ic.bShowHighlight = false;
     }
 
     hideHydrogens() { let ic = this.icn3d, me = ic.icn3dui;

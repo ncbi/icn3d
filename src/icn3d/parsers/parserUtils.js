@@ -676,7 +676,7 @@ class ParserUtils {
               if(me.cfg.showanno) {
                    let  cmd = "view annotations";
                    me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
-                   ic.showAnnoCls.showAnnotations();
+                   ic.showAnnoCls.showAnnotations(); 
               }
               if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
