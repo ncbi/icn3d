@@ -172,24 +172,6 @@ class Events {
         ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
     }
 
-    getAlignParas() { let me = this.icn3dui, ic = me.icn3d;
-        let alignment = $("#" + me.pre + "chainalignids").val();
-        let idArray = alignment.split(',');
-        let alignment_final = '';
-        for(let i = 0, il = idArray.length; i < il; ++i) {
-            alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-            if(i < il - 1) alignment_final += ',';
-        }
-        let resalign = $("#" + me.pre + "resalignids").val();
-        let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-        if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
-            alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-            return;
-        }
-
-        return {"alignment": alignment_final, "resalign": resalign, "predefinedres": predefinedres};
-    }
-
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -347,7 +329,7 @@ class Events {
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
-            
+
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structuresare required for alignment...");
                 return;
@@ -694,34 +676,99 @@ class Events {
           });
     //    },
     //    clickReload_chainalign: function() {
+/*        
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
-           let result = thisClass.getAlignParas();
+           let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
+           let resalign = $("#" + me.pre + "resalignids").val();
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+               return;
+           }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " | residues " + result.resalign + " | resdef " + result.predefinedres, false);
-           window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1', '_blank');
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
         });
+*/
 
-        me.myEventCls.onIds(["#" + me.pre + "reload_chainalign_asym", "#" + me.pre + "reload_chainalign_asym2", "#" + me.pre + "reload_chainalign_asym3"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
-           let result = thisClass.getAlignParas();
+           let alignment = $("#" + me.pre + "chainalignids").val();
+           let idArray = alignment.split(',');
+           let alignment_final = '';
+           for(let i = 0, il = idArray.length; i < il; ++i) {
+               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+               if(i < il - 1) alignment_final += ',';
+           }
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres, false);
-           window.open(hostUrl + '?chainalign=' + result.alignment + '&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
+           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym2", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+ 
+            let alignment = $("#" + me.pre + "chainalignids").val();
+            let idArray = alignment.split(',');
+            let alignment_final = '';
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+                if(i < il - 1) alignment_final += ',';
+            }
+            let resalign = $("#" + me.pre + "resalignids").val();
+ 
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
+            window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=&showalignseq=1&bu=0', '_blank');
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym3", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+ 
+            let alignment = $("#" + me.pre + "chainalignids").val();
+            let idArray = alignment.split(',');
+            let alignment_final = '';
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+                if(i < il - 1) alignment_final += ',';
+            }
+
+            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
+            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                return;
+            }
+ 
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef " + predefinedres, false);
+            window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
 
-            let result = thisClass.getAlignParas();
+            let alignment = $("#" + me.pre + "chainalignids").val();
+            let idArray = alignment.split(',');
+            let alignment_final = '';
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+                if(i < il - 1) alignment_final += ',';
+            }
  
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + result.alignment + " on asymmetric unit | residues " + result.resalign + " | resdef " + result.predefinedres + " | align tmalign", false);
-            window.open(hostUrl + '?chainalign=' + result.alignment + '&aligntool=tmalign&resnum=' + result.resalign + '&resdef=' + result.predefinedres + '&showalignseq=1&bu=0', '_blank');
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
+            window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
@@ -1828,6 +1875,27 @@ class Events {
             let color = $("#" + me.pre + "colorcustom").val();
             picker.set('#' + color).enter();
         });
+
+        let picker2 = new CP(document.querySelector("#" + me.pre + "labelcolorall"));
+        picker2.on("change", function(color) {
+            this.target.value = color;
+        });
+        me.myEventCls.onIds("#" + me.pre + "labelcolorall", "input", function() {
+            let color = $("#" + me.pre + "labelcolorall").val();
+            picker2.set('#' + color).enter();
+        });
+        me.myEventCls.onIds("#" + me.pre + "labelcolorall", "keyup", function() {
+            let color = $("#" + me.pre + "labelcolorall").val();
+            picker2.set('#' + color).enter();
+        });
+        me.myEventCls.onIds("#" + me.pre + "labelcolorall", "paste", function() {
+            let color = $("#" + me.pre + "labelcolorall").val();
+            picker2.set('#' + color).enter();
+        });
+        me.myEventCls.onIds("#" + me.pre + "labelcolorall", "cut", function() {
+            let color = $("#" + me.pre + "labelcolorall").val();
+            picker2.set('#' + color).enter();
+        });    
     //    },
     //    clickApplypick_stabilizer_rm: function() {
         me.myEventCls.onIds("#" + me.pre + "applypick_stabilizer_rm", "click", function(e) { let ic = me.icn3d;

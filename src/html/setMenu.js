@@ -532,7 +532,16 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
         html += "</ul>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
+
+        html += "<li><span>Multiple Chains</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign', 'by Structure Alignment ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign2', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign3', 'Residue by Residue');
+        html += "</ul>";
+        html += "</li>";
+
 
         html += "</ul>";
         html += "</li>";
