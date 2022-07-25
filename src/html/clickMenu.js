@@ -155,8 +155,16 @@ class ClickMenu {
     //    },
     //    clkMn1_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.dialogCls.openDlg('dl_chainalign', 'Align multiple chains of 3D structures');
+           me.htmlCls.dialogCls.openDlg('dl_chainalign', 'Align multiple chains by structure alignment');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign2", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_chainalign2', 'Align multiple chains by sequence alignment');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign3", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_chainalign3', 'Align multiple chains residue by residue');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_mutation", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_mutation', 'Show the mutations in 3D');
