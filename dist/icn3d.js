@@ -26126,6 +26126,7 @@ var icn3d = (function (exports) {
                     let  ajaxArray = [], indexArray = [], struArray = [];
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                     let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+                    //let urltmalign = "https://test.ncbi.nlm.nih.gov/Structure/tmalign/tmalign.cgi";
 
                     for(let index in ic.afChainIndexHash) {
                         let idArray = ic.afChainIndexHash[index].split('_');
@@ -29665,7 +29666,7 @@ var icn3d = (function (exports) {
             //let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
             //    'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
             //    'dl_symmetry', 'dl_symd', 'dl_rmsd', 'dl_legend', 'dl_disttable'];
-            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_uniprotid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteraction', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterplotcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
+            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_uniprotid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteraction', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterplotcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
 
             for(let i in itemArray) {
                 let  item = itemArray[i];
@@ -36530,11 +36531,15 @@ var icn3d = (function (exports) {
             // start and end of MSA
             let start_t = 9999, end_t = -1;
 
+            let baseResi = ic.chainsSeq[chainid1][0].resi - 1;
+
             for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
                 let chainIndex = index - 1;
+                if(!ic.qt_start_end[chainIndex]) continue;
+
                 for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                     let  start1, end1;
-                    if(bRealign) { // realresidue numbers are stored
+                    if(bRealign) { // real residue numbers are stored
                         start1 = ic.qt_start_end[chainIndex][i].t_start;
                         end1 = ic.qt_start_end[chainIndex][i].t_end;
                     }
@@ -36542,15 +36547,18 @@ var icn3d = (function (exports) {
                         start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                         end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
                     }
-
                     for(let j = start1; j <= end1; ++j) {
-                        let resi = this.getResi(chainidArray[0], j, bRealign);
+                        let resiPos = j - baseResi;
+                        let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                         resi2range_t[resi] = 1;
                         if(j < start_t) start_t = j;
                         if(j > end_t) end_t = j;
                     }
                 }
             }
+
+            // TM-align should use "start1 = ic.qt_start_end[chainIndex][i].t_start - 1", but the rest are the same as ""bRealign"
+            if(me.cfg.aligntool == 'tmalign') bRealign = true; // real residue numbers are stored
 
             let resi2rangeArray = Object.keys(resi2range_t);
             resi2rangeArray.sort(function(a, b) {
@@ -36598,7 +36606,7 @@ var icn3d = (function (exports) {
             for(let j = 0, jl = ic.chainsSeq[chainid1].length; j < jl; ++j) { 
                 let resi = ic.chainsSeq[chainid1][j].resi;
 
-                if((j < start_t || j > end_t) ) {
+                if((j + baseResi < start_t || j + baseResi > end_t) ) {
                     continue;
                 }
 
@@ -59062,7 +59070,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_chainalign2' class='" + dialogClass + "'>";
             html += "<div style='width:550px'>";
             html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
-            html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
+            html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids2' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
 
             html += "The sequence alignment (followed by structure alignemnt) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
             html += me.htmlCls.buttonStr + "reload_chainalign_asym2' style='margin-top:3px;'><b>Align by Sequence Alignment</b></button><br/><br/>";
@@ -59073,7 +59081,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_chainalign3' class='" + dialogClass + "'>";
             html += "<div style='width:550px'>";
             html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
-            html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
+            html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids3' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
             
             html += "Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'>1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50</textarea><br/>";
             html += me.htmlCls.buttonStr + "reload_chainalign_asym3'><b>Align Residue by Residue</b></button><br/><br/>";
@@ -60625,7 +60633,7 @@ var icn3d = (function (exports) {
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
      
-                let alignment = $("#" + me.pre + "chainalignids").val();
+                let alignment = $("#" + me.pre + "chainalignids2").val();
                 let idArray = alignment.split(',');
                 let alignment_final = '';
                 for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -60642,7 +60650,7 @@ var icn3d = (function (exports) {
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
      
-                let alignment = $("#" + me.pre + "chainalignids").val();
+                let alignment = $("#" + me.pre + "chainalignids3").val();
                 let idArray = alignment.split(',');
                 let alignment_final = '';
                 for(let i = 0, il = idArray.length; i < il; ++i) {

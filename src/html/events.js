@@ -720,7 +720,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
-            let alignment = $("#" + me.pre + "chainalignids").val();
+            let alignment = $("#" + me.pre + "chainalignids2").val();
             let idArray = alignment.split(',');
             let alignment_final = '';
             for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -737,7 +737,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
-            let alignment = $("#" + me.pre + "chainalignids").val();
+            let alignment = $("#" + me.pre + "chainalignids3").val();
             let idArray = alignment.split(',');
             let alignment_final = '';
             for(let i = 0, il = idArray.length; i < il; ++i) {

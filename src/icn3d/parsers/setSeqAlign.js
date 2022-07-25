@@ -547,11 +547,15 @@ class SetSeqAlign {
         // start and end of MSA
         let start_t = 9999, end_t = -1;
 
+        let baseResi = ic.chainsSeq[chainid1][0].resi - 1;
+
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
             let chainIndex = index - 1;
+            if(!ic.qt_start_end[chainIndex]) continue;
+
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                 let  start1, end1;
-                if(bRealign) { // realresidue numbers are stored
+                if(bRealign) { // real residue numbers are stored
                     start1 = ic.qt_start_end[chainIndex][i].t_start;
                     end1 = ic.qt_start_end[chainIndex][i].t_end;
                 }
@@ -559,15 +563,18 @@ class SetSeqAlign {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
                 }
-
                 for(let j = start1; j <= end1; ++j) {
-                    let resi = this.getResi(chainidArray[0], j, bRealign);
+                    let resiPos = j - baseResi;
+                    let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
                     if(j > end_t) end_t = j;
                 }
             }
         }
+
+        // TM-align should use "start1 = ic.qt_start_end[chainIndex][i].t_start - 1", but the rest are the same as ""bRealign"
+        if(me.cfg.aligntool == 'tmalign') bRealign = true; // real residue numbers are stored
 
         let resi2rangeArray = Object.keys(resi2range_t);
         resi2rangeArray.sort(function(a, b) {
@@ -615,7 +622,7 @@ class SetSeqAlign {
         for(let j = 0, jl = ic.chainsSeq[chainid1].length; j < jl; ++j) { 
             let resi = ic.chainsSeq[chainid1][j].resi;
 
-            if((j < start_t || j > end_t) ) {
+            if((j + baseResi < start_t || j + baseResi > end_t) ) {
                 continue;
             }
 
