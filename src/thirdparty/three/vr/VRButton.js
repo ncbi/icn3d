@@ -56,7 +56,8 @@ class VRButton {
             button.style.display = '';
 
             button.style.cursor = 'pointer';
-            button.style.left = 'calc(50% - 50px)';
+            //button.style.left = 'calc(50% - 50px)';
+            button.style.left = 'calc(33% - 50px)';
             button.style.width = '100px';
 
             button.textContent = 'ENTER VR';
@@ -110,7 +111,7 @@ class VRButton {
             button.style.display = '';
 
             button.style.cursor = 'auto';
-            button.style.left = 'calc(50% - 75px)';
+            button.style.left = 'calc(33% - 75px)'; //'calc(50% - 75px)';
             button.style.width = '150px';
 
             button.onmouseenter = null;
