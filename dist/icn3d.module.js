@@ -45545,7 +45545,8 @@ class VRButton {
             button.style.display = '';
 
             button.style.cursor = 'pointer';
-            button.style.left = 'calc(50% - 50px)';
+            //button.style.left = 'calc(50% - 50px)';
+            button.style.left = 'calc(33% - 50px)';
             button.style.width = '100px';
 
             button.textContent = 'ENTER VR';
@@ -45599,7 +45600,7 @@ class VRButton {
             button.style.display = '';
 
             button.style.cursor = 'auto';
-            button.style.left = 'calc(50% - 75px)';
+            button.style.left = 'calc(33% - 75px)'; //'calc(50% - 75px)';
             button.style.width = '150px';
 
             button.onmouseenter = null;
@@ -45792,7 +45793,8 @@ class ARButton {
 			button.style.display = '';
 
 			button.style.cursor = 'pointer';
-			button.style.left = 'calc(50% - 50px)';
+			//button.style.left = 'calc(50% - 50px)';
+			button.style.left = 'calc(66% - 50px)';
 			button.style.width = '100px';
 
 			button.textContent = 'START AR';
@@ -45840,7 +45842,7 @@ class ARButton {
 			button.style.display = '';
 
 			button.style.cursor = 'auto';
-			button.style.left = 'calc(50% - 75px)';
+			button.style.left = 'calc(66% - 50px)'; //'calc(50% - 75px)';
 			button.style.width = '150px';
 
 			button.onmouseenter = null;
@@ -45937,7 +45939,7 @@ class ARButton {
 
 			}
 
-			message.style.left = 'calc(50% - 90px)';
+			message.style.left = 'calc(66% - 90px)'; //'calc(50% - 90px)';
 			message.style.width = '180px';
 			message.style.textDecoration = 'none';
 
