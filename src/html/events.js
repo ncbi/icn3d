@@ -162,7 +162,7 @@ class Events {
 
     saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
         let html = '';
-        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.12.1.min.css">\n';
+        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
         html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
         html += $("#" + id).html();
         let idArray = id.split('_');

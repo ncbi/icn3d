@@ -241,7 +241,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";
         html += "<div style='width:500px'>";
-        html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". <br/><br/>';
+        html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID or AlphaFold UniProt ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/><br/>';
         html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
 
         html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";

@@ -68,10 +68,10 @@ gulp.task('libs-jquery-ui',
   //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/jquery-ui/jquery-ui.min.js"
+            "node_modules/jquery-ui/dist/jquery-ui.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('jquery-ui-1.12.1.min.js'))
+        .pipe(rename('jquery-ui-1.13.2.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
@@ -80,10 +80,10 @@ gulp.task('libs-jquery-ui-css',
   //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css"
+            "node_modules/jquery-ui/dist/themes/ui-lightness/jquery-ui.min.css"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('jquery-ui-1.12.1.min.css'))
+        .pipe(rename('jquery-ui-1.13.2.min.css'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
@@ -92,7 +92,7 @@ gulp.task('libs-jquery-ui-images1',
   //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/jquery-ui/themes/ui-lightness/images"
+            "node_modules/jquery-ui/dist/themes/ui-lightness/images"
         ])
         .pipe(gulp.dest(dist + '/lib'));
   });
@@ -102,7 +102,7 @@ gulp.task('libs-jquery-ui-images2',
   //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/jquery-ui/themes/ui-lightness/images/**"
+            "node_modules/jquery-ui/dist/themes/ui-lightness/images/**"
         ])
         .pipe(gulp.dest(dist + '/lib/images'))
         .pipe(gulp.dest(icn3dnpm + '/css/lib/images'));

@@ -19866,7 +19866,7 @@ class Delphi {
 
        ic.loadPhiFrom = 'delphi';
 
-       let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi";
+       let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
        let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
        let dataObj = {};
 
@@ -20678,7 +20678,7 @@ class Symd {
        let thisClass = this;
 
        //var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-       let url = "https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi";
+       let url = me.htmlCls.baseUrl + "symd/symd.cgi";
 
        let atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 
@@ -24840,13 +24840,13 @@ class OpmParser {
        });
     }
 
-    loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d; ic.icn3dui;
+    loadOpmData(data, pdbid, bFull, type, pdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
         let  url, dataType;
 
         if(!pdbid) pdbid = 'stru';
 
-        url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+        url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
         dataType = "jsonp";
 
         $.ajax({
@@ -40681,11 +40681,11 @@ class AnnoSnpClinVar {
             if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
         }
     }
-    showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d; ic.icn3dui;
+    showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
         //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
-        let url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
         if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
             url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
         }
@@ -40720,7 +40720,7 @@ class AnnoSnpClinVar {
         });
     }
 
-    showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d; ic.icn3dui;
+    showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         if(gi !== undefined) {
       /*      
@@ -40739,7 +40739,7 @@ class AnnoSnpClinVar {
                 } //if(data3 != "") {
                 else {
        */             
-                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+                    let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
                     if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
                         url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
                     }
@@ -56930,16 +56930,7 @@ class SetMenu {
         html += "</li>";
         html += "<li><span>Align</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
-        html += "<li><span>Structure to Structure</span>";
-        html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
-        html += "</ul>";
-
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
-
+        
         html += "<li><span>Multiple Chains</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign', 'by Structure Alignment ' + me.htmlCls.wifiStr);
@@ -56948,6 +56939,13 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += "<li><span>Structure to Structure</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
+        html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
 
         html += "</ul>";
         html += "</li>";
@@ -59090,7 +59088,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";
         html += "<div style='width:500px'>";
-        html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". <br/><br/>';
+        html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID or AlphaFold UniProt ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/><br/>';
         html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
 
         html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";
@@ -60074,7 +60072,7 @@ class Events {
 
     saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
         let html = '';
-        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.12.1.min.css">\n';
+        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
         html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
         html += $("#" + id).html();
         let idArray = id.split('_');
@@ -63556,7 +63554,8 @@ class Html {
     this.simulation = undefined;
 
     //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
-    this.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+    this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
+        ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
     this.divStr = "<div id='" + this.icn3dui.pre;
     this.divNowrapStr = "<div style='white-space:nowrap'>";
     this.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -67044,7 +67043,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.13.1';
+    this.REVISION = '3.13.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

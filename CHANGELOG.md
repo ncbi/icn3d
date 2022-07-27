@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.13.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.2.zip) was release on July 27, 2022. jQuery UI was upgraded from version 1.12.1 to 1.13.2.
+
 [icn3d-3.13.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.1.zip) was release on July 25, 2022. Split the menu "File > Align > Multiple Chains" into three categories: by Structure Alignment, by Sequence Alignment, and Residue by Residue".
 
 [icn3d-3.13.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.0.zip) was release on July 21, 2022. In addition to "VAST" alignment, users can also use "TM-align" to align two chains. The feature is available in the menus "File > Align > Multiple Chains" and "File > Realign Selection > by Structure Alignment".

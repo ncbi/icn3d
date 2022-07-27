@@ -38,7 +38,7 @@ class Symd {
        let thisClass = this;
 
        //var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-       let url = "https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi";
+       let url = me.htmlCls.baseUrl + "symd/symd.cgi";
 
        let atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 

@@ -524,16 +524,7 @@ class SetMenu {
         html += "</li>";
         html += "<li><span>Align</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
-        html += "<li><span>Structure to Structure</span>";
-        html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
-        html += "</ul>";
-
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
-
+        
         html += "<li><span>Multiple Chains</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign', 'by Structure Alignment ' + me.htmlCls.wifiStr);
@@ -542,6 +533,13 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += "<li><span>Structure to Structure</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
+        html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
 
         html += "</ul>";
         html += "</li>";
