@@ -163,7 +163,7 @@ input:checked + .icn3d-slider:before {
   border-radius: 50%;
 }
 
-/* jquery UI 1.12.1
+/* jquery UI 1.13.2
    for jquery tooltip */
 .icn3d-tooltip {
   display: inline-block;
@@ -228,11 +228,17 @@ input:checked + .icn3d-slider:before {
 }
 .icn3d-rad > input:checked + .ui-icon{ /* (RADIO CHECKED) IMAGE STYLES */
   /*border:2px solid #f00;*/
+  background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_222222_256x240.png");
   background-position: -64px -144px; /*ui-icon-check */
+}
+.icn3d-rad > input:not(:checked) + .ui-icon{ /* (RADIO CHECKED) IMAGE STYLES */
+  /*border:2px solid #f00;*/
+  background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_222222_256x240.png");
+  background-position: -160px 0px; /*empty */
 }
 
 .ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
-    padding-left: 0.4em;
+    padding-left: 0.4em!important;
 }
 
 .icn3d-rad-text, .icn3d-color-rad-text {
