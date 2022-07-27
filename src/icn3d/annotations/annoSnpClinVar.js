@@ -660,7 +660,7 @@ class AnnoSnpClinVar {
         let thisClass = this;
         //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
         //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
-        let url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
         if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
             url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
         }
@@ -714,7 +714,7 @@ class AnnoSnpClinVar {
                 } //if(data3 != "") {
                 else {
        */             
-                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+                    let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
                     if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
                         url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
                     }

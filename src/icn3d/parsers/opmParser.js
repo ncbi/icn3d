@@ -73,7 +73,7 @@ class OpmParser {
 
         if(!pdbid) pdbid = 'stru';
 
-        url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+        url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
         dataType = "jsonp";
 
         $.ajax({
