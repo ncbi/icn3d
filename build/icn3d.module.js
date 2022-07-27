@@ -57595,7 +57595,7 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
-        html += "<li><span style='padding-left:1.5em;'>Unicolor</span>";
+        html += "<li><span style='padding-left:1.5em!important;'>Unicolor</span>";
         html += "<ul>";
 
         html += "<li><span>Red</span>";
@@ -57802,7 +57802,7 @@ class SetMenu {
 
         if(me.cfg.cid === undefined) {
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
-            html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
+            html += "<li><span style='padding-left:1.5em!important;'>Rainbow (R-V)</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
@@ -57811,7 +57811,7 @@ class SetMenu {
 
             if(!me.cfg.simplemenu) {
                 //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
-                html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
+                html += "<li><span style='padding-left:1.5em!important;'>Spectrum (V-R)</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
@@ -57819,7 +57819,7 @@ class SetMenu {
                 html += "</ul>";
             }
 
-            html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
+            html += "<li><span style='padding-left:1.5em!important;'>Secondary</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow');
@@ -57834,13 +57834,13 @@ class SetMenu {
 
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
-            html += "<li><span style='padding-left:1.5em;'>Hydrophobicity</span>";
+            html += "<li><span style='padding-left:1.5em!important;'>Hydrophobicity</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrNormalizedHP', 'Normalized');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White');
             html += "</ul>";
 
-            html += "<li><span style='padding-left:1.5em;'>B-factor</span>";
+            html += "<li><span style='padding-left:1.5em!important;'>B-factor</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
@@ -57863,7 +57863,7 @@ class SetMenu {
 
             if(me.cfg.cid === undefined) {
                 if(!me.cfg.simplemenu) {
-                    html += "<li><span style='padding-left:1.5em;'>Defined Sets</span>";
+                    html += "<li><span style='padding-left:1.5em!important;'>Defined Sets</span>";
                     html += "<ul>";
                     html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrsets', 'Rainbow for Selected Sets<br>in "Analysis > Defined Sets"');
                     html += "</ul>";
@@ -57872,7 +57872,7 @@ class SetMenu {
 
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
 
-            html += "<li><span style='padding-left:1.5em;'>Residue</span>";
+            html += "<li><span style='padding-left:1.5em!important;'>Residue</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Default');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidueCustom', 'Custom');
