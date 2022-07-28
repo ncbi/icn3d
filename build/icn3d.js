@@ -36371,7 +36371,8 @@ var icn3d = (function (exports) {
                   if(i > 0) {
                       let  index1 = alignIndex;
                       for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
-                          if(ic.chainsSeq[chainid1] === undefined) break;
+                          if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
+
                           let  resi = ic.chainsSeq[chainid1][j].resi;
                           let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
 
@@ -36385,7 +36386,8 @@ var icn3d = (function (exports) {
 
                       let  index2 = alignIndex;
                       for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
-                          if(ic.chainsSeq[chainid2] === undefined) break;
+                          if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
+                          
                           let  resi = ic.chainsSeq[chainid2][j].resi;
                           let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
 
