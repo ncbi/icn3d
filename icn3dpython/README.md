@@ -1,6 +1,22 @@
-Python Scripts based on iCn3D
-=============================
+Python Scripts by Following Interactive Steps 
+=============================================
 
-Either Python scripts in the directory "icn3dpython" or Node.js scripts in the directory "icn3dnode" can be used to analyze structures in command line.
+Python Scripts can scrape data from iCn3D by mimicing a user to click on different menus. An example script is shown below with the following clicks. Once a structure is loaded, the script first clicks the menu "Analysis > Interaction". It then selects two sets from the popup window, and clicks "2D Interaction Network". In the resulting page, it clicks the button "JSON" to output the JSON file for the interaction. A sharable link for all steps except the last one is [https://structure.ncbi.nlm.nih.gov/icn3d/share.html?yZkg6dofei1AZwVC6](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?yZkg6dofei1AZwVC6). The last button click has no associated commands, and thus can not be reproduced in the sharable link.
 
-You can write Python scripts either based on iCn3D URLs as shown in the directory "icn3d_url", or by following the interactive steps in the directory "mimic_ui", which enables you to download any output from the UI.
+Installation
+------------
+
+Install the following libraries in your computer:
+
+    selenium
+    webdriver-manager
+
+Examples
+--------
+
+* <b>Download JSON File for Interactions</b>
+
+    You can make changes (e.g., PDB ID) in the configuration script "config.py", then run "downloadInteraction.py" in the command line to download JSON file for interactions.
+
+        python3 downloadInteraction.py
+   
