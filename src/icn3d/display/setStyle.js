@@ -152,11 +152,14 @@ class SetStyle {
             console.log("WebGL context was lost. Reset WebGLRenderer and launch iCn3D again.");
 
             ic.renderer = new THREE.WebGLRenderer({
-                canvas: ic.container.get(0),
-                antialias: true,
-                preserveDrawingBuffer: true,
-                alpha: true
+              canvas: ic.oriContainer.get(0), //this.container.get(0),
+              antialias: true,
+              preserveDrawingBuffer: true,
+              sortObjects: false,
+              alpha: true
             });
+            // Enable VR
+            ic.renderer.xr.enabled = true;
 
             ic.drawCls.draw();
 
