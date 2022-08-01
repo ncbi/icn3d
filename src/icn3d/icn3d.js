@@ -189,7 +189,7 @@ class iCn3D {
         if(bWebGL){
             //https://discourse.threejs.org/t/three-js-r128-ext-frag-depth-and-angle-instanced-arrays-extensions-are-not-supported/26037
             //this.renderer = new THREE.WebGL1Renderer({
-            if ( bWebGL2 && bVR) { 
+            if ( bWebGL2 && bVR) {                
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: this.oriContainer.get(0), //this.container.get(0),
                     antialias: true,
