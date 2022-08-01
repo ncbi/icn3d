@@ -10,6 +10,7 @@ import {MyEventCls} from '../../utils/myEventCls.js';
 import {ShowAnno} from '../annotations/showAnno.js';
 import {FirstAtomObj} from '../selection/firstAtomObj.js';
 import {AnnoCddSite} from '../annotations/annoCddSite.js';
+import {AnnoPTM} from '../annotations/annoPTM.js';
 import {AnnoContact} from '../annotations/annoContact.js';
 import {AnnoCrossLink} from '../annotations/annoCrossLink.js';
 import {AnnoDomain} from '../annotations/annoDomain.js';
@@ -30,7 +31,8 @@ class Annotation {
         this.setAnnoSeqBase(false);
     }
     setAnnoSeqBase(bShow) {  let ic = this.icn3d, me = ic.icn3dui;
-        let itemArray = ['site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        //let itemArray = ['site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        let itemArray = ['cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'interaction'];
         for(let i in itemArray) {
             let item = itemArray[i];
             if(bShow) {
@@ -42,7 +44,8 @@ class Annotation {
         }
     }
     setAnnoTabBase(bChecked) {  let ic = this.icn3d, me = ic.icn3dui;
-        let itemArray = ['all', 'binding', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
+        //let itemArray = ['all', 'binding', 'ptm', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
+        let itemArray = ['all', 'cdd', 'clinvar', 'snp', 'binding', 'ptm', 'ssbond', 'crosslink', 'transmem', '3dd', 'custom', 'interact'];
         for(let i in itemArray) {
             let item = itemArray[i];
             if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
@@ -54,10 +57,11 @@ class Annotation {
         this.updateClinvar();
         this.updateSnp();
         this.updateDomain();
-        this.updateInteraction();
+        this.updatePTM();
         this.updateSsbond();
         this.updateCrosslink();
         this.updateTransmem();
+        this.updateInteraction();
     }
     hideAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoTabBase(false);
@@ -109,6 +113,11 @@ class Annotation {
             $("[id^=" + ic.pre + "interaction]").show();
             ic.bInteractionShown = false;
             this.updateInteraction();
+        }
+        if($("#" + ic.pre + "anno_ptm").length && $("#" + ic.pre + "anno_ptm")[0].checked) {
+            $("[id^=" + ic.pre + "ptm]").show();
+            ic.bPTMShown = false;
+            this.updatePTM();
         }
         if($("#" + ic.pre + "anno_custom").length && $("#" + ic.pre + "anno_custom")[0].checked) {
             $("[id^=" + ic.pre + "custom]").show();
@@ -190,6 +199,15 @@ class Annotation {
     hideAnnoTabInteraction() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "interaction]").hide();
         if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
+    }
+    setAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
+        $("[id^=" + ic.pre + "ptm]").show();
+        if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = true;
+        this.updatePTM();
+    }
+    hideAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
+        $("[id^=" + ic.pre + "ptm]").hide();
+        if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = false;
     }
     setAnnoTabSsbond() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ssbond]").show();
@@ -302,6 +320,17 @@ class Annotation {
         }
         });
 
+        me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", function(e) {
+            if($("#" + ic.pre + "anno_ptm")[0].checked) {
+                thisClass.setAnnoTabPTM();
+                me.htmlCls.clickMenuCls.setLogCmd("set annotation ptm", true);
+            }
+            else{
+                thisClass.hideAnnoTabPTM();
+                me.htmlCls.clickMenuCls.setLogCmd("hide annotation ptm", true);
+            }
+        });
+
         //$("#" + ic.pre + "anno_custom", "click", function(e) {
         me.myEventCls.onIds("#" + ic.pre + "anno_custom", "click", function(e) {
         if($("#" + ic.pre + "anno_custom")[0].checked) {
@@ -397,7 +426,7 @@ class Annotation {
         }
     }
     setAnnoDisplay(display, prefix) { let ic = this.icn3d, me = ic.icn3dui;
-        let itemArray = ['giseq', 'custom', 'site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        let itemArray = ['giseq', 'custom', 'site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
         for(let i in itemArray) {
             let item = itemArray[i];
             $("[id^=" + ic.pre + prefix + "_" + item + "]").attr('style', display);
@@ -467,6 +496,15 @@ class Annotation {
             }
         }
         ic.bInteractionShown = true;
+    }
+    updatePTM() { let ic = this.icn3d, me = ic.icn3dui;
+        if(ic.bPTMShown === undefined || !ic.bPTMShown) {
+            for(let chainid in ic.PTMChainbase) {
+                let chainidBase = ic.PTMChainbase[chainid];
+                ic.annoPTMCls.showPTM(chainid, chainidBase);
+            }
+        }
+        ic.bPTMShown = true;
     }
     updateSsbond() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bSSbondShown === undefined || !ic.bSSbondShown) {

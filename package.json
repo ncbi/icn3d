@@ -1,6 +1,6 @@
 {
   "name": "icn3d",
-  "version": "3.13.2",
+  "version": "3.14.0",
   "description": "iCn3D Structure Viewer",
   "main": "index.html",
   "scripts": {

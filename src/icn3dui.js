@@ -93,6 +93,7 @@ import {SetOption} from './icn3d/display/setOption.js';
     // classes from icn3dui
 import {AnnoCddSite} from './icn3d/annotations/annoCddSite.js';
 import {AnnoContact} from './icn3d/annotations/annoContact.js';
+import {AnnoPTM} from './icn3d/annotations/annoPTM.js';
 import {AnnoCrossLink} from './icn3d/annotations/annoCrossLink.js';
 import {AnnoDomain} from './icn3d/annotations/annoDomain.js';
 import {AnnoSnpClinVar} from './icn3d/annotations/annoSnpClinVar.js';
@@ -175,7 +176,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.13.2';
+    this.REVISION = '3.14.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

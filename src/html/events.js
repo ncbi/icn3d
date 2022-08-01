@@ -404,10 +404,7 @@ class Events {
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
  
-            // save the current selection
-            //ic.selectionCls.saveSelectionPrep();
-            //let name = 'realignSetsByStruct';
-            //ic.selectionCls.saveSelection(name, name);
+            me.cfg.aligntool = 'vast';
  
             ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {
