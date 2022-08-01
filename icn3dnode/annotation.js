@@ -33,32 +33,39 @@ if(myArgs.length != 2) {
     // 6: Interactions
     // 7: Disulfide Bonds
     // 8: Cross-Linkages
-    console.log("Usage: node annotation.js [PDB ID] [annotation type as an integer]");
+    // 9: PTM (UniProt)
+    console.log("Usage: node annotation.js [PDB or AlphaFold UniProt ID] [annotation type as an integer]");
     return;
 }
 
-let pdbid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
+let inputid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
 let annoType = myArgs[1];
 
-let baseUrlMmdb = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=";
+let url = (inputid.length == 4) ? "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=" + inputid
+    : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_v2.pdb";
 
-let urlMmdb = baseUrlMmdb + pdbid;
-
-https.get(urlMmdb, function(res1) {
+https.get(url, function(res1) {
     let response1 = [];
     res1.on('data', function (chunk) {
         response1.push(chunk);
     });
 
     res1.on('end', function(){
-        let dataStr1 = response1.join('');
-        let dataJson = JSON.parse(dataStr1);
-
+        let dataStr = response1.join('');
+        
         me.setIcn3d();
         let ic = me.icn3d;
 
         ic.bRender = false;
-        ic.mmdbParserCls.parseMmdbData(dataJson);
+        if(inputid.length == 4) {
+            let dataJson = JSON.parse(dataStr);
+            ic.mmdbParserCls.parseMmdbData(dataJson);
+        }
+        else {
+            let header = 'HEADER                                                        ' + inputid + '\n';
+            dataStr = header + dataStr;
+            ic.opmParserCls.parseAtomData(dataStr, inputid, undefined, 'pdb', undefined);
+        }
 
         let result = ic.showAnnoCls.showAnnotations_part1();
         let nucleotide_chainid = result.nucleotide_chainid;
@@ -127,7 +134,7 @@ https.get(urlMmdb, function(res1) {
                         let chnidArray = Object.keys(ic.protein_chainid);
                         // live search
                         let url4 = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;
-                
+
                         https.get(url4, function(res1) {
                             let response1 = [];
                             res1.on('data', function (chunk) {
@@ -155,6 +162,124 @@ https.get(urlMmdb, function(res1) {
                             console.error("Error: no conserved domain and sites data...");
                         });
                     }
+
+                    // 9: PTM (UniProt)
+                    else if(annoType == 9) {
+
+                        let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
+                        let chnidArray = Object.keys(ic.protein_chainid);
+
+                        for(let chainid in ic.protein_chainid) {
+                            let structure = chainid.substr(0, chainid.indexOf('_'));
+                            let chain = chainid.substr(chainid.indexOf('_') + 1);
+
+                            // UniProt ID
+                            if( structure.length > 5 ) {
+                                let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
+
+                                https.get(url4, function(res1) {
+                                    let response1 = [];
+                                    res1.on('data', function (chunk) {
+                                        response1.push(chunk);
+                                    });
+                        
+                                    res1.on('end', function(){
+                                        let dataStr = response1.join('');
+                                        let data4 = JSON.parse(dataStr);
+                                        //console.log("dataJson: " + dataJson.length);
+                        
+                                        ic.annoPTMCls.parsePTM(data4, chainid);
+
+                                        for(let chainid in ic.resid2ptm) {
+                                            console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                                        }
+                                    });
+                                }).on('error', function(e) {
+                                    console.error("Error: no conserved domain and sites data...");
+                                });
+                            }
+                            else {
+                                // https://www.ebi.ac.uk/pdbe/api/doc/
+                                let structLower = structure.substr(0, 4).toLowerCase();
+                                let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;   
+
+                                https.get(urlMap, function(res1) {
+                                    let response1 = [];
+                                    res1.on('data', function (chunk) {
+                                        response1.push(chunk);
+                                    });
+                        
+                                    res1.on('end', function(){
+        let dataMapStr = response1.join('');
+        let dataMap = JSON.parse(dataMapStr);
+
+        let UniProtID = '';
+        if(!ic.UPResi2ResiPosPerChain) ic.UPResi2ResiPosPerChain = {};
+        ic.UPResi2ResiPosPerChain[chainid] = {};
+
+        let mapping = dataMap[structLower].UniProt;
+
+        let bFound = false;
+        for(let up in mapping) {
+            let chainArray = mapping[up].mappings;
+            if(bFound) break;
+
+            for(let i = 0, il = chainArray.length; i < il; ++i) {
+            //"entity_id": 3, "end": { "author_residue_number": null, "author_insertion_code": "", "residue_number": 219 }, "chain_id": "A", "start": { "author_residue_number": 94, "author_insertion_code": "", "residue_number": 1 }, "unp_end": 312, "unp_start": 94, "struct_asym_id": "C"
+                let chainObj = chainArray[i];
+                if(chainObj.chain_id == chain) {
+                    let start = chainObj.unp_start;
+                    let end = chainObj.unp_end;
+                    let posStart = chainObj.start.residue_number;
+                    let posEnd = chainObj.end.residue_number;
+
+                    if(posEnd - posStart != end - start) {
+                        //console.log("There might be some issues in the PDB to UniProt residue mapping.");
+                    }
+
+                    for(let j = 0; j <= end - start; ++j) {
+                        ic.UPResi2ResiPosPerChain[chainid][j + start] = j + posStart - 1; // 0-based
+                    }
+
+                    UniProtID = up;
+                    bFound = true;
+                    break;
+                }
+            }
+        }
+
+        if(UniProtID != '') {
+            let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
+
+            https.get(url4, function(res1) {
+                let response1 = [];
+                res1.on('data', function (chunk) {
+                    response1.push(chunk);
+                });
+    
+                res1.on('end', function(){
+                    let dataStr = response1.join('');
+                    let data4 = JSON.parse(dataStr);
+                    //console.log("dataJson: " + dataJson.length);
+
+                    ic.annoPTMCls.parsePTM(data4, chainid);
+
+                    for(let chainid in ic.resid2ptm) {
+                        console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                    }
+                });
+            }).on('error', function(e) {
+                console.error("Error: no conserved domain and sites data...");
+            });
+        }
+                                    });
+                                }).on('error', function(e) {
+                                    console.error("Error: no conserved domain and sites data...");
+                                });
+                            }
+                        }
+                    }
+
                     // 1: SNPs
                     // 2: ClinVar
                     else if(annoType == 1 || annoType == 2) {
@@ -242,5 +367,5 @@ https.get(urlMmdb, function(res1) {
         });
     });
 }).on('error', function(e) {
-    console.error("Error: " + pdbid + " has no MMDB data...");
+    console.error("Error: " + inputid + " has no MMDB data...");
 });

@@ -271,6 +271,24 @@ class LoadScript {
 
               return;
           }
+          else if(ic.commands[i].trim().indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
+            let  strArray = ic.commands[i].split("|||");
+
+            if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxPTM === undefined || !ic.bAjaxPTM) ) {
+                $.when(thisClass.applyCommandPTM(strArray[0].trim())).then(function() {
+                    thisClass.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            else {
+                if(Object.keys(ic.proteins).length > 0) {
+                    thisClass.applyCommandPTM(strArray[0].trim());
+                }
+
+                this.execCommandsBase(i + 1, end, steps);
+            }
+
+            return;
+          }
           else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
               let  strArray = ic.commands[i].split("|||");
 
@@ -501,6 +519,8 @@ class LoadScript {
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
 
+            me.cfg.aligntool = 'vast';
+
             $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
                thisClass.execCommandsBase(i + 1, end, steps);
             });
@@ -661,6 +681,9 @@ class LoadScript {
                     else if(lastCommand.indexOf('set annotation snp') == 0) {
                         thisClass.applyCommandSnp(lastCommand);
                     }
+                    else if(lastCommand.indexOf('set annotation ptm') == 0) {
+                        thisClass.applyCommandPTM(lastCommand);
+                    }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
                     }
@@ -711,6 +734,9 @@ class LoadScript {
                             let  nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
+
+                        me.cfg.aligntool = 'vast';
+
                         thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on tmalign') == 0) {
@@ -1115,6 +1141,25 @@ class LoadScript {
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSnp.promise();
+    }
+
+    applyCommandPTMBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        // chain functions together
+        let  pos = command.lastIndexOf(' '); // set annotation clinvar
+        let  type = command.substr(pos + 1);
+  
+        ic.annotationCls.setAnnoTabPTM();
+    }
+
+    applyCommandPTM(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+  
+        // chain functions together
+        ic.deferredPTM = $.Deferred(function() {
+            thisClass.applyCommandPTMBase(command);
+        }); // end of me.deferred = $.Deferred(function() {
+  
+        return ic.deferredPTM.promise();
     }
 
     applyCommand3ddomainBase(command) { let  ic = this.icn3d, me = ic.icn3dui;

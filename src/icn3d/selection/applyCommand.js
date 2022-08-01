@@ -304,6 +304,9 @@ class ApplyCommand {
       else if(command == 'set annotation interaction') {
           ic.annotationCls.setAnnoTabInteraction();
       }
+      else if(command == 'set annotation ptm') {
+        ic.annotationCls.setAnnoTabPTM();
+    }
       else if(command == 'set annotation cdd') {
           ic.annotationCls.setAnnoTabCdd();
       }
@@ -350,6 +353,9 @@ class ApplyCommand {
           else if(type == 'site') {
               ic.annotationCls.hideAnnoTabSite();
           }
+          else if(type == 'ptm') {
+            ic.annotationCls.hideAnnoTabPTM();
+        }
           else if(type == 'interaction') {
               ic.annotationCls.hideAnnoTabInteraction();
           }
@@ -1548,6 +1554,7 @@ class ApplyCommand {
         else if(cmd== 'set view overview') return seqAnnoStr + ': "Summary" tab';
         else if(cmd == 'set annotation custom') return seqAnnoStr + ': "Custom" checkbox';
         else if(cmd == 'set annotation interaction') return seqAnnoStr + ': "Interactions" checkbox';
+        else if(cmd == 'set annotation ptm') return seqAnnoStr + ': "PTM" checkbox';
         else if(cmd == 'set annotation cdd') return seqAnnoStr + ': "Conserved Domains" checkbox';
         else if(cmd == 'set annotation site') return seqAnnoStr + ': "Functional Sites" checkbox';
         else if(cmd == 'set annotation ssbond') return seqAnnoStr + ': "Disulfide Bonds" checkbox';

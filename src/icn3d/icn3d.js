@@ -59,6 +59,7 @@ import {SetOption} from './display/setOption.js';
     // classes from icn3dui
 import {AnnoCddSite} from './annotations/annoCddSite.js';
 import {AnnoContact} from './annotations/annoContact.js';
+import {AnnoPTM} from './annotations/annoPTM.js';
 import {AnnoCrossLink} from './annotations/annoCrossLink.js';
 import {AnnoDomain} from './annotations/annoDomain.js';
 import {AnnoSnpClinVar} from './annotations/annoSnpClinVar.js';
@@ -555,6 +556,7 @@ class iCn3D {
 
     this.annoCddSiteCls = new AnnoCddSite(this);
     this.annoContactCls = new AnnoContact(this);
+    this.annoPTMCls = new AnnoPTM(this);
     this.annoCrossLinkCls = new AnnoCrossLink(this);
     this.annoDomainCls = new AnnoDomain(this);
     this.annoSnpClinVarCls = new AnnoSnpClinVar(this);

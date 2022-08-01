@@ -1087,10 +1087,17 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs" + me.htmlCls.space2 + "</span></td>";
-        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
+        
+        // if(me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined || me.cfg.mmtfid != undefined || me.cfg.mmcifid != undefined) { // PDB
+        //     html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ptm' disabled>PTM (UniProt)" + me.htmlCls.space2 + "</span></td>";
+        // }
+        // else {
+            html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ptm'>PTM (UniProt)" + me.htmlCls.space2 + "</span></td>";
+        // }
         html += "<td></td>";
         html += "</tr><tr>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
         if(me.cfg.opmid !== undefined) {
             html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";

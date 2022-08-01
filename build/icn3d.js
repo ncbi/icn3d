@@ -28477,6 +28477,24 @@ var icn3d = (function (exports) {
 
                   return;
               }
+              else if(ic.commands[i].trim().indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
+                let  strArray = ic.commands[i].split("|||");
+
+                if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxPTM === undefined || !ic.bAjaxPTM) ) {
+                    $.when(thisClass.applyCommandPTM(strArray[0].trim())).then(function() {
+                        thisClass.execCommandsBase(i + 1, end, steps);
+                    });
+                }
+                else {
+                    if(Object.keys(ic.proteins).length > 0) {
+                        thisClass.applyCommandPTM(strArray[0].trim());
+                    }
+
+                    this.execCommandsBase(i + 1, end, steps);
+                }
+
+                return;
+              }
               else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
                   let  strArray = ic.commands[i].split("|||");
 
@@ -28707,6 +28725,8 @@ var icn3d = (function (exports) {
                     ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                 }
 
+                me.cfg.aligntool = 'vast';
+
                 $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
                    thisClass.execCommandsBase(i + 1, end, steps);
                 });
@@ -28867,6 +28887,9 @@ var icn3d = (function (exports) {
                         else if(lastCommand.indexOf('set annotation snp') == 0) {
                             thisClass.applyCommandSnp(lastCommand);
                         }
+                        else if(lastCommand.indexOf('set annotation ptm') == 0) {
+                            thisClass.applyCommandPTM(lastCommand);
+                        }
                         else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                             thisClass.applyCommand3ddomain(lastCommand);
                         }
@@ -28917,6 +28940,9 @@ var icn3d = (function (exports) {
                                 let  nameArray = paraArray[1].split(',');
                                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                             }
+
+                            me.cfg.aligntool = 'vast';
+
                             thisClass.applyCommandRealignByStruct(lastCommand);
                         }
                         else if(lastCommand.indexOf('realign on tmalign') == 0) {
@@ -29320,6 +29346,25 @@ var icn3d = (function (exports) {
           }); // end of me.deferred = $.Deferred(function() {
 
           return ic.deferredSnp.promise();
+        }
+
+        applyCommandPTMBase(command) { let ic = this.icn3d; ic.icn3dui;
+            // chain functions together
+            let  pos = command.lastIndexOf(' '); // set annotation clinvar
+            command.substr(pos + 1);
+      
+            ic.annotationCls.setAnnoTabPTM();
+        }
+
+        applyCommandPTM(command) { let ic = this.icn3d; ic.icn3dui;
+            let  thisClass = this;
+      
+            // chain functions together
+            ic.deferredPTM = $.Deferred(function() {
+                thisClass.applyCommandPTMBase(command);
+            }); // end of me.deferred = $.Deferred(function() {
+      
+            return ic.deferredPTM.promise();
         }
 
         applyCommand3ddomainBase(command) { let ic = this.icn3d; ic.icn3dui;
@@ -30863,7 +30908,8 @@ var icn3d = (function (exports) {
             if(seqLength > ic.maxAnnoLength) {
                 ic.maxAnnoLength = seqLength;
             }
-            let itemArray = ['giseq', 'cddsite', 'clinvar', 'snp', 'domain', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            //let itemArray = ['giseq', 'cddsite', 'ptm', 'clinvar', 'snp', 'domain', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            let itemArray = ['giseq', 'cddsite', 'clinvar', 'snp', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
             for(let i in itemArray) {
                 let item = itemArray[i];
                 if($("#" + ic.pre + item + "_" + chnid).length) $("#" + ic.pre + item + "_" + chnid).width(divLength);
@@ -33825,6 +33871,9 @@ var icn3d = (function (exports) {
           else if(command == 'set annotation interaction') {
               ic.annotationCls.setAnnoTabInteraction();
           }
+          else if(command == 'set annotation ptm') {
+            ic.annotationCls.setAnnoTabPTM();
+        }
           else if(command == 'set annotation cdd') {
               ic.annotationCls.setAnnoTabCdd();
           }
@@ -33871,6 +33920,9 @@ var icn3d = (function (exports) {
               else if(type == 'site') {
                   ic.annotationCls.hideAnnoTabSite();
               }
+              else if(type == 'ptm') {
+                ic.annotationCls.hideAnnoTabPTM();
+            }
               else if(type == 'interaction') {
                   ic.annotationCls.hideAnnoTabInteraction();
               }
@@ -35069,6 +35121,7 @@ var icn3d = (function (exports) {
             else if(cmd== 'set view overview') return seqAnnoStr + ': "Summary" tab';
             else if(cmd == 'set annotation custom') return seqAnnoStr + ': "Custom" checkbox';
             else if(cmd == 'set annotation interaction') return seqAnnoStr + ': "Interactions" checkbox';
+            else if(cmd == 'set annotation ptm') return seqAnnoStr + ': "PTM" checkbox';
             else if(cmd == 'set annotation cdd') return seqAnnoStr + ': "Conserved Domains" checkbox';
             else if(cmd == 'set annotation site') return seqAnnoStr + ': "Functional Sites" checkbox';
             else if(cmd == 'set annotation ssbond') return seqAnnoStr + ': "Disulfide Bonds" checkbox';
@@ -38337,8 +38390,8 @@ var icn3d = (function (exports) {
           if(me.bNode) return;
 
           let thisClass = this;
-          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
-          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
+          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
           .selectable({
               distance: 1, //Tolerance, in pixels, for when selecting should start. If specified, selecting will not start until the mouse has been dragged beyond the specified distance.
               stop: function() { let ic = thisClass.icn3d;
@@ -38391,11 +38444,11 @@ var icn3d = (function (exports) {
               }
           });
 
-          $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]")
-          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+          $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_ptm]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]")
+          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
 
-          .add("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
-          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+          .add("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
+          .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
 
           .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
               e.stopImmediatePropagation();
@@ -38436,7 +38489,7 @@ var icn3d = (function (exports) {
 
           let thisClass = this;
 
-          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
+          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
               e.stopImmediatePropagation();
     /*
               //if($(this).attr('id') === ic.pre + "dl_sequence2") {
@@ -38485,7 +38538,7 @@ var icn3d = (function (exports) {
 
           let thisClass = this;
 
-          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
+          $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
               e.stopImmediatePropagation();
 
               //if($(this).attr('id') === ic.pre + "dl_sequence2") {
@@ -38682,7 +38735,7 @@ var icn3d = (function (exports) {
                                 let residueid;
                                 let structure = chainid.substr(0, chainid.indexOf('_'));
                                 for(let i = 0, il = posArray.length; i < il; ++i) {
-                                    if($(that).attr('site') !== undefined) {
+                                    if($(that).attr('site') !== undefined || $(that).attr('ptm') !== undefined) {
                                         if(ic.bNCBI) {
                                             let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                             // AlphaFold domains calculated on-the-fly have no conversion
@@ -39084,6 +39137,8 @@ var icn3d = (function (exports) {
                 ++i;
             }
             ic.interactChainbase = me.hashUtilsCls.unionHash(ic.interactChainbase, chemical_chainid);
+            ic.PTMChainbase = me.hashUtilsCls.unionHash(ic.PTMChainbase, ic.protein_chainid);
+
             ic.ssbondChainbase = me.hashUtilsCls.unionHash(ic.ssbondChainbase, ic.protein_chainid);
             ic.ssbondChainbase = me.hashUtilsCls.unionHash(ic.ssbondChainbase, chemical_chainid);
             ic.crosslinkChainbase = me.hashUtilsCls.unionHash(ic.crosslinkChainbase, ic.protein_chainid);
@@ -39115,8 +39170,10 @@ var icn3d = (function (exports) {
                 //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
                 let categoryStr =(index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
                 let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
+                let structure = chnid.substr(0, chnid.indexOf('_'));
+                let chainLink = (structure.length > 5) ? '<a href="https://alphafold.ebi.ac.uk/entry/' + structure + '" target="_blank">' + chnid + '</a>' : chnid;
                 let chainHtml = "<div id='" + ic.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr
-                    + "<span style='font-weight:bold;'>Annotations of " + chnid
+                    + "<span style='font-weight:bold;'>Annotations of " + chainLink
                     + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term="
                     + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>"
                     + geneLink + "&nbsp;&nbsp;&nbsp;"
@@ -39129,7 +39186,8 @@ var icn3d = (function (exports) {
                     + this.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                     + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
                 $("#" + ic.pre + "dl_annotations").append(chainHtml);
-                let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+                //let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'ptm', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+                let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
                 // dt: detailed view, hide by default; ov: overview, show by default
                 for(let i in itemArray) {
                     let item = itemArray[i];
@@ -39555,6 +39613,286 @@ var icn3d = (function (exports) {
             return color;
         }
 
+    }
+
+    /**
+     * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+     */
+
+    class AnnoPTM {
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        //Show the annotations of CDD domains and binding sites.
+        showPTM(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+            let thisClass = this;
+
+            // UniProt ID
+            let structure = chnid.substr(0, chnid.indexOf('_'));
+            let chain = chnid.substr(chnid.indexOf('_') + 1);
+
+            // UniProt ID
+            if( structure.length > 5 ) {
+                let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
+                $.ajax({
+                  url: url,
+                  dataType: 'json',
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 0, //1
+                  success: function(data) {
+                    thisClass.parsePTM(data, chnid);
+                    if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if(this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+
+                    thisClass.getNoPTM(chnid);
+
+                    return;
+                  }
+                });
+            }
+            else { // PDB
+                // get PDB to UniProt mapping
+                // https://www.ebi.ac.uk/pdbe/api/doc/
+                let structLower = structure.substr(0, 4).toLowerCase();
+                let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
+
+                $.ajax({
+                  url: urlMap,
+                  dataType: 'json',
+                  cache: true,
+                  success: function(dataMap) {
+                    let UniProtID = '';
+                    if(!ic.UPResi2ResiPosPerChain) ic.UPResi2ResiPosPerChain = {};
+                    ic.UPResi2ResiPosPerChain[chnid] = {};
+                    let mapping = dataMap[structLower].UniProt;
+
+                    let bFound = false;
+                    for(let up in mapping) {
+                        let chainArray = mapping[up].mappings;
+                        if(bFound) break;
+
+                        for(let i = 0, il = chainArray.length; i < il; ++i) {
+                        //"entity_id": 3, "end": { "author_residue_number": null, "author_insertion_code": "", "residue_number": 219 }, "chain_id": "A", "start": { "author_residue_number": 94, "author_insertion_code": "", "residue_number": 1 }, "unp_end": 312, "unp_start": 94, "struct_asym_id": "C"
+                            let chainObj = chainArray[i];
+                            if(chainObj.chain_id == chain) {
+                                let start = chainObj.unp_start;
+                                let end = chainObj.unp_end;
+                                let posStart = chainObj.start.residue_number;
+                                let posEnd = chainObj.end.residue_number;
+
+                                if(posEnd - posStart != end - start) {
+                                    console.log("There might be some issues in the PDB to UniProt residue mapping.");
+                                }
+
+                                for(let j = 0; j <= end - start; ++j) {
+                                    ic.UPResi2ResiPosPerChain[chnid][j + start] = j + posStart - 1; // 0-based
+                                }
+
+                                UniProtID = up;
+                                bFound = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(UniProtID == '') {
+                        thisClass.getNoPTM(chnid);
+                    }
+                    else {
+                        let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
+                        $.ajax({
+                            url: url,
+                            dataType: 'json',
+                            cache: true,
+                            tryCount : 0,
+                            retryLimit : 0, //1
+                            success: function(data) {
+                                thisClass.parsePTM(data, chnid);
+                                if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+                            },
+                            error : function(xhr, textStatus, errorThrown ) {
+                                this.tryCount++;
+                                if(this.tryCount <= this.retryLimit) {
+                                    //try again
+                                    $.ajax(this);
+                                    return;
+                                }
+
+                                thisClass.getNoPTM(chnid);
+
+                                return;
+                            }
+                        });
+                    }
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    thisClass.getNoPTM(chnid);
+                  }
+                });
+            }
+        }
+
+        parsePTM(data, chnid) { let ic = this.icn3d, me = ic.icn3dui;
+
+            if(me.bNode) {
+                //if(!ic.resid2ptm) ic.resid2ptm = {};
+                ic.resid2ptm = {};
+                ic.resid2ptm[chnid] = [];
+            }
+
+            let ptmHash = {};
+            for(let i = 0, il = data.features.length; i < il; ++i) {
+                let feature = data.features[i];
+
+                if(feature.category == 'PTM' && feature.type != 'DISULFID' && feature.type != 'CROSSLNK') {
+                    let title = '';
+                    if(feature.type == 'CARBOHYD') {
+                        //title = 'Glycosylation, ' + feature.description;
+                        title = 'Glycosylation';
+                    }
+                    else if(feature.type == 'LIPID') {
+                        title = 'Lipidation, ' + feature.description;
+                    }
+                    else if(feature.description.indexOf('Phospho') == 0) {
+                        title = 'Phosphorylation';
+                    }
+                    else if(feature.description) {
+                        title = feature.description;
+                    }
+                    else {
+                        title = feature.type;
+                    }
+
+                    if(!ptmHash[title]) ptmHash[title] = [];
+                    ptmHash[title].push(feature);
+                }
+            }
+
+            let index = 0;
+            let html = '', html2 = '', html3 = ''; 
+            html += '<div id="' + ic.pre + chnid + '_ptmseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
+            html2 += html;
+            html3 += html;
+            let stucture = chnid.substr(0, chnid.indexOf('_'));
+
+            for(let ptm in ptmHash) {
+                let ptmArray = ptmHash[ptm];
+                //"type": "MOD_RES", "category": "PTM", "description": "4-hydroxyproline", "begin": "382", "end": "382",
+                let resPosArray = [];
+                let bCoordinates = false;
+                for(let i = 0, il = ptmArray.length; i < il; ++i) {
+                    let begin = parseInt(ptmArray[i].begin);
+                    let end = parseInt(ptmArray[i].end);
+
+
+                    for(let j = begin; j <= end; ++j) {
+                        if(stucture.length > 5) { // UniProt
+                            resPosArray.push(j - 1); // 0-based
+                        } 
+                        else { // PDB                       
+                            if(ic.UPResi2ResiPosPerChain[chnid][j]) resPosArray.push(ic.UPResi2ResiPosPerChain[chnid][j]);
+                        }
+                        
+                        if(!bCoordinates && ic.residues.hasOwnProperty(chnid + '_' + j)) {
+                            bCoordinates = true;
+                        }
+                    }
+                }
+
+                if(resPosArray.length == 0) continue;
+
+                let resCnt = resPosArray.length;
+                let title = 'PTM: ' + ptm;
+                if(title.length > 17) title = title.substr(0, 17) + '...';
+                let fulltitle = ptm;
+
+                let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
+
+                let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" ptm="ptm" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_ptm_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+                let htmlTmp = '<span class="icn3d-seqLine">';
+                html3 += htmlTmp2 + htmlTmp3 + '<br>';
+                html += htmlTmp2 + htmlTmp3 + htmlTmp;
+                html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
+                let pre = 'ptm' + index.toString();
+                //var widthPerRes = ic.seqAnnWidth / ic.maxAnnoLength;
+                let prevEmptyWidth = 0;
+                let prevLineWidth = 0;
+                let widthPerRes = 1;
+                for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
+                    html += ic.showSeqCls.insertGap(chnid, i, '-');
+                    if(resPosArray.indexOf(i) != -1) {
+                        let cFull = ic.giSeq[chnid][i];
+                        let c = cFull;
+                        if(cFull.length > 1) {
+                            c = cFull[0] + '..';
+                        }
+                        let pos = ic.annoCddSiteCls.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+
+                        html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                        if(me.bNode) {
+                            let obj = {};
+                            obj[chnid + '_' + pos] = 'PTM: ' + ptm;
+                            ic.resid2ptm[chnid].push(obj);
+                        }
+
+                        html2 += ic.showSeqCls.insertGapOverview(chnid, i);
+                        let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                        //if(emptyWidth < 0) emptyWidth = 0;
+                        if(emptyWidth >= 0) {
+                            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+                            html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
+                            prevEmptyWidth += emptyWidth;
+                            prevLineWidth += widthPerRes;
+                        }
+                    }
+                    else {
+                        html += '<span>-</span>'; //'<span>-</span>';
+                    }
+                }
+                htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
+                htmlTmp += '</span>';
+                htmlTmp += '<br>';
+                html += htmlTmp;
+                html2 += htmlTmp;
+
+                ++index;
+            }
+
+            html += '</div>';
+            html2 += '</div>';
+            html3 += '</div>';
+
+            $("#" + ic.pre + "dt_ptm_" + chnid).html(html);
+            $("#" + ic.pre + "ov_ptm_" + chnid).html(html2);
+            $("#" + ic.pre + "tt_ptm_" + chnid).html(html3);
+
+            // add here after the ajax call
+            ic.showAnnoCls.enableHlSeq();
+            ic.bAjaxPTM = true;
+        }
+
+        getNoPTM(chnid) { let ic = this.icn3d; ic.icn3dui;
+            console.log( "No PTM data were found for the chain " + chnid + "..." );
+       
+            $("#" + ic.pre + "dt_ptm_" + chnid).html('');
+            $("#" + ic.pre + "ov_ptm_" + chnid).html('');
+            $("#" + ic.pre + "tt_ptm_" + chnid).html('');
+
+            // add here after the ajax call
+            ic.showAnnoCls.enableHlSeq();
+            ic.bAjaxPTM = true;
+            if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+        }
     }
 
     /**
@@ -40873,7 +41211,8 @@ var icn3d = (function (exports) {
             this.setAnnoSeqBase(false);
         }
         setAnnoSeqBase(bShow) {  let ic = this.icn3d; ic.icn3dui;
-            let itemArray = ['site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+            //let itemArray = ['site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+            let itemArray = ['cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'interaction'];
             for(let i in itemArray) {
                 let item = itemArray[i];
                 if(bShow) {
@@ -40885,7 +41224,8 @@ var icn3d = (function (exports) {
             }
         }
         setAnnoTabBase(bChecked) {  let ic = this.icn3d; ic.icn3dui;
-            let itemArray = ['all', 'binding', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            //let itemArray = ['all', 'binding', 'ptm', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            let itemArray = ['all', 'cdd', 'clinvar', 'snp', 'binding', 'ptm', 'ssbond', 'crosslink', 'transmem', '3dd', 'custom', 'interact'];
             for(let i in itemArray) {
                 let item = itemArray[i];
                 if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
@@ -40897,10 +41237,11 @@ var icn3d = (function (exports) {
             this.updateClinvar();
             this.updateSnp();
             this.updateDomain();
-            this.updateInteraction();
+            this.updatePTM();
             this.updateSsbond();
             this.updateCrosslink();
             this.updateTransmem();
+            this.updateInteraction();
         }
         hideAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
             this.setAnnoTabBase(false);
@@ -40952,6 +41293,11 @@ var icn3d = (function (exports) {
                 $("[id^=" + ic.pre + "interaction]").show();
                 ic.bInteractionShown = false;
                 this.updateInteraction();
+            }
+            if($("#" + ic.pre + "anno_ptm").length && $("#" + ic.pre + "anno_ptm")[0].checked) {
+                $("[id^=" + ic.pre + "ptm]").show();
+                ic.bPTMShown = false;
+                this.updatePTM();
             }
             if($("#" + ic.pre + "anno_custom").length && $("#" + ic.pre + "anno_custom")[0].checked) {
                 $("[id^=" + ic.pre + "custom]").show();
@@ -41033,6 +41379,15 @@ var icn3d = (function (exports) {
         hideAnnoTabInteraction() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "interaction]").hide();
             if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
+        }
+        setAnnoTabPTM() {  let ic = this.icn3d; ic.icn3dui;
+            $("[id^=" + ic.pre + "ptm]").show();
+            if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = true;
+            this.updatePTM();
+        }
+        hideAnnoTabPTM() {  let ic = this.icn3d; ic.icn3dui;
+            $("[id^=" + ic.pre + "ptm]").hide();
+            if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = false;
         }
         setAnnoTabSsbond() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "ssbond]").show();
@@ -41145,6 +41500,17 @@ var icn3d = (function (exports) {
             }
             });
 
+            me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", function(e) {
+                if($("#" + ic.pre + "anno_ptm")[0].checked) {
+                    thisClass.setAnnoTabPTM();
+                    me.htmlCls.clickMenuCls.setLogCmd("set annotation ptm", true);
+                }
+                else {
+                    thisClass.hideAnnoTabPTM();
+                    me.htmlCls.clickMenuCls.setLogCmd("hide annotation ptm", true);
+                }
+            });
+
             //$("#" + ic.pre + "anno_custom", "click", function(e) {
             me.myEventCls.onIds("#" + ic.pre + "anno_custom", "click", function(e) {
             if($("#" + ic.pre + "anno_custom")[0].checked) {
@@ -41240,7 +41606,7 @@ var icn3d = (function (exports) {
             }
         }
         setAnnoDisplay(display, prefix) { let ic = this.icn3d; ic.icn3dui;
-            let itemArray = ['giseq', 'custom', 'site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+            let itemArray = ['giseq', 'custom', 'site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
             for(let i in itemArray) {
                 let item = itemArray[i];
                 $("[id^=" + ic.pre + prefix + "_" + item + "]").attr('style', display);
@@ -41310,6 +41676,15 @@ var icn3d = (function (exports) {
                 }
             }
             ic.bInteractionShown = true;
+        }
+        updatePTM() { let ic = this.icn3d; ic.icn3dui;
+            if(ic.bPTMShown === undefined || !ic.bPTMShown) {
+                for(let chainid in ic.PTMChainbase) {
+                    let chainidBase = ic.PTMChainbase[chainid];
+                    ic.annoPTMCls.showPTM(chainid, chainidBase);
+                }
+            }
+            ic.bPTMShown = true;
         }
         updateSsbond() { let ic = this.icn3d; ic.icn3dui;
             if(ic.bSSbondShown === undefined || !ic.bSSbondShown) {
@@ -59939,10 +60314,17 @@ var icn3d = (function (exports) {
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom" + me.htmlCls.space2 + "</span></td>";
             html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains" + me.htmlCls.space2 + "</span></td>";
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs" + me.htmlCls.space2 + "</span></td>";
-            html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
+            
+            // if(me.cfg.mmdbid != undefined || me.cfg.pdbid != undefined || me.cfg.mmtfid != undefined || me.cfg.mmcifid != undefined) { // PDB
+            //     html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ptm' disabled>PTM (UniProt)" + me.htmlCls.space2 + "</span></td>";
+            // }
+            // else {
+                html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ptm'>PTM (UniProt)" + me.htmlCls.space2 + "</span></td>";
+            // }
             html += "<td></td>";
             html += "</tr><tr>";
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
+            html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
             if(me.cfg.opmid !== undefined) {
                 html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
@@ -60319,10 +60701,7 @@ var icn3d = (function (exports) {
                     ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                 }
      
-                // save the current selection
-                //ic.selectionCls.saveSelectionPrep();
-                //let name = 'realignSetsByStruct';
-                //ic.selectionCls.saveSelection(name, name);
+                me.cfg.aligntool = 'vast';
      
                 ic.realignParserCls.realignOnStructAlign();
                 if(nameArray.length > 0) {
@@ -66784,6 +67163,7 @@ var icn3d = (function (exports) {
 
         this.annoCddSiteCls = new AnnoCddSite(this);
         this.annoContactCls = new AnnoContact(this);
+        this.annoPTMCls = new AnnoPTM(this);
         this.annoCrossLinkCls = new AnnoCrossLink(this);
         this.annoDomainCls = new AnnoDomain(this);
         this.annoSnpClinVarCls = new AnnoSnpClinVar(this);
@@ -67048,7 +67428,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.13.2';
+        this.REVISION = '3.14.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

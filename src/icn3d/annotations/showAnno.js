@@ -278,6 +278,8 @@ class ShowAnno {
             ++i;
         }
         ic.interactChainbase = me.hashUtilsCls.unionHash(ic.interactChainbase, chemical_chainid);
+        ic.PTMChainbase = me.hashUtilsCls.unionHash(ic.PTMChainbase, ic.protein_chainid);
+
         ic.ssbondChainbase = me.hashUtilsCls.unionHash(ic.ssbondChainbase, ic.protein_chainid);
         ic.ssbondChainbase = me.hashUtilsCls.unionHash(ic.ssbondChainbase, chemical_chainid);
         ic.crosslinkChainbase = me.hashUtilsCls.unionHash(ic.crosslinkChainbase, ic.protein_chainid);
@@ -309,8 +311,10 @@ class ShowAnno {
             //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
             let categoryStr =(index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
             let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
+            let structure = chnid.substr(0, chnid.indexOf('_'));
+            let chainLink = (structure.length > 5) ? '<a href="https://alphafold.ebi.ac.uk/entry/' + structure + '" target="_blank">' + chnid + '</a>' : chnid;
             let chainHtml = "<div id='" + ic.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr
-                + "<span style='font-weight:bold;'>Annotations of " + chnid
+                + "<span style='font-weight:bold;'>Annotations of " + chainLink
                 + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term="
                 + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>"
                 + geneLink + "&nbsp;&nbsp;&nbsp;"
@@ -323,7 +327,8 @@ class ShowAnno {
                 + this.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
             $("#" + ic.pre + "dl_annotations").append(chainHtml);
-            let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            //let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'ptm', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
+            let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
             // dt: detailed view, hide by default; ov: overview, show by default
             for(let i in itemArray) {
                 let item = itemArray[i];
