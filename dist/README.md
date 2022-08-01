@@ -6,7 +6,7 @@
 
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>The complete package of iCn3D</b> including Three.js and jQuery is in the directory "dist" after you get the source code with the "Code" button. 
 * <b>View a 3D structure in iCn3D</b>: 
-    Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
+    Open the link https://structure.ncbi.nlm.nih.gov/icn3d, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
     As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. 
 
@@ -101,6 +101,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[Antechamber](http://ambermd.org/antechamber/ac.html)**: used to add partial charges to ligands.
 * **[SymD](https://symd.nci.nih.gov/)**: used to calculate symmetry dynamically.
 * **[scap/Jackal](http://honig.c2b2.columbia.edu/scap)**: used to predict side chain conformation dynamically.
+* **[TM-align](https://zhanggroup.org/TM-align/)**: used to align two chains of 3D structures.
 
 ## Tools based on
 
@@ -112,6 +113,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
 * **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "Analysis > H-Bonds & Interactions" is based on Force-Directed Graph.
 * **[py3Dmol](https://pypi.org/project/py3Dmol/)**: The Jupyter Notebook widget "icn3dpy" is based on py3Dmol.
+* **[Post-Translational Modification (PTM)](https://www.ebi.ac.uk/proteins/api/doc/#/features)**: The PTM data are from UniProt.
 
 ## Building
 
