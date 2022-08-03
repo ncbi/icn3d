@@ -290,9 +290,12 @@ class Selection {
 
     //Show the selection.
     showSelection() { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.dAtoms = {};
+        //ic.dAtoms = {};
 
-        if(Object.keys(ic.hAtoms).length == 0) this.selectAll_base();
+        if(Object.keys(ic.hAtoms).length == 0) {
+            //this.selectAll_base();
+            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        }
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);

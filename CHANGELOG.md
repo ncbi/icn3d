@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.14.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.1.zip) was release on August 3, 2022. Enabled to show mutation analysis for currently loaded structures or structures to be loaded with PDB IDs or AlphaFold UniProt IDs in the menu "Analysis > Mutation".
+
 [icn3d-3.14.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.0.zip) was release on August 1, 2022. Added Post-Translational Modification (PTM) annotation from UniProt.
 
 [icn3d-3.13.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.2.zip) was release on July 27, 2022. jQuery UI was upgraded from version 1.12.1 to 1.13.2.

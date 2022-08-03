@@ -189,7 +189,8 @@ class SelectByCommand {
                  bResidueId = true;
                }
                else {
-                 if(residueStrArray[j][0] === '3' && residueStrArray[j].length > 1 &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                 //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3') { // three letter residue string, such as :3LysArg or :3ZN
                    let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
                    bResidueArrayThree = true;
@@ -304,8 +305,9 @@ class SelectByCommand {
                                chainSeq +=(ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ' ';
                            }
                            else if(bResidueArrayThree) {
-                               let  threeLetter = me.utilsCls.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name);
-                               chainSeq +=(threeLetter.length == 3) ? threeLetter : '   ';
+                               let  threeLetter = me.utilsCls.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name)
+
+                               chainSeq +=(threeLetter.length == 3) ? threeLetter : threeLetter.padEnd(3, '_');
                            }
                            resiArray.push(ic.chainsSeq[molecule_chain][s].resi);
                        }
