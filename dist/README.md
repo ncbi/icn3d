@@ -90,11 +90,14 @@ iCn3D accepts the following IDs:
 
 iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn3D PNG. The files can be passed through a url, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https://files.rcsb.org/view/1gpk.pdb](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https://files.rcsb.org/view/1gpk.pdb), [https://www.ncbi.nlm.nih.gov/Structure/icn3d2/?type=mmcif&url=https://files.rcsb.org/view/1GPK.cif](https://www.ncbi.nlm.nih.gov/Structure/icn3d2/?type=mmcif&url=https://files.rcsb.org/view/1GPK.cif), or [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=icn3dpng&url=https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/3GVU.png](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=icn3dpng&url=https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/3GVU.png). See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html) or the [Doc page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-## Third-party libraries used
+## Third-party libraries used in Frontend
 
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
-* **[D3.js](https://d3js.org/)**: used to draw force-directed graph.
+* **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "Analysis > H-Bonds & Interactions" is based on Force-Directed Graph.
+
+## Third-party libraries used in Backend
+
 * **[DelPhi](http://honig.c2b2.columbia.edu/delphi)**: used to calculate electrostatic potential dynamically and is <b>licensed</b> from Columbia University.
 * **[DelPhiPKa](http://compbio.clemson.edu/pka_webserver)**: used to add hydrogens and partial charges to proteins and nucleotides.
 * **[Open Babel](http://openbabel.org/wiki/Main_Page)**: used to add hydrogens to ligands.
@@ -110,9 +113,8 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[3Dmol](https://3dmol.csb.pitt.edu/)**: The surface generation and labeling are based on 3Dmol.
 * **[NGL Viewer](https://github.com/arose/ngl)**: The Imposter shaders are based on NGL Viewer.
 * **[LiteMol](https://github.com/dsehnal/LiteMol)**: The parser of EM density data from PDBe is based on LiteMol.
-* **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
-* **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "Analysis > H-Bonds & Interactions" is based on Force-Directed Graph.
 * **[py3Dmol](https://pypi.org/project/py3Dmol/)**: The Jupyter Notebook widget "icn3dpy" is based on py3Dmol.
+* **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
 * **[Post-Translational Modification (PTM)](https://www.ebi.ac.uk/proteins/api/doc/#/features)**: The PTM data are from UniProt.
 
 ## Building

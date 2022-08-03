@@ -14685,7 +14685,10 @@ var icn3d = (function (exports) {
            ic.hAtoms = {};
            this.setHAtomsFromSets(orArray, 'or');
 
-           if(Object.keys(ic.hAtoms).length == 0) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+           if(Object.keys(ic.hAtoms).length == 0) {
+               //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+           }
            this.setHAtomsFromSets(andArray, 'and');
 
            this.setHAtomsFromSets(notArray, 'not');
@@ -35410,7 +35413,8 @@ var icn3d = (function (exports) {
                      bResidueId = true;
                    }
                    else {
-                     if(residueStrArray[j][0] === '3' && residueStrArray[j].length > 1 &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                     //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                     if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3') { // three letter residue string, such as :3LysArg or :3ZN
                        let  tmpStr = residueStrArray[j].toUpperCase();
                        threeLetterResidueStr = tmpStr.substr(1);
                        bResidueArrayThree = true;
@@ -35526,7 +35530,8 @@ var icn3d = (function (exports) {
                                }
                                else if(bResidueArrayThree) {
                                    let  threeLetter = me.utilsCls.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name);
-                                   chainSeq +=(threeLetter.length == 3) ? threeLetter : '   ';
+
+                                   chainSeq +=(threeLetter.length == 3) ? threeLetter : threeLetter.padEnd(3, '_');
                                }
                                resiArray.push(ic.chainsSeq[molecule_chain][s].resi);
                            }
@@ -43419,9 +43424,12 @@ var icn3d = (function (exports) {
 
         //Show the selection.
         showSelection() { let  ic = this.icn3d, me = ic.icn3dui;
-            ic.dAtoms = {};
+            //ic.dAtoms = {};
 
-            if(Object.keys(ic.hAtoms).length == 0) this.selectAll_base();
+            if(Object.keys(ic.hAtoms).length == 0) {
+                //this.selectAll_base();
+                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+            }
 
             ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
             ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
@@ -45278,7 +45286,8 @@ var icn3d = (function (exports) {
                     }
                     else { // bSymd, subset, and one chain
                         if(Object.keys(ic.hAtoms).length == 0) {
-                            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                            //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
                         }
 
                         // pick the first 1/order of selection
@@ -59474,11 +59483,19 @@ var icn3d = (function (exports) {
             html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID or AlphaFold UniProt ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/><br/>';
             html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
 
-            html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";
-            html += "<option value='mmdbid' selected>PDB ID</option>";
-            html += "<option value='afid'>AlphaFold UniProt ID</option>";
-            html += "</select><br/><br/>";
-            
+            // html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";
+            // html += "<option value='mmdbid' selected>PDB ID</option>";
+            // html += "<option value='afid'>AlphaFold UniProt ID</option>";
+            // html += "</select><br/><br/>";
+     
+            html += '<b>ID Type</b>: ';
+            html += '<input type="radio" name="' + me.pre + 'idsource" id="' + me.pre + 'type_mmdbid" value="mmdbid" checked>PDB ID';
+            html += '<input type="radio" name="' + me.pre + 'idsource" id="' + me.pre + 'type_afid" value="afid" style="margin-left:20px">AlphaFold UniProt ID<br><br>';
+
+            html += '<b>Show Mutation in</b>: ';
+            html += '<input type="radio" name="' + me.pre + 'pdbsource" id="' + me.pre + 'showin_currentpage" value="currentpage">Current Page';
+            html += '<input type="radio" name="' + me.pre + 'pdbsource" id="' + me.pre + 'showin_newpage" value="newpage" style="margin-left:20px" checked>New Page<br><br>';
+
             html += me.htmlCls.buttonStr + "reload_mutation_3d' title='Show the mutations in 3D using the scap program'>3D with scap</button>";
             html += me.htmlCls.buttonStr + "reload_mutation_inter' style='margin-left:20px' title='Show the mutations in 3D and the change of interactions'>Interactions</button>";
             html += me.htmlCls.buttonStr + "reload_mutation_pdb' style='margin-left:20px' title='Show the mutations in 3D and export the PDB of the mutant within 10 angstrom'>PDB</button>";
@@ -61068,55 +61085,127 @@ var icn3d = (function (exports) {
                 window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
-               let idsource = $("#" + me.pre + "idsource").val();
-               let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));           
-               me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
-               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+               //let idsource = $("#" + me.pre + "idsource").val();
+               let idsource, pdbsource;
+               if($("#" + me.pre + "type_mmdbid").is(":checked")) {
+                    idsource = 'mmdbid';
+               }
+               else {
+                    idsource = 'afid';
+               }
+               if($("#" + me.pre + "showin_currentpage").is(":checked")) {
+                    pdbsource = 'currentpage';
+                }
+                else {
+                    pdbsource = 'newpage';
+                }
+
+               if(pdbsource == 'currentpage') {
+                    let snp = mutationids;
+
+                    ic.scapCls.retrieveScap(snp);
+                    me.htmlCls.clickMenuCls.setLogCmd('scap 3d ' + snp, true);
+                    me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+               }
+               else {
+                    let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));           
+                    me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+               }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
-               let idsource = $("#" + me.pre + "idsource").val();
-               let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
-               me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
-               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+               //let idsource = $("#" + me.pre + "idsource").val();
+               let idsource, pdbsource;
+               if($("#" + me.pre + "type_mmdbid").is(":checked")) {
+                    idsource = 'mmdbid';
+               }
+               else {
+                    idsource = 'afid';
+               }
+               if($("#" + me.pre + "showin_currentpage").is(":checked")) {
+                    pdbsource = 'currentpage';
+                }
+                else {
+                    pdbsource = 'newpage';
+                }
+
+               if(pdbsource == 'currentpage') {
+                    let snp = mutationids;
+
+                    let bPdb = true;
+                    ic.scapCls.retrieveScap(snp, undefined, bPdb);
+                    me.htmlCls.clickMenuCls.setLogCmd('scap pdb ' + snp, true);
+               }
+               else {
+                    let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+                    me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+               }
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
-               let idsource = $("#" + me.pre + "idsource").val();
-
-               let mutationArray = mutationids.split(',');
-               let residArray = [];
-               for(let i = 0, il = mutationArray.length; i < il; ++i) {
-                   let pos = mutationArray[i].lastIndexOf('_');
-                   let resid = mutationArray[i].substr(0, pos);
-                   residArray.push(resid);
+               //let idsource = $("#" + me.pre + "idsource").val();
+               let idsource, pdbsource;
+               if($("#" + me.pre + "type_mmdbid").is(":checked")) {
+                    idsource = 'mmdbid';
                }
-
-               let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
-
-               // if no structures are loaded yet
-               if(!ic.structures) {
-                   ic.structures = {};
-                   ic.structures[mmdbid] = 1;
+               else {
+                    idsource = 'afid';
                }
-               ic.resid2specCls.residueids2spec(residArray);
+               if($("#" + me.pre + "showin_currentpage").is(":checked")) {
+                    pdbsource = 'currentpage';
+                }
+                else {
+                    pdbsource = 'newpage';
+                }
 
-               me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
-               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+               if(pdbsource == 'currentpage') {
+                    let snp = mutationids;
+
+                    let bInteraction = true;
+                    ic.scapCls.retrieveScap(snp, bInteraction);
+                    me.htmlCls.clickMenuCls.setLogCmd('scap interaction ' + snp, true);
+
+                    let idArray = snp.split('_'); //stru_chain_resi_snp
+                    let select = '.' + idArray[1] + ':' + idArray[2];
+                    let name = 'snp_' + idArray[1] + '_' + idArray[2];
+                    me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
+                    me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+                    me.htmlCls.clickMenuCls.setLogCmd("adjust dialog dl_linegraph", true);
+                    me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+               }
+               else {
+                    let mutationArray = mutationids.split(',');
+                    let residArray = [];
+                    for(let i = 0, il = mutationArray.length; i < il; ++i) {
+                        let pos = mutationArray[i].lastIndexOf('_');
+                        let resid = mutationArray[i].substr(0, pos);
+                        residArray.push(resid);
+                    }
+
+                    let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+
+                    // if no structures are loaded yet
+                    if(!ic.structures) {
+                        ic.structures = {};
+                        ic.structures[mmdbid] = 1;
+                    }
+                    ic.resid2specCls.residueids2spec(residArray);
+
+                    me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+               }
             });
 
         //    },
@@ -67431,7 +67520,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.14.0';
+        this.REVISION = '3.14.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -103,7 +103,8 @@ class ApplySymd {
                 }
                 else { // bSymd, subset, and one chain
                     if(Object.keys(ic.hAtoms).length == 0) {
-                        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                        //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
                     }
 
                     // pick the first 1/order of selection
