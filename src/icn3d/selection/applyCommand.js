@@ -1508,7 +1508,7 @@ class ApplyCommand {
         else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
         else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
         else if(cmd.indexOf('graph interaction pairs') == 0) return hbondIntStr + ' > 2D Graph(Force-Directed)';
-        else if(cmd.indexOf('export canvas') == 0) return 'File > Save Files > iCn3D PNG Image';
+        else if(cmd.indexOf('export canvas') == 0) return 'File > Save File > iCn3D PNG Image';
         else if(cmd == 'export stl file') return printStr + 'STL';
         else if(cmd == 'export vrml file') return printStr + 'VRML(Color)';
         else if(cmd == 'export stl stabilizer file') return printStr + 'STL W/ Stabilizers';

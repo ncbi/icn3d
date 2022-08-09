@@ -583,7 +583,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += "<li><span>Save Files</span>";
+        html += "<li><span>Save File</span>";
         html += "<ul>";
         //html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
 
@@ -1770,17 +1770,29 @@ class SetMenu {
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
 
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
-
-        html += "<li><span>Tutorial</span>";
-        html += "<ul>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#useicn3d' target='_blank'>Use iCn3D</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#videos' target='_blank'>iCn3D Videos</a></li>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
-        html += "</ul>";
-        html += "</li>";
 
-        html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+        html += "<li><span>FAQ</span>";
+
+        html += "<ul>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#viewstru' target='_blank'><span>View structure</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#tfstru' target='_blank'><span>Transform Structure</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#selsubset' target='_blank'><span>Select Subsets</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#changestylecolor' target='_blank'><span>Change Style/Color</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview' target='_blank'><span>Save Work</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno' target='_blank'><span>Show Annotations</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno' target='_blank'><span>Export Annotations</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis' target='_blank'><span>Interactions Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis' target='_blank'><span>Mutation Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot' target='_blank'><span>Electrostatic Pot.</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast' target='_blank'><span>Similar PDB</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek' target='_blank'><span>Similar AlphaFold/PDB</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul' target='_blank'><span>Align Multiple Structures</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis' target='_blank'><span>Batch Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d' target='_blank'><span>Embed iCn3D</span></a></li>";
+        html += "</ul>";
+
+        //html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
 
         html += "<li><span>Source Code</span>";
@@ -1794,7 +1806,10 @@ class SetMenu {
         if(!me.cfg.simplemenu) {
             html += "<li><span>Develop</span>";
             html += "<ul>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>How to Embed</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>Embed iCn3D</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
+    
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";

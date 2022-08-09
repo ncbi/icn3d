@@ -150,14 +150,29 @@ pre span {color: red;}
 <ul class='icn3d-mn-item'>
 <li><a href="#about"><span>About iCn3D</span></a></li>
 <li><a href="#gallery"><span>Live Gallery</span></a></li>
-<li><span>Tutorial</span>
-  <ul>
-    <li><a href="#useicn3d"><span>Use iCn3D</span></a></li>
-    <li><a href="#videos"><span>iCn3D Videos</span></a></li>
-    <li><a href="#parameters"><span>URL Parameters</span></a></li>
-    <li><a href="#commands"><span>Commands</span></a></li>
-  </ul></li>
-<li><a href="https://www.ncbi.nlm.nih.gov/structure"><span>Search Structure</span></a></li>
+<li><a href="#videos"><span>iCn3D Videos</span></a></li>
+
+<li><a href="#faq"><span>FAQ</span></a>
+    <ul>
+        <li><a href="#viewstru"><span>View structure</span></a>
+        <li><a href="#tfstru"><span>Transform Structure</span></a>
+        <li><a href="#selsubset"><span>Select Subsets</span></a>
+        <li><a href="#changestylecolor"><span>Change Style/Color</span></a>
+        <li><a href="#saveview"><span>Save Work</span></a>
+        <li><a href="#showanno"><span>Show Annotations</span></a>
+        <li><a href="#exportanno"><span>Export Annotations</span></a>
+        <li><a href="#interanalysis"><span>Interactions Analysis</span></a>
+        <li><a href="#mutationanalysis"><span>Mutation Analysis</span></a>
+        <li><a href="#elecpot"><span>Electrostatic Pot.</span></a>
+        <li><a href="#simivast"><span>Similar PDB</span></a>
+        <li><a href="#simifoldseek"><span>Similar AlphaFold/PDB</span></a>
+        <li><a href="#alignmul"><span>Align Multiple Structures</span></a>
+        <li><a href="#batchanalysis"><span>Batch Analysis</span></a>
+        <li><a href="#embedicn3d"><span>Embed iCn3D</span></a>
+    </ul>
+</li>
+
+<!--li><a href="https://www.ncbi.nlm.nih.gov/structure"><span>Search Structure</span></a></li-->
 <li><a href="#citing"><span>Citing iCn3D</span></a></li>
 <li><span>Source Code</span>
   <ul>
@@ -167,7 +182,9 @@ pre span {color: red;}
   </ul></li>
 <li><span>Develop</span>
   <ul>
-    <li><a href="#HowToUse"><span>Embed</span></a></li>
+    <li><a href="#HowToUse"><span>Embed iCn3D</span></a></li>
+    <li><a href="#parameters"><span>URL Parameters</span></a></li>
+    <li><a href="#commands"><span>Commands</span></a></li>
     <li><a href="#datastructure"><span>Data Structure</span></a></li>
     <li><a href="#classstructure"><span>Class Structure</span></a></li>
     <li><a href="#addclass"><span>Add New Classes</span></a></li>
@@ -225,7 +242,7 @@ You first open a structure in "File" menu, then select a subset in "Select" menu
 Each operation has a corresponding command as listed at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands. These commands will show up in the command/log window right beneath the 3D display. To view all previous commands, you can click "Share Link" in "File" menu. Both the original URL and the short URL can be used to display your custom view.<br/>
 <br/>
 <li><b>Save your work</b><br/>
-You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br/>
+You can save "iCn3D PNG Image" in the menu "File > Save File". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br/>
 <br/>
 You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA">custom display</a> was generated.<br/>
 <br/>
@@ -666,53 +683,79 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <a name="Tutorial"></a>
 <h3>Tutorial</h3>
 
-<span class="anchor" id="useicn3d"></span>
-<a name="useicn3d"></a>
-<h3>Use iCn3D<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
-<ul>
-    <li><a name="HowToUseStep4"></a><b>Rotate/translate/zoom the 3D structure:</b></li>
-    <ul>
-      <li>Rotate
-          <ul>
-              <li>Left mouse (Click & Drag)</li>
-              <li>Key L: left</li>
-              <li>Key J: right</li>
-              <li>Key I: up</li>
-              <li>Key M: down</li>
-              <li>Shift + Key L: left 90&deg;</li>
-              <li>Shift + Key J: right 90&deg;</li>
-              <li>Shift + Key I: up 90&deg;</li>
-              <li>Shift + Key M: down 90&deg;</li>
-          </ul>
-      </li>
-      <li>Zoom
-          <ul>
-              <li>Middle mouse (Pinch & Spread)</li>
-              <li>Key Z: zoom in</li>
-              <li>Key X: zoom out</li>
-          </ul>
-      </li>
-      <li>Translate
-          <ul>
-              <li>Right mouse (Two Finger Click & Drag)</li>
-          </ul>
-      </li>
-    </ul>
-    <br>
+<span class="anchor" id="videos"></span>
+<a name="videos"></a>
+<h3>iCn3D Videos<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 
-    <li><span class="anchor" id="vr"></span><a name="vr"></a><b>Virtual Reality (VR) view in iCn3D:</b></li>
+<ul>
+<li><a href="https://youtu.be/w_v5GUmTh5c">iCn3D Tutorial Video (2022)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial.pptx">Slide</a></li><br>
+
+<li><a href="https://youtu.be/qzhuomrJPnI">Virtual Reality (VR) and Augmented Reality (AR) views in iCn3D (2022)</a></li><br>
+<li><a href="https://youtu.be/vfawu0qrNTA">Exploring 3D Molecular Structures with iCn3D, by Dr. Salsbury in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/alexa_ismb_2022.pdf">Slide</a></li><br>
+<li><a href="https://youtu.be/Rai-0pWusP8">iCn3D in Teaching and OERs, by Dr. Jakubowski in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/henry_ismb_2022.pptx">Slide</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=QCSNqwgp2xo">iCn3D Tutorial by Dr. Jakubowski in July 2021</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D_Tutorial_by_Jakubowski_072121.pdf">Slide</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=Mj77EFgAAQM&list=PLSAXB_etwzD824Q8TMqWPHOUv5z8gIcs5&index=8">iCn3D Tutorials by Digital World Biology (2021-)</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=7GGw4S9tE9E">iCn3D Tutorial by BioMolViz Group (2021)</a></li>
+</ul>
+
+<span class="anchor" id="faq"></span>
+<a name="faq"></a>
+<h3>Frequently Asked Questions<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<ul>
+<li><span class="anchor" id="viewstru"></span><a name="viewstru"></a><b>Q: How to view a 3D structure in iCn3D?</b><br>
+    You can use iCn3D to view a 3D structure in different platforms such as web browser, Jupyter Notebook, Virtual Reality, or Augmented Reality.<br>
+    <br>
+    To view in a web browser, you can open the link <a href="https://structure.ncbi.nlm.nih.gov/icn3d">https://structure.ncbi.nlm.nih.gov/icn3d</a> and input PDB ID(s) or AlphaFold UniProt ID(s) with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". You can also open several PDB files with the menu "File > Open File > PDB Files (appendable)".<br>
+    <br>
+    To view 3D structures in Jupyter Notebook, you can follow the instructions at <a href="https://pypi.org/project/icn3dpy/" taget="_blank">icn3dpy</a>.<br>
+    <br>
+    <span class="anchor" id="vr"></span><a name="vr"></a><b>Virtual Reality (VR) view in iCn3D:</b><br>
     You need a VR headset to view 3D structures in VR using iCn3D. In your VR browser, load a 3D structure in iCn3D and click the button "ENTER VR" at the bottom center of the page to enter the VR view.<br>
     <br>
     Currently you can use the right trigger to move forward and the left trigger to move backward.<br>
     <br>
-
-    <li><span class="anchor" id="ar"></span><a name="ar"></a><b>Augmented Reality (AR) view in iCn3D:</b></li>
+    <span class="anchor" id="ar"></span><a name="ar"></a><b>Augmented Reality (AR) view in iCn3D:</b><br>
     You need to use the Chrome browser in an Android cell phone (not iPhone) to view 3D structures in AR using iCn3D. (Some cell phones may require you to install ARCore.) In your iCn3D view, click the button "START AR" at the bottom center of the page to enter the AR view.<br>
     <br>
     Currently you can tap once on the screen to locate a minimized 3D structure in your tapped location, and tap twice quickly to scale up the 3D structure.<br>
     <br>
+</li>
 
-    <li><a name="HowToUseStep5"></a><b>Selcting 3D structure, 2D interactions, and 1D sequences:</b></li>
+<li><span class="anchor" id="tfstru"></span><a name="tfstru"></a><a name="HowToUseStep4"></a><b>Q: How to Rotate/translate/zoom structures in iCn3D?</b>
+    <ul>
+    <li>Rotate
+        <ul>
+            <li>Left mouse (Click & Drag)</li>
+            <li>Key L: left</li>
+            <li>Key J: right</li>
+            <li>Key I: up</li>
+            <li>Key M: down</li>
+            <li>Shift + Key L: left 90&deg;</li>
+            <li>Shift + Key J: right 90&deg;</li>
+            <li>Shift + Key I: up 90&deg;</li>
+            <li>Shift + Key M: down 90&deg;</li>
+        </ul>
+    </li>
+    <li>Zoom
+        <ul>
+            <li>Middle mouse (Pinch & Spread)</li>
+            <li>Key Z: zoom in</li>
+            <li>Key X: zoom out</li>
+        </ul>
+    </li>
+    <li>Translate
+        <ul>
+            <li>Right mouse (Two Finger Click & Drag)</li>
+        </ul>
+    </li>
+    </ul>
+    <br>
+</li>
+
+<li><span class="anchor" id="selsubset"></span><a name="selsubset"></a><a name="HowToUseStep5"></a><b>Q: How to select a subset of structures?</b><br>
+    You can select a subset in 3D structures, 2D interactions, or 1D sequences.<br>
+    <br>
     <div>To pick an atom/residue/strand in the 3D structure, hold "Alt" key and use mouse to pick. Click the second time to deselect. To add more selection to the current selection, hold "Ctrl" key and use mouse to pick. To add a range of selection starting from the current selection, hold "Shift" key and use mouse to pick the ending selection. To change the selected residue to the strand/chain/structure containing the residue, press the up/down arrow. <br/>
     <br/>
     To select chains or interactions in the 2D interactions diagram, click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the "Select -> Advanced" menu.<br/>
@@ -722,26 +765,101 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
     To save the current selection (either on 3D structure, 2D interactions, or 1D sequence), open the menu "Select -> Save Selection", specify the name and description for the selection, and click "Save".
     </div>
     <br>
+</li>
 
-    <li><a name="HowToUseStep7"></a><b>Turn on scroll bars in Mac:</b></li>
-    <div>If you are using Macintosh computer and need to scroll in the sequence dialog, you can turn on the scroll bars as follows: Systems preferences -> GENERAL -> show scroll bars -> check "always".
+<li><span class="anchor" id="changestylecolor"></span><a name="changestylecolor"></a><b>Q: How to change style and color?</b><br>
+    You can use the "Style" menu to change the styles for your currently selected atoms. You can also use it to show surfaces, or change the background color.<br>
+    <br>
+    You can use the "Color" menu to color your currently selected atoms.<br>
+    <br>
+    It's important to remember that any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="saveview"></span><a name="saveview"></a><b>Q: How to save your work?</b><br>
+    There are two ways to save your work: "iCn3D PNG Image" or "Share Link".<br>
+    <br>
+    You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br>
+    <br>
+    You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a custom display was generated.<br>
+    <br>
+    All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="showanno"></span><a name="showanno"></a><b>Q: How to show annotations?</b><br>
+    You can show annotations by clicking the menu "Analysis > Seq. & Annotations". The annotations include "SNPs", "ClinVar", "Conserved Domains", "Functional Sites", "3D Domains", "Interactions", "Disulfide Bonds", "Cross-Linkages", and "PTM (UniProt)". You can also add your own annotations with the button "Add Tack".<br>
+    <br>
+    <a name="HowToUseStep7"></a><b>Turn on scroll bars in Mac:</b><br>
+    <div>If you are using Macintosh computer and need to scroll in the sequences/annotations dialog, you can turn on the scroll bars as follows: Systems preferences -> GENERAL -> show scroll bars -> check "always".
     </div>
-</ul>
+    <br>
+</li>
 
-<span class="anchor" id="videos"></span>
-<a name="videos"></a>
-<h3>iCn3D Videos<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<li><span class="anchor" id="exportanno"></span><a name="exportanno"></a><b>Q: How to export annotations?</b><br>
+    There are three ways to export annotations.<br>
+    <br>
+    First, you can save the annotations in an HTML file by clicking the save icon at the upper right corner of the dialog.<br>
+    <br>
+    Second, you can retrieve the annotations using the Node.js script <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/annotations.js">annotations.js</a>. The description is at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/">icn3dnode</a>". For example, you can use the following command to retrieve Post Translational Modification (PTM) annotation for the AlphaFold UniProt ID Q08426: "node annotations.js Q08426 9".<br>
+    <br>
+    Third, you can retrieve the annotations using the Python script <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url/batch_export_panel.py">batch_export_panel.py</a>. The description is at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url">icn3dpython</a>.<br>
+    <br>
+</li>
 
-<ul>
-<li><a href="https://youtu.be/qzhuomrJPnI">Virtual Reality (VR) and Augmented Reality (AR) views in iCn3D (2022)</a></li>
-<li>Part 1: <a href="https://youtu.be/TgKQutGc9iM">Basic Tutorial Video (2021)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part1.pptx">Slide</a></li>
-<li>Part 2: <a href="https://youtu.be/85Z2_M8ET6g">Advanced Tutorial Video (2021)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part2.pptx">Slide</a><br><br></li>
+<li><span class="anchor" id="interanalysis"></span><a name="interanalysis"></a><b>Q: How to do interactions analysis?</b><br>
+    Once you load structures into iCn3D, you can click the menu "Analysis > Interactions" to analyze the interactions between any two sets. <br>
+    <br>
+    First, you need to define your interested interaction types and their thresholds in the Interactions dialog. Then select two sets. You can check the section <a href="#selsubset">"Select Subsets"</a> to define sets. Finally you can show the interactions in different formats, such as "2D Interaction Network", "2D Interaction Map", etc. If you want to clear the current interaction and try a different interaction analysis, you can click the "Reset" button at the bottom of the Interactions dialog.<br>
+    <br>
+</li>
+<li><span class="anchor" id="mutationanalysis"></span><a name="mutationanalysis"></a><b>Q: How to do mutation analysis ?</b><br>
+    You can start the mutation analysis by clicking the menu "Analysis > Mutation". First you need to define the mutation(s) in the format of "[PDB or AlphaFold ID]_[chain Name]_[residue number]_[Mutant residue in one letter]". Then you can choose whether the ID is PDB ID or AlphaFold UniProt ID. <br>
+    <br>
+    Next, if you have not loaded a structure yet, you can choose "Show Mutation in New Page" to launch the mutation analysis.<br>
+    <br>
+    If you have already loaded a structure, you can choose "Show Mutation in Current Page". Your loaded structure may come from a custom PDB file without a PDB/AlphaFold ID. You can replace "[PDB or AlphaFold ID]" with the real ID such as "STRU" as shown in the "Defined Sets" by clicking the menu "Analysis > Defined Sets".<br>
+    <br>
+    Mutation Analysis can be done only for one structure. If you want to check the effect of mutations between different structures, you can output the current structures as a PDB file, modify the PDB file to have one structure, load the modified PDB, and do mutation analysis on the modified PDB.<br>
+    <br>
+</li>
+<li><span class="anchor" id="elecpot"></span><a name="elecpot"></a><b>Q: How to show electrostatic potential?</b><br>
+    Once you load structures into iCn3D, you can click the menu "Analysis > DelPhi Potential" to show DelPhi electrostatic potential. You can show the potentials on molecular surface, or as equipotential map. You can define the salt concentration and grid size. The pH is set at 7.0.<br>
+    <br>
+    You can also output a PQR file for your structures. The PQR file contains the partial charges and radii information.<br>
+    <br>
+</li>
+<li><span class="anchor" id="simivast"></span><a name="simivast"></a><b>Q: How to find similar PDB structures?</b><br>
+    If you want to find similar PDB structures for an input structure with multiple chains, you can click the menu "File > Search Similar > NCBI VAST+ (PDB Assembly)", input a PDB ID, then click the button "VAST+" to get a list of similar structures. You can expand each similar structure for more details.<br>
+    <br>
+    If you want to find similar PDB chains for an input chain, you can click the menu "File > Search Similar > NCBI VAST (PDB)" to get a popup with two options for the input. The first input option is a PDB chain. You can input the PDB ID and the chain name, then click "VAST" to get a list of similar chains. You can select a few chains to view the alignment in iCn3D. The second input option is a custom PDB file. You can select the PDB file and click "Submit" to launch a VAST neighbor search. The search result shows a list of similar chains. You can select a few chains and show the alignment in iCn3D. (The search result will be accessible only for a week. But you can save your alignment in iCn3D permanently using the menu "File > Save File > iCn3D PNG Image". The saved "iCn3D PNG Image" can be loaded back to iCn3D with the menu "File > Open File > iCn3D PNG Image".)<br>
+    <br>
+</li>
 
-<li><a href="https://youtu.be/vfawu0qrNTA">Exploring 3D Molecular Structures with iCn3D, by Dr. Salsbury in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/alexa_ismb_2022.pdf">Slide</a></li>
-<li><a href="https://youtu.be/Rai-0pWusP8">iCn3D in Teaching and OERs, by Dr. Jakubowski in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/henry_ismb_2022.pptx">Slide</a></li>
-<li><a href="https://www.youtube.com/watch?v=QCSNqwgp2xo">iCn3D Tutorial by Dr. Jakubowski in July 2021</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D_Tutorial_by_Jakubowski_072121.pdf">Slide</a></li>
-<li><a href="https://www.youtube.com/watch?v=Mj77EFgAAQM&list=PLSAXB_etwzD824Q8TMqWPHOUv5z8gIcs5&index=8">iCn3D Tutorials by Digital World Biology (2021-)</a></li>
-<li><a href="https://www.youtube.com/watch?v=7GGw4S9tE9E">iCn3D Tutorial by BioMolViz Group (2021)</a></li>
+<li><span class="anchor" id="simifoldseek"></span><a name="simifoldseek"></a><b>Q: How to find similar AlphaFold or PDB structures?</b><br>
+    If you want to find similar predicted AlphaFold structures, you can click the menu "File > Search Similar > Foldseek (PDB & AlphaFold)", and click the "Foldseek" link in the popup to search similar structures in <a href="https://search.foldseek.com/">Foldseek</a>. If you want to view the alignment of Foldseek in iCn3D, you can input the UniProt IDs or chain names in the popup and align them.<br>
+    <br>
+</li>
+<li><span class="anchor" id="alignmul"></span><a name="alignmul"></a><b>Q: How to align multiple structures?</b><br>
+    To align multiple structures with PDB IDs or AlphaFold UniProt IDs, you can use the menu "File > Align > Multiple Chains". You can choose to align them by structure alignment, sequence alignment, or residue by residue.<br>
+    <br>
+    To align multiple structures loaded from custom PDB files, you can use the menu "File > Realign Selection". You can also choose to align them by structure alignment, sequence alignment, or residue by residue.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="batchanalysis"></span><a name="batchanalysis"></a><b>Q: How to analyze many structures with scripts?</b><br>
+    You can use either Node.js scripts or Python scripts to do batch analysis in command line.<br>
+    <br>
+    You can use Node.js scripts to retrieve any data in iCn3D, even those unavailable in the UI. Some example scripts are listed at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/">icn3dnode</a>" to retrieve annotations, interactions, electrostatic potentials, and surface areas, etc. For example, you can use the following command to retrieve the residues interacting with the ligand "JFM" in the structure with PDB ID 5R7Y: "node ligand.js 5R7Y JFM".<br>
+    <br>
+    You can also use Python scripts to retrieve data in the UI. Some example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url">icn3dpython</a> to retrieve secondary structures, iCn3D PNG Images, JSON data for interactions, etc.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="embedicn3d"></span><a name="embedicn3d"></a><b>Q: How to embed iCn3D?</b><br>
+    You can follow the instruction <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse" target="_blank">here</a>.
+    <br>
+</li>
 </ul>
 
 <span class="anchor" id="parameters"></span>
@@ -981,7 +1099,7 @@ To find icn3d commands and functions, you can first generate a custom view in iC
         </tr>
 
         <tr>
-            <td colspan="3">f) Save Files</td>
+            <td colspan="3">f) Save File</td>
         </tr>
         <tr>
             <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
@@ -2749,15 +2867,19 @@ To modify functions in some classes of iCn3D, you can follow the example of <a h
 
 <h3>RESTful APIs<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 <b>delphi.cgi</b><br>
-The "DelPhi" program calculates electrostatic potentials. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi is to post data to this API with a few parameters. The parameter "pdb2pqr" inputs the Protein Data Bank (PDB) string and outputs the PQR string with atom partial charge and atom size. The parameters "pdb2phi" and "pqr2phi" input the PDB string or PQR string, respectively, and both output the calculated potential. The parameters "gsize" and "salt" are used to define the grid size and salt concentration (M), respectively. The parameter "cube" is used to output the potential in the text format, not the default binary format.<br>
+The "DelPhi" program from the <a href=http://honig.c2b2.columbia.edu/delphi">Honig lab</a> calculates electrostatic potentials. It was <a href="https://github.com/ncbi/icn3d/blob/master/LICENSE.md">licensed</a> to be used in iCn3D by Columbia University. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi is to post data to this API with a few parameters. The parameter "pdb2pqr" inputs the Protein Data Bank (PDB) string and outputs the PQR string with atom partial charge and atom size. The parameters "pdb2phi" and "pqr2phi" input the PDB string or PQR string, respectively, and both output the calculated potential. The parameters "gsize" and "salt" are used to define the grid size and salt concentration (M), respectively. The parameter "cube" is used to output the potential in the text format, not the default binary format.<br>
 <br>
 
 <b>scap.cgi</b><br>
-The "scap" program predicts side chains due to mutations. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi is to post data to this API with a few parameters. The parameters "pdb" and "snp" input the PDB string and the SNP in the format "[chain ID],[residue number],[mutant]". For example, "A,10,K" means that the residue with a residue number 10 in the chain A will be mutated to Lys. The parameter "json=1" outputs the mutant's PDB string in the JSON format. <br>
+The "scap" program from the <a href="http://honig.c2b2.columbia.edu/jackal">Honig lab</a> predicts side chains due to mutations. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi is to post data to this API with a few parameters. The parameters "pdb" and "snp" input the PDB string and the SNP in the format "[chain ID],[residue number],[mutant]". For example, "A,10,K" means that the residue with a residue number 10 in the chain A will be mutated to Lys. The parameter "json=1" outputs the mutant's PDB string in the JSON format. <br>
+<br>
+
+<b>tmalign.cgi</b><br>
+The "TM-align" program from the <a href="https://zhanggroup.org/TM-align/">Zhang lab</a> aligns two structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/tmalign/tmalign.cgi is to post data to this API with two parameters: "pdb_query" and "pdb_target", which are the query and target PDB files, respectively. <br>
 <br>
 
 <b>symd.cgi</b><br>
-The "SymD" program determines symmetries in structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi is to post a PDB string to this API with the parameter "pdb". The output is a JSON blob describing the symmetry.<br>
+The "SymD" program from <a href="https://symd.nci.nih.gov">NCI</a> determines symmetries in structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi is to post a PDB string to this API with the parameter "pdb". The output is a JSON blob describing the symmetry.<br>
 <br>
 
 <b>cdannots.fcgi</b><br>
