@@ -8387,15 +8387,16 @@ class Strand {
                 }
 
                 let maxDist = 6.0;
-                //let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
-                let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                // The following code didn't work to select one residue
+                // let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
-                if(bBrokenSs && atom.ss === 'sheet') {
-                    bSheetSegment = true;
-                }
-                else if(bBrokenSs && atom.ss === 'helix') {
-                    bHelixSegment = true;
-                }
+                // if(bBrokenSs && atom.ss === 'sheet') {
+                //     bSheetSegment = true;
+                // }
+                // else if(bBrokenSs && atom.ss === 'helix') {
+                //     bHelixSegment = true;
+                // }
 
                 if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
                     let atomName = 'CA';
@@ -35075,7 +35076,7 @@ class ApplyCommand {
         else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
         else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
         else if(cmd.indexOf('graph interaction pairs') == 0) return hbondIntStr + ' > 2D Graph(Force-Directed)';
-        else if(cmd.indexOf('export canvas') == 0) return 'File > Save Files > iCn3D PNG Image';
+        else if(cmd.indexOf('export canvas') == 0) return 'File > Save File > iCn3D PNG Image';
         else if(cmd == 'export stl file') return printStr + 'STL';
         else if(cmd == 'export vrml file') return printStr + 'VRML(Color)';
         else if(cmd == 'export stl stabilizer file') return printStr + 'STL W/ Stabilizers';
@@ -35411,7 +35412,8 @@ class SelectByCommand {
                }
                else {
                  //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3') { // three letter residue string, such as :3LysArg or :3ZN
+                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
+                     && isNaN(residueStrArray[j][1]) && residueStrArray[j][0] !== '-') { // three letter residue string, such as :3LysArg or :3ZN, but not :30 neither :3-10
                    let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
                    bResidueArrayThree = true;
@@ -57378,7 +57380,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += "<li><span>Save Files</span>";
+        html += "<li><span>Save File</span>";
         html += "<ul>";
         //html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
 
@@ -58565,17 +58567,29 @@ class SetMenu {
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
 
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
-
-        html += "<li><span>Tutorial</span>";
-        html += "<ul>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#useicn3d' target='_blank'>Use iCn3D</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#videos' target='_blank'>iCn3D Videos</a></li>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
-        html += "</ul>";
-        html += "</li>";
 
-        html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+        html += "<li><span>FAQ</span>";
+
+        html += "<ul>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#viewstru' target='_blank'><span>View structure</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#tfstru' target='_blank'><span>Transform Structure</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#selsubset' target='_blank'><span>Select Subsets</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#changestylecolor' target='_blank'><span>Change Style/Color</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview' target='_blank'><span>Save Work</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno' target='_blank'><span>Show Annotations</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno' target='_blank'><span>Export Annotations</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis' target='_blank'><span>Interactions Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis' target='_blank'><span>Mutation Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot' target='_blank'><span>Electrostatic Pot.</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast' target='_blank'><span>Similar PDB</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek' target='_blank'><span>Similar AlphaFold/PDB</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul' target='_blank'><span>Align Multiple Structures</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis' target='_blank'><span>Batch Analysis</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d' target='_blank'><span>Embed iCn3D</span></a></li>";
+        html += "</ul>";
+
+        //html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
 
         html += "<li><span>Source Code</span>";
@@ -58589,7 +58603,10 @@ class SetMenu {
         if(!me.cfg.simplemenu) {
             html += "<li><span>Develop</span>";
             html += "<ul>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>How to Embed</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>Embed iCn3D</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
+    
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
@@ -59357,8 +59374,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
-        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of chain IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The AlphaFold chain IDs are the UniProt ID plus "_A". For example, the UniProt ID for the record name "AF-P69905-F1-model_v2" is "P69905".<br><br>'; 
-        html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905_A,P01942_A,1HHO_A' size=30> ";
+        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v2" is "P69905".<br><br>'; 
+        html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905,P01942,1hho_A' size=30> ";
         html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
         html += "</div>";
 
@@ -59576,7 +59593,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
-        html += "Your note will be saved in the HTML file when you click \"File > Save Files > iCn3D PNG Image\".<br><br>";
+        html += "Your note will be saved in the HTML file when you click \"File > Save File > iCn3D PNG Image\".<br><br>";
         html += "<textarea id='" + me.pre + "yournote' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='Enter your note here'></textarea><br>";
         html += me.htmlCls.buttonStr + "applyyournote'>Save</button>";
         html += "</div>";
@@ -60380,6 +60397,17 @@ class Events {
         }
     }
 
+    convertUniProtInChains(alignment) { let me = this.icn3dui; me.icn3d;
+        let idArray = alignment.split(',');
+        let alignment_final = '';
+        for(let i = 0, il = idArray.length; i < il; ++i) {
+            alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+            if(i < il - 1) alignment_final += ',';
+        }
+
+        return alignment_final;
+    }
+
     searchSeq() { let me = this.icn3dui, ic = me.icn3d;
        let select = $("#" + me.pre + "search_seq").val();
        if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
@@ -60850,8 +60878,16 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_foldseek", "click", function(e) { me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
-            window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+
+            // me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
+            // window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+
+
+            let alignment = $("#" + me.pre + "foldseekchainids").val();
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
+
+            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + alignment_final, true);
+            window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&showalignseq=1&bu=0', '_self');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { me.icn3d;
@@ -60993,12 +61029,7 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
+           let alignment_final = thisClass.convertUniProtInChains(alignment);
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
@@ -61016,12 +61047,7 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
+           let alignment_final = thisClass.convertUniProtInChains(alignment);
 
            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
            window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
@@ -61032,12 +61058,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
             let alignment = $("#" + me.pre + "chainalignids2").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
             let resalign = $("#" + me.pre + "resalignids").val();
  
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
@@ -61049,12 +61070,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
             let alignment = $("#" + me.pre + "chainalignids3").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
 
             let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
             if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
@@ -61071,12 +61087,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
 
             let alignment = $("#" + me.pre + "chainalignids").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
  
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
             window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
@@ -67517,7 +67528,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.14.1';
+    this.REVISION = '3.14.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

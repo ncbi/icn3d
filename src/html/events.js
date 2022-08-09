@@ -66,6 +66,17 @@ class Events {
         }
     }
 
+    convertUniProtInChains(alignment) { let me = this.icn3dui, ic = me.icn3d;
+        let idArray = alignment.split(',');
+        let alignment_final = '';
+        for(let i = 0, il = idArray.length; i < il; ++i) {
+            alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
+            if(i < il - 1) alignment_final += ',';
+        }
+
+        return alignment_final;
+    }
+
     searchSeq() { let me = this.icn3dui, ic = me.icn3d;
        let select = $("#" + me.pre + "search_seq").val();
        if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
@@ -536,8 +547,16 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_foldseek", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
-            window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+
+            // me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
+            // window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
+
+
+            let alignment = $("#" + me.pre + "foldseekchainids").val();
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
+
+            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + alignment_final, true);
+            window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&showalignseq=1&bu=0', '_self');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
@@ -679,12 +698,7 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
+           let alignment_final = thisClass.convertUniProtInChains(alignment);
            let resalign = $("#" + me.pre + "resalignids").val();
            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
@@ -702,12 +716,7 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let alignment = $("#" + me.pre + "chainalignids").val();
-           let idArray = alignment.split(',');
-           let alignment_final = '';
-           for(let i = 0, il = idArray.length; i < il; ++i) {
-               alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-               if(i < il - 1) alignment_final += ',';
-           }
+           let alignment_final = thisClass.convertUniProtInChains(alignment);
 
            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
            window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
@@ -718,12 +727,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
             let alignment = $("#" + me.pre + "chainalignids2").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
             let resalign = $("#" + me.pre + "resalignids").val();
  
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
@@ -735,12 +739,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
             let alignment = $("#" + me.pre + "chainalignids3").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
 
             let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
             if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
@@ -757,12 +756,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
 
             let alignment = $("#" + me.pre + "chainalignids").val();
-            let idArray = alignment.split(',');
-            let alignment_final = '';
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                alignment_final += (idArray[i].indexOf('_') != -1) ? idArray[i] : idArray[i] + '_A'; // AlphaFold ID
-                if(i < il - 1) alignment_final += ',';
-            }
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
  
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
             window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', '_blank');

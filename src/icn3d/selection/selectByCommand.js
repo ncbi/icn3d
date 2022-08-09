@@ -190,7 +190,8 @@ class SelectByCommand {
                }
                else {
                  //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3') { // three letter residue string, such as :3LysArg or :3ZN
+                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
+                     && isNaN(residueStrArray[j][1]) && residueStrArray[j][0] !== '-') { // three letter residue string, such as :3LysArg or :3ZN, but not :30 neither :3-10
                    let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
                    bResidueArrayThree = true;

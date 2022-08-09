@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.14.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.2.zip) was release on August 9, 2022. Added the "FAQ" section in the "Help" menu.
+
 [icn3d-3.14.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.1.zip) was release on August 3, 2022. Enabled to show mutation analysis for currently loaded structures or structures to be loaded with PDB IDs or AlphaFold UniProt IDs in the menu "Analysis > Mutation".
 
 [icn3d-3.14.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.0.zip) was release on August 1, 2022. Added Post-Translational Modification (PTM) annotation from UniProt.
@@ -75,7 +77,7 @@
 
 [icn3d-3.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.5.0.zip) was release on December 21, 2021. Enabled to use the global Smith Waterman algorithm to align a sequence to a structure in the menu "File > Align > Sequence to Structure". Improved the labels by removing the background boxes and adjusting the text color when switching the canvas background color. Simplified the menus when the URL parameter "simplemenu=1" is used.
 
-[icn3d-3.4.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.13.zip) was release on December 13, 2021. Added the menu "File > Save Files > Selection Details" to export selected residues in a human readable format.
+[icn3d-3.4.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.13.zip) was release on December 13, 2021. Added the menu "File > Save File > Selection Details" to export selected residues in a human readable format.
 
 [icn3d-3.4.12](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.12.zip) was release on November 24, 2021. Fixed some bugs including the selection on 1D sequences in mobile devices.
 
@@ -83,7 +85,7 @@
 
 [icn3d-3.4.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.10.zip) was release on November 15, 2021. Fixed the base URL when launching iCn3D from a non-NCBI server.
 
-[icn3d-3.4.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.9.zip) was release on November 8, 2021. Enabled to export secondary structure information for any subset of any structure, including AlphaFold UniProt structures. The feature is available in the menu "File > Save Files > Secondary Structure".
+[icn3d-3.4.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.9.zip) was release on November 8, 2021. Enabled to export secondary structure information for any subset of any structure, including AlphaFold UniProt structures. The feature is available in the menu "File > Save File > Secondary Structure".
 
 [icn3d-3.4.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.8.zip) was release on October 22, 2021. Fixed the mapping between PDB residue numbers and NCBI residue numbers for 3D domains, conserved domains, and sites.
 
@@ -263,7 +265,7 @@
 
 [icn3d-2.7.18](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.18.zip) was release on September 4, 2019. Added the option to view in Full Screen mode by clicking the expansion icon in the top-right corner when "mobilemenu" is turned on, or by clicking "Full Screen" in the View menu. 
 
-[icn3d-2.7.17](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.17.zip) was release on September 3, 2019. Made it easy to save interactive work by clicking "File > Save Files > iCn3D PNG Images". This saves both "iCn3D PNG Image" and an HTML file with a clickable PNG image, which is link to the custom display via a sharable link. 
+[icn3d-2.7.17](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.17.zip) was release on September 3, 2019. Made it easy to save interactive work by clicking "File > Save File > iCn3D PNG Images". This saves both "iCn3D PNG Image" and an HTML file with a clickable PNG image, which is link to the custom display via a sharable link. 
 
 [icn3d-2.7.16](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.16.zip) was release on August 29, 2019. Fixed the transparent display by switching three.js from version 107 to 103. 
 
@@ -331,7 +333,7 @@
 
 [icn3d-2.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.4.zip) was release on December 12, 2018. Enabled users to load a saved iCn3D PNG image into iCn3D to reproduce the display using the URL embedded in the image.
 
-[icn3d-2.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.3.zip) was release on December 6, 2018. Made the list of interacting residues consistent in "File -> Save Files -> Interaction List" and in the "Sequences and Annotations" window.
+[icn3d-2.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.3.zip) was release on December 6, 2018. Made the list of interacting residues consistent in "File -> Save File -> Interaction List" and in the "Sequences and Annotations" window.
 
 [icn3d-2.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.2.zip) was release on October 30, 2018. Water molecules were enabled to be shown when the structure is not a biological assembly. Gene symbols were shown for each chain in the "Sequences and Annotations" window.
 
