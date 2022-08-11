@@ -155,7 +155,7 @@ class SetColor {
                 break;
 
             case 'chain':
-                if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input
+                if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input   
                     this.setMmdbChainColor();
                 }
                 else {

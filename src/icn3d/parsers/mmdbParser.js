@@ -67,7 +67,7 @@ class MmdbParser {
         //var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
 
         let  index = 1;
-        let  chainNameHash = {}
+        let  chainNameHash = {};       
         for(let i in molid2rescount) {
           if(Object.keys(molid2rescount[i]).length === 0) continue;
 
@@ -87,7 +87,7 @@ class MmdbParser {
           chain2molid[chain] = i;
           molid2chain[i] = chain;
 
-          ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+          ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
 
           let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
           let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
