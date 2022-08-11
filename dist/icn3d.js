@@ -18769,7 +18769,7 @@ var icn3d = (function (exports) {
                     break;
 
                 case 'chain':
-                    if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input
+                    if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input   
                         this.setMmdbChainColor();
                     }
                     else {
@@ -24994,7 +24994,7 @@ var icn3d = (function (exports) {
 
             let  molid2rescount = data.moleculeInfor;
             let  molid2color = {}, chain2molid = {}, molid2chain = {};
-            let  chainNameHash = {};
+            let  chainNameHash = {};       
             for(let i in molid2rescount) {
               if(Object.keys(molid2rescount[i]).length === 0) continue;
 
@@ -25014,7 +25014,7 @@ var icn3d = (function (exports) {
               chain2molid[chain] = i;
               molid2chain[i] = chain;
 
-              ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+              ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
 
               let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
               let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
@@ -26992,6 +26992,8 @@ var icn3d = (function (exports) {
             let  hAtoms = {}, hAtomsTmp = {};
             let  bLastQuery = false;
 
+            ic.opts['color'] = ((structArray.length == 1)) ? 'chain' : 'structure';
+
             for(let i = 0, il = structArray.length; i < il; ++i) {
                 if(i == structArray.length - 1) bLastQuery = true;
 
@@ -27004,7 +27006,7 @@ var icn3d = (function (exports) {
                     targetOrQuery = 'query';
                     bAppend = true; 
                 }
-
+                
                 //if(structArray[i].length > 4) {
                 if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                     //let bNoDssp = true;
@@ -67515,7 +67517,7 @@ var icn3d = (function (exports) {
         }
 
         if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
-        if(me.cfg.mmdbafid !== undefined) this.opts['color'] = 'structure';
+        //if(me.cfg.mmdbafid !== undefined) this.opts['color'] = 'structure';
 
         if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
     };

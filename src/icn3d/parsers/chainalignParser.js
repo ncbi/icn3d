@@ -947,6 +947,8 @@ class ChainalignParser {
         let  hAtoms = {}, hAtomsTmp = {};
         let  bLastQuery = false;
 
+        ic.opts['color'] = ((structArray.length == 1)) ? 'chain' : 'structure';
+
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
 
@@ -959,7 +961,7 @@ class ChainalignParser {
                 targetOrQuery = 'query';
                 bAppend = true; 
             }
-
+            
             //if(structArray[i].length > 4) {
             if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 //let bNoDssp = true;
