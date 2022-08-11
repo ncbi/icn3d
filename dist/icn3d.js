@@ -26992,7 +26992,7 @@ var icn3d = (function (exports) {
             let  hAtoms = {}, hAtomsTmp = {};
             let  bLastQuery = false;
 
-            ic.opts['color'] = ((structArray.length == 1)) ? 'chain' : 'structure';
+            ic.opts['color'] = (structArray.length == 1) ? 'chain' : 'structure';
 
             for(let i = 0, il = structArray.length; i < il; ++i) {
                 if(i == structArray.length - 1) bLastQuery = true;
@@ -67517,7 +67517,7 @@ var icn3d = (function (exports) {
         }
 
         if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
-        //if(me.cfg.mmdbafid !== undefined) this.opts['color'] = 'structure';
+        if(me.cfg.mmdbafid !== undefined && ic.structures) ic.opts['color'] = (Object.keys(ic.structures).length == 1) ? 'chain' : 'structure';
 
         if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
     };
