@@ -61,7 +61,7 @@ class Dssp {
 
           ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-          if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+          //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
           if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
       });
     }
@@ -180,7 +180,7 @@ class Dssp {
 
         ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }
 }
