@@ -27,6 +27,7 @@ Install Jupyter Lab and the extension "jupyterlab_3dmol":
     pip install jupyterlab
 
     jupyter labextension install jupyterlab_3dmol
+    or jupyterhub labextension install jupyterlab_3dmol
 
 
 

@@ -962,7 +962,8 @@ class ChainalignParser {
 
             //if(structArray[i].length > 4) {
             if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
-                let bNoDssp = true;
+                //let bNoDssp = true;
+                let bNoDssp = false; // get secondary structure info
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
             }
             else {              
@@ -975,7 +976,7 @@ class ChainalignParser {
 
         // calculate secondary structures with applyCommandDssp
         if(bQuery && me.cfg.matchedchains) {
-            $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+           // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
                 // reset annotations
@@ -984,11 +985,13 @@ class ChainalignParser {
                 if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
                     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
                 }
-           });
+           //});
         }
         else {
-            ic.pdbParserCls.applyCommandDssp(true);
+            //ic.pdbParserCls.applyCommandDssp(true);
         }
+
+        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
     }
 }
 

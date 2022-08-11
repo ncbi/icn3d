@@ -23563,7 +23563,7 @@ var icn3d = (function (exports) {
 
               ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-              if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+              //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
               if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
           });
         }
@@ -23682,7 +23682,7 @@ var icn3d = (function (exports) {
 
             ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
             if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
         }
     }
@@ -27007,7 +27007,8 @@ var icn3d = (function (exports) {
 
                 //if(structArray[i].length > 4) {
                 if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
-                    let bNoDssp = true;
+                    //let bNoDssp = true;
+                    let bNoDssp = false; // get secondary structure info
                     hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
                 }
                 else {              
@@ -27020,7 +27021,7 @@ var icn3d = (function (exports) {
 
             // calculate secondary structures with applyCommandDssp
             if(bQuery && me.cfg.matchedchains) {
-                $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+               // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                     let bRealign = true, bPredefined = true;
                     ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
                     // reset annotations
@@ -27029,11 +27030,10 @@ var icn3d = (function (exports) {
                     if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
                         $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
                     }
-               });
+               //});
             }
-            else {
-                ic.pdbParserCls.applyCommandDssp(true);
-            }
+
+            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         }
     }
 
@@ -57277,11 +57277,12 @@ var icn3d = (function (exports) {
 
             html += "<li><span>Retrieve by ID</span>";
             html += "<ul>";
+            
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'MMDB or AlphaFold IDs' + me.htmlCls.wifiStr);
             if(!me.cfg.simplemenu) {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
                 html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
