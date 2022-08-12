@@ -23700,7 +23700,7 @@ class PdbParser {
        let  url, dataType;
 
        if(bAf) {
-           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v2.pdb";
+           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v3.pdb";
            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
        }
        else {
@@ -26583,7 +26583,7 @@ class ChainalignParser {
 
         let  url_t;
         if(ic.mmdbid_t.length > 5) {
-            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v2.pdb";
+            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v3.pdb";
 
             targetAjax = $.ajax({
                 url: url_t,
@@ -26621,7 +26621,7 @@ class ChainalignParser {
 
             let  url_q, queryAjax;
             if(ic.mmdbid_q.length > 5) {
-                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v2.pdb";
+                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v3.pdb";
 
                 queryAjax = $.ajax({
                     url: url_q,
@@ -26924,7 +26924,7 @@ class ChainalignParser {
             let structure = ic.structArray[i];
 
             if(isNaN(structure) && structure.length > 5) {
-                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v2.pdb";
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v3.pdb";
 
                 targetAjax = $.ajax({
                     url: url_t,
@@ -59377,7 +59377,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
-        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v2" is "P69905".<br><br>'; 
+        html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
         html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905,P01942,1hho_A' size=30> ";
         html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
         html += "</div>";
@@ -67531,7 +67531,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.14.2';
+    this.REVISION = '3.14.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
