@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.14.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.3.zip) was release on August 12, 2022. Enabled to show 200 million AlphaFold UniProt structures in the recent release.
+
 [icn3d-3.14.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.2.zip) was release on August 9, 2022. Added the "FAQ" section in the "Help" menu.
 
 [icn3d-3.14.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.1.zip) was release on August 3, 2022. Enabled to show mutation analysis for currently loaded structures or structures to be loaded with PDB IDs or AlphaFold UniProt IDs in the menu "Analysis > Mutation".
