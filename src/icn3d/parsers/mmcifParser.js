@@ -438,7 +438,7 @@ class MmcifParser {
             ic.asuCnt = ic.biomtMatrices.length;
         }
         else {
-            $("#" + ic.pre + "assemblyWrapper").hide();
+            //$("#" + ic.pre + "assemblyWrapper").hide();
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);

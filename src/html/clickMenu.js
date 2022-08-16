@@ -106,6 +106,95 @@ class ClickMenu {
         $("#" + me.pre + id2).resizable();
     }
 
+    applyShownMenus() { let me = this.icn3dui, ic = me.icn3d;
+        let idArray = [];
+        for(let id in me.htmlCls.allMenus) {
+            if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
+                $("#" + id).parent().show();
+                idArray.push(id);
+            }
+            else {            
+                $("#" + id).parent().hide();              
+            }
+        }   
+
+        if(Object.keys(me.htmlCls.shownMenus).length == Object.keys(me.htmlCls.allMenus).length) {
+            $(".icn3d-menusep").show();
+        }
+        else {
+            $(".icn3d-menusep").hide();
+        }
+
+        // save to localStorage
+        if(localStorage) localStorage.setItem('menulist', JSON.stringify(idArray));
+    }
+
+    getShownMenusFromCookie() { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.shownMenus = {};
+
+        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
+        
+        if(idArrayStr) {
+            let idArray = JSON.parse(idArrayStr);
+
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                me.htmlCls.shownMenus[idArray[i]] = 1;
+            }
+        }
+        else {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+        }
+    }
+    
+    displayShownMenus() { let me = this.icn3dui, ic = me.icn3d;
+        let html = "<form name='" + me.pre + "selmenu'>";
+        html += "<table><tr><th>File</th><th>Select</th><th>View</th><th>Style</th><th>Color</th><th>Analysis</th><th>Help</th></tr>";
+        html += "<tr>";
+        for(let id in me.htmlCls.allMenusSel) {
+            // skip all unicolor: too many
+            let len = me.pre.length;
+            if(id.substr(0, 6 + len) == me.pre + 'uniclr' 
+                || id.substr(0, 11 + len) == me.pre + 'mn5_opacity'
+                || id.substr(0, 14 + len) == me.pre + 'mn6_labelscale'
+                || id.substr(0, 4 + len) == me.pre + 'faq_'
+                || id.substr(0, 4 + len) == me.pre + 'dev_') {
+                    continue;
+            }
+
+            if(id == me.pre + 'mn1_searchstru') {
+                html += "<td valign='top'>";
+            }
+            else if(id == me.pre + 'mn2_definedsets') {
+                html += "</td><td valign='top'>";
+            }
+            else if(id == me.pre + 'mn2_show_selected') {
+                html += "</td><td valign='top'>";
+            }
+            else if(id == me.pre + 'mn3_proteinwrap' || (me.cfg.cid && id == me.pre + 'mn3_ligwrap')) {
+                html += "</td><td valign='top'>";
+            }
+            else if(id == me.pre + 'mn4_clrwrap') {
+                html += "</td><td valign='top'>";
+            }
+            else if(id == me.pre + 'mn6_selectannotations') {
+                html += "</td><td valign='top'>";
+            }
+            else if(id == me.pre + 'abouticn3d') {
+                html += "</td><td valign='top'>";
+            }
+
+            let checkStr = (me.htmlCls.shownMenus.hasOwnProperty(id)) ? "checked" : "";
+
+            let selType = me.htmlCls.allMenusSel[id];
+            let styleStr = (selType == 3) ? " style='margin-left:30px'" : ((selType == 2) ? " style='margin-left:15px'" : "");
+
+            html += "<span style='white-space:nowrap'><input type='checkbox' name='" + id + "' value='" + id + "'" + checkStr + styleStr + ">" + me.htmlCls.allMenus[id] + "</span><br>";
+        }  
+        html += "</td></tr></table></form>";
+
+        $("#" + me.pre + "menulist").html(html);
+    }
+
 
     clickMenu1() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
@@ -487,6 +576,98 @@ class ClickMenu {
             ic.resizeCanvasCls.replayoff();
             thisClass.setLogCmd("replay off", true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
+            thisClass.applyShownMenus();    
+          });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+
+            thisClass.applyShownMenus();
+          });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
+
+            thisClass.getShownMenusFromCookie();
+
+            thisClass.displayShownMenus();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "apply_menupref", "click", function(e) { let ic = me.icn3d;
+            var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+            me.htmlCls.shownMenus = {};
+            for (var checkbox of checkboxes) {
+                me.htmlCls.shownMenus[checkbox.value] = 1;
+            }
+
+            thisClass.applyShownMenus();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reset_menupref", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+
+            thisClass.applyShownMenus();
+            thisClass.displayShownMenus();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reset_menupref_all", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
+            thisClass.applyShownMenus();
+            thisClass.displayShownMenus();
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d;
+            let menuStr = '[';
+
+            var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+            let cnt = 0;
+            for (var checkbox of checkboxes) {
+                if(cnt > 0) menuStr += ', ';
+                menuStr += '"' + checkbox.value + '"';
+                ++cnt;
+            }
+            
+            menuStr += ']';
+    
+            ic.saveFileCls.saveFile('icn3d_shown_menus.txt', 'text', [menuStr]);
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let file = $("#" + me.pre + "menupreffile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                let idArray = JSON.parse(dataStr);
+
+                me.htmlCls.shownMenus = {};
+                for(let i = 0, il = idArray.length; i < il; ++i) {
+                    me.htmlCls.shownMenus[idArray[i]] = 1;
+                }
+
+                thisClass.applyShownMenus();
+                thisClass.displayShownMenus();
+              }
+              reader.readAsText(file);
+            }
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_menuloadpref', 'Please input the menu preference file');
+        });
+         
+
     //    },
     //    clkMn1_link_structure: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d;
@@ -2133,8 +2314,9 @@ class ClickMenu {
     //    },
     //    clkmn5_setThickness: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Preferences');
+           me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Style Preferences');
         });
+
     //    },
     //    clkmn1_thicknessReset: function() {
 /*

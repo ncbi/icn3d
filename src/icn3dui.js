@@ -176,7 +176,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.14.3';
+    this.REVISION = '3.15.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -188,7 +188,7 @@ class iCn3DUI {
     if(this.cfg.showmenu === undefined) this.cfg.showmenu = true;
     if(this.cfg.showtitle === undefined) this.cfg.showtitle = true;
     if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;
-    if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
+    //if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
     if(this.cfg.mobilemenu === undefined) this.cfg.mobilemenu = false;
     if(this.cfg.closepopup === undefined) this.cfg.closepopup = false;
     if(this.cfg.showanno === undefined) this.cfg.showanno = false;
@@ -341,6 +341,10 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     }
     ic.molTitle = '';
     ic.loadCmd;
+
+    // set menus
+    me.htmlCls.clickMenuCls.getShownMenusFromCookie();
+    me.htmlCls.clickMenuCls.applyShownMenus();
 
     if(pdbStr) { // input pdbStr
         ic.init();

@@ -254,7 +254,7 @@ class MmdbParser {
             //ic.bAssembly = true;
         }
         else {
-            $("#" + ic.pre + "assemblyWrapper").hide();
+            //$("#" + ic.pre + "assemblyWrapper").hide();
             //ic.bAssembly = false;
         }
 

@@ -26,26 +26,68 @@ class SetHtml {
         this.icn3dui = icn3dui;
     }
 
-    getLink(id, text) { let me = this.icn3dui, ic = me.icn3d;
+    getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
         return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
-    getLinkWrapper(id, text, wrapper) { let me = this.icn3dui, ic = me.icn3d;
+    // a group of menus
+    getMenuText(id, text, classname, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
+        let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
+
+        // no ending "</li>"" since this is usually the start of a group of menus
+        return "<li><span id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
+    }
+
+    getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
+        return "<li><a id='" + me.pre + id + "' href='" + url + "' target='_blank'>" + text + "</a></li>";
+    }
+
+    getMenuSep() { let me = this.icn3dui, ic = me.icn3d;
+        return "<li class='icn3d-menusep'>-</li>";
+    }
+
+    getLinkWrapper(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
         return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
-    getRadio(radioid, id, text, bChecked) { let me = this.icn3dui, ic = me.icn3d;
+    getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
         let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-        return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+        //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+        return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
     }
 
-    getRadioColor(radioid, id, text, color, bChecked) { let me = this.icn3dui, ic = me.icn3d;
+    getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[me.pre + id] = text;
+        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
         let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-        return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+        //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+        return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
     }
 
     setAdvanced(index) { let me = this.icn3dui, ic = me.icn3d;
