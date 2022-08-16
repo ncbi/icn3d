@@ -175,7 +175,7 @@ class PdbParser {
           ic.asuCnt = ic.biomtMatrices.length;
         }
         else {
-          $("#" + ic.pre + "assemblyWrapper").hide();
+          //$("#" + ic.pre + "assemblyWrapper").hide();
         }
 
         if(ic.emd !== undefined) {

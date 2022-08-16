@@ -115,7 +115,7 @@ class MmtfParser {
             ic.asuCnt = ic.biomtMatrices.length;
         }
         else {
-            $("#" + ic.pre + "assemblyWrapper").hide();
+            //$("#" + ic.pre + "assemblyWrapper").hide();
         }
 
         let  oriindex2serial = {}

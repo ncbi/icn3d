@@ -5077,6 +5077,10 @@ var icn3d = (function (exports) {
             return window.sessionStorage;
         }
 
+        isLocalStorageSupported() { this.icn3dui;
+          return window.localStorage;
+        }
+
         // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
         hexToRgb(hex, a) { this.icn3dui;
              let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -12777,7 +12781,7 @@ var icn3d = (function (exports) {
                     if(key === 'showtitle' && value === true) continue;
                     if(key === 'showcommand' && value === true) continue;
 
-                    if(key === 'simplemenu' && value === false) continue;
+                    //if(key === 'simplemenu' && value === false) continue;
                     if(key === 'mobilemenu' && value === false) continue;
                     //if(key === 'closepopup' && value === false) continue;
                     if(key === 'showanno' && value === false) continue;
@@ -23847,9 +23851,6 @@ var icn3d = (function (exports) {
 
               ic.asuCnt = ic.biomtMatrices.length;
             }
-            else {
-              $("#" + ic.pre + "assemblyWrapper").hide();
-            }
 
             if(ic.emd !== undefined) {
                 $("#" + ic.pre + "mapWrapper1").hide();
@@ -24027,9 +24028,6 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + "assemblyWrapper").show();
 
                 ic.asuCnt = ic.biomtMatrices.length;
-            }
-            else {
-                $("#" + ic.pre + "assemblyWrapper").hide();
             }
 
             let  oriindex2serial = {};
@@ -25178,10 +25176,6 @@ var icn3d = (function (exports) {
             if(ic.bAssemblyUseAsu) { 
                 $("#" + ic.pre + "assemblyWrapper").show();
                 //ic.bAssembly = true;
-            }
-            else {
-                $("#" + ic.pre + "assemblyWrapper").hide();
-                //ic.bAssembly = false;
             }
 
             if(ic.emd !== undefined) {
@@ -38370,9 +38364,6 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + "assemblyWrapper").show();
 
                 ic.asuCnt = ic.biomtMatrices.length;
-            }
-            else {
-                $("#" + ic.pre + "assemblyWrapper").hide();
             }
 
             ic.setStyleCls.setAtomStyleByOptions(ic.opts);
@@ -54668,6 +54659,95 @@ var icn3d = (function (exports) {
             $("#" + me.pre + id2).resizable();
         }
 
+        applyShownMenus() { let me = this.icn3dui; me.icn3d;
+            let idArray = [];
+            for(let id in me.htmlCls.allMenus) {
+                if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
+                    $("#" + id).parent().show();
+                    idArray.push(id);
+                }
+                else {            
+                    $("#" + id).parent().hide();              
+                }
+            }   
+
+            if(Object.keys(me.htmlCls.shownMenus).length == Object.keys(me.htmlCls.allMenus).length) {
+                $(".icn3d-menusep").show();
+            }
+            else {
+                $(".icn3d-menusep").hide();
+            }
+
+            // save to localStorage
+            if(localStorage) localStorage.setItem('menulist', JSON.stringify(idArray));
+        }
+
+        getShownMenusFromCookie() { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.shownMenus = {};
+
+            let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
+            
+            if(idArrayStr) {
+                let idArray = JSON.parse(idArrayStr);
+
+                for(let i = 0, il = idArray.length; i < il; ++i) {
+                    me.htmlCls.shownMenus[idArray[i]] = 1;
+                }
+            }
+            else {
+                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+            }
+        }
+        
+        displayShownMenus() { let me = this.icn3dui; me.icn3d;
+            let html = "<form name='" + me.pre + "selmenu'>";
+            html += "<table><tr><th>File</th><th>Select</th><th>View</th><th>Style</th><th>Color</th><th>Analysis</th><th>Help</th></tr>";
+            html += "<tr>";
+            for(let id in me.htmlCls.allMenusSel) {
+                // skip all unicolor: too many
+                let len = me.pre.length;
+                if(id.substr(0, 6 + len) == me.pre + 'uniclr' 
+                    || id.substr(0, 11 + len) == me.pre + 'mn5_opacity'
+                    || id.substr(0, 14 + len) == me.pre + 'mn6_labelscale'
+                    || id.substr(0, 4 + len) == me.pre + 'faq_'
+                    || id.substr(0, 4 + len) == me.pre + 'dev_') {
+                        continue;
+                }
+
+                if(id == me.pre + 'mn1_searchstru') {
+                    html += "<td valign='top'>";
+                }
+                else if(id == me.pre + 'mn2_definedsets') {
+                    html += "</td><td valign='top'>";
+                }
+                else if(id == me.pre + 'mn2_show_selected') {
+                    html += "</td><td valign='top'>";
+                }
+                else if(id == me.pre + 'mn3_proteinwrap' || (me.cfg.cid && id == me.pre + 'mn3_ligwrap')) {
+                    html += "</td><td valign='top'>";
+                }
+                else if(id == me.pre + 'mn4_clrwrap') {
+                    html += "</td><td valign='top'>";
+                }
+                else if(id == me.pre + 'mn6_selectannotations') {
+                    html += "</td><td valign='top'>";
+                }
+                else if(id == me.pre + 'abouticn3d') {
+                    html += "</td><td valign='top'>";
+                }
+
+                let checkStr = (me.htmlCls.shownMenus.hasOwnProperty(id)) ? "checked" : "";
+
+                let selType = me.htmlCls.allMenusSel[id];
+                let styleStr = (selType == 3) ? " style='margin-left:30px'" : ((selType == 2) ? " style='margin-left:15px'" : "");
+
+                html += "<span style='white-space:nowrap'><input type='checkbox' name='" + id + "' value='" + id + "'" + checkStr + styleStr + ">" + me.htmlCls.allMenus[id] + "</span><br>";
+            }  
+            html += "</td></tr></table></form>";
+
+            $("#" + me.pre + "menulist").html(html);
+        }
+
 
         clickMenu1() { let me = this.icn3dui; me.icn3d;
             if(me.bNode) return;
@@ -55049,6 +55129,98 @@ var icn3d = (function (exports) {
                 ic.resizeCanvasCls.replayoff();
                 thisClass.setLogCmd("replay off", true);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { me.icn3d;
+                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
+                thisClass.applyShownMenus();    
+              });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { me.icn3d;
+                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+
+                thisClass.applyShownMenus();
+              });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
+
+                thisClass.getShownMenusFromCookie();
+
+                thisClass.displayShownMenus();
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "apply_menupref", "click", function(e) { me.icn3d;
+                var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+                me.htmlCls.shownMenus = {};
+                for (var checkbox of checkboxes) {
+                    me.htmlCls.shownMenus[checkbox.value] = 1;
+                }
+
+                thisClass.applyShownMenus();
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "reset_menupref", "click", function(e) { me.icn3d;
+                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+
+                thisClass.applyShownMenus();
+                thisClass.displayShownMenus();
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "reset_menupref_all", "click", function(e) { me.icn3d;
+                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
+                thisClass.applyShownMenus();
+                thisClass.displayShownMenus();
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d;
+                let menuStr = '[';
+
+                var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+                let cnt = 0;
+                for (var checkbox of checkboxes) {
+                    if(cnt > 0) menuStr += ', ';
+                    menuStr += '"' + checkbox.value + '"';
+                    ++cnt;
+                }
+                
+                menuStr += ']';
+        
+                ic.saveFileCls.saveFile('icn3d_shown_menus.txt', 'text', [menuStr]);
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let file = $("#" + me.pre + "menupreffile")[0].files[0];
+                if(!file) {
+                  alert("Please select a file before clicking 'Load'");
+                }
+                else {
+                  me.htmlCls.setHtmlCls.fileSupport();
+                  let reader = new FileReader();
+                  reader.onload = function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    let idArray = JSON.parse(dataStr);
+
+                    me.htmlCls.shownMenus = {};
+                    for(let i = 0, il = idArray.length; i < il; ++i) {
+                        me.htmlCls.shownMenus[idArray[i]] = 1;
+                    }
+
+                    thisClass.applyShownMenus();
+                    thisClass.displayShownMenus();
+                  };
+                  reader.readAsText(file);
+                }
+             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_menuloadpref', 'Please input the menu preference file');
+            });
+             
+
         //    },
         //    clkMn1_link_structure: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d;
@@ -56692,8 +56864,9 @@ var icn3d = (function (exports) {
         //    },
         //    clkmn5_setThickness: function() {
             me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { me.icn3d;
-               me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Preferences');
+               me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Style Preferences');
             });
+
         //    },
         //    clkmn1_thicknessReset: function() {
     /*
@@ -56835,26 +57008,24 @@ var icn3d = (function (exports) {
             let tdStr = '<td valign="top">';
             html += tdStr + this.setMenu1() + '</td>';
 
-            //if(!me.cfg.simplemenu) {
-                html += tdStr + this.setMenu2() + '</td>';
-            //}
+            html += tdStr + this.setMenu2() + '</td>';
 
             html += tdStr + this.setMenu2b() + '</td>';
             html += tdStr + this.setMenu3() + '</td>';
             html += tdStr + this.setMenu4() + '</td>';
 
-            //if(!me.cfg.simplemenu) {
-                html += tdStr + this.setMenu5() + '</td>';
-                //html += tdStr + this.setMenu5b() + '</td>';
-                html += tdStr + this.setMenu6() + '</td>';
+            html += tdStr + this.setMenu5() + '</td>';
+            //html += tdStr + this.setMenu5b() + '</td>';
+            html += tdStr + this.setMenu6() + '</td>';
 
-                html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
-                html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
-                html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" style="display:block;" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
+            html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
+            html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
 
-                html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
-            //}
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" style="display:block;" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
+
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
 
             html += "</tr>";
             html += "</table>";
@@ -56969,6 +57140,8 @@ var icn3d = (function (exports) {
             html += this.setMenu5_base();
             html += liStr + ">Help</span>";
             html += this.setMenu6_base();
+
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
             html += "<li><div style='position:relative; margin-top:-6px;'>" + str1;
             html += "<div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'>" + str2;
@@ -57268,160 +57441,157 @@ var icn3d = (function (exports) {
             let html = "";
 
             html += "<ul class='icn3d-mn-item'>";
-            html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+            //html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('mn1_searchstru', "https://www.ncbi.nlm.nih.gov/structure", "Search Structure " + me.htmlCls.wifiStr, 1, 1);
 
-            html += "<li><span>Search Similar</span>";
+            //html += "<li><span>Search Similar</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_searchsimilar', 'Search Similar', undefined, undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr, undefined, 2);
             html += "</ul>";
+            html += "</li>";
 
-            html += "<li><span>Retrieve by ID</span>";
+            //html += "<li><span>Retrieve by ID</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_retrievebyid', 'Retrieve by ID', undefined, 1, 1); 
             html += "<ul>";
             
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
-            if(!me.cfg.simplemenu) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
-            }
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr, 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
+
             //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
             
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Open File</span>";
+
+            //html += "<li><span>Open File</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_openfile', 'Open File', undefined, 1, 1);
             html += "<ul>";
     //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
     //        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB Files (appendable)');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_xyzfile', 'XYZ File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold PAE File');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB Files (appendable)', 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold PAE File', undefined, 2);
 
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr);
-            html += "<li>-</li>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_pngimage', 'iCn3D PNG Image');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_state', 'State/Script File');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_fixedversion', 'Share Link in Archived Ver. ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_selection', 'Selection File');
-            
-            if(!me.cfg.simplemenu) {
-                html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+            html += me.htmlCls.setHtmlCls.getLink('mn1_pngimage', 'iCn3D PNG Image', 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_state', 'State/Script File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_fixedversion', 'Share Link in Archived Ver. ' + me.htmlCls.wifiStr, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_selection', 'Selection File', undefined, 2);
 
-                html += "<li><span>Electron Density(DSN6)</span>";
-                html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_dsn6', 'Local File');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_dsn6url', 'URL(Same Host) ' + me.htmlCls.wifiStr);
-                html += "</ul>";
-            }
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+
+            //html += "<li><span>Electron Density(DSN6)</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_dsn6wrap', 'Electron Density(DSN6)', undefined, undefined, 2);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getLink('mn1_dsn6', 'Local File', undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_dsn6url', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 3);
+            html += "</ul>";
 
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Align</span>";
+
+            //html += "<li><span>Align</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_alignwrap', 'Align', undefined, 1, 1);
             html += "<ul>";
             
-            html += "<li><span>Multiple Chains</span>";
+            //html += "<li><span>Multiple Chains</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_chainalignwrap', 'Multiple Chains', undefined, 1, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign', 'by Structure Alignment ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign2', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign3', 'Residue by Residue');
+            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign', 'by Structure Alignment ' + me.htmlCls.wifiStr, undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign2', 'by Sequence Alignment ' + me.htmlCls.wifiStr, undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadio('mn1_chainalignRad', 'mn1_chainalign3', 'Residue by Residue', undefined, undefined, 3);
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Structure to Structure</span>";
+            //html += "<li><span>Structure to Structure</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_aligntwostru', 'Structure to Structure', undefined, undefined, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr, undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 3);
             html += "</ul>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure', undefined, 2);
 
             html += "</ul>";
             html += "</li>";
 
-            html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
+            //html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_realignWrap', 'Realign Selection', undefined, undefined, 1);
             html += "<ul>";
 
-            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 2);
 
-            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
-            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>3D Printing</span>";
+            //html += "<li><span>3D Printing</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_3dpprint', '3D Printing', undefined, 1, 1);
             html += "<ul>";
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'WRL/VRML(Color, W/ Stab.)');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/ Stabilizers)');
-                html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'WRL/VRML(Color)');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'WRL/VRML(Color, W/ Stab.)', 1, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/ Stabilizers)', 1, 2);
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'WRL/VRML(Color)', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL', undefined, 2);
 
-                if(!me.cfg.simplemenu) {
-                    html += "<li>-</li>";
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All Stabilizers');
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All Stabilizers');
-                    html += "<li>-</li>";
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One Stabilizer');
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One Stabilizer');
-                    html += "<li>-</li>";
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessSet', 'Set Thickness');
-                    //html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessReset', 'Reset Thickness');
-                }
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All Stabilizers', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All Stabilizers', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One Stabilizer', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One Stabilizer', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+                html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessSet', 'Set Thickness', undefined, 2);
             }
             else {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)', 1, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL', 1, 2);
             }
 
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Save File</span>";
+            //html += "<li><span>Save File</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_savefile', 'Save File', undefined, 1, 1);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
+            //html += "<li><span>iCn3D PNG Image</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_savepngimage', 'iCn3D PNG Image', undefined, 1, 2);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'Original Size & HTML', 1, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas1', 'Original Size', undefined, 3);
 
-            html += "<li><span>iCn3D PNG Image</span>";
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'Original Size & HTML');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas1', 'Original Size');
-            if(!me.cfg.simplemenu) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas2', '2X Large');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas4', '4X Large');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas8', '8X Large');
-            }
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas2', '2X Large', undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas4', '4X Large', undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas8', '8X Large', undefined, 3);
+
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportState', 'State File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelections', 'Selection File');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelDetails', 'Selection Details');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCounts', 'Residue Counts');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportState', 'State File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelections', 'Selection File', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelDetails', 'Selection Details', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportCounts', 'Residue Counts', undefined, 2);
 
-        /*
-            html += "<li><span>PDB</span>";
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'Selected Residues');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbChain', 'Selected Chains');
-            html += "<li><br/></li>";
-            html += "</ul>";
-            html += "</li>";
-        */
-
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB');
-            html += me.htmlCls.setHtmlCls.getLink('delphipdbh', 'PDB with Hydrogens');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB', 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('delphipdbh', 'PDB with Hydrogens', undefined, 2);
 
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
             }
 
             html += "<li><br/></li>";
@@ -57429,9 +57599,21 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn1_sharelink', 'Share Link ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_sharelink', 'Share Link ' + me.htmlCls.wifiStr, 1, 1);
 
-            html += me.htmlCls.setHtmlCls.getLink('mn1_replayon', 'Replay Each Step');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_replayon', 'Replay Each Step', undefined, 1);
+
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_menuwrap', 'Customize Menus', undefined, 1, 1);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getLink('mn1_menuall', 'All Menus', 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_menusimple', 'Simple Menus', 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+            html += me.htmlCls.setHtmlCls.getLink('mn1_menupref', 'Preferences', 1, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_menuloadpref', 'Load Preferences', 1, 2);
+            html += "</ul>";
+            html += "</li>";
 
             html += "<li><br/></li>";
 
@@ -57467,87 +57649,86 @@ var icn3d = (function (exports) {
 
             html += "<ul class='icn3d-mn-item'>";
 
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn2_definedsets', 'Defined Sets');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_selectall', 'All');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn2_selectdisplayed', 'Displayed Set');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_aroundsphere', 'by Distance');
+            html += me.htmlCls.setHtmlCls.getLink('mn2_definedsets', 'Defined Sets', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectall', 'All', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectdisplayed', 'Displayed Set', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_aroundsphere', 'by Distance', 1, 1);
 
-            html += "<li><span>by Property</span>";
+            //html += "<li><span>by Property</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_selbyprop', 'by Property', undefined, undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propPos', 'Positive');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propNeg', 'Negative');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propHydro', 'Hydrophobic');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propPolar', 'Polar');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propBfactor', 'B-factor');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_propSolAcc', 'Solvent Accessibility');
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propPos', 'Positive', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propNeg', 'Negative', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propHydro', 'Hydrophobic', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propPolar', 'Polar', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propBfactor', 'B-factor', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_propSolAcc', 'Solvent Accessibility', undefined, 2);
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.simplemenu) {
-                html += me.htmlCls.setHtmlCls.getLink('mn2_selectcomplement', 'Inverse');
-                html += me.htmlCls.setHtmlCls.getLink('mn2_selectmainchains', 'Main Chains');
-                html += me.htmlCls.setHtmlCls.getLink('mn2_selectsidechains', 'Side Chains');
-                html += me.htmlCls.setHtmlCls.getLink('mn2_selectmainsidechains', 'Main & Side Chains');
-                html += me.htmlCls.setHtmlCls.getLink('mn2_command', 'Advanced');
-            }
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectcomplement', 'Inverse', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectmainchains', 'Main Chains', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectsidechains', 'Side Chains', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectmainsidechains', 'Main & Side Chains', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_command', 'Advanced', undefined, 1);
 
             if(me.cfg.cid === undefined) {
-                html += "<li><span>Select on 3D</span>";
+                //html += "<li><span>Select on 3D</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn2_selon3d', 'Select on 3D', undefined, 1, 1);
                 html += "<ul>";
 
                 html += "<li>\"Alt\"+Click: start selection</li>";
                 html += "<li>\"Ctrl\"+Click: union selection</li>";
                 html += "<li>\"Shift\"+Click: range Selection</li>";
-                html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkChain', 'Chain');
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkChain', 'Chain', undefined, 1, 2);
                 if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkDomain', '3D Domain');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkDomain', '3D Domain', undefined, undefined, 2);
                 }
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkStrand', 'Strand/Helix');
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkResidue', 'Residue', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkYes', 'Atom');
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkNo', 'None');
+                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkStrand', 'Strand/Helix', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkResidue', 'Residue', true, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkYes', 'Atom', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn2_pk', 'mn2_pkNo', 'None', undefined, undefined, 2);
                 html += "</ul>";
                 html += "</li>";
             }
             else {
                 if(me.utilsCls.isMobile()) {
-                    html += "<li><span>Touch to pick</span>";
+                    html += "<li><span>Touch to pick</span></li>";
                 }
                 else {
-                    html += "<li><span>Picking with<br>\"Alt\" + Click</span>";
+                    html += "<li><span>Picking with<br>\"Alt\" + Click</span></li>";
                 }
             }
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            html += me.htmlCls.setHtmlCls.getLink('mn2_saveselection', 'Save Selection');
-            html += me.htmlCls.setHtmlCls.getLink('clearall', 'Clear Selection');
+            html += me.htmlCls.setHtmlCls.getLink('mn2_saveselection', 'Save Selection', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('clearall', 'Clear Selection', undefined, 1);
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            if(!me.cfg.simplemenu) {
-                html += "<li><span>Highlight Color</span>";
-                html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrYellow', 'Yellow', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrGreen', 'Green');
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrRed', 'Red');
-                html += "</ul>";
-                html += "</li>";
-                html += "<li><span>Highlight Style</span>";
-                html += "<ul>";
+            //html += "<li><span>Highlight Color</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_hlcolor', 'Highlight Color', undefined, undefined, 1);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrYellow', 'Yellow', true, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrGreen', 'Green', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_clr', 'mn2_hl_clrRed', 'Red', undefined, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+            //html += "<li><span>Highlight Style</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_hlstyle', 'Highlight Style', undefined, undefined, 1);
+            html += "<ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_style', 'mn2_hl_styleOutline', 'Outline', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_style', 'mn2_hl_styleObject', '3D Objects');
-                //html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_style', 'mn2_hl_styleNone', 'No Highlight');
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_style', 'mn2_hl_styleOutline', 'Outline', true, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn2_hl_style', 'mn2_hl_styleObject', '3D Objects', undefined, undefined, 2);
 
-                html += "</ul>";
-                html += "</li>";
-            }
+            html += "</ul>";
+            html += "</li>";
 
             //html += me.htmlCls.setHtmlCls.getLink('mn2_hl_styleNone', 'Clear Highlight');
 
-            html += me.htmlCls.setHtmlCls.getLink('toggleHighlight2', 'Toggle Highlight');
+            html += me.htmlCls.setHtmlCls.getLink('toggleHighlight2', 'Toggle Highlight', 1, 1);
 
             html += "<li><br/></li>";
 
@@ -57581,108 +57762,104 @@ var icn3d = (function (exports) {
             let html = "";
             html += "<ul class='icn3d-mn-item'>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Selection');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn2_hide_selected', 'Hide Selection');
-            html += me.htmlCls.setHtmlCls.getLink('mn2_selectedcenter', 'Zoom in Selection');
-            html += me.htmlCls.setHtmlCls.getLink('mn6_center', 'Center Selection');
+            html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Selection', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_hide_selected', 'Hide Selection', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_selectedcenter', 'Zoom in Selection', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn6_center', 'Center Selection', undefined, 1);
             html += me.htmlCls.setHtmlCls.getLink('mn2_fullstru', 'View Full Structure');
-            html += "<li id='" + me.pre + "mn2_alternateWrap'><span id='" + me.pre + "mn2_alternate' class='icn3d-link'>Alternate(Key \"a\")</span></li>";
+            //html += "<li id='" + me.pre + "mn2_alternateWrap'><span id='" + me.pre + "mn2_alternate' class='icn3d-link'>Alternate(Key \"a\")</span></li>";
+            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn2_alternate', 'Alternate(Key "a")', 'mn2_alternateWrap', undefined, 1);
 
             if(me.cfg.opmid !== undefined) {
-                html += "<li id='" + me.pre + "togglememli'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
-                html += "<li id='" + me.pre + "adjustmemli'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
-                html += "<li id='" + me.pre + "selectplaneli'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
-            }
-            else {
-                html += "<li id='" + me.pre + "togglememli' style='display:none'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
-                html += "<li id='" + me.pre + "adjustmemli' style='display:none'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
-                html += "<li id='" + me.pre + "selectplaneli' style='display:none'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
+                //html += "<li id='" + me.pre + "togglememli'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
+                html += me.htmlCls.setHtmlCls.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1);
+                //html += "<li id='" + me.pre + "adjustmemli'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
+                html += me.htmlCls.setHtmlCls.getLinkWrapper('adjustmem', 'Adjust Membrane', 'adjustmemli', undefined, 1);
+                //html += "<li id='" + me.pre + "selectplaneli'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
+                html += me.htmlCls.setHtmlCls.getLinkWrapper('selectplane', 'Select between<br>Two X-Y Planes</span>', 'selectplaneli', undefined, 1);
             }
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            let liStr = "<li><a href='";
-
-            html += "<li><span>VR & AR Hints</span>";
+            //html += "<li><span>VR & AR Hints</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_vrarhints', 'VR & AR Hints', undefined, 1, 1);
             html += "<ul>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#vr' target='_blank'>VR: VR Headsets</a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#ar' target='_blank'>AR: Chrome in Android</a></li>";
-            html += "</ul>";
-    /*
-            let liStr = "<li><a href='";
-
-            html += "<ul class='icn3d-mn-item'>";
-
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
-
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
-    */
-
-            html += me.htmlCls.setHtmlCls.getLink('mn6_sidebyside', 'Side by Side');
-
-            html += "<li><span>Rotate</span>";
-            html += "<ul>";
-
-            html += "<li><span>Rotate 90&deg;</span>";
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatex', 'X-axis(Shift + Key M)');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatey', 'Y-axis(Shift + Key J)');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatez', 'Z-axis');
+            html += me.htmlCls.setHtmlCls.getMenuUrl("vrhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#vr", "VR: VR Headsets", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl("arhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#ar", "AR: Chrome in Android", 1, 2);
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Auto Rotation</span>";
+
+            html += me.htmlCls.setHtmlCls.getLink('mn6_sidebyside', 'Side by Side', 1, 1);
+
+            //html += "<li><span>Rotate</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_rotate', 'Rotate', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateleft', 'Rotate Left');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateright', 'Rotate Right');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateup', 'Rotate Up');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotatedown', 'Rotate Down');
+
+            //html += "<li><span>Rotate 90&deg;</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_rotate90', 'Rotate 90&deg;', undefined, undefined, 2);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatex', 'X-axis(Shift + Key M)', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatey', 'Y-axis(Shift + Key J)', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate90', 'mn6_rotatez', 'Z-axis', undefined, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+            //html += "<li><span>Auto Rotation</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_rotateauto', 'Auto Rotation', undefined, 1, 2);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateleft', 'Rotate Left', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateright', 'Rotate Right', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotateup', 'Rotate Up', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_rotate', 'mn6_rotatedown', 'Rotate Down', undefined, 1, 3);
             html += "</ul>";
             html += "</li>";
 
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Camera</span>";
+            //html += "<li><span>Camera</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_camera', 'Camera', undefined, undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_camera', 'mn6_cameraPers', 'Perspective', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_camera', 'mn6_cameraOrth', 'Orthographic');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_camera', 'mn6_cameraPers', 'Perspective', true, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_camera', 'mn6_cameraOrth', 'Orthographic', undefined, undefined, 2);
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Fog for Selection</span>";
+            //html += "<li><span>Fog for Selection</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_fog', 'Fog for Selection', undefined, undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showfog', 'mn6_showfogYes', 'On');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showfog', 'mn6_showfogNo', 'Off', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showfog', 'mn6_showfogYes', 'On', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showfog', 'mn6_showfogNo', 'Off', true, undefined, 2);
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Slab for Selection</span>";
+            //html += "<li><span>Slab for Selection</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_slab', 'Slab for Selection', undefined, undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showslab', 'mn6_showslabYes', 'On');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showslab', 'mn6_showslabNo', 'Off', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showslab', 'mn6_showslabYes', 'On', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showslab', 'mn6_showslabNo', 'Off', true, undefined, 2);
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>XYZ-axes</span>";
+            //html += "<li><span>XYZ-axes</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_axes', 'XYZ-axes', undefined, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Original');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisSel', 'Prin. Axes on Sel.');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisNo', 'Hide', true);
-            html += "</ul>";
-            html += "</li>";
-
-            html += "<li>-</li>";
-
-            html += "<li><span>Reset</span>";
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_reset', 'reset', 'All');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_reset', 'mn6_resetOrientation', 'Orientation');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Original', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisSel', 'Prin. Axes on Sel.', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_showaxis', 'mn6_showaxisNo', 'Hide', true, undefined, 2);
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.simplemenu) {
-                html += me.htmlCls.setHtmlCls.getLink('mn6_back', 'Undo');
-                html += me.htmlCls.setHtmlCls.getLink('mn6_forward', 'Redo');
-            }
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            html += me.htmlCls.setHtmlCls.getLink('mn6_fullscreen', 'Full Screen');
+            //html += "<li><span>Reset</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn2_resetwrap', 'Reset', undefined, 1, 1);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_reset', 'reset', 'All', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_reset', 'mn6_resetOrientation', 'Orientation', undefined, 1, 2);
+            html += "</ul>";
+            html += "</li>";
+
+            html += me.htmlCls.setHtmlCls.getLink('mn6_back', 'Undo', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn6_forward', 'Redo', undefined, 1);
+
+            html += me.htmlCls.setHtmlCls.getLink('mn6_fullscreen', 'Full Screen', undefined, 1);
         //    html += me.htmlCls.setHtmlCls.getLink('mn6_exitfullscreen', 'Exit Full Screen');
 
             html += "<li><br/></li>";
@@ -57720,243 +57897,248 @@ var icn3d = (function (exports) {
             html += "<ul class='icn3d-mn-item'>";
 
             if(me.cfg.cid === undefined) {
-                html += "<li><span>Proteins</span>";
+                //html += "<li><span>Proteins</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_proteinwrap', 'Proteins', undefined, 1, 1);
                 html += "<ul>";
                 if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsRibbon', 'Ribbon');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsRibbon', 'Ribbon', undefined, 1, 2);
                 }
                 else {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsRibbon', 'Ribbon', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsRibbon', 'Ribbon', true, 1, 2);
                 }
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsStrand', 'Strand');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCylinder', 'Cylinder and Plate');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsSchematic', 'Schematic');
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsStrand', 'Strand', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCylinder', 'Cylinder and Plate', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsSchematic', 'Schematic', undefined, 1, 2);
 
                 if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace', true, 1, 2);
                 }
                 else {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace', undefined, 1, 2);
                 }
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBackbone', 'Backbone');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsLines', 'Lines');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsStick', 'Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBallstick', 'Ball and Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsSphere', 'Sphere');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsNo', 'Hide');
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBackbone', 'Backbone', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsLines', 'Lines', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsStick', 'Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsBallstick', 'Ball and Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsSphere', 'Sphere', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_proteins', 'mn3_proteinsNo', 'Hide', undefined, 1, 2);
                 html += "</ul>";
                 html += "</li>";
 
-                html += "<li><span>Side Chains</span>";
+                //html += "<li><span>Side Chains</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_sidecwrap', 'Side Chains', undefined, 1, 1);
                 html += "<ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecLines', 'Lines');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecStick', 'Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecBallstick', 'Ball and Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecSphere', 'Sphere');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecNo', 'Hide', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecLines', 'Lines', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecStick', 'Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecBallstick', 'Ball and Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecSphere', 'Sphere', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_sidec', 'mn3_sidecNo', 'Hide', true, 1, 2);
                 html += "</ul>";
                 html += "</li>";
 
-                html += "<li><span>Nucleotides</span>";
+                //html += "<li><span>Nucleotides</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_nuclwrap', 'Nucleotides', undefined, 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclCartoon', 'Cartoon', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclPhos', "O3' Trace");
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclBackbone', 'Backbone');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclSchematic', 'Schematic');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclLines', 'Lines');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclStick', 'Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclBallstick', 'Ball and Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclSphere', 'Sphere');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclNo', 'Hide');
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclCartoon', 'Cartoon', true, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclPhos', "O3' Trace", undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclBackbone', 'Backbone', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclSchematic', 'Schematic', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclLines', 'Lines', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclStick', 'Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclBallstick', 'Ball and Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclSphere', 'Sphere', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_nucl', 'mn3_nuclNo', 'Hide', undefined, 1, 2);
                 html += "</ul>";
                 html += "</li>";
 
-                html += "<li><span>Nucl. Bases</span>";
+                //html += "<li><span>Nucl. Bases</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_ntbasewrap', 'Nucl. Bases', undefined, 1, 1);
                 html += "<ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseLines', 'Lines');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseStick', 'Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseBallstick', 'Ball and Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseSphere', 'Sphere');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseNo', 'Hide', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseLines', 'Lines', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseStick', 'Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseBallstick', 'Ball and Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseSphere', 'Sphere', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_ntbase', 'mn3_ntbaseNo', 'Hide', true, 1, 2);
                 html += "</ul>";
                 html += "</li>";
             }
 
-            html += "<li><span>Chemicals</span>";
+            //html += "<li><span>Chemicals</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn3_ligwrap', 'Chemicals', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligLines', 'Lines');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligLines', 'Lines', undefined, 1, 2);
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick');
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', true, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', undefined, 1, 2);
             }
             else {
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligStick', 'Stick');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', true, 1, 2);
             }
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligSchematic', 'Schematic');
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligSphere', 'Sphere');
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligNo', 'Hide');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligSchematic', 'Schematic', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligSphere', 'Sphere', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_lig', 'mn3_ligNo', 'Hide', undefined, 1, 2);
             html += "</ul>";
             html += "</li>";
 
             //if(me.cfg.cid !== undefined) {
-                html += "<li><span>Hydrogens</span>";
+                //html += "<li><span>Hydrogens</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_hydrogenswrap', 'Hydrogens', undefined, 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide');
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide', undefined, 1, 2);
                 html += "</ul>";
                 html += "</li>";
             //}
 
             if(me.cfg.cid === undefined) {
-                html += "<li><span>Glycans</span>";
+                //html += "<li><span>Glycans</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn3_glycanwrap', 'Glycans', undefined, undefined, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Show Cartoon');
-                html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartNo', 'Hide Cartoon', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Show Cartoon', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartNo', 'Hide Cartoon', true, undefined, 2);
                 html += "</ul>";
                 html += "</li>";
             }
 
-            html += "<li><span>Ions</span>";
+            //html += "<li><span>Ions</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn3_ionswrap', 'Ions', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsSphere', 'Sphere', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsDot', 'Dot');
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsNo', 'Hide');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsSphere', 'Sphere', true, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsDot', 'Dot', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_ions', 'mn3_ionsNo', 'Hide', undefined, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Water</span>";
+            //html += "<li><span>Water</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn3_waterwrap', 'Water', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterSphere', 'Sphere');
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterDot', 'Dot');
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterNo', 'Hide', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterSphere', 'Sphere', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterDot', 'Dot', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_water', 'mn3_waterNo', 'Hide', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Preferences');
+            html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Preferences', undefined, 1);
 
-            if(!me.cfg.simplemenu) {
-                html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getLink('mn3_styleSave', 'Save Style');
-                html += me.htmlCls.setHtmlCls.getLink('mn3_styleApplySave', 'Apply Saved Style');
-            }
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+            html += me.htmlCls.setHtmlCls.getLink('mn3_styleSave', 'Save Style', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn3_styleApplySave', 'Apply Saved Style', undefined, 2);
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            html += "<li><span>Surface Type</span>";
+            //html += "<li><span>Surface Type</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn5_surfacewrap', 'Surface Type', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceVDW', 'Van der Waals');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceVDWContext', 'VDW with Context');
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceMolecular', 'Molecular Surface');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceMolecularContext', 'MS with Context');
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceSAS', 'Solvent Accessible');
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceSASContext', 'SA with Context');
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceVDW', 'Van der Waals', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceVDWContext', 'VDW with Context', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceMolecular', 'Molecular Surface', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceMolecularContext', 'MS with Context', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceSAS', 'Solvent Accessible', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_surface', 'mn5_surfaceSASContext', 'SA with Context', undefined, undefined, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn5_surfaceNo', 'Remove Surface');
+            html += me.htmlCls.setHtmlCls.getLink('mn5_surfaceNo', 'Remove Surface', 1, 1);
 
-            html += "<li><span>Surface Opacity</span>";
+            //html += "<li><span>Surface Opacity</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn5_surfaceop', 'Surface Opacity', undefined, 1, 1);
             html += "<ul>";
 
-            html += "<li><span>Fast Transparency</span>";
+            //html += "<li><span>Fast Transparency</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn5_surfaceopfast', 'Fast Transparency', undefined, 1, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true, 1, 3);
 
             for(let i = 9; i > 0; --i) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity0' + i, '0.' + i);
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity0' + i, '0.' + i, 1, 3);
             }
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Slow Transparency</span>";
+            //html += "<li><span>Slow Transparency</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn5_surfaceopslow', 'Slow Transparency', undefined, undefined, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow10', '1.0', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow10', '1.0', true, undefined, 3);
 
             for(let i = 9; i > 0; --i) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow0' + i, '0.' + i);
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_opacityslow', 'mn5_opacityslow0' + i, '0.' + i, undefined, undefined, 3);
             }
             html += "</ul>";
             html += "</li>";
 
             html += "</ul>"; // end of Surface Opacity
 
-            html += "<li><span>Surface Wireframe</span>";
+            //html += "<li><span>Surface Wireframe</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn5_wireframewrap', 'Surface Wireframe', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes');
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeNo', 'No', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeNo', 'No', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
             if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
-                if(!me.cfg.simplemenu) {
-                    html += "<li>-</li>";
+                html += me.htmlCls.setHtmlCls.getMenuSep();
 
-                    html += "<li id='" + me.pre + "mapWrapper1'><span>Electron Density</span>";
+                //html += "<li id='" + me.pre + "mapWrapper1'><span>Electron Density</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper1', 'Electron Density', undefined, undefined, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map', undefined, undefined, 2);
+                html += "</ul>";
+                html += "</li>";
+
+                html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 1);
+
+                //html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper3', 'Map Wireframe', undefined, undefined, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No', undefined, undefined, 2);
+                html += "</ul>";
+                html += "</li>";
+
+                if(me.cfg.mmtfid === undefined) {
+                    //html += me.htmlCls.setHtmlCls.getMenuSep();
+
+                    html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmap', 'EM Density Map', 'emmapWrapper1', undefined, 1);
+                    html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2', undefined, 1);
+
+                    //html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map Wireframe</span>";
+                    html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapwfwrap', 'EM Map Wireframe', 'emmapWrapper3', undefined, 1);
                     html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true, undefined, 2);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No', undefined, undefined, 2);
                     html += "</ul>";
                     html += "</li>";
-
-                    html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2');
-
-                    html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
-                    html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
-                    html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
-                    html += "</ul>";
-                    html += "</li>";
-
-                    if(me.cfg.mmtfid === undefined) {
-                        //html += "<li>-</li>";
-
-                        html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmap', 'EM Density Map', 'emmapWrapper1');
-                        html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2');
-
-                        html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map Wireframe</span>";
-                        html += "<ul>";
-                        html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true);
-                        html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No');
-                        html += "</ul>";
-                        html += "</li>";
-                    }
                 }
             }
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-            html += "<li><span>Background</span>";
+            //html += "<li><span>Background</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_bkgdwrap', 'Background', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Gray');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black', true, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Gray', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White', undefined, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.simplemenu) {
-                html += "<li><span>Dialog Color</span>";
-                html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlue', 'Blue', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeOrange', 'Orange');
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlack', 'Black');
-                html += "</ul>";
-                html += "</li>";
-            }
-
-    //        html += "<li><span>Two-color Helix</span>";
-    //        html += "<ul>";
-    //        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorYes', 'Yes');
-    //        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorNo', 'No', true);
-    //        html += "</ul>";
-    //        html += "</li>";
-
+            html += "<li><span>Dialog Color</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_themewrap', 'Dialog Color', undefined, undefined, 1);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlue', 'Blue', true, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeOrange', 'Orange', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlack', 'Black', undefined, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
 
             html += "<li><br/></li>";
 
@@ -57992,316 +58174,309 @@ var icn3d = (function (exports) {
 
             html += "<ul class='icn3d-mn-item'>";
 
-            html += "<li><span style='padding-left:1.5em!important;'>Unicolor</span>";
+            //html += "<li><span style='padding-left:1.5em!important;'>Unicolor</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrwrap', 'Unicolor', 'icn3d-menupd', 1, 1);
             html += "<ul>";
 
             html += "<li><span>Red</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrRedwrap', 'Red', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRed', 'Red');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed1', 'Red', 'F00');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed2', 'Indian Red', 'CD5C5C');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed3', 'Light Coral', 'F08080');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed4', 'Salmon', 'FA8072');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed5', 'Dark Salmon', 'E9967A');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed6', 'Light Salmon', 'FFA07A');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed7', 'Crimson', 'DC143C');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed8', 'Fire Brick', 'B22222');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrRed9', 'Dark Red', '8B0000');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed1', 'Red', 'F00', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed2', 'Indian Red', 'CD5C5C', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed3', 'Light Coral', 'F08080', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed4', 'Salmon', 'FA8072', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed5', 'Dark Salmon', 'E9967A', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed6', 'Light Salmon', 'FFA07A', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed7', 'Crimson', 'DC143C', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed8', 'Fire Brick', 'B22222', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed9', 'Dark Red', '8B0000', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Pink</span>";
+            //html += "<li><span>Pink</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrPinkwrap', 'Pink', undefined, 1, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink1', 'Pink', 'FFC0CB');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink2', 'Light Pink', 'FFB6C1');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink3', 'Hot Pink', 'FF69B4');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink4', 'Deep Pink', 'FF1493');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink5', 'Medium Violet Red', 'C71585');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrPink6', 'Pale Violet Red', 'DB7093');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink1', 'Pink', 'FFC0CB', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink2', 'Light Pink', 'FFB6C1', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink3', 'Hot Pink', 'FF69B4', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink4', 'Deep Pink', 'FF1493', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink5', 'Medium Violet Red', 'C71585', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrPink6', 'Pale Violet Red', 'DB7093', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Orange</span>";
+            //html += "<li><span>Orange</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrOrangewrap', 'Orange', undefined, 1, 2);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran1', 'Orange', 'FFA500');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran2', 'Dark Orange', 'FF8C00');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran3', 'Orange Red', 'FF4500');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran4', 'Tomato', 'FF6347');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran5', 'Coral', 'FF7F50');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrOran6', 'Light Salmon', 'FFA07A');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran1', 'Orange', 'FFA500', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran2', 'Dark Orange', 'FF8C00', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran3', 'Orange Red', 'FF4500', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran4', 'Tomato', 'FF6347', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran5', 'Coral', 'FF7F50', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrOran6', 'Light Salmon', 'FFA07A', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Yellow</span>";
+            //html += "<li><span>Yellow</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrYellowwrap', 'Yellow', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrYllw', 'Yellow');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw1', 'Yellow', 'FF0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw2', 'Gold', 'FFD700');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw3', 'Light Yellow', 'FFFFE0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw4', 'Lemon Chiffon', 'FFFACD');
-            //html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw5', 'Light Golden Rod Yellow', 'FAFAD2');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw5', 'Light Golden Rod', 'FAFAD2');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw6', 'Papaya Whip', 'FFEFD5');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw7', 'Moccasin', 'FFE4B5');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw8', 'Peach Puff', 'FFDAB9');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw9', 'Pale Golden Rod', 'EEE8AA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw10', 'Khaki', 'F0E68C');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrYllw11', 'Dark Khaki', 'BDB76B');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw1', 'Yellow', 'FF0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw2', 'Gold', 'FFD700', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw3', 'Light Yellow', 'FFFFE0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw4', 'Lemon Chiffon', 'FFFACD', undefined, 1, 3);
+            //html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw5', 'Light Golden Rod Yellow', 'FAFAD2', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw5', 'Light Golden Rod', 'FAFAD2', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw6', 'Papaya Whip', 'FFEFD5', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw7', 'Moccasin', 'FFE4B5', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw8', 'Peach Puff', 'FFDAB9', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw9', 'Pale Golden Rod', 'EEE8AA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw10', 'Khaki', 'F0E68C', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrYllw11', 'Dark Khaki', 'BDB76B', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Magenta</span>";
+            //html += "<li><span>Magenta</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrMagentawrap', 'Magenta', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrMgnt', 'Magenta');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt1', 'Magenta', 'F0F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt2', 'Orchid', 'DA70D6');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt3', 'Violet', 'EE82EE');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt4', 'Plum', 'DDA0DD');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt5', 'Thistle', 'D8BFD8');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt6', 'Lavender', 'E6E6FA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt7', 'Medium Orchid', 'BA55D3');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt8', 'Medium Purple', '9370DB');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt9', 'Rebecca Purple', '663399');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt10', 'Blue Violet', '8A2BE2');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt11', 'Dark Violet', '9400D3');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt12', 'Dark Orchid', '9932CC');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt13', 'Dark Magenta', '8B008B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt14', 'Purple', '800080');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt15', 'Indigo', '4B0082');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt16', 'Slat Blue', '6A5ACD');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt17', 'Dark Slate Blue', '483D8B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrMgnt18', 'Medium Slat Blue', '6A5ACD');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt1', 'Magenta', 'F0F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt2', 'Orchid', 'DA70D6', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt3', 'Violet', 'EE82EE', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt4', 'Plum', 'DDA0DD', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt5', 'Thistle', 'D8BFD8', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt6', 'Lavender', 'E6E6FA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt7', 'Medium Orchid', 'BA55D3', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt8', 'Medium Purple', '9370DB', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt9', 'Rebecca Purple', '663399', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt10', 'Blue Violet', '8A2BE2', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt11', 'Dark Violet', '9400D3', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt12', 'Dark Orchid', '9932CC', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt13', 'Dark Magenta', '8B008B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt14', 'Purple', '800080', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt15', 'Indigo', '4B0082', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt16', 'Slat Blue', '6A5ACD', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt17', 'Dark Slate Blue', '483D8B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrMgnt18', 'Medium Slat Blue', '6A5ACD', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Green</span>";
+            //html += "<li><span>Green</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrGreenwrap', 'Green', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrGrn', 'Green');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn1', 'Green', '0F0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn2', 'Dark Green', '006400');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn3', 'Yellow Green', '9ACD32');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn4', 'Olive Drab', '6B8E23');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn5', 'Olive', '808000');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn6', 'Dark Olive Green', '556B2F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn7', 'Medium Aquamarine', '66CDAA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn8', 'Dark Sea Green', '8FBC8B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn9', 'Lignt Sea Green', '20B2AA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn10', 'Dark Cyan', '008B8B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn11', 'Teal', '008080');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn12', 'Forest Green', '228B22');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn13', 'Sea Green', '2E8B57');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn14', 'Medium Sea Green', '3CB371');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn15', 'Spring Green', '00FF7F');
-            //html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn16', 'Medium Spring Green', '00FA9A');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn16', 'Medium Spring', '00FA9A');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn17', 'Light Green', '90EE90');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn18', 'Pale Green', '98FB98');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn19', 'Lime Green', '32CD32');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn20', 'Lawn Green', '7CFC00');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn21', 'Chartreuse', '7FFF00');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGrn22', 'Green Yellow', 'ADFF2F');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn1', 'Green', '0F0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn2', 'Dark Green', '006400', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn3', 'Yellow Green', '9ACD32', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn4', 'Olive Drab', '6B8E23', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn5', 'Olive', '808000', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn6', 'Dark Olive Green', '556B2F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn7', 'Medium Aquamarine', '66CDAA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn8', 'Dark Sea Green', '8FBC8B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn9', 'Lignt Sea Green', '20B2AA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn10', 'Dark Cyan', '008B8B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn11', 'Teal', '008080', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn12', 'Forest Green', '228B22', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn13', 'Sea Green', '2E8B57', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn14', 'Medium Sea Green', '3CB371', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn15', 'Spring Green', '00FF7F', undefined, 1, 3);
+            //html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn16', 'Medium Spring Green', '00FA9A', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn16', 'Medium Spring', '00FA9A', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn17', 'Light Green', '90EE90', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn18', 'Pale Green', '98FB98', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn19', 'Lime Green', '32CD32', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn20', 'Lawn Green', '7CFC00', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn21', 'Chartreuse', '7FFF00', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGrn22', 'Green Yellow', 'ADFF2F', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Cyan</span>";
+            //html += "<li><span>Cyan</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrCyanwrap', 'Cyan', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCyan', 'Cyan');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan1', 'Cyan', '0FF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan2', 'Light Cyan', 'E0FFFF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan3', 'Pale Turquoise', 'AFEEEE');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan4', 'Aquamarine', '7FFFD4');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan5', 'Turquoise', '40E0D0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan6', 'Medium Turquoise', '48D1CC');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrCyan7', 'Dark Turquoise', '00CED1');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan1', 'Cyan', '0FF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan2', 'Light Cyan', 'E0FFFF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan3', 'Pale Turquoise', 'AFEEEE', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan4', 'Aquamarine', '7FFFD4', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan5', 'Turquoise', '40E0D0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan6', 'Medium Turquoise', '48D1CC', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrCyan7', 'Dark Turquoise', '00CED1', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Blue</span>";
+            //html += "<li><span>Blue</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrBluewrap', 'Blue', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBlue', 'Blue');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue1', 'Blue', '00F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue2', 'Medium Blue', '0000CD');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue3', 'Dark Blue', '00008B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue4', 'Navy', '000080');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue5', 'Midnight Blue', '191970');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue6', 'Royal Blue', '4169E1');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue7', 'Medium Slate Blue', '7B68EE');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue8', 'Corn Flower Blue', '6495ED');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue9', 'Dodger Blue', '1E90FF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue10', 'Deep Sky Blue', '00BFFF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue11', 'Light Sky Blue', '87CEFA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue12', 'Sky Blue', '87CEEB');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue13', 'Light Blue', 'ADD8E6');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue14', 'Powder Blue', 'B0E0E6');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue15', 'Light Steel Blue', 'B0C4DE');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue16', 'Steel Blue', '4682B4');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBlue17', 'Cadet Blue', '5F9EA0');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue1', 'Blue', '00F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue2', 'Medium Blue', '0000CD', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue3', 'Dark Blue', '00008B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue4', 'Navy', '000080', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue5', 'Midnight Blue', '191970', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue6', 'Royal Blue', '4169E1', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue7', 'Medium Slate Blue', '7B68EE', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue8', 'Corn Flower Blue', '6495ED', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue9', 'Dodger Blue', '1E90FF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue10', 'Deep Sky Blue', '00BFFF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue11', 'Light Sky Blue', '87CEFA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue12', 'Sky Blue', '87CEEB', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue13', 'Light Blue', 'ADD8E6', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue14', 'Powder Blue', 'B0E0E6', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue15', 'Light Steel Blue', 'B0C4DE', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue16', 'Steel Blue', '4682B4', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBlue17', 'Cadet Blue', '5F9EA0', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Brown</span>";
+            //html += "<li><span>Brown</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrBrownwrap', 'Brown', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBrown', 'Brown');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown1', 'Brown', 'A52A2A');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown2', 'Maroon', '800000');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown3', 'Sienna', 'A0522D');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown4', 'Saddle Brown', '8B4513');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown5', 'Chocolate', 'D2691E');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown6', 'Peru', 'CD853F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown7', 'Dark Golden Rod', 'B8860B');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown8', 'Golden Rod', 'DAA520');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown9', 'Sandy Brown', 'F4A460');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown10', 'Rosy Brown', 'BC8F8F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown11', 'Tan', 'D2B48C');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown12', 'Burlywood', 'DEB887');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown13', 'Wheat', 'F5DEB3');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown14', 'Navajo White', 'FFDEAD');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown15', 'Bisque', 'FFE4C4');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown16', 'Blanched Almond', 'FFEBCD');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrBrown17', 'Corn Silk', 'FFF8DC');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown1', 'Brown', 'A52A2A', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown2', 'Maroon', '800000', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown3', 'Sienna', 'A0522D', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown4', 'Saddle Brown', '8B4513', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown5', 'Chocolate', 'D2691E', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown6', 'Peru', 'CD853F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown7', 'Dark Golden Rod', 'B8860B', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown8', 'Golden Rod', 'DAA520', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown9', 'Sandy Brown', 'F4A460', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown10', 'Rosy Brown', 'BC8F8F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown11', 'Tan', 'D2B48C', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown12', 'Burlywood', 'DEB887', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown13', 'Wheat', 'F5DEB3', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown14', 'Navajo White', 'FFDEAD', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown15', 'Bisque', 'FFE4C4', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown16', 'Blanched Almond', 'FFEBCD', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrBrown17', 'Corn Silk', 'FFF8DC', undefined, 1, 3);
             html += "</ul>";
 
             html += "<li><span>White</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrWhitewrap', 'White', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrWhite', 'White');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite1', 'White', 'FFF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite2', 'Snow', 'FFFAFA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite3', 'Honey Dew', 'F0FFF0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite4', 'Mint Cream', 'F5FFFA');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite5', 'Azure', 'F0FFFF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite6', 'Alice Blue', 'F0F8FF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite7', 'Ghost White', 'F8F8FF');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite8', 'White Smoke', 'F5F5F5');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite9', 'Sea Shell', 'FFF5EE');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite10', 'Beige', 'F5F5DC');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite11', 'Old Lace', 'FDF5E6');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite12', 'Floral White', 'FFFAF0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite13', 'Ivory', 'FFFFF0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite14', 'Antique White', 'FAEBD7');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite15', 'Linen', 'FAF0E6');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite16', 'Lavenderblush', 'FFF0F5');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite17', 'Misty Rose', 'FFE4E1');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite1', 'White', 'FFF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite2', 'Snow', 'FFFAFA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite3', 'Honey Dew', 'F0FFF0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite4', 'Mint Cream', 'F5FFFA', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite5', 'Azure', 'F0FFFF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite6', 'Alice Blue', 'F0F8FF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite7', 'Ghost White', 'F8F8FF', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite8', 'White Smoke', 'F5F5F5', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite9', 'Sea Shell', 'FFF5EE', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite10', 'Beige', 'F5F5DC', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite11', 'Old Lace', 'FDF5E6', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite12', 'Floral White', 'FFFAF0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite13', 'Ivory', 'FFFFF0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite14', 'Antique White', 'FAEBD7', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite15', 'Linen', 'FAF0E6', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite16', 'Lavenderblush', 'FFF0F5', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrWhite17', 'Misty Rose', 'FFE4E1', undefined, 1, 3);
             html += "</ul>";
 
-            html += "<li><span>Gray</span>";
+            //html += "<li><span>Gray</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('uniclrGraywrap', 'Gray', undefined, 1, 2);
             html += "<ul>";
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrGray', 'Gray');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray1', 'Gray', '808080');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray2', 'Dim Gray', '696969');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray3', 'Light Slate Gray', '778899');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray4', 'Slate Gray', '708090');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray5', 'Dark Slate Gray', '2F4F4F');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray6', 'Black', '000000');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray7', 'Dark Gray', 'A9A9A9');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray8', 'Silver', 'C0C0C0');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray9', 'Light Gray', 'D3D3D3');
-            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray10', 'Gainsboro', 'DCDCDC');
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray1', 'Gray', '808080', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray2', 'Dim Gray', '696969', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray3', 'Light Slate Gray', '778899', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray4', 'Slate Gray', '708090', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray5', 'Dark Slate Gray', '2F4F4F', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray6', 'Black', '000000', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray7', 'Dark Gray', 'A9A9A9', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray8', 'Silver', 'C0C0C0', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray9', 'Light Gray', 'D3D3D3', undefined, 1, 3);
+            html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrGray10', 'Gainsboro', 'DCDCDC', undefined, 1, 3);
             html += "</ul>";
 
             html += "</ul>";
 
-            if(!me.cfg.simplemenu) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker');
-                html += "<li>-</li>";
-            }
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker', undefined, undefined, 1);
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
             if(me.cfg.cid === undefined) {
                 //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
-                html += "<li><span style='padding-left:1.5em!important;'>Rainbow (R-V)</span>";
+                //html += "<li><span style='padding-left:1.5em!important;'>Rainbow (R-V)</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrRainbowwrap', 'Rainbow (R-V)', 'icn3d-menupd', 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowSets', 'for Sets');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowSets', 'for Sets', undefined, undefined, 2);
                 html += "</ul>";
 
-                if(!me.cfg.simplemenu) {
-                    //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
-                    html += "<li><span style='padding-left:1.5em!important;'>Spectrum (V-R)</span>";
-                    html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumSets', 'for Sets');
-                    html += "</ul>";
-                }
-
-                html += "<li><span style='padding-left:1.5em!important;'>Secondary</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrSpectrumwrap', 'Spectrum (V-R)', 'icn3d-menupd', 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSSpectrum', 'Spectrum');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumSets', 'for Sets', undefined, undefined, 2);
                 html += "</ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
-
-    //            if(!me.cfg.notebook && !me.cfg.hidelicense) {
-    //                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
-    //            }
-
-                //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
-
-                html += "<li><span style='padding-left:1.5em!important;'>Hydrophobicity</span>";
+                //html += "<li><span style='padding-left:1.5em!important;'>Secondary</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrSSwrap', 'Secondary', 'icn3d-menupd', 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrNormalizedHP', 'Normalized');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSSpectrum', 'Spectrum', undefined, undefined, 2);
                 html += "</ul>";
 
-                html += "<li><span style='padding-left:1.5em!important;'>B-factor</span>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge', undefined, 1, 1);
+
+                //html += "<li><span style='padding-left:1.5em!important;'>Hydrophobicity</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_hydrophobicwrap', 'Hydrophobicity', 'icn3d-menupd', 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrNormalizedHP', 'Normalized', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White', undefined, undefined, 2);
                 html += "</ul>";
 
-                if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>');
+                //html += "<li><span style='padding-left:1.5em!important;'>B-factor</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrBfactorwrap', 'B-factor', 'icn3d-menupd', 1, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile', undefined, 1, 2);
+                html += "</ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>', undefined, undefined, 1);
+
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure', undefined, 1, 1);
 
                 if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', undefined, 1, 1);
                 }
                 else {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true, 1, 1);
                 }
 
                 //if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
-                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
+                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain', undefined, undefined, 1);
                 //}
 
                 if(me.cfg.cid === undefined) {
-                    if(!me.cfg.simplemenu) {
-                        html += "<li><span style='padding-left:1.5em!important;'>Defined Sets</span>";
-                        html += "<ul>";
-                        html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrsets', 'Rainbow for Selected Sets<br>in "Analysis > Defined Sets"');
-                        html += "</ul>";
-                    }
+                    //html += "<li><span style='padding-left:1.5em!important;'>Defined Sets</span>";
+                    html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrsetswrap', 'Defined Sets', 'icn3d-menupd', undefined, 1);
+                    html += "<ul>";
+                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrsets', 'Rainbow for Selected Sets<br><span style="padding-left:1.5em;">in "Analysis > Defined Sets"</span>', undefined, undefined, 2);
+                    html += "</ul>";
+                    html += "</li>";
                 }
 
-                //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
-
-                html += "<li><span style='padding-left:1.5em!important;'>Residue</span>";
+                //html += "<li><span style='padding-left:1.5em!important;'>Residue</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrResiduewrap', 'Residue', 'icn3d-menupd', 1, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Default');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidueCustom', 'Custom');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Default', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidueCustom', 'Custom', undefined, undefined, 2);
                 html += "</ul>";
 
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', undefined, 1, 1);
 
                 if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true);
-                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation');
+                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true, undefined, 2);
+                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 2);
                 }
                 else if(me.cfg.blast_rep_id !== undefined) {
-                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity');
-                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true);
+                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
+                  html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true, undefined, 2);
                 }
 
                 //if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
                 //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>', undefined, 1, 1);
                 //}
             }
             else {
                 //if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true, 1, 1);
             }
 
-            if(!me.cfg.simplemenu) {
-                html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
-                html += me.htmlCls.setHtmlCls.getLink('mn4_clrSave', 'Save Color');
-                html += me.htmlCls.setHtmlCls.getLink('mn4_clrApplySave', 'Apply Saved Color');
-            }
+            html += me.htmlCls.setHtmlCls.getLink('mn4_clrSave', 'Save Color', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn4_clrApplySave', 'Apply Saved Color', undefined, 1);
 
             html += "<li><br/></li>";
             html += "</ul>";
@@ -58337,197 +58512,194 @@ var icn3d = (function (exports) {
             html += "<ul class='icn3d-mn-item'>";
 
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr, 1, 1);
 
                 //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd || ic.bInputfile) {
-                    html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr);
+                    html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr, undefined, 1);
                 //}
 
                 if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-                  html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
+                  html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr, 1, 1);
                 }
 
-                html += "<li><span>2D Cartoon</span>";
+                //html += "<li><span>2D Cartoon</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('2dctnwrap', '2D Cartoon', undefined, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getLink('2dctn_chain', 'Chain Level');
-                html += me.htmlCls.setHtmlCls.getLink('2dctn_domain', 'Domain Level');
-                html += me.htmlCls.setHtmlCls.getLink('2dctn_secondary', 'Helix/Sheet Level');
+                html += me.htmlCls.setHtmlCls.getLink('2dctn_chain', 'Chain Level', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('2dctn_domain', 'Domain Level', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('2dctn_secondary', 'Helix/Sheet Level', undefined, 2);
                 html += "</ul>";
                 html += "</li>";
 
-                html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
+                html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets', 1, 1);
 
-                html += "<li>-</li>";
+                html += me.htmlCls.setHtmlCls.getMenuSep();
 
-                html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions');
+                html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions', 1, 1);
                 //html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
-                if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn6_contactmap', 'Contact Map');
-    /*
-                html += "<li><span>Bring to Front</span>";
-                html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_window_table', 'Interaction Table');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_window_linegraph', '2D Interaction Network');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_window_scatterplot', '2D Interaction Map');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_window_graph', '2D Graph(Force-Directed)');
-                html += "</ul>";
-                html += "</li>";
-    */
+                html += me.htmlCls.setHtmlCls.getLink('mn6_contactmap', 'Contact Map', undefined, 1);
 
                 if(!me.cfg.notebook) {
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr);
+                    html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr, 1, 1);
                 }
 
-                if(!me.cfg.simplemenu) html += "<li>-</li>";
+                html += me.htmlCls.setHtmlCls.getMenuSep();
             }
 
             if(!me.cfg.notebook && !me.cfg.hidelicense) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr, 1, 1);
                 
-                if(!me.cfg.simplemenu) {
-                    html += "<li><span>Load PQR/Phi</span>";
-                    html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_phi', 'Local PQR/Phi/Cube File');
-                    html += me.htmlCls.setHtmlCls.getLink('mn1_phiurl', 'URL PQR/Phi/Cube File');
-                    html += "</ul>";
-                    html += me.htmlCls.setHtmlCls.getLink('delphipqr', 'Download PQR');
-                }
+                //html += "<li><span>Load PQR/Phi</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn1_phiwrap', 'Load PQR/Phi', undefined, undefined, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getLink('mn1_phi', 'Local PQR/Phi/Cube File', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_phiurl', 'URL PQR/Phi/Cube File', undefined, 2);
+                html += "</ul>";
+                html += "</li>";
+                html += me.htmlCls.setHtmlCls.getLink('delphipqr', 'Download PQR', undefined, 1);
 
-                html += "<li>-</li>";
+                html += me.htmlCls.setHtmlCls.getMenuSep();
             }
 
-            html += "<li><span>Distance</span>";
+            //html += "<li><span>Distance</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_distancewrap', 'Distance', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn6_area', 'Surface Area');
+            html += me.htmlCls.setHtmlCls.getLink('mn6_area', 'Surface Area', 1, 1);
 
-            html += "<li><span>Label</span>";
+            //html += "<li><span>Label</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_addlabelwrap', 'Label', undefined, 1, 1);
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelElements', 'per Atom Element');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelElements', 'per Atom Element', undefined, 1, 2);
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number');
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
             }
 
-            html += "<li>-</li>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', undefined, 1, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Label Scale</span>";
+            //html += "<li><span>Label Scale</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('labelscalewrap', 'Label Scale', undefined, 1, 1);
             html += "<ul>";
 
             for(let i = 1; i <= 4; ++i) {
                 let twoi = 2 * i;
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale0' + twoi, '0.' + twoi);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale0' + twoi, '0.' + twoi, undefined, 1, 2);
             }
 
             for(let i = 1; i <= 5; ++i) {
                 if(i == 1) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true, 1, 2);
                 }
                 else {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', undefined, 1, 2);
                 }
             }
 
             html += "</ul>";
             html += "</li>";
 
-            html += "<li>-</li>";
+            html += me.htmlCls.setHtmlCls.getMenuSep();
 
             if(me.cfg.cid === undefined) {
-                if(!me.cfg.simplemenu) {
-                    html += "<li><span>Chem. Binding</span>";
-                    html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true);
-                    html += "</ul>";
-                    html += "</li>";
-                }
-
-                html += "<li><span>Disulfide Bonds</span>";
+                //html += "<li><span>Chem. Binding</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn6_chemicalbindingwrap', 'Chem. Binding', undefined, undefined, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true);
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsExport', 'Export Pairs');
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsNo', 'Hide');
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true, undefined, 2);
                 html += "</ul>";
                 html += "</li>";
 
-                if(!me.cfg.simplemenu) {
-                    html += "<li><span>Cross-Linkages</span>";
-                    html += "<ul>";
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true);
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsExport', 'Export Pairs');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide');
-                    html += "</ul>";
-                    html += "</li>";
-                }
+                //html += "<li><span>Disulfide Bonds</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn6_ssbondswrap', 'Disulfide Bonds', undefined, 1, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true, 1, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsExport', 'Export Pairs', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_ssbonds', 'mn6_ssbondsNo', 'Hide', undefined, 1, 2);
+                html += "</ul>";
+                html += "</li>";
 
-                let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+                //html += "<li><span>Cross-Linkages</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn6_clbondswrap', 'Cross-Linkages', undefined, undefined, 1);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsExport', 'Export Pairs', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide', undefined, undefined, 2);
+                html += "</ul>";
+                html += "</li>";
+
+                let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
                 if(bOnePdb) {
-                  html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
+                  //html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
+                  html += me.htmlCls.setHtmlCls.getMenuText('assemblyWrapper', 'Assembly', undefined, 1, 1);
                   html += "<ul>";
 
                   if(!me.cfg.bu) {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', undefined, 1, 2);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true, 1, 2);
                   }
                   else {
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
-                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true, 1, 2);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', undefined, 1, 2);
                   }
 
                   html += "</ul>";
                   html += "</li>";
-
                 }
 
-                html += "<li><span>Symmetry</span>";
+                //html += "<li><span>Symmetry</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn6_symmetrywrap', 'Symmetry', undefined, undefined, 1);
                 html += "<ul>";
-                if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr);
-                if(!me.cfg.simplemenu) {
-                    html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr);
-                    html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
-                    html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only');
-                }
+                if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
+
+                html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only', undefined, 2);
+
                 html += "</ul>";
                 html += "</li>";
 
-                html += "<li>-</li>";
+                html += me.htmlCls.setHtmlCls.getMenuSep();
             }
 
-            if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Window Title');
+            html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Window Title', undefined, 1);
 
             if(me.cfg.cid !== undefined) {
-                html += "<li><span>Links</span>";
+                //html += "<li><span>Links</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn1_linkwrap', 'Links', undefined, undefined, 1);
+                
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_structure', 'Compound Summary ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_vast', 'Similar Compounds ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_bind', 'Structures Bound ' + me.htmlCls.wifiStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_structure', 'Compound Summary ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_vast', 'Similar Compounds ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_bind', 'Structures Bound ' + me.htmlCls.wifiStr, undefined, 2);
                 html += "</ul>";
                 html += "</li>";
             }
             else {
-                html += "<li><span>Links</span>";
+                //html += "<li><span>Links</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn1_linkwrap', 'Links', undefined, undefined, 1);
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_structure', 'Structure Summary ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_vast', 'Similar Structures ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_pubmed', 'Literature ' + me.htmlCls.wifiStr);
-                html += me.htmlCls.setHtmlCls.getLink('mn1_link_protein', 'Protein ' + me.htmlCls.wifiStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_structure', 'Structure Summary ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_vast', 'Similar Structures ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_pubmed', 'Literature ' + me.htmlCls.wifiStr, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_link_protein', 'Protein ' + me.htmlCls.wifiStr, undefined, 2);
                 //html += me.htmlCls.setHtmlCls.getLink('mn1_link_gene', 'Gene');
                 //html += me.htmlCls.setHtmlCls.getLink('mn1_link_chemicals', 'Chemicals');
                 html += "</ul>";
@@ -58566,70 +58738,77 @@ var icn3d = (function (exports) {
 
             let html = "";
 
-            let liStr = "<li><a href='";
-
             html += "<ul class='icn3d-mn-item'>";
 
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('abouticn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#about", "About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span>", 1, 1);
 
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#videos' target='_blank'>iCn3D Videos</a></li>";
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('gallery', me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery", "Live Gallery " + me.htmlCls.wifiStr, 1, 1);
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#videos' target='_blank'>iCn3D Videos</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('video', me.htmlCls.baseUrl + "icn3d/icn3d.html#videos", "iCn3D Videos", 1, 1);
 
-            html += "<li><span>FAQ</span>";
+            //html += "<li><span>FAQ</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_faq', 'FAQ', undefined, 1, 1);
 
             html += "<ul>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#viewstru' target='_blank'><span>View structure</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#tfstru' target='_blank'><span>Transform Structure</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#selsubset' target='_blank'><span>Select Subsets</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#changestylecolor' target='_blank'><span>Change Style/Color</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview' target='_blank'><span>Save Work</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno' target='_blank'><span>Show Annotations</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno' target='_blank'><span>Export Annotations</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis' target='_blank'><span>Interactions Analysis</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis' target='_blank'><span>Mutation Analysis</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot' target='_blank'><span>Electrostatic Pot.</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast' target='_blank'><span>Similar PDB</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek' target='_blank'><span>Similar AlphaFold/PDB</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul' target='_blank'><span>Align Multiple Structures</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis' target='_blank'><span>Batch Analysis</span></a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d' target='_blank'><span>Embed iCn3D</span></a></li>";
-            html += "</ul>";
-
-            //html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
-            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
-
-            html += "<li><span>Source Code</span>";
-            html += "<ul>";
-            html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>GitHub (browser) " + me.htmlCls.wifiStr + "</a></li>";
-            html += liStr + "https://www.npmjs.com/package/icn3d' target='_blank'>npm (Node.js) " + me.htmlCls.wifiStr + "</a></li>";
-            html += liStr + "https://pypi.org/project/icn3dpy' target='_blank'>Jupyter Notebook " + me.htmlCls.wifiStr + "</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_viewstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#viewstru", "View structure", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_tfstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#tfstru", "Transform Structure", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_selsubset', me.htmlCls.baseUrl + "icn3d/icn3d.html#selsubset", "Select Subsets", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_stylecolor', me.htmlCls.baseUrl + "icn3d/icn3d.html#changestylecolor", "Change Style/Color", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_savework', me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview", "Save Work", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_showanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno", "Show Annotations", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_exportanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno", "Export Annotations", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_interanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis", "Interactions Analysis", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_mutanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis", "Mutation Analysis", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_elecpot', me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot", "Electrostatic Pot.", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_simipdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast", "Similar PDB", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_simialphapdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek", "Similar AlphaFold/PDB", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_alnstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul", "Align Multiple Structures", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_batchanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis", "Batch Analysis", 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('faq_embedicn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d", "Embed iCn3D", 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.simplemenu) {
-                html += "<li><span>Develop</span>";
-                html += "<ul>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>Embed iCn3D</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
-        
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi' target='_blank'>RESTful APIs</a></li>";
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors' target='_blank'>Codeathon Contributors</a></li>";
-                html += "</ul>";
-                html += "</li>";
-            }
+            //html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('citing', me.htmlCls.baseUrl + "icn3d/icn3d.html#citing", "Citing iCn3D", undefined, 1);
 
-            html += liStr + me.htmlCls.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc " + me.htmlCls.wifiStr + "</a></li>";
-
-            html += "<li>-</li>";
-
-            html += "<li><span>Transform Hints</span>";
+            //html += "<li><span>Source Code</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_source', 'Source Code', undefined, 1, 1);
             html += "<ul>";
-            html += "<li><span>Rotate</span>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('github', "https://github.com/ncbi/icn3d", "GitHub (browser) " + me.htmlCls.wifiStr, 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('npm', "https://www.npmjs.com/package/icn3d", "npm (Node.js) " + me.htmlCls.wifiStr, 1, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('notebook', "https://pypi.org/project/icn3dpy", "Jupyter Notebook " + me.htmlCls.wifiStr, 1, 2);
+            html += "</ul>";
+            html += "</li>";
+
+            //html += "<li><span>Develop</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_develop', 'Develop', undefined, undefined, 1);
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_embedicn3d2', me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse", "Embed iCn3D", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_urlpara', me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters", "URL Parameters", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_command', me.htmlCls.baseUrl + "icn3d/icn3d.html#commands", "Commands", undefined, 2);
+
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_datastru', me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure", "Data Structure", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_classstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure", "Class Structure", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_addclass', me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass", "Add New Classes", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_modfunc', me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction", "Modify Functions", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_restful', me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi", "RESTful APIs", undefined, 2);
+            html += me.htmlCls.setHtmlCls.getMenuUrl('dev_contributor', me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors", "Codeathon Contributors", undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc " + me.htmlCls.wifiStr + "</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('helpdoc', me.htmlCls.baseUrl + "icn3d/docs/icn3d_help.html", "Help Doc " + me.htmlCls.wifiStr, 1, 1);
+
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+
+            //html += "<li><span>Transform Hints</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_tfhint', 'Transform Hints', undefined, 1, 1);
+            html += "<ul>";
+            //html += "<li><span>Rotate</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_rotate', 'Rotate', undefined, 1, 2);
             html += "<ul>";
             html += "<li>Left Mouse (Click & Drag)</li>";
             html += "<li>Key l: Left</li>";
@@ -58642,14 +58821,16 @@ var icn3d = (function (exports) {
             html += "<li>Shift + Key m: Down 90&deg;</li>";
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Zoom</span>";
+            //html += "<li><span>Zoom</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_zoom', 'Zoom', undefined, 1, 2);
             html += "<ul>";
             html += "<li>Middle Mouse <br>(Pinch & Spread)</li>";
             html += "<li>Key z: Zoom in</li>";
             html += "<li>Key x: Zoom out</li>";
             html += "</ul>";
             html += "</li>";
-            html += "<li><span>Translate</span>";
+            //html += "<li><span>Translate</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_translate', 'Translate', undefined, 1, 2);
             html += "<ul>";
             html += "<li>Right Mouse <br>(Two Finger Click & Drag)</li>";
             html += "</ul>";
@@ -58657,11 +58838,10 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.simplemenu) {
-                html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
-
-                html += liStr + "https://support.nlm.nih.gov/support/create-case/' target='_blank'>Write to Help Desk</a></li>";
-            }
+            //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5' target='_blank'>Selection Hints</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('selhints', me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUseStep5", "Selection Hints", undefined, 1);
+            //html += liStr + "https://support.nlm.nih.gov/support/create-case/' target='_blank'>Write to Help Desk</a></li>";
+            html += me.htmlCls.setHtmlCls.getMenuUrl('helpdesk', "https://support.nlm.nih.gov/support/create-case/", "Write to Help Desk", 1, 1);
 
             html += "<li><br/></li>";
             html += "</ul>";
@@ -59642,6 +59822,11 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
+            html += "Preference file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "menupreffile'><br/>";
+            html += me.htmlCls.buttonStr + "reload_menupreffile' style='margin-top: 6px;'>Load</button>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
             html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
@@ -60134,6 +60319,15 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_thickness2' class='" + dialogClass + "'>";
             html += me.htmlCls.setHtmlCls.setThicknessHtml('style');
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_menupref' class='" + dialogClass + "'>";
+            html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
+            html += "<div id='" + me.pre + "menulist' style='max-width:500px; max-height:300px; overflow:scroll'></div><br><br>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref' style='margin-left:30px'>Reset to Simple Menus</button></span>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all' style='margin-left:30px'>Reset to All Menus</button></span>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";
@@ -63050,26 +63244,68 @@ var icn3d = (function (exports) {
             this.icn3dui = icn3dui;
         }
 
-        getLink(id, text) { let me = this.icn3dui; me.icn3d;
+        getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
             return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
-        getLinkWrapper(id, text, wrapper) { let me = this.icn3dui; me.icn3d;
+        // a group of menus
+        getMenuText(id, text, classname, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
+            let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
+
+            // no ending "</li>"" since this is usually the start of a group of menus
+            return "<li><span id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
+        }
+
+        getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
+            return "<li><a id='" + me.pre + id + "' href='" + url + "' target='_blank'>" + text + "</a></li>";
+        }
+
+        getMenuSep() { let me = this.icn3dui; me.icn3d;
+            return "<li class='icn3d-menusep'>-</li>";
+        }
+
+        getLinkWrapper(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
             return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
-        getRadio(radioid, id, text, bChecked) { let me = this.icn3dui; me.icn3d;
+        getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
             let checkedStr =(bChecked) ? ' checked' : '';
 
             //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-            return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+            //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+            return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
         }
 
-        getRadioColor(radioid, id, text, color, bChecked) { let me = this.icn3dui; me.icn3d;
+        getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
+            me.htmlCls.allMenus[me.pre + id] = text;
+            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+
             let checkedStr =(bChecked) ? ' checked' : '';
 
             //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-            return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+            //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+            return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
         }
 
         setAdvanced(index) { let me = this.icn3dui; me.icn3d;
@@ -63965,6 +64201,11 @@ var icn3d = (function (exports) {
 
         this.opts = {};
         this.opts['background']         = 'black';        //transparent, black, grey, white
+
+        this.allMenus = {};
+        this.allMenusSel= {}; // Selectable menus
+        this.simpleMenus = {};
+        this.shownMenus = {};
 
         this.WIDTH = 400; // total width of view area
         this.HEIGHT = 400; // total height of view area
@@ -67534,7 +67775,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.14.3';
+        this.REVISION = '3.15.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -67546,7 +67787,7 @@ var icn3d = (function (exports) {
         if(this.cfg.showmenu === undefined) this.cfg.showmenu = true;
         if(this.cfg.showtitle === undefined) this.cfg.showtitle = true;
         if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;
-        if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
+        //if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
         if(this.cfg.mobilemenu === undefined) this.cfg.mobilemenu = false;
         if(this.cfg.closepopup === undefined) this.cfg.closepopup = false;
         if(this.cfg.showanno === undefined) this.cfg.showanno = false;
@@ -67699,6 +67940,10 @@ var icn3d = (function (exports) {
         }
         ic.molTitle = '';
         ic.loadCmd;
+
+        // set menus
+        me.htmlCls.clickMenuCls.getShownMenusFromCookie();
+        me.htmlCls.clickMenuCls.applyShownMenus();
 
         if(pdbStr) { // input pdbStr
             ic.init();

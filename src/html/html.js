@@ -21,6 +21,11 @@ class Html {
     this.opts = {};
     this.opts['background']         = 'black';        //transparent, black, grey, white
 
+    this.allMenus = {};
+    this.allMenusSel= {}; // Selectable menus
+    this.simpleMenus = {};
+    this.shownMenus = {};
+
     this.WIDTH = 400; // total width of view area
     this.HEIGHT = 400; // total height of view area
     this.RESIDUE_WIDTH = 10;  // sequences

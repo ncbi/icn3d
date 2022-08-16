@@ -231,7 +231,7 @@ input:checked + .icn3d-slider:before {
   background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_222222_256x240.png");
   background-position: -64px -144px; /*ui-icon-check */
 }
-.icn3d-rad > input:not(:checked) + .ui-icon{ /* (RADIO CHECKED) IMAGE STYLES */
+.icn3d-rad > input:not(:checked) + .ui-icon{ /* (RADIO NOT CHECKED) IMAGE STYLES */
   /*border:2px solid #f00;*/
   background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_222222_256x240.png");
   background-position: -160px 0px; /*empty */
@@ -278,3 +278,5 @@ input:checked + .icn3d-slider:before {
 .icn3d-square { display:inline-block; width:15px;}
 
 .icn3d-distance {color:#1c94c4; cursor: pointer;}
+
+.icn3d-menupd {padding-left:1.5em!important;}

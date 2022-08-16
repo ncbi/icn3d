@@ -383,6 +383,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
+        html += "Preference file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "menupreffile'><br/>";
+        html += me.htmlCls.buttonStr + "reload_menupreffile' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
         html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
@@ -875,6 +880,15 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_thickness2' class='" + dialogClass + "'>";
         html += me.htmlCls.setHtmlCls.setThicknessHtml('style');
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_menupref' class='" + dialogClass + "'>";
+        html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
+        html += "<div id='" + me.pre + "menulist' style='max-width:500px; max-height:300px; overflow:scroll'></div><br><br>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref' style='margin-left:30px'>Reset to Simple Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all' style='margin-left:30px'>Reset to All Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";

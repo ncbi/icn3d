@@ -46,6 +46,10 @@ class UtilsCls {
         return window.sessionStorage;
     }
 
+    isLocalStorageSupported() { let me = this.icn3dui;
+      return window.localStorage;
+    }
+
     // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
     hexToRgb(hex, a) { let me = this.icn3dui;
          let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
