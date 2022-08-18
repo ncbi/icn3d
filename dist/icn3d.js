@@ -67981,8 +67981,6 @@ var icn3d = (function (exports) {
 
         // set menus
         me.htmlCls.clickMenuCls.getShownMenusFromCache();
-        me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
-
         me.htmlCls.clickMenuCls.applyShownMenus();
 
         if(pdbStr) { // input pdbStr

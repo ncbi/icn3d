@@ -344,8 +344,6 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
 
     // set menus
     me.htmlCls.clickMenuCls.getShownMenusFromCache();
-    me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
-
     me.htmlCls.clickMenuCls.applyShownMenus();
 
     if(pdbStr) { // input pdbStr
