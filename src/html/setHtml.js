@@ -27,18 +27,18 @@ class SetHtml {
     }
 
     getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
     // a group of menus
     getMenuText(id, text, classname, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
 
@@ -47,9 +47,9 @@ class SetHtml {
     }
 
     getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         return "<li><a id='" + me.pre + id + "' href='" + url + "' target='_blank'>" + text + "</a></li>";
     }
@@ -59,17 +59,17 @@ class SetHtml {
     }
 
     getLinkWrapper(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
     getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         let checkedStr =(bChecked) ? ' checked' : '';
 
@@ -79,9 +79,9 @@ class SetHtml {
     }
 
     getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.allMenus[me.pre + id] = text;
-        if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-        if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         let checkedStr =(bChecked) ? ' checked' : '';
 
