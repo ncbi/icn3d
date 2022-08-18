@@ -110,11 +110,11 @@ class ClickMenu {
         let idArray = [];
         for(let id in me.htmlCls.allMenus) {
             if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
-                $("#" + id).parent().show();
+                $("#" + me.pre + id).parent().show();
                 idArray.push(id);
             }
             else {            
-                $("#" + id).parent().hide();              
+                $("#" + me.pre + id).parent().hide();              
             }
         }   
 
@@ -129,7 +129,7 @@ class ClickMenu {
         if(localStorage) localStorage.setItem('menulist', JSON.stringify(idArray));
     }
 
-    getShownMenusFromCookie() { let me = this.icn3dui, ic = me.icn3d;
+    getShownMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
         me.htmlCls.shownMenus = {};
 
         let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
@@ -152,31 +152,30 @@ class ClickMenu {
         html += "<tr>";
         for(let id in me.htmlCls.allMenusSel) {
             // skip all unicolor: too many
-            let len = me.pre.length;
-            if(id.substr(0, 6 + len) == me.pre + 'uniclr' 
-                || id.substr(0, 11 + len) == me.pre + 'mn5_opacity'
-                || id.substr(0, 14 + len) == me.pre + 'mn6_labelscale'
-                || id.substr(0, 4 + len) == me.pre + 'faq_'
-                || id.substr(0, 4 + len) == me.pre + 'dev_') {
+            if(id.substr(0, 6) == 'uniclr' 
+                || id.substr(0, 11) == 'mn5_opacity'
+                || id.substr(0, 14) == 'mn6_labelscale'
+                || id.substr(0, 4) == 'faq_'
+                || id.substr(0, 4) == 'dev_') {
                     continue;
             }
 
-            if(id == me.pre + 'mn1_searchstru') {
+            if(id == 'mn1_searchstru') {
                 html += "<td valign='top'>";
             }
-            else if(id == me.pre + 'mn2_definedsets') {
+            else if(id == 'mn2_definedsets') {
                 html += "</td><td valign='top'>";
             }
-            else if(id == me.pre + 'mn2_show_selected') {
+            else if(id == 'mn2_show_selected') {
                 html += "</td><td valign='top'>";
             }
-            else if(id == me.pre + 'mn3_proteinwrap' || (me.cfg.cid && id == me.pre + 'mn3_ligwrap')) {
+            else if(id == 'mn3_proteinwrap' || (me.cfg.cid && id == 'mn3_ligwrap')) {
                 html += "</td><td valign='top'>";
             }
-            else if(id == me.pre + 'mn4_clrwrap') {
+            else if(id == 'mn4_clrwrap') {
                 html += "</td><td valign='top'>";
             }
-            else if(id == me.pre + 'mn6_selectannotations') {
+            else if(id == 'mn6_selectannotations') {
                 html += "</td><td valign='top'>";
             }
             else if(id == me.pre + 'abouticn3d') {
@@ -592,7 +591,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { let ic = me.icn3d;
             me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
 
-            thisClass.getShownMenusFromCookie();
+            thisClass.getShownMenusFromCache();
 
             thisClass.displayShownMenus();
          });

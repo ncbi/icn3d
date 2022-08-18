@@ -176,7 +176,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.15.0';
+    this.REVISION = '3.15.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -343,7 +343,9 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     ic.loadCmd;
 
     // set menus
-    me.htmlCls.clickMenuCls.getShownMenusFromCookie();
+    me.htmlCls.clickMenuCls.getShownMenusFromCache();
+    me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
     me.htmlCls.clickMenuCls.applyShownMenus();
 
     if(pdbStr) { // input pdbStr

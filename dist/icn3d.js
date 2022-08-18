@@ -25741,8 +25741,8 @@ var icn3d = (function (exports) {
                                 });
                             }
                             else {
-                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1]);
-                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2]);
+                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
+                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
                             
                                 alignAjax = $.ajax({
                                     url: urltmalign,
@@ -36301,6 +36301,34 @@ var icn3d = (function (exports) {
               seqalign = {};
         }
 
+        getPosFromResi(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
+            let pos = resi;
+
+            for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                if(ic.chainsSeq[chainid][i].resi == resi) {
+                    pos = i;
+                    break;
+                }
+            }
+
+            return pos;
+        }
+
+        getResnFromResi(chainid, resi) { let  ic = this.icn3d, me = ic.icn3dui;
+            let resid = chainid + '_' + resi;
+            let resn = '';
+
+            if(ic.residues[resid] === undefined) {
+                let pos = this.getPosFromResi(chainid, resi);
+                resn = ic.chainsSeq[chainid][pos].name;
+            }
+            else {
+                resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
+            }
+
+            return resn;
+        }
+
         setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
             let hAtoms = {};
 
@@ -36401,7 +36429,7 @@ var icn3d = (function (exports) {
 
               if(ic.qt_start_end[chainIndex] === undefined) return;
 
-              let  alignIndex = 1;
+              let  alignIndex = 1; // number of residues displayed in seq alignment
               if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
               if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
               for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -36411,11 +36439,16 @@ var icn3d = (function (exports) {
                   //var end2 = ic.qt_start_end[chainIndex][i].t_end - 1;
 
                   let  start1, start2, end1, end2;
-                  if(bRealign) { // realresidue numbers are stored
+                  if(bRealign) { // real residue numbers are stored
                     start1 = ic.qt_start_end[chainIndex][i].t_start;
                     start2 = ic.qt_start_end[chainIndex][i].q_start;
                     end1 = ic.qt_start_end[chainIndex][i].t_end;
                     end2 = ic.qt_start_end[chainIndex][i].q_end;  
+
+                    // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                    // start2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_start);
+                    // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
+                    // end2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_end);
                   }
                   else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -36426,11 +36459,12 @@ var icn3d = (function (exports) {
 
                   if(i > 0) {
                       let  index1 = alignIndex;
+
                       for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
                           if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
-                          let  resi = ic.chainsSeq[chainid1][j].resi;
-                          let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
+                          let resi = (bRealign) ? j : ic.chainsSeq[chainid1][j].resi;
+                          let resn = (bRealign) ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
 
                           color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
@@ -36444,8 +36478,10 @@ var icn3d = (function (exports) {
                       for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
                           if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
                           
-                          let  resi = ic.chainsSeq[chainid2][j].resi;
-                          let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
+                          //let  resi = ic.chainsSeq[chainid2][j].resi;
+                          //let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
+                          let resi = (bRealign) ? j : ic.chainsSeq[chainid2][j].resi;
+                          let resn = (bRealign) ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
 
                           color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
@@ -36482,7 +36518,7 @@ var icn3d = (function (exports) {
                           }
                       }
                   }
-
+                
                   for(let j = 0; j <= end1 - start1; ++j) {
                       if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -36491,13 +36527,8 @@ var icn3d = (function (exports) {
                         resi1 = j + start1;
                         resi2 = j + start2;
 
-                        let resid1 = chainid1 + '_' + resi1;
-                        let resid2 = chainid2 + '_' + resi2;
-
-                        if(ic.residues[resid1] === undefined || ic.residues[resid2] === undefined) continue;
-
-                        resn1 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]).resn.substr(0, 3));
-                        resn2 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]).resn.substr(0, 3));
+                        resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
+                        resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
                       }
                       else {
                         if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
@@ -36600,6 +36631,9 @@ var icn3d = (function (exports) {
                     if(bRealign) { // real residue numbers are stored
                         start1 = ic.qt_start_end[chainIndex][i].t_start;
                         end1 = ic.qt_start_end[chainIndex][i].t_end;
+
+                        // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                        // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
                     }
                     else {
                         start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -36942,6 +36976,11 @@ var icn3d = (function (exports) {
                     start2 = ic.qt_start_end[chainIndex][i].q_start;
                     end1 = ic.qt_start_end[chainIndex][i].t_end;
                     end2 = ic.qt_start_end[chainIndex][i].q_end;  
+
+                    // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                    // start2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_start);
+                    // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
+                    // end2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_end);
                 }
                 else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -54058,7 +54097,7 @@ var icn3d = (function (exports) {
         }
 
         //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb) { let ic = this.icn3d, me = ic.icn3dui;
+        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
             let pdbStr = '';
 
             // get all phosphate groups in lipids
@@ -54230,7 +54269,7 @@ var icn3d = (function (exports) {
 
                     // add header            
                     let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
-                    if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo);
+                    if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
 
                     prevStru = atom.structure;
                     ++molNum;
@@ -54458,11 +54497,11 @@ var icn3d = (function (exports) {
 
            return pdbStr;
         }
-        getPDBHeader(struNum, stru2header, mutantInfo) { let ic = this.icn3d; ic.icn3dui;
+        getPDBHeader(struNum, stru2header, mutantInfo, pdbid) { let ic = this.icn3d; ic.icn3dui;
            if(struNum === undefined) struNum = 0;
 
            let pdbStr = '';
-           let stru = Object.keys(ic.structures)[struNum];
+           let stru = (pdbid) ? pdbid : Object.keys(ic.structures)[struNum];
            let id = (mutantInfo) ? stru + '2' : stru;
            pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + id + '\n';
 
@@ -54663,11 +54702,11 @@ var icn3d = (function (exports) {
             let idArray = [];
             for(let id in me.htmlCls.allMenus) {
                 if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
-                    $("#" + id).parent().show();
+                    $("#" + me.pre + id).parent().show();
                     idArray.push(id);
                 }
                 else {            
-                    $("#" + id).parent().hide();              
+                    $("#" + me.pre + id).parent().hide();              
                 }
             }   
 
@@ -54682,7 +54721,7 @@ var icn3d = (function (exports) {
             if(localStorage) localStorage.setItem('menulist', JSON.stringify(idArray));
         }
 
-        getShownMenusFromCookie() { let me = this.icn3dui; me.icn3d;
+        getShownMenusFromCache() { let me = this.icn3dui; me.icn3d;
             me.htmlCls.shownMenus = {};
 
             let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
@@ -54705,31 +54744,30 @@ var icn3d = (function (exports) {
             html += "<tr>";
             for(let id in me.htmlCls.allMenusSel) {
                 // skip all unicolor: too many
-                let len = me.pre.length;
-                if(id.substr(0, 6 + len) == me.pre + 'uniclr' 
-                    || id.substr(0, 11 + len) == me.pre + 'mn5_opacity'
-                    || id.substr(0, 14 + len) == me.pre + 'mn6_labelscale'
-                    || id.substr(0, 4 + len) == me.pre + 'faq_'
-                    || id.substr(0, 4 + len) == me.pre + 'dev_') {
+                if(id.substr(0, 6) == 'uniclr' 
+                    || id.substr(0, 11) == 'mn5_opacity'
+                    || id.substr(0, 14) == 'mn6_labelscale'
+                    || id.substr(0, 4) == 'faq_'
+                    || id.substr(0, 4) == 'dev_') {
                         continue;
                 }
 
-                if(id == me.pre + 'mn1_searchstru') {
+                if(id == 'mn1_searchstru') {
                     html += "<td valign='top'>";
                 }
-                else if(id == me.pre + 'mn2_definedsets') {
+                else if(id == 'mn2_definedsets') {
                     html += "</td><td valign='top'>";
                 }
-                else if(id == me.pre + 'mn2_show_selected') {
+                else if(id == 'mn2_show_selected') {
                     html += "</td><td valign='top'>";
                 }
-                else if(id == me.pre + 'mn3_proteinwrap' || (me.cfg.cid && id == me.pre + 'mn3_ligwrap')) {
+                else if(id == 'mn3_proteinwrap' || (me.cfg.cid && id == 'mn3_ligwrap')) {
                     html += "</td><td valign='top'>";
                 }
-                else if(id == me.pre + 'mn4_clrwrap') {
+                else if(id == 'mn4_clrwrap') {
                     html += "</td><td valign='top'>";
                 }
-                else if(id == me.pre + 'mn6_selectannotations') {
+                else if(id == 'mn6_selectannotations') {
                     html += "</td><td valign='top'>";
                 }
                 else if(id == me.pre + 'abouticn3d') {
@@ -55145,7 +55183,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { me.icn3d;
                 me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
 
-                thisClass.getShownMenusFromCookie();
+                thisClass.getShownMenusFromCache();
 
                 thisClass.displayShownMenus();
              });
@@ -63245,18 +63283,18 @@ var icn3d = (function (exports) {
         }
 
         getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
         // a group of menus
         getMenuText(id, text, classname, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
 
@@ -63265,9 +63303,9 @@ var icn3d = (function (exports) {
         }
 
         getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             return "<li><a id='" + me.pre + id + "' href='" + url + "' target='_blank'>" + text + "</a></li>";
         }
@@ -63277,17 +63315,17 @@ var icn3d = (function (exports) {
         }
 
         getLinkWrapper(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
         getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             let checkedStr =(bChecked) ? ' checked' : '';
 
@@ -63297,9 +63335,9 @@ var icn3d = (function (exports) {
         }
 
         getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
-            me.htmlCls.allMenus[me.pre + id] = text;
-            if(selType) me.htmlCls.allMenusSel[me.pre + id] = selType;
-            if(bSimpleMenu) me.htmlCls.simpleMenus[me.pre + id] = 1;
+            me.htmlCls.allMenus[id] = text;
+            if(selType) me.htmlCls.allMenusSel[id] = selType;
+            if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             let checkedStr =(bChecked) ? ' checked' : '';
 
@@ -67775,7 +67813,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.15.0';
+        this.REVISION = '3.15.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -67942,7 +67980,9 @@ var icn3d = (function (exports) {
         ic.loadCmd;
 
         // set menus
-        me.htmlCls.clickMenuCls.getShownMenusFromCookie();
+        me.htmlCls.clickMenuCls.getShownMenusFromCache();
+        me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
         me.htmlCls.clickMenuCls.applyShownMenus();
 
         if(pdbStr) { // input pdbStr

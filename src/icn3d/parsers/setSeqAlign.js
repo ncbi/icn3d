@@ -250,6 +250,34 @@ class SetSeqAlign {
           seqalign = {};
     }
 
+    getPosFromResi(chainid, resi) { let  ic = this.icn3d, me = ic.icn3dui;
+        let pos = resi;
+
+        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+            if(ic.chainsSeq[chainid][i].resi == resi) {
+                pos = i;
+                break;
+            }
+        }
+
+        return pos;
+    }
+
+    getResnFromResi(chainid, resi) { let  ic = this.icn3d, me = ic.icn3dui;
+        let resid = chainid + '_' + resi;
+        let resn = '';
+
+        if(ic.residues[resid] === undefined) {
+            let pos = this.getPosFromResi(chainid, resi);
+            resn = ic.chainsSeq[chainid][pos].name;
+        }
+        else {
+            resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
+        }
+
+        return resn;
+    }
+
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
@@ -361,7 +389,7 @@ class SetSeqAlign {
 
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
-          let  alignIndex = 1;
+          let  alignIndex = 1; // number of residues displayed in seq alignment
           if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
           if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -371,11 +399,16 @@ class SetSeqAlign {
               //var end2 = ic.qt_start_end[chainIndex][i].t_end - 1;
 
               let  start1, start2, end1, end2;
-              if(bRealign) { // realresidue numbers are stored
+              if(bRealign) { // real residue numbers are stored
                 start1 = ic.qt_start_end[chainIndex][i].t_start;
                 start2 = ic.qt_start_end[chainIndex][i].q_start;
                 end1 = ic.qt_start_end[chainIndex][i].t_end;
                 end2 = ic.qt_start_end[chainIndex][i].q_end;  
+
+                // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                // start2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_start);
+                // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
+                // end2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_end);
               }
               else {
                 start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -386,11 +419,12 @@ class SetSeqAlign {
 
               if(i > 0) {
                   let  index1 = alignIndex;
+
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
                       if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
-                      let  resi = ic.chainsSeq[chainid1][j].resi;
-                      let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
+                      let resi = (bRealign) ? j : ic.chainsSeq[chainid1][j].resi;
+                      let resn = (bRealign) ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
 
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
@@ -404,8 +438,10 @@ class SetSeqAlign {
                   for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
                       if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
                       
-                      let  resi = ic.chainsSeq[chainid2][j].resi;
-                      let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
+                      //let  resi = ic.chainsSeq[chainid2][j].resi;
+                      //let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
+                      let resi = (bRealign) ? j : ic.chainsSeq[chainid2][j].resi;
+                      let resn = (bRealign) ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
 
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
@@ -442,7 +478,7 @@ class SetSeqAlign {
                       }
                   }
               }
-
+            
               for(let j = 0; j <= end1 - start1; ++j) {
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -451,13 +487,8 @@ class SetSeqAlign {
                     resi1 = j + start1;
                     resi2 = j + start2;
 
-                    let resid1 = chainid1 + '_' + resi1;
-                    let resid2 = chainid2 + '_' + resi2;
-
-                    if(ic.residues[resid1] === undefined || ic.residues[resid2] === undefined) continue;
-
-                    resn1 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]).resn.substr(0, 3));
-                    resn2 = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]).resn.substr(0, 3));
+                    resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
+                    resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
                   }
                   else {
                     if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
@@ -560,6 +591,9 @@ class SetSeqAlign {
                 if(bRealign) { // real residue numbers are stored
                     start1 = ic.qt_start_end[chainIndex][i].t_start;
                     end1 = ic.qt_start_end[chainIndex][i].t_end;
+
+                    // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                    // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
                 }
                 else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -908,6 +942,11 @@ class SetSeqAlign {
                 start2 = ic.qt_start_end[chainIndex][i].q_start;
                 end1 = ic.qt_start_end[chainIndex][i].t_end;
                 end2 = ic.qt_start_end[chainIndex][i].q_end;  
+
+                // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                // start2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_start);
+                // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
+                // end2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_end);
             }
             else {
                 start1 = ic.qt_start_end[chainIndex][i].t_start - 1;

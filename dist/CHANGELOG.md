@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.15.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.15.1.zip) was release on August 18, 2022. Fixed the stickiness of menus and the TM-align output for a subset of residues.
+
 [icn3d-3.15.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.15.0.zip) was release on August 16, 2022. Enabled users to switch between "All Menus" and "Simple Menus", or customize the menus and save them in a file to be loaded by others. The customized menus are sticky and saved in cache.
 
 [icn3d-3.14.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.14.3.zip) was release on August 12, 2022. Enabled to show 200 million AlphaFold UniProt structures in the recent release.

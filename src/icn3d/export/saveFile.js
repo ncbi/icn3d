@@ -314,7 +314,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -486,7 +486,7 @@ class SaveFile {
 
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
-                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo);
+                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
 
                 prevStru = atom.structure;
                 ++molNum;
@@ -714,11 +714,11 @@ class SaveFile {
 
        return pdbStr;
     }
-    getPDBHeader(struNum, stru2header, mutantInfo) { let ic = this.icn3d, me = ic.icn3dui;
+    getPDBHeader(struNum, stru2header, mutantInfo, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
        if(struNum === undefined) struNum = 0;
 
        let pdbStr = '';
-       let stru = Object.keys(ic.structures)[struNum];
+       let stru = (pdbid) ? pdbid : Object.keys(ic.structures)[struNum];
        let id = (mutantInfo) ? stru + '2' : stru;
        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + id + '\n';
 
