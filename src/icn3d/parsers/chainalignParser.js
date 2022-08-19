@@ -661,7 +661,7 @@ class ChainalignParser {
         // index = 0: the mmdb data of target
         let  targetData = dataArray[0][0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
-        if(mmdbid_t.length > 5) targetData = header + targetData;
+        if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -683,7 +683,7 @@ class ChainalignParser {
             let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
             let header = 'HEADER                                                        ' + mmdbid_q + '\n';
-            if(mmdbid_q.length > 5) queryData = header + queryData;
+            if(isNaN(mmdbid_q) && mmdbid_q.length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -930,7 +930,7 @@ class ChainalignParser {
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
-            if(structArray[index].length > 5) queryData = header + queryData;
+            if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -963,7 +963,7 @@ class ChainalignParser {
             }
             
             //if(structArray[i].length > 4) {
-            if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
+            if(isNaN(structArray[i]) && structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 //let bNoDssp = true;
                 let bNoDssp = false; // get secondary structure info
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
