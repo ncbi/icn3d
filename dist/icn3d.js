@@ -54732,9 +54732,9 @@ var icn3d = (function (exports) {
         getShownMenusFromCache() { let me = this.icn3dui; me.icn3d;
             me.htmlCls.shownMenus = {};
 
-            let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '[]';
+            let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
             
-            if(idArrayStr != '[]') {
+            if(idArrayStr && idArrayStr != '[]') {
                 let idArray = JSON.parse(idArrayStr);
 
                 for(let i = 0, il = idArray.length; i < il; ++i) {
