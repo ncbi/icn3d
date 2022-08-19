@@ -54770,7 +54770,7 @@ var icn3d = (function (exports) {
                 else if(id == 'mn6_selectannotations') {
                     html += "</td><td valign='top'>";
                 }
-                else if(id == me.pre + 'abouticn3d') {
+                else if(id == 'abouticn3d') {
                     html += "</td><td valign='top'>";
                 }
 
@@ -54908,12 +54908,12 @@ var icn3d = (function (exports) {
             });
         //    },
         //    clkMn1_mmdbid: function() {
-            me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbid", "#" + me.pre + "tool_mmdbid"], "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { me.icn3d;
                me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn1_mmdbafid", "click", function(e) { me.icn3d;
-                me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input MMDB, PDB, or AlphaFold UniProt IDs');
+            me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbafid", , "#" + me.pre + "tool_mmdbafid"], "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
             });
         //    },
         //    clkMn1_blast_rep_id: function() {
@@ -57324,7 +57324,7 @@ var icn3d = (function (exports) {
 
             // line-awesome: https://icons8.com/line-awesome
             // File menu
-            html += tdStr + this.setIcon(iconType, 'tool_mmdbid', 'Input PDB or MMDB ID', 'id', undefined, true) + "</td>";
+            html += tdStr + this.setIcon(iconType, 'tool_mmdbafid', 'Input PDB/MMDB/AlphaFold IDs', 'id', undefined, true) + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_pdbfile', 'Input PDB Files (appendable)', 'file-alt') + "</td>";
             html += tdStr + this.setIcon(iconType, 'tool_sharelink', 'Get Share Link', 'link') + "</td>";
             html += tdStr + this.setIcon(iconType, 'saveimage', 'Save iCn3D PNG Image', 'camera') + "</td>";
