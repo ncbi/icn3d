@@ -311,7 +311,7 @@ class SetMenu {
 
         // line-awesome: https://icons8.com/line-awesome
         // File menu
-        html += tdStr + this.setIcon(iconType, 'tool_mmdbid', 'Input PDB or MMDB ID', 'id', undefined, true) + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_mmdbafid', 'Input PDB/MMDB/AlphaFold IDs', 'id', undefined, true) + "</td>";
         html += tdStr + this.setIcon(iconType, 'tool_pdbfile', 'Input PDB Files (appendable)', 'file-alt') + "</td>";
         html += tdStr + this.setIcon(iconType, 'tool_sharelink', 'Get Share Link', 'link') + "</td>";
         html += tdStr + this.setIcon(iconType, 'saveimage', 'Save iCn3D PNG Image', 'camera') + "</td>";
