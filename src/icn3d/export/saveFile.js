@@ -767,26 +767,34 @@ class SaveFile {
             }
             else if(me.cfg.mmdbafid !== undefined) {
                 let structureArray = me.cfg.mmdbafid.split(',');
-                title = 'Multiple structures: ' + structureArray;
-
-                $("#" + ic.pre + "title").html(title);
+                if(structureArray.length > 1) {
+                    title = 'Multiple structures: ' + structureArray;
+                    $("#" + ic.pre + "title").html(title);
+                }
+                else if(structureArray.length == 1) {
+                    let url = this.getLinkToStructureSummary();
+                    this.setStructureTitle(url, title, titlelinkColor)
+                }
             }
             else {
                 let url = this.getLinkToStructureSummary();
-
-                if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
-
-                //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
-                let asymmetricStr = "";
-
-                let idName = (me.cfg.afid) ? "AlphaFold UniProt ID" : "PDB ID";
-
-                $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+                this.setStructureTitle(url, title, titlelinkColor);
             }
         }
         else {
             $("#" + ic.pre + "title").html("");
         }
+    }
+
+    setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
+        if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+
+        //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
+        let asymmetricStr = "";
+
+        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold UniProt ID" : "PDB/MMDB ID";
+
+        $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
     }
 
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;

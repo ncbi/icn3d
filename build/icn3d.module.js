@@ -26698,7 +26698,7 @@ class ChainalignParser {
         // index = 0: the mmdb data of target
         let  targetData = dataArray[0][0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
-        if(mmdbid_t.length > 5) targetData = header + targetData;
+        if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -26720,7 +26720,7 @@ class ChainalignParser {
             let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
             let header = 'HEADER                                                        ' + mmdbid_q + '\n';
-            if(mmdbid_q.length > 5) queryData = header + queryData;
+            if(isNaN(mmdbid_q) && mmdbid_q.length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -26966,7 +26966,7 @@ class ChainalignParser {
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
-            if(structArray[index].length > 5) queryData = header + queryData;
+            if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
@@ -26999,7 +26999,7 @@ class ChainalignParser {
             }
             
             //if(structArray[i].length > 4) {
-            if(structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
+            if(isNaN(structArray[i]) && structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 //let bNoDssp = true;
                 let bNoDssp = false; // get secondary structure info
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
@@ -54547,26 +54547,34 @@ class SaveFile {
             }
             else if(me.cfg.mmdbafid !== undefined) {
                 let structureArray = me.cfg.mmdbafid.split(',');
-                title = 'Multiple structures: ' + structureArray;
-
-                $("#" + ic.pre + "title").html(title);
+                if(structureArray.length > 1) {
+                    title = 'Multiple structures: ' + structureArray;
+                    $("#" + ic.pre + "title").html(title);
+                }
+                else if(structureArray.length == 1) {
+                    let url = this.getLinkToStructureSummary();
+                    this.setStructureTitle(url, title, titlelinkColor);
+                }
             }
             else {
                 let url = this.getLinkToStructureSummary();
-
-                if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
-
-                //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
-                let asymmetricStr = "";
-
-                let idName = (me.cfg.afid) ? "AlphaFold UniProt ID" : "PDB ID";
-
-                $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+                this.setStructureTitle(url, title, titlelinkColor);
             }
         }
         else {
             $("#" + ic.pre + "title").html("");
         }
+    }
+
+    setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d; ic.icn3dui;
+        if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+
+        //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
+        let asymmetricStr = "";
+
+        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold UniProt ID" : "PDB/MMDB ID";
+
+        $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
     }
 
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
@@ -54721,9 +54729,9 @@ class ClickMenu {
     getShownMenusFromCache() { let me = this.icn3dui; me.icn3d;
         me.htmlCls.shownMenus = {};
 
-        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
+        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '[]';
         
-        if(idArrayStr) {
+        if(idArrayStr != '[]') {
             let idArray = JSON.parse(idArrayStr);
 
             for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -58558,7 +58566,7 @@ class SetMenu {
             }
 
             //html += "<li><span>2D Cartoon</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('2dctnwrap', '2D Cartoon', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getMenuText('2dctnwrap', '2D Cartoon', undefined, undefined, 1);
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('2dctn_chain', 'Chain Level', undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('2dctn_domain', 'Domain Level', undefined, 2);
@@ -58794,7 +58802,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_savework', me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview", "Save Work", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_showanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno", "Show Annotations", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_exportanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno", "Export Annotations", 1, 2);
-        html += me.htmlCls.setHtmlCls.getMenuUrl('faq_interanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis", "Interactions Analysis", 1, 2);
+        html += me.htmlCls.setHtmlCls.getMenuUrl('faq_interanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis", "Interaction Analysis", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_mutanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis", "Mutation Analysis", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_elecpot', me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot", "Electrostatic Pot.", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_simipdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast", "Similar PDB", 1, 2);

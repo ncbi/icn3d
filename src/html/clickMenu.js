@@ -132,9 +132,9 @@ class ClickMenu {
     getShownMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
         me.htmlCls.shownMenus = {};
 
-        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
+        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '[]';
         
-        if(idArrayStr) {
+        if(idArrayStr != '[]') {
             let idArray = JSON.parse(idArrayStr);
 
             for(let i = 0, il = idArray.length; i < il; ++i) {

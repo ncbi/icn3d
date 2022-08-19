@@ -1550,7 +1550,7 @@ class SetMenu {
             }
 
             //html += "<li><span>2D Cartoon</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('2dctnwrap', '2D Cartoon', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getMenuText('2dctnwrap', '2D Cartoon', undefined, undefined, 1);
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('2dctn_chain', 'Chain Level', undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('2dctn_domain', 'Domain Level', undefined, 2);
@@ -1788,7 +1788,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_savework', me.htmlCls.baseUrl + "icn3d/icn3d.html#saveview", "Save Work", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_showanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#showanno", "Show Annotations", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_exportanno', me.htmlCls.baseUrl + "icn3d/icn3d.html#exportanno", "Export Annotations", 1, 2);
-        html += me.htmlCls.setHtmlCls.getMenuUrl('faq_interanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis", "Interactions Analysis", 1, 2);
+        html += me.htmlCls.setHtmlCls.getMenuUrl('faq_interanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#interanalysis", "Interaction Analysis", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_mutanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#mutationanalysis", "Mutation Analysis", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_elecpot', me.htmlCls.baseUrl + "icn3d/icn3d.html#elecpot", "Electrostatic Pot.", 1, 2);
         html += me.htmlCls.setHtmlCls.getMenuUrl('faq_simipdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simivast", "Similar PDB", 1, 2);
