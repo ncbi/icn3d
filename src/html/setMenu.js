@@ -483,12 +483,12 @@ class SetMenu {
         html += "<ul>";
         
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr, 1, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'NCBI MMDB ID (annotation) ' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'RCSB MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'RCSB PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
         //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
@@ -557,10 +557,15 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getMenuText('mn2_realignWrap', 'Realign Selection', undefined, undefined, 1);
         html += "<ul>";
 
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getMenuText('mn2_chainrealignwrap', 'Multiple Chains', undefined, undefined, 2);
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 3);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 3);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 3);
+        html += "</ul>";
 
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr, undefined, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, undefined, 2);
+
         html += "</ul>";
         html += "</li>";
 
@@ -686,7 +691,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn2_propNeg', 'Negative', undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn2_propHydro', 'Hydrophobic', undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn2_propPolar', 'Polar', undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn2_propBfactor', 'B-factor', undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_propBfactor', 'B-factor/pLDDT', undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn2_propSolAcc', 'Solvent Accessibility', undefined, 2);
         html += "</ul>";
         html += "</li>";

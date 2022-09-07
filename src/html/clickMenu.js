@@ -111,10 +111,10 @@ class ClickMenu {
         for(let id in me.htmlCls.allMenus) {
             if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
                 $("#" + me.pre + id).parent().show();
-                idArray.push(id);
             }
             else {            
-                $("#" + me.pre + id).parent().hide();              
+                $("#" + me.pre + id).parent().hide();     
+                idArray.push(id);         
             }
         }   
 
@@ -126,19 +126,24 @@ class ClickMenu {
         }
 
         // save to localStorage
-        if(localStorage) localStorage.setItem('menulist', JSON.stringify(idArray));
+        if(localStorage) localStorage.setItem('hiddenmenus', JSON.stringify(idArray));
     }
 
-    getShownMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
+    getHiddenMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
         me.htmlCls.shownMenus = {};
 
-        let idArrayStr = (localStorage) ? localStorage.getItem('menulist') : '';
+        let idArrayStr = (localStorage) ? localStorage.getItem('hiddenmenus') : '';
         
         if(idArrayStr && idArrayStr != '[]') {
             let idArray = JSON.parse(idArrayStr);
 
-            for(let i = 0, il = idArray.length; i < il; ++i) {
-                me.htmlCls.shownMenus[idArray[i]] = 1;
+            // for(let i = 0, il = idArray.length; i < il; ++i) {
+            //     me.htmlCls.shownMenus[idArray[i]] = 1;
+            // }
+            for(let menu in me.htmlCls.allMenus) {
+                if(idArray.indexOf(menu) == -1) {
+                    me.htmlCls.shownMenus[idArray[i]] = 1;
+                }
             }
         }
         else {
@@ -591,7 +596,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { let ic = me.icn3d;
             me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
 
-            thisClass.getShownMenusFromCache();
+            thisClass.getHiddenMenusFromCache();
 
             thisClass.displayShownMenus();
          });

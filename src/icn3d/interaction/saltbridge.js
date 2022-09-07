@@ -53,8 +53,8 @@ class Saltbridge {
           }
         } // end of for (let i in startAtoms) {
 
-        let hbondsAtoms = {}
-        let residueHash = {}
+        let hbondsAtoms = {};
+        let residueHash = {};
 
         for (let i in targetAtoms) {
           let atom = targetAtoms[i];
@@ -81,9 +81,9 @@ class Saltbridge {
             chain_resi_atom = chain_resi + "_" + atom.name;
 
             let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
-            if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
+            if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
-            let atomHbond = {}
+            let atomHbond = {};
             if(bAtomCondCation) atomHbond = atomAnion;
             else if(bAtomCondAnion) atomHbond = atomCation;
 

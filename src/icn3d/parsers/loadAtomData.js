@@ -60,8 +60,17 @@ class LoadAtomData {
         if(type === 'align') {
           //serial2structure
           ic.pmid = "";
-          let  refinedStr =(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
-          ic.molTitle = refinedStr + 'Structure Alignment of ';
+          ic.molTitle = "";
+          if(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) {
+            ic.molTitle = 'Invariant Core Structure Alignment (VAST) of ';
+          }
+          else if(me.cfg.inpara && me.cfg.inpara.indexOf('atype=2') !== -1) {
+            ic.molTitle = 'Structure Alignment (TM-align) of ';
+          }
+          else {
+            ic.molTitle = 'Structure Alignment (VAST) of ';
+          }
+          
 
           let bTitle = false;
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
@@ -548,6 +557,20 @@ class LoadAtomData {
         }
 
         //ic.lastTargetSerial = serial;
+
+        // remove P-P bonds in PDB 3FGU
+        for(let i in ic.chemicals) {
+            let atom = ic.atoms[i];
+            if(atom.elem == 'P' && atom.bonds.length >= 4) {
+                // remove the bonds with another 'P'
+                for(let j = atom.bonds.length - 1; j >= 0; --j) {
+                    let atom2 = ic.atoms[atom.bonds[j]];
+                    if(atom2.elem == 'P') {
+                        atom.bonds.splice(j, 1);
+                    }
+                }
+            }
+        }
 
         // adjust biopolymer type
         for(let chainid in biopolymerChainsHash) {

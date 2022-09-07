@@ -221,7 +221,7 @@ class PdbParser {
     }
 
     loadPdbDataRender(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.pmid = ic.pmid;
+        //ic.pmid = ic.pmid;
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();

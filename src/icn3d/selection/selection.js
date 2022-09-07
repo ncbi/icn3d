@@ -44,8 +44,9 @@ class Selection {
 
         ic.definedSetsCls.setMode('all');
 
-        let  title =(ic.molTitle.length > 40) ? ic.molTitle.substr(0, 40) + "..." : ic.molTitle;
-        $("#" + ic.pre + "title").html(title);
+        //let  title =(ic.molTitle.length > 40) ? ic.molTitle.substr(0, 40) + "..." : ic.molTitle;
+        //$("#" + ic.pre + "title").html(title);
+        ic.saveFileCls.showTitle();
     }
 
     selectAll_base() { let  ic = this.icn3d, me = ic.icn3dui;

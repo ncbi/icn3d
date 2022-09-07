@@ -665,7 +665,7 @@ class ParserUtils {
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
 
-                  if(me.cfg.align !== undefined) {
+                  if(me.cfg.align !== undefined && me.cfg.atype != 2) { // atype = 2: dynamic VAST+
                       let  bShowHighlight = false;                  
                       let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
