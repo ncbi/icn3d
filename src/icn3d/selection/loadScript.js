@@ -528,18 +528,20 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('realign on tmalign') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
-
-            let  paraArray = command.split(' | ');
-            if(paraArray.length == 2) {
-                let  nameArray = paraArray[1].split(',');
-                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            }
+            thisClass.getHAtoms(ic.commands[i]);
 
             me.cfg.aligntool = 'tmalign';
 
             $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
+          else if(ic.commands[i].trim().indexOf('realign on vastplus') == 0) {
+            thisClass.getHAtoms(ic.commands[i]);
+
+            $.when(thisClass.applyCommandRealignByVastplus(ic.commands[i])).then(function() {
                thisClass.execCommandsBase(i + 1, end, steps);
             });
 
@@ -750,6 +752,15 @@ class LoadScript {
 
                         thisClass.applyCommandRealignByStruct(lastCommand);
                     }
+                    else if(lastCommand.indexOf('realign on vastplus') == 0) {
+                        let  paraArray = lastCommand.split(' | ');
+                        if(paraArray.length == 2) {
+                            let  nameArray = paraArray[1].split(',');
+                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                        }
+                        
+                        thisClass.applyCommandRealignByVastplus(lastCommand);
+                    }
                     else if(lastCommand.indexOf('graph interaction pairs') == 0) {
                         thisClass.applyCommandGraphinteraction(lastCommand);
                     }
@@ -879,7 +890,14 @@ class LoadScript {
         }
         else if(command.indexOf('load alignment') !== -1) {
           me.cfg.align = id;
-          ic.alignParserCls.downloadAlignment(id);
+
+          if(me.cfg.inpara.indexOf('atype=2') == -1) {
+            ic.alignParserCls.downloadAlignment(me.cfg.align);
+          }
+          else {
+            let vastplusAtype = 2; // Tm-align
+            ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+          }
         }
         else if(command.indexOf('load chainalignment') !== -1) {
           //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
@@ -1009,6 +1027,21 @@ class LoadScript {
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredRealignByStruct.promise();
+    }
+
+    applyCommandRealignByVastplusBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.vastplusCls.realignOnVastplus();
+    }
+
+    applyCommandRealignByVastplus(command) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  thisClass = this;
+
+      // chain functions together
+      ic.deferredRealignByVastplus = new $.Deferred(function() {
+         thisClass.applyCommandRealignByVastplusBase(command);
+      }); // end of me.deferred = $.Deferred(function() {
+
+      return ic.deferredRealignByVastplus.promise();
     }
 
     applyCommandAfmapBase(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -1330,6 +1363,17 @@ class LoadScript {
 
           ic.bRender = true;
           ic.drawCls.draw();
+    }
+
+    getHAtoms(fullcommand) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  strArray = fullcommand.split("|||");
+        let  command = strArray[0].trim();
+
+        let  paraArray = command.split(' | ');
+        if(paraArray.length == 2) {
+            let  nameArray = paraArray[1].split(',');
+            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        }
     }
 }
 

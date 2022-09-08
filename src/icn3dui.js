@@ -134,6 +134,7 @@ import {ParserUtils} from './icn3d/parsers/parserUtils.js';
 import {LoadAtomData} from './icn3d/parsers/loadAtomData.js';
 import {SetSeqAlign} from './icn3d/parsers/setSeqAlign.js';
 import {LoadPDB} from './icn3d/parsers/loadPDB.js';
+import {Vastplus} from './icn3d/parsers/vastplus.js';
 
 import {ApplyCommand} from './icn3d/selection/applyCommand.js';
 import {DefinedSets} from './icn3d/selection/definedSets.js';
@@ -176,7 +177,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.15.1';
+    this.REVISION = '3.16.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -343,7 +344,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     ic.loadCmd;
 
     // set menus
-    me.htmlCls.clickMenuCls.getShownMenusFromCache();
+    me.htmlCls.clickMenuCls.getHiddenMenusFromCache();
     me.htmlCls.clickMenuCls.applyShownMenus();
 
     if(pdbStr) { // input pdbStr
@@ -581,9 +582,16 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         else if(alignArray.length === 2) {
             ic.inputid = alignArray[0] + "_" + alignArray[1];
         }
+
         ic.loadCmd = 'load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.alignParserCls.downloadAlignment(me.cfg.align);
+        if(me.cfg.inpara.indexOf('atype=2') == -1) {
+            ic.alignParserCls.downloadAlignment(me.cfg.align);
+        }
+        else {
+            let vastplusAtype = 2; // Tm-align
+            ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+        }
     }
     else if(me.cfg.chainalign !== undefined) {
         ic.bNCBI = true;
@@ -738,4 +746,4 @@ class printMsg {
 
 //export {iCn3DUI, printMsg}
 
-export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}
+export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, Vastplus, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}

@@ -100,6 +100,7 @@ import {ParserUtils} from './parsers/parserUtils.js';
 import {LoadAtomData} from './parsers/loadAtomData.js';
 import {SetSeqAlign} from './parsers/setSeqAlign.js';
 import {LoadPDB} from './parsers/loadPDB.js';
+import {Vastplus} from './parsers/vastplus.js';
 
 import {ApplyCommand} from './selection/applyCommand.js';
 import {DefinedSets} from './selection/definedSets.js';
@@ -545,6 +546,7 @@ class iCn3D {
     this.saltbridgeCls = new Saltbridge(this);
 
     this.loadPDBCls = new LoadPDB(this);
+    this.vastplusCls = new Vastplus(this);
     this.transformCls = new Transform(this);
 
     this.setStyleCls = new SetStyle(this);
@@ -805,7 +807,20 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
     }
 
     if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
-    if(me.cfg.mmdbafid !== undefined && ic.structures) ic.opts['color'] = (Object.keys(ic.structures).length == 1) ? 'chain' : 'structure';
+    if(me.cfg.mmdbafid !== undefined && ic.structures) {
+        if(Object.keys(ic.structures).length > 1) {
+            ic.opts['color'] = 'structure';
+        }
+        else if(Object.keys(ic.structures).length == 1) {
+            let struct = Object.keys(ic.structures)[0];
+            if(isNaN(struct) && struct.length > 5) {
+                this.opts['color'] = 'confidence';
+            }
+            else {
+                ic.opts['color'] = 'chain';
+            }
+        }
+    }
 
     if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
 };

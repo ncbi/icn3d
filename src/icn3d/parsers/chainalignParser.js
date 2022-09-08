@@ -210,7 +210,7 @@ class ChainalignParser {
         this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
-    setMsa(chainidArray, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+    setMsa(chainidArray, bVastplus, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
         // get aligned length for each pair
         let index_alignLen = [];
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
@@ -228,6 +228,11 @@ class ChainalignParser {
 
         let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
 
+        if(bVastplus) {
+            ic.opts['color'] = 'identity';
+            ic.setColorCls.setColorByOptions(ic.opts, hAtomsAll);
+        }
+        
         let  bReverse = false;
         let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
         let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
@@ -385,14 +390,14 @@ class ChainalignParser {
         if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
     }
 
-    transformStructure(mmdbid, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
+    transformStructure(mmdbid, index, alignType, bForce) { let  ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
 
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
                 //if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
-                if(ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+                if(ic.q_rotation !== undefined && (bForce || (!me.cfg.resnum && !me.cfg.resdef)) ) {
                     atm = this.transformAtom(atm, index, alignType);
                 }
             }
@@ -868,7 +873,7 @@ class ChainalignParser {
         }
     }
 
-    downloadMmdbAf(idlist, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadMmdbAf(idlist, bQuery, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         ic.deferredMmdbaf = $.Deferred(function() {
@@ -912,8 +917,8 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
           let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery);
-          ic.ParserUtilsCls.hideLoading();
+          thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
+          if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
         })
         .fail(function() {
             alert("There are some problems in retrieving the coordinates...");
@@ -923,7 +928,7 @@ class ChainalignParser {
       return ic.deferredMmdbaf.promise();
     }
 
-    parseMMdbAfData(dataArray, structArray, bQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         let queryDataArray = [];
@@ -988,6 +993,14 @@ class ChainalignParser {
                     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
                 }
            //});
+        }
+        else if(vastplusAtype !== undefined) {
+            // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
+            // VAST+ on the fly
+            let structArray = Object.keys(ic.structures);
+            ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
+
+            //ic.pdbParserCls.loadPdbDataRender(true);
         }
         else {
             //ic.pdbParserCls.applyCommandDssp(true);

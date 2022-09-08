@@ -422,6 +422,12 @@ class ViewInterPairs {
          if(!ic.b2DShown) {
              if(me.cfg.align !== undefined) {
                  let  structureArray = Object.keys(ic.structures);
+
+                 if(me.cfg.atype == 2) {
+                    let bDiagramOnly = true;
+                    ic.alignParserCls.downloadAlignment(structureArray[0] + ',' + structureArray[1], bDiagramOnly);
+                 }
+                 
                  ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
              }
              else if(me.cfg.chainalign !== undefined) {
@@ -432,6 +438,7 @@ class ViewInterPairs {
                  //else if(structureArray.length == 1) {
                  //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
                  //}
+
                  ic.ParserUtilsCls.set2DDiagramsForChainalign(ic.chainidArray);
              }
              else {

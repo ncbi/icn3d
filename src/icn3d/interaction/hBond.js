@@ -250,7 +250,8 @@ class HBond {
           for(let i = 0, il = donorAngles.length; i < il; ++i) {
               if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) {
 // commented out on Nov 19, 2021
-///                  return false;
+// uncommented on Sep 8, 2022 since these conditions should be used for nucleotides
+                  return false;
               }
           }
 
@@ -266,8 +267,9 @@ class HBond {
           let idealAcceptorAngle = 90 * Math.PI / 180;
           for(let i = 0, il = acceptorAngles.length; i < il; ++i) {
               if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) {
-// commented out on Nov 19, 2021
-///                  return false;
+// commented out on Nov 19, 2021, but keep it for nucleotides
+// uncommented on Sep 8, 2022 since these conditions should be used for nucleotides
+                  return false;
               }
           }
 

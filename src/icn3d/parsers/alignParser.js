@@ -20,7 +20,7 @@ class AlignParser {
     }
 
     //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
-    downloadAlignment(align) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadAlignment(align, bDiagramOnly) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         ic.opts['proteins'] = 'c alpha trace';
@@ -46,7 +46,7 @@ class AlignParser {
         // define for 'align' only
         ic.pdbid_chain2title = {}
 
-        if(ic.chainids2resids === undefined) ic.chainids2resids = {} // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
+        if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
         let  request = $.ajax({
            url: url2,
@@ -153,145 +153,147 @@ class AlignParser {
                 ic.alignmolid2color.push(tmpHash);
             }
 
-            //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
-            //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
-            // need the parameter moleculeInfor
-            let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
-            let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
+            if(!bDiagramOnly) {
+                //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
+                //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
+                // need the parameter moleculeInfor
+                let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
+                let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
 
-            let  d3 = $.ajax({
-              url: url3,
-              dataType: 'jsonp',
-              cache: true,
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              }
-            });
-            let  d4 = $.ajax({
-              url: url4,
-              dataType: 'jsonp',
-              cache: true,
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              }
-            });
+                let  d3 = $.ajax({
+                url: url3,
+                dataType: 'jsonp',
+                cache: true,
+                beforeSend: function() {
+                    ic.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    //ic.ParserUtilsCls.hideLoading();
+                }
+                });
+                let  d4 = $.ajax({
+                url: url4,
+                dataType: 'jsonp',
+                cache: true,
+                beforeSend: function() {
+                    ic.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    //ic.ParserUtilsCls.hideLoading();
+                }
+                });
 
-            $.when( d3, d4 ).then(function( v3, v4 ) {
-                // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
-                //var data2 = v2[0];
-                let  data2 = data;
-                let  data3 = v3[0];
-                let  data4 = v4[0];
+                $.when( d3, d4 ).then(function( v3, v4 ) {
+                    // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
+                    //var data2 = v2[0];
+                    let  data2 = data;
+                    let  data3 = v3[0];
+                    let  data4 = v4[0];
 
-                if(data3.atoms !== undefined && data4.atoms !== undefined) {
-                    ic.deferredOpm = $.Deferred(function() {
-                        //ic.mmdbidArray = [];
-                        //for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
-                        //    ic.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
-                        //}
+                    if(data3.atoms !== undefined && data4.atoms !== undefined) {
+                        ic.deferredOpm = $.Deferred(function() {
+                            //ic.mmdbidArray = [];
+                            //for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
+                            //    ic.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
+                            //}
 
-                        ic.ParserUtilsCls.setYourNote((ic.mmdbidArray[0] + ',' + ic.mmdbidArray[1]).toUpperCase() + '(VAST+) in iCn3D');
+                            ic.ParserUtilsCls.setYourNote((ic.mmdbidArray[0] + ',' + ic.mmdbidArray[1]).toUpperCase() + '(VAST+) in iCn3D');
 
-                        // get transformation factors
-                        let  factor = 1; //10000;
-                        //var scale = data2.transform.scale / factor;
-                        let  tMaster = data2.transform.translate.master;
-                        let  tMVector = new THREE.Vector3(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
-                        let  tSlave = data2.transform.translate.slave;
-                        let  tSVector = new THREE.Vector3(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
-                        let  rotation = data2.transform.rotate;
-                        let  rMatrix = [];
-                        for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements
-                            rMatrix.push(rotation[i] / factor);
-                        }
-
-                        // get sequence
-                        ic.chainid2seq = {}
-                        for(let chain in data3.sequences) {
-                            let  chainid = ic.mmdbidArray[0] + '_' + chain;
-                            ic.chainid2seq[chainid] = data3.sequences[chain]; // ["0","D","ASP"],
-                        }
-                        for(let chain in data4.sequences) {
-                            let  chainid = ic.mmdbidArray[1] + '_' + chain;
-                            ic.chainid2seq[chainid] = data4.sequences[chain]; // ["0","D","ASP"],
-                        }
-
-                        // atoms
-                        let  atomsM = data3.atoms;
-                        let  atomsS = data4.atoms;
-
-                        // fix serialInterval
-                        let  nAtom1 = data3.atomCount;
-                        let  nAtom2 = data4.atomCount;
-
-                        for(let i = 0, il = data2.alignedStructures[0].length; i < il; ++i) {
-                          let  structure = data2.alignedStructures[0][i];
-
-                          structure.serialInterval = [];
-                          if(i == 0) {
-                              structure.serialInterval.push(1);
-                              structure.serialInterval.push(nAtom1);
-                          }
-                          else if(i == 1) {
-                              structure.serialInterval.push(nAtom1 + 1);
-                              structure.serialInterval.push(nAtom1 + nAtom2);
-                          }
-                        }
-
-                        let  allAtoms = {}
-                        for(let i in atomsM) {
-                            let  atm = atomsM[i];
-
-                            atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                            atm.coord.add(tMVector);
-
-                            let  x = atm.coord.x * rMatrix[0] + atm.coord.y * rMatrix[1] + atm.coord.z * rMatrix[2];
-                            let  y = atm.coord.x * rMatrix[3] + atm.coord.y * rMatrix[4] + atm.coord.z * rMatrix[5];
-                            let  z = atm.coord.x * rMatrix[6] + atm.coord.y * rMatrix[7] + atm.coord.z * rMatrix[8];
-
-                            atm.coord.x = x;
-                            atm.coord.y = y;
-                            atm.coord.z = z;
-
-                            allAtoms[i] = atm;
-                        }
-
-                        for(let i in atomsS) {
-                            let  atm = atomsS[i];
-
-                            atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                            atm.coord.add(tSVector);
-
-                            // update the bonds
-                            for(let j = 0, jl = atm.bonds.length; j < jl; ++j) {
-                                atm.bonds[j] += nAtom1;
+                            // get transformation factors
+                            let  factor = 1; //10000;
+                            //var scale = data2.transform.scale / factor;
+                            let  tMaster = data2.transform.translate.master;
+                            let  tMVector = new THREE.Vector3(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
+                            let  tSlave = data2.transform.translate.slave;
+                            let  tSVector = new THREE.Vector3(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
+                            let  rotation = data2.transform.rotate;
+                            let  rMatrix = [];
+                            for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements
+                                rMatrix.push(rotation[i] / factor);
                             }
 
-                            allAtoms[(parseInt(i) + nAtom1).toString()] = atm;
-                        }
+                            // get sequence
+                            ic.chainid2seq = {}
+                            for(let chain in data3.sequences) {
+                                let  chainid = ic.mmdbidArray[0] + '_' + chain;
+                                ic.chainid2seq[chainid] = data3.sequences[chain]; // ["0","D","ASP"],
+                            }
+                            for(let chain in data4.sequences) {
+                                let  chainid = ic.mmdbidArray[1] + '_' + chain;
+                                ic.chainid2seq[chainid] = data4.sequences[chain]; // ["0","D","ASP"],
+                            }
 
-                        // combine data
-                        let  allData = {}
-                        allData.alignedStructures = data2.alignedStructures;
-                        allData.alignment = data2.alignment;
-                        allData.atoms = allAtoms;
+                            // atoms
+                            let  atomsM = data3.atoms;
+                            let  atomsS = data4.atoms;
 
-                        thisClass.loadOpmDataForAlign(allData, seqalign, ic.mmdbidArray);
-                    });
+                            // fix serialInterval
+                            let  nAtom1 = data3.atomCount;
+                            let  nAtom2 = data4.atomCount;
 
-                    return ic.deferredOpm.promise();
-                }
-                else {
-                    alert('invalid atoms data.');
-                    return false;
-                }
-            });
+                            for(let i = 0, il = data2.alignedStructures[0].length; i < il; ++i) {
+                            let  structure = data2.alignedStructures[0][i];
+
+                            structure.serialInterval = [];
+                            if(i == 0) {
+                                structure.serialInterval.push(1);
+                                structure.serialInterval.push(nAtom1);
+                            }
+                            else if(i == 1) {
+                                structure.serialInterval.push(nAtom1 + 1);
+                                structure.serialInterval.push(nAtom1 + nAtom2);
+                            }
+                            }
+
+                            let  allAtoms = {}
+                            for(let i in atomsM) {
+                                let  atm = atomsM[i];
+
+                                atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                                atm.coord.add(tMVector);
+
+                                let  x = atm.coord.x * rMatrix[0] + atm.coord.y * rMatrix[1] + atm.coord.z * rMatrix[2];
+                                let  y = atm.coord.x * rMatrix[3] + atm.coord.y * rMatrix[4] + atm.coord.z * rMatrix[5];
+                                let  z = atm.coord.x * rMatrix[6] + atm.coord.y * rMatrix[7] + atm.coord.z * rMatrix[8];
+
+                                atm.coord.x = x;
+                                atm.coord.y = y;
+                                atm.coord.z = z;
+
+                                allAtoms[i] = atm;
+                            }
+
+                            for(let i in atomsS) {
+                                let  atm = atomsS[i];
+
+                                atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                                atm.coord.add(tSVector);
+
+                                // update the bonds
+                                for(let j = 0, jl = atm.bonds.length; j < jl; ++j) {
+                                    atm.bonds[j] += nAtom1;
+                                }
+
+                                allAtoms[(parseInt(i) + nAtom1).toString()] = atm;
+                            }
+
+                            // combine data
+                            let  allData = {}
+                            allData.alignedStructures = data2.alignedStructures;
+                            allData.alignment = data2.alignment;
+                            allData.atoms = allAtoms;
+
+                            thisClass.loadOpmDataForAlign(allData, seqalign, ic.mmdbidArray);
+                        });
+
+                        return ic.deferredOpm.promise();
+                    }
+                    else {
+                        alert('invalid atoms data.');
+                        return false;
+                    }
+                });
+            }
         });
     }
 

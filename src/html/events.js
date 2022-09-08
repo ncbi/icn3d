@@ -183,6 +183,25 @@ class Events {
         ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
     }
 
+    setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d;
+        if(Object.keys(ic.structures).length < 2) {
+            alert("At least two structuresare required for alignment...");
+            return;
+        }
+        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+            let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+            ic.definedSetsCls.setPredefinedInMenu();
+            ic.bSetChainsAdvancedMenu = true;
+            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+        }
+        let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+        if($("#" + me.pre + id).length) {
+            $("#" + me.pre + id).html(definedAtomsHtml);
+        }
+        
+        $("#" + me.pre + id).resizable();
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -339,49 +358,23 @@ class Events {
     //    },
     //    clickRealignonseqalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
 
-            if(Object.keys(ic.structures).length < 2) {
-                alert("At least two structuresare required for alignment...");
-                return;
-            }
-
-            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-            }
-            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
-            if($("#" + me.pre + "atomsCustomRealign").length) {
-                $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
-            }
-            
-            $("#" + me.pre + "atomsCustomRealign").resizable();
-            //$("#" + me.pre + "atomsCustomRealign2").resizable();
+            thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets in two chains to realign');
 
-            if(Object.keys(ic.structures).length < 2) {
-                alert("At least two structuresare required for alignment...");
-                return;
-            }
-            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-               ic.definedSetsCls.setPredefinedInMenu();
-               ic.bSetChainsAdvancedMenu = true;
-               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-            }
-            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
-            if($("#" + me.pre + "atomsCustomRealignByStruct").length) {
-                $("#" + me.pre + "atomsCustomRealignByStruct").html(definedAtomsHtml);
-            }
-            
-            $("#" + me.pre + "atomsCustomRealignByStruct").resizable();
-            //$("#" + me.pre + "atomsCustomRealign2").resizable();
+            thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_realigntwostru", "click", function(e) { let ic = me.icn3d;
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realigntwostru', 'Please select two sets in two structures to realign');
+
+            thisClass.setPredefinedMenu('atomsCustomRealignByStruct2');
+        });
+
     //    },
     //    clickApplyRealign: function() {
         me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", function(e) { let ic = me.icn3d;
@@ -442,6 +435,26 @@ class Events {
             }
             else {
                 me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign", true);
+            }
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct2").val();
+            if(nameArray.length > 0) {
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            //me.cfg.aligntool = 'tmalign';
+
+            ic.vastplusCls.realignOnVastplus();
+
+            if(nameArray.length > 0) {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on vastplus | " + nameArray, true);
+            }
+            else {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on vastplus", true);
             }
          });
     //    },
@@ -673,6 +686,14 @@ class Events {
             me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
             //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_align_tmalign", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=2&bu=1', false);
+            window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=2&bu=1', '_blank');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { let ic = me.icn3d;

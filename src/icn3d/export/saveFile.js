@@ -569,7 +569,8 @@ class SaveFile {
             line += atom.coord.z.toFixed(3).toString().padStart(8, ' ');
 
             //if((bPqr && atom.het) ||(phosPHash.hasOwnProperty(i) && !bPdb) ||(phosOHash.hasOwnProperty(i) && !bPdb) ) {
-            if((bPqr && atom.het) ||(phosPHash.hasOwnProperty(i)) ||(phosOHash.hasOwnProperty(i)) ) {
+            //if((bPqr && atom.het) ||(phosPHash.hasOwnProperty(i)) ||(phosOHash.hasOwnProperty(i)) ) {
+            if(bPqr && atom.het) {
                 let size = 1.5, charge = 0;
 
     /*
@@ -757,6 +758,8 @@ class SaveFile {
                 $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
             }
             else if(me.cfg.align !== undefined) {
+                title = 'VAST+ alignment of ' + Object.keys(ic.structures);
+
                 $("#" + ic.pre + "title").html(title);
             }
             else if(me.cfg.chainalign !== undefined) {
