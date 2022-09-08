@@ -54847,7 +54847,7 @@ var icn3d = (function (exports) {
                 // }
                 for(let menu in me.htmlCls.allMenus) {
                     if(idArray.indexOf(menu) == -1) {
-                        me.htmlCls.shownMenus[idArray[i]] = 1;
+                        me.htmlCls.shownMenus[menu] = 1;
                     }
                 }
             }
