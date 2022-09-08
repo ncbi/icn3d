@@ -105,7 +105,7 @@ class Html {
 
     //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
     this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
-        ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://test.ncbi.nlm.nih.gov/Structure/";
+        ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
     this.divStr = "<div id='" + this.icn3dui.pre;
     this.divNowrapStr = "<div style='white-space:nowrap'>";
     this.spanNowrapStr = "<span style='white-space:nowrap'>";

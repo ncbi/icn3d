@@ -564,7 +564,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 3);
         html += "</ul>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, 2);
 
         html += "</ul>";
         html += "</li>";

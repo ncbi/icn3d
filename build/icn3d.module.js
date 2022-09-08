@@ -15151,7 +15151,11 @@ class HBond {
           let donorAngles = this.calcAngles(donorAtom, acceptorAtom);
           let idealDonorAngle = 90 * Math.PI / 180; // 90 for sp2, 60 for sp3
           for(let i = 0, il = donorAngles.length; i < il; ++i) {
-              if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) ;
+              if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) {
+// commented out on Nov 19, 2021
+// uncommented on Sep 8, 2022 since these conditions should be used for nucleotides
+                  return false;
+              }
           }
 
           //if (idealGeometry[donor.index] === AtomGeometry.Trigonal){ // 120
@@ -15165,7 +15169,11 @@ class HBond {
           let acceptorAngles = this.calcAngles(acceptorAtom, donorAtom);
           let idealAcceptorAngle = 90 * Math.PI / 180;
           for(let i = 0, il = acceptorAngles.length; i < il; ++i) {
-              if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) ;
+              if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) {
+// commented out on Nov 19, 2021, but keep it for nucleotides
+// uncommented on Sep 8, 2022 since these conditions should be used for nucleotides
+                  return false;
+              }
           }
 
           //if (idealGeometry[acceptor.index] === AtomGeometry.Trigonal){ // 120
@@ -26469,7 +26477,7 @@ class ChainalignParser {
 
     transformStructure(mmdbid, index, alignType, bForce) { let  ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
-       
+
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
@@ -57684,7 +57692,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 3);
         html += "</ul>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, 2);
 
         html += "</ul>";
         html += "</li>";
@@ -59789,8 +59797,8 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_align' class='" + dialogClass + "'>";
         html += "Enter the PDB IDs or MMDB IDs of the structures: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid1' value='1HHO' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
-        html += "<b><a href=' " + me.htmlCls.baseUrl + "vastplus/vastplus.cgi' target='_blank'>VAST+</a> based on <a href='" + me.htmlCls.baseUrl + "VAST/vast.shtml' target='_blank'>VAST</a></b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
-        html += "<b><a href=' " + me.htmlCls.baseUrl + "vastplus/vastplus.cgi' target='_blank'>VAST+</a> based on <a href='https://zhanggroup.org/TM-align' target='_blank'>TM-align</a></b>: " + me.htmlCls.buttonStr + "reload_align_tmalign'>All Matching Molecules Superposed</button><br><br>";
+        html += "<b>VAST+ based on VAST</b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
+        html += "<b>VAST+ based on TM-align</b>: " + me.htmlCls.buttonStr + "reload_align_tmalign'>All Matching Molecules Superposed</button><br><br>";
         html += "</div>";
         
         html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
@@ -64467,7 +64475,7 @@ class Html {
 
     //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
     this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
-        ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://test.ncbi.nlm.nih.gov/Structure/";
+        ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
     this.divStr = "<div id='" + this.icn3dui.pre;
     this.divNowrapStr = "<div style='white-space:nowrap'>";
     this.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -66371,7 +66379,7 @@ class Vastplus {
 
     //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
     // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
-    vastplusAlign(structArray, vastplusAtype, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+    vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d; ic.icn3dui;
         let  thisClass = this;
 
         // 1. pairwise alignment
@@ -66383,6 +66391,7 @@ class Vastplus {
 
         let struct1 = structArray[0], struct2 = structArray[1];
 
+        // align A to A, B to B first
         for(let i = 0, il = ic.structures[struct1].length; i < il; ++i) {
             let chainid1 = ic.structures[struct1][i];
             if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
@@ -66391,24 +66400,29 @@ class Vastplus {
                 let chainid2 = ic.structures[struct2][j];
                 if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
 
-                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+                if(i == j) {
+                    let alignAjax = this.setAlignment(struct1, struct2, chainid1, chainid2, bRealign);
 
-                let sel_t = (bRealign) ? me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid1]) : ic.chains[chainid1];
-                let sel_q = (bRealign) ? me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid2]) : ic.chains[chainid2];
+                    ajaxArray.push(alignAjax);
+                    chainidpairArray.push(chainid1 + ',' + chainid2);
+                }
+            }
+        }
 
-                let pdb_target = ic.saveFileCls.getAtomPDB(sel_t, undefined, undefined, undefined, undefined, struct1);
-                let pdb_query = ic.saveFileCls.getAtomPDB(sel_q, undefined, undefined, undefined, undefined, struct2);
-            
-                let alignAjax = $.ajax({
-                    url: urltmalign,
-                    type: 'POST',
-                    data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                    dataType: 'jsonp',
-                    cache: true
-                });
+        for(let i = 0, il = ic.structures[struct1].length; i < il; ++i) {
+            let chainid1 = ic.structures[struct1][i];
+            if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
 
-                ajaxArray.push(alignAjax);
-                chainidpairArray.push(chainid1 + ',' + chainid2);
+            for(let j = 0, jl = ic.structures[struct2].length; j < jl; ++j) {
+                let chainid2 = ic.structures[struct2][j];
+                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
+
+                if(i != j) {
+                    let alignAjax = this.setAlignment(struct1, struct2, chainid1, chainid2, bRealign);
+
+                    ajaxArray.push(alignAjax);
+                    chainidpairArray.push(chainid1 + ',' + chainid2);
+                }
             }
         }
 
@@ -66427,6 +66441,26 @@ class Vastplus {
         .fail(function() {
             alert("There are some problems in aligning the chains...");
         });
+    }
+
+    setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+        let sel_t = (bRealign) ? me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid1]) : ic.chains[chainid1];
+        let sel_q = (bRealign) ? me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid2]) : ic.chains[chainid2];
+
+        let pdb_target = ic.saveFileCls.getAtomPDB(sel_t, undefined, undefined, undefined, undefined, struct1);
+        let pdb_query = ic.saveFileCls.getAtomPDB(sel_q, undefined, undefined, undefined, undefined, struct2);
+
+        let alignAjax = $.ajax({
+            url: urltmalign,
+            type: 'POST',
+            data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
+            dataType: 'jsonp',
+            cache: true
+        });
+
+        return alignAjax;
     }
 
     realignOnVastplus() { let  ic = this.icn3d, me = ic.icn3dui;
@@ -66529,9 +66563,6 @@ class Vastplus {
             let nodeArray = m_buChainMap[i].nodeArray;
             let allnodes = nodeArray.join(',');
 
-            // use the distance of the first pair
-            //allnodesHash[allnodes] = (m_buChainMap[i].twonodes.length == 2) ? m_qpMatrixDist[m_buChainMap[i].twonodes[0]][m_buChainMap[i].twonodes[1]] : 1;
-
             // use the sum of all pairs
             let sum = 0;
             for(let j = 0, jl = nodeArray.length; j < jl; j += 2) {
@@ -66550,10 +66581,8 @@ class Vastplus {
         // sort the hash by value, then sort by key
         let allnodesArray = Object.keys(allnodesHash).sort((key1, key2) => (allnodesHash[key1] < allnodesHash[key2]) ? -1 : ( (parseInt(10000*allnodesHash[key1]) == parseInt(10000*allnodesHash[key2])) ? ( (key1 < key2) ? -1 : 1 ) : 1 ));
 
-        let badRmsd = 30;
+        let badRmsd = 20;
         bAligned = false;
-console.log(allnodesArray);  
-console.log(chainidpairArray);
 
         for(let i = 0, il = allnodesArray.length; i < il; ++i) {
             let nodeArray = allnodesArray[i].split(',');
@@ -66565,7 +66594,7 @@ console.log(chainidpairArray);
             let coor_t = [], coor_q = [];
             let chainid_t, chainid_q;
             let hAtomsAll = {};
-console.log(nodeArray);             
+          
             for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                 let node = parseInt(nodeArray[j]);
                 let segs = queryDataArray[node][0].segs;
@@ -66577,8 +66606,6 @@ console.log(nodeArray);
                 let resiArrays = this.getResisFromSegs(segs);
                 let resiArray_t = resiArrays.resiArray_t;
                 let resiArray_q = resiArrays.resiArray_q;
-console.log(resiArray_t); 
-console.log(resiArray_q); 
 
                 let base = 0;
                 let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t, base);
@@ -66587,8 +66614,6 @@ console.log(resiArray_q);
                 base = parseInt(ic.chainsSeq[chainid_t][0].resi);
                 let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q, base);
                 coor_q = coor_q.concat(result_q.coor);
-console.log(result_t); 
-console.log(result_q); 
 
                 // align seq 
                 ic.qt_start_end = [];
@@ -66605,12 +66630,12 @@ console.log(result_q);
 
             // align residue by residue
             let  n =(coor_q.length < coor_t.length) ? coor_q.length : coor_t.length;
-console.log("n: " + n);     
+   
             if(n < 4) continue;
 
             if(n >= 4) {
                 ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coor_q, coor_t, n);
-console.log(ic.rmsd_suprTmp);      
+     
                 // superpose
                 if(ic.rmsd_suprTmp.rot !== undefined) {
                     let  rot = ic.rmsd_suprTmp.rot;
@@ -66633,13 +66658,10 @@ console.log(ic.rmsd_suprTmp);
                         ic.t_trans_add = [];
 
                         ic.q_rotation.push({x1: rot[0], y1: rot[1], z1: rot[2], x2: rot[3], y2: rot[4], z2: rot[5], x3: rot[6], y3: rot[7], z3: rot[8]});
-                        // ic.q_trans_sub.push(centerFrom);
-                        // ic.t_trans_add.push(centerTo);
+                        ic.q_trans_sub.push(centerFrom);
+                        ic.t_trans_add.push({x: -centerTo.x, y: -centerTo.y, z: -centerTo.z});
 
-                        ic.q_trans_sub.push(centerTo);
-                        ic.t_trans_add.push(centerFrom);
-
-                        me.cfg.aligntool = 'vast'; //!= 'tmalign'
+                        me.cfg.aligntool = 'vast'; //!= 'tmalign';
                         let index = 0, alignType = 'query';
                         let mmdbid_q = chainid_q.substr(0, chainid_q.indexOf('_'));
                         let bForce = true;
@@ -66823,7 +66845,7 @@ console.log(ic.rmsd_suprTmp);
     } 
 
     //  This method has been adapted from the code at:
-    //  src/internal/structure/PubChem/graphicsapi/graphicsapi.hpp
+    //  src/internal/structure/PubChem/graphicsapi/graphicsapi.cpp
     // ref: Olson CF, 1995, Parallel algorithms for hierarchical clustering.
     // http://linkinghub.elsevier.com/retrieve/pii/016781919500017I
     
@@ -67011,7 +67033,7 @@ console.log(ic.rmsd_suprTmp);
         let chain1a, chain1b, chain2a, chain2b;
     
         let result = this.getClusters(m_clusteringResult, true);
-        let clusterScores = result.scores;
+        //let clusterScores = result.scores;
         let clusters = result.clusters;
         let nClusters = clusters.length;
 
@@ -67021,10 +67043,8 @@ console.log(ic.rmsd_suprTmp);
             let leavesArray = clusters[i];        
             for(let j = 0, jl = leavesArray.length; j < jl; ++j) {
                 let bucm = {};
-                bucm.score = clusterScores[i];
-                //bucm.chainpair = {};
+                //bucm.score = clusterScores[i];
                 bucm.nodeArray = [];
-                bucm.twonodes = (leavesArray[j].length >= 2) ? [leavesArray[j][0], leavesArray[j][1]] : [];
   
                 if(leavesArray[j].length == 1) {
                     let node = leavesArray[j][0];
@@ -67050,7 +67070,6 @@ console.log(ic.rmsd_suprTmp);
                             if (chainSet1.hasOwnProperty(chain1a) || chainSet1.hasOwnProperty(chain1b) 
                                 || chainSet2.hasOwnProperty(chain2a) || chainSet2.hasOwnProperty(chain2b)) continue;
                             
-                            //bucm.chainpair[chain1] = chain2;
                             bucm.nodeArray.push(node1.toString().padStart(5, '0'));
                             bucm.nodeArray.push(node2.toString().padStart(5, '0'));
                 
@@ -67084,7 +67103,6 @@ console.log(ic.rmsd_suprTmp);
         for (; i < n; ++i) {
             if (tree[i].leaves.length > minClusterSize) {
                 clusters.push(tree[i].leaves);
-                //scores.push(tree[i].joinDist);
                 scores.push(tree[i].dist);
             }
         }
@@ -68703,7 +68721,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.15.1';
+    this.REVISION = '3.16.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

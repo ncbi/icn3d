@@ -200,8 +200,8 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_align' class='" + dialogClass + "'>";
         html += "Enter the PDB IDs or MMDB IDs of the structures: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid1' value='1HHO' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
-        html += "<b><a href=' " + me.htmlCls.baseUrl + "vastplus/vastplus.cgi' target='_blank'>VAST+</a> based on <a href='" + me.htmlCls.baseUrl + "VAST/vast.shtml' target='_blank'>VAST</a></b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
-        html += "<b><a href=' " + me.htmlCls.baseUrl + "vastplus/vastplus.cgi' target='_blank'>VAST+</a> based on <a href='https://zhanggroup.org/TM-align' target='_blank'>TM-align</a></b>: " + me.htmlCls.buttonStr + "reload_align_tmalign'>All Matching Molecules Superposed</button><br><br>";
+        html += "<b>VAST+ based on VAST</b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
+        html += "<b>VAST+ based on TM-align</b>: " + me.htmlCls.buttonStr + "reload_align_tmalign'>All Matching Molecules Superposed</button><br><br>";
         html += "</div>";
         
         html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
