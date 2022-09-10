@@ -588,17 +588,14 @@ class SetSeqAlign {
 
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                 let  start1, end1;
-                if(bRealign) { // real residue numbers are stored
-                    start1 = ic.qt_start_end[chainIndex][i].t_start;
-                    end1 = ic.qt_start_end[chainIndex][i].t_end;
-
-                    // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
-                    // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
-                }
-                else {
+                // if(bRealign) { // real residue numbers are stored
+                //     start1 = ic.qt_start_end[chainIndex][i].t_start;
+                //     end1 = ic.qt_start_end[chainIndex][i].t_end;
+                // }
+                // else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-                }
+                //}
                 for(let j = start1; j <= end1; ++j) {
                     let resiPos = j - baseResi;
                     let resi = this.getResi(chainidArray[0], resiPos, bRealign);

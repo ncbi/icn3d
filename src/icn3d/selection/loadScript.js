@@ -532,7 +532,7 @@ class LoadScript {
 
             me.cfg.aligntool = 'tmalign';
 
-            $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+            $.when(thisClass.applyCommandRealignByStruct(ic.commands[i])).then(function() {
                thisClass.execCommandsBase(i + 1, end, steps);
             });
 

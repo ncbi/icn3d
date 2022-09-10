@@ -79,7 +79,8 @@ class RealignParser {
             chainidArray.push(struct2chain[fromStruct]);
         }
 
-              // align seq
+        // align seq
+        //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
         ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
 
         name = 'protein_aligned';
@@ -150,6 +151,7 @@ class RealignParser {
       }
 
       // align seq
+      //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
       ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
 
       ic.transformCls.zoominSelection();
