@@ -185,7 +185,7 @@ class Events {
 
     setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d;
         if(Object.keys(ic.structures).length < 2) {
-            alert("At least two structuresare required for alignment...");
+            alert("At least two structures are required for alignment...");
             return;
         }
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
@@ -348,7 +348,7 @@ class Events {
     //    clickRealign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
             if(Object.keys(ic.structures).length < 2) {
-                alert("At least two structuresare required for alignment...");
+                alert("At least two structures are required for alignment...");
                 return;
             }
             

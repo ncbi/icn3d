@@ -25488,7 +25488,8 @@ var icn3d = (function (exports) {
                 chainidArray.push(struct2chain[fromStruct]);
             }
 
-                  // align seq
+            // align seq
+            //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
             ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
 
             name = 'protein_aligned';
@@ -25550,6 +25551,7 @@ var icn3d = (function (exports) {
           }
 
           // align seq
+          //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
           ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
 
           ic.transformCls.zoominSelection();
@@ -28795,7 +28797,7 @@ var icn3d = (function (exports) {
 
                 me.cfg.aligntool = 'tmalign';
 
-                $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+                $.when(thisClass.applyCommandRealignByStruct(ic.commands[i])).then(function() {
                    thisClass.execCommandsBase(i + 1, end, steps);
                 });
 
@@ -36729,17 +36731,14 @@ var icn3d = (function (exports) {
 
                 for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                     let  start1, end1;
-                    if(bRealign) { // real residue numbers are stored
-                        start1 = ic.qt_start_end[chainIndex][i].t_start;
-                        end1 = ic.qt_start_end[chainIndex][i].t_end;
-
-                        // start1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
-                        // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
-                    }
-                    else {
+                    // if(bRealign) { // real residue numbers are stored
+                    //     start1 = ic.qt_start_end[chainIndex][i].t_start;
+                    //     end1 = ic.qt_start_end[chainIndex][i].t_end;
+                    // }
+                    // else {
                         start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                         end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-                    }
+                    //}
                     for(let j = start1; j <= end1; ++j) {
                         let resiPos = j - baseResi;
                         let resi = this.getResi(chainidArray[0], resiPos, bRealign);
@@ -60887,7 +60886,7 @@ var icn3d = (function (exports) {
 
         setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d;
             if(Object.keys(ic.structures).length < 2) {
-                alert("At least two structuresare required for alignment...");
+                alert("At least two structures are required for alignment...");
                 return;
             }
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
@@ -61050,7 +61049,7 @@ var icn3d = (function (exports) {
         //    clickRealign: function() {
             me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
                 if(Object.keys(ic.structures).length < 2) {
-                    alert("At least two structuresare required for alignment...");
+                    alert("At least two structures are required for alignment...");
                     return;
                 }
                 
@@ -66394,13 +66393,26 @@ var icn3d = (function (exports) {
 
             let struct1 = structArray[0], struct2 = structArray[1];
 
-            // align A to A, B to B first
+            // get non-chemical chains
+            let chainidArray1 = [], chainidArray2 = [];
             for(let i = 0, il = ic.structures[struct1].length; i < il; ++i) {
                 let chainid1 = ic.structures[struct1][i];
                 if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
+                chainidArray1.push(chainid1);
+            }
+            for(let i = 0, il = ic.structures[struct2].length; i < il; ++i) {
+                let chainid2 = ic.structures[struct2][i];
+                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
+                chainidArray2.push(chainid2);
+            }
 
-                for(let j = 0, jl = ic.structures[struct2].length; j < jl; ++j) {
-                    let chainid2 = ic.structures[struct2][j];
+            // align A to A, B to B first
+            for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                let chainid1 = chainidArray1[i];
+                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
+
+                for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                    let chainid2 = chainidArray2[j];
                     if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
 
                     if(i == j) {
@@ -66412,12 +66424,12 @@ var icn3d = (function (exports) {
                 }
             }
 
-            for(let i = 0, il = ic.structures[struct1].length; i < il; ++i) {
-                let chainid1 = ic.structures[struct1][i];
+            for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                let chainid1 = chainidArray1[i];
                 if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
 
-                for(let j = 0, jl = ic.structures[struct2].length; j < jl; ++j) {
-                    let chainid2 = ic.structures[struct2][j];
+                for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                    let chainid2 = chainidArray2[j];
                     if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
 
                     if(i != j) {
@@ -66610,19 +66622,19 @@ var icn3d = (function (exports) {
                     let resiArray_t = resiArrays.resiArray_t;
                     let resiArray_q = resiArrays.resiArray_q;
 
-                    let base = 0;
+                    let base = parseInt(ic.chainsSeq[chainid_t][0].resi);
                     let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t, base);
                     coor_t = coor_t.concat(result_t.coor);
 
-                    base = parseInt(ic.chainsSeq[chainid_t][0].resi);
+                    base = parseInt(ic.chainsSeq[chainid_q][0].resi);
                     let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q, base);
                     coor_q = coor_q.concat(result_q.coor);
 
                     // align seq 
                     ic.qt_start_end = [];
                     ic.qt_start_end.push(segs);
-                    let bVastplus = true;
-                    let hAtomsTmp = ic.chainalignParserCls.setMsa(chainidArray, bVastplus);
+                    let bVastplus = true, bRealign = true;
+                    let hAtomsTmp = ic.chainalignParserCls.setMsa(chainidArray, bVastplus, bRealign);
                     hAtomsAll = me.hashUtilsCls.unionHash(hAtomsAll, hAtomsTmp);
                 }
 
@@ -66915,6 +66927,11 @@ var icn3d = (function (exports) {
                 childDist[count]     = 0.0;
             }
 
+            let structArray = Object.keys(ic.structures);
+            let nChain1 = ic.structures[structArray[0]].length;
+            let nChain2 = ic.structures[structArray[1]].length;
+            let nChain = (nChain1 < nChain2) ? nChain1 : nChain2;
+
             for(count = n; count < 2*n-1; ++count) {
                 // find the min dist
                 distTmp = maxDist;
@@ -66956,41 +66973,44 @@ var icn3d = (function (exports) {
                     else vvDist[j][selJ] = maxDist;
                 }
 
-                cumul[count].leaves = [];
-                
-                for(let i = 0, il = cumul[selI].leaves.length; i < il; ++i) {
-                    for(let j = 0, jl = cumul[selJ].leaves.length; j < jl; ++j) {
-                        cumul[selI].leaves[i][0];
-                        cumul[selJ].leaves[j][0];
+                let factor = 4; // 2-4 fold more chains/alignments
+                if(cumul[selI].leaves.length < factor * nChain || cumul[selJ].leaves.length < factor * nChain) {
+                    cumul[count].leaves = [];
+                    
+                    for(let i = 0, il = cumul[selI].leaves.length; i < il; ++i) {
+                        for(let j = 0, jl = cumul[selJ].leaves.length; j < jl; ++j) {
+                            // let nodeI = cumul[selI].leaves[i][0];
+                            // let nodeJ = cumul[selJ].leaves[j][0];
 
-                        // skip non-similar alignments
-                        // if(cumul[selI].dist > threshold) {
-                        //     cumul[count].leaves.push(cumul[selJ].leaves[j]);
-                        // } else if(cumul[selJ].dist > threshold) {
-                        //     cumul[count].leaves = [];
-                        // }
-                        // else {
-                            
-                            // if(this.compareFloat(cumul, nodeI, nodeJ) == 0) {
-                            //     cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
-                            //     cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
+                            // skip non-similar alignments
+                            // if(cumul[selI].dist > threshold) {
+                            //     cumul[count].leaves.push(cumul[selJ].leaves[j]);
+                            // } else if(cumul[selJ].dist > threshold) {
+                            //     cumul[count].leaves = [];
                             // }
-                            // else if(this.compareFloat(cumul, nodeI, nodeJ) == -1) {
-                            //     cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
-                            // }
-                            // else if(this.compareFloat(cumul, nodeI, nodeJ) == 1) {
-                            //     cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
-                            // }
+                            // else {
+                                
+                                // if(this.compareFloat(cumul, nodeI, nodeJ) == 0) {
+                                //     cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
+                                //     cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
+                                // }
+                                // else if(this.compareFloat(cumul, nodeI, nodeJ) == -1) {
+                                //     cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
+                                // }
+                                // else if(this.compareFloat(cumul, nodeI, nodeJ) == 1) {
+                                //     cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
+                                // }
 
-                            cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
-                            cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
+                                cumul[count].leaves.push(cumul[selI].leaves[i].concat(cumul[selJ].leaves[j]));
+                                cumul[count].leaves.push(cumul[selJ].leaves[j].concat(cumul[selI].leaves[i]));
 
-                        // }
+                            // }
+                        }
                     }
-                }
 
-                cumul[selI].leaves = [];
-                cumul[selJ].leaves = [];
+                    cumul[selI].leaves = [];
+                    cumul[selJ].leaves = [];
+                }
                 
                 // update mNearestNB and mNearestNBDist
                 delete mNearestNB[selI];
