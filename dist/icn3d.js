@@ -57671,8 +57671,8 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
-            //html += "<li><span>Structure to Structure</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('mn1_aligntwostru', 'Structure to Structure', undefined, undefined, 2);
+            //html += "<li><span>Protein Complexes</span>";
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_aligntwostru', 'Protein Complexes', undefined, undefined, 2);
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr, undefined, 3);
             html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 3);
@@ -57694,7 +57694,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 3);
             html += "</ul>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Protein Complexes', undefined, 2);
 
             html += "</ul>";
             html += "</li>";
@@ -66393,50 +66393,51 @@ var icn3d = (function (exports) {
 
             let struct1 = structArray[0], struct2 = structArray[1];
 
-            // get non-chemical chains
+            // get protein chains since TM-align doesn't work for nucleotides
             let chainidArray1 = [], chainidArray2 = [];
             for(let i = 0, il = ic.structures[struct1].length; i < il; ++i) {
                 let chainid1 = ic.structures[struct1][i];
-                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
+                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).serial)) continue;
                 chainidArray1.push(chainid1);
             }
             for(let i = 0, il = ic.structures[struct2].length; i < il; ++i) {
                 let chainid2 = ic.structures[struct2][i];
-                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
+                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).serial)) continue;
                 chainidArray2.push(chainid2);
             }
+
+            let node2chainindex = {};
+            let node = 0;
 
             // align A to A, B to B first
             for(let i = 0, il = chainidArray1.length; i < il; ++i) {
                 let chainid1 = chainidArray1[i];
-                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
-
                 for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                     let chainid2 = chainidArray2[j];
-                    if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
-
                     if(i == j) {
                         let alignAjax = this.setAlignment(struct1, struct2, chainid1, chainid2, bRealign);
 
                         ajaxArray.push(alignAjax);
                         chainidpairArray.push(chainid1 + ',' + chainid2);
+                        node2chainindex[node] = [i, j];
+
+                        ++node;
                     }
                 }
             }
 
             for(let i = 0, il = chainidArray1.length; i < il; ++i) {
                 let chainid1 = chainidArray1[i];
-                if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid1]).het) continue;
-
                 for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                     let chainid2 = chainidArray2[j];
-                    if(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid2]).het) continue;
-
                     if(i != j) {
                         let alignAjax = this.setAlignment(struct1, struct2, chainid1, chainid2, bRealign);
 
                         ajaxArray.push(alignAjax);
                         chainidpairArray.push(chainid1 + ',' + chainid2);
+                        node2chainindex[node] = [i, j];
+
+                        ++node;
                     }
                 }
             }
@@ -66444,7 +66445,7 @@ var icn3d = (function (exports) {
             $.when.apply(undefined, ajaxArray).then(function() {
                 let  dataArray = (structArray.length == 1) ? [arguments] : Array.from(arguments);
                 // 2. cluster pairs
-                thisClass.clusterAlignment(dataArray, chainidpairArray, vastplusAtype);
+                thisClass.clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype);
 
                 // 3. superpose the top selection
 
@@ -66511,7 +66512,7 @@ var icn3d = (function (exports) {
             return {resiArray_t: resiArray_t, resiArray_q: resiArray_q};
         }
 
-        clusterAlignment(dataArray, chainidpairArray, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
+        clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
 
             let queryDataArray = [];
             for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
@@ -66531,7 +66532,7 @@ var icn3d = (function (exports) {
             //  Doing a new comparison; remove any existing results.
             let m_qpMatrixDist = [];
 
-            let outlier = 9999, maxDist = 0;
+            let outlier = 1.0, maxDist = 0;
 
             let bAligned = false;
             for(let i = 0, il = chainidpairArray.length; i < il; ++i) {
@@ -66539,9 +66540,12 @@ var icn3d = (function (exports) {
                 if(queryDataArray[i].length > 0) bAligned = true;
 
                 for(let j = 0, jl = chainidpairArray.length; j < jl; ++j) {
+                    let result = this.RotMatrixTransDist(queryDataArray[i][0], queryDataArray[j][0], outlier, vastplusAtype);
+
                     // 1.0: not aligned
-                    let dist = (i == j) ? 0.0 : ( (queryDataArray[i].length == 0 || queryDataArray[j].length == 0) ? 1.0 : this.RotMatrixTransDist(queryDataArray[i][0], queryDataArray[j][0], outlier, vastplusAtype));
-                    if(dist < outlier && dist > maxDist) {
+                    let dist = (i == j) ? 0.0 : ( (queryDataArray[i].length == 0 || queryDataArray[j].length == 0) ? 1.0 : result);
+                    //if(dist < outlier && dist > maxDist) {
+                    if(dist > maxDist) {
                         maxDist = dist;
                     }
                     vdist.push(dist);
@@ -66563,7 +66567,7 @@ var icn3d = (function (exports) {
                     m_qpMatrixDist[i][j] = m_qpMatrixDist[i][j] / maxDist;
                 }
             }
-
+            
             // cluster
             let threshold = 1.0;
 
@@ -66580,8 +66584,9 @@ var icn3d = (function (exports) {
 
                 // use the sum of all pairs
                 let sum = 0;
-                for(let j = 0, jl = nodeArray.length; j < jl; j += 2) {
-                    sum += m_qpMatrixDist[parseInt(nodeArray[j])][parseInt(nodeArray[j+1])];
+                for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
+                    let chainindexArray = node2chainindex[parseInt(nodeArray[j])];
+                    sum += m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];
                 }
 
                 if(!allnodesHash[allnodes]) {
@@ -66590,7 +66595,6 @@ var icn3d = (function (exports) {
                 else if(sum < allnodesHash[allnodes]) {
                     allnodesHash[allnodes] = sum;
                 }
-
             }
 
             // sort the hash by value, then sort by key
@@ -66738,7 +66742,7 @@ var icn3d = (function (exports) {
             sum += Math.pow(vecr[1], 2);
             sum += Math.pow(vecr[2], 2);
             l2 = Math.sqrt(sum);
-        
+
             // l1 == 0.0 or l2 == 0.0 may occur, if two of the molecules are the same
             if(vastplusAtype != 2) { // VAST
                 if ((l1 < 1e-10) || (l2 < 1e-10)) {
@@ -66768,7 +66772,7 @@ var icn3d = (function (exports) {
             dot0 += vecl[1]*vecr0[1];
             dot0 += vecl[2]*vecr0[2];
             dot0 /= (l1*l2);
-        
+
             if (dot0 < cosval) {
                 return outlier;
             }
@@ -66784,7 +66788,7 @@ var icn3d = (function (exports) {
             dot0 += vecl[1]*vecr0[1];
             dot0 += vecl[2]*vecr0[2];
             dot0 /= (l1*l2);
-        
+
             if (dot0 < cosval) {
                 return outlier;
             }
@@ -66799,7 +66803,7 @@ var icn3d = (function (exports) {
             sum += Math.pow(qpa1.q_rotation.x3 - qpa2.q_rotation.x3, 2);
             sum += Math.pow(qpa1.q_rotation.y3 - qpa2.q_rotation.y3, 2);
             sum += Math.pow(qpa1.q_rotation.z3 - qpa2.q_rotation.z3, 2);
-         
+       
             return Math.sqrt(sum);
         }
         
@@ -66974,7 +66978,7 @@ var icn3d = (function (exports) {
                 }
 
                 let factor = 4; // 2-4 fold more chains/alignments
-                if(cumul[selI].leaves.length < factor * nChain || cumul[selJ].leaves.length < factor * nChain) {
+                if(cumul[selI].leaves.length < factor * nChain && cumul[selJ].leaves.length < factor * nChain) {
                     cumul[count].leaves = [];
                     
                     for(let i = 0, il = cumul[selI].leaves.length; i < il; ++i) {
@@ -67053,7 +67057,7 @@ var icn3d = (function (exports) {
         GetChainMappings(m_clusteringResult, chainidpairArray) { let ic = this.icn3d; ic.icn3dui;
             let mappings = [];
             chainidpairArray.length;
-            let chain1a, chain1b, chain2a, chain2b;
+            let chain1a, chain2a;
         
             let result = this.getClusters(m_clusteringResult, true);
             //let clusterScores = result.scores;
@@ -67062,51 +67066,36 @@ var icn3d = (function (exports) {
 
             for(let i = 0; i < nClusters; ++i) {
                 //isClusterOk = true;       
-            
+
                 let leavesArray = clusters[i];        
                 for(let j = 0, jl = leavesArray.length; j < jl; ++j) {
                     let bucm = {};
                     //bucm.score = clusterScores[i];
                     bucm.nodeArray = [];
       
-                    if(leavesArray[j].length == 1) {
-                        let node = leavesArray[j][0];
-                        bucm.nodeArray.push(node.toString().padStart(5, '0'));
-                    }
-                    else {
-                        let chainSet1 = {}, chainSet2 = {};
+                    let chainSet1 = {}, chainSet2 = {};
 
-                        for(let k = 0, kl = leavesArray[j].length; k < kl; k +=2) {
-                            let node1 = leavesArray[j][k];
-                            let node2 = leavesArray[j][k+1];
+                    for(let k = 0, kl = leavesArray[j].length; k < kl; ++k) {
+                        let node1 = leavesArray[j][k];
 
-                            // if (node < nQpAligns) {
-                                let chainArray1 = chainidpairArray[node1].split(',');
-                                let chainArray2 = chainidpairArray[node2].split(',');
-                                chain1a = chainArray1[0];
-                                chain2a = chainArray1[1];
-                                chain1b = chainArray2[0];
-                                chain2b = chainArray2[1];
-                                
-                                // if (chainSet1.hasOwnProperty(chain1)) continue;
-                                // if (chainSet2.hasOwnProperty(chain2)) continue;
-                                if (chainSet1.hasOwnProperty(chain1a) || chainSet1.hasOwnProperty(chain1b) 
-                                    || chainSet2.hasOwnProperty(chain2a) || chainSet2.hasOwnProperty(chain2b)) continue;
-                                
-                                bucm.nodeArray.push(node1.toString().padStart(5, '0'));
-                                bucm.nodeArray.push(node2.toString().padStart(5, '0'));
-                    
-                                chainSet1[chain1a] = 1;
-                                chainSet1[chain1b] = 1;
-                                chainSet2[chain2a] = 1;
-                                chainSet2[chain2b] = 1;
-                            // } 
-                            // else {
-                            //     isClusterOk = false;
-                            //     console.log("Skipping cluster");
-                            //     break;
-                            // }
-                        }
+                        // if (node < nQpAligns) {
+                            let chainArray1 = chainidpairArray[node1].split(',');
+                            chain1a = chainArray1[0];
+                            chain2a = chainArray1[1];
+                            
+                            // if (chainSet1.hasOwnProperty(chain1)) continue;
+                            if (chainSet1.hasOwnProperty(chain1a) || chainSet2.hasOwnProperty(chain2a)) continue;
+                            
+                            bucm.nodeArray.push(node1.toString().padStart(5, '0'));
+                
+                            chainSet1[chain1a] = 1;
+                            chainSet2[chain2a] = 1;
+                        // } 
+                        // else {
+                        //     isClusterOk = false;
+                        //     console.log("Skipping cluster");
+                        //     break;
+                        // }
                     }
             
                     //if (isClusterOk) {
