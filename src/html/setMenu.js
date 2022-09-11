@@ -541,8 +541,8 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        //html += "<li><span>Structure to Structure</span>";
-        html += me.htmlCls.setHtmlCls.getMenuText('mn1_aligntwostru', 'Structure to Structure', undefined, undefined, 2);
+        //html += "<li><span>Protein Complexes</span>";
+        html += me.htmlCls.setHtmlCls.getMenuText('mn1_aligntwostru', 'Protein Complexes', undefined, undefined, 2);
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr, undefined, 3);
         html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 3);
@@ -564,7 +564,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue', undefined, undefined, 3);
         html += "</ul>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Structure to Structure', undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_realigntwostru', 'Protein Complexes', undefined, 2);
 
         html += "</ul>";
         html += "</li>";
