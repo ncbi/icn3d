@@ -26312,6 +26312,7 @@ class ChainalignParser {
         index_alignLen.sort(function(a,b){
             return b.alignLen - a.alignLen;
         });
+console.log(ic.qt_start_end);
 
         let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
 
@@ -36735,9 +36736,9 @@ class SetSeqAlign {
                 // else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-                //}
+                // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = j - baseResi;
+                    let resiPos = (bRealign) ? j : j - baseResi;
                     let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
@@ -55357,8 +55358,13 @@ class ClickMenu {
                 let idArray = JSON.parse(dataStr);
 
                 me.htmlCls.shownMenus = {};
-                for(let i = 0, il = idArray.length; i < il; ++i) {
-                    me.htmlCls.shownMenus[idArray[i]] = 1;
+                // for(let i = 0, il = idArray.length; i < il; ++i) {
+                //     me.htmlCls.shownMenus[idArray[i]] = 1;
+                // }
+                for(let menu in me.htmlCls.allMenus) {
+                    if(idArray.indexOf(menu) == -1) {
+                        me.htmlCls.shownMenus[menu] = 1;
+                    }
                 }
 
                 thisClass.applyShownMenus();
@@ -57599,8 +57605,8 @@ class SetMenu {
         //html += "<li><span>Search Similar</span>";
         html += me.htmlCls.setHtmlCls.getMenuText('mn1_searchsimilar', 'Search Similar', undefined, undefined, 1);
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Complex)' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB Chain)' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";
         html += "</li>";
@@ -68730,7 +68736,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.16.0';
+    this.REVISION = '3.16.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

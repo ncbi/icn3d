@@ -472,8 +472,8 @@ class SetMenu {
         //html += "<li><span>Search Similar</span>";
         html += me.htmlCls.setHtmlCls.getMenuText('mn1_searchsimilar', 'Search Similar', undefined, undefined, 1);
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Assembly)' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB)' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Complex)' + me.htmlCls.wifiStr, undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_vast', 'NCBI VAST (PDB Chain)' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_foldseek', 'Foldseek (PDB & AlphaFold)' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";
         html += "</li>";

@@ -595,9 +595,9 @@ class SetSeqAlign {
                 // else {
                     start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-                //}
+                // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = j - baseResi;
+                    let resiPos = (bRealign) ? j : j - baseResi;
                     let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;

@@ -225,6 +225,7 @@ class ChainalignParser {
         index_alignLen.sort(function(a,b){
             return b.alignLen - a.alignLen;
         });
+console.log(ic.qt_start_end);
 
         let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
 
