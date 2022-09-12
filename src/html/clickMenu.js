@@ -656,8 +656,13 @@ class ClickMenu {
                 let idArray = JSON.parse(dataStr);
 
                 me.htmlCls.shownMenus = {};
-                for(let i = 0, il = idArray.length; i < il; ++i) {
-                    me.htmlCls.shownMenus[idArray[i]] = 1;
+                // for(let i = 0, il = idArray.length; i < il; ++i) {
+                //     me.htmlCls.shownMenus[idArray[i]] = 1;
+                // }
+                for(let menu in me.htmlCls.allMenus) {
+                    if(idArray.indexOf(menu) == -1) {
+                        me.htmlCls.shownMenus[menu] = 1;
+                    }
                 }
 
                 thisClass.applyShownMenus();
