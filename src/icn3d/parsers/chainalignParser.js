@@ -225,7 +225,6 @@ class ChainalignParser {
         index_alignLen.sort(function(a,b){
             return b.alignLen - a.alignLen;
         });
-console.log(ic.qt_start_end);
 
         let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
 
@@ -509,7 +508,9 @@ console.log(ic.qt_start_end);
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             let  chainid = chainidArray[i];
             let  pos = chainid.indexOf('_');
-            let struct = chainid.substr(0, pos).toUpperCase();
+            let struct = chainid.substr(0, pos); 
+            if(struct != 'stru') struct = struct.toUpperCase();
+
             if(!struct2cnt.hasOwnProperty(struct)) {
                 struct2cnt[struct] = 1;
             }

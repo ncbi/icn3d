@@ -385,11 +385,11 @@ class RealignParser {
                             });
                         }
                         else {
-                            //let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
-                            //let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
+                            let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
+                            let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
   
-                            let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
-                            let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+                            // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                            // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
     
                             alignAjax = $.ajax({
                                 url: urltmalign,

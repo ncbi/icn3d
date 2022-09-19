@@ -1000,6 +1000,7 @@ class LoadScript {
     }
 
     applyCommandRealignBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        //ic.drawCls.draw();
         ic.realignParserCls.realignOnSeqAlign();
     }
 
@@ -1015,6 +1016,7 @@ class LoadScript {
     }
 
     applyCommandRealignByStructBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.drawCls.draw();
         ic.realignParserCls.realignOnStructAlign();
     }
 
@@ -1030,6 +1032,7 @@ class LoadScript {
     }
 
     applyCommandRealignByVastplusBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        //ic.drawCls.draw();
         ic.vastplusCls.realignOnVastplus();
     }
 

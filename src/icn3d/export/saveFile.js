@@ -353,40 +353,49 @@ class SaveFile {
             stru2header[stru] = '';
         }
 
-        for(let i in calphaHash) {
-            let atom = ic.atoms[i];
-            let stru = atom.structure;
+//        if(!bNoSs) {
+            let prevResi, stru;
+            for(let i in calphaHash) {
+                let atom = ic.atoms[i];
+                stru = atom.structure;
 
-            if(atom.ssbegin) {
-                if(atom.ss == 'helix') {
-                    bHelixBegin = true;
-                    if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                        + atom.resi.toString().padStart(5, ' ');
-                    bHelixEnd = false;
+                if(atom.ssbegin) {
+                    if(atom.ss == 'helix') {
+                        bHelixBegin = true;
+                        if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                            + atom.resi.toString().padStart(5, ' ');
+                        bHelixEnd = false;
+                        prevResi = atom.resi;
+                    }
+                    else if(atom.ss == 'sheet') {
+                        bSheetBegin = true;
+                        if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                            + atom.resi.toString().padStart(4, ' ');
+                        bSheetEnd = false;
+                    }
                 }
-                else if(atom.ss == 'sheet') {
-                    bSheetBegin = true;
-                    if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                        + atom.resi.toString().padStart(4, ' ');
-                    bSheetEnd = false;
+
+                if(atom.ssend) {
+                    if(atom.ss == 'helix') {
+                        bHelixEnd = true;
+                        let helixLen = parseInt(atom.resi) - parseInt(prevResi);
+                        let helixType = 1;
+                        if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                            + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
+                        bHelixBegin = false;
+                    }
+                    else if(atom.ss == 'sheet') {
+                        bSheetEnd = true;
+                        let sense = 0;
+                        if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                            + atom.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
+                        bSheetBegin = false;
+                    }
                 }
             }
-
-            if(atom.ssend) {
-                if(atom.ss == 'helix') {
-                    bHelixEnd = true;
-                    if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                        + atom.resi.toString().padStart(5, ' ') + '\n';
-                    bHelixBegin = false;
-                }
-                else if(atom.ss == 'sheet') {
-                    bSheetEnd = true;
-                    if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                        + atom.resi.toString().padStart(4, ' ') + '\n';
-                    bSheetBegin = false;
-                }
-            }
-        }
+            // add a new line in case the structure is a subset
+            stru2header[stru] += '\n';
+//        }
 
         // export assembly symmetry matrix "BIOMT"
         if(ic.biomtMatrices) {
