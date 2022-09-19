@@ -625,7 +625,8 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     }
     else {
         //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
-        me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+        //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+        me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
     }
   });
   return me.deferred.promise();

@@ -25783,11 +25783,11 @@ var icn3d = (function (exports) {
                                 });
                             }
                             else {
-                                //let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
-                                //let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
+                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
+                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
       
-                                let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
-                                let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+                                // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                                // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
         
                                 alignAjax = $.ajax({
                                     url: urltmalign,
@@ -26315,7 +26315,6 @@ var icn3d = (function (exports) {
             index_alignLen.sort(function(a,b){
                 return b.alignLen - a.alignLen;
             });
-    console.log(ic.qt_start_end);
 
             let hAtomsAll = ic.setSeqAlignCls.setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign);
 
@@ -26595,7 +26594,9 @@ var icn3d = (function (exports) {
             for(let i = 0, il = chainidArray.length; i < il; ++i) {
                 let  chainid = chainidArray[i];
                 let  pos = chainid.indexOf('_');
-                let struct = chainid.substr(0, pos).toUpperCase();
+                let struct = chainid.substr(0, pos); 
+                if(struct != 'stru') struct = struct.toUpperCase();
+
                 if(!struct2cnt.hasOwnProperty(struct)) {
                     struct2cnt[struct] = 1;
                 }
@@ -29265,6 +29266,7 @@ var icn3d = (function (exports) {
         }
 
         applyCommandRealignBase(command) { let ic = this.icn3d; ic.icn3dui;
+            //ic.drawCls.draw();
             ic.realignParserCls.realignOnSeqAlign();
         }
 
@@ -29280,6 +29282,7 @@ var icn3d = (function (exports) {
         }
 
         applyCommandRealignByStructBase(command) { let ic = this.icn3d; ic.icn3dui;
+            ic.drawCls.draw();
             ic.realignParserCls.realignOnStructAlign();
         }
 
@@ -29295,6 +29298,7 @@ var icn3d = (function (exports) {
         }
 
         applyCommandRealignByVastplusBase(command) { let ic = this.icn3d; ic.icn3dui;
+            //ic.drawCls.draw();
             ic.vastplusCls.realignOnVastplus();
         }
 
@@ -54238,40 +54242,49 @@ var icn3d = (function (exports) {
                 stru2header[stru] = '';
             }
 
-            for(let i in calphaHash) {
-                let atom = ic.atoms[i];
-                let stru = atom.structure;
+    //        if(!bNoSs) {
+                let prevResi, stru;
+                for(let i in calphaHash) {
+                    let atom = ic.atoms[i];
+                    stru = atom.structure;
 
-                if(atom.ssbegin) {
-                    if(atom.ss == 'helix') {
-                        bHelixBegin = true;
-                        if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ');
-                        bHelixEnd = false;
+                    if(atom.ssbegin) {
+                        if(atom.ss == 'helix') {
+                            bHelixBegin = true;
+                            if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + atom.resi.toString().padStart(5, ' ');
+                            bHelixEnd = false;
+                            prevResi = atom.resi;
+                        }
+                        else if(atom.ss == 'sheet') {
+                            bSheetBegin = true;
+                            if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + atom.resi.toString().padStart(4, ' ');
+                            bSheetEnd = false;
+                        }
                     }
-                    else if(atom.ss == 'sheet') {
-                        bSheetBegin = true;
-                        if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ');
-                        bSheetEnd = false;
+
+                    if(atom.ssend) {
+                        if(atom.ss == 'helix') {
+                            bHelixEnd = true;
+                            let helixLen = parseInt(atom.resi) - parseInt(prevResi);
+                            let helixType = 1;
+                            if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
+                            bHelixBegin = false;
+                        }
+                        else if(atom.ss == 'sheet') {
+                            bSheetEnd = true;
+                            let sense = 0;
+                            if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + atom.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
+                            bSheetBegin = false;
+                        }
                     }
                 }
-
-                if(atom.ssend) {
-                    if(atom.ss == 'helix') {
-                        bHelixEnd = true;
-                        if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ') + '\n';
-                        bHelixBegin = false;
-                    }
-                    else if(atom.ss == 'sheet') {
-                        bSheetEnd = true;
-                        if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ') + '\n';
-                        bSheetBegin = false;
-                    }
-                }
-            }
+                // add a new line in case the structure is a subset
+                stru2header[stru] += '\n';
+    //        }
 
             // export assembly symmetry matrix "BIOMT"
             if(ic.biomtMatrices) {
@@ -54920,7 +54933,7 @@ var icn3d = (function (exports) {
              });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { me.icn3d;
-                me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Please input AlphaFold Uniprot ID or PDB ID');
+                me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Submit your selection to Foldseek');
              });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { me.icn3d;
@@ -57088,7 +57101,43 @@ var icn3d = (function (exports) {
                ic.setOptionCls.setStyle('sidec', 'nothing');
             });
         //    },
-        }
+
+            $("#" + me.pre + "newvs2").on('submit', function() {
+                // fill the pdbstr
+                let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                $("#" + me.pre + "pdbstr").val(pdbstr);
+
+                return true;
+            });
+
+            $("#" + me.pre + "fssubmit").on('click', function() {
+                let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                let url = 'https://search.foldseek.com/api/ticket';
+
+
+                let template = "<!doctype html>\n<head>\n<title>Loading Foldseek</title>\n<style>\n  body {\n    background-color: #121212;\n    color: #fff;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\n    height: 100vh;\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n  }\n  .loader {\n    display: block;\n    width: 80px;\n    height: 80px;\n  }\n  .loader:after {\n    content: \" \";\n    display: block;\n    width: 64px;\n    height: 64px;\n    margin: 8px;\n    border-radius: 50%;\n    border: 6px solid #fff;\n    border-color: #fff transparent #fff transparent;\n    animation: loader 1.2s linear infinite;\n  }\n  @keyframes loader {\n    0% {\n      transform: rotate(0deg);\n    }\n    100% {\n      transform: rotate(360deg);\n    }\n  }\n</style>\n</head>\n<body>\n<div>Foldseek is loading...</div><div class=\"loader\"></div>\n</body>";
+
+                let w = window.open('', '_blank');
+                w.document.body.innerHTML = template;
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { 
+                        q : pdbstr,
+                        database: ["afdb50", "afdb-swissprot", "gmgcl_id", "pdb100"],
+                        mode: "3diaa"
+                    },
+                    dataType: 'text',
+                    success: function(data) {
+                        w.location = 'https://search.foldseek.com/queue/' + JSON.parse(data).id;
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                      console.log("Error in submitting data to Foldseek...");
+                    }
+                });
+            });
+        } 
 
         //Show the input command in log. If "bSetCommand" is true, the command will be saved in the state file as well.
         setLogCmd(str, bSetCommand, bAddLogs) {var me = this.icn3dui, ic = me.icn3d;
@@ -59709,24 +59758,38 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
             html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
-            html += '<b>Optione 1</b>, search with PDB ID and chain name:<br>'; 
+
+            html += '<b>Optione 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
+            html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
+            html += '<input type=hidden id="' + me.pre + 'pdbstr" name="pdbstr">';
+            html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
+            // the submit value has to be "Submit" in order to make the backend cgi works
+            //html += '<input type="submit" name="' + me.pre + 'cmdVSMmdb" value="VAST Search"></input>';
+            html += '<input type="submit" id="' + me.pre + 'cmdVSMmdb2" name="cmdVSMmdb" value="Submit"></input>';
+            html += "</form><br>";
+
+            html += '<b>Optione 2</b>, search with PDB ID and chain name:<br>'; 
             html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='1HHO' size=8> &nbsp;&nbsp;";
             html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
             html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
 
-            html += '<b>Optione 2</b>, search with a PDB file:<br>'; 
-            html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" name="newvs" target="_blank">';
+            html += '<b>Optione 3</b>, search with a PDB file:<br>'; 
+            html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
             html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
             html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
             // the submit value has to be "Submit" in order to make the backend cgi works
-            //html += '<input type="submit" name="cmdVSMmdb" value="VAST Search"></input>';
+            //html += '<input type="submit" name="' + me.pre + 'cmdVSMmdb" value="VAST Search"></input>';
             html += '<input type="submit" name="cmdVSMmdb" value="Submit"></input>';
-            html += "</form>";
+            html += "</form><br>";
 
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
-            html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
+            html += '1. <input type="submit" id="' + me.pre + 'fssubmit" name="fssubmit" value="Submit"></input> your selection (all residues are selected by default) in the loaded structures to <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server.<br><br>';
+            html += '2 (Optional). Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
+
+            //html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
+
             html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905,P01942,1hho_A' size=30> ";
             html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
             html += "</div>";
@@ -66714,6 +66777,8 @@ var icn3d = (function (exports) {
         // src/internal/structure/MMDBUpdateTools/Interactions/compbu/qaAlignment.cpp
         RotMatrixTransDist(qpa1, qpa2, outlier, vastplusAtype) { let ic = this.icn3d; ic.icn3dui;
             let cosval = 0.866, lenval = 8.0; 
+
+            if(!qpa1 || !qpa2) return outlier;
             
             let rmat1 = this.GetRotMatrix(qpa1, 1.0, vastplusAtype);
             let rmat2 = this.GetRotMatrix(qpa2, 1.0, vastplusAtype);
@@ -69187,7 +69252,8 @@ var icn3d = (function (exports) {
         }
         else {
             //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
-            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+            //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
+            me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
         }
       });
       return me.deferred.promise();

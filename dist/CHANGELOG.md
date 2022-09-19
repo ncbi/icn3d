@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.16.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.2.zip) was release on September 19, 2022. Enabled to submit loaded structures to VAST and Foldseek to search similar structures directly. 
+
 [icn3d-3.16.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.1.zip) was release on September 12, 2022. Fixed a bug in VAST+ alignment based on TM-align. 
 
 [icn3d-3.16.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.0.zip) was release on September 8, 2022. Added dynamic VAST+ based on TM-align for any two structure assemblies in the menus "File > Align > Protein Complexes > Two PDB Structures" and "File > Realign Selection > Protein Complexes". Added the angle restriction for hydrogen bonds back. 

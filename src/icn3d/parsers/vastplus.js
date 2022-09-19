@@ -349,6 +349,8 @@ class Vastplus {
     // src/internal/structure/MMDBUpdateTools/Interactions/compbu/qaAlignment.cpp
     RotMatrixTransDist(qpa1, qpa2, outlier, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
         let cosval = 0.866, lenval = 8.0; 
+
+        if(!qpa1 || !qpa2) return outlier;
         
         let rmat1 = this.GetRotMatrix(qpa1, 1.0, vastplusAtype);
         let rmat2 = this.GetRotMatrix(qpa2, 1.0, vastplusAtype);
