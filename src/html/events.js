@@ -965,6 +965,15 @@ class Events {
               }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mmdbafid", "keyup", function(e) { let ic = me.icn3d;
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
+                window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+               }
+         });
+
     //    },
     //    clickReload_blast_rep_id: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { let ic = me.icn3d;

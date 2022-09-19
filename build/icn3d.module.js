@@ -61732,6 +61732,15 @@ class Events {
               }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mmdbafid", "keyup", function(e) { me.icn3d;
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
+                window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+               }
+         });
+
     //    },
     //    clickReload_blast_rep_id: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { me.icn3d;
@@ -68801,7 +68810,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.16.1';
+    this.REVISION = '3.16.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
