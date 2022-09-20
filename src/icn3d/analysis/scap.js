@@ -207,11 +207,13 @@ class Scap {
               for(let serial in hAtom2) {
               //for(let serial in allAtoms2) {
                   let atom = ic.atoms[serial];
+
                   if(!atom.het) {
                       // use the same color as the wild type
                       let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
 
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
                       ic.atoms[serial].color = atomWT.color;
                       ic.atomPrevColors[serial] = atomWT.color;
                   }

@@ -100,7 +100,6 @@ class LoadPDB {
 
                 structure = id;
 
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
                 //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                 if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
@@ -238,7 +237,7 @@ class LoadPDB {
                 id = 'stru';
 
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                
                 //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                 if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
@@ -262,7 +261,7 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                
                 //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                 if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();

@@ -20574,11 +20574,13 @@ var icn3d = (function (exports) {
                   for(let serial in hAtom2) {
                   //for(let serial in allAtoms2) {
                       let atom = ic.atoms[serial];
+
                       if(!atom.het) {
                           // use the same color as the wild type
                           let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
 
                           let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
                           ic.atoms[serial].color = atomWT.color;
                           ic.atomPrevColors[serial] = atomWT.color;
                       }
@@ -21376,7 +21378,6 @@ var icn3d = (function (exports) {
 
                     structure = id;
 
-                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
                     //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                     if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
@@ -21509,7 +21510,7 @@ var icn3d = (function (exports) {
                     id = 'stru';
 
                     structure = id;
-                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    
                     //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                     if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
@@ -21533,7 +21534,7 @@ var icn3d = (function (exports) {
                     }
                 } else if (record === 'ATOM  ' || record === 'HETATM') {
                     structure = id;
-                    //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    
                     //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
                     if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
@@ -54302,40 +54303,6 @@ var icn3d = (function (exports) {
                 }
             }
 
-     /*
-            // get missing residues
-            let ic.chainMissingResidueArray = {};
-            for(let chainid in ic.chainsSeq) {
-                let pos = chainid.indexOf('_');
-                let chain = chainid.substr(0, pos);
-
-                for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
-                    let resi = ic.chainsSeq[chainid][i].resi;
-                    let resid = chainid + '_' + resi;
-                    if(!ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid])) { // mising coordinate
-                        if(ic.chainMissingResidueArray[chainid] === undefined) ic.chainMissingResidueArray[chainid] = [];
-                        let seq = me.utilsCls.residueAbbr2Name(ic.chainsSeq[chainid][i].name);
-                        let resiObj = {'resi': resi, 'seq': seq};
-                        ic.chainMissingResidueArray[chainid].push(resiObj);
-                    }
-                }
-            }
-
-            // add missing residues "REMARK 465..."
-            for(let chainid in ic.chainMissingResidueArray) {
-                let pos = chainid.indexOf('_');
-                let chain = chainid.substr(pos + 1, 2);
-                let stru = chainid.substr(0, pos);
-
-                for(let i = 0, il = ic.chainMissingResidueArray[chainid].length; i < il; ++i) {
-                    let resi = ic.chainMissingResidueArray[chainid][i].resi;
-                    let seq = ic.chainMissingResidueArray[chainid][i].seq;
-
-                    stru2header[stru] += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
-                }
-            }
-    */
-
             // add missing residues "REMARK 465..."
             for(let chainid in ic.chainMissingResidueArray) {
                 let pos = chainid.indexOf('_');
@@ -54361,15 +54328,6 @@ var icn3d = (function (exports) {
             for(let i in atomHash) {
                 let atom = ic.atoms[i];
 
-                let chainResi = atom.chain + '_' + atom.resi;
-                if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
-                    if(!addedChainResiHash.hasOwnProperty(chainResi)) {
-                        pdbStr += chainResi2pdb[chainResi];
-                        addedChainResiHash[chainResi] = 1;
-                    }
-                    continue;
-                }
-
                 // remove chemicals
                 if(bNoChem && atom.het) continue;
 
@@ -54388,6 +54346,15 @@ var icn3d = (function (exports) {
 
                     prevStru = atom.structure;
                     ++molNum;
+                }
+
+                let chainResi = atom.chain + '_' + atom.resi;
+                if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
+                    if(!addedChainResiHash.hasOwnProperty(chainResi)) {
+                        pdbStr += chainResi2pdb[chainResi];
+                        addedChainResiHash[chainResi] = 1;
+                    }
+                    continue;
                 }
 
                 let line = '';
