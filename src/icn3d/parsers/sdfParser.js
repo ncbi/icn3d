@@ -20,60 +20,85 @@ class SdfParser {
     downloadCid(cid) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        let  uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
-
         ic.ParserUtilsCls.setYourNote('PubChem CID ' + cid + ' in iCn3D');
 
         ic.bCid = true;
 
+        // get parent CID
+        let urlParent = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/cids/JSONP?cids_type=parent";
         $.ajax({
-          url: uri,
-          dataType: 'text',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-            let  bResult = thisClass.loadSdfAtomData(data, cid);
+            url: urlParent,
+            dataType: 'jsonp',
+            cache: true,
+            tryCount : 0,
+            retryLimit : 0, //1
+            beforeSend: function() {
+                ic.ParserUtilsCls.showLoading();
+            },
+            complete: function() {
+                //ic.ParserUtilsCls.hideLoading();
+            },
+            success: function(dataParent) {
+                let cidParent = dataParent.IdentifierList.CID[0];
 
-//            ic.opts['pk'] = 'atom';
-//            ic.opts['chemicals'] = 'ball and stick';
+                let  uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cidParent + "/record/SDF/?record_type=3d&response_type=display";
 
-            if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
-                $("#" + ic.pre + "alternateWrapper").hide();
+                $.ajax({
+                    url: uri,
+                    dataType: 'text',
+                    cache: true,
+                    tryCount : 0,
+                    retryLimit : 0, //1
+                    beforeSend: function() {
+                        ic.ParserUtilsCls.showLoading();
+                    },
+                    complete: function() {
+                        //ic.ParserUtilsCls.hideLoading();
+                    },
+                    success: function(data) {
+                        let  bResult = thisClass.loadSdfAtomData(data, cid);
+
+            //            ic.opts['pk'] = 'atom';
+            //            ic.opts['chemicals'] = 'ball and stick';
+
+                        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+                            $("#" + ic.pre + "alternateWrapper").hide();
+                        }
+
+                        if(!bResult) {
+                        alert('The SDF of CID ' + cid + ' has the wrong format...');
+                        }
+                        else {
+                        ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+                        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+                        ic.ParserUtilsCls.renderStructure();
+
+                        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
+                        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+                        }
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                        this.tryCount++;
+                        if(this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        return;
+                    }
+                })
+                .fail(function() {
+                    alert( "This CID may not have 3D structure..." );
+                });
+            },
+            error : function(xhr, textStatus, errorThrown ) {
+                alert( "Can not retrieve the parant CID..." );
             }
-
-            if(!bResult) {
-              alert('The SDF of CID ' + cid + ' has the wrong format...');
-            }
-            else {
-              ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-
-              ic.ParserUtilsCls.renderStructure();
-
-              if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-              //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-            }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            return;
-          }
         })
         .fail(function() {
-            alert( "This CID may not have 3D structure..." );
+            alert( "Can not retrieve the parant CID..." );
         });
     }
 
