@@ -496,7 +496,7 @@ class RealignParser {
                     if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
 
                     // master
-                    resiArray = predefinedResPair[0].split(",");
+                    resiArray = predefinedResPair[0].split(",");        
                     result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
 
                     hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);

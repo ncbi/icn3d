@@ -1016,6 +1016,14 @@ class Events {
            window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load refseq " + $("#" + me.pre + "refseq").val(), false);
+            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+            window.open(hostUrl + '?refseq=' + $("#" + me.pre + "refseq").val(), '_blank');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();

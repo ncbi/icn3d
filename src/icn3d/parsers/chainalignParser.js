@@ -232,7 +232,7 @@ class ChainalignParser {
             ic.opts['color'] = 'identity';
             ic.setColorCls.setColorByOptions(ic.opts, hAtomsAll);
         }
-        
+
         let  bReverse = false;
         let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
         let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
@@ -975,7 +975,7 @@ class ChainalignParser {
                 let bNoDssp = false; // get secondary structure info
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
             }
-            else {              
+            else {         
                 let bNoSeqalign = true;
                 hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
             }
@@ -984,7 +984,7 @@ class ChainalignParser {
         }
 
         // calculate secondary structures with applyCommandDssp
-        if(bQuery && me.cfg.matchedchains) {
+        if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);

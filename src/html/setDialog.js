@@ -365,6 +365,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_refseq' class='" + dialogClass + "'>";
+        html += "Protein RefSeq: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseq' value='0308234A' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
         html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
         html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
@@ -616,9 +621,11 @@ class SetDialog {
 
         html += me.htmlCls.divNowrapStr + "1. Select sets in two structures below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct2' multiple size='5' style='min-width:130px;'>";
-        html += "</select></div>";
+        html += "</select></div><br>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_vastplus'>VAST+ Alignment based on TM-align</button></div><br>";
+        html += "2. Overall maximum RMSD: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxrmsd' value='30' size='2'> &#197; <br><br>";
+
+        html += "<div>3. " + me.htmlCls.buttonStr + "applyRealignByStruct_vastplus'>VAST+ Alignment based on TM-align</button></div><br>";
         html += "</div>";
 
 

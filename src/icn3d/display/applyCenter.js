@@ -59,7 +59,7 @@ class ApplyCenter {
     }
 
     //Center on the selected atoms.
-    centerSelection(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+    centerSelection(atoms, bNoOrientation) { let ic = this.icn3d, me = ic.icn3dui;
        //ic.transformCls.resetOrientation();
 
        ic.opts['rotationcenter'] = 'highlight center';
@@ -68,10 +68,12 @@ class ApplyCenter {
            atoms = me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms);
        }
 
-        // reset parameters
-        ic._zoomFactor = 1.0;
-        ic.mouseChange = new THREE.Vector2(0,0);
-        ic.quaternion = new THREE.Quaternion(0,0,0,1);
+       if(!bNoOrientation) {
+            // reset parameters
+            ic._zoomFactor = 1.0;
+            ic.mouseChange = new THREE.Vector2(0,0);
+            ic.quaternion = new THREE.Quaternion(0,0,0,1);
+       }
 
        // center on the hAtoms if more than one residue is selected
        if(Object.keys(atoms).length > 1) {
