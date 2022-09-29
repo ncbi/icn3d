@@ -177,7 +177,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.16.2';
+    this.REVISION = '3.16.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -543,6 +543,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     }
     else if(me.cfg.cid !== undefined) {
        ic.inputid = me.cfg.cid;
+
        let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
        $.ajax({
           url: url,

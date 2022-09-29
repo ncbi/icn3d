@@ -597,7 +597,7 @@ class SetSeqAlign {
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
                 // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = (bRealign) ? j : j - baseResi;
+                    let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
                     let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
@@ -605,7 +605,7 @@ class SetSeqAlign {
                 }
             }
         }
-
+        
         // TM-align should use "start1 = ic.qt_start_end[chainIndex][i].t_start - 1", but the rest are the same as ""bRealign"
         if(me.cfg.aligntool == 'tmalign') bRealign = true; // real residue numbers are stored
 
@@ -655,7 +655,10 @@ class SetSeqAlign {
         for(let j = 0, jl = ic.chainsSeq[chainid1].length; j < jl; ++j) { 
             let resi = ic.chainsSeq[chainid1][j].resi;
 
-            if((j + baseResi < start_t || j + baseResi > end_t) ) {
+            let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
+
+            //if(j + baseResi < start_t || j + baseResi > end_t) {
+            if(jAdjusted < start_t || jAdjusted > end_t) {    
                 continue;
             }
 

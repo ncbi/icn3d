@@ -339,6 +339,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_refseq", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_grefseq', 'Please input protein RefSeq');
+         });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_uniprotid", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_uniprotid', 'Please input UniProt ID');
         });

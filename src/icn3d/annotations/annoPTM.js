@@ -50,6 +50,7 @@ class AnnoPTM {
         }
         else { // PDB
             // get PDB to UniProt mapping
+            // https://www.ebi.ac.uk/pdbe/api/doc/sifts.html
             // https://www.ebi.ac.uk/pdbe/api/doc/
             let structLower = structure.substr(0, 4).toLowerCase();
             let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
