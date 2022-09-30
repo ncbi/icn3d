@@ -164,8 +164,9 @@ class Vastplus {
                 queryDataArray.push(queryData);
             }
             else {
-                alert("The alignment data can NOT be retrieved for the pair " + chainidpairArray[index] + "...");
-                return;
+                console.log("The alignment data can NOT be retrieved for the pair " + chainidpairArray[index] + "...");
+                //return;
+                queryDataArray.push([]);
             }
         }
 
@@ -189,7 +190,7 @@ class Vastplus {
                 if(dist > maxDist) {
                     maxDist = dist;
                 }
-                vdist.push(dist);
+                vdist.push(dist);                
             }
 
             m_qpMatrixDist.push(vdist);
@@ -224,11 +225,15 @@ class Vastplus {
             let allnodes = nodeArray.join(',');
 
             // use the sum of all pairs
-            let sum = 0;
-            for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
-                let chainindexArray = node2chainindex[parseInt(nodeArray[j])];
-                sum += m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];
-            }
+            // let sum = 0;
+            // for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
+            //     let chainindexArray = node2chainindex[parseInt(nodeArray[j])];
+            //     sum += m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];
+            // }
+
+            // use the best match
+            let chainindexArray = node2chainindex[parseInt(nodeArray[0])];
+            let sum = m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];           
 
             if(!allnodesHash[allnodes]) {
                 allnodesHash[allnodes] = sum;
@@ -241,7 +246,9 @@ class Vastplus {
         // sort the hash by value, then sort by key
         let allnodesArray = Object.keys(allnodesHash).sort((key1, key2) => (allnodesHash[key1] < allnodesHash[key2]) ? -1 : ( (parseInt(10000*allnodesHash[key1]) == parseInt(10000*allnodesHash[key2])) ? ( (key1 < key2) ? -1 : 1 ) : 1 ));
 
-        let badRmsd = 20;
+        let badRmsd = parseInt($("#" + me.pre + "maxrmsd").val());
+        if(!badRmsd) badRmsd = 30;
+        
         bAligned = false;
 
         for(let i = 0, il = allnodesArray.length; i < il; ++i) {
@@ -254,6 +261,9 @@ class Vastplus {
             let coor_t = [], coor_q = [];
             let chainid_t, chainid_q;
             let hAtomsAll = {};
+
+            // reinitialize the alignment
+            $("#" + ic.pre + "dl_sequence2").html('');
           
             for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                 let node = parseInt(nodeArray[j]);
@@ -326,6 +336,12 @@ class Vastplus {
                         let mmdbid_q = chainid_q.substr(0, chainid_q.indexOf('_'));
                         let bForce = true;
                         ic.chainalignParserCls.transformStructure(mmdbid_q, index, alignType, bForce);
+
+                        let chainpairStr = '';
+                        for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
+                            chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
+                        }
+                        console.log("Selected the alignment: " + chainpairStr);
 
                         break;
                     }

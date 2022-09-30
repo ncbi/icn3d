@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.16.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.3.zip) was release on September 29, 2022. Fixed a bug in VAST chain alignment. Updated the video of iCn3D tutorial. 
+
 [icn3d-3.16.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.2.zip) was release on September 19, 2022. Enabled to submit loaded structures to VAST and Foldseek to search similar structures directly. 
 
 [icn3d-3.16.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.1.zip) was release on September 12, 2022. Fixed a bug in VAST+ alignment based on TM-align. 

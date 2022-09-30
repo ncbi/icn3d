@@ -37,7 +37,8 @@ class Draw {
                 ic.instancingCls.drawSymmetryMates();
             }
             else {
-                ic.applyCenterCls.centerSelection();
+                let bNoOrientation = true;
+                ic.applyCenterCls.centerSelection(undefined, bNoOrientation);
             }
         }
 

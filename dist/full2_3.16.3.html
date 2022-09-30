@@ -7,7 +7,7 @@
 <meta name="robots" content="index,follow,noarchive">
 <meta name="ncbi_app" content="structure">
 <meta name="ncbi_pdid" content="icn3d">
-<meta name="ncbi_page" content="full">
+<meta name="ncbi_page" content="full2">
 <meta name="ncbi_pinger_xml_http_request_override" content="false"/>
 <title>iCn3D: Web-based 3D Structure Viewer</title>
 <script type="text/javascript">
@@ -15,17 +15,17 @@
 </script>
 </head>
 <body>
-  <div id="div0"></div>
+  <div id="div0" style="float:left; padding-right:5px;"></div>
+  <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.16.2.css">
+  <link rel="stylesheet" href="icn3d_3.16.3.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.16.2.min.js"></script>
+  <script src="icn3d_3.16.3.min.js"></script>
 
   <script type="text/javascript">
-
     $( document ).ready(function() {
       if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
           // iCn3D version 2.24.7 doesn't work with three_0.128.0.min.js
@@ -34,18 +34,22 @@
           //  launchIcn3d(version);
           //});
 
-          var fixedUrl = document.URL.replace('full.html', 'full_2.24.7.html');
+          var fixedUrl = document.URL.replace('full2.html', 'full2_2.24.7.html');
           window.open(fixedUrl, '_self');
 
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.16.2.min.js', function() {
+          //$.getScript('icn3d_3.16.3.min.js', function() {
             var version = 3;
             launchIcn3d(version);
           //});
       }
+
       function launchIcn3d(version) {
+          // use the FIXED name "icn3duiHash" for side-by-side view
+          window.icn3duiHash = {};
+
           var cfg = getConfig();
           cfg.version = version;
 
@@ -73,11 +77,8 @@
           else if(cfg.gi !== undefined) {
               setupViewer('gi', cfg.gi, cfg);
           }
-          else if(cfg.uniprotid !== undefined) {
-              setupViewer('uniprotid', cfg.uniprotid, cfg);
-          }
           else if(cfg.blast_rep_id !== undefined) {
-              if( (cfg.from === 'blast' || cfg.from === 'icn3d') && cfg.command == '') {
+              if( (from === 'blast' || from === 'icn3d') && command == '') {
                 command = 'view+annotations;+set+annotation+cdd;+set+annotation+site;+set+view+detailed+view;+select+chain+'
                   + cfg.blast_rep_id + ';+show+selection';
               }
@@ -86,28 +87,54 @@
           }
           else if(cfg.urlname !== undefined) {
               var urlname = decodeURIComponent(cfg.urlname);
-
               setupViewer('url', cfg.urltype + '|' + urlname, cfg);
           }
           // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
           else if(cfg.align !== undefined) {
+              cfg.width = '49%'; //width,
+              cfg.mobilemenu = true; //mobilemenu,
+              cfg.closepopup = true; //closepopup,
+              cfg.controlGl = true;
+              cfg.bSidebyside = true;
+
               cfg.divid = 'div0';
-              //cfg.align = cfg.align;
-              //cfg.showalignseq = cfg.showalignseq;
+              cfg.align = cfg.align;
+              cfg.showalignseq = cfg.showalignseq;
 
               // VAST+ uses biological units
               cfg.bu = 1;
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
-
               icn3dui.show3DStructure();
+              window.icn3duiHash['div0'] = icn3dui;
+
+              var cfg2 = cfg;
+              cfg2.divid = 'div1';
+              var icn3dui2 = new icn3d.iCn3DUI(cfg2);
+              icn3dui2.show3DStructure();
+              window.icn3duiHash['div1'] = icn3dui2;
           }
           else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
+              cfg.width = '49%'; //width,
+              cfg.mobilemenu = true; //mobilemenu,
+              cfg.closepopup = true; //closepopup,
+              cfg.controlGl = true;
+              cfg.bSidebyside = true;
+
               cfg.divid = 'div0';
+              //cfg.chainalign = cfg.chainalign;
+              //cfg.resnum = cfg.resnum;
+              //cfg.showalignseq = cfg.showalignseq;
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
-
               icn3dui.show3DStructure();
+              window.icn3duiHash['div0'] = icn3dui;
+
+              var cfg2 = cfg;
+              cfg2.divid = 'div1';
+              var icn3dui2 = new icn3d.iCn3DUI(cfg2);
+              icn3dui2.show3DStructure();
+              window.icn3duiHash['div1'] = icn3dui2;
           }
           else {
               setupViewer('', '', cfg);
@@ -117,19 +144,25 @@
       function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
-        var idArray = idValue.toString().replace(/\s/g, '').split(',');
+        var idArray = idValue.replace(/\s/g, '').split(',');
 
-        if(idArray.length > 1) {
-          resize = false;
+        //if(idArray.length > 1) {
+          cfg.resize = false;
 
           if(cfg.width && cfg.width.indexOf('%') != -1) {
             cfg.width = 400;
             cfg.height = 400;
           }
-        }
+        //}
 
-        for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
+        //for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
+          var i = 0;
           cfg.divid = 'div' + i;
+          cfg.width = '49%'; //width,
+          cfg.mobilemenu = true; //mobilemenu,
+          cfg.closepopup = true; //closepopup,
+          cfg.controlGl = true;
+          cfg.bSidebyside = true;
 
           if(idName !== '') cfg[idName] = idArray[i];
 
@@ -139,8 +172,21 @@
                //icn3dui.setOption('color', 'spectrum');
           });
 
+          window.icn3duiHash['div0'] = icn3dui;
           if(idName === '') $("#div" + i + "_wait").hide();
-        }
+
+          i = 1;
+          var cfg2 = cfg;
+          cfg2.divid = 'div' + i;
+          var icn3dui2 = new icn3d.iCn3DUI(cfg2);
+
+          $.when(icn3dui2.show3DStructure()).then(function() {
+               //icn3dui2.setOption('color', 'spectrum');
+          });
+
+          window.icn3duiHash['div1'] = icn3dui2;
+          if(idName === '') $("#div" + i + "_wait").hide();
+        //}
       }
 
       function getConfig() {
@@ -255,10 +301,10 @@
       }
 
       function getValue(input) {
-        if(input == 'true' || input == '1') {
+        if(input == 'true') { // || input == '1') {
           input = true;
         }
-        else if(input == 'false' || input == '0') {
+        else if(input == 'false') { // || input == '0') {
           input = false;
         }
 
@@ -276,6 +322,7 @@
         return input;
       }
     }); // document ready
+
   </script>
 
   <!-- log & Google Analytics -->

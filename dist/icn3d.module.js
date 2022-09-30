@@ -6704,7 +6704,7 @@ class ApplyCenter {
     }
 
     //Center on the selected atoms.
-    centerSelection(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+    centerSelection(atoms, bNoOrientation) { let ic = this.icn3d, me = ic.icn3dui;
        //ic.transformCls.resetOrientation();
 
        ic.opts['rotationcenter'] = 'highlight center';
@@ -6713,10 +6713,12 @@ class ApplyCenter {
            atoms = me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms);
        }
 
-        // reset parameters
-        ic._zoomFactor = 1.0;
-        ic.mouseChange = new THREE.Vector2(0,0);
-        ic.quaternion = new THREE.Quaternion(0,0,0,1);
+       if(!bNoOrientation) {
+            // reset parameters
+            ic._zoomFactor = 1.0;
+            ic.mouseChange = new THREE.Vector2(0,0);
+            ic.quaternion = new THREE.Quaternion(0,0,0,1);
+       }
 
        // center on the hAtoms if more than one residue is selected
        if(Object.keys(atoms).length > 1) {
@@ -25910,7 +25912,7 @@ class RealignParser {
                     if(!struct2resid[chainidpair]) struct2resid[chainidpair] = {};
 
                     // master
-                    resiArray = predefinedResPair[0].split(",");
+                    resiArray = predefinedResPair[0].split(",");        
                     result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
 
                     hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
@@ -26345,7 +26347,7 @@ class ChainalignParser {
             ic.opts['color'] = 'identity';
             ic.setColorCls.setColorByOptions(ic.opts, hAtomsAll);
         }
-        
+
         let  bReverse = false;
         let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
         let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
@@ -27082,7 +27084,7 @@ class ChainalignParser {
                 let bNoDssp = false; // get secondary structure info
                 hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
             }
-            else {              
+            else {         
                 let bNoSeqalign = true;
                 hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
             }
@@ -27091,7 +27093,7 @@ class ChainalignParser {
         }
 
         // calculate secondary structures with applyCommandDssp
-        if(bQuery && me.cfg.matchedchains) {
+        if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
                 ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
@@ -36768,7 +36770,7 @@ class SetSeqAlign {
                     end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
                 // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = (bRealign) ? j : j - baseResi;
+                    let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
                     let resi = this.getResi(chainidArray[0], resiPos, bRealign);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
@@ -36776,7 +36778,7 @@ class SetSeqAlign {
                 }
             }
         }
-
+        
         // TM-align should use "start1 = ic.qt_start_end[chainIndex][i].t_start - 1", but the rest are the same as ""bRealign"
         if(me.cfg.aligntool == 'tmalign') bRealign = true; // real residue numbers are stored
 
@@ -36826,7 +36828,10 @@ class SetSeqAlign {
         for(let j = 0, jl = ic.chainsSeq[chainid1].length; j < jl; ++j) { 
             let resi = ic.chainsSeq[chainid1][j].resi;
 
-            if((j + baseResi < start_t || j + baseResi > end_t) ) {
+            let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
+
+            //if(j + baseResi < start_t || j + baseResi > end_t) {
+            if(jAdjusted < start_t || jAdjusted > end_t) {    
                 continue;
             }
 
@@ -37523,7 +37528,6 @@ class ParserUtils {
             let resid_t = ic.realignResid[struct_t][i].resid;
             let pos_t = resid_t.lastIndexOf('_');
             let resi_t = parseInt(resid_t.substr(pos_t + 1));
-
             let resid_q = ic.realignResid[struct_q][i].resid;
             let pos_q = resid_q.lastIndexOf('_');
             let resi_q = parseInt(resid_q.substr(pos_q + 1));
@@ -39995,6 +39999,7 @@ class AnnoPTM {
         }
         else { // PDB
             // get PDB to UniProt mapping
+            // https://www.ebi.ac.uk/pdbe/api/doc/sifts.html
             // https://www.ebi.ac.uk/pdbe/api/doc/
             let structLower = structure.substr(0, 4).toLowerCase();
             let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
@@ -53598,7 +53603,8 @@ class Draw {
                 ic.instancingCls.drawSymmetryMates();
             }
             else {
-                ic.applyCenterCls.centerSelection();
+                let bNoOrientation = true;
+                ic.applyCenterCls.centerSelection(undefined, bNoOrientation);
             }
         }
 
@@ -55222,6 +55228,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_refseq", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_grefseq', 'Please input protein RefSeq');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_uniprotid", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_uniprotid', 'Please input UniProt ID');
@@ -57855,6 +57865,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_refseq', 'NCBI RefSeq ' + me.htmlCls.wifiStr, undefined, 2);
 
         //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
@@ -60227,6 +60238,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_refseq' class='" + dialogClass + "'>";
+        html += "Protein RefSeq: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseq' value='0308234A' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
         html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
         html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
@@ -60478,9 +60494,11 @@ class SetDialog {
 
         html += me.htmlCls.divNowrapStr + "1. Select sets in two structures below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct2' multiple size='5' style='min-width:130px;'>";
-        html += "</select></div>";
+        html += "</select></div><br>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_vastplus'>VAST+ Alignment based on TM-align</button></div><br>";
+        html += "2. Overall maximum RMSD: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxrmsd' value='30' size='2'> &#197; <br><br>";
+
+        html += "<div>3. " + me.htmlCls.buttonStr + "applyRealignByStruct_vastplus'>VAST+ Alignment based on TM-align</button></div><br>";
         html += "</div>";
 
 
@@ -61396,28 +61414,24 @@ class LegendTable {
                     else {
                         html += "<div id='legend_table_alpha' display='block'>";
 
-
                         html += "<label class='legend_bullets_" + 1 + "'>";
                         html += "<div style='width: 10px; height: 10px; background-color:#0052cc; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Very high (pLDDT > 90)" + "</label>";
-                        html += "</div>";
 
                         html += "<label class='legend_bullets_" + 2 + "'>";
                         html += "<div style='width: 10px; height: 10px; background-color:#65cbf3; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Confident (90 > pLDDT > 70)" + "</label>";
-                        html += "</div>";
 
                         html += "<label class='legend_bullets_" + 3 + "'>";
                         html += "<div style='width: 10px; height: 10px; background-color:#ffd113; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Low (70 > pLDDT > 50)" + "</label>";
-                        html += "</div>";
 
                         html += "<label class='legend_bullets_" + 4 + "'>";
                         html += "<div style='width: 10px; height: 10px; background-color:#ff7d45; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Very low (pLDDT < 50)" + "</label>";
+
                         html += "</div>";
                     }
-                    html += "</div>";
                 }
             }
 
@@ -62909,6 +62923,14 @@ class Events {
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
            window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load refseq " + $("#" + me.pre + "refseq").val(), false);
+            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+            window.open(hostUrl + '?refseq=' + $("#" + me.pre + "refseq").val(), '_blank');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { me.icn3d;
            if (e.keyCode === 13) {
@@ -67725,8 +67747,9 @@ class Vastplus {
                 queryDataArray.push(queryData);
             }
             else {
-                alert("The alignment data can NOT be retrieved for the pair " + chainidpairArray[index] + "...");
-                return;
+                console.log("The alignment data can NOT be retrieved for the pair " + chainidpairArray[index] + "...");
+                //return;
+                queryDataArray.push([]);
             }
         }
 
@@ -67750,7 +67773,7 @@ class Vastplus {
                 if(dist > maxDist) {
                     maxDist = dist;
                 }
-                vdist.push(dist);
+                vdist.push(dist);                
             }
 
             m_qpMatrixDist.push(vdist);
@@ -67785,11 +67808,15 @@ class Vastplus {
             let allnodes = nodeArray.join(',');
 
             // use the sum of all pairs
-            let sum = 0;
-            for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
-                let chainindexArray = node2chainindex[parseInt(nodeArray[j])];
-                sum += m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];
-            }
+            // let sum = 0;
+            // for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
+            //     let chainindexArray = node2chainindex[parseInt(nodeArray[j])];
+            //     sum += m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];
+            // }
+
+            // use the best match
+            let chainindexArray = node2chainindex[parseInt(nodeArray[0])];
+            let sum = m_qpMatrixDist[chainindexArray[0]][chainindexArray[1]];           
 
             if(!allnodesHash[allnodes]) {
                 allnodesHash[allnodes] = sum;
@@ -67802,7 +67829,9 @@ class Vastplus {
         // sort the hash by value, then sort by key
         let allnodesArray = Object.keys(allnodesHash).sort((key1, key2) => (allnodesHash[key1] < allnodesHash[key2]) ? -1 : ( (parseInt(10000*allnodesHash[key1]) == parseInt(10000*allnodesHash[key2])) ? ( (key1 < key2) ? -1 : 1 ) : 1 ));
 
-        let badRmsd = 20;
+        let badRmsd = parseInt($("#" + me.pre + "maxrmsd").val());
+        if(!badRmsd) badRmsd = 30;
+        
         bAligned = false;
 
         for(let i = 0, il = allnodesArray.length; i < il; ++i) {
@@ -67815,6 +67844,9 @@ class Vastplus {
             let coor_t = [], coor_q = [];
             let chainid_t, chainid_q;
             let hAtomsAll = {};
+
+            // reinitialize the alignment
+            $("#" + ic.pre + "dl_sequence2").html('');
           
             for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                 let node = parseInt(nodeArray[j]);
@@ -67887,6 +67919,12 @@ class Vastplus {
                         let mmdbid_q = chainid_q.substr(0, chainid_q.indexOf('_'));
                         let bForce = true;
                         ic.chainalignParserCls.transformStructure(mmdbid_q, index, alignType, bForce);
+
+                        let chainpairStr = '';
+                        for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
+                            chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
+                        }
+                        console.log("Selected the alignment: " + chainpairStr);
 
                         break;
                     }
@@ -69938,7 +69976,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.16.2';
+    this.REVISION = '3.16.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -70304,6 +70342,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     }
     else if(me.cfg.cid !== undefined) {
        ic.inputid = me.cfg.cid;
+
        let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
        $.ajax({
           url: url,
