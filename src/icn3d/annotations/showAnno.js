@@ -111,7 +111,7 @@ class ShowAnno {
                 }
                 //}
                 // protein and nucleotide chain may have chemicals/ions attached at the end
-                if((me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
+                if((me.cfg.pdbid !== undefined || me.cfg.pdb_filepath !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
                   &&(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial)) ) {
                     for(let r = 0, rl = ic.chainsSeq[chainArray[i]].length; r < rl; ++r) {
                         let resObj = ic.chainsSeq[chainArray[i]][r];
@@ -146,7 +146,7 @@ class ShowAnno {
         let chemical_set = result.chemical_set;
             
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
-            if(me.cfg.blast_rep_id === undefined) {
+            if(me.cfg.blast_rep_id === undefined && me.smith_id === undefined) {
                if(ic.bFullUi) {
                    if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
                        let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
@@ -258,6 +258,32 @@ class ShowAnno {
                     }
                 });
              } // align seq to structure
+             else if (me.smith_id !== undefined && ic.bSmithwm) { // align sequence to structure
+                //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
+                let target, query;
+                let idArray = [me.smith_id];
+                if (me.query_smith_fasta.indexOf('>') != -1) { //FASTA with header
+                    query = me.query_smith_fasta.substr(me.query_smith_fasta.indexOf('\n') + 1);
+                }
+                else if (!(/\d/.test(me.query_smith_fasta)) || me.query_smith_fasta.length > 50) { //FASTA
+                    query = me.query_smith_fasta;
+                }
+                else { // accession
+                    idArray.push(me.query_smith_fasta);
+                }
+                let index = 0;
+                for (let acc in me.icn3d.chainsSeq) {
+                    if (index == 0) {
+                        target = Array.from(me.icn3d.chainsSeq[acc], ({ name }) => name).join("");
+                    }
+                    else if (!me.query_smith_fasta) {
+                        me.query_smith_fasta = Array.from(me.icn3d.chainsSeq[acc], ({ name }) => name).join("");
+                    }
+                    ++index;
+                }
+                ic.seqStructAlignDataSmithwm = ic.alignSWCls.alignSW(target, me.query_smith_fasta, me.smith_match, me.smith_mismatch, me.smith_gap, me.smith_extension, me.smith_local);
+                thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+            }
         }
         ic.bAnnoShown = true;
     }
@@ -495,10 +521,15 @@ class ShowAnno {
                 if(!me.bNode) console.log( "No data were found for the protein " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
-            if(me.cfg.blast_rep_id != chnid) {
+            if(me.cfg.blast_rep_id != chnid && me.smith_id != chnid) {
+                console.log(525)
+                console.log(me.smith_id, chnid)
+
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
             else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
+              console.log((528))  
+            
               let title;
               if(me.cfg.query_id.length > 14) {
                   title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -516,6 +547,8 @@ class ShowAnno {
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
               //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+              console.log("545")
+
               let title;
               if(me.cfg.query_id.length > 14) {
                   title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -680,8 +713,144 @@ class ShowAnno {
               ic.selectionCls.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
             } // align seq to structure
+            else if (me.smith_id == chnid) { // align sequence to structure
+                //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+                console.log("me.smith_id")
+                console.log((ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined))
+                
+                let title;
+                if (me.query_smith_fasta.length > 14) {
+                    title = 'Query: ' + me.query_smith_fasta.substr(0, 6) + '...';
+                }
+                else {
+                    title = (isNaN(me.query_smith_fasta)) ? 'Query: ' + me.query_smith_fasta : 'Query: gi ' + me.query_smith_fasta;
+                }
+                let evalue, targetSeq, querySeq, segArray;
+                let data = ic.seqStructAlignDataSmithwm;
+                evalue = data.score;
+                targetSeq = data.target.replace(/-/g, '');
+                querySeq = data.query.replace(/-/g, '');
+                segArray = [];
+                // target, 0-based: orifrom, orito
+                // query, 0-based: from, to
+                let targetCnt = -1, queryCnt = -1;
+                let bAlign = false, seg = {};
+                for (let i = 0, il = data.target.length; i < il; ++i) {
+                    if (data.target[i] != '-') ++targetCnt;
+                    if (data.query[i] != '-') ++queryCnt;
+                    if (!bAlign && data.target[i] != '-' && data.query[i] != '-') {
+                        bAlign = true;
+                        seg.orifrom = targetCnt;
+                        seg.from = queryCnt;
+                    }
+                    else if (bAlign && (data.target[i] == '-' || data.query[i] == '-')) {
+                        bAlign = false;
+                        seg.orito = (data.target[i] == '-') ? targetCnt : targetCnt - 1;
+                        seg.to = (data.query[i] == '-') ? queryCnt : queryCnt - 1;
+                        segArray.push(seg);
+                        seg = {};
+                    }
+                }
+                // end condition
+                if (data.target[data.target.length - 1] != '-' && data.query[data.target.length - 1] != '-') {
+                    seg.orito = targetCnt;
+                    seg.to = queryCnt;
+                    segArray.push(seg);
+                }
+                let text = '', compText = '';
+                ic.queryStart = '';
+                ic.queryEnd = '';
+                if (segArray !== undefined) {
+                    let target2queryHash = {};
+                    if (ic.targetGapHash === undefined) ic.targetGapHash = {};
+                    ic.fullpos2ConsTargetpos = {};
+                    ic.consrvResPosArray = [];
+                    let prevTargetTo = 0, prevQueryTo = 0;
+                    ic.nTotalGap = 0;
+                    ic.queryStart = segArray[0].from + 1;
+                    ic.queryEnd = segArray[segArray.length - 1].to + 1;
+                    for (let i = 0, il = segArray.length; i < il; ++i) {
+                        let seg = segArray[i];
+                        if (i > 0) { // determine gap
+                            if (seg.orifrom - prevTargetTo < seg.from - prevQueryTo) { // gap in target
+                                ic.targetGapHash[seg.orifrom] = { 'from': prevQueryTo + 1, 'to': seg.from - 1 };
+                                ic.nTotalGap += ic.targetGapHash[seg.orifrom].to - ic.targetGapHash[seg.orifrom].from + 1;
+                            }
+                            else if (seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
+                                for (let j = prevTargetTo + 1; j < seg.orifrom; ++j) {
+                                    target2queryHash[j] = -1; // means gap in query
+                                }
+                            }
+                        }
+                        for (let j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                            target2queryHash[j + seg.orifrom] = j + seg.from;
+                        }
+                        prevTargetTo = seg.orito;
+                        prevQueryTo = seg.to;
+                    }
+                    // the missing residues at the end of the seq will be filled up in the API showNewTrack()
+                    let nGap = 0;
+                    ic.alnChainsSeq[chnid] = [];
+                    let offset = (ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;
+                    for (let i = 0, il = targetSeq.length; i < il; ++i) {
+                        //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
+                        if (ic.targetGapHash.hasOwnProperty(i)) {
+                            for (let j = ic.targetGapHash[i].from; j <= ic.targetGapHash[i].to; ++j) {
+                                text += querySeq[j];
+                            }
+                        }
+                        compText += ic.showSeqCls.insertGap(chnid, i, '-', true);
+                        if (ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
+                        let pos = (ic.bUsePdbNum) ? i + 1 + offset : i + 1;
+                        if (target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
+                            text += querySeq[target2queryHash[i]];
+                            let colorHexStr = this.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+                            if (targetSeq[i] == querySeq[target2queryHash[i]]) {
+                                compText += targetSeq[i];
+                                ic.fullpos2ConsTargetpos[i + nGap] = { 'same': 1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                ic.consrvResPosArray.push(pos);
+                                ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': '#FF0000', 'color2': '#' + colorHexStr });
+                            }
+                            else if (this.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
+                                compText += '+';
+                                ic.fullpos2ConsTargetpos[i + nGap] = { 'same': 0, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                ic.consrvResPosArray.push(pos);
+                                ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': '#0000FF', 'color2': '#' + colorHexStr });
+                            }
+                            else {
+                                compText += ' ';
+                                ic.fullpos2ConsTargetpos[i + nGap] = { 'same': -1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': me.htmlCls.GREYC, 'color2': '#' + colorHexStr });
+                            }
+                        }
+                        else {
+                            text += '-';
+                            compText += ' ';
+                        }
+                    }
+                    //title += ', E: ' + evalue;
+                }
+                else {
+                    text += "cannot be aligned";
+                    alert('The sequence can NOT be aligned to the structure');
+                }
+                let compTitle = (ic.seqStructAlignDataSmithwm !== undefined) ? 'SMITHWM, E: ' + evalue : 'Score: ' + evalue;
+                ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+                let residueidHash = {};
+                let residueid;
+                if (ic.consrvResPosArray !== undefined) {
+                    for (let i = 0, il = ic.consrvResPosArray.length; i < il; ++i) {
+                        residueid = chnidBase + '_' + ic.consrvResPosArray[i];
+                        residueidHash[residueid] = 1;
+                        //atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueid]);
+                    }
+                }
+                let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                //ic.selectionCls.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
+                ic.selectionCls.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
+                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+            }
         } // for loop
-        
         if(!me.bNode) {
             this.enableHlSeq();
             // get CDD/Binding sites

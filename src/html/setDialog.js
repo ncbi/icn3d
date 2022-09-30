@@ -96,6 +96,13 @@ class SetDialog {
 
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
 
+        html += me.htmlCls.divStr + "dl_legend_table' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_legendmenu'>";
+        html += "<div id='" + me.pre + "atomsCustom2' multiple size='6' style='min-width:130px;'>";
+        html += "</div>";
+        html += "</div>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_vastplus' class='" + dialogClass + "' style='max-width:500px'>";
         html += "Note: <b>VAST+</b> finds other macromolecular structures that have a similar biological unit. To do this, VAST+ takes into consideration the complete set of 3D domains that VAST identified within a query structure, throughout all of its component protein molecules, and finds other macromolecular structures that have a similar set of proteins/3D domains.<br><br>"; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpluspdbid' value='1HHO' size=8><br>";
@@ -352,6 +359,18 @@ class SetDialog {
         //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
         html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
             + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Smith-Waterman</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_smith_id' style='max-width:500px;' class='" + dialogClass + "'>";
+        html += "Enter a FASTA sequence and the aligned Structure ID. Change parameters as needed.<br><br> ";
+        html += "Match: " + me.htmlCls.inputTextStr + "id='" + me.pre + "smith_match' value='1' size=1> &emsp;";
+        html += "Mismatch: " + me.htmlCls.inputTextStr + "id='" + me.pre + "smith_mismatch' value='-1' size=1> &emsp;";
+        html += "Gap: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gap' value='-1' size=1> &emsp;";
+        html += "Extension: " + me.htmlCls.inputTextStr + "id='" + me.pre + "extension' value='-1' size=1> &emsp;";
+        html += "Local: " + me.htmlCls.inputCheckStr + "id='" + me.pre + "local' checked size=1>&emsp; <br><br> ";
+        html += "FASTA sequence: <br><textarea id='" + me.pre + "query_smith_fasta' rows='5' style='width: 100%; height: " + me.htmlCls.LOG_HEIGHT + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+        html += "<b>Structure ID</b>(Target chain for sequence alignment): "+ me.htmlCls.inputTextStr + "id='" + me.pre + "smith_id' value='A' size=8><br><br> ";
+        html += me.htmlCls.buttonStr + "reload_smith'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";

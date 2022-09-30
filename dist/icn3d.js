@@ -31016,7 +31016,7 @@ var icn3d = (function (exports) {
         showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d, me = ic.icn3dui;
             let bNonMmdb = false;
             let giSeq;
-            if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
+            if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.smith_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
                 bNonMmdb = true;
                 giSeq = [];
                 for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
@@ -31059,7 +31059,7 @@ var icn3d = (function (exports) {
                 htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-                if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+                if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.smith_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                     htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
                 }
                 else {
@@ -31191,7 +31191,7 @@ var icn3d = (function (exports) {
             html += '</div>';
             html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
             html3 += '</div></div>';
-            if(me.cfg.blast_rep_id === chnid) {
+            if(me.cfg.blast_rep_id === chnid || me.smith_id === chnid) {
                 htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
             }
             else {
@@ -31234,7 +31234,7 @@ var icn3d = (function (exports) {
               }
               else {
                   let color = '333333';
-                  if(me.cfg.blast_rep_id == chnid && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
+                  if((me.cfg.blast_rep_id == chnid || me.smith_id == chnid) && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
                       color = ic.fullpos2ConsTargetpos[i + nGap].color;
                   }
                   else {
@@ -31245,7 +31245,7 @@ var icn3d = (function (exports) {
                   html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
               }
             }
-            if(me.cfg.blast_rep_id == chnid) {
+            if(me.cfg.blast_rep_id == chnid || me.smith_id == chnid) {
               // change color in 3D
               ic.opts['color'] = 'conservation';
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
@@ -31257,7 +31257,7 @@ var icn3d = (function (exports) {
             let color =(atom.color) ? atom.color.getHexString() : "CCCCCC";
             let width = Math.round(ic.seqAnnWidth * giSeq.length / ic.maxAnnoLength);
             if(width < 1) width = 1;
-            if(me.cfg.blast_rep_id != chnid) { // regular
+            if(me.cfg.blast_rep_id != chnid || me.smith_id == chnid) { // regular
                 html2 += '<div id="giseq_summary_' + ic.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
             }
             else { // with potential gaps
@@ -31282,7 +31282,7 @@ var icn3d = (function (exports) {
             htmlTmp += '<br>';
             html += htmlTmp;
             html2 += htmlTmp;
-            if(me.cfg.blast_rep_id == chnid) {
+            if(me.cfg.blast_rep_id == chnid || me.smith_id == chnid) {
                 // 1. residue conservation
                 if(compText !== undefined && compText !== '') {
                 // conservation, detailed view
@@ -31394,7 +31394,7 @@ var icn3d = (function (exports) {
             if(ic.giSeq[chnid].length > 10) {
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-                if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+                if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.smith_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                     htmlTmp = '<div class="icn3d-dl_sequence">';
                     htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                     htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -31503,7 +31503,7 @@ var icn3d = (function (exports) {
         }
         insertGapOverview(chnid, seqIndex) {  let ic = this.icn3d, me = ic.icn3dui;
           let html2 = '';
-          if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+          if((me.cfg.blast_rep_id == chnid || me.smith_id == chnid) && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
               let width = ic.seqAnnWidth *(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1) /(ic.maxAnnoLength + ic.nTotalGap);
               html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
           }
@@ -31523,7 +31523,7 @@ var icn3d = (function (exports) {
         }
         getProteinName(chnid) { let ic = this.icn3d, me = ic.icn3dui;
             let fullProteinName = '';
-            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.smith_id !== undefined) && ic.mmdb_data !== undefined) {
                 let moleculeInfor = ic.mmdb_data.moleculeInfor;
                 let chain = chnid.substr(chnid.indexOf('_') + 1);
                 for(let i in moleculeInfor) {
@@ -39140,7 +39140,7 @@ var icn3d = (function (exports) {
                     }
                     //}
                     // protein and nucleotide chain may have chemicals/ions attached at the end
-                    if((me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
+                    if((me.cfg.pdbid !== undefined || me.cfg.pdb_filepath !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
                       &&(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial)) ) {
                         for(let r = 0, rl = ic.chainsSeq[chainArray[i]].length; r < rl; ++r) {
                             let resObj = ic.chainsSeq[chainArray[i]][r];
@@ -39175,7 +39175,7 @@ var icn3d = (function (exports) {
             let chemical_set = result.chemical_set;
                 
             if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
-                if(me.cfg.blast_rep_id === undefined) {
+                if(me.cfg.blast_rep_id === undefined && me.smith_id === undefined) {
                    if(ic.bFullUi) {
                        if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
                            let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
@@ -39287,6 +39287,30 @@ var icn3d = (function (exports) {
                         }
                     });
                  } // align seq to structure
+                 else if (me.smith_id !== undefined && ic.bSmithwm) { // align sequence to structure
+                    //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
+                    let target;
+                    let idArray = [me.smith_id];
+                    if (me.query_smith_fasta.indexOf('>') != -1) { //FASTA with header
+                        me.query_smith_fasta.substr(me.query_smith_fasta.indexOf('\n') + 1);
+                    }
+                    else if (!(/\d/.test(me.query_smith_fasta)) || me.query_smith_fasta.length > 50) ;
+                    else { // accession
+                        idArray.push(me.query_smith_fasta);
+                    }
+                    let index = 0;
+                    for (let acc in me.icn3d.chainsSeq) {
+                        if (index == 0) {
+                            target = Array.from(me.icn3d.chainsSeq[acc], ({ name }) => name).join("");
+                        }
+                        else if (!me.query_smith_fasta) {
+                            me.query_smith_fasta = Array.from(me.icn3d.chainsSeq[acc], ({ name }) => name).join("");
+                        }
+                        ++index;
+                    }
+                    ic.seqStructAlignDataSmithwm = ic.alignSWCls.alignSW(target, me.query_smith_fasta, me.smith_match, me.smith_mismatch, me.smith_gap, me.smith_extension, me.smith_local);
+                    thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                }
             }
             ic.bAnnoShown = true;
         }
@@ -39524,10 +39548,15 @@ var icn3d = (function (exports) {
                     if(!me.bNode) console.log( "No data were found for the protein " + chnid + "..." );
                     ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
                 }
-                if(me.cfg.blast_rep_id != chnid) {
+                if(me.cfg.blast_rep_id != chnid && me.smith_id != chnid) {
+                    console.log(525);
+                    console.log(me.smith_id, chnid);
+
                     ic.showSeqCls.showSeq(chnid, chnidBase);
                 }
                 else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
+                  console.log((528));  
+                
                   let title;
                   if(me.cfg.query_id.length > 14) {
                       title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -39545,6 +39574,8 @@ var icn3d = (function (exports) {
                 }
                 else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
                   //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+                  console.log("545");
+
                   let title;
                   if(me.cfg.query_id.length > 14) {
                       title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -39709,8 +39740,144 @@ var icn3d = (function (exports) {
                   ic.selectionCls.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
                 } // align seq to structure
+                else if (me.smith_id == chnid) { // align sequence to structure
+                    //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+                    console.log("me.smith_id");
+                    console.log((ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined));
+                    
+                    let title;
+                    if (me.query_smith_fasta.length > 14) {
+                        title = 'Query: ' + me.query_smith_fasta.substr(0, 6) + '...';
+                    }
+                    else {
+                        title = (isNaN(me.query_smith_fasta)) ? 'Query: ' + me.query_smith_fasta : 'Query: gi ' + me.query_smith_fasta;
+                    }
+                    let evalue, targetSeq, querySeq, segArray;
+                    let data = ic.seqStructAlignDataSmithwm;
+                    evalue = data.score;
+                    targetSeq = data.target.replace(/-/g, '');
+                    querySeq = data.query.replace(/-/g, '');
+                    segArray = [];
+                    // target, 0-based: orifrom, orito
+                    // query, 0-based: from, to
+                    let targetCnt = -1, queryCnt = -1;
+                    let bAlign = false, seg = {};
+                    for (let i = 0, il = data.target.length; i < il; ++i) {
+                        if (data.target[i] != '-') ++targetCnt;
+                        if (data.query[i] != '-') ++queryCnt;
+                        if (!bAlign && data.target[i] != '-' && data.query[i] != '-') {
+                            bAlign = true;
+                            seg.orifrom = targetCnt;
+                            seg.from = queryCnt;
+                        }
+                        else if (bAlign && (data.target[i] == '-' || data.query[i] == '-')) {
+                            bAlign = false;
+                            seg.orito = (data.target[i] == '-') ? targetCnt : targetCnt - 1;
+                            seg.to = (data.query[i] == '-') ? queryCnt : queryCnt - 1;
+                            segArray.push(seg);
+                            seg = {};
+                        }
+                    }
+                    // end condition
+                    if (data.target[data.target.length - 1] != '-' && data.query[data.target.length - 1] != '-') {
+                        seg.orito = targetCnt;
+                        seg.to = queryCnt;
+                        segArray.push(seg);
+                    }
+                    let text = '', compText = '';
+                    ic.queryStart = '';
+                    ic.queryEnd = '';
+                    if (segArray !== undefined) {
+                        let target2queryHash = {};
+                        if (ic.targetGapHash === undefined) ic.targetGapHash = {};
+                        ic.fullpos2ConsTargetpos = {};
+                        ic.consrvResPosArray = [];
+                        let prevTargetTo = 0, prevQueryTo = 0;
+                        ic.nTotalGap = 0;
+                        ic.queryStart = segArray[0].from + 1;
+                        ic.queryEnd = segArray[segArray.length - 1].to + 1;
+                        for (let i = 0, il = segArray.length; i < il; ++i) {
+                            let seg = segArray[i];
+                            if (i > 0) { // determine gap
+                                if (seg.orifrom - prevTargetTo < seg.from - prevQueryTo) { // gap in target
+                                    ic.targetGapHash[seg.orifrom] = { 'from': prevQueryTo + 1, 'to': seg.from - 1 };
+                                    ic.nTotalGap += ic.targetGapHash[seg.orifrom].to - ic.targetGapHash[seg.orifrom].from + 1;
+                                }
+                                else if (seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
+                                    for (let j = prevTargetTo + 1; j < seg.orifrom; ++j) {
+                                        target2queryHash[j] = -1; // means gap in query
+                                    }
+                                }
+                            }
+                            for (let j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                                target2queryHash[j + seg.orifrom] = j + seg.from;
+                            }
+                            prevTargetTo = seg.orito;
+                            prevQueryTo = seg.to;
+                        }
+                        // the missing residues at the end of the seq will be filled up in the API showNewTrack()
+                        let nGap = 0;
+                        ic.alnChainsSeq[chnid] = [];
+                        let offset = (ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;
+                        for (let i = 0, il = targetSeq.length; i < il; ++i) {
+                            //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
+                            if (ic.targetGapHash.hasOwnProperty(i)) {
+                                for (let j = ic.targetGapHash[i].from; j <= ic.targetGapHash[i].to; ++j) {
+                                    text += querySeq[j];
+                                }
+                            }
+                            compText += ic.showSeqCls.insertGap(chnid, i, '-', true);
+                            if (ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
+                            let pos = (ic.bUsePdbNum) ? i + 1 + offset : i + 1;
+                            if (target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
+                                text += querySeq[target2queryHash[i]];
+                                let colorHexStr = this.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+                                if (targetSeq[i] == querySeq[target2queryHash[i]]) {
+                                    compText += targetSeq[i];
+                                    ic.fullpos2ConsTargetpos[i + nGap] = { 'same': 1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                    ic.consrvResPosArray.push(pos);
+                                    ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': '#FF0000', 'color2': '#' + colorHexStr });
+                                }
+                                else if (this.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
+                                    compText += '+';
+                                    ic.fullpos2ConsTargetpos[i + nGap] = { 'same': 0, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                    ic.consrvResPosArray.push(pos);
+                                    ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': '#0000FF', 'color2': '#' + colorHexStr });
+                                }
+                                else {
+                                    compText += ' ';
+                                    ic.fullpos2ConsTargetpos[i + nGap] = { 'same': -1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr };
+                                    ic.alnChainsSeq[chnid].push({ 'resi': pos, 'color': me.htmlCls.GREYC, 'color2': '#' + colorHexStr });
+                                }
+                            }
+                            else {
+                                text += '-';
+                                compText += ' ';
+                            }
+                        }
+                        //title += ', E: ' + evalue;
+                    }
+                    else {
+                        text += "cannot be aligned";
+                        alert('The sequence can NOT be aligned to the structure');
+                    }
+                    let compTitle = (ic.seqStructAlignDataSmithwm !== undefined) ? 'SMITHWM, E: ' + evalue : 'Score: ' + evalue;
+                    ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+                    let residueidHash = {};
+                    let residueid;
+                    if (ic.consrvResPosArray !== undefined) {
+                        for (let i = 0, il = ic.consrvResPosArray.length; i < il; ++i) {
+                            residueid = chnidBase + '_' + ic.consrvResPosArray[i];
+                            residueidHash[residueid] = 1;
+                            //atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueid]);
+                        }
+                    }
+                    let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                    //ic.selectionCls.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
+                    ic.selectionCls.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
+                    ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+                }
             } // for loop
-            
             if(!me.bNode) {
                 this.enableHlSeq();
                 // get CDD/Binding sites
@@ -43150,10 +43317,16 @@ var icn3d = (function (exports) {
             if(commandnameArray === undefined) commandnameArray = [];
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(commandnameArray);
+            let legendAtomsHtml = ic.legendTableCls.setAtomMenu(commandnameArray);
 
             if($("#" + ic.pre + "atomsCustom").length) {
                 $("#" + ic.pre + "atomsCustom").html(definedAtomsHtml);
                 $("#" + ic.pre + "atomsCustom")[0].blur();
+            }
+
+            if($("#" + ic.pre + "atomsCustom2").length) {
+                $("#" + ic.pre + "atomsCustom2").html(legendAtomsHtml);
+                $("#" + ic.pre + "atomsCustom2")[0].blur();
             }
         }
 
@@ -55043,6 +55216,10 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { me.icn3d;
                me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
             });
+            //    clkMn1_smith_id: function() {
+            me.myEventCls.onIds("#" + me.pre + "mn1_smith", "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_smith_id', 'Align local sequence to structure');
+            });
         //    },
         //    clkMn1_gi: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d;
@@ -55654,6 +55831,12 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "setNot", "click", function(e) { let ic = me.icn3d;
                ic.setOperation = 'not';
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn_legend_table", "click", function(e) { let ic = me.icn3d;
+                ic.legendTableCls.showSets();
+                thisClass.setLogCmd('legend table', true);
+             });
+
         //    },
         //    clkMn2_pkNo: function() {
             me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d;
@@ -55694,7 +55877,7 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn2_pkChain: function() {
             me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d;
-               ic.pk = 5;
+               //ic.pk = 5;
                ic.opts['pk'] = 'chain';
                thisClass.setLogCmd('set pk chain', true);
             });
@@ -56127,12 +56310,14 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrResidue: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 2;
                ic.setOptionCls.setOption('color', 'residue');
                thisClass.setLogCmd('color residue', true);
             });
         //    },
         //    clkMn4_clrResidueCustom: function() {
-            me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 2;
                me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
             });
         //    },
@@ -56190,17 +56375,20 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrCharge: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 3;
                ic.setOptionCls.setOption('color', 'charge');
                thisClass.setLogCmd('color charge', true);
             });
         //    },
         //    clkMn4_clrHydrophobic: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 4; 
                ic.setOptionCls.setOption('color', 'hydrophobic');
                thisClass.setLogCmd('color hydrophobic', true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 4;
                ic.setOptionCls.setOption('color', 'normalized hydrophobic');
                thisClass.setLogCmd('color normalized hydrophobic', true);
             });
@@ -56208,17 +56396,20 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrAtom: function() {
             me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 1;
                ic.setOptionCls.setOption('color', 'atom');
                thisClass.setLogCmd('color atom', true);
             });
         //    },
         //    clkMn4_clrBfactor: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 5;
                ic.setOptionCls.setOption('color', 'b factor');
                thisClass.setLogCmd('color b factor', true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d;
+               ic.legendClick = 6;
                ic.setOptionCls.setOption('color', 'confidence');
                thisClass.setLogCmd('color confidence', true);
             });
@@ -57608,13 +57799,13 @@ var icn3d = (function (exports) {
 
             let html = "";
 
-            html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
-
-            html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+            html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+            html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px;  margin: auto; padding: 5px; box-sizing: border-box; border: 4px inset orange; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
             html += "</div>";
 
-            return html;
-        }
+           return html;
+      }
+
 
         //Set the menu "File" at the top of the viewer.
         setMenu1() { let me = this.icn3dui;
@@ -57726,6 +57917,7 @@ var icn3d = (function (exports) {
             html += "</ul>";
 
             html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink("mn1_smith", "Local Sequence to Structure " + me.htmlCls.wifiStr);
 
             html += "</ul>";
             html += "</li>";
@@ -58739,6 +58931,7 @@ var icn3d = (function (exports) {
                 html += "</li>";
 
                 html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets', 1, 1);
+                html += me.htmlCls.setHtmlCls.getLink('mn_legend_table', 'Legend', 1, 1); 
 
                 html += me.htmlCls.setHtmlCls.getMenuSep();
 
@@ -59148,10 +59341,12 @@ var icn3d = (function (exports) {
             let bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
             let bTwodctnInit = $('#' + me.pre + 'dl_2dctn').hasClass('ui-dialog-content'); // initialized
             let bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
+            let bLegendInit = $('#' + me.pre + 'dl_legend_table').hasClass('ui-dialog-content'); // initialized
 
             status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
             status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
             status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
+            status.bLegendInit2 = false;
 
             if(bSelectannotationsInit) status.bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
             if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
@@ -59164,6 +59359,7 @@ var icn3d = (function (exports) {
             if(bTwoddgmInit) status.bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
             if(bTwodctnInit) status.bTwodctnInit2 = $('#' + me.pre + 'dl_2dctn').dialog( 'isOpen' );
             if(bSetsInit) status.bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
+            if(bLegendInit) status.bLegendInit2 = $('#' + me.pre + 'dl_legend_table').dialog( 'isOpen' );
 
             return status;
         }
@@ -59212,7 +59408,7 @@ var icn3d = (function (exports) {
                     ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bAlignerrormap2)
                     ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
                     ) {
-                      if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                      if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                           //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                           let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                           ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
@@ -59220,6 +59416,7 @@ var icn3d = (function (exports) {
                           if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                           if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                           if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                          if(status.bLegendInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_legend_table', undefined, status.bLegendInit2);
                       }
                       else {
                           //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -59292,6 +59489,10 @@ var icn3d = (function (exports) {
                 }
 
                 title = (id === me.pre + 'dl_2ddgm') ? '2D Diagram' : '2D Cartoon';
+            }
+            else if (id === me.pre + 'dl_legend_table'){
+                at = "right top";
+                title = 'Legend';
             }
 
             //var position ={ my: "left top", at: at, of: "#" + me.pre + "canvas", collision: "none" }
@@ -59367,12 +59568,13 @@ var icn3d = (function (exports) {
                 if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
                     this.openDlgHalfWindow(id, title, dialogWidth, true);
 
-                    if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                    if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                         ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth - twoddgmWidth, me.htmlCls.HEIGHT, true);
 
                         if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                         if(status.bTwodctnInit2) this.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                         if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                        if(status.bLegendInit2) this.openDlg2Ddgm(me.pre + 'dl_legend_table', undefined, status.bLegendInit2);
                     }
                 }
                 else {
@@ -59404,13 +59606,14 @@ var icn3d = (function (exports) {
                             ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bAlignerrormap2))
                             ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
                             ) {
-                              if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                              if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                                   let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                                   ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                                   if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                                   if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                                   if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                                  if(status.bLegendInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_legend_table');
                               }
                               else {
                                   //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -59498,7 +59701,7 @@ var icn3d = (function (exports) {
 
                 let position;
 
-                if(id === me.pre + 'dl_definedsets') {
+                if(id === me.pre + 'dl_definedsets' || id === me.pre + 'dl_legend_table') {
                     let tmpWidth = 0;
 
                     //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
@@ -59538,9 +59741,6 @@ var icn3d = (function (exports) {
                         height = 500;
                     }
                     else if(id === me.pre + 'dl_rmsd') {
-                        position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" };
-                    }
-                    else if(id === me.pre + 'dl_legend') {
                         position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" };
                     }
                     else if(id === me.pre + 'dl_symd') {
@@ -59634,7 +59834,7 @@ var icn3d = (function (exports) {
                 if(id === me.pre + 'dl_addtrack') {
                     width='50%';
                 }
-                else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn' || id === me.pre + 'dl_definedsets') {
+                else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn' || id === me.pre + 'dl_definedsets' || id === me.pre + 'dl_legend_table') {
                     width=twoddgmWidth;
                 }
                 else if(id === me.pre + 'dl_allinteraction' || id === me.pre + 'dl_buriedarea') {
@@ -59741,6 +59941,13 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.setHtmlCls.setAdvanced(2);
+
+            html += me.htmlCls.divStr + "dl_legend_table' class='" + dialogClass + "'>";
+            html += me.htmlCls.divStr + "dl_legendmenu'>";
+            html += "<div id='" + me.pre + "atomsCustom2' multiple size='6' style='min-width:130px;'>";
+            html += "</div>";
+            html += "</div>";
+            html += "</div>";
 
             html += me.htmlCls.divStr + "dl_vastplus' class='" + dialogClass + "' style='max-width:500px'>";
             html += "Note: <b>VAST+</b> finds other macromolecular structures that have a similar biological unit. To do this, VAST+ takes into consideration the complete set of 3D domains that VAST identified within a query structure, throughout all of its component protein molecules, and finds other macromolecular structures that have a similar set of proteins/3D domains.<br><br>"; 
@@ -59998,6 +60205,18 @@ var icn3d = (function (exports) {
             //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
             html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
                 + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Smith-Waterman</button>";
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_smith_id' style='max-width:500px;' class='" + dialogClass + "'>";
+            html += "Enter a FASTA sequence and the aligned Structure ID. Change parameters as needed.<br><br> ";
+            html += "Match: " + me.htmlCls.inputTextStr + "id='" + me.pre + "smith_match' value='1' size=1> &emsp;";
+            html += "Mismatch: " + me.htmlCls.inputTextStr + "id='" + me.pre + "smith_mismatch' value='-1' size=1> &emsp;";
+            html += "Gap: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gap' value='-1' size=1> &emsp;";
+            html += "Extension: " + me.htmlCls.inputTextStr + "id='" + me.pre + "extension' value='-1' size=1> &emsp;";
+            html += "Local: " + me.htmlCls.inputCheckStr + "id='" + me.pre + "local' checked size=1>&emsp; <br><br> ";
+            html += "FASTA sequence: <br><textarea id='" + me.pre + "query_smith_fasta' rows='5' style='width: 100%; height: " + me.htmlCls.LOG_HEIGHT + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+            html += "<b>Structure ID</b>(Target chain for sequence alignment): "+ me.htmlCls.inputTextStr + "id='" + me.pre + "smith_id' value='A' size=8><br><br> ";
+            html += me.htmlCls.buttonStr + "reload_smith'>Load</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
@@ -60808,6 +61027,894 @@ var icn3d = (function (exports) {
      * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
      */
 
+    class LegendTable {
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        setProtNuclLigInMenu() { let ic = this.icn3d; ic.icn3dui;
+            // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
+            if(Object.keys(ic.proteins).length > 0) {
+              //ic.defNames2Atoms['proteins'] = Object.keys(ic.proteins);
+              ic.defNames2Residues['proteins'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.proteins));
+              ic.defNames2Descr['proteins'] = 'proteins';
+              ic.defNames2Command['proteins'] = 'select :proteins';
+            }
+
+            if(Object.keys(ic.nucleotides).length > 0) {
+              //ic.defNames2Atoms['nucleotides'] = Object.keys(ic.nucleotides);
+              ic.defNames2Residues['nucleotides'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.nucleotides));
+              ic.defNames2Descr['nucleotides'] = 'nucleotides';
+              ic.defNames2Command['nucleotides'] = 'select :nucleotides';
+            }
+
+            if(Object.keys(ic.chemicals).length > 0) {
+              //ic.defNames2Atoms['chemicals'] = Object.keys(ic.chemicals);
+              if(ic.bOpm) {
+                  let  chemicalResHash = {}, memResHash = {};
+                  for(let serial in ic.chemicals) {
+                      let  atom = ic.atoms[serial];
+                      let  residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                      if(atom.resn === 'DUM') {
+                          memResHash[residueid] = 1;
+                      }
+                      else {
+                          chemicalResHash[residueid] = 1;
+                      }
+                  }
+
+                  if(Object.keys(chemicalResHash).length > 0) {
+                      ic.defNames2Residues['chemicals'] = Object.keys(chemicalResHash);
+                      ic.defNames2Descr['chemicals'] = 'chemicals';
+                      ic.defNames2Command['chemicals'] = 'select :chemicals';
+                  }
+
+                  if(Object.keys(memResHash).length > 0) {
+                      ic.defNames2Residues['membrane'] = Object.keys(memResHash);
+                      ic.defNames2Descr['membrane'] = 'membrane';
+                      ic.defNames2Command['membrane'] = 'select :membrane';
+                  }
+              }
+              else {
+                  ic.defNames2Residues['chemicals'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.chemicals));
+                  ic.defNames2Descr['chemicals'] = 'chemicals';
+                  ic.defNames2Command['chemicals'] = 'select :chemicals';
+              }
+            }
+
+            if(Object.keys(ic.ions).length > 0) {
+              //ic.defNames2Atoms['ions'] = Object.keys(ic.ions);
+              ic.defNames2Residues['ions'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.ions));
+              ic.defNames2Descr['ions'] = 'ions';
+              ic.defNames2Command['ions'] = 'select :ions';
+            }
+
+            if(Object.keys(ic.water).length > 0) {
+              //ic.defNames2Atoms['water'] = Object.keys(ic.water);
+              ic.defNames2Residues['water'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.water));
+              ic.defNames2Descr['water'] = 'water';
+              ic.defNames2Command['water'] = 'select :water';
+            }
+
+            this.setTransmemInMenu(ic.halfBilayerSize, -ic.halfBilayerSize);
+        }
+
+        setPredefinedInMenu() { let  ic = this.icn3d, me = ic.icn3dui;
+              // predefined sets: all chains
+              this.setChainsInMenu();
+
+              // predefined sets: proteins,nucleotides, chemicals
+              this.setProtNuclLigInMenu();
+
+              // show 3d domains for mmdbid
+              if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
+                  for(let tddomainName in ic.tddomains) {
+                      ic.selectionCls.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
+                  }
+              }
+
+              //if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && ic.bFullUi) {
+              // deal with multiple chain align separately
+              if((me.cfg.align !== undefined ||(me.cfg.chainalign !== undefined && ic.chainidArray.length == 2) ) && ic.bFullUi) {
+                ic.selectionCls.selectResidueList(ic.consHash1, ic.conservedName1, ic.conservedName1, false, false);
+                ic.selectionCls.selectResidueList(ic.consHash2, ic.conservedName2, ic.conservedName2, false, false);
+
+                ic.selectionCls.selectResidueList(ic.nconsHash1, ic.nonConservedName1, ic.nonConservedName1, false, false);
+                ic.selectionCls.selectResidueList(ic.nconsHash2, ic.nonConservedName2, ic.nonConservedName2, false, false);
+
+                ic.selectionCls.selectResidueList(ic.nalignHash1, ic.notAlignedName1, ic.notAlignedName1, false, false);
+                ic.selectionCls.selectResidueList(ic.nalignHash2, ic.notAlignedName2, ic.notAlignedName2, false, false);
+
+                // for alignment, show aligned residues, chemicals, and ions
+                let  dAtoms = {};
+                for(let alignChain in ic.alnChains) {
+                    dAtoms = me.hashUtilsCls.unionHash(dAtoms, ic.alnChains[alignChain]);
+                }
+
+                let  residuesHash = {}, chains = {};
+                for(let i in dAtoms) {
+                    let  atom = ic.atoms[i];
+
+                    let  chainid = atom.structure + '_' + atom.chain;
+                    let  resid = chainid + '_' + atom.resi;
+                    residuesHash[resid] = 1;
+                    chains[chainid] = 1;
+                }
+
+                let  commandname = 'protein_aligned';
+                let  commanddescr = 'aligned protein and nucleotides';
+                let  select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
+
+                //ic.selectionCls.addCustomSelection(Object.keys(residuesHash), Object.keys(dAtoms), commandname, commanddescr, select, true);
+                ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
+              }
+        }
+
+        //Set the menu of defined sets with an array of defined names "commandnameArray".
+        setAtomMenu(commandnameArray) { let ic = this.icn3d; ic.icn3dui;
+          let  html = "";
+
+          let  nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
+          let  nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
+
+          let  nameArrayTmp = nameArray1.concat(nameArray2).sort();
+
+          let  nameArray = [];
+
+          const residueAbbrev = {
+            ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
+            ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
+            GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
+            ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
+            MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
+            SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
+            TYR: "Y (Tyr)",       VAL: "V (Val)",       ASX: "B (Asx)",
+            GLX: "Z (Glx)",         'G': "Guanine",       'A': "Adenine",
+            'T': "Thymine",         'C': "Cytosine",       'U': "Uracile",
+            'DG': "dG",       'DA': "dA",      'DT': "dT",
+            'DC': "dC",       'DU': 'dU'
+            };
+
+            const chargeAbbrev = {
+                "0000ff": "Postive",
+                "8080ff": "Partial-Positive",
+                "ff0000": "Negative",
+                "888888": "Neutral"
+            };
+
+        //  $.each(nameArrayTmp, function(i, el){
+        //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
+        //  });
+          nameArrayTmp.forEach(elem => {
+               if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
+          });
+          
+          if (!ic.legendClick){
+              html += "Please select [Atom, Residue, Charge, Hydrophobicity, B-Factor, AlphaFold Confidence] from the 'Color' menu.";
+          }
+
+          //for(let i in ic.defNames2Atoms) {
+          for(let i = 0, il = nameArray.length; i < il; ++i) {
+              let  name = nameArray[i];
+              let  atom, atomHash;
+
+              if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(name)) {
+                  let atomArray = ic.defNames2Atoms[name];
+
+                  if(atomArray.length > 0) atom = ic.atoms[atomArray[0]];
+              }
+
+              else if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(name)) {
+                  let residueArray = ic.defNames2Residues[name];
+                  let elemSet = {};
+                  let resSet = {};
+                  let resSet2 = {};
+                  
+                  if(residueArray.length > 0) {
+                      atomHash = ic.residues[residueArray[0]];
+                      if(atomHash) {
+                          atom = ic.atoms[Object.keys(atomHash)[0]];
+                      }
+                  }
+
+                  for(let j = 0; j < residueArray.length; j++){
+                    atomHash = ic.residues[residueArray[j]];
+                    if(atomHash) {
+                        for (let k = 0; k < Object.keys(atomHash).length; k++){
+                            atom = ic.atoms[Object.keys(atomHash)[k]];
+                            let temp = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                            if (elemSet[atom.elem] === undefined){
+                                elemSet[atom.elem] = [];
+                            }
+                            if (!elemSet[atom.elem].includes(temp)){
+                                elemSet[atom.elem].push(temp);
+                            }
+
+                            if (residueAbbrev[atom.resn] != undefined && i == 0){
+                                if (resSet[residueAbbrev[atom.resn]] === undefined){
+                                    resSet[residueAbbrev[atom.resn]] = [];
+                                    resSet2[atom.resn] = [];
+                                }
+                                if (!resSet[residueAbbrev[atom.resn]].includes(temp)){
+                                    resSet[residueAbbrev[atom.resn]].push(temp);
+                                    resSet2[atom.resn].push(temp);
+                                }
+                            }
+                        }
+                    }
+                  }
+
+                if (ic.legendClick == 1){
+                    if (name.search("chemicals") == 0 || name.search("proteins") == 0 || name.search("water") == 0 || name.search("nucleotides") == 0){
+                        let  colorStr = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                        let  color = (atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
+
+                        if(commandnameArray.indexOf(name) != -1) {
+                            html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
+                        }
+                        else {
+                            html += "<button value='" + name + "' style='color:#" + color + "' id='legend_button' display='block' selected='selected'>" + name + "</button><br>";
+                            for (let k in elemSet) {
+                                html += "<label class='legend_bullets_" + i + "'>";
+                                for (let v in elemSet[k]) {
+                                    html += "<div style='width: 10px; height: 10px; background-color:#" + elemSet[k][v] + "; border: 0px;display:inline-block;' ></div> ";
+                                }
+                                html +=  k + "</label><br>";
+                            }
+                        }
+                    }
+                }
+                else if (ic.legendClick == 2){
+                    if (!name.search("chemicals") == 0 && !name.search("proteins") == 0 && !name.search("water") == 0 && !name.search("nucleotides") == 0 && i == 0){
+                        let  colorStr = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                        let  color = (atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
+                        if(commandnameArray.indexOf(name) != -1) {
+                            html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
+                        }
+                        else {
+                            html += "<button value='" + name + "' style='color:#" + color + "' id='legend_button' display='block' selected='selected'>" + name + "</button><br>";
+                            html += "<div id='legend_table' display='block'>";
+                            for (let k in resSet) {
+
+                                html += "<label class='legend_bullets_" + i + "'>";
+                                for (let v in resSet[k]) {
+                                    html += "<div style='width: 10px; height: 10px; background-color:#" + resSet[k][v] + "; border: 0px;display:inline-block;' ></div> ";
+                                }
+                                html +=  k + "</label>";
+                            }
+                            html += "</div>";
+                        }
+                    }
+                }
+                else if (ic.legendClick == 3){
+                    if (i == 0){
+                        html += "Charge at PH 7 \n";
+
+                        let colorSet = {"0000ff": 0, "8080ff": 0, "ff0000": 0, "888888": 0};
+                        let colorOrder = ["0000ff", "8080ff", "ff0000", "888888"];
+
+                        html += "<div id='legend_table_charge' display='block'>";
+                        for (let k in resSet) {
+                            colorSet[resSet[k]] = 1;   
+                        }
+                        for (let k of colorOrder){
+                            if (colorSet[k] == 1){
+                                html += "<label class='legend_bullets_" + i + "'>";
+                                html += "<div style='width: 10px; height: 10px; background-color:#" + k + "; border: 0px;display:inline-block;' ></div> ";
+                                html += chargeAbbrev[k];
+                                html +=  "</label>";
+                            }
+                            console.log(k);
+                        }
+                        html += "</div>";
+                         
+                    }
+                }
+            
+                else if (ic.legendClick == 4){
+
+                    // polar first - most to least
+                    // create hydrophobic table
+
+                    if (i == 0){
+
+                        var items = Object.keys(resSet).map(
+                            (key) => { return [key, resSet[key][0]] 
+                        });
+                        
+                        items.sort(
+                            (first, second) => { 
+                                return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
+                        );
+
+                        var keys = items.map(
+                            (e) => { return [e[0], e[1]]
+                        });
+
+                        console.log(keys);
+
+
+                        if(commandnameArray.indexOf(name) != -1) {
+                            html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
+                        }
+                        else {
+                            html += "<div id='legend_table' display='block'>";
+
+                            for (let key of keys) {
+                                html += "<label class='legend_bullets_" + i + "'>";
+                                html += "<div style='width: 10px; height: 10px; background-color:#" + key[1] + "; border: 0px;display:inline-block;' ></div> ";
+                                html +=  key[0] + "</label>";
+                            }
+                            html += "</div>";
+                        }
+                    }
+                }
+
+                else if (ic.legendClick == 5){
+
+                    if (i == 0){
+
+                        var items = Object.keys(resSet).map(
+                            (key) => { return [key, resSet[key].sort()] 
+                        });
+                        
+                        // items.sort(
+                        //     (first, second) => { 
+                        //         return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
+                        // );
+
+                        var keys = items.map(
+                            (e) => { return [e[0], e[1]]
+                        });
+
+                        console.log(keys);
+
+
+                        if(commandnameArray.indexOf(name) != -1) {
+                            html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
+                        }
+                        else {
+                            html += "<div id='legend_table' display='block'>";
+
+                            for (let key of keys) {
+                                html += "<label class='legend_bullets_" + i + "' display:block>";
+                                for (let color in key[1]){
+                                    html += "<div style='width: 10px; height: 10px; background-color:#" + key[1][color] + "; border: 0px;display:inline-block;' ></div> ";
+                                }
+                                
+                                html +=  key[0] + "</label>";
+                            }
+                            html += "</div>";
+                        }
+
+                    }
+                }
+
+                else if (ic.legendClick == 6){
+                    if (i == 0){
+            
+                        if(commandnameArray.indexOf(name) != -1) {
+                            html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
+                        }
+                        else {
+                            html += "<div id='legend_table_alpha' display='block'>";
+
+
+                            html += "<label class='legend_bullets_" + 1 + "'>";
+                            html += "<div style='width: 10px; height: 10px; background-color:#0052cc; border: 0px;display:inline-block;' ></div> ";
+                            html +=  "Very high (pLDDT > 90)" + "</label>";
+                            html += "</div>";
+
+                            html += "<label class='legend_bullets_" + 2 + "'>";
+                            html += "<div style='width: 10px; height: 10px; background-color:#65cbf3; border: 0px;display:inline-block;' ></div> ";
+                            html +=  "Confident (90 > pLDDT > 70)" + "</label>";
+                            html += "</div>";
+
+                            html += "<label class='legend_bullets_" + 3 + "'>";
+                            html += "<div style='width: 10px; height: 10px; background-color:#ffd113; border: 0px;display:inline-block;' ></div> ";
+                            html +=  "Low (70 > pLDDT > 50)" + "</label>";
+                            html += "</div>";
+
+                            html += "<label class='legend_bullets_" + 4 + "'>";
+                            html += "<div style='width: 10px; height: 10px; background-color:#ff7d45; border: 0px;display:inline-block;' ></div> ";
+                            html +=  "Very low (pLDDT < 50)" + "</label>";
+                            html += "</div>";
+                        }
+                        html += "</div>";
+                    }
+                }
+
+                else {
+                    ic.legendClick = 0;
+                }
+              }
+          }
+
+          return html;
+        }
+
+        setChainsInMenu() { let ic = this.icn3d; ic.icn3dui;
+            for(let chainid in ic.chains) {
+                // skip chains with one residue/chemical
+                if(ic.chainsSeq[chainid] && ic.chainsSeq[chainid].length > 1) {
+                  //ic.defNames2Atoms[chainid] = Object.keys(ic.chains[chainid]);
+                  ic.defNames2Residues[chainid] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]));
+                  ic.defNames2Descr[chainid] = chainid;
+
+                  let  pos = chainid.indexOf('_');
+                  let  structure = chainid.substr(0, pos);
+                  let  chain = chainid.substr(pos + 1);
+
+                  ic.defNames2Command[chainid] = 'select $' + structure + '.' + chain;
+                }
+            }
+
+            // select whole structure
+            if(Object.keys(ic.structures) == 1) {
+              let  structure = Object.keys(ic.structures)[0];
+
+              ic.defNames2Residues[structure] = Object.keys(ic.residues);
+              ic.defNames2Descr[structure] = structure;
+
+              ic.defNames2Command[structure] = 'select $' + structure;
+            }
+            else {
+                let  resArray = Object.keys(ic.residues);
+                let  structResHash = {};
+                for(let i = 0, il = resArray.length; i < il; ++i) {
+                    let  resid = resArray[i];
+                    let  pos = resid.indexOf('_');
+                    let  structure = resid.substr(0, pos);
+                    if(structResHash[structure] === undefined) {
+                        structResHash[structure] = [];
+                    }
+                    structResHash[structure].push(resid);
+                }
+
+                for(let structure in structResHash) {
+                  ic.defNames2Residues[structure] = structResHash[structure];
+                  ic.defNames2Descr[structure] = structure;
+
+                  ic.defNames2Command[structure] = 'select $' + structure;
+                }
+            }
+        }
+
+        setTransmemInMenu(posZ, negZ, bReset) { let ic = this.icn3d; ic.icn3dui;
+            // set transmembrane, extracellular, intracellular
+            if(ic.bOpm) {
+              let  transmembraneHash = {}, extracellularHash = {}, intracellularHash = {};
+              for(let serial in ic.atoms) {
+                  let  atom = ic.atoms[serial];
+
+                  if(atom.resn === 'DUM') continue;
+
+                  let  residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                  if(atom.coord.z > posZ) {
+                      extracellularHash[residueid] = 1;
+                  }
+                  else if(atom.coord.z < negZ) {
+                      intracellularHash[residueid] = 1;
+                  }
+                  else {
+                      transmembraneHash[residueid] = 1;
+                  }
+              }
+
+              let  extraStr =(bReset) ? '2' : '';
+
+              if(Object.keys(transmembraneHash).length > 0) {
+                  ic.defNames2Residues['transmembrane' + extraStr] = Object.keys(transmembraneHash);
+                  ic.defNames2Descr['transmembrane' + extraStr] = 'transmembrane' + extraStr;
+                  ic.defNames2Command['transmembrane' + extraStr] = 'select :transmembrane' + extraStr;
+              }
+
+              if(Object.keys(extracellularHash).length > 0) {
+                  ic.defNames2Residues['extracellular' + extraStr] = Object.keys(extracellularHash);
+                  ic.defNames2Descr['extracellular' + extraStr] = 'extracellular' + extraStr;
+                  ic.defNames2Command['extracellular' + extraStr] = 'select :extracellular' + extraStr;
+              }
+
+              if(Object.keys(intracellularHash).length > 0) {
+                  ic.defNames2Residues['intracellular' + extraStr] = Object.keys(intracellularHash);
+                  ic.defNames2Descr['intracellular' + extraStr] = 'intracellular' + extraStr;
+                  ic.defNames2Command['intracellular' + extraStr] = 'select :intracellular' + extraStr;
+              }
+            }
+        }
+
+        //Display the menu of defined sets. All chains and defined custom sets are listed in the menu.
+        //All new custom sets will be displayed in the menu.
+        showSets() { let  ic = this.icn3d, me = ic.icn3dui;
+            if(!me.bNode) {
+                me.htmlCls.dialogCls.openDlg('dl_legend_table', 'Legend');
+                $("#" + ic.pre + "dl_setsmenu2").show();
+                $("#" + ic.pre + "dl_command2").hide();
+                $("#" + ic.pre + "atomsCustom2").resizable();
+            }
+
+            let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+            let  prevDAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu || ic.bResetSets) {
+               this.setPredefinedInMenu();
+
+               ic.bSetChainsAdvancedMenu = true;
+            }
+
+            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+            ic.dAtoms = me.hashUtilsCls.cloneHash(prevDAtoms);
+
+            ic.hlUpdateCls.updateHlMenus();
+        }
+
+        //HighlightAtoms are set up based on the selected custom names "nameArray" in the atom menu.
+        //The corresponding atoms are neither highlighted in the sequence dialog nor in the 3D structure
+        //since not all residue atom are selected.
+        changeCustomAtoms(nameArray, bUpdateHlMenus) { let  ic = this.icn3d, me = ic.icn3dui;
+           ic.hAtoms = {};
+
+           for(let i = 0; i < nameArray.length; ++i) {
+             let  selectedSet = nameArray[i];
+
+             if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+
+             if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
+                 let  atomArray = ic.defNames2Atoms[selectedSet];
+
+                 for(let j = 0, jl = atomArray.length; j < jl; ++j) {
+                     ic.hAtoms[atomArray[j]] = 1;
+                 }
+             }
+
+             if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(selectedSet)) {
+                 let  residueArrayTmp = ic.defNames2Residues[selectedSet];
+
+                 let  atomHash = {};
+                 for(let j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
+                     atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueArrayTmp[j]]);
+                 }
+
+                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomHash);
+             }
+           } // outer for
+
+           ic.hlUpdateCls.updateHlAll(nameArray, bUpdateHlMenus);
+
+           // show selected chains in annotation window
+           ic.annotationCls.showAnnoSelectedChains();
+
+           // clear commmand
+           $("#" + ic.pre + "command2").val("");
+           $("#" + ic.pre + "command_name2").val("");
+           //$("#" + ic.pre + "command_desc").val("");
+
+           // update the commands in the dialog
+           for(let i = 0, il = nameArray.length; i < il; ++i) {
+               ic.defNames2Atoms[nameArray[i]];
+               ic.defNames2Residues[nameArray[i]];
+               ic.defNames2Descr[nameArray[i]];
+
+               if(i === 0) {
+                 //$("#" + ic.pre + "command").val(atomCommand);
+                 $("#" + ic.pre + "command2").val('saved atoms ' + nameArray[i]);
+                 $("#" + ic.pre + "command_name2").val(nameArray[i]);
+               }
+               else {
+                 let  prevValue = $("#" + ic.pre + "command2").val();
+                 $("#" + ic.pre + "command2").val(prevValue + ' ' + ic.setOperation + ' ' + nameArray[i]);
+
+                 prevValue = $("#" + ic.pre + "command_name2").val();
+                 $("#" + ic.pre + "command_name2").val(prevValue + ' ' + ic.setOperation + ' ' + nameArray[i]);
+               }
+           } // outer for
+        }
+
+        setHAtomsFromSets(nameArray, type) { let  ic = this.icn3d, me = ic.icn3dui;
+           for(let i = 0; i < nameArray.length; ++i) {
+             let  selectedSet = nameArray[i];
+
+             if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+
+             if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
+
+                 let  atomArray = ic.defNames2Atoms[selectedSet];
+
+                 if(type === 'or') {
+                     for(let j = 0, jl = atomArray.length; j < jl; ++j) {
+                         ic.hAtoms[atomArray[j]] = 1;
+                     }
+                 }
+                 else if(type === 'and') {
+                     let  atomHash = {};
+                     for(let j = 0, jl = atomArray.length; j < jl; ++j) {
+                         atomHash[atomArray[j]] = 1;
+                     }
+
+                     ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, atomHash);
+                 }
+                 else if(type === 'not') {
+                     //for(let j = 0, jl = atomArray.length; j < jl; ++j) {
+                     //    ic.hAtoms[atomArray[j]] = undefined;
+                     //}
+
+                     let  atomHash = {};
+                     for(let j = 0, jl = atomArray.length; j < jl; ++j) {
+                         atomHash[atomArray[j]] = 1;
+                     }
+
+                     ic.hAtoms = me.hashUtilsCls.exclHash(ic.hAtoms, atomHash);
+                 }
+             }
+
+             if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(selectedSet)) {
+                 let  residueArrayTmp = ic.defNames2Residues[selectedSet];
+
+                 let  atomHash = {};
+                 for(let j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
+                     atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueArrayTmp[j]]);
+                 }
+
+                 if(type === 'or') {
+                     ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomHash);
+                 }
+                 else if(type === 'and') {
+                     ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, atomHash);
+                 }
+                 else if(type === 'not') {
+                     ic.hAtoms = me.hashUtilsCls.exclHash(ic.hAtoms, atomHash);
+                 }
+             }
+           } // outer for
+        }
+
+        updateAdvancedCommands(nameArray, type) { let ic = this.icn3d; ic.icn3dui;
+           // update the commands in the dialog
+           let  separator = ' ' + type + ' ';
+           for(let i = 0, il = nameArray.length; i < il; ++i) {
+               if(i === 0 && type == 'or') {
+                 $("#" + ic.pre + "command2").val('saved atoms ' + nameArray[i]);
+                 $("#" + ic.pre + "command_name2").val(nameArray[i]);
+               }
+               else {
+                 let  prevValue = $("#" + ic.pre + "command2").val();
+                 $("#" + ic.pre + "command2").val(prevValue + separator + nameArray[i]);
+
+                 prevValue = $("#" + ic.pre + "command_name2").val();
+                 $("#" + ic.pre + "command_name2").val(prevValue + separator + nameArray[i]);
+               }
+           } // outer for
+        }
+
+        combineSets(orArray, andArray, notArray, commandname) { let  ic = this.icn3d, me = ic.icn3dui;
+           ic.hAtoms = {};
+           this.setHAtomsFromSets(orArray, 'or');
+
+           if(Object.keys(ic.hAtoms).length == 0) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+           this.setHAtomsFromSets(andArray, 'and');
+
+           this.setHAtomsFromSets(notArray, 'not');
+
+           // expensive to update, avoid it when loading script
+           //ic.hlUpdateCls.updateHlAll();
+           if(!ic.bInitial) ic.hlUpdateCls.updateHlAll();
+
+           // show selected chains in annotation window
+           ic.annotationCls.showAnnoSelectedChains();
+
+           // clear commmand
+           $("#" + ic.pre + "command2").val("");
+           $("#" + ic.pre + "command_name2").val("");
+
+           this.updateAdvancedCommands(orArray, 'or');
+           this.updateAdvancedCommands(andArray, 'and');
+           this.updateAdvancedCommands(notArray, 'not');
+
+           if(commandname !== undefined) {
+               let  select = "select " + $("#" + ic.pre + "command2").val();
+
+               $("#" + ic.pre + "command_name2").val(commandname);
+               ic.selectionCls.addCustomSelection(Object.keys(ic.hAtoms), commandname, commandname, select, false);
+           }
+        }
+
+        commandSelect(postfix) { let  ic = this.icn3d, me = ic.icn3dui;
+               let  select = $("#" + ic.pre + "command2" + postfix).val();
+
+               let  commandname = $("#" + ic.pre + "command_name2" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
+
+               if(select) {
+                   ic.selByCommCls.selectByCommand(select, commandname, commandname);
+                   me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+               }
+        }
+
+        clickCommand_apply() { let  ic = this.icn3d, me = ic.icn3dui;
+            let  thisClass = this;
+            me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", function(e) { thisClass.icn3d;
+               e.preventDefault();
+
+               thisClass.commandSelect('');
+            });
+
+            me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", function(e) { thisClass.icn3d;
+               e.preventDefault();
+               thisClass.commandSelect('2');
+            });
+
+        }
+
+        selectCombinedSets(strSets, commandname) { let ic = this.icn3d; ic.icn3dui;
+            let  idArray = strSets.split(' ');
+
+            let  orArray = [], andArray = [], notArray = [];
+            let  prevLabel = 'or';
+
+            for(let i = 0, il = idArray.length; i < il; ++i) {
+                if(idArray[i] === 'or' || idArray[i] === 'and' || idArray[i] === 'not') {
+                    prevLabel = idArray[i];
+                    continue;
+                }
+                else {
+                    if(prevLabel === 'or') {
+                        orArray.push(idArray[i]);
+                    }
+                    else if(prevLabel === 'and') {
+                        andArray.push(idArray[i]);
+                    }
+                    else if(prevLabel === 'not') {
+                        notArray.push(idArray[i]);
+                    }
+                }
+            }
+
+            if(idArray !== null) this.combineSets(orArray, andArray, notArray, commandname);
+        }
+
+        clickModeswitch() { let  ic = this.icn3d, me = ic.icn3dui;
+            let  thisClass = this;
+            me.myEventCls.onIds("#" + ic.pre + "modeswitch", "click", function(e) {
+                if($("#" + ic.pre + "modeswitch")[0] !== undefined && $("#" + ic.pre + "modeswitch")[0].checked) { // mode: selection
+                    thisClass.setModeAndDisplay('selection');
+                }
+                else { // mode: all
+                    thisClass.setModeAndDisplay('all');
+                }
+            });
+        }
+
+        setModeAndDisplay(mode) { let  ic = this.icn3d, me = ic.icn3dui;
+            if(mode === 'all') { // mode all
+                this.setMode('all');
+
+                // remember previous selection
+                ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+               // select all
+               me.htmlCls.clickMenuCls.setLogCmd("set mode all", true);
+
+               ic.selectionCls.selectAll();
+
+               ic.drawCls.draw();
+            }
+            else { // mode selection
+                this.setMode('selection');
+
+                // get the previous hAtoms
+                if(ic.prevHighlightAtoms !== undefined) {
+                    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.prevHighlightAtoms);
+                }
+                else {
+                    ic.selectionCls.selectAll();
+                }
+
+                me.htmlCls.clickMenuCls.setLogCmd("set mode selection", true);
+
+                ic.hlUpdateCls.updateHlAll();
+            }
+        }
+
+        setMode(mode) { let ic = this.icn3d; ic.icn3dui;
+            if(mode === 'all') { // mode all
+                // set text
+                $("#" + ic.pre + "modeall").show();
+                $("#" + ic.pre + "modeselection").hide();
+
+                if($("#" + ic.pre + "modeswitch")[0] !== undefined) $("#" + ic.pre + "modeswitch")[0].checked = false;
+
+                if($("#" + ic.pre + "style").hasClass('icn3d-modeselection')) $("#" + ic.pre + "style").removeClass('icn3d-modeselection');
+                if($("#" + ic.pre + "color").hasClass('icn3d-modeselection')) $("#" + ic.pre + "color").removeClass('icn3d-modeselection');
+                //if($("#" + ic.pre + "surface").hasClass('icn3d-modeselection')) $("#" + ic.pre + "surface").removeClass('icn3d-modeselection');
+            }
+            else { // mode selection
+                //if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) {
+                    // set text
+                    $("#" + ic.pre + "modeall").hide();
+                    $("#" + ic.pre + "modeselection").show();
+
+                    if($("#" + ic.pre + "modeswitch")[0] !== undefined) $("#" + ic.pre + "modeswitch")[0].checked = true;
+
+                    if(!$("#" + ic.pre + "style").hasClass('icn3d-modeselection')) $("#" + ic.pre + "style").addClass('icn3d-modeselection');
+                    if(!$("#" + ic.pre + "color").hasClass('icn3d-modeselection')) $("#" + ic.pre + "color").addClass('icn3d-modeselection');
+                    //if(!$("#" + ic.pre + "surface").hasClass('icn3d-modeselection')) $("#" + ic.pre + "surface").addClass('icn3d-modeselection');
+
+                    // show selected chains in annotation window
+                    //ic.annotationCls.showAnnoSelectedChains();
+                //}
+            }
+        }
+        getAtomsFromOneSet(commandname) {  let  ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
+           let  residuesHash = {};
+           // defined sets is not set up
+           if(ic.defNames2Residues['proteins'] === undefined) {
+               this.showSets();
+           }
+           //for(let i = 0, il = nameArray.length; i < il; ++i) {
+               //var commandname = nameArray[i];
+               if(Object.keys(ic.chains).indexOf(commandname) !== -1) {
+                   residuesHash = me.hashUtilsCls.unionHash(residuesHash, ic.chains[commandname]);
+               }
+               else {
+                   if(ic.defNames2Residues[commandname] !== undefined && ic.defNames2Residues[commandname].length > 0) {
+                       for(let j = 0, jl = ic.defNames2Residues[commandname].length; j < jl; ++j) {
+                           let  resid = ic.defNames2Residues[commandname][j]; // return an array of resid
+                           residuesHash = me.hashUtilsCls.unionHash(residuesHash, ic.residues[resid]);
+                       }
+                   }
+                   if(ic.defNames2Atoms[commandname] !== undefined && ic.defNames2Atoms[commandname].length > 0) {
+                       for(let j = 0, jl = ic.defNames2Atoms[commandname].length; j < jl; ++j) {
+                           //var resid = ic.defNames2Atoms[commandname][j]; // return an array of serial
+                           //residuesHash = me.hashUtilsCls.unionHash(residuesHash, ic.residues[resid]);
+                           let  serial = ic.defNames2Atoms[commandname][j]; // return an array of serial
+                           residuesHash[serial] = 1;
+                       }
+                   }
+               }
+           //}
+           return residuesHash;
+        }
+
+    /*
+        getAtomsFromSets(nameArray) {  let  ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
+           let  residuesHash = {}
+           for(let i = 0, il = nameArray.length; i < il; ++i) {
+               commandname = nameArray[i];
+               let  residuesHashTmp = this.getAtomsFromOneSet(commandname);
+               residuesHash = me.hashUtilsCls.unionHash(residuesHash, residuesHashTmp);
+           }
+           return residuesHash;
+        }
+    */
+
+        getAtomsFromNameArray(nameArray) {  let  ic = this.icn3d, me = ic.icn3dui;
+            let  selAtoms = {};
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                if(nameArray[i] === 'non-selected') { // select all hAtoms
+                   let  currAtoms = {};
+                   for(let i in ic.atoms) {
+                       if(!ic.hAtoms.hasOwnProperty(i) && ic.dAtoms.hasOwnProperty(i)) {
+                           currAtoms[i] = ic.atoms[i];
+                       }
+                   }
+                   selAtoms = me.hashUtilsCls.unionHash(selAtoms, currAtoms);
+                }
+                else if(nameArray[i] === 'selected') {
+                    selAtoms = me.hashUtilsCls.unionHash(selAtoms, me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms) );
+                }
+                else {
+                    selAtoms = me.hashUtilsCls.unionHash(selAtoms, me.hashUtilsCls.hash2Atoms(this.getAtomsFromOneSet(nameArray[i]), ic.atoms) );
+                }
+            }
+            if(nameArray.length == 0) selAtoms = ic.atoms;
+            return selAtoms;
+        }
+
+    }
+
+    /**
+     * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+     */
+
     class Events {
         constructor(icn3dui) {
             this.icn3dui = icn3dui;
@@ -60928,6 +62035,7 @@ var icn3d = (function (exports) {
 
                 if(bAppend) {
                     if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                    if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
                     if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
                 }
            }
@@ -61767,6 +62875,33 @@ var icn3d = (function (exports) {
                   + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
                   + blast_rep_id + '; show selection', '_blank');
              });
+
+            //    clickReload_smith
+            me.myEventCls.onIds("#" + me.pre + "reload_smith", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                me.query_smith_fasta = encodeURIComponent($("#" + me.pre + "query_smith_fasta").val());
+                me.smith_id = $("#" + me.pre + "smith_id").val();
+                me.smith_match = parseInt($("#" + me.pre + "smith_match").val());
+                me.smith_mismatch = parseInt($("#" + me.pre + "smith_mismatch").val());
+                me.smith_gap = parseInt($("#" + me.pre + "gap").val());
+                me.smith_extension = parseInt($("#" + me.pre + "extension").val());
+                me.smith_local = parseInt($("#" + me.pre + "local").val());
+                me.icn3d.bSmithwm = true;
+
+                me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + me.query_smith_fasta.substring(0,10) + ", " + me.smith_id, false);
+                me.icn3d.showAnnoCls.showAnnotations();
+                me.icn3d.applyCommandCls.applyCommand("view annotations");
+                me.icn3d.annotationCls.setAnnoTabSite();
+                me.icn3d.applyCommandCls.applyCommand("set annotation site");
+                me.icn3d.annotationCls.setAnnoViewAndDisplay("detailed view");
+                me.icn3d.applyCommandCls.applyCommand("set view detailed view");
+                me.icn3d.selectionCls.selectAChain(me.smith_id, me.smith_id, !1);
+                me.icn3d.applyCommandCls.applyCommand("select chain " + me.smith_id);
+                me.icn3d.selectionCls.showSelection();
+                me.icn3d.applyCommandCls.applyCommand("show selection");
+
+            });
 
         //    },
         //    clickReload_gi: function() {
@@ -63360,7 +64495,7 @@ var icn3d = (function (exports) {
                 for (let k = 0, kl = seqLength; k < kl; ++k) {
                     // resiId is empty if it's gap
                     let resiId = 'N/A',
-                        resIdFull = '';
+                        resIdFull = '';
                     if (ic.alnChainsSeq[i][k].resi !== '' && !isNaN(ic.alnChainsSeq[i][k].resi)) {
                         resiId = ic.alnChainsSeq[i][k].resi;
                         resIdFull = structure + "_" + chain + "_" + resiId;
@@ -64477,7 +65612,7 @@ var icn3d = (function (exports) {
         else {
             this.MENU_HEIGHT = 40;
         }
-        this.LOG_HEIGHT = 65; //40;
+        this.LOG_HEIGHT = 180; //40;
         // used to set the position for the log/command textarea
         this.MENU_WIDTH = 750;
         //The width (in px) that was left empty by the 3D viewer. The default is 20px.
@@ -68569,6 +69704,7 @@ var icn3d = (function (exports) {
 
         this.applyCommandCls = new ApplyCommand(this);
         this.definedSetsCls = new DefinedSets(this);
+        this.legendTableCls = new LegendTable(this);
         this.loadScriptCls = new LoadScript(this);
         this.selByCommCls = new SelectByCommand(this);
         this.selectionCls = new Selection(this);

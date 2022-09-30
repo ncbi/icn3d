@@ -77,10 +77,12 @@ class Dialog {
         let bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
         let bTwodctnInit = $('#' + me.pre + 'dl_2dctn').hasClass('ui-dialog-content'); // initialized
         let bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
+        let bLegendInit = $('#' + me.pre + 'dl_legend_table').hasClass('ui-dialog-content'); // initialized
 
         status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
         status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
         status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
+        status.bLegendInit2 = false;
 
         if(bSelectannotationsInit) status.bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
         if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
@@ -93,6 +95,7 @@ class Dialog {
         if(bTwoddgmInit) status.bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
         if(bTwodctnInit) status.bTwodctnInit2 = $('#' + me.pre + 'dl_2dctn').dialog( 'isOpen' );
         if(bSetsInit) status.bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
+        if(bLegendInit) status.bLegendInit2 = $('#' + me.pre + 'dl_legend_table').dialog( 'isOpen' );
 
         return status;
     }
@@ -141,7 +144,7 @@ class Dialog {
                 ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bAlignerrormap2)
                 ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
                 ) {
-                  if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                  if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                       let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                       ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
@@ -149,6 +152,7 @@ class Dialog {
                       if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                       if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                       if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                      if(status.bLegendInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_legend_table', undefined, status.bLegendInit2);
                   }
                   else {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -221,6 +225,10 @@ class Dialog {
             }
 
             title = (id === me.pre + 'dl_2ddgm') ? '2D Diagram' : '2D Cartoon';
+        }
+        else if (id === me.pre + 'dl_legend_table'){
+            at = "right top";
+            title = 'Legend';
         }
 
         //var position ={ my: "left top", at: at, of: "#" + me.pre + "canvas", collision: "none" }
@@ -296,12 +304,13 @@ class Dialog {
             if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
                 this.openDlgHalfWindow(id, title, dialogWidth, true);
 
-                if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth - twoddgmWidth, me.htmlCls.HEIGHT, true);
 
                     if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                     if(status.bTwodctnInit2) this.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                     if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                    if(status.bLegendInit2) this.openDlg2Ddgm(me.pre + 'dl_legend_table', undefined, status.bLegendInit2);
                 }
             }
             else {
@@ -333,13 +342,14 @@ class Dialog {
                         ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bAlignerrormap2))
                         ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
                         ) {
-                          if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
+                          if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2 || status.bLegendInit2) {
                               let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                               ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                               if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
                               if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                               if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                              if(status.bLegendInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_legend_table');
                           }
                           else {
                               //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -427,7 +437,7 @@ class Dialog {
 
             let position;
 
-            if(id === me.pre + 'dl_definedsets') {
+            if(id === me.pre + 'dl_definedsets' || id === me.pre + 'dl_legend_table') {
                 let tmpWidth = 0;
 
                 //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
@@ -467,9 +477,6 @@ class Dialog {
                     height = 500;
                 }
                 else if(id === me.pre + 'dl_rmsd') {
-                    position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" }
-                }
-                else if(id === me.pre + 'dl_legend') {
                     position ={ my: "left bottom", at: "left+20 bottom-20", of: "#" + me.pre + "canvas", collision: "none" }
                 }
                 else if(id === me.pre + 'dl_symd') {
@@ -563,7 +570,7 @@ class Dialog {
             if(id === me.pre + 'dl_addtrack') {
                 width='50%';
             }
-            else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn' || id === me.pre + 'dl_definedsets') {
+            else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn' || id === me.pre + 'dl_definedsets' || id === me.pre + 'dl_legend_table') {
                 width=twoddgmWidth;
             }
             else if(id === me.pre + 'dl_allinteraction' || id === me.pre + 'dl_buriedarea') {

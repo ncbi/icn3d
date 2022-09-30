@@ -431,13 +431,13 @@ class SetMenu {
 
         let html = "";
 
-        html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
-
-        html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+        html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+        html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px;  margin: auto; padding: 5px; box-sizing: border-box; border: 4px inset orange; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
         html += "</div>";
 
-        return html;
-    }
+       return html;
+  }
+
 
     //Set the menu "File" at the top of the viewer.
     setMenu1() { let me = this.icn3dui;
@@ -549,6 +549,7 @@ class SetMenu {
         html += "</ul>";
 
         html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure', undefined, 2);
+        html += me.htmlCls.setHtmlCls.getLink("mn1_smith", "Local Sequence to Structure " + me.htmlCls.wifiStr);
 
         html += "</ul>";
         html += "</li>";
@@ -1564,6 +1565,7 @@ class SetMenu {
             html += "</li>";
 
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets', 1, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn_legend_table', 'Legend', 1, 1); 
 
             html += me.htmlCls.setHtmlCls.getMenuSep();
 

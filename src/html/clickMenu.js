@@ -333,6 +333,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
         });
+        //    clkMn1_smith_id: function() {
+        me.myEventCls.onIds("#" + me.pre + "mn1_smith", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_smith_id', 'Align local sequence to structure');
+        });
     //    },
     //    clkMn1_gi: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { let ic = me.icn3d;
@@ -945,6 +949,12 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "setNot", "click", function(e) { let ic = me.icn3d;
            ic.setOperation = 'not';
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn_legend_table", "click", function(e) { let ic = me.icn3d;
+            ic.legendTableCls.showSets();
+            thisClass.setLogCmd('legend table', true);
+         });
+
     //    },
     //    clkMn2_pkNo: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d;
@@ -985,7 +995,7 @@ class ClickMenu {
     //    },
     //    clkMn2_pkChain: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d;
-           ic.pk = 5;
+           //ic.pk = 5;
            ic.opts['pk'] = 'chain';
            thisClass.setLogCmd('set pk chain', true);
         });
@@ -1418,12 +1428,14 @@ class ClickMenu {
     //    },
     //    clkMn4_clrResidue: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 2;
            ic.setOptionCls.setOption('color', 'residue');
            thisClass.setLogCmd('color residue', true);
         });
     //    },
     //    clkMn4_clrResidueCustom: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 2;
            me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
         });
     //    },
@@ -1481,17 +1493,20 @@ class ClickMenu {
     //    },
     //    clkMn4_clrCharge: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 3;
            ic.setOptionCls.setOption('color', 'charge');
            thisClass.setLogCmd('color charge', true);
         });
     //    },
     //    clkMn4_clrHydrophobic: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 4; 
            ic.setOptionCls.setOption('color', 'hydrophobic');
            thisClass.setLogCmd('color hydrophobic', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 4;
            ic.setOptionCls.setOption('color', 'normalized hydrophobic');
            thisClass.setLogCmd('color normalized hydrophobic', true);
         });
@@ -1499,17 +1514,20 @@ class ClickMenu {
     //    },
     //    clkMn4_clrAtom: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 1;
            ic.setOptionCls.setOption('color', 'atom');
            thisClass.setLogCmd('color atom', true);
         });
     //    },
     //    clkMn4_clrBfactor: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 5;
            ic.setOptionCls.setOption('color', 'b factor');
            thisClass.setLogCmd('color b factor', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d;
+           ic.legendClick = 6;
            ic.setOptionCls.setOption('color', 'confidence');
            thisClass.setLogCmd('color confidence', true);
         });

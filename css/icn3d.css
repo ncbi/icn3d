@@ -280,3 +280,19 @@ input:checked + .icn3d-slider:before {
 .icn3d-distance {color:#1c94c4; cursor: pointer;}
 
 .icn3d-menupd {padding-left:1.5em!important;}
+
+#legend_table{
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(60px,1fr));
+  grid-gap: 5px;
+}
+
+#legend_table_charge{
+  display: grid; 
+  grid-template-columns: repeat(1, minmax(60px,1fr));
+  grid-gap: 5px;
+}
+
+#div0_dl_legend_table{
+  overflow: hidden !important
+}

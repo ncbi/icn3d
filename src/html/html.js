@@ -35,7 +35,7 @@ class Html {
     else {
         this.MENU_HEIGHT = 40;
     }
-    this.LOG_HEIGHT = 65; //40;
+    this.LOG_HEIGHT = 180; //40;
     // used to set the position for the log/command textarea
     this.MENU_WIDTH = 750;
     //The width (in px) that was left empty by the 3D viewer. The default is 20px.

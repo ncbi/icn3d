@@ -13,6 +13,7 @@ import {ResizeCanvas} from '../icn3d/transform/resizeCanvas.js';
 import {Draw} from '../icn3d/display/draw.js';
 import {ApplyCenter} from '../icn3d/display/applyCenter.js';
 import {DefinedSets} from '../icn3d/selection/definedSets.js';
+import {LegendTable} from '../icn3d/selection/legendTable.js';
 import {Selection} from '../icn3d/selection/selection.js';
 import {LoadScript} from '../icn3d/selection/loadScript.js';
 import {SelectByCommand} from '../icn3d/selection/selectByCommand.js';
@@ -166,6 +167,7 @@ class Events {
 
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
                 if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
             }
        }
@@ -1005,6 +1007,33 @@ class Events {
               + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
               + blast_rep_id + '; show selection', '_blank');
          });
+
+        //    clickReload_smith
+        me.myEventCls.onIds("#" + me.pre + "reload_smith", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.query_smith_fasta = encodeURIComponent($("#" + me.pre + "query_smith_fasta").val());
+            me.smith_id = $("#" + me.pre + "smith_id").val();
+            me.smith_match = parseInt($("#" + me.pre + "smith_match").val());
+            me.smith_mismatch = parseInt($("#" + me.pre + "smith_mismatch").val());
+            me.smith_gap = parseInt($("#" + me.pre + "gap").val());
+            me.smith_extension = parseInt($("#" + me.pre + "extension").val());
+            me.smith_local = parseInt($("#" + me.pre + "local").val());
+            me.icn3d.bSmithwm = true
+
+            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + me.query_smith_fasta.substring(0,10) + ", " + me.smith_id, false);
+            me.icn3d.showAnnoCls.showAnnotations();
+            me.icn3d.applyCommandCls.applyCommand("view annotations");
+            me.icn3d.annotationCls.setAnnoTabSite();
+            me.icn3d.applyCommandCls.applyCommand("set annotation site");
+            me.icn3d.annotationCls.setAnnoViewAndDisplay("detailed view");
+            me.icn3d.applyCommandCls.applyCommand("set view detailed view");
+            me.icn3d.selectionCls.selectAChain(me.smith_id, me.smith_id, !1);
+            me.icn3d.applyCommandCls.applyCommand("select chain " + me.smith_id);
+            me.icn3d.selectionCls.showSelection();
+            me.icn3d.applyCommandCls.applyCommand("show selection");
+
+        });
 
     //    },
     //    clickReload_gi: function() {

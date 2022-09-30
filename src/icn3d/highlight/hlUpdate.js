@@ -261,10 +261,16 @@ class HlUpdate {
         if(commandnameArray === undefined) commandnameArray = [];
 
         let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(commandnameArray);
+        let legendAtomsHtml = ic.legendTableCls.setAtomMenu(commandnameArray);
 
         if($("#" + ic.pre + "atomsCustom").length) {
             $("#" + ic.pre + "atomsCustom").html(definedAtomsHtml);
             $("#" + ic.pre + "atomsCustom")[0].blur();
+        }
+
+        if($("#" + ic.pre + "atomsCustom2").length) {
+            $("#" + ic.pre + "atomsCustom2").html(legendAtomsHtml);
+            $("#" + ic.pre + "atomsCustom2")[0].blur();
         }
     }
 
