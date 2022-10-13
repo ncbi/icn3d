@@ -204,7 +204,7 @@ class LegendTable {
                   }
               }
 
-              for(let j = 0; j < residueArray.length; j++)
+              for(let j = 0; j < residueArray.length; j++){
                 atomHash = ic.residues[residueArray[j]]
                 if(atomHash) {
                     for (let k = 0; k < Object.keys(atomHash).length; k++){
