@@ -522,13 +522,9 @@ class ShowAnno {
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
             if(me.cfg.blast_rep_id != chnid && me.smith_id != chnid) {
-                console.log(525)
-                console.log(me.smith_id, chnid)
-
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
             else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
-              console.log((528))  
             
               let title;
               if(me.cfg.query_id.length > 14) {
@@ -547,7 +543,6 @@ class ShowAnno {
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
               //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
-              console.log("545")
 
               let title;
               if(me.cfg.query_id.length > 14) {
@@ -713,11 +708,8 @@ class ShowAnno {
               ic.selectionCls.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
             } // align seq to structure
-            else if (me.smith_id == chnid) { // align sequence to structure
+            else if (me.smith_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined)) { // align sequence to structure
                 //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
-                console.log("me.smith_id")
-                console.log((ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined))
-                
                 let title;
                 if (me.query_smith_fasta.length > 14) {
                     title = 'Query: ' + me.query_smith_fasta.substr(0, 6) + '...';

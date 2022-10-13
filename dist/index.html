@@ -56,6 +56,79 @@
           else if(cfg.pdbid !== undefined) {
               setupViewer('pdbid', cfg.pdbid, cfg);
           }
+          else if (cfg.pdb_filepath !== undefined) {
+              cfg.divid = 'div0';
+
+              var e = new icn3d.iCn3DUI(cfg);
+              e.show3DStructure();
+              var s = e.icn3d;
+              var getFileBlob = function (url, cb) {
+                  var xhr = new XMLHttpRequest();
+                  xhr.open("GET", url);
+                  //xhr.responseType = "blob";
+
+                  xhr.onload = function () {
+                      if (xhr.status == 200) {
+                          cb(xhr.response);
+                      } else {
+                          cb(null)
+                      }
+                  }
+
+                  xhr.send();
+              };
+
+              (async () => {
+                  var i = null;
+                  getFileBlob(cfg.pdb_filepath, function (fileObject) {
+                      i = fileObject;
+                  });
+                  while (!i) {
+                      await new Promise(resolve => setTimeout(resolve, 100));
+                  }
+
+                  (s.bInitial = !0), e.cfg.notebook || dialog.dialog("close"), e.cfg.notebook ? s.resizeCanvasCls.closeDialogs() : $(".ui-dialog-content").dialog("close");
+                  (s.molTitle = ""),
+                      s.init(),
+                      (s.bInputfile = !0),
+                      (s.InputfileData = i);
+                  (s.InputfileType = "pdb"),
+                      s.pdbParserCls.loadPdbData(i);
+
+                  setupStateFile(cfg, e)
+
+                  atoms = []
+                  chains = {}
+                  fasta = {}
+                  codes = { 'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F', 'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L', 'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y' }
+
+                  var fileContentArray = i.split(/\r\n|\n/);
+                  for (var line = 0; line < fileContentArray.length - 1; line++) {
+                      content = fileContentArray[line].replace(/\s\s+/g, ' ').split(' ');
+                      if (content[0] == "ATOM") {
+                          atoms.push(content)
+                      }
+                  }
+                  for (var atom = 0; atom < atoms.length; atom++) {
+                      if (atoms[atom][4] in chains) {
+                          chains[atoms[atom][4]].push(atoms[atom])
+                      } else {
+                          chains[atoms[atom][4]] = new Array();
+                          chains[atoms[atom][4]].push(atoms[atom])
+                      }
+                  }
+                  for (const [key, value] of Object.entries(chains)) {
+                      fasta[key] = new Array();
+                      for (var atom = 0; atom < value.length; atom++) {
+                          if (fasta[key].length < value[atom][5]) {
+                              fasta[key].push(codes[value[atom][3]])
+                          }
+                      }
+                  }
+              })();
+              setupMenu(cfg)
+
+          }
           else if(cfg.afid !== undefined) {
               setupViewer('afid', cfg.afid, cfg);
           }
@@ -115,6 +188,26 @@
           }
       }
 
+      function setupStateFile(cfg, icn3dui) {
+            if (cfg.statefile !== undefined) {
+                var stateFile = new XMLHttpRequest();
+                stateFile.open("GET", cfg.statefile)
+                stateFile.onload = function () {
+                    if (stateFile.status == 200) {
+                        statefile = stateFile.responseText.split('\n')
+                        console.log(statefile)
+                        for (i = 0; i < statefile.length - 1; i++) {
+                            icn3dui.icn3d.applyCommandCls.applyCommand(statefile[i]);
+                        }
+                        icn3dui.icn3d.drawCls.draw()
+                    } else {
+                        console.log("none")
+                    }
+                }
+                stateFile.send()
+            }
+        }
+
       function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
@@ -137,7 +230,7 @@
           var icn3dui = new icn3d.iCn3DUI(cfg);
 
           $.when(icn3dui.show3DStructure()).then(function() {
-               //icn3dui.setOption('color', 'spectrum');
+               setupStateFile(cfg, icn3dui);
           });
 
           if(idName === '') $("#div" + i + "_wait").hide();

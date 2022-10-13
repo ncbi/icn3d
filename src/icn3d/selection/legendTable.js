@@ -13,6 +13,7 @@ import {Selection} from './selection.js';
 import {HlUpdate} from '../highlight/hlUpdate.js';
 import {Annotation} from '../annotations/annotation.js';
 import { ApplyOther } from '../display/applyOther.js';
+import { fromHalfFloat } from 'three';
 
 class LegendTable {
     constructor(icn3d) {
@@ -175,10 +176,6 @@ class LegendTable {
       nameArrayTmp.forEach(elem => {
            if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
       });
-      
-      if (!ic.legendClick){
-          html += "Please select [Atom, Residue, Charge, Hydrophobicity, B-Factor, AlphaFold Confidence] from the 'Color' menu."
-      }
 
       //for(let i in ic.defNames2Atoms) {
       for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -195,7 +192,6 @@ class LegendTable {
               let residueArray = ic.defNames2Residues[name];
               let elemSet = {};
               let resSet = {}
-              let resSet2 = {}
               
               if(residueArray.length > 0) {
                   atomHash = ic.residues[residueArray[0]]
@@ -220,11 +216,9 @@ class LegendTable {
                         if (residueAbbrev[atom.resn] != undefined && i == 0){
                             if (resSet[residueAbbrev[atom.resn]] === undefined){
                                 resSet[residueAbbrev[atom.resn]] = []
-                                resSet2[atom.resn] = []
                             }
                             if (!resSet[residueAbbrev[atom.resn]].includes(temp)){
                                 resSet[residueAbbrev[atom.resn]].push(temp)
-                                resSet2[atom.resn].push(temp)
                             }
                         }
                     }
@@ -291,7 +285,6 @@ class LegendTable {
                             html += chargeAbbrev[k]
                             html +=  "</label>"
                         }
-                        console.log(k)
                     }
                     html += "</div>"
                      
@@ -318,7 +311,7 @@ class LegendTable {
                         (e) => { return [e[0], e[1]]
                     });
 
-                    console.log(keys)
+
 
 
                     if(commandnameArray.indexOf(name) != -1) {
@@ -341,35 +334,23 @@ class LegendTable {
 
                 if (i == 0){
 
-                    var items = Object.keys(resSet).map(
-                        (key) => { return [key, resSet[key].sort()] 
-                    });
-                    
-                    // items.sort(
-                    //     (first, second) => { 
-                    //         return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
-                    // );
-
-                    var keys = items.map(
-                        (e) => { return [e[0], e[1]]
-                    });
-
-                    console.log(keys)
-
-
+                    let  colorStr = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                    let  color = (atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
                     if(commandnameArray.indexOf(name) != -1) {
                         html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
                     }
                     else {
-                        html += "<div id='legend_table' display='block'>"
-
-                        for (let key of keys) {
-                            html += "<label class='legend_bullets_" + i + "' display:block>"
-                            for (let color in key[1]){
-                                html += "<div style='width: 10px; height: 10px; background-color:#" + key[1][color] + "; border: 0px;display:inline-block;' ></div> ";
+                        let colorSet = new Set
+                        html += "<button value='" + name + "' style='color:#" + color + "' id='legend_button' display='block' selected='selected'>" + name + "</button><br>";
+                        for (let k in resSet) {
+                            for (let v in resSet[k]) {
+                                colorSet.add(resSet[k][v])
                             }
-                            
-                            html +=  key[0] + "</label>"
+                        }
+                        const sortedColors = Array.from(colorSet).sort((first, second) => ((parseInt(second.substring(0,2), 16) - parseInt(second.substring(4,6), 16)) - (parseInt(first.substring(0,2), 16) - parseInt(first.substring(4,6), 16))))
+                        html += "<div id='legend_table_b_factor' display='block'>"
+                        for (let color of sortedColors){
+                            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
                         }
                         html += "</div>"
                     }
@@ -386,19 +367,19 @@ class LegendTable {
                     else {
                         html += "<div id='legend_table_alpha' display='block'>"
 
-                        html += "<label class='legend_bullets_" + 1 + "'>"
+                        html += "<label class='legend_bullets_" + 0 + "'>"
                         html += "<div style='width: 10px; height: 10px; background-color:#0052cc; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Very high (pLDDT > 90)" + "</label>"
 
-                        html += "<label class='legend_bullets_" + 2 + "'>"
+                        html += "<label class='legend_bullets_" + 0 + "'>"
                         html += "<div style='width: 10px; height: 10px; background-color:#65cbf3; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Confident (90 > pLDDT > 70)" + "</label>"
 
-                        html += "<label class='legend_bullets_" + 3 + "'>"
+                        html += "<label class='legend_bullets_" + 0 + "'>"
                         html += "<div style='width: 10px; height: 10px; background-color:#ffd113; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Low (70 > pLDDT > 50)" + "</label>"
 
-                        html += "<label class='legend_bullets_" + 4 + "'>"
+                        html += "<label class='legend_bullets_" + 0 + "'>"
                         html += "<div style='width: 10px; height: 10px; background-color:#ff7d45; border: 0px;display:inline-block;' ></div> ";
                         html +=  "Very low (pLDDT < 50)" + "</label>"
 
@@ -409,6 +390,7 @@ class LegendTable {
 
             else {
                 ic.legendClick = 0
+                html = "Please select [Atom, Residue, Charge, Hydrophobicity, B-Factor, AlphaFold Confidence] from the 'Color' menu."
             }
           }
       }
