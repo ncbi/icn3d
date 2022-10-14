@@ -354,8 +354,6 @@ class LegendTable {
                         (e) => { return [e[0], e[1]]
                     });
 
-                    console.log(keys)
-
 
                     if(commandnameArray.indexOf(name) != -1) {
                         html += "<button value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</button>";
