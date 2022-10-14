@@ -56413,7 +56413,7 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrBfactor: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d;
-               ic.legendClick = 5;
+               //ic.legendClick = 5;
                ic.setOptionCls.setOption('color', 'b factor');
                thisClass.setLogCmd('color b factor', true);
             });
