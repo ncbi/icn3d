@@ -9,7 +9,9 @@ class Domain3d {
     constructor(icn3d) {
 		this.icn3d = icn3d;
 
-        this.dcut = 8; // threshold for C-alpha interactions
+        //this.dcut = 8; // threshold for C-alpha interactions
+		// It seemed the threshold 7 angstrom works better
+		this.dcut = 7; // threshold for C-alpha interactions
 
 		this.MAX_SSE = 512;
 
@@ -27,13 +29,22 @@ class Domain3d {
         this.group_num = [];
         this.group_num.length = this.MAX_SSE;
 
-        this.split_ratio = 0.0;			//let // splitting ratio
-        this.min_size = 0;				// min required size of a domain
-        this.min_sse = 0;				// min number of SSEs required in a domain
-        this.max_csz = 0;				// max size of a cut, i.e. number of points
+        // this.split_ratio = 0.0;			//let // splitting ratio
+        // this.min_size = 0;				// min required size of a domain
+        // this.min_sse = 0;				// min number of SSEs required in a domain
+        // this.max_csz = 0;				// max size of a cut, i.e. number of points
+        // this.mean_cts = 0.0;				// mean number of contacts in a domain
+        // this.c_delta = 0;				// cut set parameter
+        // this.nc_fact = 0.0;				// size factor for internal contacts
+
+		this.split_ratio = 0.25;			//let // splitting ratio
+        this.min_size = 25;				// min required size of a domain
+        this.min_sse = 3;				// min number of SSEs required in a domain
+        this.max_csz = 4;				// max size of a cut, i.e. number of points
         this.mean_cts = 0.0;				// mean number of contacts in a domain
-        this.c_delta = 0;				// cut set parameter
+        this.c_delta = 3;				// cut set parameter
         this.nc_fact = 0.0;				// size factor for internal contacts
+
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];
         this.elements.length = 2*this.MAX_SSE;

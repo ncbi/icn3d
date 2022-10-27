@@ -146,6 +146,7 @@ import {FirstAtomObj} from './icn3d/selection/firstAtomObj.js';
 
 import {Delphi} from './icn3d/analysis/delphi.js';
 import {Dssp} from './icn3d/analysis/dssp.js';
+import {Refnum} from './icn3d/analysis/refnum.js';
 import {Scap} from './icn3d/analysis/scap.js';
 import {Symd} from './icn3d/analysis/symd.js';
 import {AlignSW} from './icn3d/analysis/alignSW.js';
@@ -177,7 +178,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.16.3';
+    this.REVISION = '3.17.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -441,7 +442,11 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
        ic.loadCmd = 'load af ' + me.cfg.afid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        let bAf = true;
-       ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+
+       //ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+       $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
+        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+       });
     }
     else if(me.cfg.opmid !== undefined) {
        ic.inputid = me.cfg.opmid;
@@ -606,6 +611,9 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
     else if(me.cfg.mmdbafid !== undefined) {
         ic.bNCBI = true;
 
+        // remove space
+        me.cfg.mmdbafid = me.cfg.mmdbafid.replace(/\s+/g, '');
+
         ic.bMmdbafid = true;
         ic.inputid = me.cfg.mmdbafid;
         if(me.cfg.bu == 1) {
@@ -616,13 +624,14 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-        $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {
-            ic.loadScriptCls.loadScript(me.cfg.command);
+        //ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
+        $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {          
+            ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
         });
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
-        ic.loadScriptCls.loadScript(me.cfg.command);
+        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else {
         //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
@@ -748,4 +757,4 @@ class printMsg {
 
 //export {iCn3DUI, printMsg}
 
-export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, Vastplus, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}
+export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, Vastplus, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Refnum, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}

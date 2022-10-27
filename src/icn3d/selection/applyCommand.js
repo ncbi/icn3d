@@ -1308,7 +1308,10 @@ class ApplyCommand {
         //     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
         // }
       }
-      
+      else if(command.indexOf('ig refnum off') == 0) {
+        ic.refnumCls.hideIgRefNum();
+      }
+
     // special, select ==========
 
       else if(command.indexOf('select displayed set') !== -1) {

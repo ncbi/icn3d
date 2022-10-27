@@ -603,7 +603,7 @@ class SetDialog {
 
         html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
-        html += "</select></div>";
+        html += "</select></div><br>";
 
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign by Sequence</button></div><br>";
         html += "</div>";
@@ -612,7 +612,7 @@ class SetDialog {
 
         html += me.htmlCls.divNowrapStr + "1. Select sets in two chains below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
-        html += "</select></div>";
+        html += "</select></div><br>";
 
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
         html += "</div>";
@@ -1091,7 +1091,7 @@ class SetDialog {
         html += "<button style='white-space:nowrap;' id='" + me.pre + "applycolorbyarea'>Color</button><br/><br/>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_rmsd' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_rmsd' class='" + dialogClass + "' style='max-width:300px'>";
         
         html += "</div>";
 

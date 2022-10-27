@@ -252,14 +252,16 @@ class Strip {
                 }
 
                 //colorArray = colorArray.concat(colors[0].toArray());
-                colorArray[offset2++] = colors[0].r;
-                colorArray[offset2++] = colors[0].g;
-                colorArray[offset2++] = colors[0].b;
-                //colorArray = colorArray.concat(colors[p0.length - 1].toArray());
-                let color = (colors[p0.length - 1]) ? colors[p0.length - 1] : (colors[p0.length - 2] ? colors[p0.length - 2] : {r:0, g:0, b:0});
-                colorArray[offset2++] = color.r;
-                colorArray[offset2++] = color.g;
-                colorArray[offset2++] = color.b;
+                if(colors[0]) {
+                    colorArray[offset2++] = colors[0].r;
+                    colorArray[offset2++] = colors[0].g;
+                    colorArray[offset2++] = colors[0].b;
+                    //colorArray = colorArray.concat(colors[p0.length - 1].toArray());
+                    let color = (colors[p0.length - 1]) ? colors[p0.length - 1] : (colors[p0.length - 2] ? colors[p0.length - 2] : {r:0, g:0, b:0});
+                    colorArray[offset2++] = color.r;
+                    colorArray[offset2++] = color.g;
+                    colorArray[offset2++] = color.b;
+                }
             };
             vsize += 8;
             //fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));

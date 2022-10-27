@@ -161,6 +161,13 @@ class ShareLink {
                }
            }
 
+           if(ic.bAfMem) {
+            paraHash['afmem'] = 'on';
+           }
+           else {
+            paraHash['afmem'] = 'off';
+           }
+
            let inparaWithoutCommand;
            let pos = -1;
            if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');

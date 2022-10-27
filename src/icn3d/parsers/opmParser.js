@@ -147,8 +147,6 @@ class OpmParser {
           }
           else if(type === 'pdb') {
               ic.pdbParserCls.loadPdbData(data, pdbid);
-
-              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
           }
           else if(type === 'align') {
               if(ic.bOpm) {

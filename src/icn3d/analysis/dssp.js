@@ -30,7 +30,7 @@ class Dssp {
            let pdbStr = '';
 ///           pdbStr += ic.saveFileCls.getPDBHeader(i);
 
-           let atomHash = {}
+           let atomHash = {};
            let chainidArray = ic.structures[struArray[i]];
 
            for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
@@ -55,13 +55,18 @@ class Dssp {
       $.when.apply(undefined, ajaxArray).then(function() {
           let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parseDsspData(dataArray, struArray, bAppend);
+
+          if(!ic.bCheckMemProtein) {
+            ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+            ic.bCheckMemProtein = true;
+          }
       })
       .fail(function() {
           console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
 
           ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-          //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+          if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
           if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
       });
     }
