@@ -52,7 +52,6 @@ class AnnoDomain {
                     let result = ic.domain3dCls.c2b_NewSplitChain(atoms);
                     let subdomains = result.subdomains;
                     //let substruct = result.substruct;
-
                     //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
             
                     for(let i = 0, il = subdomains.length; i < il; ++i) {

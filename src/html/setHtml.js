@@ -58,12 +58,21 @@ class SetHtml {
         return "<li class='icn3d-menusep'>-</li>";
     }
 
-    getLinkWrapper(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+    getLinkWrapper(id, text, wrapper, bSimpleMenu, selType, bHide) { let me = this.icn3dui, ic = me.icn3d;
         me.htmlCls.allMenus[id] = text;
         if(selType) me.htmlCls.allMenusSel[id] = selType;
         if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
-        return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+        let hideStr = (bHide) ? ' style="display:none"' : '';
+        return "<li id='" + me.pre + wrapper + "'" + hideStr + "><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+    }
+
+    getLinkWrapper2(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.allMenus[id] = text;
+        if(selType) me.htmlCls.allMenusSel[id] = selType;
+        if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
+
+        return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span>";
     }
 
     getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;

@@ -392,6 +392,7 @@ class ShowSeq {
         html += '</div>';
         html2 += '</div>';
         html3 += '</div>';
+
         //if(Object.keys(ic.chains[chnid]).length > 10) {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
@@ -431,61 +432,171 @@ class ShowSeq {
                 html += '</div>';
                 html += '</div>';
                 html3 += '</div></div>';
+            }         
+            else if(ic.bShowRefnum && ic.chainid2index.hasOwnProperty(chnid)) {              
+                let result = this.showRefNum(giSeq, chnid);
+                html += result.html;
+                html3 += result.html3;
+
+                let bKabat = true;
+                result = this.showRefNum(giSeq, chnid, bKabat);
+                html += result.html;
+                html3 += result.html3;
             }
-/*            
-            else if(chnid == '4YHY_B') {
-                // test reference num
-                let resid2refnum = {};
-
-                let refData = {6: 'A1050', 22: 'B2050', 36: 'C3050', 48: 'C`3250', 61: 'C``3750', 70: 'D4050', 81: 'E5050', 96: 'F6050', 112: 'G7050'};
-
-                //ic.chainsMapping[chnid][chnid + '_' + resObject2.resi] = resObject1.resn + resObject1.resi;
-                for(let resi in refData) {
-                    let resid = chnid + '_' + resi;
-                    resid2refnum[resid] = refData[resi];
-                }
-
-
-                htmlTmp = '<div class="icn3d-dl_sequence">';
-                htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
-                htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Ig Reference Numbers">Ig Reference Numbers</div>';
-                htmlTmp += '<span class="icn3d-residueNum"></span>';
-                html3 += htmlTmp + '<br>';
-                html += htmlTmp + '<span class="icn3d-seqLine">';
-                for(let i = 0, il = giSeq.length; i < il; ++i) {
-                    html += this.insertGap(chnid, i, '-');
-                    if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                      let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
-                      let residueid = chnid + '_' + currResi;
-                      if(!ic.residues.hasOwnProperty(residueid)) {
-                          html += '<span></span>';
-                      }
-                      else {
-                          let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
-                          let resi_ori = atom.resi_ori;
-                          html += '<span>';
-                          if( resid2refnum.hasOwnProperty(residueid)) {
-                            html += resid2refnum[residueid] + ' ';
-                          }
-                          html += '</span>';
-                      }
-                    }
-                    else {
-                      html += '<span></span>';
-                    }
-                }
-                html += '<span class="icn3d-residueNum"></span>';
-                html += '</span>';
-                html += '<br>';
-                html += '</div>';
-                html += '</div>';
-                html3 += '</div></div>';
-            }
-*/
         }
+
+        // highlight reference numbers
+        if(ic.bShowRefnum) {
+            ic.hAtoms = ic.hAtomsRefnum;
+            
+            let name = 'refnum_anchors';
+            ic.selectionCls.saveSelection(name, name);
+            
+            ic.hlUpdateCls.updateHlAll();
+        }
+
         $("#" + ic.pre + 'dt_giseq_' + chnid).html(html);
         $("#" + ic.pre + 'ov_giseq_' + chnid).html(html2);
         $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
+    }
+
+    showRefNum(giSeq, chnid, bKabat) {  let ic = this.icn3d, me = ic.icn3dui;
+        let html = '', html3 = '';
+
+        let htmlTmp = '<div class="icn3d-dl_sequence">';
+        htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
+        if(bKabat) {
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers">Kabat Ref. No.</div>';
+        }
+        else {
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IgStRAnD Reference Numbers">IgStRAnD Ref. No.</div>';
+        }
+        htmlTmp += '<span class="icn3d-residueNum"></span>';
+        html3 += htmlTmp + '<br>';
+        html += htmlTmp + '<span class="icn3d-seqLine">';
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            html += this.insertGap(chnid, i, '-');
+            if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                let residueid = chnid + '_' + currResi;
+                let domainid = ic.resid2domainid[residueid];
+                if(!ic.residues.hasOwnProperty(residueid)) {
+                    html += '<span></span>';
+                }
+                else {
+                    //let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                    //let resi_ori = atom.resi_ori;
+
+                    //if(ic.resid2refnum.hasOwnProperty(residueid)) {
+                    let refnumLabel = ic.resid2refnum[residueid];
+                    if(refnumLabel) {
+                        let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
+                        let refnumStr;
+                        if(bKabat) {
+                            refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
+                        }
+                        else {
+                            refnumStr = refnumStr_ori;
+                        }
+                    
+                        if(bKabat) {
+                            if(!refnumStr) {                               
+                                html += '<span></span>';
+                            }
+                            else {
+                                let refnum = parseInt(refnumStr).toString();
+                                let color = this.getRefnumColor(refnumStr_ori);
+                                let colorStr = 'style="color:' + color + '"'
+
+                                let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
+
+                                if(lastTwo % 2 == 0) {
+                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">' + refnumStr + '</span>';
+                                }
+                                else {
+                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">&nbsp;</span>';
+                                }
+                            }
+                        }
+                        else {
+                            let refnum = parseInt(refnumStr).toString();
+                            let color = this.getRefnumColor(refnumStr_ori);
+                            let colorStr = 'style="color:' + color + '"'
+
+                            let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
+
+                            if(lastTwo == 50) {
+                                // highlight the anchor residues
+                                ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
+
+                                html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
+                            }
+                            else if(lastTwo % 2 == 0 && lastTwo != 52) {
+                                let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
+                                html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
+                            }
+                            else {
+                                html += '<span ' + colorStr + ' title="' + refnumLabel + '">&nbsp;</span>';
+                            }
+                        }
+                    }
+                    else {
+                        html += '<span></span>';
+                    }
+                }
+            }
+            else {
+                html += '<span></span>';
+            }
+        }
+        html += '<span class="icn3d-residueNum"></span>';
+        html += '</span>';
+        html += '<br>';
+        html += '</div>';
+        html += '</div>';
+        html3 += '</div></div>';
+
+        return {html: html, html3: html3}
+    }
+
+    getRefnumColor(refnumStr) {  let ic = this.icn3d, me = ic.icn3dui;
+        let prefix = refnumStr.substr(0,2);
+        if(prefix == '10') {
+            return '#000';
+        }
+        else if(prefix == '12') {
+            return '#888';
+        }
+        else if(prefix == '20') {
+            return '#000';
+        }
+        else if(prefix == '30') {
+            return '#888';
+        }
+        else if(prefix == '32') {
+            return '#000';
+        }
+        else if(prefix == '37') {
+            return '#888';
+        }
+        else if(prefix == '40') {
+            return '#000';
+        }
+        else if(prefix == '50') {
+            return '#888';
+        }
+        else if(prefix == '60') {
+            return '#000';
+        }
+        else if(prefix == '70') {
+            return '#888';
+        }
+        else if(prefix == '72') {
+            return '#000';
+        }
+        else if(prefix == '30') {
+            return '#BBB';
+        }
     }
 
     insertGap(chnid, seqIndex, text, bNohtml) {  let ic = this.icn3d, me = ic.icn3dui;

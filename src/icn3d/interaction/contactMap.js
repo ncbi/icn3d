@@ -52,7 +52,8 @@ class ContactMap {
 
         let  url, dataType;
     
-        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
+        //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
+        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v3.json";
 
         dataType = "json";
     
@@ -81,7 +82,8 @@ class ContactMap {
     processAfErrorMap(dataJson, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
         // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
-        let distMatrix = dataJson[0].distance;
+        //let distMatrix = dataJson[0].distance; // version 2, one dimension
+        let distMatrix = dataJson[0].predicted_aligned_error; // version 3, two dimensions 
         let max = dataJson[0].max_predicted_aligned_error;
         if(!distMatrix || !max) {
             alert("The PAE file didn't have the right format...");
@@ -108,7 +110,8 @@ class ContactMap {
         //let chainidArray = Object.keys(ic.chains);
         //let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
 
-        let dim = parseInt(Math.sqrt(distMatrix.length));
+        //let dim = parseInt(Math.sqrt(distMatrix.length));
+        let dim = distMatrix.length;
 
         // map index with residue number when the structure has multiple chains
         let index = 0;
@@ -156,7 +159,8 @@ class ContactMap {
                 
                 // max dark green color 004d00, 0x4d = 77, 77/255 = 0.302
                 // 0: 004d00, max: FFFFFF
-                let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;
+                //let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;
+                let ratio = (distMatrix[i][j]) ? distMatrix[i][j] / max : 0;
                 let r = parseInt(ratio*255).toString(16);
                 let g = parseInt(((1.0 - 0.302)*ratio + 0.302) * 255).toString(16);
                 let rHex = (r.length == 1) ? '0' + r : r;

@@ -131,7 +131,8 @@ class SetColor {
                 break;
 
             case 'structure':
-                let index = -1, prevStructure = '', colorLength = me.parasCls.stdChainColors.length;
+                let colorArray = (ic.bAfMem) ? [me.parasCls.thr(0xFF00FF), me.parasCls.thr(0x00FF00)] : me.parasCls.stdChainColors;
+                let index = -1, prevStructure = '', colorLength = colorArray.length;
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
 
@@ -142,7 +143,7 @@ class SetColor {
                     }
 
                     if(!atom.het) {
-                        atom.color = me.parasCls.stdChainColors[index];
+                        atom.color = colorArray[index];
                         ic.atomPrevColors[i] = atom.color;
                     }
                     else{

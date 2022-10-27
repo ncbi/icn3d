@@ -360,7 +360,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
 
-            thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
+            thisClass.setPredefinedMenu('atomsCustomRealign');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
@@ -945,15 +945,23 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + $("#" + me.pre + "mmdbafid").val(), false);
-            window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=1', '_blank');
+
+            // remove space
+            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + ids, false);
+            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=1', '_blank');
         });
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
              //if(!me.cfg.notebook) dialog.dialog( "close" );
-             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
-             window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+
+             // remove space
+             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+
+             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + ids, false);
+             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
