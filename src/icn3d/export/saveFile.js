@@ -770,7 +770,7 @@ class SaveFile {
         //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
         let asymmetricStr = "";
 
-        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold UniProt ID" : "PDB/MMDB ID";
+        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
 
         $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
     }
