@@ -304,22 +304,23 @@ class RealignParser {
         let name = 'protein_aligned';
         ic.selectionCls.saveSelection(name, name);
 
-        ic.transformCls.zoominSelection();
-
-        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms); //hAtoms;
-        //ic.hAtoms = hAtoms;
-
-        ic.opts['color'] = 'identity';
-
         if(ic.bAfMem) {
             ic.selectionCls.selectAll_base();
 
             ic.opts['chemicals'] = 'stick';  
             ic.opts['color'] = 'structure';
-        }
 
-        //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        }
+        else {
+            ic.transformCls.zoominSelection();
+
+            ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms); //hAtoms;
+    
+            ic.opts['color'] = 'identity';
+
+            ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+        }
 
         ic.drawCls.draw();
         ic.hlUpdateCls.updateHlAll();
@@ -467,7 +468,7 @@ class RealignParser {
 
         if(bPredefined) {
             predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split('; ');
-
+            
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
