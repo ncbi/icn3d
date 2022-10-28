@@ -154,7 +154,7 @@ class SetDialog {
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
         html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
-        let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
+        let afid = (me.cfg.afid) ? me.cfg.afid : 'A4D1S0';
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
         html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button><br><br>" 

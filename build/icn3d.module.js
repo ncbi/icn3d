@@ -21396,7 +21396,7 @@ class LoadPDB {
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
-                let  name = line.substr(10);
+                let  name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
 
             } else if (record === 'HELIX ') {
@@ -41557,7 +41557,7 @@ class AnnoSnpClinVar {
                 $.ajax(this);
                 return;
             }
-            this.processNoClinvar(chnid);
+            thisClass.processNoClinvar(chnid);
             //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
             return;
           }
@@ -55024,7 +55024,7 @@ class SaveFile {
         //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
         let asymmetricStr = "";
 
-        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold UniProt ID" : "PDB/MMDB ID";
+        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
 
         $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
     }
@@ -60184,7 +60184,7 @@ class SetDialog {
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
         html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
-        let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
+        let afid = (me.cfg.afid) ? me.cfg.afid : 'A4D1S0';
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
         html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button><br><br>"; 

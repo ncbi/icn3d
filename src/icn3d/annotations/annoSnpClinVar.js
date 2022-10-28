@@ -688,7 +688,7 @@ class AnnoSnpClinVar {
                 $.ajax(this);
                 return;
             }
-            this.processNoClinvar(chnid);
+            thisClass.processNoClinvar(chnid);
             //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
             return;
           }

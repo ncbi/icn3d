@@ -115,6 +115,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[LiteMol](https://github.com/dsehnal/LiteMol)**: The parser of EM density data from PDBe is based on LiteMol.
 * **[py3Dmol](https://pypi.org/project/py3Dmol/)**: The Jupyter Notebook widget "icn3dpy" is based on py3Dmol.
 * **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
+* **[Membranome](https://membranome.org)**: For AlphaFold Structures, the membrane data of single-spanning transmembrane proteins are from Membranome.
 * **[Post-Translational Modification (PTM)](https://www.ebi.ac.uk/proteins/api/doc/#/features)**: The PTM data are from UniProt.
 
 ## Building
