@@ -542,6 +542,16 @@ class ApplyCommand {
       else if(command == 'realign') {
          ic.realignParserCls.realign();
       }
+      else if(command.indexOf('realign predefined ') != -1) {
+        //e.g., realign predefined 1HHO_A,4M7N_A 1,5,10-50 | 1,5,10-50: 2,6,11-51 | 1,5,10-50
+        let str = 'realign predefined ';
+        let chainids_resdef = commandOri.substr(str.length);
+        let pos = chainids_resdef.indexOf(' ');
+        let chainidArray = chainids_resdef.substr(0, pos).split(',');
+        me.cfg.resdef = chainids_resdef.substr(pos + 1).replace(/:/gi, ';'); // should be 1,5,10-50 | 1,5,10-50; 2,6,11-51 | 1,5,10-50
+
+        ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, true, true);
+     }
       else if(command == 'area') {
          ic.analysisCls.calculateArea();
       }

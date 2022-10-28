@@ -12,10 +12,21 @@ class SetDialog {
     }
 
     //A placeholder for all custom dialogs.
-    setCustomDialogs() {var me = this.icn3dui, ic = me.icn3d;
+    setCustomDialogs() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return '';
 
         let html = "";
+        return html;
+    }
+
+    getHtmlAlignResidueByResidue(chainids, predefinedid, buttonid) { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
+
+        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
+        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + chainids + "' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
+        
+        html += "Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + predefinedid + "' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'>1,5,10-50 | 1,5,10-50\n2,6,11-51 | 1,5,10-50</textarea><br/>";
+        html += me.htmlCls.buttonStr + buttonid + "'><b>Align Residue by Residue</b></button><br/>";
         return html;
     }
 
@@ -245,13 +256,14 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_chainalign3' class='" + dialogClass + "'>";
         html += "<div style='width:550px'>";
-        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
-        html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids3' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
-        
-        html += "Each alignment is defined as \" | \"-separated residue lists in one line. \"10-50\" means a range of residues from 10 to 50.<br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'>1,5,10-50 | 1,5,10-50     \n2,6,11-51 | 1,5,10-50</textarea><br/>";
-        html += me.htmlCls.buttonStr + "reload_chainalign_asym3'><b>Align Residue by Residue</b></button><br/><br/>";
+        html += this.getHtmlAlignResidueByResidue('chainalignids3', 'predefinedres', 'reload_chainalign_asym3');
+        html += "</div></div>";
 
-        html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
+        html += me.htmlCls.divStr + "dl_realignresbyres' class='" + dialogClass + "'>";
+        html += "<div style='width:550px'>";
+        html += "<b>Option 1</b>: " + me.htmlCls.buttonStr + "realignSelection'><b>Realign Current Selection Residue by Residue</b></button><br/><br/>";
+        html += "<b>Option 2</b>: <br>";
+        html += "<div class='icn3d-box'>" + this.getHtmlAlignResidueByResidue('chainalignids4', 'predefinedres2', 'reload_chainalign_asym4') + "</div>";
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";

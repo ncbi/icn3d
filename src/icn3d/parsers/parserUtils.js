@@ -756,15 +756,28 @@ class ParserUtils {
                           if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
                       }
 
-                      // Realign by seqeunce alignment
+                      // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                      let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
+                                                    //the second range is the range of the helix
+                      let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
+                      let start_end = range.split('-');
+
                       ic.hAtoms = {};
                       ic.dAtoms = {};
+
+                      // get the AlphaFold structure
                       for(let i in ic.atoms) {
-                        if(ic.atoms[i].resn != 'DUM') {
+                        if(ic.atoms[i].structure != pdbid) {
                             ic.hAtoms[i] = 1;
                         }
                         ic.dAtoms[i] = 1;
                       }
+
+                      // get the transmembrane from the model of Membranome
+                      for(let i = parseInt(start_end[0]); i <= parseInt(start_end[1]); ++i) {
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                      }
+
                       ic.realignParserCls.realignOnSeqAlign();
                   },
                   error : function(xhr, textStatus, errorThrown ) {
