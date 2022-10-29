@@ -610,7 +610,6 @@ class SetSeqAlign {
         let start_t = 9999, end_t = -1;
 
         let baseResi = ic.chainsSeq[chainid1][0].resi - 1;
-
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
             let chainIndex = index - 1;
             if(!ic.qt_start_end[chainIndex]) continue;

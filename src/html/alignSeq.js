@@ -48,7 +48,7 @@ class AlignSeq {
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
-
+            
             if (index == 0) firstChainid = i;
 
             if (bOnechain && index > 0) {
