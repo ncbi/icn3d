@@ -125,6 +125,14 @@ class PdbParser {
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command, undefined, true);
+
+                // rotate for links from Membranome
+                if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+                    let  axis = new THREE.Vector3(1,0,0);
+                    let  angle = -90 / 180.0 * Math.PI;
+
+                    ic.transformCls.setRotation(axis, angle);
+                }
             }
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.parseMmcifData(data, undefined, command);

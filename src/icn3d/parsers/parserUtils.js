@@ -778,7 +778,7 @@ class ParserUtils {
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                       }
 
-                      ic.realignParserCls.realignOnSeqAlign();
+                      ic.realignParserCls.realignOnSeqAlign(pdbid);
                   },
                   error : function(xhr, textStatus, errorThrown ) {
                       console.log("Error in retrieving matched PDB from Membranome...");

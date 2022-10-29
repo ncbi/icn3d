@@ -23879,6 +23879,14 @@ class PdbParser {
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command, undefined, true);
+
+                // rotate for links from Membranome
+                if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+                    let  axis = new THREE.Vector3(1,0,0);
+                    let  angle = -90 / 180.0 * Math.PI;
+
+                    ic.transformCls.setRotation(axis, angle);
+                }
             }
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.parseMmcifData(data, undefined, command);
@@ -25766,6 +25774,13 @@ class RealignParser {
 
         ic.drawCls.draw();
         ic.hlUpdateCls.updateHlAll();
+
+        if(ic.bAfMem) {
+            let  axis = new THREE.Vector3(1,0,0);
+            let  angle = -90 / 180.0 * Math.PI;
+
+            ic.transformCls.setRotation(axis, angle);
+        }
                
         if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
       }
@@ -25779,7 +25794,7 @@ class RealignParser {
       }
     }
 
-    realignOnSeqAlign() { let ic = this.icn3d; ic.icn3dui;
+    realignOnSeqAlign(pdbidTemplate) { let ic = this.icn3d; ic.icn3dui;
         let  chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
 
         let  chainidArrayTmp = Object.keys(chainidHash);
@@ -25790,7 +25805,16 @@ class RealignParser {
             if(chainidArrayTmp[i] != prevChainid) chainidArray.push(chainidArrayTmp[i]);
             prevChainid = chainidArrayTmp[i];
         }
-
+        
+        // use the model from Membranome as template
+        if(ic.bAfMem && chainidArray.length == 2) {
+            if(chainidArray[1].split('_')[0] == pdbidTemplate) {
+                let tmp = chainidArray[0];
+                chainidArray[0] = chainidArray[1]; 
+                chainidArray[1] = tmp;
+            }
+        }
+        
         let  bRealign = true;
         ic.qt_start_end = []; // reset the alignment
 
@@ -25926,7 +25950,7 @@ class RealignParser {
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
             if(i == 0) chainid_t = chainid;
-
+            
             if(!ic.chainsSeq[chainid]) {
                 //alert("Please select one chain per structure and try it again...");
                 //return;
@@ -26015,7 +26039,7 @@ class RealignParser {
                     }
 
                     //if(!bPredefined) {
-                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);         
                         struct2SeqHash[mmdbid] += result.seq;
                         struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
                         struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
@@ -26111,7 +26135,9 @@ class RealignParser {
                     // from VAST neighbor page, use NCBI residue number
                     //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                    let seqIndex = k - base;
+                    //let seqIndex = k - base;
+                    let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
+
                     if(ic.bNCBI) {
                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                         if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
@@ -26132,7 +26158,9 @@ class RealignParser {
                 // from VAST neighbor page, use NCBI residue number
                 //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                let seqIndex = k - base;
+                //let seqIndex = k - base;
+                let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
+
                 if(ic.bNCBI) {
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
@@ -37014,7 +37042,6 @@ class SetSeqAlign {
         let start_t = 9999, end_t = -1;
 
         let baseResi = ic.chainsSeq[chainid1][0].resi - 1;
-
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) { 
             let chainIndex = index - 1;
             if(!ic.qt_start_end[chainIndex]) continue;
@@ -38436,7 +38463,7 @@ class ParserUtils {
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                       }
 
-                      ic.realignParserCls.realignOnSeqAlign();
+                      ic.realignParserCls.realignOnSeqAlign(pdbid);
                   },
                   error : function(xhr, textStatus, errorThrown ) {
                       console.log("Error in retrieving matched PDB from Membranome...");
@@ -63780,7 +63807,7 @@ class AlignSeq {
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
-
+            
             if (index == 0) firstChainid = i;
 
             if (bOnechain && index > 0) {
