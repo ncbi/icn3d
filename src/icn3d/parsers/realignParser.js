@@ -97,7 +97,7 @@ class RealignParser {
       let  toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
       if(!bRealign) toStruct = toStruct.toUpperCase();
 
-      let  hAtoms = {}
+      let  hAtoms = {}, rmsd;
 
       ic.realignResid = {}
 
@@ -146,17 +146,37 @@ class RealignParser {
           let  bChainAlign = true;
           // set ic.qt_start_end in alignCoords()
 
-          let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
-          hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+          let  result = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+          hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
+          rmsd = parseFloat(result.rmsd);
       }
 
-      // align seq
-      //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
-      ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+      // If rmsd from vastsrv is too large, realign the chains
+      if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {      
+        let nameArray = me.cfg.chainalign.split(',');
+        if(nameArray.length > 0) {
+            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        }
 
-      ic.transformCls.zoominSelection();
+        me.cfg.aligntool = 'tmalign';
 
-      ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
+        ic.realignParserCls.realignOnStructAlign();
+        // if(nameArray.length > 0) {
+        //     me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
+        // }
+        // else {
+        //     me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign", true);
+        // }
+      }
+      else {
+        // align seq
+        //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, true);
+        ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
+
+        ic.transformCls.zoominSelection();
+
+        ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
+      }
     }
 
     parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -250,8 +270,8 @@ class RealignParser {
               //let  chainFrom = chainidArray[index + 1];
 
               let  bChainAlign = true;
-              let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
-              hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+              let  result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
     //          ic.opts['color'] = 'identity';
     //          ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
@@ -281,22 +301,36 @@ class RealignParser {
         // align seq
         //ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray, undefined, bRealign);
         ic.hAtoms = ic.chainalignParserCls.setMsa(chainidArray);
-
-        ic.transformCls.zoominSelection();
-
-
-        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms); //hAtoms;
-        //ic.hAtoms = hAtoms;
-
-        ic.opts['color'] = 'identity';
-        //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
-        
         let name = 'protein_aligned';
         ic.selectionCls.saveSelection(name, name);
-        
+
+        if(ic.bAfMem) {
+            ic.selectionCls.selectAll_base();
+
+            ic.opts['chemicals'] = 'stick';  
+            ic.opts['color'] = 'structure';
+
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        }
+        else {
+            ic.transformCls.zoominSelection();
+
+            ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms); //hAtoms;
+    
+            ic.opts['color'] = 'identity';
+
+            ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+        }
+
         ic.drawCls.draw();
         ic.hlUpdateCls.updateHlAll();
+
+        if(ic.bAfMem) {
+            let  axis = new THREE.Vector3(1,0,0);
+            let  angle = -90 / 180.0 * Math.PI;
+
+            ic.transformCls.setRotation(axis, angle);
+        }
                
         if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
       }
@@ -310,7 +344,7 @@ class RealignParser {
       }
     }
 
-    realignOnSeqAlign() { let  ic = this.icn3d, me = ic.icn3dui;
+    realignOnSeqAlign(pdbidTemplate) { let  ic = this.icn3d, me = ic.icn3dui;
         let  chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
 
         let  chainidArrayTmp = Object.keys(chainidHash);
@@ -321,7 +355,16 @@ class RealignParser {
             if(chainidArrayTmp[i] != prevChainid) chainidArray.push(chainidArrayTmp[i]);
             prevChainid = chainidArrayTmp[i];
         }
-
+        
+        // use the model from Membranome as template
+        if(ic.bAfMem && chainidArray.length == 2) {
+            if(chainidArray[1].split('_')[0] == pdbidTemplate) {
+                let tmp = chainidArray[0];
+                chainidArray[0] = chainidArray[1]; 
+                chainidArray[1] = tmp;
+            }
+        }
+        
         let  bRealign = true;
         ic.qt_start_end = []; // reset the alignment
 
@@ -413,7 +456,7 @@ class RealignParser {
         $.when.apply(undefined, ajaxArray).then(function() {
             let  dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
             ic.qt_start_end = []; // reset the alignment
-            ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);
+            ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);               
         })
         .fail(function() {
             alert("These structures can NOT be aligned to each other...");
@@ -441,7 +484,7 @@ class RealignParser {
 
         if(bPredefined) {
             predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split('; ');
-
+            
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
@@ -466,7 +509,7 @@ class RealignParser {
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
             if(i == 0) chainid_t = chainid;
-
+            
             if(!ic.chainsSeq[chainid]) {
                 //alert("Please select one chain per structure and try it again...");
                 //return;
@@ -555,7 +598,7 @@ class RealignParser {
                     }
 
                     //if(!bPredefined) {
-                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);
+                        result = thisClass.getSeqCoorResid(resiArray, chainid, base);         
                         struct2SeqHash[mmdbid] += result.seq;
                         struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(result.coor);
                         struct2resid[mmdbid] = struct2resid[mmdbid].concat(result.resid);
@@ -622,9 +665,18 @@ class RealignParser {
             $.when.apply(undefined, ajaxArray).then(function() {
                 let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
                 thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+
+                //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
             })
             .fail(function() {
-               alert("The realignment did not work...");
+                alert("The realignment did not work...");
+                //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+
+                return;
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }
@@ -642,7 +694,9 @@ class RealignParser {
                     // from VAST neighbor page, use NCBI residue number
                     //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                    let seqIndex = k - base;
+                    //let seqIndex = k - base;
+                    let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
+
                     if(ic.bNCBI) {
                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                         if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
@@ -663,7 +717,9 @@ class RealignParser {
                 // from VAST neighbor page, use NCBI residue number
                 //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                let seqIndex = k - base;
+                //let seqIndex = k - base;
+                let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
+
                 if(ic.bNCBI) {
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;

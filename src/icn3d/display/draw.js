@@ -62,6 +62,15 @@ class Draw {
         }
 
         ic.impostorCls.clearImpostors();
+
+        // show membranes
+        if(ic.bOpm) {
+            if(window.dialog) window.dialog.dialog( "close" );
+            
+            let html = "<br><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
+            $("#" + ic.pre + "dl_rmsd").html(html);
+            if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Membranes');
+        }
     }
 
     //Update the rotation, translation, and zooming before rendering. Typically used before the function render().
@@ -207,8 +216,6 @@ class Draw {
                     const targetRayMode = inputSource.targetRayMode;
                     //info.push({ gamepad, handedness, profiles, targetRayMode });
                 });
-                    
-                //console.log( JSON.stringify(info) );
                  
                 ic.getInputSources = false;
             }else if (ic.useStandard && ic.gamepadType != ""){

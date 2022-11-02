@@ -33,7 +33,7 @@ class ParserUtils {
       //var n = coordsFrom.length;
       let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      let  hAtoms = {};
+      let  hAtoms = {}, rmsd;
 
       if(n < 4) alert("Please select at least four residues in each structure...");
       if(n >= 4) {
@@ -46,11 +46,16 @@ class ParserUtils {
 
               let  centerFrom = ic.rmsd_suprTmp.trans1;
               let  centerTo = ic.rmsd_suprTmp.trans2;
-              let  rmsd = ic.rmsd_suprTmp.rmsd;
+              rmsd = ic.rmsd_suprTmp.rmsd;
 
               if(rmsd) {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-                  $("#" + ic.pre + "dl_rmsd").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                  let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
+                  if(ic.bAfMem) {
+                    if(window.dialog) window.dialog.dialog( "close" );
+                    html += "<span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
+                  }
+                  $("#" + ic.pre + "dl_rmsd").html(html);
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
@@ -98,7 +103,7 @@ class ParserUtils {
           }
       }
 
-      return hAtoms;
+      return {hAtoms: hAtoms, rmsd: rmsd};
     }
 
     getQtStartEndFromRealignResid(chainid_t, chainid_q) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -423,8 +428,8 @@ class ParserUtils {
                   let  rmsd = ic.rmsd_supr.rmsd;
 
                   me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
-                  $("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
-                  if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
+                  //$("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                  //if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let  dxymaxsq = 0;
                   for(let i in ic.atoms) {
@@ -637,7 +642,8 @@ class ParserUtils {
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          if(me.cfg.mmdbafid === undefined) ic.loadScriptCls.loadScript(me.cfg.command);
+          if(me.cfg.mmdbafid === undefined && me.cfg.afid === undefined) ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+          //ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
           if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
@@ -712,6 +718,94 @@ class ParserUtils {
         }
 
         return maxD;
+    }
+
+    checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
+      //ic.deferredAfMem = $.Deferred(function() {
+        let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+
+        $.ajax({
+          url: url,
+          dataType: 'jsonp',
+          cache: true,
+          success: function(data) {
+            if(data.pdbid) {
+              let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
+             
+              if (me.cfg.afmem == 'off') {
+                // do nothing
+                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+              }
+              else if (me.cfg.afmem == 'on' || confirm(question)) {
+                let  url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
+                $.ajax({
+                  url: url2,
+                  dataType: 'text',
+                  cache: true,
+                  success: function(afMemdata) {
+                      ic.bAfMem = true;
+                      $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
+
+                      // append the PDB
+                      let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));
+                      let bOpm = true, bAppend = true;
+                      ic.pdbParserCls.loadPdbData(afMemdata, pdbid, bOpm, bAppend);
+
+                      if(bAppend) {
+                          if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                          if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+                      }
+
+                      // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                      let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
+                                                    //the second range is the range of the helix
+                      let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
+                      let start_end = range.split('-');
+
+                      ic.hAtoms = {};
+                      ic.dAtoms = {};
+
+                      // get the AlphaFold structure
+                      for(let i in ic.atoms) {
+                        if(ic.atoms[i].structure != pdbid) {
+                            ic.hAtoms[i] = 1;
+                        }
+                        ic.dAtoms[i] = 1;
+                      }
+
+                      // get the transmembrane from the model of Membranome
+                      for(let i = parseInt(start_end[0]); i <= parseInt(start_end[1]); ++i) {
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                      }
+
+                      ic.realignParserCls.realignOnSeqAlign(pdbid);
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                      console.log("Error in retrieving matched PDB from Membranome...");
+                      //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                      if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                      return;
+                  }
+                });
+              }
+            }
+            else {
+                if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            }
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+              console.log("Error in finding matched PDB in Membranome...");
+              //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+              if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+              return;
+          }
+        });
+      //});
+
+      //return ic.deferredAfMem.promise();
     }
 }
 

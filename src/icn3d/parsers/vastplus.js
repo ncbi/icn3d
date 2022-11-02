@@ -159,6 +159,8 @@ class Vastplus {
         for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
 
+            queryDataArray.push(queryData);
+/*
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
                 queryDataArray.push(queryData);
@@ -168,6 +170,7 @@ class Vastplus {
                 //return;
                 queryDataArray.push([]);
             }
+*/            
         }
 
         //src/internal/structure/MMDBUpdateTools/Interactions/compbu/comparebuEngine.cpp

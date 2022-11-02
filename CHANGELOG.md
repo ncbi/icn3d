@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.17.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.17.0.zip) was release on October 27, 2022. Showed membranes for AlphaFold structures, which are single-spanning transmembrane proteins; enabled to load recent version of PAE json files for AlphaFold Structures.
+
 [icn3d-3.16.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.3.zip) was release on September 29, 2022. Fixed a bug in VAST chain alignment. Updated the video of iCn3D tutorial. 
 
 [icn3d-3.16.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.16.2.zip) was release on September 19, 2022. Enabled to submit loaded structures to VAST and Foldseek to search similar structures directly. 

@@ -805,6 +805,13 @@ class SetMenu {
         if(me.cfg.opmid !== undefined) {
             //html += "<li id='" + me.pre + "togglememli'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
             html += me.htmlCls.setHtmlCls.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1)
+        }
+        else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
+            // hide by default
+            html += me.htmlCls.setHtmlCls.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1, true)
+        }
+
+        if(me.cfg.opmid !== undefined) {
             //html += "<li id='" + me.pre + "adjustmemli'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
             html += me.htmlCls.setHtmlCls.getLinkWrapper('adjustmem', 'Adjust Membrane', 'adjustmemli', undefined, 1)
             //html += "<li id='" + me.pre + "selectplaneli'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
@@ -1120,7 +1127,9 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getMenuSep();
 
             //html += "<li id='" + me.pre + "mapWrapper1'><span>Electron Density</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper1', 'Electron Density', undefined, undefined, 1);
+            //html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper1', 'Electron Density', undefined, undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLinkWrapper2('mn5_map', 'Electron Density', 'mapWrapper1', undefined, 1);
+
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map', undefined, undefined, 2);
             html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map', undefined, undefined, 2);
@@ -1130,7 +1139,9 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 1);
 
             //html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper3', 'Map Wireframe', undefined, undefined, 1);
+            //html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper3', 'Map Wireframe', undefined, undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLinkWrapper2('mn5_map3', 'Map Wireframe', 'mapWrapper3', undefined, 1);
+            
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true, undefined, 2);
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No', undefined, undefined, 2);
@@ -1144,7 +1155,8 @@ class SetMenu {
                 html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2', undefined, 1);
 
                 //html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map Wireframe</span>";
-                html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapwfwrap', 'EM Map Wireframe', 'emmapWrapper3', undefined, 1);
+                //html += me.htmlCls.setHtmlCls.getMenuText('emmapWrapper3', 'EM Map Wireframe', undefined, undefined, 1);
+                html += me.htmlCls.setHtmlCls.getLinkWrapper2('mn5_emmap3', 'EM Map Wireframe', 'emmapWrapper3', undefined, 1);
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true, undefined, 2);
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No', undefined, undefined, 2);
@@ -1212,7 +1224,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getMenuText('mn4_clrwrap', 'Unicolor', 'icn3d-menupd', 1, 1);
         html += "<ul>";
 
-        html += "<li><span>Red</span>";
+        //html += "<li><span>Red</span>";
         html += me.htmlCls.setHtmlCls.getMenuText('uniclrRedwrap', 'Red', undefined, 1, 2);
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'uniclrRed1', 'Red', 'F00', undefined, 1, 3);
@@ -1579,23 +1591,31 @@ class SetMenu {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr, 1, 1);
             }
 
-            html += me.htmlCls.setHtmlCls.getMenuSep();
+            //html += me.htmlCls.setHtmlCls.getMenuSep();
         }
 
         if(!me.cfg.notebook && !me.cfg.hidelicense) {
-            html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr, 1, 1);
-            
-            //html += "<li><span>Load PQR/Phi</span>";
-            html += me.htmlCls.setHtmlCls.getMenuText('mn1_phiwrap', 'Load PQR/Phi', undefined, undefined, 1);
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_phi', 'Local PQR/Phi/Cube File', undefined, 2);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_phiurl', 'URL PQR/Phi/Cube File', undefined, 2);
+            //html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr, 1, 1);
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_delphiwrap', 'DelPhi Potential', undefined, 1, 1);
+
+            html += "<ul>";       
+                html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr, 1, 2);    
+
+                //html += "<li><span>Load PQR/Phi</span>";
+                html += me.htmlCls.setHtmlCls.getMenuText('mn1_phiwrap', 'Load PQR/Phi', undefined, undefined, 2);
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getLink('mn1_phi', 'Local PQR/Phi/Cube File', undefined, 3);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_phiurl', 'URL PQR/Phi/Cube File', undefined, 3);
+                html += "</ul>";
+                html += "</li>";
+                html += me.htmlCls.setHtmlCls.getLink('delphipqr', 'Download PQR', undefined, 2);
             html += "</ul>";
             html += "</li>";
-            html += me.htmlCls.setHtmlCls.getLink('delphipqr', 'Download PQR', undefined, 1);
 
-            html += me.htmlCls.setHtmlCls.getMenuSep();
+            //html += me.htmlCls.setHtmlCls.getMenuSep();
         }
+
+        html += me.htmlCls.setHtmlCls.getMenuSep();
 
         //html += "<li><span>Distance</span>";
         html += me.htmlCls.setHtmlCls.getMenuText('mn6_distancewrap', 'Distance', undefined, 1, 1);
@@ -1701,6 +1721,7 @@ class SetMenu {
 
             //html += "<li><span>Symmetry</span>";
             html += me.htmlCls.setHtmlCls.getMenuText('mn6_symmetrywrap', 'Symmetry', undefined, undefined, 1);
+
             html += "<ul>";
             if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
 
@@ -1710,7 +1731,15 @@ class SetMenu {
 
             html += "</ul>";
             html += "</li>";
+/*
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_igrefwrap', 'Ig Ref. Number', undefined, undefined, 1);
 
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefYes', 'Show', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefNo', 'Hide', true, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+*/
             html += me.htmlCls.setHtmlCls.getMenuSep();
         }
 

@@ -217,7 +217,7 @@ class ChainalignParser {
             let alignLen = 0;
             if(ic.qt_start_end && ic.qt_start_end[index - 1]) {
                 for(let i = 0, il = ic.qt_start_end[index - 1].length; i < il; ++i) { 
-                    alignLen += ic.qt_start_end[index - 1][i].q_end - ic.qt_start_end[index - 1][i].q_start + 1;
+                    alignLen += parseInt(ic.qt_start_end[index - 1][i].q_end) - parseInt(ic.qt_start_end[index - 1][i].q_start) + 1;
                 }
             }
             index_alignLen.push({index: index, alignLen: alignLen});
@@ -385,6 +385,8 @@ class ChainalignParser {
         me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
         ic.drawCls.draw();
+        ic.transformCls.zoominSelection();
+        
         ic.hlUpdateCls.updateHlAll();
 
         if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
@@ -954,7 +956,7 @@ class ChainalignParser {
         let  hAtoms = {}, hAtomsTmp = {};
         let  bLastQuery = false;
 
-        ic.opts['color'] = (structArray.length == 1) ? 'chain' : 'structure';
+        ic.opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
@@ -982,7 +984,7 @@ class ChainalignParser {
                     
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
-
+        
         // calculate secondary structures with applyCommandDssp
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
@@ -1008,7 +1010,12 @@ class ChainalignParser {
             //ic.pdbParserCls.applyCommandDssp(true);
         }
 
-        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
+            ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
+        }
+        else {
+            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        }
     }
 }
 

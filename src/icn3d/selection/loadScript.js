@@ -38,7 +38,7 @@ class LoadScript {
     }
 
     //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
-    loadScript(dataStr, bStatefile) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadScript(dataStr, bStatefile, bStrict) { let  ic = this.icn3d, me = ic.icn3dui;
       // allow the "loading structure..." message to be shown while loading script
       ic.bCommandLoad = true;
 
@@ -49,7 +49,7 @@ class LoadScript {
       dataStr =(bStatefile) ? dataStr.replace(/\+/g, ' ') : dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
 
       let  preCommands = [];
-      if(ic.commands.length > 0) preCommands[0] = ic.commands[0];
+      if(!bStrict && ic.commands.length > 0) preCommands[0] = ic.commands[0];
 
       let  commandArray = dataStr.trim().split('\n');
       ic.commands = commandArray;
@@ -82,16 +82,16 @@ class LoadScript {
           this.replayFirstStep(ic.CURRENTNUMBER);
       }
       else {
-          this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
+          this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
       }
     }
 
     //Execute a list of commands. "steps" is the total number of commands.
-    execCommands(start, end, steps) { let  ic = this.icn3d, me = ic.icn3dui;
+    execCommands(start, end, steps, bStrict) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.bRender = false;
 
         // fresh start
-        ic.reinitAfterLoad();
+        if(!bStrict) ic.reinitAfterLoad();
 
         //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
 
@@ -283,6 +283,22 @@ class LoadScript {
                 if(Object.keys(ic.proteins).length > 0) {
                     thisClass.applyCommandPTM(strArray[0].trim());
                 }
+
+                this.execCommandsBase(i + 1, end, steps);
+            }
+
+            return;
+          }
+          else if(ic.commands[i].trim().indexOf('ig refnum on') == 0 ) { 
+            let  strArray = ic.commands[i].split("|||");
+
+            if(Object.keys(ic.resid2refnum).length == 0) {
+                $.when(thisClass.applyCommandRefnum(strArray[0].trim())).then(function() {
+                    thisClass.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            else {
+                thisClass.applyCommandRefnumBase(strArray[0].trim());
 
                 this.execCommandsBase(i + 1, end, steps);
             }
@@ -686,6 +702,9 @@ class LoadScript {
                     else if(lastCommand.indexOf('set annotation ptm') == 0) {
                         thisClass.applyCommandPTM(lastCommand);
                     }
+                    else if(lastCommand.indexOf('ig refnum on') == 0) {
+                        thisClass.applyCommandRefnum(lastCommand);
+                    }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
                     }
@@ -819,10 +838,11 @@ class LoadScript {
         }
         else if(command.indexOf('load pdb') !== -1) {
           me.cfg.pdbid = id;
+
           ic.pdbParserCls.downloadPdb(id);
         }
         else if(command.indexOf('load af') !== -1) {
-          me.cfg.afid = id;
+          me.cfg.afid = id;  
           ic.pdbParserCls.downloadPdb(id, true);
         }
         else if(command.indexOf('load opm') !== -1) {
@@ -1198,6 +1218,22 @@ class LoadScript {
         return ic.deferredPTM.promise();
     }
 
+    applyCommandRefnumBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        // chain functions together
+        ic.refnumCls.showIgRefNum();
+    }
+
+    applyCommandRefnum(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+  
+        // chain functions together
+        ic.deferredRefnum = $.Deferred(function() {
+            thisClass.applyCommandRefnumBase(command);
+        }); // end of me.deferred = $.Deferred(function() {
+  
+        return ic.deferredRefnum.promise();
+    }
+
     applyCommand3ddomainBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
       let  pos = command.lastIndexOf(' ');
@@ -1274,8 +1310,8 @@ class LoadScript {
         // simple if all atoms are modified
         //if( me.cfg.command === undefined &&(steps === 1 ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
         if(steps === 1
-          ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
-          ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
+          || (ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
+          || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
     // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
     //        if(steps === 1) {
                 // assign styles and color using the options at that stage

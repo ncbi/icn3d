@@ -127,7 +127,7 @@ class HlUpdate {
     updateHlObjects(bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
        ic.hlObjectsCls.removeHlObjects();
 
-       if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
+       if((ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
           ic.hlObjectsCls.addHlObjects();
           ic.definedSetsCls.setMode('selection');
        }
@@ -142,7 +142,7 @@ class HlUpdate {
 
            if(residueHash === undefined) residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-           if(ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) this.hlSequence(Object.keys(residueHash));
+           if(ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) this.hlSequence(Object.keys(residueHash));
            this.changeSeqColor(Object.keys(residueHash));
     }
 
@@ -152,7 +152,7 @@ class HlUpdate {
            }
            //if(residueHash === undefined) residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-           if(ic.hAtoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
+           if(ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
            //this.hlSequence(Object.keys(residueHash));
            // speed up with chain highlight
@@ -193,7 +193,7 @@ class HlUpdate {
     updateHl2D(chainArray2d) { let ic = this.icn3d, me = ic.icn3dui;
       this.removeHl2D();
 
-      if(ic.hAtoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
+      if(ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
       if(chainArray2d === undefined) {
           let chainHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);

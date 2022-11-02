@@ -112,26 +112,12 @@ pre span {color: red;}
 <div class="us">
     <!--a class="skipnav" href="#maincontent">Skip to main page content</a-->
     <header class="ncbi-page-header" role="banner">
-        <div class="prefix">
-                    <span class="nih" title="National Institutes of Health">
-                        <a href="https://www.nih.gov/" title="To NIH homepage">
-                            <img alt="NIH"
-                                 src="https://www.ncbi.nlm.nih.gov/Structure/sparcle/uswds/resources/nih-logo-header.svg">
-                        </a>
-                    </span>
-            <span class="nlm">
-                        <a href="https://www.nlm.nih.gov/" title="To NLM homepage">U.S. National Library of Medicine</a>
-                    </span>
-        </div>
-
-        <div class="ncbi">
-            <abbr class="abbr">
-                <a href="https://www.ncbi.nlm.nih.gov/" title="To NCBI homepage">NCBI</a>
-            </abbr>
-            <span class="name">
-                        <a accesskey="1" href="https://www.ncbi.nlm.nih.gov/" title="To NCBI homepage">National Center for Biotechnology Information</a>
-                    <a accesskey="0" class="usa-sr-only"
-                       href="https://www.ncbi.nlm.nih.gov/guide/browsers/#ncbi_accesskeys">Accesskeys</a>
+        <div class="prefix" style="background:initial; float:initial;">
+            <span class="nih" title="National Center for Biotechnology Information">
+                <a href="https://www.ncbi.nlm.nih.gov/" title="To NCBI homepage">
+                    <img style="padding:3px;" alt="NCBI"
+                            src="https://www.ncbi.nlm.nih.gov/coreutils/nwds/img/logos/AgencyLogo.svg">
+                </a>
             </span>
         </div>
     </header>
@@ -350,6 +336,12 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-align.png"><br>Align AlphaFold and PDB structures <br>(chains: P69905_A,P01942_A,1HHO_A)
 </a>
+</div>
+
+<div class="gallery">
+    <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbafid=A4D1S0&afmem=on" target="_blank">
+    <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-mem.png"><br>Membrane for AlphaFold structure <br>(Uniprot ID A4D1S0)
+    </a>
 </div>
 
 <div style="clear:both;"></div>
@@ -865,6 +857,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <a name="parameters"></a>
 <h3>URL parameters<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 <table><tr valign='top'><th>Parameter</th><th>Description</th></tr>
+<tr valign='top'><td>mmdbafid</td><td>A list of PDB or AlphaFold UniProt IDs for realignment, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbafid=1HHO,4N7N,P69905,P01942">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbafid=1HHO,4N7N,P69905,P01942</a>. You could then input multiple PDB files with the menu "File > Open File > PDB Files (appendable)". Next you could click the menu "File > Realign Selection > by Structure Alignment" to realign all loaded structures.</td></tr>
 <tr valign='top'><td>mmdbid</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=1tup&showanno=1&show2d=1">?mmdbid=1tup&showanno=1&show2d=1</a></td></tr>
 <tr valign='top'><td>mmtfid</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=1tup">?mmtfid=1tup</a></td></tr>
 <tr valign='top'><td>pdbid</td><td>PDB ID, e.g., <a href="full.html?pdbid=1tup">?pdbid=1tup</a></td></tr>

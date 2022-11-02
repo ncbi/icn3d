@@ -82,7 +82,7 @@ class MmcifParser {
            },
            success: function(data) {
                thisClass.loadMmcifData(data, mmcifid);
-               if(command) ic.loadScriptCls.loadScript(command);
+               //if(command) ic.loadScriptCls.loadScript(command, undefined, true);
            },
            error : function(xhr, textStatus, errorThrown ) {
              this.tryCount++;

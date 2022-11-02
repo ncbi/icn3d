@@ -27,60 +27,62 @@ class PdbParser {
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
     downloadPdb(pdbid, bAf) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  url, dataType;
+      ic.deferredOpm = $.Deferred(function() {
+        let  url, dataType;
 
-       if(bAf) {
-           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v3.pdb";
-           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
-       }
-       else {
-           url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
-           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
-       }
+        if(bAf) {
+            url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v3.pdb";
+            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+        }
+        else {
+            url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
+        }
 
-       dataType = "text";
+        dataType = "text";
 
-       ic.bCid = undefined;
+        ic.bCid = undefined;
 
-       $.ajax({
-          url: url,
-          dataType: dataType,
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-              //ic.pdbParserCls.loadPdbData(data, pdbid);
-              ic.deferredOpm = $.Deferred(function() {
-                  //ic.loadPdbOpmData(data, pdbid);
-                  if(bAf) {
-                      // add UniProt ID into the header
-                      let header = 'HEADER                                                        ' + pdbid + '\n';
-                      data = header + data;
-                      ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
-                  }
-                  else {
-                      ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
-                  }
-              });
+        $.ajax({
+            url: url,
+            dataType: dataType,
+            cache: true,
+            tryCount : 0,
+            retryLimit : 0, //1
+            beforeSend: function() {
+                ic.ParserUtilsCls.showLoading();
+            },
+            complete: function() {
+                //ic.ParserUtilsCls.hideLoading();
+            },
+            success: function(data) {
+                //ic.deferredOpm = $.Deferred(function() {
+                    if(bAf) {
+                        // add UniProt ID into the header
+                        let header = 'HEADER                                                        ' + pdbid + '\n';
+                        data = header + data;          
+                        ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
+                    }
+                    else {
+                        ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+                    }
+                //});
 
-              return ic.deferredOpm.promise();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
+                //return ic.deferredOpm.promise();
+            },
+            error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if(this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
                 return;
             }
-            return;
-          }
-       });
+        });
+      });
+
+      return ic.deferredOpm.promise();
     }
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
@@ -122,7 +124,15 @@ class PdbParser {
 
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
-                ic.loadScriptCls.loadScript(command);
+                ic.loadScriptCls.loadScript(command, undefined, true);
+
+                // rotate for links from Membranome
+                if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+                    let  axis = new THREE.Vector3(1,0,0);
+                    let  angle = -90 / 180.0 * Math.PI;
+
+                    ic.transformCls.setRotation(axis, angle);
+                }
             }
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.parseMmcifData(data, undefined, command);
@@ -206,6 +216,9 @@ class PdbParser {
         }
         else {
             this.loadPdbDataRender(bAppend);
+            ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+
+            if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
 
         return hAtoms;
@@ -227,7 +240,7 @@ class PdbParser {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
-        if(me.cfg.afid) {
+        if(me.cfg.afid && !ic.bAfMem) {
             ic.opts['color'] = 'confidence';
         }
 

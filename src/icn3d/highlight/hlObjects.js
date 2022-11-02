@@ -29,14 +29,14 @@ class HlObjects {
     removeHlObjects() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        for(let i in ic.prevHighlightObjects) {
-           ic.mdl.remove(ic.prevHighlightObjects[i]);
+           if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects[i]);
        }
 
        ic.prevHighlightObjects = [];
 
        // remove prevous highlight
        for(let i in ic.prevHighlightObjects_ghost) {
-           ic.mdl.remove(ic.prevHighlightObjects_ghost[i]);
+        if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects_ghost[i]);
        }
 
        ic.prevHighlightObjects_ghost = [];

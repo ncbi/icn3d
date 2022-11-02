@@ -349,6 +349,10 @@ class Events {
     //    },
     //    clickRealign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_realignresbyres', 'Align multiple chains residue by residue');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "realignSelection", "click", function(e) { let ic = me.icn3d;
             if(Object.keys(ic.structures).length < 2) {
                 alert("At least two structures are required for alignment...");
                 return;
@@ -362,7 +366,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
 
-            thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
+            thisClass.setPredefinedMenu('atomsCustomRealign');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
@@ -723,8 +727,8 @@ class Events {
            let alignment = $("#" + me.pre + "chainalignids").val();
            let alignment_final = thisClass.convertUniProtInChains(alignment);
            let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ': ');
+           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split(': ').length) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                return;
            }
@@ -764,14 +768,36 @@ class Events {
             let alignment = $("#" + me.pre + "chainalignids3").val();
             let alignment_final = thisClass.convertUniProtInChains(alignment);
 
-            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, '; ');
-            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split('; ').length) {
+            let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ': ');
+            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split(': ').length) {
                 alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                 return;
             }
  
             me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef " + predefinedres, false);
             window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+ 
+            let alignment = $("#" + me.pre + "chainalignids4").val();
+            let alignment_final = thisClass.convertUniProtInChains(alignment);
+
+            let predefinedres = $("#" + me.pre + "predefinedres2").val().trim().replace(/\n/g, ': ');
+            if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split(': ').length) {
+                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                return;
+            }
+
+            me.cfg.resdef = predefinedres.replace(/:/gi, ';');
+
+            let bRealign = true, bPredefined = true;
+            let chainidArray = alignment_final.split(',');
+            ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+ 
+            me.htmlCls.clickMenuCls.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { let ic = me.icn3d;
@@ -947,15 +973,23 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + $("#" + me.pre + "mmdbafid").val(), false);
-            window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=1', '_blank');
+
+            // remove space
+            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + ids, false);
+            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=1', '_blank');
         });
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
              //if(!me.cfg.notebook) dialog.dialog( "close" );
-             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
-             window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+
+             // remove space
+             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+
+             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + ids, false);
+             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;

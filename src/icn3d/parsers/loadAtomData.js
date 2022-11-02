@@ -386,8 +386,7 @@ class LoadAtomData {
                 }
             }
 
-            if(bProtein || bNucleotide)
-            {
+            if(bProtein || bNucleotide) {
                 if(bProtein) {
                   ic.proteins[serial] = 1;
 
@@ -773,7 +772,7 @@ class LoadAtomData {
             hAtoms = ic.hAtoms;
         }
 
-        if(type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
+        if(!me.cfg.mmdbafid && type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
             if(alignType === 'target' || alignType === 'query') {
                 for(let i in atoms) {
                     let  atom = atoms[i];

@@ -113,6 +113,7 @@ import {FirstAtomObj} from './selection/firstAtomObj.js';
 
 import {Delphi} from './analysis/delphi.js';
 import {Dssp} from './analysis/dssp.js';
+import {Refnum} from './analysis/refnum.js';
 import {Scap} from './analysis/scap.js';
 import {Symd} from './analysis/symd.js';
 import {AlignSW} from './analysis/alignSW.js';
@@ -609,6 +610,7 @@ class iCn3D {
 
     this.delphiCls = new Delphi(this);
     this.dsspCls = new Dssp(this);
+    this.refnumCls = new Refnum(this);
     this.scapCls = new Scap(this);
     this.symdCls = new Symd(this);
     this.alignSWCls = new AlignSW(this);
@@ -658,7 +660,7 @@ iCn3D.prototype.init = function (bKeepCmd) {
 
 iCn3D.prototype.init_base = function (bKeepCmd) {
     this.resetConfig();
-
+    
     this.structures = {}; // structure name -> array of chains
     this.chains = {}; // structure_chain name -> atom hash
     this.tddomains = {}; // structure_chain_3d_domain_# name -> residue id hash such as {'structure_chain_3d_domain_1': 1, ...}
@@ -673,7 +675,10 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 
     this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
-
+    this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2050', ...}
+    this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2050': ['1WIO_A_16', ...], ...}
+    this.bShowRefnum = false;
+    
     this.alnChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
     this.alnChainsAnno = {}; // structure_chain name -> array of annotations, such as residue number
     this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
@@ -809,12 +814,13 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
     }
 
     if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
-    if(me.cfg.mmdbafid !== undefined && ic.structures) {
-        if(Object.keys(ic.structures).length > 1) {
+    if(me.cfg.mmdbafid !== undefined) {
+        let idArray = me.cfg.mmdbafid.split(',');
+        if(idArray.length > 1) {
             ic.opts['color'] = 'structure';
         }
-        else if(Object.keys(ic.structures).length == 1) {
-            let struct = Object.keys(ic.structures)[0];
+        else if(idArray.length == 1) {
+            let struct = idArray[0];
             if(isNaN(struct) && struct.length > 5) {
                 this.opts['color'] = 'confidence';
             }

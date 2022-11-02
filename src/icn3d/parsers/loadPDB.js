@@ -109,7 +109,7 @@ class LoadPDB {
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
-                let  name = line.substr(10);
+                let  name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
 
             } else if (record === 'HELIX ') {
