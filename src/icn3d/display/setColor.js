@@ -326,8 +326,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('residue');
-
                 break;
 
             case 'residue custom':
@@ -412,8 +410,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('charge');
-
                 break;
             case 'hydrophobic':
                 for (let i in atoms) {
@@ -435,8 +431,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('normalized hydrophobic');
-
                 break;
             case 'atom':
                 for (let i in atoms) {
@@ -445,8 +439,6 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
-
-                ic.legendTableCls.showColorLegend('atom');
 
                 break;
 
@@ -476,8 +468,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('confidence');
-
                 break;
 
             case 'b factor':
@@ -506,8 +496,6 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
-
-                ic.legendTableCls.showColorLegend('b factor');
 
                 break;
 
@@ -639,6 +627,8 @@ class SetColor {
 
                 break;
         }
+
+        ic.legendTableCls.showColorLegend(options.color.toLowerCase());
       }
      }
     }
