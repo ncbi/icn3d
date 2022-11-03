@@ -181,6 +181,7 @@ class SetHtml {
         let linerad =(type == '3dprint') ? '1' : '0.1';
         let coilrad =(type == '3dprint') ? '1.2' : '0.3';
         let stickrad =(type == '3dprint') ? '0.8' : '0.4';
+        let crosslinkrad =(type == '3dprint') ? '0.8' : '0.4';
         let tracerad =(type == '3dprint') ? '1' : '0.4';
         let ballscale =(type == '3dprint') ? '0.6' : '0.3';
         let ribbonthick =(type == '3dprint') ? '1' : '0.2';
@@ -193,6 +194,7 @@ class SetHtml {
         let light3 = 0.2;
         let bGlycansCartoon = 0;
         let bMembrane = 1;
+        let bCmdWindow = 0;
 
         // retrieve from cache
         if(type == 'style') {
@@ -210,6 +212,7 @@ class SetHtml {
                 linerad = parseFloat(this.getCookie('lineRadius'));
                 coilrad = parseFloat(this.getCookie('coilWidth'));
                 stickrad = parseFloat(this.getCookie('cylinderRadius'));
+                crosslinkrad = parseFloat(this.getCookie('crosslinkRadius'));
                 tracerad = parseFloat(this.getCookie('traceRadius'));
                 ballscale = parseFloat(this.getCookie('dotSphereScale'));
                 ribbonthick = parseFloat(this.getCookie('ribbonthickness'));
@@ -225,6 +228,10 @@ class SetHtml {
                 bMembrane = parseFloat(this.getCookie('membrane'));
             }
 
+            if(this.getCookie('cmdwindow') != '') {
+                bCmdWindow = parseFloat(this.getCookie('cmdwindow'));
+            }
+
             html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
             html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
@@ -238,6 +245,7 @@ class SetHtml {
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
         html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
         html += "<b>Stick Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>" + me.htmlCls.space3 + "(for sticks, default 0.4)<br/>";
+        html += "<b>Cross-Linkage Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "crosslinkrad_" + type + "' value='" + crosslinkrad + "' size=4>" + me.htmlCls.space3 + "(for cross-linkages, default 0.4)<br/>";
         html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.4)<br/>";
 
         html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
@@ -249,7 +257,9 @@ class SetHtml {
         if(type == 'style') {
             html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
 
-            html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/><br/>";
+            html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/>";
+
+            html += "<br><b>6. Enlarge Command Window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cmdwindow' value='" + bCmdWindow + "' size=4>" + me.htmlCls.space3 + "(0: Regular, 1: Large, default 0)<br/><br/>";
         }
 
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
@@ -869,6 +879,7 @@ class SetHtml {
             this.setCookie('lineRadius', ic.lineRadius, exdays);
             this.setCookie('coilWidth', ic.coilWidth, exdays);
             this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+            this.setCookie('crosslinkRadius', ic.crosslinkRadius, exdays);
             this.setCookie('traceRadius', ic.traceRadius, exdays);
             this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
             this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
@@ -888,6 +899,7 @@ class SetHtml {
                 $("#" + me.pre + "light3").val('0.2');
                 $("#" + me.pre + "glycan").val('0');
                 $("#" + me.pre + "membrane").val('1');
+                $("#" + me.pre + "cmdwindow").val('0');
             }
 
             ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
@@ -896,12 +908,14 @@ class SetHtml {
             ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
             ic.bGlycansCartoon = parseInt($("#" + me.pre + "glycan").val()); //0;
             ic.bMembrane = parseInt($("#" + me.pre + "membrane").val()); //1;
+            ic.bCmdWindow = parseInt($("#" + me.pre + "cmdwindow").val()); //0;
         }
 
         if(bReset) {
             $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
             $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
             $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
+            $("#" + me.pre + "crosslinkrad_" + postfix ).val(0.4); //0.4; // cross-linkage
             $("#" + me.pre + "tracerad_" + postfix ).val(0.4); //0.4; // style c alpha trace, nucleotide stick
             $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
             $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
@@ -912,6 +926,7 @@ class SetHtml {
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
         ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
         ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
+        ic.crosslinkRadius = parseFloat($("#" + me.pre + "crosslinkrad_" + postfix ).val()); //0.4; // cross-linkage
         ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.4; // style c alpha trace, nucleotide stick
         ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
         ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
@@ -927,6 +942,7 @@ class SetHtml {
             this.setCookie('light3', ic.light3, exdays);
             this.setCookie('glycan', ic.bGlycansCartoon, exdays);
             this.setCookie('membrane', ic.bMembrane, exdays);
+            this.setCookie('cmdwindow', ic.bCmdWindow, exdays);
         }
 
         this.setCookieForThickness();
@@ -938,10 +954,11 @@ class SetHtml {
            ic.threeDPrintCls.resetAfter3Dprint();
         }
         else {
-            me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+            me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | crosslinkrad ' + ic.crosslinkRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
 
             me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);
             me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + ic.bMembrane, true);
+            me.htmlCls.clickMenuCls.setLogCmd('set cmdwindow ' + ic.bCmdWindow, true);
         }
 
         ic.drawCls.draw();

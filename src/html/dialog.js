@@ -63,7 +63,8 @@ class Dialog {
     getDialogStatus() {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        let status = {}
+        let status = {};
+        let id2flag = {};
 
         // determine whether dialogs initilaized
         let bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
@@ -82,6 +83,18 @@ class Dialog {
         status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
         status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
 
+        id2flag.dl_selectannotations = 'bSelectannotationsInit2';
+        id2flag.dl_graph = 'bGraph2';
+        id2flag.dl_linegraph = 'bLineGraph2';
+        id2flag.dl_scatterplot = 'bScatterplot2';	
+        id2flag.dl_contactmap = 'bContactmap2';
+        id2flag.dl_alignerrormap = 'bAlignerrormap2';
+        id2flag.dl_interactionsorted = 'bTable2';
+        id2flag.dl_alignment = 'bAlignmentInit2';
+        id2flag.dl_2ddgm = 'bTwoddgmInit2';
+        id2flag.dl_2dctn = 'bTwodctnInit2';
+        id2flag.dl_definedsets = 'bSetsInit2';
+
         if(bSelectannotationsInit) status.bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
         if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
         if(bLineGraph) status.bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
@@ -94,7 +107,7 @@ class Dialog {
         if(bTwodctnInit) status.bTwodctnInit2 = $('#' + me.pre + 'dl_2dctn').dialog( 'isOpen' );
         if(bSetsInit) status.bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-        return status;
+        return {status: status, id2flag: id2flag};
     }
 
     openDlgHalfWindow(id, title, dialogWidth, bForceResize) {  let me = this.icn3dui, ic = me.icn3d;
@@ -130,17 +143,23 @@ class Dialog {
           modal: false,
           position: position,
           close: function(e) {
-              let status = thisClass.getDialogStatus();
+              let result = thisClass.getDialogStatus();
+              let status = result.status;
+              let id2flag = result.id2flag;
 
-              if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) && !status.bTable2 && !status.bLineGraph2  && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bAlignerrormap2)
-                ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
-                ) {
+              // check the condition when all the rest dialogs are closed
+              let bCheckAll = false;
+              for(let idname in id2flag) {
+                let bCheckRest = (id === me.pre + idname);
+                for(let idstatus in status) {
+                    // just check the rest, not itself
+                    if(status.hasOwnProperty(idstatus)) continue;
+                    bCheckRest = bCheckRest && !status[idstatus];
+                }
+                bCheckAll = bCheckAll || bCheckRest;
+              }
+
+              if(bCheckAll) {
                   if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                       let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -236,7 +255,7 @@ class Dialog {
           modal: false,
           position: position,
           close: function(e) {
-              let status = thisClass.getDialogStatus();
+              let status = thisClass.getDialogStatus().status;
 
               if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -286,7 +305,7 @@ class Dialog {
         let width = 400, height = 150;
         let twoddgmWidth = me.htmlCls.width2d + 20;
 
-        let status = this.getDialogStatus();
+        let status = this.getDialogStatus().status;
 
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;

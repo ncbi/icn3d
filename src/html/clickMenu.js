@@ -632,7 +632,8 @@ class ClickMenu {
          me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
             let menuStr = '[';
 
-            var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+            //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+            var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:not(:checked)');
             let cnt = 0;
             for (var checkbox of checkboxes) {
                 if(cnt > 0) menuStr += ', ';
@@ -642,7 +643,7 @@ class ClickMenu {
             
             menuStr += ']';
     
-            ic.saveFileCls.saveFile('icn3d_shown_menus.txt', 'text', [menuStr]);
+            ic.saveFileCls.saveFile('icn3d_menus_pref.txt', 'text', [menuStr]);
          });
 
          me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
@@ -1422,13 +1423,15 @@ class ClickMenu {
     //    },
     //    clkMn4_clrResidue: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'residue');
-           thisClass.setLogCmd('color residue', true);
+            //ic.legendClick = 2;
+            ic.setOptionCls.setOption('color', 'residue');
+            thisClass.setLogCmd('color residue', true);
         });
     //    },
     //    clkMn4_clrResidueCustom: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
+            //ic.legendClick = 2;
+            me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
         });
     //    },
     //    clkMn4_reloadRescolorfile: function() {
@@ -1485,37 +1488,43 @@ class ClickMenu {
     //    },
     //    clkMn4_clrCharge: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'charge');
-           thisClass.setLogCmd('color charge', true);
+            //ic.legendClick = 3;
+            ic.setOptionCls.setOption('color', 'charge');
+            thisClass.setLogCmd('color charge', true);
         });
     //    },
     //    clkMn4_clrHydrophobic: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'hydrophobic');
-           thisClass.setLogCmd('color hydrophobic', true);
+            //ic.legendClick = 4; 
+            ic.setOptionCls.setOption('color', 'hydrophobic');
+            thisClass.setLogCmd('color hydrophobic', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'normalized hydrophobic');
-           thisClass.setLogCmd('color normalized hydrophobic', true);
+            //ic.legendClick = 4;
+            ic.setOptionCls.setOption('color', 'normalized hydrophobic');
+            thisClass.setLogCmd('color normalized hydrophobic', true);
         });
 
     //    },
     //    clkMn4_clrAtom: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'atom');
-           thisClass.setLogCmd('color atom', true);
+            //ic.legendClick = 1;
+            ic.setOptionCls.setOption('color', 'atom');
+            thisClass.setLogCmd('color atom', true);
         });
     //    },
     //    clkMn4_clrBfactor: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'b factor');
-           thisClass.setLogCmd('color b factor', true);
+            //ic.legendClick = 5;
+            ic.setOptionCls.setOption('color', 'b factor');
+            thisClass.setLogCmd('color b factor', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOptionCls.setOption('color', 'confidence');
-           thisClass.setLogCmd('color confidence', true);
+            //ic.legendClick = 6;
+            ic.setOptionCls.setOption('color', 'confidence');
+            thisClass.setLogCmd('color confidence', true);
         });
 
     //    },
@@ -2481,7 +2490,10 @@ class ClickMenu {
           let finalStr = (bSetCommand) ? str : '[comment] ' + str;
           ic.logs.push(finalStr);
           // move cursor to the end, and scroll to the end
-          $("#" + me.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+          $("#" + me.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ");
+          if($("#" + me.pre + "logtext")[0]) {
+            $("#" + me.pre + "logtext").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+          }
       }
       ic.setStyleCls.adjustIcon();
     }
