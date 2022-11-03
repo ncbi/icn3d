@@ -712,6 +712,7 @@ class ApplyCommand {
             if(para == 'linerad') ic.lineRadius = value;
             if(para == 'coilrad') ic.coilWidth = value;
             if(para == 'stickrad') ic.cylinderRadius = value;
+            if(para == 'crosslinkrad') ic.crosslinkRadius = value;
             if(para == 'tracerad') ic.traceRadius = value;
             if(para == 'ballscale') ic.dotSphereScale = value;
 
@@ -758,6 +759,12 @@ class ApplyCommand {
         ic.bMembrane = parseInt(command.substr(pos + 1));
 
         ic.drawCls.draw();
+      }
+      else if(commandOri.indexOf('set cmdwindow') == 0) {
+        let  pos = command.lastIndexOf(' ');
+
+        let bCmdWindow = parseInt(command.substr(pos + 1));
+        me.htmlCls.setMenuCls.setLogWindow(true, bCmdWindow);
       }
       else if(command.indexOf('set highlight color') == 0) {
            let  color = command.substr(20);

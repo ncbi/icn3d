@@ -18,6 +18,7 @@ class ThreeDPrint {
         ic.lineRadius = 1; //0.1; // hbonds, distance lines
         ic.coilWidth = 1.2; //0.3; // style cartoon-coil
         ic.cylinderRadius = 0.8; //0.4; // style stick
+        ic.crosslinkRadius = 0.8; //0.4; // cross-linkage
         ic.traceRadius = 1; //0.4; // style c alpha trace, nucleotide stick
         ic.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
 
@@ -86,6 +87,7 @@ class ThreeDPrint {
           ic.lineRadius = 0.1; // hbonds, distance lines
           ic.coilWidth = 0.3; // style cartoon-coil
           ic.cylinderRadius = 0.4; // style stick
+          ic.crosslinkRadius = 0.4; // cross-linkage
           ic.traceRadius = 0.4; // style c alpha trace, nucleotide stick
           ic.dotSphereScale = 0.3; // style ball and stick, dot
           ic.sphereRadius = 1.5; // style sphere

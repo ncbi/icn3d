@@ -178,7 +178,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.17.0';
+    this.REVISION = '3.18.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -483,9 +483,14 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
             ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
             ic.bSmithwm = true;
            }
+           else if(me.cfg.alg == 'local_smithwm') {
+            ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+            ic.bLocalSmithwm = true;
+           }
            else {
             ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
             ic.bSmithwm = false;
+            ic.bLocalSmithwm = false;
            }
            
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);

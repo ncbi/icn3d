@@ -159,7 +159,7 @@ class ShowAnno {
                    }
                }
             }
-            else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm) { // align sequence to structure
+            else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
                let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
                let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
                if(me.cfg.query_from_to !== undefined ) {
@@ -201,7 +201,7 @@ class ShowAnno {
                   }
                 });
             } // align seq to structure
-            else if(me.cfg.blast_rep_id !== undefined && ic.bSmithwm) { // align sequence to structure
+            else if(me.cfg.blast_rep_id !== undefined && (ic.bSmithwm || ic.bLocalSmithwm)) { // align sequence to structure
                 //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
                 let idArray = [me.cfg.blast_rep_id];
 
@@ -240,7 +240,9 @@ class ShowAnno {
                         }
 
                         let match_score = 1, mismatch = -1, gap = -1, extension = -1;
-                        ic.seqStructAlignDataSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension);
+
+                        let bLocal = (ic.bLocalSmithwm) ? true : false;
+                        ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
 
                         thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                     },
@@ -506,8 +508,8 @@ class ShowAnno {
               else {
                   title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
-              compTitle = undefined;
-              compText = undefined;
+              let compTitle = undefined;
+              let compText = undefined;
               let text = "cannot be aligned";
               ic.queryStart = '';
               ic.queryEnd = '';

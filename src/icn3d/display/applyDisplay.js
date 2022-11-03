@@ -32,19 +32,21 @@ class ApplyDisplay {
             let lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
             let coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
             let cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
+            let crosslinkRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('crosslinkRadius'));
             let traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
             let dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
             let ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
             let helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
             let nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
 
-            if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
-                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
+            if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.crosslinkRadius != crosslinkRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
+                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | crosslinkrad ' + crosslinkRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
             }
 
             ic.lineRadius = lineRadius;
             ic.coilWidth = coilWidth;
             ic.cylinderRadius = cylinderRadius;
+            ic.crosslinkRadius = crosslinkRadius;
             ic.traceRadius = traceRadius;
             ic.dotSphereScale = dotSphereScale;
             ic.ribbonthickness = ribbonthickness;

@@ -325,6 +325,9 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                ic.legendTableCls.showColorLegend('residue');
+
                 break;
 
             case 'residue custom':
@@ -408,6 +411,9 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                ic.legendTableCls.showColorLegend('charge');
+
                 break;
             case 'hydrophobic':
                 for (let i in atoms) {
@@ -428,6 +434,9 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                ic.legendTableCls.showColorLegend('normalized hydrophobic');
+
                 break;
             case 'atom':
                 for (let i in atoms) {
@@ -436,6 +445,9 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                ic.legendTableCls.showColorLegend('atom');
+
                 break;
 
             case 'confidence':
@@ -464,12 +476,7 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-                //$("#" + me.pre + "legend").removeClass('icn3d-legend');
-                //$("#" + me.pre + "legend").addClass('icn3d-legend2');
-                //$("#" + me.pre + "legend").html(legendHtml).show();
-                $("#" + me.pre + "dl_legend").html(legendHtml);
-                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color legend');
+                ic.legendTableCls.showColorLegend('confidence');
 
                 break;
 
@@ -499,6 +506,9 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                ic.legendTableCls.showColorLegend('b factor');
+
                 break;
 
             case 'b factor percentile':

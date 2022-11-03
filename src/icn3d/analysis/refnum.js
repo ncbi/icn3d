@@ -181,8 +181,30 @@
             let domainid = domainid_index[0];
             let chainid = domainid.split('-')[0];
 
+            // must contain Ig B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
+            for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
+                let seg = queryData[0].segs[i];
+                if(seg.q_start.indexOf('2050') != -1) {
+                    bBstrand = true;
+                }
+                else if(seg.q_start.indexOf('3050') != -1) {
+                    bCstrand = true;
+                }
+                else if(seg.q_start.indexOf('5050') != -1) {
+                    bEstrand = true;
+                }
+                else if(seg.q_start.indexOf('6050') != -1) {
+                    bFstrand = true;
+                }
+
+                if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+            }
+            if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
+
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                 domainid2score[domainid] = queryData[0].score;
+console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);                
                 ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;

@@ -55,6 +55,7 @@ import {Saltbridge} from './interaction/saltbridge.js';
 import {SetStyle} from './display/setStyle.js';
 import {SetColor} from './display/setColor.js';
 import {SetOption} from './display/setOption.js';
+import {LegendTable} from './display/legendTable.js';
 
     // classes from icn3dui
 import {AnnoCddSite} from './annotations/annoCddSite.js';
@@ -231,7 +232,10 @@ class iCn3D {
     this.lineRadius = 0.1; // hbonds, distance lines
     //This is the coil radius for coils. It's 0.3 by default.
     this.coilWidth = 0.3; //0.4; // style cartoon-coil
+    //This is the stick radius. It's 0.4 by default.
     this.cylinderRadius = 0.4; // style stick
+    //This is the cross-linkage radius. It's 0.4 by default.
+    this.crosslinkRadius = 0.4; // cross-linkage
     //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
     this.traceRadius = 0.4; //0.4; // c alpha trace, nucleotide stick
     //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
@@ -601,6 +605,7 @@ class iCn3D {
 
     this.applyCommandCls = new ApplyCommand(this);
     this.definedSetsCls = new DefinedSets(this);
+    this.legendTableCls = new LegendTable(this);
     this.loadScriptCls = new LoadScript(this);
     this.selByCommCls = new SelectByCommand(this);
     this.selectionCls = new Selection(this);
@@ -756,6 +761,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
 
     this.bGlycansCartoon = 0;
     this.bMembrane = 1;
+    this.bCmdWindow = 0;
 
     this.chainid2offset = {};
 

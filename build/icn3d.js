@@ -9456,7 +9456,7 @@ var icn3d = (function (exports) {
                         line.position2 = ic.atoms[line.serial2].coord;
 
                         ic.lines['clbond'].push(line);
-                        ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
+                        ic.cylinderCls.createCylinder(line.position1, line.position2, ic.crosslinkRadius, colorObj);
 
                         // show stick for these two residues
                         let residueAtoms = {};
@@ -13065,6 +13065,7 @@ var icn3d = (function (exports) {
             ic.lineRadius = 1; //0.1; // hbonds, distance lines
             ic.coilWidth = 1.2; //0.3; // style cartoon-coil
             ic.cylinderRadius = 0.8; //0.4; // style stick
+            ic.crosslinkRadius = 0.8; //0.4; // cross-linkage
             ic.traceRadius = 1; //0.4; // style c alpha trace, nucleotide stick
             ic.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
 
@@ -13133,6 +13134,7 @@ var icn3d = (function (exports) {
               ic.lineRadius = 0.1; // hbonds, distance lines
               ic.coilWidth = 0.3; // style cartoon-coil
               ic.cylinderRadius = 0.4; // style stick
+              ic.crosslinkRadius = 0.4; // cross-linkage
               ic.traceRadius = 0.4; // style c alpha trace, nucleotide stick
               ic.dotSphereScale = 0.3; // style ball and stick, dot
               ic.sphereRadius = 1.5; // style sphere
@@ -18965,6 +18967,9 @@ var icn3d = (function (exports) {
 
                         ic.atomPrevColors[i] = atom.color;
                     }
+
+                    ic.legendTableCls.showColorLegend('residue');
+
                     break;
 
                 case 'residue custom':
@@ -19048,6 +19053,9 @@ var icn3d = (function (exports) {
 
                         ic.atomPrevColors[i] = atom.color;
                     }
+
+                    ic.legendTableCls.showColorLegend('charge');
+
                     break;
                 case 'hydrophobic':
                     for (let i in atoms) {
@@ -19068,6 +19076,9 @@ var icn3d = (function (exports) {
 
                         ic.atomPrevColors[i] = atom.color;
                     }
+
+                    ic.legendTableCls.showColorLegend('normalized hydrophobic');
+
                     break;
                 case 'atom':
                     for (let i in atoms) {
@@ -19076,6 +19087,9 @@ var icn3d = (function (exports) {
 
                         ic.atomPrevColors[i] = atom.color;
                     }
+
+                    ic.legendTableCls.showColorLegend('atom');
+
                     break;
 
                 case 'confidence':
@@ -19104,12 +19118,7 @@ var icn3d = (function (exports) {
                         ic.atomPrevColors[i] = atom.color;
                     }
 
-                    let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-                    //$("#" + me.pre + "legend").removeClass('icn3d-legend');
-                    //$("#" + me.pre + "legend").addClass('icn3d-legend2');
-                    //$("#" + me.pre + "legend").html(legendHtml).show();
-                    $("#" + me.pre + "dl_legend").html(legendHtml);
-                    me.htmlCls.dialogCls.openDlg('dl_legend', 'Color legend');
+                    ic.legendTableCls.showColorLegend('confidence');
 
                     break;
 
@@ -19139,6 +19148,9 @@ var icn3d = (function (exports) {
 
                         ic.atomPrevColors[i] = atom.color;
                     }
+
+                    ic.legendTableCls.showColorLegend('b factor');
+
                     break;
 
                 case 'b factor percentile':
@@ -29280,10 +29292,15 @@ var icn3d = (function (exports) {
             }
             else if(command.indexOf('load seq_struct_ids ') !== -1) {
               ic.bSmithwm = false;
+              ic.bLocalSmithwm = false;
               ic.mmdbParserCls.downloadBlast_rep_id(id);
             }
             else if(command.indexOf('load seq_struct_ids_smithwm ') !== -1) {
                 ic.bSmithwm = true;
+                ic.mmdbParserCls.downloadBlast_rep_id(id);
+            }
+            else if(command.indexOf('load seq_struct_ids_local_smithwm ') !== -1) {
+                ic.bLocalSmithwm = true;
                 ic.mmdbParserCls.downloadBlast_rep_id(id);
             }
             else if(command.indexOf('load cid') !== -1) {
@@ -34661,6 +34678,7 @@ var icn3d = (function (exports) {
                 if(para == 'linerad') ic.lineRadius = value;
                 if(para == 'coilrad') ic.coilWidth = value;
                 if(para == 'stickrad') ic.cylinderRadius = value;
+                if(para == 'crosslinkrad') ic.crosslinkRadius = value;
                 if(para == 'tracerad') ic.traceRadius = value;
                 if(para == 'ballscale') ic.dotSphereScale = value;
 
@@ -34707,6 +34725,12 @@ var icn3d = (function (exports) {
             ic.bMembrane = parseInt(command.substr(pos + 1));
 
             ic.drawCls.draw();
+          }
+          else if(commandOri.indexOf('set cmdwindow') == 0) {
+            let  pos = command.lastIndexOf(' ');
+
+            let bCmdWindow = parseInt(command.substr(pos + 1));
+            me.htmlCls.setMenuCls.setLogWindow(true, bCmdWindow);
           }
           else if(command.indexOf('set highlight color') == 0) {
                let  color = command.substr(20);
@@ -39573,7 +39597,7 @@ var icn3d = (function (exports) {
                        }
                    }
                 }
-                else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm) { // align sequence to structure
+                else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
                    let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
                    let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
                    if(me.cfg.query_from_to !== undefined ) {
@@ -39615,7 +39639,7 @@ var icn3d = (function (exports) {
                       }
                     });
                 } // align seq to structure
-                else if(me.cfg.blast_rep_id !== undefined && ic.bSmithwm) { // align sequence to structure
+                else if(me.cfg.blast_rep_id !== undefined && (ic.bSmithwm || ic.bLocalSmithwm)) { // align sequence to structure
                     //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
                     let idArray = [me.cfg.blast_rep_id];
 
@@ -39654,7 +39678,9 @@ var icn3d = (function (exports) {
                             }
 
                             let match_score = 1, mismatch = -1, gap = -1, extension = -1;
-                            ic.seqStructAlignDataSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension);
+
+                            let bLocal = (ic.bLocalSmithwm) ? true : false;
+                            ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
 
                             thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                         },
@@ -39920,8 +39946,8 @@ var icn3d = (function (exports) {
                   else {
                       title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
                   }
-                  compTitle = undefined;
-                  compText = undefined;
+                  let compTitle = undefined;
+                  let compText = undefined;
                   let text = "cannot be aligned";
                   ic.queryStart = '';
                   ic.queryEnd = '';
@@ -45350,19 +45376,21 @@ var icn3d = (function (exports) {
                 let lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
                 let coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
                 let cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
+                let crosslinkRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('crosslinkRadius'));
                 let traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
                 let dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
                 let ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
                 let helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
                 let nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
 
-                if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
-                    me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
+                if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.crosslinkRadius != crosslinkRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | crosslinkrad ' + crosslinkRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
                 }
 
                 ic.lineRadius = lineRadius;
                 ic.coilWidth = coilWidth;
                 ic.cylinderRadius = cylinderRadius;
+                ic.crosslinkRadius = crosslinkRadius;
                 ic.traceRadius = traceRadius;
                 ic.dotSphereScale = dotSphereScale;
                 ic.ribbonthickness = ribbonthickness;
@@ -55735,7 +55763,8 @@ var icn3d = (function (exports) {
              me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                 let menuStr = '[';
 
-                var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+                //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
+                var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:not(:checked)');
                 let cnt = 0;
                 for (var checkbox of checkboxes) {
                     if(cnt > 0) menuStr += ', ';
@@ -55745,7 +55774,7 @@ var icn3d = (function (exports) {
                 
                 menuStr += ']';
         
-                ic.saveFileCls.saveFile('icn3d_shown_menus.txt', 'text', [menuStr]);
+                ic.saveFileCls.saveFile('icn3d_menus_pref.txt', 'text', [menuStr]);
              });
 
              me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { me.icn3d; e.preventDefault();
@@ -56524,13 +56553,15 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrResidue: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'residue');
-               thisClass.setLogCmd('color residue', true);
+                //ic.legendClick = 2;
+                ic.setOptionCls.setOption('color', 'residue');
+                thisClass.setLogCmd('color residue', true);
             });
         //    },
         //    clkMn4_clrResidueCustom: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { me.icn3d; e.preventDefault();
-               me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
+                //ic.legendClick = 2;
+                me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
             });
         //    },
         //    clkMn4_reloadRescolorfile: function() {
@@ -56587,37 +56618,43 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn4_clrCharge: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'charge');
-               thisClass.setLogCmd('color charge', true);
+                //ic.legendClick = 3;
+                ic.setOptionCls.setOption('color', 'charge');
+                thisClass.setLogCmd('color charge', true);
             });
         //    },
         //    clkMn4_clrHydrophobic: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'hydrophobic');
-               thisClass.setLogCmd('color hydrophobic', true);
+                //ic.legendClick = 4; 
+                ic.setOptionCls.setOption('color', 'hydrophobic');
+                thisClass.setLogCmd('color hydrophobic', true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'normalized hydrophobic');
-               thisClass.setLogCmd('color normalized hydrophobic', true);
+                //ic.legendClick = 4;
+                ic.setOptionCls.setOption('color', 'normalized hydrophobic');
+                thisClass.setLogCmd('color normalized hydrophobic', true);
             });
 
         //    },
         //    clkMn4_clrAtom: function() {
             me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'atom');
-               thisClass.setLogCmd('color atom', true);
+                //ic.legendClick = 1;
+                ic.setOptionCls.setOption('color', 'atom');
+                thisClass.setLogCmd('color atom', true);
             });
         //    },
         //    clkMn4_clrBfactor: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'b factor');
-               thisClass.setLogCmd('color b factor', true);
+                //ic.legendClick = 5;
+                ic.setOptionCls.setOption('color', 'b factor');
+                thisClass.setLogCmd('color b factor', true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-               ic.setOptionCls.setOption('color', 'confidence');
-               thisClass.setLogCmd('color confidence', true);
+                //ic.legendClick = 6;
+                ic.setOptionCls.setOption('color', 'confidence');
+                thisClass.setLogCmd('color confidence', true);
             });
 
         //    },
@@ -57581,7 +57618,10 @@ var icn3d = (function (exports) {
               let finalStr = (bSetCommand) ? str : '[comment] ' + str;
               ic.logs.push(finalStr);
               // move cursor to the end, and scroll to the end
-              $("#" + me.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+              $("#" + me.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ");
+              if($("#" + me.pre + "logtext")[0]) {
+                $("#" + me.pre + "logtext").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+              }
           }
           ic.setStyleCls.adjustIcon();
         }
@@ -58011,15 +58051,46 @@ var icn3d = (function (exports) {
         }
 
         //Set the textarea for the log output.
-        setLogWindow() { let me = this.icn3dui;
+        setLogWindow(bUpdate, bCmdWindowInput) { let me = this.icn3dui;
             if(me.bNode) return '';
 
-            let html = "";
+            let bCmdWindow, html = "";
 
-            html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
+            // check comand window 
+            let value = me.htmlCls.setHtmlCls.getCookie('cmdwindow');
+            if(value != '') {
+                bCmdWindow = (bCmdWindowInput !== undefined) ? bCmdWindowInput : parseInt(value);
+                if(bCmdWindow == 1) { // default 0
+                    me.htmlCls.LOG_HEIGHT = 180; //65;
+                    me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
 
-            html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
-            html += "</div>";
+                    if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+                    html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px;  margin: auto; padding: 5px; box-sizing: border-box; border: 4px inset orange; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+                }
+                else {
+                    me.htmlCls.LOG_HEIGHT = 65;
+                    me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
+
+                    if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+                    html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";                 
+                }
+            }
+            else {
+                bCmdWindow = 0;
+
+                me.htmlCls.LOG_HEIGHT = 65;
+                me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
+
+                if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+                html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+            }
+            
+            if(!bUpdate) html += "</div>";
+
+            if(bUpdate) {
+                me.htmlCls.clickMenuCls.setLogCmd('set cmdwindow ' + bCmdWindow, true);
+                $("#" + me.pre + "cmdlog").html(html);
+            }
 
             return html;
         }
@@ -59573,6 +59644,7 @@ var icn3d = (function (exports) {
             if(me.bNode) return;
 
             let status = {};
+            let id2flag = {};
 
             // determine whether dialogs initilaized
             let bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
@@ -59591,6 +59663,18 @@ var icn3d = (function (exports) {
             status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
             status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
 
+            id2flag.dl_selectannotations = 'bSelectannotationsInit2';
+            id2flag.dl_graph = 'bGraph2';
+            id2flag.dl_linegraph = 'bLineGraph2';
+            id2flag.dl_scatterplot = 'bScatterplot2';	
+            id2flag.dl_contactmap = 'bContactmap2';
+            id2flag.dl_alignerrormap = 'bAlignerrormap2';
+            id2flag.dl_interactionsorted = 'bTable2';
+            id2flag.dl_alignment = 'bAlignmentInit2';
+            id2flag.dl_2ddgm = 'bTwoddgmInit2';
+            id2flag.dl_2dctn = 'bTwodctnInit2';
+            id2flag.dl_definedsets = 'bSetsInit2';
+
             if(bSelectannotationsInit) status.bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
             if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
             if(bLineGraph) status.bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
@@ -59603,7 +59687,7 @@ var icn3d = (function (exports) {
             if(bTwodctnInit) status.bTwodctnInit2 = $('#' + me.pre + 'dl_2dctn').dialog( 'isOpen' );
             if(bSetsInit) status.bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-            return status;
+            return {status: status, id2flag: id2flag};
         }
 
         openDlgHalfWindow(id, title, dialogWidth, bForceResize) {  let me = this.icn3dui, ic = me.icn3d;
@@ -59639,17 +59723,23 @@ var icn3d = (function (exports) {
               modal: false,
               position: position,
               close: function(e) {
-                  let status = thisClass.getDialogStatus();
+                  let result = thisClass.getDialogStatus();
+                  let status = result.status;
+                  let id2flag = result.id2flag;
 
-                  if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) && !status.bTable2 && !status.bLineGraph2  && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bContactmap2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bAlignerrormap2)
-                    ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
-                    ) {
+                  // check the condition when all the rest dialogs are closed
+                  let bCheckAll = false;
+                  for(let idname in id2flag) {
+                    let bCheckRest = (id === me.pre + idname);
+                    for(let idstatus in status) {
+                        // just check the rest, not itself
+                        if(status.hasOwnProperty(idstatus)) continue;
+                        bCheckRest = bCheckRest && !status[idstatus];
+                    }
+                    bCheckAll = bCheckAll || bCheckRest;
+                  }
+
+                  if(bCheckAll) {
                       if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                           //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                           let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -59745,7 +59835,7 @@ var icn3d = (function (exports) {
               modal: false,
               position: position,
               close: function(e) {
-                  let status = thisClass.getDialogStatus();
+                  let status = thisClass.getDialogStatus().status;
 
                   if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
                         //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -59795,7 +59885,7 @@ var icn3d = (function (exports) {
             let width = 400, height = 150;
             let twoddgmWidth = me.htmlCls.width2d + 20;
 
-            let status = this.getDialogStatus();
+            let status = this.getDialogStatus().status;
 
             if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
                 //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
@@ -60440,14 +60530,15 @@ var icn3d = (function (exports) {
 
             html += "</div>";
 
-            html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
+            html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
             html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
             html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
             html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
             html += "<b>Structure ID</b>(NCBI protein accession of a chain of a 3D structure): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
             //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
             html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
-                + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Smith-Waterman</button>";
+                + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Global Smith-Waterman</button>"
+                + me.htmlCls.buttonStr + "reload_alignswlocal' style='margin-left:30px'>Align with Local Smith-Waterman</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
@@ -61208,7 +61299,7 @@ var icn3d = (function (exports) {
             html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbybfactor'>Apply</button><br/><br/>";
             html += "</div>";
 
-            html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px'>";
+            html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px; background-color:white'>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_disttable' class='" + dialogClass + "'>";
@@ -61385,6 +61476,7 @@ var icn3d = (function (exports) {
 
                 if(bAppend) {
                     if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                    //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
                     if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
                 }
            }
@@ -62254,6 +62346,21 @@ var icn3d = (function (exports) {
                 query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
                 
                 window.open(hostUrl + '?from=icn3d&alg=smithwm&blast_rep_id=' + blast_rep_id
+                  + '&query_id=' + query_id
+                  + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
+                  + blast_rep_id + '; show selection', '_blank');
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let query_id = $("#" + me.pre + "query_id").val();
+                let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
+                let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
+                me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
+                query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
+                
+                window.open(hostUrl + '?from=icn3d&alg=local_smithwm&blast_rep_id=' + blast_rep_id
                   + '&query_id=' + query_id
                   + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
                   + blast_rep_id + '; show selection', '_blank');
@@ -63350,6 +63457,7 @@ var icn3d = (function (exports) {
                 e.preventDefault();
 
                 me.htmlCls.setHtmlCls.setLineThickness("style");
+                me.htmlCls.setMenuCls.setLogWindow(true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "reset_thickness_3dprint", "click", function(e) { me.icn3d;
@@ -63361,6 +63469,7 @@ var icn3d = (function (exports) {
                 e.preventDefault();
 
                 me.htmlCls.setHtmlCls.setLineThickness("style", true);
+                me.htmlCls.setMenuCls.setLogWindow(true);
             });
 
         //    },
@@ -64159,6 +64268,7 @@ var icn3d = (function (exports) {
             let linerad =(type == '3dprint') ? '1' : '0.1';
             let coilrad =(type == '3dprint') ? '1.2' : '0.3';
             let stickrad =(type == '3dprint') ? '0.8' : '0.4';
+            let crosslinkrad =(type == '3dprint') ? '0.8' : '0.4';
             let tracerad =(type == '3dprint') ? '1' : '0.4';
             let ballscale =(type == '3dprint') ? '0.6' : '0.3';
             let ribbonthick =(type == '3dprint') ? '1' : '0.2';
@@ -64171,6 +64281,7 @@ var icn3d = (function (exports) {
             let light3 = 0.2;
             let bGlycansCartoon = 0;
             let bMembrane = 1;
+            let bCmdWindow = 0;
 
             // retrieve from cache
             if(type == 'style') {
@@ -64188,6 +64299,7 @@ var icn3d = (function (exports) {
                     linerad = parseFloat(this.getCookie('lineRadius'));
                     coilrad = parseFloat(this.getCookie('coilWidth'));
                     stickrad = parseFloat(this.getCookie('cylinderRadius'));
+                    crosslinkrad = parseFloat(this.getCookie('crosslinkRadius'));
                     tracerad = parseFloat(this.getCookie('traceRadius'));
                     ballscale = parseFloat(this.getCookie('dotSphereScale'));
                     ribbonthick = parseFloat(this.getCookie('ribbonthickness'));
@@ -64203,6 +64315,10 @@ var icn3d = (function (exports) {
                     bMembrane = parseFloat(this.getCookie('membrane'));
                 }
 
+                if(this.getCookie('cmdwindow') != '') {
+                    bCmdWindow = parseFloat(this.getCookie('cmdwindow'));
+                }
+
                 html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
                 html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
@@ -64216,6 +64332,7 @@ var icn3d = (function (exports) {
             html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
             html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
             html += "<b>Stick Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>" + me.htmlCls.space3 + "(for sticks, default 0.4)<br/>";
+            html += "<b>Cross-Linkage Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "crosslinkrad_" + type + "' value='" + crosslinkrad + "' size=4>" + me.htmlCls.space3 + "(for cross-linkages, default 0.4)<br/>";
             html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.4)<br/>";
 
             html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
@@ -64227,7 +64344,9 @@ var icn3d = (function (exports) {
             if(type == 'style') {
                 html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
 
-                html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/><br/>";
+                html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/>";
+
+                html += "<br><b>6. Enlarge Command Window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cmdwindow' value='" + bCmdWindow + "' size=4>" + me.htmlCls.space3 + "(0: Regular, 1: Large, default 0)<br/><br/>";
             }
 
             html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
@@ -64847,6 +64966,7 @@ var icn3d = (function (exports) {
                 this.setCookie('lineRadius', ic.lineRadius, exdays);
                 this.setCookie('coilWidth', ic.coilWidth, exdays);
                 this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+                this.setCookie('crosslinkRadius', ic.crosslinkRadius, exdays);
                 this.setCookie('traceRadius', ic.traceRadius, exdays);
                 this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
                 this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
@@ -64866,6 +64986,7 @@ var icn3d = (function (exports) {
                     $("#" + me.pre + "light3").val('0.2');
                     $("#" + me.pre + "glycan").val('0');
                     $("#" + me.pre + "membrane").val('1');
+                    $("#" + me.pre + "cmdwindow").val('0');
                 }
 
                 ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
@@ -64874,12 +64995,14 @@ var icn3d = (function (exports) {
                 ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
                 ic.bGlycansCartoon = parseInt($("#" + me.pre + "glycan").val()); //0;
                 ic.bMembrane = parseInt($("#" + me.pre + "membrane").val()); //1;
+                ic.bCmdWindow = parseInt($("#" + me.pre + "cmdwindow").val()); //0;
             }
 
             if(bReset) {
                 $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
                 $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
                 $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
+                $("#" + me.pre + "crosslinkrad_" + postfix ).val(0.4); //0.4; // cross-linkage
                 $("#" + me.pre + "tracerad_" + postfix ).val(0.4); //0.4; // style c alpha trace, nucleotide stick
                 $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
                 $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
@@ -64890,6 +65013,7 @@ var icn3d = (function (exports) {
             ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
             ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
             ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
+            ic.crosslinkRadius = parseFloat($("#" + me.pre + "crosslinkrad_" + postfix ).val()); //0.4; // cross-linkage
             ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.4; // style c alpha trace, nucleotide stick
             ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
             ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
@@ -64905,6 +65029,7 @@ var icn3d = (function (exports) {
                 this.setCookie('light3', ic.light3, exdays);
                 this.setCookie('glycan', ic.bGlycansCartoon, exdays);
                 this.setCookie('membrane', ic.bMembrane, exdays);
+                this.setCookie('cmdwindow', ic.bCmdWindow, exdays);
             }
 
             this.setCookieForThickness();
@@ -64916,10 +65041,11 @@ var icn3d = (function (exports) {
                ic.threeDPrintCls.resetAfter3Dprint();
             }
             else {
-                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | crosslinkrad ' + ic.crosslinkRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
 
                 me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);
                 me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + ic.bMembrane, true);
+                me.htmlCls.clickMenuCls.setLogCmd('set cmdwindow ' + ic.bCmdWindow, true);
             }
 
             ic.drawCls.draw();
@@ -64985,7 +65111,8 @@ var icn3d = (function (exports) {
         else {
             this.MENU_HEIGHT = 40;
         }
-        this.LOG_HEIGHT = 65; //40;
+        this.LOG_HEIGHT = 65; //65;
+
         // used to set the position for the log/command textarea
         this.MENU_WIDTH = 750;
         //The width (in px) that was left empty by the 3D viewer. The default is 20px.
@@ -65210,6 +65337,249 @@ var icn3d = (function (exports) {
         }
 
     }
+
+    /**
+     * @author Jack Lin <th3linja@yahoo.com> / https://github.com/ncbi/icn3d
+     */
+     
+     class LegendTable {
+         constructor(icn3d) {
+             this.icn3d = icn3d;
+         }
+
+         showColorLegend(colorType) { let  ic = this.icn3d, me = ic.icn3dui;
+            let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
+            if(colorType == 'confidence') {
+                colorLabel = 'AlphaFold Confidence';
+            }
+            else if(colorType == 'normalized hydrophobic') {
+                colorLabel = 'Normalized Hydrophobicity';
+            }
+
+            let  html = "Color by <b>" + colorLabel + "</b><br><br>";
+     
+            //if (ic.legendClick == 1){
+            if (colorType == 'atom'){  
+                let categoryArray = ['proteins', 'nucleotides', 'chemicals', 'ions', 'water'];
+                for(let i = 0, il = categoryArray.length; i < il; ++i) {
+                    let category = categoryArray[i];
+                    let atomHash = me.hashUtilsCls.intHash(ic[category], ic.hAtoms);
+                    html += this.getColorLegendForElem(category, atomHash);
+                }
+            }
+            //else if (ic.legendClick == 2){
+            else if (colorType == 'residue'){
+                html += this.getColorLegendForResidue(ic.hAtoms);
+            }
+            //else if (ic.legendClick == 3){
+            else if (colorType == 'charge'){
+                html += this.getColorLegendForCharge(ic.hAtoms);
+            }
+            //else if (ic.legendClick == 4){
+            else if (colorType == 'normalized hydrophobic') {
+                let resSet = this.getRes2color(ic.hAtoms);
+
+                // polar first - most to least
+                // create hydrophobic table
+                var items = Object.keys(resSet).map(
+                    (key) => { return [key, Object.keys(resSet[key])[0]] 
+                });
+
+                items.sort(
+                    (first, second) => { 
+                        return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
+                );
+
+                var keys = items.map(
+                    (e) => { return [e[0], e[1]]
+                });
+
+                html += "<div>";
+
+                let cnt = 0;
+                for (let key of keys) {
+                    html += "<div style='display:inline-block; width:100px'>";
+                    html += "<div style='width: 10px; height: 10px; background-color:#" + key[1] + "; border: 0px;display:inline-block;' ></div> ";
+                    html +=  key[0] + "</div>";
+
+                    if(cnt % 4 == 3) html += "<br>";
+
+                    ++cnt;
+                }
+                html += "</div>";
+            }
+            //else if (ic.legendClick == 5){
+            else if (colorType == 'b factor') {
+                html += me.htmlCls.clickMenuCls.setLegendHtml();
+            }
+            //else if (ic.legendClick == 6){
+            else if (colorType == 'confidence') {
+                html += me.htmlCls.clickMenuCls.setLegendHtml(true);
+            }
+
+            $("#" + me.pre + "dl_legend").html(html);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+         }
+
+         getColorLegendForElem(category, atomHash) { let ic = this.icn3d; ic.icn3dui;
+            let html = '';
+            let elemSet = {};
+
+            for (let serial in atomHash){
+                // atom = ic.atoms[Object.keys(atomHash)[k]];
+                let atom = ic.atoms[serial];
+                let temp = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                if (elemSet[atom.elem] === undefined){
+                    elemSet[atom.elem] = {};
+                }
+                elemSet[atom.elem][temp] = 1;
+            }
+
+            if(Object.keys(elemSet).length > 0) {
+                //html += "<button value='" + category + "' display='block'>" + category + "</button><br>";
+                html += "<b>" + category + "</b><br>";
+                let elemArray = Object.keys(elemSet).sort();
+                //for (let k in elemSet) {
+                for(let i = 0, il = elemArray.length; i < il; ++i) {
+                    let k = elemArray[i];
+
+                    html += "<span>";
+                    for (let v in elemSet[k]) {
+                        html += "<div style='width: 10px; height: 10px; background-color:#" + v + "; border: 0px;display:inline-block;' ></div> ";
+                    }
+                    html +=  k + "</span><br>";
+                }
+                html += "<br>";
+            }
+
+            return html;
+         }
+
+         getRes2color(atomHash) { let ic = this.icn3d; ic.icn3dui;
+            let resSet = {};
+
+            const residueAbbrev = {
+                ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
+                ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
+                GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
+                ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
+                MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
+                SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
+                TYR: "Y (Tyr)",       VAL: "V (Val)",       ASX: "B (Asx)",
+                GLX: "Z (Glx)",         'G': "Guanine",       'A': "Adenine",
+                'T': "Thymine",         'C': "Cytosine",       'U': "Uracile",
+                'DG': "dG",       'DA': "dA",      'DT': "dT",
+                'DC': "dC",       'DU': 'dU'
+            };
+
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
+            for(let resid in residueHash){
+                let atomHash = ic.residues[resid];
+
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
+                let resiLabel = residueAbbrev[atom.resn];
+                let temp = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                
+                if (resiLabel != undefined){
+                    if (resSet[resiLabel] === undefined){
+                        resSet[resiLabel] = {};
+                    }
+                    resSet[resiLabel][temp] = 1;
+                }
+            }
+
+            return resSet;
+         }
+
+         getColorLegendForResidue(atomHash) { let ic = this.icn3d; ic.icn3dui;
+            let html = '';
+
+            let resSet = this.getRes2color(atomHash);
+
+            if(Object.keys(resSet).length > 0) {
+                //html += "<button value='" + pdbid + "' display='block'>" + pdbid + "</button><br>";
+                html += "<div>";
+                let residueArray = Object.keys(resSet).sort();
+                //for (let k in resSet) {
+                let dnaHtml = '';
+                let cnt = 0;
+                for(let i = 0, il = residueArray.length; i < il; ++i) {
+                    let htmlTmp = '';
+                    let k = residueArray[i];
+                    htmlTmp += "<div style='display:inline-block; width:100px'>";
+                    for (let v in resSet[k]) {
+                        htmlTmp += "<div style='width: 10px; height: 10px; background-color:#" + v + "; border: 0px;display:inline-block;' ></div> ";
+                    }
+                    htmlTmp +=  k + "</div>";
+
+                    if(cnt % 4 == 3) htmlTmp += "<br>";
+
+                    if(k.indexOf('(') != -1) {
+                        html += htmlTmp;
+                        ++cnt;
+                    }
+                    else {
+                        dnaHtml += htmlTmp;
+                    }
+                }
+
+                if(dnaHtml) html += "<br>" + dnaHtml;
+
+                html += "</div>";
+            }
+
+            return html;
+         }
+
+         getColorLegendForCharge(atomHash) { let ic = this.icn3d; ic.icn3dui;
+            let html = '';
+
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
+
+            let chargeHash = {};
+            for(let resid in residueHash){
+                let atomHash = ic.residues[resid];
+
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
+                if(atom.resn == 'ARG' || atom.resn == 'LYS') {
+                    chargeHash['Postive'] = 1;
+                }
+                else if(atom.resn == 'HIS') {
+                    chargeHash['Partial-Positive'] = 1;
+                }
+                else if(atom.resn == 'ASP' || atom.resn == 'GLU' || ic.nucleotides[atom.serial]) {
+                    chargeHash['Negative'] = 1;
+                }
+                else {
+                    chargeHash['Neutral'] = 1;
+                }
+            }
+
+            const charge2color = {
+                "Postive": "0000ff",
+                "Partial-Positive": "8080ff",
+                "Negative": "ff0000",
+                "Neutral": "888888"
+            };
+
+            let chargeOrder = ["Postive", "Partial-Positive", "Negative", "Neutral"];
+     
+            html += "<div>";
+            for (let i = 0, il = chargeOrder.length; i < il; ++i) {
+                let charge = chargeOrder[i];
+                if (chargeHash[charge]){
+                    html += "<span>";
+                    html += "<div style='width: 10px; height: 10px; background-color:#" + charge2color[charge] + "; border: 0px;display:inline-block;' ></div> ";
+                    html += charge;
+                    html +=  "</span><br>";
+                }
+            }
+            html += "<br>(Charges are at pH 7)";
+            html += "</div>";
+
+            return html;
+         }
+     }
 
     /**
      * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
@@ -67902,8 +68272,30 @@ var icn3d = (function (exports) {
                 let domainid = domainid_index[0];
                 let chainid = domainid.split('-')[0];
 
+                // must contain Ig B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+                let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
+                for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
+                    let seg = queryData[0].segs[i];
+                    if(seg.q_start.indexOf('2050') != -1) {
+                        bBstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('3050') != -1) {
+                        bCstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('5050') != -1) {
+                        bEstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('6050') != -1) {
+                        bFstrand = true;
+                    }
+
+                    if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+                }
+                if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
+
                 if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                     domainid2score[domainid] = queryData[0].score;
+    console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);                
                     ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
                     domainid2segs[domainid] = queryData[0].segs;
                     ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
@@ -68001,7 +68393,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        alignSW(target, query, match_score, mismatch, gap, extension, is_local = false) { let ic = this.icn3d; ic.icn3dui;
+        alignSW(target, query, match_score, mismatch, gap, extension, is_local) { let ic = this.icn3d; ic.icn3dui;
             //let time_start = new Date().getTime();
 
             let rst = this.bsa_align(is_local, target, query, [match_score, mismatch], [gap, extension]);
@@ -68989,7 +69381,10 @@ var icn3d = (function (exports) {
         this.lineRadius = 0.1; // hbonds, distance lines
         //This is the coil radius for coils. It's 0.3 by default.
         this.coilWidth = 0.3; //0.4; // style cartoon-coil
+        //This is the stick radius. It's 0.4 by default.
         this.cylinderRadius = 0.4; // style stick
+        //This is the cross-linkage radius. It's 0.4 by default.
+        this.crosslinkRadius = 0.4; // cross-linkage
         //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
         this.traceRadius = 0.4; //0.4; // c alpha trace, nucleotide stick
         //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
@@ -69359,6 +69754,7 @@ var icn3d = (function (exports) {
 
         this.applyCommandCls = new ApplyCommand(this);
         this.definedSetsCls = new DefinedSets(this);
+        this.legendTableCls = new LegendTable(this);
         this.loadScriptCls = new LoadScript(this);
         this.selByCommCls = new SelectByCommand(this);
         this.selectionCls = new Selection(this);
@@ -69513,6 +69909,7 @@ var icn3d = (function (exports) {
 
         this.bGlycansCartoon = 0;
         this.bMembrane = 1;
+        this.bCmdWindow = 0;
 
         this.chainid2offset = {};
 
@@ -69600,7 +69997,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.17.0';
+        this.REVISION = '3.18.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -69905,9 +70302,14 @@ var icn3d = (function (exports) {
                 ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
                 ic.bSmithwm = true;
                }
+               else if(me.cfg.alg == 'local_smithwm') {
+                ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                ic.bLocalSmithwm = true;
+               }
                else {
                 ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
                 ic.bSmithwm = false;
+                ic.bLocalSmithwm = false;
                }
                
                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);

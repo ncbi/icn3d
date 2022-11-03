@@ -14,7 +14,7 @@ class AlignSW {
         this.icn3d = icn3d;
     }
 
-    alignSW(target, query, match_score, mismatch, gap, extension, is_local = false) { let ic = this.icn3d, me = ic.icn3dui;
+    alignSW(target, query, match_score, mismatch, gap, extension, is_local) { let ic = this.icn3d, me = ic.icn3dui;
         //let time_start = new Date().getTime();
 
         let rst = this.bsa_align(is_local, target, query, [match_score, mismatch], [gap, extension]);

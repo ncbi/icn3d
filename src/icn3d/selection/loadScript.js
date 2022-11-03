@@ -898,10 +898,15 @@ class LoadScript {
         }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
+          ic.bLocalSmithwm = false;
           ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load seq_struct_ids_smithwm ') !== -1) {
             ic.bSmithwm = true;
+            ic.mmdbParserCls.downloadBlast_rep_id(id);
+        }
+        else if(command.indexOf('load seq_struct_ids_local_smithwm ') !== -1) {
+            ic.bLocalSmithwm = true;
             ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load cid') !== -1) {

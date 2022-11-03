@@ -166,6 +166,7 @@ class Events {
 
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
                 if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
             }
        }
@@ -1035,6 +1036,21 @@ class Events {
             query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
             
             window.open(hostUrl + '?from=icn3d&alg=smithwm&blast_rep_id=' + blast_rep_id
+              + '&query_id=' + query_id
+              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
+              + blast_rep_id + '; show selection', '_blank');
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let query_id = $("#" + me.pre + "query_id").val();
+            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
+            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
+            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
+            
+            window.open(hostUrl + '?from=icn3d&alg=local_smithwm&blast_rep_id=' + blast_rep_id
               + '&query_id=' + query_id
               + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
               + blast_rep_id + '; show selection', '_blank');
@@ -2133,6 +2149,7 @@ class Events {
             e.preventDefault();
 
             me.htmlCls.setHtmlCls.setLineThickness("style");
+            me.htmlCls.setMenuCls.setLogWindow(true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reset_thickness_3dprint", "click", function(e) { let ic = me.icn3d;
@@ -2144,6 +2161,7 @@ class Events {
             e.preventDefault();
 
             me.htmlCls.setHtmlCls.setLineThickness("style", true);
+            me.htmlCls.setMenuCls.setLogWindow(true);
         });
 
     //    },

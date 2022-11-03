@@ -60,7 +60,7 @@ class ApplyClbonds {
                     line.position2 = ic.atoms[line.serial2].coord;
 
                     ic.lines['clbond'].push(line);
-                    ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
+                    ic.cylinderCls.createCylinder(line.position1, line.position2, ic.crosslinkRadius, colorObj);
 
                     // show stick for these two residues
                     let residueAtoms = {};

@@ -426,15 +426,46 @@ class SetMenu {
     }
 
     //Set the textarea for the log output.
-    setLogWindow() { let me = this.icn3dui;
+    setLogWindow(bUpdate, bCmdWindowInput) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        let html = "";
+        let bCmdWindow, html = "";
 
-        html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
+        // check comand window 
+        let value = me.htmlCls.setHtmlCls.getCookie('cmdwindow');
+        if(value != '') {
+            bCmdWindow = (bCmdWindowInput !== undefined) ? bCmdWindowInput : parseInt(value);
+            if(bCmdWindow == 1) { // default 0
+                me.htmlCls.LOG_HEIGHT = 180; //65;
+                me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
 
-        html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
-        html += "</div>";
+                if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+                html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px;  margin: auto; padding: 5px; box-sizing: border-box; border: 4px inset orange; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+            }
+            else {
+                me.htmlCls.LOG_HEIGHT = 65;
+                me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
+
+                if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+                html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";                 
+            }
+        }
+        else {
+            bCmdWindow = 0;
+
+            me.htmlCls.LOG_HEIGHT = 65;
+            me.htmlCls.CMD_HEIGHT = 0.8*me.htmlCls.LOG_HEIGHT;
+
+            if(!bUpdate) html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: 5px; width: 100%;'>";
+            html += "<textarea id='" + me.pre + "logtext' rows='2' style='width: 100%; height: " + me.htmlCls.CMD_HEIGHT + "px; padding: 0px; border: 0px; background-color: " + me.htmlCls.GREYD + ";'></textarea>";
+        }
+        
+        if(!bUpdate) html += "</div>";
+
+        if(bUpdate) {
+            me.htmlCls.clickMenuCls.setLogCmd('set cmdwindow ' + bCmdWindow, true);
+            $("#" + me.pre + "cmdlog").html(html);
+        }
 
         return html;
     }
