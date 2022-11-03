@@ -18965,8 +18965,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('residue');
-
                 break;
 
             case 'residue custom':
@@ -19051,8 +19049,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('charge');
-
                 break;
             case 'hydrophobic':
                 for (let i in atoms) {
@@ -19074,8 +19070,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('normalized hydrophobic');
-
                 break;
             case 'atom':
                 for (let i in atoms) {
@@ -19084,8 +19078,6 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
-
-                ic.legendTableCls.showColorLegend('atom');
 
                 break;
 
@@ -19115,8 +19107,6 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
 
-                ic.legendTableCls.showColorLegend('confidence');
-
                 break;
 
             case 'b factor':
@@ -19145,8 +19135,6 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
-
-                ic.legendTableCls.showColorLegend('b factor');
 
                 break;
 
@@ -19278,6 +19266,8 @@ class SetColor {
 
                 break;
         }
+
+        ic.legendTableCls.showColorLegend(options.color.toLowerCase());
       }
      }
     }
@@ -65345,6 +65335,8 @@ class Alternate {
      }
 
      showColorLegend(colorType) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bClose = false;
+
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
         if(colorType == 'confidence') {
             colorLabel = 'AlphaFold Confidence';
@@ -65413,9 +65405,17 @@ class Alternate {
         else if (colorType == 'confidence') {
             html += me.htmlCls.clickMenuCls.setLegendHtml(true);
         }
+        else {
+            bClose = true;
+        }
 
-        $("#" + me.pre + "dl_legend").html(html);
-        me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+        if(bClose) {
+            if(window.dialog) window.dialog.dialog( "close" );
+        }
+        else {
+            $("#" + me.pre + "dl_legend").html(html);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+        }
      }
 
      getColorLegendForElem(category, atomHash) { let ic = this.icn3d; ic.icn3dui;
@@ -68269,7 +68269,8 @@ class Vastplus {
             let domainid = domainid_index[0];
             let chainid = domainid.split('-')[0];
 
-            // must contain Ig B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            // Ig-like domains: B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            // Ig domain may require G (7050). But we'll leave that out for now.
             let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
             for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                 let seg = queryData[0].segs[i];
@@ -68285,9 +68286,14 @@ class Vastplus {
                 else if(seg.q_start.indexOf('6050') != -1) {
                     bFstrand = true;
                 }
+                // else if(seg.q_start.indexOf('7050') != -1) {
+                //     bGstrand = true;
+                // }
 
+                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                 if(bBstrand && bCstrand && bEstrand && bFstrand) break;
             }
+            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
             if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
 
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {

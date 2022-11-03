@@ -181,8 +181,9 @@
             let domainid = domainid_index[0];
             let chainid = domainid.split('-')[0];
 
-            // must contain Ig B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
-            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
+            // Ig-like domains: B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            // Ig domain may require G (7050). But we'll leave that out for now.
+            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
             for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                 let seg = queryData[0].segs[i];
                 if(seg.q_start.indexOf('2050') != -1) {
@@ -197,9 +198,14 @@
                 else if(seg.q_start.indexOf('6050') != -1) {
                     bFstrand = true;
                 }
+                // else if(seg.q_start.indexOf('7050') != -1) {
+                //     bGstrand = true;
+                // }
 
+                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                 if(bBstrand && bCstrand && bEstrand && bFstrand) break;
             }
+            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
             if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
 
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {

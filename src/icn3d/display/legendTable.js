@@ -19,6 +19,8 @@
      }
 
      showColorLegend(colorType) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bClose = false;
+
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
         if(colorType == 'confidence') {
             colorLabel = 'AlphaFold Confidence';
@@ -87,9 +89,17 @@
         else if (colorType == 'confidence') {
             html += me.htmlCls.clickMenuCls.setLegendHtml(true);
         }
+        else {
+            bClose = true;
+        }
 
-        $("#" + me.pre + "dl_legend").html(html);
-        me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+        if(bClose) {
+            if(window.dialog) window.dialog.dialog( "close" );
+        }
+        else {
+            $("#" + me.pre + "dl_legend").html(html);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+        }
      }
 
      getColorLegendForElem(category, atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
