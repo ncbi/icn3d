@@ -65409,15 +65409,15 @@ var icn3d = (function (exports) {
                 html += me.htmlCls.clickMenuCls.setLegendHtml(true);
             }
             else {
+                html = '';
                 bClose = true;
             }
 
+            $("#" + me.pre + "dl_legend").html(html);
+            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+
             if(bClose) {
                 if(window.dialog) window.dialog.dialog( "close" );
-            }
-            else {
-                $("#" + me.pre + "dl_legend").html(html);
-                me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
             }
          }
 
