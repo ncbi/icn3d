@@ -55,9 +55,11 @@ class Dssp {
       $.when.apply(undefined, ajaxArray).then(function() {
           let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parseDsspData(dataArray, struArray, bAppend);
-
+          
           if(!ic.bCheckMemProtein) {
-            ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+            ic.ParserUtilsCls.checkMemProtein(afid);
             ic.bCheckMemProtein = true;
           }
       })

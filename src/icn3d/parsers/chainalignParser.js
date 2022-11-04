@@ -985,7 +985,6 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
         
-        // calculate secondary structures with applyCommandDssp
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
@@ -1003,19 +1002,14 @@ class ChainalignParser {
             // VAST+ on the fly
             let structArray = Object.keys(ic.structures);
             ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
-
-            //ic.pdbParserCls.loadPdbDataRender(true);
-        }
-        else {
-            //ic.pdbParserCls.applyCommandDssp(true);
         }
 
-        if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
-            ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
-        }
-        else {
-            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-        }
+        // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
+        //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
+        // }
+        // else {
+        //     if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        // }
     }
 }
 

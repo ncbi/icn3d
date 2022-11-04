@@ -445,7 +445,7 @@ class SetColor {
             case 'confidence':
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
-                    if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                    if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0) { // invalid b-factor
                         atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                     }
                     else {
@@ -479,7 +479,7 @@ class SetColor {
 
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
-                    if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                    if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0) { // invalid b-factor
                         atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                     }
                     else {
@@ -520,7 +520,7 @@ class SetColor {
                 let totalCnt = ic.bfactorArray.length;
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
-                    if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || ic.bfactorArray.length == 0) { // invalid b-factor
+                    if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0 || ic.bfactorArray.length == 0) { // invalid b-factor
                         atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                     }
                     else {
