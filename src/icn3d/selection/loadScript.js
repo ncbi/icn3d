@@ -39,6 +39,8 @@ class LoadScript {
 
     //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
     loadScript(dataStr, bStatefile, bStrict) { let  ic = this.icn3d, me = ic.icn3dui;
+      if(!dataStr) return;
+      
       // allow the "loading structure..." message to be shown while loading script
       ic.bCommandLoad = true;
 

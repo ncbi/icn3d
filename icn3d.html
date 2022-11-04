@@ -20,8 +20,8 @@
 <link rel="stylesheet" href="icn3d.css">
 <script src="lib/jquery-3.5.0.min.js"></script>
 <script src="lib/jquery-ui-1.13.2.min.js"></script>
-<script src="lib/three_0.137.0.min.js"></script>
-<script src="icn3d.min.js"></script>
+<!---script src="lib/three_0.137.0.min.js"></script>
+<script--- src="icn3d.min.js"></script--->
 
 <style type="text/css">
 /* header */
@@ -71,9 +71,10 @@ pre span {color: red;}
 </style>
 
 <script type="text/javascript">
+   
     $( document ).ready(function() {
       $("accordion").show();
-
+/*
       var cfg = {
           divid: 'icn3dwrap',
           width: 400,
@@ -89,7 +90,7 @@ pre span {color: red;}
 
       var icn3dui = new icn3d.iCn3DUI(cfg);
       icn3dui.show3DStructure();
-    }); // document ready
+*/      
 
         // mn display
         $("accordion").accordion({ collapsible: true, active: false, heightStyle: "content"});
@@ -101,7 +102,7 @@ pre span {color: red;}
         $("#icn3d-accordion1").hover( function(){ $("#icn3d-accordion1 div").css("display", "block"); }, function(){ $("#icn3d-accordion1 div").css("display", "none"); } );
         $("#icn3d-accordion2").hover( function(){ $("#icn3d-accordion2 div").css("display", "block"); }, function(){ $("#icn3d-accordion2 div").css("display", "none"); } );
         $("#icn3d-accordion3").hover( function(){ $("#icn3d-accordion3 div").css("display", "block"); }, function(){ $("#icn3d-accordion3 div").css("display", "none"); } );
-
+    }); // document ready
 </script>
 
 </head>
@@ -202,10 +203,10 @@ pre span {color: red;}
 
 <h3>What is iCn3D Structure Viewer?</h3>
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
-<br/>
+<!---br/>
 <br/>
 <div id="icn3dwrap" style="font-size: 0.8em; width:420px"></div>
-<br/>
+<br/--->
 
 <ol>
 <li><b>View a 3D structure in iCn3D</b><br/>

@@ -736,7 +736,7 @@ class ParserUtils {
                 // do nothing
                 if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               }
-              else if (me.cfg.afmem == 'on' || confirm(question)) {
+              else if (me.cfg.afmem == 'on' || confirm(question)) {           
                 let  url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
                 $.ajax({
                   url: url2,

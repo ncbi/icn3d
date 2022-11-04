@@ -308,7 +308,7 @@ class RealignParser {
             ic.selectionCls.selectAll_base();
 
             ic.opts['chemicals'] = 'stick';  
-            ic.opts['color'] = 'structure';
+            ic.opts['color'] = 'confidence'; //'structure';
 
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         }
@@ -332,6 +332,7 @@ class RealignParser {
             ic.transformCls.setRotation(axis, angle);
         }
                
+        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
       }
       else {

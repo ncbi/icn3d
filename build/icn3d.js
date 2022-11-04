@@ -19087,7 +19087,7 @@ var icn3d = (function (exports) {
                 case 'confidence':
                     for (let i in atoms) {
                         let atom = ic.atoms[i];
-                        if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                        if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0) { // invalid b-factor
                             atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                         }
                         else {
@@ -19121,7 +19121,7 @@ var icn3d = (function (exports) {
 
                     for (let i in atoms) {
                         let atom = ic.atoms[i];
-                        if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                        if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0) { // invalid b-factor
                             atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                         }
                         else {
@@ -19162,7 +19162,7 @@ var icn3d = (function (exports) {
                     let totalCnt = ic.bfactorArray.length;
                     for (let i in atoms) {
                         let atom = ic.atoms[i];
-                        if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || ic.bfactorArray.length == 0) { // invalid b-factor
+                        if(atom.b === undefined || isNaN(atom.b) || parseInt(atom.b * 1000) == 0 || ic.bfactorArray.length == 0) { // invalid b-factor
                             atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                         }
                         else {
@@ -23638,9 +23638,11 @@ var icn3d = (function (exports) {
           $.when.apply(undefined, ajaxArray).then(function() {
               let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
               thisClass.parseDsspData(dataArray, struArray, bAppend);
-
+              
               if(!ic.bCheckMemProtein) {
-                ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+                let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+                ic.ParserUtilsCls.checkMemProtein(afid);
                 ic.bCheckMemProtein = true;
               }
           })
@@ -23972,7 +23974,9 @@ var icn3d = (function (exports) {
             }
             else {
                 this.loadPdbDataRender(bAppend);
-                ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+                let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+                ic.ParserUtilsCls.checkMemProtein(afid);
 
                 if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
             }
@@ -25763,7 +25767,7 @@ var icn3d = (function (exports) {
                 ic.selectionCls.selectAll_base();
 
                 ic.opts['chemicals'] = 'stick';  
-                ic.opts['color'] = 'structure';
+                ic.opts['color'] = 'confidence'; //'structure';
 
                 ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
             }
@@ -25787,6 +25791,7 @@ var icn3d = (function (exports) {
                 ic.transformCls.setRotation(axis, angle);
             }
                    
+            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
             if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
           }
           else {
@@ -27180,7 +27185,6 @@ var icn3d = (function (exports) {
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }
             
-            // calculate secondary structures with applyCommandDssp
             if(bQuery && me.cfg.matchedchains) {          
                // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                     let bRealign = true, bPredefined = true;
@@ -27198,17 +27202,14 @@ var icn3d = (function (exports) {
                 // VAST+ on the fly
                 let structArray = Object.keys(ic.structures);
                 ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
+            }
 
-                //ic.pdbParserCls.loadPdbDataRender(true);
-            }
-            else ;
-
-            if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
-                ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
-            }
-            else {
-                if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-            }
+            // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
+            //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
+            // }
+            // else {
+            //     if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            // }
         }
     }
 
@@ -28424,6 +28425,8 @@ var icn3d = (function (exports) {
 
         //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
         loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d; ic.icn3dui;
+          if(!dataStr) return;
+          
           // allow the "loading structure..." message to be shown while loading script
           ic.bCommandLoad = true;
 
@@ -38438,7 +38441,7 @@ var icn3d = (function (exports) {
                     // do nothing
                     if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                   }
-                  else if (me.cfg.afmem == 'on' || confirm(question)) {
+                  else if (me.cfg.afmem == 'on' || confirm(question)) {           
                     let  url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
                     $.ajax({
                       url: url2,

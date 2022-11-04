@@ -216,7 +216,9 @@ class PdbParser {
         }
         else {
             this.loadPdbDataRender(bAppend);
-            ic.ParserUtilsCls.checkMemProtein(me.cfg.afid);
+            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+            ic.ParserUtilsCls.checkMemProtein(afid);
 
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
