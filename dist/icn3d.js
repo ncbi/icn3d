@@ -25297,8 +25297,10 @@ var icn3d = (function (exports) {
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
             }
 
+            ic.ParserUtilsCls.renderStructure();
+
             if(type === undefined) {
-                ic.ParserUtilsCls.renderStructure();
+                //ic.ParserUtilsCls.renderStructure();
                 if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
                 ic.html2ddgm = '';
@@ -27177,14 +27179,14 @@ var icn3d = (function (exports) {
                     let bNoDssp = false; // get secondary structure info
                     hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
                 }
-                else {         
+                else {
                     let bNoSeqalign = true;
                     hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
                 }
                         
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }
-            
+
             if(bQuery && me.cfg.matchedchains) {          
                // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                     let bRealign = true, bPredefined = true;
@@ -27203,6 +27205,8 @@ var icn3d = (function (exports) {
                 let structArray = Object.keys(ic.structures);
                 ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
             }
+
+            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
 
             // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
             //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
@@ -38434,7 +38438,7 @@ var icn3d = (function (exports) {
               dataType: 'jsonp',
               cache: true,
               success: function(data) {
-                if(data.pdbid) {
+                if(data && data.pdbid) {
                   let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
                  
                   if (me.cfg.afmem == 'off') {
