@@ -729,7 +729,7 @@ class ParserUtils {
           dataType: 'jsonp',
           cache: true,
           success: function(data) {
-            if(data.pdbid) {
+            if(data && data.pdbid) {
               let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
              
               if (me.cfg.afmem == 'off') {
