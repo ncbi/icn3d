@@ -985,6 +985,12 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
+        // parseMmdbData() didn't render structures for mmdbafid input
+        if(structArray.length > 1) ic.opts['color'] = 'structure';
+        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.ParserUtilsCls.renderStructure();
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
@@ -1004,7 +1010,7 @@ class ChainalignParser {
             ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
         }
 
-        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        // if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
 
         // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
         //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);

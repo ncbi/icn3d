@@ -317,6 +317,7 @@ class SetDialog {
         html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
         html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
         html += me.htmlCls.optionStr + "'icn3dpng'>iCn3D PNG</option>";
+        html += me.htmlCls.optionStr + "'pae'>AlphaFold PAE</option>";
         html += "</select><br/>";
         html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "urlfile' size=20><br/> ";
         html += me.htmlCls.buttonStr + "reload_urlfile'>Load</button>";
@@ -1165,12 +1166,8 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
-        if(me.cfg.opmid !== undefined) {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
-        else {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none; white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
+
         html += "<td></td>";
         html += "</tr></table></div></div>";
 

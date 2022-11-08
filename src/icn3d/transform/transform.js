@@ -153,10 +153,10 @@ class Transform {
     }
 
     setRotation(axis, angle) { let  ic = this.icn3d, me = ic.icn3dui;
-      if(ic.bControlGl && !me.bNode) {
+      if(ic.bControlGl && !me.bNode && window.cam) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
-      else {
+      else if(ic.cam) {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
@@ -167,10 +167,10 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !me.bNode) {
-          window.controls.update(para);
+      if(ic.bControlGl && !me.bNode && window.controls) {
+        window.controls.update(para);
       }
-      else {
+      else if(ic.controls) {
           ic.controls.update(para);
       }
 

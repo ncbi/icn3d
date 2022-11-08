@@ -203,6 +203,20 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
+    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
+        let flag = bBiounit ? '1' : '0';
+
+        let idArray = ids.split(',');
+        if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
+            window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
+        }
+        else {
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf" + flag + " " + ids, false);
+            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, '_blank');
+        }
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -976,19 +990,16 @@ class Events {
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
 
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + ids, false);
-            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=1', '_blank');
+            thisClass.launchMmdb(ids, 1, hostUrl);
         });
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
-             e.preventDefault();
-             //if(!me.cfg.notebook) dialog.dialog( "close" );
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
-             // remove space
-             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
-
-             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + ids, false);
-             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=0', '_blank');
+            // remove space
+            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+            thisClass.launchMmdb(ids, 0, hostUrl);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
@@ -1003,9 +1014,9 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mmdbafid", "keyup", function(e) { let ic = me.icn3d;
             if (e.keyCode === 13) {
                 e.preventDefault();
-                //if(!me.cfg.notebook) dialog.dialog( "close" );
-                me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
-                window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+                
+                let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+                thisClass.launchMmdb(ids, 0, hostUrl);
                }
          });
 

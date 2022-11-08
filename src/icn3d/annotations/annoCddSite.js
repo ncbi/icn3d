@@ -524,7 +524,7 @@ class AnnoCddSite {
               else {
                 title = 'Residue ' + resid + ' has connection with';
                 let cltitle = '';
-                if(resid2resids[resid] !== undefined) {
+                if(resid2resids && resid2resids[resid] !== undefined) {
                     for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
                       cltitle += ' residue ' + resid2resids[resid][j];
                     }

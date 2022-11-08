@@ -33,7 +33,7 @@ Examples
 
 * <b>Retrieve Annotations for PDB or AlphaFold Structures</b>
 
-    In the command line, run the following command with the annotation type defined as: "1" for SNPs, "2 for ClinVar, "3" for Conserved Domains, "4" for Functional Sites, "5" for 3D Domains, "6" for Interactions, "7" for Disulfide Bonds, "8" for Cross-Linkages, and "9" for Post-Translational Modification (PTM). 
+    In the command line, run the following command with the annotation type defined as: "1" for SNPs, "2 for ClinVar, "3" for Conserved Domains, "4" for Functional Sites, "5" for 3D Domains, "6" for Interactions, "7" for Disulfide Bonds, "8" for Cross-Linkages, "9" for Post-Translational Modification (PTM), and "10" for transmembrane region.
 
         node annotation.js Q08426 1
 

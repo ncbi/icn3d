@@ -23633,15 +23633,10 @@ class Dssp {
       //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
       $.when.apply(undefined, ajaxArray).then(function() {
-          let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parseDsspData(dataArray, struArray, bAppend);
-          
-          if(!ic.bCheckMemProtein) {
-            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
-
-            ic.ParserUtilsCls.checkMemProtein(afid);
-            ic.bCheckMemProtein = true;
-          }
+            let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
+            thisClass.parseDsspData(dataArray, struArray, bAppend);
+            
+            ic.ParserUtilsCls.checkMemProteinAndRotate();
       })
       .fail(function() {
           console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
@@ -23844,7 +23839,8 @@ class PdbParser {
     }
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
-    //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
+    //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
+    //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
     downloadUrl(url, type, command) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
@@ -23883,14 +23879,6 @@ class PdbParser {
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command, undefined, true);
-
-                // rotate for links from Membranome
-                if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
-                    let  axis = new THREE.Vector3(1,0,0);
-                    let  angle = -90 / 180.0 * Math.PI;
-
-                    ic.transformCls.setRotation(axis, angle);
-                }
             }
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.parseMmcifData(data, undefined, command);
@@ -23908,8 +23896,12 @@ class PdbParser {
                 ic.mmcifParserCls.loadMmcifData(data);
             }
             else if(type === 'icn3dpng') {
-                ic.mmcifParserCls.loadMmcifData(data);
                 me.htmlCls.setHtmlCls.loadPng(data, command);
+            }
+            else if(type === 'pae') {
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
+                let bFull = true;
+                ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
             }
           },
           error : function(xhr, textStatus, errorThrown ) {
@@ -23971,9 +23963,8 @@ class PdbParser {
         }
         else {
             this.loadPdbDataRender(bAppend);
-            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
-            ic.ParserUtilsCls.checkMemProtein(afid);
+            ic.ParserUtilsCls.checkMemProteinAndRotate();
 
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
@@ -25294,10 +25285,8 @@ class MmdbParser {
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
         }
 
-        ic.ParserUtilsCls.renderStructure();
-
         if(type === undefined) {
-            //ic.ParserUtilsCls.renderStructure();
+            ic.ParserUtilsCls.renderStructure();
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             ic.html2ddgm = '';
@@ -27184,6 +27173,12 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
+        // parseMmdbData() didn't render structures for mmdbafid input
+        if(structArray.length > 1) ic.opts['color'] = 'structure';
+        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.ParserUtilsCls.renderStructure();
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 let bRealign = true, bPredefined = true;
@@ -27203,7 +27198,7 @@ class ChainalignParser {
             ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
         }
 
-        if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        // if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
 
         // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
         //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
@@ -33643,7 +33638,7 @@ class AnnoCddSite {
               else {
                 title = 'Residue ' + resid + ' has connection with';
                 let cltitle = '';
-                if(resid2resids[resid] !== undefined) {
+                if(resid2resids && resid2resids[resid] !== undefined) {
                     for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
                       cltitle += ' residue ' + resid2resids[resid][j];
                     }
@@ -38095,7 +38090,7 @@ class ParserUtils {
           $("#" + ic.pre + "togglememli").show();
           $("#" + ic.pre + "adjustmemli").show();
           $("#" + ic.pre + "selectplaneli").show();
-          $("#" + ic.pre + "anno_transmemli").show();
+          //$("#" + ic.pre + "anno_transmemli").show();
       }
       else {
           ic.bOpm = false;
@@ -38166,7 +38161,7 @@ class ParserUtils {
                   $("#" + ic.pre + "togglememli").show();
                   $("#" + ic.pre + "adjustmemli").show();
                   $("#" + ic.pre + "selectplaneli").show();
-                  $("#" + ic.pre + "anno_transmemli").show();
+                  //$("#" + ic.pre + "anno_transmemli").show();
               }
               else {
                   ic.bOpm = false;
@@ -38426,6 +38421,23 @@ class ParserUtils {
         return maxD;
     }
 
+    checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
+        if(!ic.bCheckMemProtein) {
+            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+            ic.ParserUtilsCls.checkMemProtein(afid);
+            ic.bCheckMemProtein = true;
+        }
+
+        // rotate for links from Membranome
+        if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+            let  axis = new THREE.Vector3(1,0,0);
+            let  angle = -90 / 180.0 * Math.PI;
+
+            ic.transformCls.setRotation(axis, angle);
+        }
+    }
+
     checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
       //ic.deferredAfMem = $.Deferred(function() {
         let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
@@ -38466,7 +38478,7 @@ class ParserUtils {
                       let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
                                                     //the second range is the range of the helix
                       let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
-                      let start_end = range.split('-');
+                      ic.afmem_start_end = range.split('-');
 
                       ic.hAtoms = {};
                       ic.dAtoms = {};
@@ -38480,7 +38492,7 @@ class ParserUtils {
                       }
 
                       // get the transmembrane from the model of Membranome
-                      for(let i = parseInt(start_end[0]); i <= parseInt(start_end[1]); ++i) {
+                      for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                       }
 
@@ -40200,15 +40212,19 @@ class AnnoPTM {
     }
 
     //Show the annotations of CDD domains and binding sites.
-    showPTM(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+    showPTM(chnid, chnidBase, type, begin, end) { let ic = this.icn3d; ic.icn3dui;
         let thisClass = this;
 
         // UniProt ID
         let structure = chnid.substr(0, chnid.indexOf('_'));
         let chain = chnid.substr(chnid.indexOf('_') + 1);
 
+        if(type == 'afmem') {
+            let ptmHash = {'Transmembrane': [{'begin': begin, 'end': end}]};
+            this.setAnnoPtmTransmem('transmem', ptmHash, chnid);        
+        }
         // UniProt ID
-        if( structure.length > 5 ) {
+        else if( structure.length > 5 ) {
             let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
             $.ajax({
               url: url,
@@ -40217,7 +40233,7 @@ class AnnoPTM {
               tryCount : 0,
               retryLimit : 0, //1
               success: function(data) {
-                thisClass.parsePTM(data, chnid);
+                thisClass.parsePTM(data, chnid, type);
                 if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
               },
               error : function(xhr, textStatus, errorThrown ) {
@@ -40250,11 +40266,9 @@ class AnnoPTM {
                 if(!ic.UPResi2ResiPosPerChain) ic.UPResi2ResiPosPerChain = {};
                 ic.UPResi2ResiPosPerChain[chnid] = {};
                 let mapping = dataMap[structLower].UniProt;
-
-                let bFound = false;
                 for(let up in mapping) {
                     let chainArray = mapping[up].mappings;
-                    if(bFound) break;
+                    //if(bFound) break;
 
                     for(let i = 0, il = chainArray.length; i < il; ++i) {
                     //"entity_id": 3, "end": { "author_residue_number": null, "author_insertion_code": "", "residue_number": 219 }, "chain_id": "A", "start": { "author_residue_number": 94, "author_insertion_code": "", "residue_number": 1 }, "unp_end": 312, "unp_start": 94, "struct_asym_id": "C"
@@ -40273,9 +40287,8 @@ class AnnoPTM {
                                 ic.UPResi2ResiPosPerChain[chnid][j + start] = j + posStart - 1; // 0-based
                             }
 
-                            UniProtID = up;
-                            bFound = true;
-                            break;
+                            if(UniProtID == '' || UniProtID.length != 6) UniProtID = up;
+                            //break;
                         }
                     }
                 }
@@ -40292,7 +40305,7 @@ class AnnoPTM {
                         tryCount : 0,
                         retryLimit : 0, //1
                         success: function(data) {
-                            thisClass.parsePTM(data, chnid);
+                            thisClass.parsePTM(data, chnid, type);
                             if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
                         },
                         error : function(xhr, textStatus, errorThrown ) {
@@ -40317,19 +40330,23 @@ class AnnoPTM {
         }
     }
 
-    parsePTM(data, chnid) { let ic = this.icn3d, me = ic.icn3dui;
-
+    parsePTM(data, chnid, type) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) {
-            //if(!ic.resid2ptm) ic.resid2ptm = {};
-            ic.resid2ptm = {};
-            ic.resid2ptm[chnid] = [];
+            if(type == 'ptm') {
+                ic.resid2ptm = {};
+                ic.resid2ptm[chnid] = [];
+            }
+            else {
+                ic.resid2transmem = {};
+                ic.resid2transmem[chnid] = [];
+            }
         }
 
-        let ptmHash = {};
+        let ptmHash = {}, transmemHash = {};
         for(let i = 0, il = data.features.length; i < il; ++i) {
             let feature = data.features[i];
 
-            if(feature.category == 'PTM' && feature.type != 'DISULFID' && feature.type != 'CROSSLNK') {
+            if(type == 'ptm' && feature.category == 'PTM' && feature.type != 'DISULFID' && feature.type != 'CROSSLNK') {
                 let title = '';
                 if(feature.type == 'CARBOHYD') {
                     //title = 'Glycosylation, ' + feature.description;
@@ -40351,11 +40368,29 @@ class AnnoPTM {
                 if(!ptmHash[title]) ptmHash[title] = [];
                 ptmHash[title].push(feature);
             }
+            else if(type == 'transmem' && feature.category == 'TOPOLOGY' && feature.type == 'TRANSMEM') {
+                let title = 'Transmembrane';
+                if(!transmemHash[title]) transmemHash[title] = [];
+                transmemHash[title].push(feature);
+            }
         }
 
+        if(type == 'ptm') {
+            this.setAnnoPtmTransmem('ptm', ptmHash, chnid);
+        }
+        else {
+            this.setAnnoPtmTransmem('transmem', transmemHash, chnid);
+        }
+
+        // add here after the ajax call
+        ic.showAnnoCls.enableHlSeq();
+        ic.bAjaxPTM = true;
+    }
+
+    setAnnoPtmTransmem(type, ptmHash, chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let index = 0;
         let html = '', html2 = '', html3 = ''; 
-        html += '<div id="' + ic.pre + chnid + '_ptmseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
+        html += '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
         html2 += html;
         html3 += html;
         let stucture = chnid.substr(0, chnid.indexOf('_'));
@@ -40369,13 +40404,12 @@ class AnnoPTM {
                 let begin = parseInt(ptmArray[i].begin);
                 let end = parseInt(ptmArray[i].end);
 
-
                 for(let j = begin; j <= end; ++j) {
                     if(stucture.length > 5) { // UniProt
                         resPosArray.push(j - 1); // 0-based
                     } 
                     else { // PDB                       
-                        if(ic.UPResi2ResiPosPerChain[chnid][j]) resPosArray.push(ic.UPResi2ResiPosPerChain[chnid][j]);
+                        if(ic.UPResi2ResiPosPerChain && ic.UPResi2ResiPosPerChain[chnid][j]) resPosArray.push(ic.UPResi2ResiPosPerChain[chnid][j]);
                     }
                     
                     if(!bCoordinates && ic.residues.hasOwnProperty(chnid + '_' + j)) {
@@ -40387,19 +40421,21 @@ class AnnoPTM {
             if(resPosArray.length == 0) continue;
 
             let resCnt = resPosArray.length;
-            let title = 'PTM: ' + ptm;
+            let title = (type == 'ptm') ? 'PTM: ' + ptm : 'Transmembrane';
             if(title.length > 17) title = title.substr(0, 17) + '...';
             let fulltitle = ptm;
 
             let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
 
-            let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" ptm="ptm" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_ptm_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+            let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' + type + '" posarray="' 
+                + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + type + '_' 
+                + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
             let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
             let htmlTmp = '<span class="icn3d-seqLine">';
             html3 += htmlTmp2 + htmlTmp3 + '<br>';
             html += htmlTmp2 + htmlTmp3 + htmlTmp;
             html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
-            let pre = 'ptm' + index.toString();
+            let pre = type + index.toString();
             //var widthPerRes = ic.seqAnnWidth / ic.maxAnnoLength;
             let prevEmptyWidth = 0;
             let prevLineWidth = 0;
@@ -40417,7 +40453,7 @@ class AnnoPTM {
                     html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                     if(me.bNode) {
                         let obj = {};
-                        obj[chnid + '_' + pos] = 'PTM: ' + ptm;
+                        obj[chnid + '_' + pos] = title;
                         ic.resid2ptm[chnid].push(obj);
                     }
 
@@ -40448,13 +40484,9 @@ class AnnoPTM {
         html2 += '</div>';
         html3 += '</div>';
 
-        $("#" + ic.pre + "dt_ptm_" + chnid).html(html);
-        $("#" + ic.pre + "ov_ptm_" + chnid).html(html2);
-        $("#" + ic.pre + "tt_ptm_" + chnid).html(html3);
-
-        // add here after the ajax call
-        ic.showAnnoCls.enableHlSeq();
-        ic.bAjaxPTM = true;
+        $("#" + ic.pre + "dt_" + type + "_" + chnid).html(html);
+        $("#" + ic.pre + "ov_" + type + "_" + chnid).html(html2);
+        $("#" + ic.pre + "tt_" + type + "_" + chnid).html(html3);
     }
 
     getNoPTM(chnid) { let ic = this.icn3d; ic.icn3dui;
@@ -41763,7 +41795,7 @@ class AnnoTransMem {
             }
         }
         let residueArray = Object.keys(residHash);
-        let title = "Transmembrane domain";
+        let title = "Transmembrane"; //"Transmembrane domain";
         ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'transmem', title, residueArray);
     }
 
@@ -42256,7 +42288,7 @@ class Annotation {
         if(ic.bPTMShown === undefined || !ic.bPTMShown) {
             for(let chainid in ic.PTMChainbase) {
                 let chainidBase = ic.PTMChainbase[chainid];
-                ic.annoPTMCls.showPTM(chainid, chainidBase);
+                ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
             }
         }
         ic.bPTMShown = true;
@@ -42279,11 +42311,21 @@ class Annotation {
         }
         ic.bCrosslinkShown = true;
     }
-    updateTransmem() { let ic = this.icn3d; ic.icn3dui;
+    updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bTranememShown === undefined || !ic.bTranememShown) {
             for(let chainid in ic.protein_chainid) {
                 let chainidBase = ic.protein_chainid[chainid];
-                ic.annoTransMemCls.showTransmem(chainid, chainidBase);
+                if(me.cfg.opmid !== undefined) {
+                    ic.annoTransMemCls.showTransmem(chainid, chainidBase);
+                }
+                else if(ic.bAfMem && ic.afmem_start_end) {
+                    let begin = ic.afmem_start_end[0];
+                    let end = ic.afmem_start_end[1];
+                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
+                }
+                else {
+                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
+                }
             }
         }
         ic.bTranememShown = true;
@@ -54187,10 +54229,10 @@ class Transform {
     }
 
     setRotation(axis, angle) { let  ic = this.icn3d, me = ic.icn3dui;
-      if(ic.bControlGl && !me.bNode) {
+      if(ic.bControlGl && !me.bNode && window.cam) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
-      else {
+      else if(ic.cam) {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
@@ -54201,10 +54243,10 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !me.bNode) {
-          window.controls.update(para);
+      if(ic.bControlGl && !me.bNode && window.controls) {
+        window.controls.update(para);
       }
-      else {
+      else if(ic.controls) {
           ic.controls.update(para);
       }
 
@@ -60485,6 +60527,7 @@ class SetDialog {
         html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
         html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
         html += me.htmlCls.optionStr + "'icn3dpng'>iCn3D PNG</option>";
+        html += me.htmlCls.optionStr + "'pae'>AlphaFold PAE</option>";
         html += "</select><br/>";
         html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "urlfile' size=20><br/> ";
         html += me.htmlCls.buttonStr + "reload_urlfile'>Load</button>";
@@ -61333,12 +61376,8 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
-        if(me.cfg.opmid !== undefined) {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
-        else {
-            html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none; white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-        }
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
+
         html += "<td></td>";
         html += "</tr></table></div></div>";
 
@@ -61505,6 +61544,20 @@ class Events {
         }
         
         $("#" + me.pre + id).resizable();
+    }
+
+    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui; me.icn3d;
+        let flag = bBiounit ? '1' : '0';
+
+        let idArray = ids.split(',');
+        if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
+            window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
+        }
+        else {
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf" + flag + " " + ids, false);
+            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, '_blank');
+        }
     }
 
     //Hold all functions related to click events.
@@ -62280,19 +62333,16 @@ class Events {
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
 
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf1 " + ids, false);
-            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=1', '_blank');
+            thisClass.launchMmdb(ids, 1, hostUrl);
         });
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { me.icn3d;
-             e.preventDefault();
-             //if(!me.cfg.notebook) dialog.dialog( "close" );
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
-             // remove space
-             let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
-
-             me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + ids, false);
-             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=0', '_blank');
+            // remove space
+            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+            thisClass.launchMmdb(ids, 0, hostUrl);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
@@ -62307,9 +62357,9 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mmdbafid", "keyup", function(e) { me.icn3d;
             if (e.keyCode === 13) {
                 e.preventDefault();
-                //if(!me.cfg.notebook) dialog.dialog( "close" );
-                me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf0 " + $("#" + me.pre + "mmdbafid").val(), false);
-                window.open(hostUrl + '?mmdbafid=' + $("#" + me.pre + "mmdbafid").val() + '&bu=0', '_blank');
+                
+                let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+                thisClass.launchMmdb(ids, 0, hostUrl);
                }
          });
 
@@ -70007,7 +70057,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.18.0';
+    this.REVISION = '3.18.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

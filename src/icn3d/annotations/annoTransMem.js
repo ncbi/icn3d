@@ -31,7 +31,7 @@ class AnnoTransMem {
             }
         }
         let residueArray = Object.keys(residHash);
-        let title = "Transmembrane domain";
+        let title = "Transmembrane"; //"Transmembrane domain";
         ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'transmem', title, residueArray);
     }
 

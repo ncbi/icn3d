@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.18.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.18.1.zip) was release on November 8, 2022. Added the annotation "Transmembrane" for PDB or AlphaFold structures based on data from OPM, Membranome, and UniProt; enabled to load a PAE file from a URL in the same domain.
+
 [icn3d-3.18.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.18.0.zip) was release on November 3, 2022. Merged Jack Lin's branch with the following new features: show some basic color legends when coloring a structure; add local Smith-Waterman alignment when aligning two sequences; add a preference in the menu "Style > Prefereces" to enlarge the command window.
 
 [icn3d-3.17.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.17.0.zip) was release on October 27, 2022. Showed membranes for AlphaFold structures, which are single-spanning transmembrane proteins; enabled to load recent version of PAE json files for AlphaFold Structures.

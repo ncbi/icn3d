@@ -501,7 +501,7 @@ class Annotation {
         if(ic.bPTMShown === undefined || !ic.bPTMShown) {
             for(let chainid in ic.PTMChainbase) {
                 let chainidBase = ic.PTMChainbase[chainid];
-                ic.annoPTMCls.showPTM(chainid, chainidBase);
+                ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
             }
         }
         ic.bPTMShown = true;
@@ -528,7 +528,17 @@ class Annotation {
         if(ic.bTranememShown === undefined || !ic.bTranememShown) {
             for(let chainid in ic.protein_chainid) {
                 let chainidBase = ic.protein_chainid[chainid];
-                ic.annoTransMemCls.showTransmem(chainid, chainidBase);
+                if(me.cfg.opmid !== undefined) {
+                    ic.annoTransMemCls.showTransmem(chainid, chainidBase);
+                }
+                else if(ic.bAfMem && ic.afmem_start_end) {
+                    let begin = ic.afmem_start_end[0];
+                    let end = ic.afmem_start_end[1];
+                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
+                }
+                else {
+                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
+                }
             }
         }
         ic.bTranememShown = true;
