@@ -53,7 +53,7 @@ class ContactMap {
         let  url, dataType;
     
         //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
-        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v3.json";
+        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
 
         dataType = "json";
     

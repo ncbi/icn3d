@@ -23787,7 +23787,7 @@ var icn3d = (function (exports) {
             let  url, dataType;
 
             if(bAf) {
-                url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v3.pdb";
+                url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
                 ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
             }
             else {
@@ -26741,7 +26741,7 @@ var icn3d = (function (exports) {
 
             let  url_t;
             if(ic.mmdbid_t.length > 5) {
-                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v3.pdb";
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                 targetAjax = $.ajax({
                     url: url_t,
@@ -26779,7 +26779,7 @@ var icn3d = (function (exports) {
 
                 let  url_q, queryAjax;
                 if(ic.mmdbid_q.length > 5) {
-                    url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v3.pdb";
+                    url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                     queryAjax = $.ajax({
                         url: url_q,
@@ -27082,7 +27082,7 @@ var icn3d = (function (exports) {
                 let structure = ic.structArray[i];
 
                 if(isNaN(structure) && structure.length > 5) {
-                    url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v3.pdb";
+                    url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                     targetAjax = $.ajax({
                         url: url_t,
@@ -60356,9 +60356,7 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
             html += '1. <input type="submit" id="' + me.pre + 'fssubmit" name="fssubmit" value="Submit"></input> your selection (all residues are selected by default) in the loaded structures to <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server.<br><br>';
-            html += '2 (Optional). Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
-
-            //html += 'Note: You can search similar PDB or AlphaFold structures for any structure at the fast <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server. <br><br>Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v3" is "P69905".<br><br>'; 
+            html += '2 (Optional). Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1hho_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v4" is "P69905".<br><br>'; 
 
             html += "Chain ID List: " + me.htmlCls.inputTextStr + "id='" + me.pre + "foldseekchainids' value='P69905,P01942,1hho_A' size=30> ";
             html += me.htmlCls.buttonStr + "reload_foldseek'>Align</button>";
@@ -66128,7 +66126,7 @@ var icn3d = (function (exports) {
             let  url, dataType;
         
             //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
-            url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v3.json";
+            url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
 
             dataType = "json";
         
@@ -69484,6 +69482,8 @@ var icn3d = (function (exports) {
         this._zoomFactor = 1.0;
 
         this.transparentRenderOrder = false; // false: regular transparency; true: expensive renderOrder for each face
+
+        this.AFUniprotVersion = 'v4';
 
         if(!this.icn3dui.bNode) {
             if ( bWebGL2 && bVR) { 
