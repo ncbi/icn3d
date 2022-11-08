@@ -548,7 +548,7 @@ class ChainalignParser {
 
         let  url_t;
         if(ic.mmdbid_t.length > 5) {
-            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v3.pdb";
+            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
             targetAjax = $.ajax({
                 url: url_t,
@@ -586,7 +586,7 @@ class ChainalignParser {
 
             let  url_q, queryAjax;
             if(ic.mmdbid_q.length > 5) {
-                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v3.pdb";
+                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                 queryAjax = $.ajax({
                     url: url_q,
@@ -890,7 +890,7 @@ class ChainalignParser {
             let structure = ic.structArray[i];
 
             if(isNaN(structure) && structure.length > 5) {
-                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_v3.pdb";
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                 targetAjax = $.ajax({
                     url: url_t,
