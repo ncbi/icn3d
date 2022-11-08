@@ -278,10 +278,8 @@ class MmdbParser {
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
         }
 
-        ic.ParserUtilsCls.renderStructure();
-
         if(type === undefined) {
-            //ic.ParserUtilsCls.renderStructure();
+            ic.ParserUtilsCls.renderStructure();
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             ic.html2ddgm = '';

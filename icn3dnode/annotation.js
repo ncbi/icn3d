@@ -33,7 +33,7 @@ if(myArgs.length != 2) {
     // 6: Interactions
     // 7: Disulfide Bonds
     // 8: Cross-Linkages
-    // 9: PTM (UniProt)
+    // 9: PTM (UniProt)Transmembrane
     console.log("Usage: node annotation.js [PDB or AlphaFold UniProt ID] [annotation type as an integer]");
     return;
 }
@@ -42,7 +42,7 @@ let inputid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
 let annoType = myArgs[1];
 
 let url = (inputid.length == 4) ? "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=" + inputid
-    : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_v2.pdb";
+    : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_v3.pdb";
 
 https.get(url, function(res1) {
     let response1 = [];
@@ -57,14 +57,14 @@ https.get(url, function(res1) {
         let ic = me.icn3d;
 
         ic.bRender = false;
-        if(inputid.length == 4) {
-            let dataJson = JSON.parse(dataStr);
-            ic.mmdbParserCls.parseMmdbData(dataJson);
-        }
-        else {
+        if(isNaN(inputid) && inputid.length > 5) {
             let header = 'HEADER                                                        ' + inputid + '\n';
             dataStr = header + dataStr;
             ic.opmParserCls.parseAtomData(dataStr, inputid, undefined, 'pdb', undefined);
+        }
+        else {
+            let dataJson = JSON.parse(dataStr);
+            ic.mmdbParserCls.parseMmdbData(dataJson);
         }
 
         let result = ic.showAnnoCls.showAnnotations_part1();
@@ -164,7 +164,8 @@ https.get(url, function(res1) {
                     }
 
                     // 9: PTM (UniProt)
-                    else if(annoType == 9) {
+                    // 10: Transmembrane
+                    else if(annoType == 9 || annoType == 10) {
 
                         let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
                         let chnidArray = Object.keys(ic.protein_chainid);
@@ -188,10 +189,19 @@ https.get(url, function(res1) {
                                         let data4 = JSON.parse(dataStr);
                                         //console.log("dataJson: " + dataJson.length);
                         
-                                        ic.annoPTMCls.parsePTM(data4, chainid);
+                                        if(annoType == 9) {
+                                            ic.annoPTMCls.parsePTM(data4, chainid, 'ptm');
 
-                                        for(let chainid in ic.resid2ptm) {
-                                            console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                                            for(let chainid in ic.resid2ptm) {
+                                                console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                                            }
+                                        }
+                                        else if(annoType == 10) {
+                                            ic.annoPTMCls.parsePTM(data4, chainid, 'transmem');
+
+                                            for(let chainid in ic.resid2transmem) {
+                                                console.log(chainid + '\t' + JSON.stringify(ic.resid2transmem[chainid]));
+                                            }
                                         }
                                     });
                                 }).on('error', function(e) {
@@ -262,10 +272,19 @@ https.get(url, function(res1) {
                     let data4 = JSON.parse(dataStr);
                     //console.log("dataJson: " + dataJson.length);
 
-                    ic.annoPTMCls.parsePTM(data4, chainid);
+                    if(annoType == 9) {
+                        ic.annoPTMCls.parsePTM(data4, chainid, 'ptm');
 
-                    for(let chainid in ic.resid2ptm) {
-                        console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                        for(let chainid in ic.resid2ptm) {
+                            console.log(chainid + '\t' + JSON.stringify(ic.resid2ptm[chainid]));
+                        }
+                    }
+                    else if(annoType == 10) {
+                        ic.annoPTMCls.parsePTM(data4, chainid, 'transmem');
+
+                        for(let chainid in ic.resid2transmem) {
+                            console.log(chainid + '\t' + JSON.stringify(ic.resid2transmem[chainid]));
+                        }
                     }
                 });
             }).on('error', function(e) {

@@ -86,7 +86,8 @@ class PdbParser {
     }
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
-    //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
+    //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
+    //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
     downloadUrl(url, type, command) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
@@ -125,14 +126,6 @@ class PdbParser {
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
                 ic.loadScriptCls.loadScript(command, undefined, true);
-
-                // rotate for links from Membranome
-                if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
-                    let  axis = new THREE.Vector3(1,0,0);
-                    let  angle = -90 / 180.0 * Math.PI;
-
-                    ic.transformCls.setRotation(axis, angle);
-                }
             }
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.parseMmcifData(data, undefined, command);
@@ -150,8 +143,12 @@ class PdbParser {
                 ic.mmcifParserCls.loadMmcifData(data);
             }
             else if(type === 'icn3dpng') {
-                ic.mmcifParserCls.loadMmcifData(data);
                 me.htmlCls.setHtmlCls.loadPng(data, command);
+            }
+            else if(type === 'pae') {
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
+                let bFull = true;
+                ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
             }
           },
           error : function(xhr, textStatus, errorThrown ) {
@@ -216,9 +213,8 @@ class PdbParser {
         }
         else {
             this.loadPdbDataRender(bAppend);
-            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
-            ic.ParserUtilsCls.checkMemProtein(afid);
+            ic.ParserUtilsCls.checkMemProteinAndRotate();
 
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }

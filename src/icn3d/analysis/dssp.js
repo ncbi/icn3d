@@ -53,15 +53,10 @@ class Dssp {
       //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
       $.when.apply(undefined, ajaxArray).then(function() {
-          let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parseDsspData(dataArray, struArray, bAppend);
-          
-          if(!ic.bCheckMemProtein) {
-            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
-
-            ic.ParserUtilsCls.checkMemProtein(afid);
-            ic.bCheckMemProtein = true;
-          }
+            let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
+            thisClass.parseDsspData(dataArray, struArray, bAppend);
+            
+            ic.ParserUtilsCls.checkMemProteinAndRotate();
       })
       .fail(function() {
           console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");

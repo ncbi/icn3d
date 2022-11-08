@@ -386,7 +386,7 @@ class ParserUtils {
           $("#" + ic.pre + "togglememli").show();
           $("#" + ic.pre + "adjustmemli").show();
           $("#" + ic.pre + "selectplaneli").show();
-          $("#" + ic.pre + "anno_transmemli").show();
+          //$("#" + ic.pre + "anno_transmemli").show();
       }
       else {
           ic.bOpm = false;
@@ -457,7 +457,7 @@ class ParserUtils {
                   $("#" + ic.pre + "togglememli").show();
                   $("#" + ic.pre + "adjustmemli").show();
                   $("#" + ic.pre + "selectplaneli").show();
-                  $("#" + ic.pre + "anno_transmemli").show();
+                  //$("#" + ic.pre + "anno_transmemli").show();
               }
               else {
                   ic.bOpm = false;
@@ -720,6 +720,23 @@ class ParserUtils {
         return maxD;
     }
 
+    checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
+        if(!ic.bCheckMemProtein) {
+            let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
+
+            ic.ParserUtilsCls.checkMemProtein(afid);
+            ic.bCheckMemProtein = true;
+        }
+
+        // rotate for links from Membranome
+        if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+            let  axis = new THREE.Vector3(1,0,0);
+            let  angle = -90 / 180.0 * Math.PI;
+
+            ic.transformCls.setRotation(axis, angle);
+        }
+    }
+
     checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
       //ic.deferredAfMem = $.Deferred(function() {
         let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
@@ -760,7 +777,7 @@ class ParserUtils {
                       let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
                                                     //the second range is the range of the helix
                       let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
-                      let start_end = range.split('-');
+                      ic.afmem_start_end = range.split('-');
 
                       ic.hAtoms = {};
                       ic.dAtoms = {};
@@ -774,7 +791,7 @@ class ParserUtils {
                       }
 
                       // get the transmembrane from the model of Membranome
-                      for(let i = parseInt(start_end[0]); i <= parseInt(start_end[1]); ++i) {
+                      for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                       }
 
