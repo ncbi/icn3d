@@ -29,7 +29,7 @@ class SelectByCommand {
 
                // each select command may have several commands separated by ' or '
                let  commandArray = commandStr.split(' or ');
-               let  allHighlightAtoms = {}
+               let  allHighlightAtoms = {};
 
                for(let i = 0, il = commandArray.length; i < il; ++i) {
                    let  command = commandArray[i].trim().replace(/\s+/g, ' ');
@@ -49,7 +49,6 @@ class SelectByCommand {
                    }
                    else { // union
                            ic.applyCommandCls.applyCommand('select ' + command);
-
                            allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
                    }
                }
@@ -78,7 +77,6 @@ class SelectByCommand {
        // There will be no ' or ' in the spec. It's already separated in selectByCommand()
        // There could be ' and ' in the spec.
        let  commandArray = select.replace(/\s+/g, ' ').replace(/ AND /g, ' and ').split(' and ');
-
        let  residueHash = {}
        let  atomHash = {}
 
@@ -95,9 +93,10 @@ class SelectByCommand {
            let  dollarPos = commandArray[i].indexOf('$');
            let  periodPos = commandArray[i].indexOf('.');
            let  colonPos = commandArray[i].indexOf(':');
+           let  colonPos2 = commandArray[i].indexOf('%'); // for reference numbers
            let  atPos = commandArray[i].indexOf('@');
 
-           let  moleculeStr, chainStr, residueStr, atomStrArray;
+           let  moleculeStr, chainStr, residueStr, refResStr, atomStrArray;
            let  testStr = commandArray[i];
 
            if(atPos === -1) {
@@ -108,13 +107,17 @@ class SelectByCommand {
              testStr = testStr.substr(0, atPos);
            }
 
-           if(colonPos === -1) {
+           if(colonPos === -1 && colonPos2 === -1 ) {
              residueStr = "*";
            }
-           else {
+           else if(colonPos != -1) {
              residueStr = testStr.substr(colonPos + 1);
              testStr = testStr.substr(0, colonPos);
            }
+           else if(colonPos2 != -1) {
+            refResStr = testStr.substr(colonPos2 + 1);
+            testStr = testStr.substr(0, colonPos2);
+          }
 
            if(periodPos === -1) {
              chainStr = "*";
@@ -171,7 +174,9 @@ class SelectByCommand {
              }
            }
 
-           let  residueStrArray = residueStr.split(',');
+           let bRefnum = (refResStr) ? true : false;
+           let residueStrArray = (bRefnum) ? refResStr.split(',') : residueStr.split(',');
+
            for(let j = 0, jl = residueStrArray.length; j < jl; ++j) {
                let  bResidueId = false;
 
@@ -190,7 +195,7 @@ class SelectByCommand {
                }
                else {
                  //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                 if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
+                 if(!bRefnum && residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
                      && isNaN(residueStrArray[j][1]) && residueStrArray[j][0] !== '-') { // three letter residue string, such as :3LysArg or :3ZN, but not :30 neither :3-10
                    let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
@@ -223,35 +228,52 @@ class SelectByCommand {
                    start = !isNaN(start) ? parseInt(start) : start;
                    end = !isNaN(end) ? parseInt(end) : end;
                    for(let k = start; k <= end; ++k) {
-                     let  residueId = molecule_chain + '_' + k;
-                     if(i === 0) {
-                          residueHash[residueId] = 1;
+                     let residArray = [];
+
+                     if(bRefnum) {
+                      let residArrayTmp = ic.refnum2residArray[k];
+                      for(let m = 0, ml = residArrayTmp.length; m < ml; ++m) {
+                        let residueId = residArrayTmp[m];
+                        if(residueId.substr(0, residueId.lastIndexOf('_')) == molecule_chain) {
+                          residArray.push(residueId);
+                        }
+                      }
                      }
                      else {
-                         // if not exit previously, "and" operation will remove this one
-                         //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
-                         if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
+                      let  residueId = molecule_chain + '_' + k;
+                      residArray = [residueId];
                      }
 
-                     for(let m in ic.residues[residueId]) {
-                       for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                           let  atomStr = atomStrArray[n];
-                           if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                             if(i === 0) {
-                                 //currHighlightAtoms[m] = 1;
-                                 atomHash[m] = 1;
-                             }
-                             else {
-                                 //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                 //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                 if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                             }
-                           }
-                       }
-                     }
+                     for(let l = 0, ll = residArray.length; l < ll; ++l) {
+                        let residueId = residArray[l];
+
+                        if(i === 0) {
+                              residueHash[residueId] = 1;
+                        }
+                        else {
+                            // if not exit previously, "and" operation will remove this one
+                            //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                            if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
+                        }
+
+                        for(let m in ic.residues[residueId]) {
+                          for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                              let  atomStr = atomStrArray[n];
+                              if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                                if(i === 0) {
+                                    //currHighlightAtoms[m] = 1;
+                                    atomHash[m] = 1;
+                                }
+                                else {
+                                    //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
+                                    //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                    if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                                }
+                              }
+                          }
+                        }
+                      } // end for(let l = 0, 
                    } // end for
-
-
                  }
                  else {
                    if(molecule_chain in ic.chains) {

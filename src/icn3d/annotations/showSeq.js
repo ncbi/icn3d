@@ -443,6 +443,12 @@ class ShowSeq {
                 html += result.html;
                 html3 += result.html3;
             }
+            else if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
+                let bCustom = true;
+                let result = this.showRefNum(giSeq, chnid, undefined, bCustom);
+                html += result.html;
+                html3 += result.html3;
+            }
         }
 
         // highlight reference numbers
@@ -460,12 +466,15 @@ class ShowSeq {
         $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
     }
 
-    showRefNum(giSeq, chnid, bKabat) {  let ic = this.icn3d, me = ic.icn3dui;
+    showRefNum(giSeq, chnid, bKabat, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
         let html = '', html3 = '';
 
         let htmlTmp = '<div class="icn3d-dl_sequence">';
         htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
-        if(bKabat) {
+        if(bCustom) {
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Custom Reference Numbers">Custom Ref. No.</div>';
+        }
+        else if(bKabat) {
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers">Kabat Ref. No.</div>';
         }
         else {
@@ -479,7 +488,7 @@ class ShowSeq {
             if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
                 let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
                 let residueid = chnid + '_' + currResi;
-                let domainid = ic.resid2domainid[residueid];
+                let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
                 if(!ic.residues.hasOwnProperty(residueid)) {
                     html += '<span></span>';
                 }
@@ -492,14 +501,32 @@ class ShowSeq {
                     if(refnumLabel) {
                         let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
                         let refnumStr;
-                        if(bKabat) {
+                        if(bCustom) {
+                            refnumStr = refnumLabel;
+                        }
+                        else if(bKabat) {
                             refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
                         }
                         else {
                             refnumStr = refnumStr_ori;
                         }
                     
-                        if(bKabat) {
+                        if(bCustom) {
+                            if(!refnumStr) {                               
+                                html += '<span></span>';
+                            }
+                            else {
+                                let refnum = parseInt(refnumStr);
+
+                                if(refnum % 2 == 0) {
+                                    html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
+                                }
+                                else {
+                                    html += '<span title="' + refnumStr + '">&nbsp;</span>';
+                                }
+                            }
+                        }
+                        else if(bKabat) {
                             if(!refnumStr) {                               
                                 html += '<span></span>';
                             }

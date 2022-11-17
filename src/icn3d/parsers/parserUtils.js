@@ -52,7 +52,7 @@ class ParserUtils {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                   if(ic.bAfMem) {
-                    if(window.dialog) window.dialog.dialog( "close" );
+                    //if(window.dialog) window.dialog.dialog( "close" );
                     html += "<span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
                   }
                   $("#" + ic.pre + "dl_rmsd").html(html);

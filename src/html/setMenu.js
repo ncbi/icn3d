@@ -1153,6 +1153,11 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += me.htmlCls.setHtmlCls.getMenuSep();
+
+        html += me.htmlCls.setHtmlCls.getLink('mn5_cartoonshape', 'Cartoon for a Set', undefined, 1);
+        html += me.htmlCls.setHtmlCls.getLink('mn5_linebtwsets', 'Line btw. Two Sets', undefined, 1);
+
         if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
             html += me.htmlCls.setHtmlCls.getMenuSep();
 
@@ -1161,12 +1166,12 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getLinkWrapper2('mn5_map', 'Electron Density', 'mapWrapper1', undefined, 1);
 
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map', undefined, undefined, 2);
-            html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn5_elecmap2fofc', '2Fo-Fc Map', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn5_elecmapfofc', 'Fo-Fc Map', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, undefined, 2);
+
             html += "</ul>";
             html += "</li>";
-
-            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 1);
 
             //html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
             //html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper3', 'Map Wireframe', undefined, undefined, 1);
@@ -1207,7 +1212,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += "<li><span>Dialog Color</span>";
+        //html += "<li><span>Dialog Color</span>";
         html += me.htmlCls.setHtmlCls.getMenuText('mn6_themewrap', 'Dialog Color', undefined, undefined, 1);
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlue', 'Blue', true, undefined, 2);
@@ -1760,15 +1765,20 @@ class SetMenu {
 
             html += "</ul>";
             html += "</li>";
-/*
-            html += me.htmlCls.setHtmlCls.getMenuText('mn6_igrefwrap', 'Ig Ref. Number', undefined, undefined, 1);
+
+            html += me.htmlCls.setHtmlCls.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefYes', 'Show', undefined, undefined, 2);
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefNo', 'Hide', true, undefined, 2);
+/*
+            html += me.htmlCls.setHtmlCls.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
+
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+*/
+            html += me.htmlCls.setHtmlCls.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
             html += "</li>";
-*/
+
             html += me.htmlCls.setHtmlCls.getMenuSep();
         }
 

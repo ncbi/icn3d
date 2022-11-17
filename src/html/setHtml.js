@@ -212,7 +212,8 @@ class SetHtml {
                 linerad = parseFloat(this.getCookie('lineRadius'));
                 coilrad = parseFloat(this.getCookie('coilWidth'));
                 stickrad = parseFloat(this.getCookie('cylinderRadius'));
-                crosslinkrad = parseFloat(this.getCookie('crosslinkRadius'));
+                let clrad = this.getCookie('crosslinkRadius');
+                crosslinkrad = (!isNaN(clrad)) ? parseFloat(clrad) : ic.crosslinkRadius;
                 tracerad = parseFloat(this.getCookie('traceRadius'));
                 ballscale = parseFloat(this.getCookie('dotSphereScale'));
                 ribbonthick = parseFloat(this.getCookie('ribbonthickness'));

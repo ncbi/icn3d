@@ -198,6 +198,16 @@ class ParasCls {
             'Au': this.thr(0xDAA520),      'AU': this.thr(0xDAA520)
         };
 
+        this.atomnames = {
+            'H': 'Hydrogen',        'HE': 'Helium',         'LI': 'Lithium',        'B': 'Boron',           
+            'C': 'Carbon',          'N': 'Nitrogen',        'O': 'Oxygen',          'F': 'Fluorine',       
+            'NA': 'Sodium',         'MG': 'Magnesium',      'AL': 'Aluminum',       'SI': 'Silicon',      
+            'P': 'Phosphorus',      'S': 'Sulfur',          'CL': 'Chlorine',       'CA': 'Calcium',      
+            'TI': 'Titanium',       'CR': 'Chromium',       'MN': 'Manganese',      'FE': 'Iron',      
+            'NI': 'Nickel',         'CU': 'Copper',         'ZN': 'Zinc',           'BR': 'Bromine',
+            'AG': 'Silver',         'I': 'Iodine',          'BA': 'Barium',         'AU': 'Gold'
+        };
+
         this.defaultAtomColor = this.thr(0xCCCCCC);
 
         this.stdChainColors = [

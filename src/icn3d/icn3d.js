@@ -476,6 +476,8 @@ class iCn3D {
 
     this.residNCBI2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
 
+    this.shapeCmdHash = {}; // remember the spheres/cubes for sets
+
     this.bHideSelection = true;
     this.bSelectResidue = false;
     this.bSelectAlignResidue = false;
@@ -795,6 +797,8 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
                         // label name could be custom, residue, schmatic, distance
     ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
+
+    ic.shapeCmdHash = {};
 
     ic.bAssembly = true; //false;
 };

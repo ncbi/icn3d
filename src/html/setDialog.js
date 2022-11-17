@@ -221,6 +221,18 @@ class SetDialog {
 
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_customref' class='" + dialogClass + "'>";
+        html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
+        html += '<pre>refnum,11,12,,21,22<br>';
+        html += '1TUP_A,100,101,,,132<br>';
+        html += '1TUP_B,110,111,,141,142</pre>';
+        html += 'The first row defines the reference residue numbers. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 12, 21, 22) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The thrid row shows the real residue numbers for the chain "1TUP_B".<br><br>';
+        html += 'To select all residues corresponding to the reference numbers, you can simplay replace ":" with "%" in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank">Specification</a>. For example, "%12"  selects the residue 101 in 1TUP_A and the residue 111 in 1TUP_B. ".A%12" has the chain "A" filter and selects the residue 101 in 1TUP_A.<br>';
+        html += '</div><br>';
+        html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstreffile' size=8> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_customreffile'>Apply Custom Reference Numbers</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_align' class='" + dialogClass + "'>";
         html += "Enter the PDB IDs or MMDB IDs of the structures: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid1' value='1HHO' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
         html += "<b>VAST+ based on VAST</b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
@@ -344,8 +356,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
-        html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' value='1HHO,4N7N,P69905,P01942' size=30> <br><br>";
-        html += me.htmlCls.buttonStr + "reload_mmdbaf_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+        html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdbaf'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/><br>";
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
         + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
         + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
@@ -887,6 +899,58 @@ class SetDialog {
         html += me.htmlCls.spanNowrapStr + "2. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "distancecolor2' value='" + defaultColor + "' size=4><br/><br/>";
         html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applydist2'>Display</button></span>";
         html += "</div>";
+
+        
+        html += me.htmlCls.divStr + "dl_linebtwsets' class='" + dialogClass + "'>";
+        html += me.htmlCls.spanNowrapStr + "1. Select two sets</span><br/>";
+        html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+        html += me.htmlCls.divNowrapStr + "First set:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "linebtwsets2' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td><td>";
+
+        html += me.htmlCls.divNowrapStr + "Second set:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "linebtwsets' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td></tr></table>";
+
+        html += me.htmlCls.divNowrapStr + "2. Line style: <select id='" + me.pre + "linebtwsets_style'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['Solid', 'Dashed'], 0);
+        html += "</select></div><br>";
+
+        html += "3. Line radius: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_radius' value='0.4' size=4><br/><br/>";
+        
+        html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
+
+        html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
+        html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearlinebtwsets'>Clear</button></span>";
+        html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_cartoonshape' class='" + dialogClass + "'>";
+        html += me.htmlCls.spanNowrapStr + "1. Select a set:</span><br/>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "cartoonshape' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div><br>";
+
+        html += me.htmlCls.divNowrapStr + "2. Shape: <select id='" + me.pre + "cartoonshape_shape'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['Sphere', 'Cube'], 0);
+        html += "</select></div><br>";
+
+        html += "3. Radius: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cartoonshape_radius' value='1.5' size=4><br/><br/>";
+        
+        html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cartoonshape_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
+
+        html += me.htmlCls.divNowrapStr + "5. Opacity: <select id='" + me.pre + "cartoonshape_opacity'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'], 7);
+        html += "</select></div><br>";
+        
+        html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applycartoonshape'>Display</button></span>";
+        html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearcartoonshape'>Clear</button></span>";
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_distmanysets' class='" + dialogClass + "'>";
         html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise distances</span><br/>";

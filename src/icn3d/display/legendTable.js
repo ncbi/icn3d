@@ -68,10 +68,14 @@
             });
 
             html += "<div>";
+            
+            html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+            html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+            html += "Grey: Charged, not hydrophobic<br><br>";
 
             let cnt = 0;
             for (let key of keys) {
-                html += "<div style='display:inline-block; width:100px'>"
+                html += "<div style='display:inline-block; width:100px'>";
                 html += "<div style='width: 10px; height: 10px; background-color:#" + key[1] + "; border: 0px;display:inline-block;' ></div> ";
                 html +=  key[0] + "</div>"
 
@@ -83,6 +87,7 @@
         }
         //else if (ic.legendClick == 5){
         else if (colorType == 'b factor') {
+            html += "<div style='width:450px'>B factor quantitates the uncertainty for each atom. A high B factor reflects that the position is less certain.</div><br>"
             html += me.htmlCls.clickMenuCls.setLegendHtml();
         }
         //else if (ic.legendClick == 6){
@@ -128,7 +133,7 @@
                 for (let v in elemSet[k]) {
                     html += "<div style='width: 10px; height: 10px; background-color:#" + v + "; border: 0px;display:inline-block;' ></div> ";
                 }
-                html +=  k + "</span><br>";
+                html +=  me.parasCls.atomnames[k.toUpperCase()] + "</span><br>";
             }
             html += "<br>";
         }
@@ -146,11 +151,13 @@
             ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
             MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
             SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
-            TYR: "Y (Tyr)",       VAL: "V (Val)",       ASX: "B (Asx)",
-            GLX: "Z (Glx)",         'G': "Guanine",       'A': "Adenine",
-            'T': "Thymine",         'C': "Cytosine",       'U': "Uracile",
-            'DG': "dG",       'DA': "dA",      'DT': "dT",
-            'DC': "dC",       'DU': 'dU'
+            TYR: "Y (Tyr)",       VAL: "V (Val)",       
+            //ASX: "B (Asx)",       GLX: "Z (Glx)",   
+            ASX: "X (Asx)",       GLX: "X (Glx)",       
+            'G': "Guanine",       'A': "Adenine",
+            'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
+            'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
+            'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
         };
 
         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
@@ -223,7 +230,7 @@
 
             let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
             if(atom.resn == 'ARG' || atom.resn == 'LYS') {
-                chargeHash['Postive'] = 1;
+                chargeHash['Positive'] = 1;
             }
             else if(atom.resn == 'HIS') {
                 chargeHash['Partial-Positive'] = 1;
@@ -237,13 +244,13 @@
         }
 
         const charge2color = {
-            "Postive": "0000ff",
+            "Positive": "0000ff",
             "Partial-Positive": "8080ff",
             "Negative": "ff0000",
             "Neutral": "888888"
         };
 
-        let chargeOrder = ["Postive", "Partial-Positive", "Negative", "Neutral"]
+        let chargeOrder = ["Positive", "Partial-Positive", "Negative", "Neutral"]
  
         html += "<div>"
         for (let i = 0, il = chargeOrder.length; i < il; ++i) {

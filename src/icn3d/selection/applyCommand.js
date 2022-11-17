@@ -801,9 +801,26 @@ class ApplyCommand {
         let  color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
         let  dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
         let  type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
+        let  radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
 
-        ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type);
+        ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius));
         ic.drawCls.draw();
+      }
+      else if(command.indexOf('add sphere') == 0) {
+        this.addShape(command, 'sphere');
+        //ic.drawCls.draw();
+      }
+      else if(command.indexOf('add cube') == 0) {
+        this.addShape(command, 'cube');
+        //ic.drawCls.draw();
+      }
+      else if(command.indexOf('clear shape') == 0) {
+        ic.shapeCmdHash = {};
+        //ic.drawCls.draw();
+      }
+      else if(command.indexOf('clear line between sets') == 0) {
+        ic.lines['cylinder'] = []; // reset
+        //ic.drawCls.draw();
       }
       else if(commandOri.indexOf('add label') == 0) {
         let  paraArray = commandOri.split(' | ');
@@ -1328,6 +1345,11 @@ class ApplyCommand {
       else if(command.indexOf('ig refnum off') == 0) {
         ic.refnumCls.hideIgRefNum();
       }
+      else if(command.indexOf('custom refnum') == 0) {
+        let  paraArray = commandOri.split(' | ');
+        let dataStr = paraArray[1].replace(/\\n/g, '\n');
+        ic.refnumCls.parseCustomRefFile(dataStr);
+      }
 
     // special, select ==========
 
@@ -1373,7 +1395,8 @@ class ApplyCommand {
 
         ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
       }
-      else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 || command.indexOf('select @') !== -1) {
+      else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 
+          || command.indexOf('select %') !== -1 || command.indexOf('select @') !== -1) {
         let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
         let  select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
@@ -1496,6 +1519,28 @@ class ApplyCommand {
             $("#" + me.pre + "dl_legend").html(legendHtml);
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
+    }
+
+    addShape(command, shape) { let  ic = this.icn3d, me = ic.icn3dui;
+      ic.shapeCmdHash[command] = 1;
+      
+      let  paraArray = command.split(' | ');
+      let  p1Array = paraArray[1].split(' ');
+      let  colorStr = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
+      let  opacity = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
+      let  radius = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+
+      colorStr = '#' + colorStr.replace(/\#/g, '');
+      let color = me.parasCls.thr(colorStr);
+
+      let pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+
+      if(shape == 'sphere') {
+        ic.sphereCls.createSphereBase(pos1, color, parseFloat(radius), undefined, undefined, undefined, parseFloat(opacity));
+      }
+      else { // 'cube'
+        ic.boxCls.createBox_base(pos1, parseFloat(radius), color, undefined, undefined, undefined, parseFloat(opacity));
+      }
     }
 
     getMenuFromCmd(cmd) { let  ic = this.icn3d, me = ic.icn3dui;

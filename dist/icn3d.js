@@ -4841,6 +4841,16 @@ var icn3d = (function (exports) {
                 'Au': this.thr(0xDAA520),      'AU': this.thr(0xDAA520)
             };
 
+            this.atomnames = {
+                'H': 'Hydrogen',        'HE': 'Helium',         'LI': 'Lithium',        'B': 'Boron',           
+                'C': 'Carbon',          'N': 'Nitrogen',        'O': 'Oxygen',          'F': 'Fluorine',       
+                'NA': 'Sodium',         'MG': 'Magnesium',      'AL': 'Aluminum',       'SI': 'Silicon',      
+                'P': 'Phosphorus',      'S': 'Sulfur',          'CL': 'Chlorine',       'CA': 'Calcium',      
+                'TI': 'Titanium',       'CR': 'Chromium',       'MN': 'Manganese',      'FE': 'Iron',      
+                'NI': 'Nickel',         'CU': 'Copper',         'ZN': 'Zinc',           'BR': 'Bromine',
+                'AG': 'Silver',         'I': 'Iodine',          'BA': 'Barium',         'AU': 'Gold'
+            };
+
             this.defaultAtomColor = this.thr(0xCCCCCC);
 
             this.stdChainColors = [
@@ -7723,21 +7733,23 @@ var icn3d = (function (exports) {
             this.createBox_base(atom.coord, radius, color, bHighlight);
         }
 
-        createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+        createBox_base(coord, radius, color, bHighlight, bOther, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return;
 
             let mesh;
 
+            if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
+
             new THREE.BoxGeometry(1, 1, 1);
 
-            if(bHighlight || bGlycan) {
-              mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5,
+            //if(bHighlight || bGlycan) {
+              mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity,
                   specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-            }
-            else {
-              mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
-                  specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-            }
+            // }
+            // else {
+            //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
+            //       specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            // }
 
             mesh.scale.x = mesh.scale.y = mesh.scale.z = radius;
 
@@ -8978,7 +8990,7 @@ var icn3d = (function (exports) {
                    let dashed = (line.dashed) ? line.dashed : false;
                    let dashSize = 0.3;
 
-                   let radius = ic.lineRadius;
+                   let radius = (line.radius) ? line.radius : ic.lineRadius;
 
                    let colorStr = '#' + line.color.replace(/\#/g, '');
 
@@ -9047,19 +9059,22 @@ var icn3d = (function (exports) {
             this.createSphereBase(atom.coord, atom.color, radius, scale, bHighlight);
         }
 
-        createSphereBase(pos, color, radius, scale, bHighlight, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+        createSphereBase(pos, color, radius, scale, bHighlight, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return;
 
             let mesh;
 
             if(scale === undefined) scale = 1.0;
 
+            let opacity_ori = opacity;
+            if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
+
             if(bHighlight === 2) {
               scale *= 1.5;
 
               color = ic.hColor;
 
-              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
               mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
               mesh.position.copy(pos);
@@ -9077,19 +9092,18 @@ var icn3d = (function (exports) {
               if(color === undefined) {
                   color = me.parasCls.defaultAtomColor;
               }
-
-              //var color = atom.color;
-              if(bGlycan) {
-                  mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-              }
-              else {
-                  mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-              }
+              
+              //if(bGlycan) {
+                  mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            //   }
+            //   else {
+            //       mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            //   }
 
               mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
               mesh.position.copy(pos);
 
-              if(ic.bImpo && !bGlycan) {
+              if(ic.bImpo && !opacity_ori && !bGlycan) {
                   ic.posArraySphere.push(pos.x);
                   ic.posArraySphere.push(pos.y);
                   ic.posArraySphere.push(pos.z);
@@ -9117,7 +9131,7 @@ var icn3d = (function (exports) {
                 }
             }
             else {
-                if(ic.bImpo) {
+                if(ic.bImpo && !opacity_ori) { // imposter didn't work with transparency yet in iCn3D
                     if(ic.cnt <= ic.maxatomcnt) ic.objects_ghost.push(mesh);
                 }
                 else {
@@ -12912,19 +12926,16 @@ var icn3d = (function (exports) {
                    else if(prevCommandStr.indexOf(toggleStr) !== -1) {
                        ++cntToggle;
                    }
-                   else if(i === start + 1) {
-                       //tmpUrl += prevCommandStr;
+                // adding this section will remove the first command!!!
+                //    else if(i === start + 1) {
+                //        //tmpUrl += prevCommandStr;
 
-                       if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
-                       //if(!(inparaWithoutCommand !== undefined &&
-                       //  (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1
-                       //   || inparaWithoutCommand.indexOf('gi=') != -1 || inparaWithoutCommand.indexOf('align=') != -1)
-                       //   ) ) {
-                           tmpUrl += prevCommandStr;
-                       }
+                //        if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
+                //            tmpUrl += prevCommandStr;
+                //        }
 
-                       //statefile += prevCommandStr + "\n";
-                   }
+                //        //statefile += prevCommandStr + "\n";
+                //    }
                    else {
                        tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
                        //statefile += prevCommandStr + "\n";
@@ -28446,11 +28457,12 @@ var icn3d = (function (exports) {
               let  commandFirst = commandArray[0].substr(0, pos - 1);
               ic.commands.splice(0, 1, commandFirst);
           }
-
+          
           //ic.commands = dataStr.trim().split('\n');
           ic.STATENUMBER = ic.commands.length;
 
           ic.commands = preCommands.concat(ic.commands);
+          
           ic.STATENUMBER = ic.commands.length;
 
         /*
@@ -31587,6 +31599,12 @@ var icn3d = (function (exports) {
                     html += result.html;
                     html3 += result.html3;
                 }
+                else if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
+                    let bCustom = true;
+                    let result = this.showRefNum(giSeq, chnid, undefined, bCustom);
+                    html += result.html;
+                    html3 += result.html3;
+                }
             }
 
             // highlight reference numbers
@@ -31604,12 +31622,15 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
         }
 
-        showRefNum(giSeq, chnid, bKabat) {  let ic = this.icn3d, me = ic.icn3dui;
+        showRefNum(giSeq, chnid, bKabat, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
             let html = '', html3 = '';
 
             let htmlTmp = '<div class="icn3d-dl_sequence">';
             htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
-            if(bKabat) {
+            if(bCustom) {
+                htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Custom Reference Numbers">Custom Ref. No.</div>';
+            }
+            else if(bKabat) {
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers">Kabat Ref. No.</div>';
             }
             else {
@@ -31623,7 +31644,7 @@ var icn3d = (function (exports) {
                 if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
                     let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
                     let residueid = chnid + '_' + currResi;
-                    let domainid = ic.resid2domainid[residueid];
+                    let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
                     if(!ic.residues.hasOwnProperty(residueid)) {
                         html += '<span></span>';
                     }
@@ -31636,14 +31657,32 @@ var icn3d = (function (exports) {
                         if(refnumLabel) {
                             let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
                             let refnumStr;
-                            if(bKabat) {
+                            if(bCustom) {
+                                refnumStr = refnumLabel;
+                            }
+                            else if(bKabat) {
                                 refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
                             }
                             else {
                                 refnumStr = refnumStr_ori;
                             }
                         
-                            if(bKabat) {
+                            if(bCustom) {
+                                if(!refnumStr) {                               
+                                    html += '<span></span>';
+                                }
+                                else {
+                                    let refnum = parseInt(refnumStr);
+
+                                    if(refnum % 2 == 0) {
+                                        html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
+                                    }
+                                    else {
+                                        html += '<span title="' + refnumStr + '">&nbsp;</span>';
+                                    }
+                                }
+                            }
+                            else if(bKabat) {
                                 if(!refnumStr) {                               
                                     html += '<span></span>';
                                 }
@@ -32993,12 +33032,13 @@ var icn3d = (function (exports) {
 
         //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
         //The line can be dashed if "dashed" is set true.
-        addLine(x1, y1, z1, x2, y2, z2, color, dashed, type) {var ic = this.icn3d; ic.icn3dui;
+        addLine(x1, y1, z1, x2, y2, z2, color, dashed, type, radius) {var ic = this.icn3d; ic.icn3dui;
             let line = {}; // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
             line.position1 = new THREE.Vector3(x1, y1, z1);
             line.position2 = new THREE.Vector3(x2, y2, z2);
             line.color = color;
             line.dashed = dashed;
+            line.radius = radius;
             if(ic.lines[type] === undefined) ic.lines[type] = [];
             if(type !== undefined) {
                 ic.lines[type].push(line);
@@ -34759,9 +34799,26 @@ var icn3d = (function (exports) {
             let  color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
             let  dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
             let  type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
+            let  radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
 
-            ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type);
+            ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius));
             ic.drawCls.draw();
+          }
+          else if(command.indexOf('add sphere') == 0) {
+            this.addShape(command, 'sphere');
+            //ic.drawCls.draw();
+          }
+          else if(command.indexOf('add cube') == 0) {
+            this.addShape(command, 'cube');
+            //ic.drawCls.draw();
+          }
+          else if(command.indexOf('clear shape') == 0) {
+            ic.shapeCmdHash = {};
+            //ic.drawCls.draw();
+          }
+          else if(command.indexOf('clear line between sets') == 0) {
+            ic.lines['cylinder'] = []; // reset
+            //ic.drawCls.draw();
           }
           else if(commandOri.indexOf('add label') == 0) {
             let  paraArray = commandOri.split(' | ');
@@ -35286,6 +35343,11 @@ var icn3d = (function (exports) {
           else if(command.indexOf('ig refnum off') == 0) {
             ic.refnumCls.hideIgRefNum();
           }
+          else if(command.indexOf('custom refnum') == 0) {
+            let  paraArray = commandOri.split(' | ');
+            let dataStr = paraArray[1].replace(/\\n/g, '\n');
+            ic.refnumCls.parseCustomRefFile(dataStr);
+          }
 
         // special, select ==========
 
@@ -35331,7 +35393,8 @@ var icn3d = (function (exports) {
 
             ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
           }
-          else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 || command.indexOf('select @') !== -1) {
+          else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 
+              || command.indexOf('select %') !== -1 || command.indexOf('select @') !== -1) {
             let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
             let  select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
@@ -35454,6 +35517,28 @@ var icn3d = (function (exports) {
                 $("#" + me.pre + "dl_legend").html(legendHtml);
                 me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
             }
+        }
+
+        addShape(command, shape) { let  ic = this.icn3d, me = ic.icn3dui;
+          ic.shapeCmdHash[command] = 1;
+          
+          let  paraArray = command.split(' | ');
+          let  p1Array = paraArray[1].split(' ');
+          let  colorStr = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
+          let  opacity = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
+          let  radius = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+
+          colorStr = '#' + colorStr.replace(/\#/g, '');
+          let color = me.parasCls.thr(colorStr);
+
+          let pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+
+          if(shape == 'sphere') {
+            ic.sphereCls.createSphereBase(pos1, color, parseFloat(radius), undefined, undefined, undefined, parseFloat(opacity));
+          }
+          else { // 'cube'
+            ic.boxCls.createBox_base(pos1, parseFloat(radius), color, undefined, undefined, undefined, parseFloat(opacity));
+          }
         }
 
         getMenuFromCmd(cmd) { let ic = this.icn3d; ic.icn3dui;
@@ -35682,7 +35767,6 @@ var icn3d = (function (exports) {
                        }
                        else { // union
                                ic.applyCommandCls.applyCommand('select ' + command);
-
                                allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
                        }
                    }
@@ -35710,7 +35794,6 @@ var icn3d = (function (exports) {
            // There will be no ' or ' in the spec. It's already separated in selectByCommand()
            // There could be ' and ' in the spec.
            let  commandArray = select.replace(/\s+/g, ' ').replace(/ AND /g, ' and ').split(' and ');
-
            let  residueHash = {};
            let  atomHash = {};
 
@@ -35727,9 +35810,10 @@ var icn3d = (function (exports) {
                let  dollarPos = commandArray[i].indexOf('$');
                let  periodPos = commandArray[i].indexOf('.');
                let  colonPos = commandArray[i].indexOf(':');
+               let  colonPos2 = commandArray[i].indexOf('%'); // for reference numbers
                let  atPos = commandArray[i].indexOf('@');
 
-               let  moleculeStr, chainStr, residueStr, atomStrArray;
+               let  moleculeStr, chainStr, residueStr, refResStr, atomStrArray;
                let  testStr = commandArray[i];
 
                if(atPos === -1) {
@@ -35740,13 +35824,17 @@ var icn3d = (function (exports) {
                  testStr = testStr.substr(0, atPos);
                }
 
-               if(colonPos === -1) {
+               if(colonPos === -1 && colonPos2 === -1 ) {
                  residueStr = "*";
                }
-               else {
+               else if(colonPos != -1) {
                  residueStr = testStr.substr(colonPos + 1);
                  testStr = testStr.substr(0, colonPos);
                }
+               else if(colonPos2 != -1) {
+                refResStr = testStr.substr(colonPos2 + 1);
+                testStr = testStr.substr(0, colonPos2);
+              }
 
                if(periodPos === -1) {
                  chainStr = "*";
@@ -35803,7 +35891,9 @@ var icn3d = (function (exports) {
                  }
                }
 
-               let  residueStrArray = residueStr.split(',');
+               let bRefnum = (refResStr) ? true : false;
+               let residueStrArray = (bRefnum) ? refResStr.split(',') : residueStr.split(',');
+
                for(let j = 0, jl = residueStrArray.length; j < jl; ++j) {
                    let  bResidueId = false;
 
@@ -35822,7 +35912,7 @@ var icn3d = (function (exports) {
                    }
                    else {
                      //if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                     if(residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
+                     if(!bRefnum && residueStrArray[j].length > 1 && residueStrArray[j][0] === '3' 
                          && isNaN(residueStrArray[j][1]) && residueStrArray[j][0] !== '-') { // three letter residue string, such as :3LysArg or :3ZN, but not :30 neither :3-10
                        let  tmpStr = residueStrArray[j].toUpperCase();
                        threeLetterResidueStr = tmpStr.substr(1);
@@ -35855,35 +35945,52 @@ var icn3d = (function (exports) {
                        start = !isNaN(start) ? parseInt(start) : start;
                        end = !isNaN(end) ? parseInt(end) : end;
                        for(let k = start; k <= end; ++k) {
-                         let  residueId = molecule_chain + '_' + k;
-                         if(i === 0) {
-                              residueHash[residueId] = 1;
+                         let residArray = [];
+
+                         if(bRefnum) {
+                          let residArrayTmp = ic.refnum2residArray[k];
+                          for(let m = 0, ml = residArrayTmp.length; m < ml; ++m) {
+                            let residueId = residArrayTmp[m];
+                            if(residueId.substr(0, residueId.lastIndexOf('_')) == molecule_chain) {
+                              residArray.push(residueId);
+                            }
+                          }
                          }
                          else {
-                             // if not exit previously, "and" operation will remove this one
-                             //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
-                             if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
+                          let  residueId = molecule_chain + '_' + k;
+                          residArray = [residueId];
                          }
 
-                         for(let m in ic.residues[residueId]) {
-                           for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                               let  atomStr = atomStrArray[n];
-                               if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                 if(i === 0) {
-                                     //currHighlightAtoms[m] = 1;
-                                     atomHash[m] = 1;
-                                 }
-                                 else {
-                                     //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                     //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                     if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                 }
-                               }
-                           }
-                         }
+                         for(let l = 0, ll = residArray.length; l < ll; ++l) {
+                            let residueId = residArray[l];
+
+                            if(i === 0) {
+                                  residueHash[residueId] = 1;
+                            }
+                            else {
+                                // if not exit previously, "and" operation will remove this one
+                                //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                                if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
+                            }
+
+                            for(let m in ic.residues[residueId]) {
+                              for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                                  let  atomStr = atomStrArray[n];
+                                  if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                                    if(i === 0) {
+                                        //currHighlightAtoms[m] = 1;
+                                        atomHash[m] = 1;
+                                    }
+                                    else {
+                                        //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
+                                        //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                        if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                                    }
+                                  }
+                              }
+                            }
+                          } // end for(let l = 0, 
                        } // end for
-
-
                      }
                      else {
                        if(molecule_chain in ic.chains) {
@@ -37763,7 +37870,7 @@ var icn3d = (function (exports) {
                       me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                       let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                       if(ic.bAfMem) {
-                        if(window.dialog) window.dialog.dialog( "close" );
+                        //if(window.dialog) window.dialog.dialog( "close" );
                         html += "<span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
                       }
                       $("#" + ic.pre + "dl_rmsd").html(html);
@@ -45415,7 +45522,8 @@ var icn3d = (function (exports) {
                 let lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
                 let coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
                 let cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
-                let crosslinkRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('crosslinkRadius'));
+                let clRad = me.htmlCls.setHtmlCls.getCookie('crosslinkRadius');
+                let crosslinkRadius = (!isNaN(clRad)) ? parseFloat(clRad) : ic.crosslinkRadius;
                 let traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
                 let dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
                 let ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
@@ -46214,6 +46322,16 @@ var icn3d = (function (exports) {
             // add cartoon for glycans
             if(ic.bGlycansCartoon && !ic.bAlternate) {
                 ic.glycanCls.showGlycans();
+            }
+
+            // add extra spheres or cubes
+            for(let command in ic.shapeCmdHash) {
+                if(command.substr(0, 8) == 'add cube') {
+                    ic.applyCommandCls.addShape(command, 'cube');
+                }
+                else { // 'add sphere'
+                    ic.applyCommandCls.addShape(command, 'sphere');
+                }
             }
 
             ic.applyCenterCls.applyCenterOptions(options);
@@ -53908,7 +54026,7 @@ var icn3d = (function (exports) {
 
             // show membranes
             if(ic.bOpm) {
-                if(window.dialog) window.dialog.dialog( "close" );
+                //if(window.dialog) window.dialog.dialog( "close" );
                 
                 let html = "<br><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
                 $("#" + ic.pre + "dl_rmsd").html(html);
@@ -55258,22 +55376,22 @@ var icn3d = (function (exports) {
             }
         }
 
-        setSetsMenus(bTable) { let me = this.icn3dui, ic = me.icn3d;
+        setSetsMenus(id, bOneset) { let me = this.icn3dui, ic = me.icn3d;
             this.SetChainsAdvancedMenu();
 
-            let id1 = (bTable) ? 'atomsCustomDistTable' : 'atomsCustomDist';
-            let id2 = (bTable) ? 'atomsCustomDistTable2' : 'atomsCustomDist2';
+            let id1 = id;
+            let id2 = id + '2';
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
             if($("#" + me.pre + id1).length) {
                 $("#" + me.pre + id1).html("  <option value='selected'>selected</option>" + definedAtomsHtml);
             }
-            if($("#" + me.pre + id2).length) {
+            if(!bOneset && $("#" + me.pre + id2).length) {
                 $("#" + me.pre + id2).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
             }
 
             $("#" + me.pre + id1).resizable();
-            $("#" + me.pre + id2).resizable();
+            if(!bOneset) $("#" + me.pre + id2).resizable();
         }
 
         applyShownMenus() { let me = this.icn3dui; me.icn3d;
@@ -56643,6 +56761,35 @@ var icn3d = (function (exports) {
 
                ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { me.icn3d; e.preventDefault();
+                //e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_customref', 'Set custom reference numbers');
+             });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+                //e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                
+                let file = $("#" + ic.pre + "cstreffile")[0].files[0];
+                if(!file) {
+                    alert("Please select a file before clicking 'Apply'");
+                }
+                else {
+                    me.utilsCls.checkFileAPI();
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let dataStr = e.target.result; // or = reader.result;
+                        ic.refnumCls.parseCustomRefFile(dataStr);
+
+                        dataStr = dataStr.replace(/\r/g, '').replace(/\n/g, '\\n');
+
+                        thisClass.setLogCmd('custom refnum | ' + dataStr, true);
+                    };
+                    reader.readAsText(file);
+                }
+            }); 
+
             me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { me.icn3d; e.preventDefault();
                //e.preventDefault();
                $("#" + me.pre + "legend").hide();
@@ -57128,7 +57275,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                 me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
-                thisClass.setSetsMenus();
+                thisClass.setSetsMenus('atomsCustomDist');
 
                ic.bMeasureDistance = true;
             });
@@ -57136,7 +57283,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                 me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
 
-                thisClass.setSetsMenus(true);
+                thisClass.setSetsMenus('atomsCustomDistTable');
 
                ic.bMeasureDistance = true;
             });
@@ -57152,6 +57299,24 @@ var icn3d = (function (exports) {
                ic.pk = 2;
                ic.drawCls.draw();
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_cartoonshape', 'Draw cartoon for a set');
+
+                let bOneset = true;
+                thisClass.setSetsMenus('cartoonshape', bOneset);
+
+               ic.bCartoonshape = true;
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_linebtwsets', 'Draw a line between two sets');
+
+                thisClass.setSetsMenus('linebtwsets');
+
+               ic.bLinebtwsets = true;
+            });
+
         //    },
         //    clkMn2_selectedcenter: function() {
             me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
@@ -58815,6 +58980,11 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
+            html += me.htmlCls.setHtmlCls.getMenuSep();
+
+            html += me.htmlCls.setHtmlCls.getLink('mn5_cartoonshape', 'Cartoon for a Set', undefined, 1);
+            html += me.htmlCls.setHtmlCls.getLink('mn5_linebtwsets', 'Line btw. Two Sets', undefined, 1);
+
             if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
                 html += me.htmlCls.setHtmlCls.getMenuSep();
 
@@ -58823,12 +58993,12 @@ var icn3d = (function (exports) {
                 html += me.htmlCls.setHtmlCls.getLinkWrapper2('mn5_map', 'Electron Density', 'mapWrapper1', undefined, 1);
 
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map', undefined, undefined, 2);
-                html += me.htmlCls.setHtmlCls.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map', undefined, undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn5_elecmap2fofc', '2Fo-Fc Map', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn5_elecmapfofc', 'Fo-Fc Map', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, undefined, 2);
+
                 html += "</ul>";
                 html += "</li>";
-
-                html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 1);
 
                 //html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
                 //html += me.htmlCls.setHtmlCls.getMenuText('mapWrapper3', 'Map Wireframe', undefined, undefined, 1);
@@ -58869,7 +59039,7 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
-            html += "<li><span>Dialog Color</span>";
+            //html += "<li><span>Dialog Color</span>";
             html += me.htmlCls.setHtmlCls.getMenuText('mn6_themewrap', 'Dialog Color', undefined, undefined, 1);
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn6_theme', 'mn6_themeBlue', 'Blue', true, undefined, 2);
@@ -59422,15 +59592,20 @@ var icn3d = (function (exports) {
 
                 html += "</ul>";
                 html += "</li>";
-    /*
-                html += me.htmlCls.setHtmlCls.getMenuText('mn6_igrefwrap', 'Ig Ref. Number', undefined, undefined, 1);
+
+                html += me.htmlCls.setHtmlCls.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
                 html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefYes', 'Show', undefined, undefined, 2);
-                html += me.htmlCls.setHtmlCls.getRadio('mn6_igref', 'mn6_igrefNo', 'Hide', true, undefined, 2);
+    /*
+                html += me.htmlCls.setHtmlCls.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
+                html += me.htmlCls.setHtmlCls.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
+
+                html += me.htmlCls.setHtmlCls.getMenuSep();
+    */
+                html += me.htmlCls.setHtmlCls.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
                 html += "</ul>";
                 html += "</li>";
-    */
+
                 html += me.htmlCls.setHtmlCls.getMenuSep();
             }
 
@@ -60434,6 +60609,18 @@ var icn3d = (function (exports) {
 
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_customref' class='" + dialogClass + "'>";
+            html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
+            html += '<pre>refnum,11,12,,21,22<br>';
+            html += '1TUP_A,100,101,,,132<br>';
+            html += '1TUP_B,110,111,,141,142</pre>';
+            html += 'The first row defines the reference residue numbers. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 12, 21, 22) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The thrid row shows the real residue numbers for the chain "1TUP_B".<br><br>';
+            html += 'To select all residues corresponding to the reference numbers, you can simplay replace ":" with "%" in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank">Specification</a>. For example, "%12"  selects the residue 101 in 1TUP_A and the residue 111 in 1TUP_B. ".A%12" has the chain "A" filter and selects the residue 101 in 1TUP_A.<br>';
+            html += '</div><br>';
+            html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstreffile' size=8> <br><br>";
+            html += me.htmlCls.buttonStr + "reload_customreffile'>Apply Custom Reference Numbers</button>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_align' class='" + dialogClass + "'>";
             html += "Enter the PDB IDs or MMDB IDs of the structures: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid1' value='1HHO' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
             html += "<b>VAST+ based on VAST</b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
@@ -60557,8 +60744,8 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
-            html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' value='1HHO,4N7N,P69905,P01942' size=30> <br><br>";
-            html += me.htmlCls.buttonStr + "reload_mmdbaf_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+            html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+            html += me.htmlCls.buttonStr + "reload_mmdbaf'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/><br>";
             html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
             + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
             + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
@@ -61101,6 +61288,58 @@ var icn3d = (function (exports) {
             html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applydist2'>Display</button></span>";
             html += "</div>";
 
+            
+            html += me.htmlCls.divStr + "dl_linebtwsets' class='" + dialogClass + "'>";
+            html += me.htmlCls.spanNowrapStr + "1. Select two sets</span><br/>";
+            html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+            html += me.htmlCls.divNowrapStr + "First set:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "linebtwsets2' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td><td>";
+
+            html += me.htmlCls.divNowrapStr + "Second set:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "linebtwsets' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td></tr></table>";
+
+            html += me.htmlCls.divNowrapStr + "2. Line style: <select id='" + me.pre + "linebtwsets_style'>";
+            html += me.htmlCls.setHtmlCls.getOptionHtml(['Solid', 'Dashed'], 0);
+            html += "</select></div><br>";
+
+            html += "3. Line radius: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_radius' value='0.4' size=4><br/><br/>";
+            
+            html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
+
+            html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
+            html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearlinebtwsets'>Clear</button></span>";
+            html += "</div>";
+
+
+            html += me.htmlCls.divStr + "dl_cartoonshape' class='" + dialogClass + "'>";
+            html += me.htmlCls.spanNowrapStr + "1. Select a set:</span><br/>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "cartoonshape' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div><br>";
+
+            html += me.htmlCls.divNowrapStr + "2. Shape: <select id='" + me.pre + "cartoonshape_shape'>";
+            html += me.htmlCls.setHtmlCls.getOptionHtml(['Sphere', 'Cube'], 0);
+            html += "</select></div><br>";
+
+            html += "3. Radius: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cartoonshape_radius' value='1.5' size=4><br/><br/>";
+            
+            html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cartoonshape_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
+
+            html += me.htmlCls.divNowrapStr + "5. Opacity: <select id='" + me.pre + "cartoonshape_opacity'>";
+            html += me.htmlCls.setHtmlCls.getOptionHtml(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'], 7);
+            html += "</select></div><br>";
+            
+            html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applycartoonshape'>Display</button></span>";
+            html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearcartoonshape'>Clear</button></span>";
+            html += "</div>";
+
+
             html += me.htmlCls.divStr + "dl_distmanysets' class='" + dialogClass + "'>";
             html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise distances</span><br/>";
             html += "<table border=0 width=400 cellspacing=10><tr><td>";
@@ -61423,7 +61662,8 @@ var icn3d = (function (exports) {
 
         searchSeq() { let me = this.icn3dui, ic = me.icn3d;
            let select = $("#" + me.pre + "search_seq").val();
-           if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
+           if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
+           && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
                select = ':' + select;
            }
            let commandname = select.replace(/\s+/g, '_');
@@ -61550,7 +61790,14 @@ var icn3d = (function (exports) {
         launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui; me.icn3d;
             let flag = bBiounit ? '1' : '0';
 
-            let idArray = ids.split(',');
+            ids = ids.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+
+            if(!ids) {
+                alert("Please enter a list of PDB IDs or AlphaFold UniProt IDs...");
+                return;
+            }
+
+            let idArray = ids.split(' ');
             if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
                 window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
@@ -62332,7 +62579,7 @@ var icn3d = (function (exports) {
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
 
                 // remove space
-                let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+                let ids = $("#" + me.pre + "mmdbafid").val();
 
                 thisClass.launchMmdb(ids, 1, hostUrl);
             });
@@ -62342,7 +62589,7 @@ var icn3d = (function (exports) {
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
 
                 // remove space
-                let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+                let ids = $("#" + me.pre + "mmdbafid").val();
                 thisClass.launchMmdb(ids, 0, hostUrl);
             });
 
@@ -62350,8 +62597,8 @@ var icn3d = (function (exports) {
                if (e.keyCode === 13) {
                    e.preventDefault();
                    //if(!me.cfg.notebook) dialog.dialog( "close" );
-                   me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
+                   me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
                   }
             });
 
@@ -62359,8 +62606,8 @@ var icn3d = (function (exports) {
                 if (e.keyCode === 13) {
                     e.preventDefault();
                     
-                    let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
-                    thisClass.launchMmdb(ids, 0, hostUrl);
+                    let ids = $("#" + me.pre + "mmdbafid").val();
+                    thisClass.launchMmdb(ids, 1, hostUrl);
                    }
              });
 
@@ -63199,19 +63446,25 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.alignerrormapid + "_svg", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
+                let scale = 1;
+                $("#" + me.alignerrormapid + "_scale").val(scale);
+                $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+                
                 ic.saveFileCls.saveSvg(me.alignerrormapid, ic.inputid + "_alignerrormap.svg", true);
              });
              me.myEventCls.onIds("#" + me.alignerrormapid + "_png", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
+                let scale = 1;
+                $("#" + me.alignerrormapid + "_scale").val(scale);
+                $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+                
                 ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
              });
              me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
                 ic.contactMapCls.afErrorMap(afid, true);
-
-                
              });
              me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
                  e.preventDefault();
@@ -63490,6 +63743,91 @@ var icn3d = (function (exports) {
                 me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
 
                 me.htmlCls.clickMenuCls.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "applylinebtwsets", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.bLinebtwsets = false;
+     
+                let nameArray = $("#" + me.pre + "linebtwsets").val();
+                let nameArray2 = $("#" + me.pre + "linebtwsets2").val();
+     
+                let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+
+                let posArray1 = ic.contactCls.getExtent(atomSet1);
+                let posArray2 = ic.contactCls.getExtent(atomSet2);
+
+                let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+                let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+
+                let radius = $("#" + me.pre + "linebtwsets_radius").val(); 
+                let color = $("#" + me.pre + "linebtwsets_customcolor").val(); 
+                let dashed = ($("#" + me.pre + "linebtwsets_style").val() == 'Solid') ? false : true;
+                let type = 'cylinder';
+
+                let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius;
+
+                me.htmlCls.clickMenuCls.setLogCmd(command, true);
+
+                ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius);
+                ic.drawCls.draw();
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "applycartoonshape", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.bCartoonshape = false;
+     
+                let nameArray = $("#" + me.pre + "cartoonshape").val();
+                let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                let posArray1 = ic.contactCls.getExtent(atomSet1);
+                let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+
+                let shape = $("#" + me.pre + "cartoonshape_shape").val(); // Sphere or Cube
+                let radius = $("#" + me.pre + "cartoonshape_radius").val(); 
+                let colorStr = $("#" + me.pre + "cartoonshape_customcolor").val(); 
+                let opacity = $("#" + me.pre + "cartoonshape_opacity").val();
+
+                colorStr = '#' + colorStr.replace(/\#/g, '');
+                let color = me.parasCls.thr(colorStr);
+             
+                // draw the shape
+                let command;
+                if(shape == 'Sphere') {
+                    ic.sphereCls.createSphereBase(pos1, color, radius, undefined, undefined, undefined, opacity);
+                    command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                }
+                else {
+                    ic.boxCls.createBox_base(pos1, radius, color, undefined, undefined, undefined, opacity);
+                    command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                }
+
+                me.htmlCls.clickMenuCls.setLogCmd(command, true);
+                ic.shapeCmdHash[command] = 1;
+
+                ic.drawCls.draw();
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "clearlinebtwsets", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+                ic.lines['cylinder'] = [];
+                me.htmlCls.clickMenuCls.setLogCmd('clear line between sets', true);
+
+                ic.drawCls.draw();
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "clearcartoonshape", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+                ic.shapeCmdHash = {};
+                me.htmlCls.clickMenuCls.setLogCmd('clear shape', true);
+
+                ic.drawCls.draw();
             });
 
         //    clickApply_thickness: function() {
@@ -64306,7 +64644,7 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        setThicknessHtml(type) { let me = this.icn3dui; me.icn3d;
+        setThicknessHtml(type) { let me = this.icn3dui, ic = me.icn3d;
             let html = '';
 
             // type == '3dprint' or 'style'
@@ -64344,7 +64682,8 @@ var icn3d = (function (exports) {
                     linerad = parseFloat(this.getCookie('lineRadius'));
                     coilrad = parseFloat(this.getCookie('coilWidth'));
                     stickrad = parseFloat(this.getCookie('cylinderRadius'));
-                    crosslinkrad = parseFloat(this.getCookie('crosslinkRadius'));
+                    let clrad = this.getCookie('crosslinkRadius');
+                    crosslinkrad = (!isNaN(clrad)) ? parseFloat(clrad) : ic.crosslinkRadius;
                     tracerad = parseFloat(this.getCookie('traceRadius'));
                     ballscale = parseFloat(this.getCookie('dotSphereScale'));
                     ribbonthick = parseFloat(this.getCookie('ribbonthickness'));
@@ -65442,6 +65781,10 @@ var icn3d = (function (exports) {
                 });
 
                 html += "<div>";
+                
+                html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+                html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Grey: Charged, not hydrophobic<br><br>";
 
                 let cnt = 0;
                 for (let key of keys) {
@@ -65457,6 +65800,7 @@ var icn3d = (function (exports) {
             }
             //else if (ic.legendClick == 5){
             else if (colorType == 'b factor') {
+                html += "<div style='width:450px'>B factor quantitates the uncertainty for each atom. A high B factor reflects that the position is less certain.</div><br>";
                 html += me.htmlCls.clickMenuCls.setLegendHtml();
             }
             //else if (ic.legendClick == 6){
@@ -65476,7 +65820,7 @@ var icn3d = (function (exports) {
             }
          }
 
-         getColorLegendForElem(category, atomHash) { let ic = this.icn3d; ic.icn3dui;
+         getColorLegendForElem(category, atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
             let html = '';
             let elemSet = {};
 
@@ -65502,7 +65846,7 @@ var icn3d = (function (exports) {
                     for (let v in elemSet[k]) {
                         html += "<div style='width: 10px; height: 10px; background-color:#" + v + "; border: 0px;display:inline-block;' ></div> ";
                     }
-                    html +=  k + "</span><br>";
+                    html +=  me.parasCls.atomnames[k.toUpperCase()] + "</span><br>";
                 }
                 html += "<br>";
             }
@@ -65520,11 +65864,13 @@ var icn3d = (function (exports) {
                 ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
                 MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
                 SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
-                TYR: "Y (Tyr)",       VAL: "V (Val)",       ASX: "B (Asx)",
-                GLX: "Z (Glx)",         'G': "Guanine",       'A': "Adenine",
-                'T': "Thymine",         'C': "Cytosine",       'U': "Uracile",
-                'DG': "dG",       'DA': "dA",      'DT': "dT",
-                'DC': "dC",       'DU': 'dU'
+                TYR: "Y (Tyr)",       VAL: "V (Val)",       
+                //ASX: "B (Asx)",       GLX: "Z (Glx)",   
+                ASX: "X (Asx)",       GLX: "X (Glx)",       
+                'G': "Guanine",       'A': "Adenine",
+                'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
+                'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
+                'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
             };
 
             let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
@@ -65597,7 +65943,7 @@ var icn3d = (function (exports) {
 
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
                 if(atom.resn == 'ARG' || atom.resn == 'LYS') {
-                    chargeHash['Postive'] = 1;
+                    chargeHash['Positive'] = 1;
                 }
                 else if(atom.resn == 'HIS') {
                     chargeHash['Partial-Positive'] = 1;
@@ -65611,13 +65957,13 @@ var icn3d = (function (exports) {
             }
 
             const charge2color = {
-                "Postive": "0000ff",
+                "Positive": "0000ff",
                 "Partial-Positive": "8080ff",
                 "Negative": "ff0000",
                 "Neutral": "888888"
             };
 
-            let chargeOrder = ["Postive", "Partial-Positive", "Negative", "Neutral"];
+            let chargeOrder = ["Positive", "Partial-Positive", "Negative", "Neutral"];
      
             html += "<div>";
             for (let i = 0, il = chargeOrder.length; i < il; ++i) {
@@ -68371,9 +68717,9 @@ var icn3d = (function (exports) {
             }
 
             // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
-            ic.resid2refnum = {};
-            ic.refnum2residArray = {};
-            ic.chainsMapping = {};
+            if(!ic.resid2refnum) ic.resid2refnum = {};
+            if(!ic.refnum2residArray) ic.refnum2residArray = {};
+            if(!ic.chainsMapping) ic.chainsMapping = {};
             for(let chainid in chainid2segs) {
                 let segArray = chainid2segs[chainid];
     console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.chainid2index[chainid]]);
@@ -68435,6 +68781,72 @@ var icn3d = (function (exports) {
             else if(refnum >= 6000 && refnum < 7000) return "F" + oriRefnum;
             else if(refnum >= 7000 && refnum < 7200) return "G" + oriRefnum;
             else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
+        }
+
+        parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
+            ic.bShowCustomRefnum = true;
+
+            //refnum,11,12,,21,22
+            //1TUP_A,100,101,,,132
+            //1TUP_B,110,111,,141,142
+
+            let lineArray = data.split('\n');
+
+            if(!ic.resid2refnum) ic.resid2refnum = {};
+            if(!ic.refnum2residArray) ic.refnum2residArray = {};
+            if(!ic.chainsMapping) ic.chainsMapping = {};
+
+            let refAA = [];
+            for(let i = 0, il = lineArray.length; i < il; ++i) {
+                let numArray = lineArray[i].split(',');
+                refAA.push(numArray);
+            }
+
+            // assign ic.refnum2residArray
+            let refI = 0;
+            for(let j = 1, jl = refAA[refI].length; j < jl; ++j) {
+                if(!refAA[refI][j]) continue;
+
+                let refnum = refAA[refI][j].trim();
+                if(refnum) {
+                    for(let i = 1, il = refAA.length; i < il; ++i) {
+                        if(!refAA[i][j]) continue;
+                        let chainid = refAA[i][0].trim();
+                        let resid = chainid + '_' + refAA[i][j].trim();
+                        if(!ic.refnum2residArray[refnum]) {
+                            ic.refnum2residArray[refnum] = [resid];
+                        }
+                        else {
+                            ic.refnum2residArray[refnum].push(resid);
+                        }
+                    }
+                }
+            }
+
+            // assign ic.resid2refnum and ic.chainsMapping
+            for(let i = 1, il = refAA.length; i < il; ++i) {
+                let chainid = refAA[i][0].trim();
+
+                for(let j = 1, jl = refAA[i].length; j < jl; ++j) {
+                    if(!refAA[i][j] || !refAA[refI][j]) continue;
+
+                    let resi = refAA[i][j].trim();
+                    let refnum = refAA[refI][j].trim();
+                    if(resi && refnum) {
+                        let resid = chainid + '_' + resi;
+                        ic.resid2refnum[resid] = refnum;
+
+                        if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                            ic.chainsMapping[chainid] = {};
+                        }
+                        ic.chainsMapping[chainid][resid] = refnum;
+                    }
+                }
+            }
+
+            // open sequence view
+            ic.showAnnoCls.showAnnotations();
+            ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
      }
 
@@ -69686,6 +70098,8 @@ var icn3d = (function (exports) {
 
         this.residNCBI2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
 
+        this.shapeCmdHash = {}; // remember the spheres/cubes for sets
+
         this.bHideSelection = true;
         this.bSelectResidue = false;
         this.bSelectAlignResidue = false;
@@ -70005,6 +70419,8 @@ var icn3d = (function (exports) {
         ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
+        ic.shapeCmdHash = {};
+
         ic.bAssembly = true; //false;
     };
 
@@ -70060,7 +70476,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.18.1';
+        this.REVISION = '3.19.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.19.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.19.0.zip) was release on November 16, 2022. Enabled users to add custom reference residue number with the menu "Analysis > Ref. Number", add (transparent) spheres or cubes for any sets with the menu "Style > Cartoon for a Set", add a line between two sets with the menu "Style > Line btw. Two Sets". Also improved the color legends.
+
 [icn3d-3.18.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.18.1.zip) was release on November 8, 2022. Added the annotation "Transmembrane" for PDB or AlphaFold structures based on data from OPM, Membranome, and UniProt; enabled to load a PAE file from a URL in the same domain.
 
 [icn3d-3.18.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.18.0.zip) was release on November 3, 2022. Merged Jack Lin's branch with the following new features: show some basic color legends when coloring a structure; add local Smith-Waterman alignment when aligning two sequences; add a preference in the menu "Style > Prefereces" to enlarge the command window.
