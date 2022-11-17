@@ -8991,6 +8991,7 @@ var icn3d = (function (exports) {
                    let dashSize = 0.3;
 
                    let radius = (line.radius) ? line.radius : ic.lineRadius;
+                   let opacity = (line.opacity) ? line.opacity : 1.0;
 
                    let colorStr = '#' + line.color.replace(/\#/g, '');
 
@@ -9001,7 +9002,7 @@ var icn3d = (function (exports) {
                             ic.brickCls.createBrick(p1, p2, radius, color);
                         }
                         else {
-                            ic.cylinderCls.createCylinder(p1, p2, radius, color);
+                            ic.cylinderCls.createCylinder(p1, p2, radius, color, undefined, undefined, undefined, undefined, opacity);
                         }
                    }
                    else {
@@ -9020,7 +9021,7 @@ var icn3d = (function (exports) {
                                 ic.brickCls.createBrick(start, end, radius, color);
                               }
                               else {
-                                ic.cylinderCls.createCylinder(start, end, radius, color);
+                                ic.cylinderCls.createCylinder(start, end, radius, color, undefined, undefined, undefined, undefined, opacity);
                               }
                           }
                      }
@@ -9165,8 +9166,11 @@ var icn3d = (function (exports) {
         }
 
         // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-        createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+        createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return;
+
+            let opacity_ori = opacity;
+            if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
 
             let mesh;
             if(bHighlight === 1) {
@@ -9188,18 +9192,19 @@ var icn3d = (function (exports) {
             else {
                 if(bHighlight === 2) {
                   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                      { transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                      { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
                   radius *= 1.5;
                 }
-                else if(bGlycan) {
-                  mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                      { transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-                }
+                //else if(bGlycan) {
                 else {
                   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                      { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                      { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
                 }
+                // else {
+                //   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
+                //       { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                // }
 
                 mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
                 mesh.matrixAutoUpdate = false;
@@ -9209,7 +9214,7 @@ var icn3d = (function (exports) {
                 mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(
                     new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
 
-                if(ic.bImpo && !bGlycan) {
+                if(ic.bImpo && !opacity_ori && !bGlycan) {
                   ic.posArray.push(p0.x);
                   ic.posArray.push(p0.y);
                   ic.posArray.push(p0.z);
@@ -9243,7 +9248,7 @@ var icn3d = (function (exports) {
                 }
 
                 if(bHighlight === 2) {
-                    if(ic.bImpo) {
+                    if(ic.bImpo && !opacity_ori) {
                         if(ic.cnt <= ic.maxatomcnt) ic.prevHighlightObjects_ghost.push(mesh);
                     }
                     else {
@@ -9251,7 +9256,7 @@ var icn3d = (function (exports) {
                     }
                 }
                 else {
-                    if(ic.bImpo) {
+                    if(ic.bImpo && !opacity_ori) {
                         if(ic.cnt <= ic.maxatomcnt) ic.objects_ghost.push(mesh);
                     }
                     else {
@@ -33032,13 +33037,14 @@ var icn3d = (function (exports) {
 
         //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
         //The line can be dashed if "dashed" is set true.
-        addLine(x1, y1, z1, x2, y2, z2, color, dashed, type, radius) {var ic = this.icn3d; ic.icn3dui;
+        addLine(x1, y1, z1, x2, y2, z2, color, dashed, type, radius, opacity) {var ic = this.icn3d; ic.icn3dui;
             let line = {}; // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
             line.position1 = new THREE.Vector3(x1, y1, z1);
             line.position2 = new THREE.Vector3(x2, y2, z2);
             line.color = color;
             line.dashed = dashed;
             line.radius = radius;
+            line.opacity = opacity;
             if(ic.lines[type] === undefined) ic.lines[type] = [];
             if(type !== undefined) {
                 ic.lines[type].push(line);
@@ -34800,8 +34806,9 @@ var icn3d = (function (exports) {
             let  dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
             let  type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
             let  radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
+            let  opacity = (paraArray.length > 7) ? paraArray[7].substr(paraArray[7].lastIndexOf(' ') + 1) : 1.0;
 
-            ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius));
+            ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius), parseFloat(opacity));
             ic.drawCls.draw();
           }
           else if(command.indexOf('add sphere') == 0) {
@@ -61313,7 +61320,11 @@ var icn3d = (function (exports) {
             
             html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
 
-            html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
+            html += me.htmlCls.divNowrapStr + "5. Opacity: <select id='" + me.pre + "linebtwsets_opacity'>";
+            html += me.htmlCls.setHtmlCls.getOptionHtml(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'], 7);
+            html += "</select></div><br>";
+
+            html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
             html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearlinebtwsets'>Clear</button></span>";
             html += "</div>";
 
@@ -63764,14 +63775,15 @@ var icn3d = (function (exports) {
 
                 let radius = $("#" + me.pre + "linebtwsets_radius").val(); 
                 let color = $("#" + me.pre + "linebtwsets_customcolor").val(); 
+                let opacity = $("#" + me.pre + "linebtwsets_opacity").val();
                 let dashed = ($("#" + me.pre + "linebtwsets_style").val() == 'Solid') ? false : true;
                 let type = 'cylinder';
 
-                let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius;
+                let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius + ' | opacity ' + opacity;
 
                 me.htmlCls.clickMenuCls.setLogCmd(command, true);
 
-                ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius);
+                ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius, opacity);
                 ic.drawCls.draw();
             });
 

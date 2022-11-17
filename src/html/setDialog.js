@@ -925,7 +925,11 @@ class SetDialog {
         
         html += "4. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linebtwsets_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
 
-        html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
+        html += me.htmlCls.divNowrapStr + "5. Opacity: <select id='" + me.pre + "linebtwsets_opacity'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'], 7);
+        html += "</select></div><br>";
+
+        html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
         html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearlinebtwsets'>Clear</button></span>";
         html += "</div>";
 

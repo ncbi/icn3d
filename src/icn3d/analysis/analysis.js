@@ -196,13 +196,14 @@ class Analysis {
 
     //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
     //The line can be dashed if "dashed" is set true.
-    addLine(x1, y1, z1, x2, y2, z2, color, dashed, type, radius) {var ic = this.icn3d, me = ic.icn3dui;
+    addLine(x1, y1, z1, x2, y2, z2, color, dashed, type, radius, opacity) {var ic = this.icn3d, me = ic.icn3dui;
         let line = {} // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
         line.position1 = new THREE.Vector3(x1, y1, z1);
         line.position2 = new THREE.Vector3(x2, y2, z2);
         line.color = color;
         line.dashed = dashed;
         line.radius = radius;
+        line.opacity = opacity;
         if(ic.lines[type] === undefined) ic.lines[type] = [];
         if(type !== undefined) {
             ic.lines[type].push(line);
