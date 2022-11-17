@@ -2183,14 +2183,15 @@ class Events {
 
             let radius = $("#" + me.pre + "linebtwsets_radius").val(); 
             let color = $("#" + me.pre + "linebtwsets_customcolor").val(); 
+            let opacity = $("#" + me.pre + "linebtwsets_opacity").val();
             let dashed = ($("#" + me.pre + "linebtwsets_style").val() == 'Solid') ? false : true;
             let type = 'cylinder';
 
-            let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius;
+            let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius + ' | opacity ' + opacity;
 
             me.htmlCls.clickMenuCls.setLogCmd(command, true);
 
-            ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius);
+            ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius, opacity);
             ic.drawCls.draw();
         });
 

@@ -223,6 +223,7 @@ class Line {
                let dashSize = 0.3;
 
                let radius = (line.radius) ? line.radius : ic.lineRadius;
+               let opacity = (line.opacity) ? line.opacity : 1.0;
 
                let colorStr = '#' + line.color.replace(/\#/g, '');
 
@@ -233,7 +234,7 @@ class Line {
                         ic.brickCls.createBrick(p1, p2, radius, color);
                     }
                     else {
-                        ic.cylinderCls.createCylinder(p1, p2, radius, color);
+                        ic.cylinderCls.createCylinder(p1, p2, radius, color, undefined, undefined, undefined, undefined, opacity);
                     }
                }
                else {
@@ -252,7 +253,7 @@ class Line {
                             ic.brickCls.createBrick(start, end, radius, color);
                           }
                           else {
-                            ic.cylinderCls.createCylinder(start, end, radius, color);
+                            ic.cylinderCls.createCylinder(start, end, radius, color, undefined, undefined, undefined, undefined, opacity);
                           }
                       }
                  }

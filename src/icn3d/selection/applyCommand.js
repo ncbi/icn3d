@@ -802,8 +802,9 @@ class ApplyCommand {
         let  dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
         let  type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
         let  radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
+        let  opacity = (paraArray.length > 7) ? paraArray[7].substr(paraArray[7].lastIndexOf(' ') + 1) : 1.0;
 
-        ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius));
+        ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius), parseFloat(opacity));
         ic.drawCls.draw();
       }
       else if(command.indexOf('add sphere') == 0) {

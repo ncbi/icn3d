@@ -19,8 +19,11 @@ class Cylinder {
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+    createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
+
+        let opacity_ori = opacity;
+        if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
 
         let mesh;
         if(bHighlight === 1) {
@@ -42,18 +45,19 @@ class Cylinder {
         else {
             if(bHighlight === 2) {
               mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                  { transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                  { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
               radius *= 1.5;
             }
-            else if(bGlycan) {
-              mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                  { transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-            }
+            //else if(bGlycan) {
             else {
               mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                  { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                  { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
             }
+            // else {
+            //   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
+            //       { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            // }
 
             mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
             mesh.matrixAutoUpdate = false;
@@ -63,7 +67,7 @@ class Cylinder {
             mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(
                 new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
 
-            if(ic.bImpo && !bGlycan) {
+            if(ic.bImpo && !opacity_ori && !bGlycan) {
               ic.posArray.push(p0.x);
               ic.posArray.push(p0.y);
               ic.posArray.push(p0.z);
@@ -97,7 +101,7 @@ class Cylinder {
             }
 
             if(bHighlight === 2) {
-                if(ic.bImpo) {
+                if(ic.bImpo && !opacity_ori) {
                     if(ic.cnt <= ic.maxatomcnt) ic.prevHighlightObjects_ghost.push(mesh);
                 }
                 else {
@@ -105,7 +109,7 @@ class Cylinder {
                 }
             }
             else {
-                if(ic.bImpo) {
+                if(ic.bImpo && !opacity_ori) {
                     if(ic.cnt <= ic.maxatomcnt) ic.objects_ghost.push(mesh);
                 }
                 else {
