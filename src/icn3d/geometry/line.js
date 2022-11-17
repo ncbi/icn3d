@@ -222,7 +222,7 @@ class Line {
                let dashed = (line.dashed) ? line.dashed : false;
                let dashSize = 0.3;
 
-               let radius = ic.lineRadius;
+               let radius = (line.radius) ? line.radius : ic.lineRadius;
 
                let colorStr = '#' + line.color.replace(/\#/g, '');
 

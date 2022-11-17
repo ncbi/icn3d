@@ -79,7 +79,8 @@ class Events {
 
     searchSeq() { let me = this.icn3dui, ic = me.icn3d;
        let select = $("#" + me.pre + "search_seq").val();
-       if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
+       if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
+       && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
            select = ':' + select;
        }
        let commandname = select.replace(/\s+/g, '_');
@@ -206,7 +207,14 @@ class Events {
     launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
         let flag = bBiounit ? '1' : '0';
 
-        let idArray = ids.split(',');
+        ids = ids.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+
+        if(!ids) {
+            alert("Please enter a list of PDB IDs or AlphaFold UniProt IDs...");
+            return;
+        }
+
+        let idArray = ids.split(' ');
         if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
             window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
@@ -988,7 +996,7 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             // remove space
-            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+            let ids = $("#" + me.pre + "mmdbafid").val();
 
             thisClass.launchMmdb(ids, 1, hostUrl);
         });
@@ -998,7 +1006,7 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             // remove space
-            let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
+            let ids = $("#" + me.pre + "mmdbafid").val();
             thisClass.launchMmdb(ids, 0, hostUrl);
         });
 
@@ -1006,8 +1014,8 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
+               me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
               }
         });
 
@@ -1015,8 +1023,8 @@ class Events {
             if (e.keyCode === 13) {
                 e.preventDefault();
                 
-                let ids = $("#" + me.pre + "mmdbafid").val().replace(/\s+/g, '');
-                thisClass.launchMmdb(ids, 0, hostUrl);
+                let ids = $("#" + me.pre + "mmdbafid").val();
+                thisClass.launchMmdb(ids, 1, hostUrl);
                }
          });
 
@@ -1855,19 +1863,25 @@ class Events {
         me.myEventCls.onIds("#" + me.alignerrormapid + "_svg", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
+            let scale = 1;
+            $("#" + me.alignerrormapid + "_scale").val(scale);
+            $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+            
             ic.saveFileCls.saveSvg(me.alignerrormapid, ic.inputid + "_alignerrormap.svg", true);
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_png", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
+            let scale = 1;
+            $("#" + me.alignerrormapid + "_scale").val(scale);
+            $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+            
             ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.contactMapCls.afErrorMap(afid, true);
-
-            
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
@@ -2148,6 +2162,91 @@ class Events {
             me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
 
             me.htmlCls.clickMenuCls.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applylinebtwsets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.bLinebtwsets = false;
+ 
+            let nameArray = $("#" + me.pre + "linebtwsets").val();
+            let nameArray2 = $("#" + me.pre + "linebtwsets2").val();
+ 
+            let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+
+            let posArray1 = ic.contactCls.getExtent(atomSet1);
+            let posArray2 = ic.contactCls.getExtent(atomSet2);
+
+            let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+            let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+
+            let radius = $("#" + me.pre + "linebtwsets_radius").val(); 
+            let color = $("#" + me.pre + "linebtwsets_customcolor").val(); 
+            let dashed = ($("#" + me.pre + "linebtwsets_style").val() == 'Solid') ? false : true;
+            let type = 'cylinder';
+
+            let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius;
+
+            me.htmlCls.clickMenuCls.setLogCmd(command, true);
+
+            ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius);
+            ic.drawCls.draw();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applycartoonshape", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.bCartoonshape = false;
+ 
+            let nameArray = $("#" + me.pre + "cartoonshape").val();
+            let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            let posArray1 = ic.contactCls.getExtent(atomSet1);
+            let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+
+            let shape = $("#" + me.pre + "cartoonshape_shape").val(); // Sphere or Cube
+            let radius = $("#" + me.pre + "cartoonshape_radius").val(); 
+            let colorStr = $("#" + me.pre + "cartoonshape_customcolor").val(); 
+            let opacity = $("#" + me.pre + "cartoonshape_opacity").val();
+
+            colorStr = '#' + colorStr.replace(/\#/g, '');
+            let color = me.parasCls.thr(colorStr);
+         
+            // draw the shape
+            let command;
+            if(shape == 'Sphere') {
+                ic.sphereCls.createSphereBase(pos1, color, radius, undefined, undefined, undefined, opacity);
+                command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+            }
+            else {
+                ic.boxCls.createBox_base(pos1, radius, color, undefined, undefined, undefined, opacity);
+                command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+            }
+
+            me.htmlCls.clickMenuCls.setLogCmd(command, true);
+            ic.shapeCmdHash[command] = 1;
+
+            ic.drawCls.draw();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "clearlinebtwsets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            ic.lines['cylinder'] = [];
+            me.htmlCls.clickMenuCls.setLogCmd('clear line between sets', true);
+
+            ic.drawCls.draw();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "clearcartoonshape", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            ic.shapeCmdHash = {};
+            me.htmlCls.clickMenuCls.setLogCmd('clear shape', true);
+
+            ic.drawCls.draw();
         });
 
     //    clickApply_thickness: function() {

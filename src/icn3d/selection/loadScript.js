@@ -61,11 +61,12 @@ class LoadScript {
           let  commandFirst = commandArray[0].substr(0, pos - 1);
           ic.commands.splice(0, 1, commandFirst);
       }
-
+      
       //ic.commands = dataStr.trim().split('\n');
       ic.STATENUMBER = ic.commands.length;
 
       ic.commands = preCommands.concat(ic.commands);
+      
       ic.STATENUMBER = ic.commands.length;
 
     /*

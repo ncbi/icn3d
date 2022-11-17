@@ -36,21 +36,23 @@ class Box {
         this.createBox_base(atom.coord, radius, color, bHighlight);
     }
 
-    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let mesh;
 
+        if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
+
         let boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-        if(bHighlight || bGlycan) {
-          mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5,
+        //if(bHighlight || bGlycan) {
+          mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity,
               specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-        }
-        else {
-          mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
-              specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-        }
+        // }
+        // else {
+        //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
+        //       specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+        // }
 
         mesh.scale.x = mesh.scale.y = mesh.scale.z = radius;
 

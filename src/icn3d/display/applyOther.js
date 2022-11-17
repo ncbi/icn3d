@@ -127,6 +127,16 @@ class ApplyOther {
             ic.glycanCls.showGlycans();
         }
 
+        // add extra spheres or cubes
+        for(let command in ic.shapeCmdHash) {
+            if(command.substr(0, 8) == 'add cube') {
+                ic.applyCommandCls.addShape(command, 'cube');
+            }
+            else { // 'add sphere'
+                ic.applyCommandCls.addShape(command, 'sphere');
+            }
+        }
+
         ic.applyCenterCls.applyCenterOptions(options);
 
         ic.axesCls.buildAllAxes(undefined, true);

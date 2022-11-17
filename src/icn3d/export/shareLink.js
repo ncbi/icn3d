@@ -259,19 +259,16 @@ class ShareLink {
                else if(prevCommandStr.indexOf(toggleStr) !== -1) {
                    ++cntToggle;
                }
-               else if(i === start + 1) {
-                   //tmpUrl += prevCommandStr;
+            // adding this section will remove the first command!!!
+            //    else if(i === start + 1) {
+            //        //tmpUrl += prevCommandStr;
 
-                   if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
-                   //if(!(inparaWithoutCommand !== undefined &&
-                   //  (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1
-                   //   || inparaWithoutCommand.indexOf('gi=') != -1 || inparaWithoutCommand.indexOf('align=') != -1)
-                   //   ) ) {
-                       tmpUrl += prevCommandStr;
-                   }
+            //        if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
+            //            tmpUrl += prevCommandStr;
+            //        }
 
-                   //statefile += prevCommandStr + "\n";
-               }
+            //        //statefile += prevCommandStr + "\n";
+            //    }
                else {
                    tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
                    //statefile += prevCommandStr + "\n";

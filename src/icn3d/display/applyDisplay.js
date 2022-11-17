@@ -32,7 +32,8 @@ class ApplyDisplay {
             let lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
             let coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
             let cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
-            let crosslinkRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('crosslinkRadius'));
+            let clRad = me.htmlCls.setHtmlCls.getCookie('crosslinkRadius');
+            let crosslinkRadius = (!isNaN(clRad)) ? parseFloat(clRad) : ic.crosslinkRadius;
             let traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
             let dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
             let ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));

@@ -88,22 +88,22 @@ class ClickMenu {
         }
     }
 
-    setSetsMenus(bTable) { let me = this.icn3dui, ic = me.icn3d;
+    setSetsMenus(id, bOneset) { let me = this.icn3dui, ic = me.icn3d;
         this.SetChainsAdvancedMenu();
 
-        let id1 = (bTable) ? 'atomsCustomDistTable' : 'atomsCustomDist';
-        let id2 = (bTable) ? 'atomsCustomDistTable2' : 'atomsCustomDist2';
+        let id1 = id;
+        let id2 = id + '2';
 
         let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
         if($("#" + me.pre + id1).length) {
             $("#" + me.pre + id1).html("  <option value='selected'>selected</option>" + definedAtomsHtml);
         }
-        if($("#" + me.pre + id2).length) {
+        if(!bOneset && $("#" + me.pre + id2).length) {
             $("#" + me.pre + id2).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
         }
 
         $("#" + me.pre + id1).resizable();
-        $("#" + me.pre + id2).resizable();
+        if(!bOneset) $("#" + me.pre + id2).resizable();
     }
 
     applyShownMenus() { let me = this.icn3dui, ic = me.icn3d;
@@ -1474,6 +1474,35 @@ class ClickMenu {
 
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+            //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_customref', 'Set custom reference numbers');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+            //e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            
+            let file = $("#" + ic.pre + "cstreffile")[0].files[0];
+            if(!file) {
+                alert("Please select a file before clicking 'Apply'");
+            }
+            else {
+                me.utilsCls.checkFileAPI();
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    ic.refnumCls.parseCustomRefFile(dataStr);
+
+                    dataStr = dataStr.replace(/\r/g, '').replace(/\n/g, '\\n');
+
+                    thisClass.setLogCmd('custom refnum | ' + dataStr, true);
+                }
+                reader.readAsText(file);
+            }
+        }); 
+
         me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { let ic = me.icn3d; e.preventDefault();
            //e.preventDefault();
            $("#" + me.pre + "legend").hide();
@@ -1959,7 +1988,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
-            thisClass.setSetsMenus();
+            thisClass.setSetsMenus('atomsCustomDist');
 
            ic.bMeasureDistance = true;
         });
@@ -1967,7 +1996,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
 
-            thisClass.setSetsMenus(true);
+            thisClass.setSetsMenus('atomsCustomDistTable');
 
            ic.bMeasureDistance = true;
         });
@@ -1983,6 +2012,24 @@ class ClickMenu {
            ic.pk = 2;
            ic.drawCls.draw();
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_cartoonshape', 'Draw cartoon for a set');
+
+            let bOneset = true;
+            thisClass.setSetsMenus('cartoonshape', bOneset);
+
+           ic.bCartoonshape = true;
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_linebtwsets', 'Draw a line between two sets');
+
+            thisClass.setSetsMenus('linebtwsets');
+
+           ic.bLinebtwsets = true;
+        });
+
     //    },
     //    clkMn2_selectedcenter: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; e.preventDefault();

@@ -29,19 +29,22 @@ class Sphere {
         this.createSphereBase(atom.coord, atom.color, radius, scale, bHighlight);
     }
 
-    createSphereBase(pos, color, radius, scale, bHighlight, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+    createSphereBase(pos, color, radius, scale, bHighlight, bGlycan, opacity) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let mesh;
 
         if(scale === undefined) scale = 1.0;
 
+        let opacity_ori = opacity;
+        if(opacity === undefined) opacity = (bGlycan) ? 0.5 : 1.0;
+
         if(bHighlight === 2) {
           scale *= 1.5;
 
           color = ic.hColor;
 
-          mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+          mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
           mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
           mesh.position.copy(pos);
@@ -59,19 +62,18 @@ class Sphere {
           if(color === undefined) {
               color = me.parasCls.defaultAtomColor;
           }
-
-          //var color = atom.color;
-          if(bGlycan) {
-              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-          }
-          else {
-              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
-          }
+          
+          //if(bGlycan) {
+              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+        //   }
+        //   else {
+        //       mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+        //   }
 
           mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
           mesh.position.copy(pos);
 
-          if(ic.bImpo && !bGlycan) {
+          if(ic.bImpo && !opacity_ori && !bGlycan) {
               ic.posArraySphere.push(pos.x);
               ic.posArraySphere.push(pos.y);
               ic.posArraySphere.push(pos.z);
@@ -99,7 +101,7 @@ class Sphere {
             }
         }
         else {
-            if(ic.bImpo) {
+            if(ic.bImpo && !opacity_ori) { // imposter didn't work with transparency yet in iCn3D
                 if(ic.cnt <= ic.maxatomcnt) ic.objects_ghost.push(mesh);
             }
             else {

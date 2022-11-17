@@ -225,9 +225,9 @@ console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + 
         }
 
         // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
-        ic.resid2refnum = {};
-        ic.refnum2residArray = {};
-        ic.chainsMapping = {};
+        if(!ic.resid2refnum) ic.resid2refnum = {};
+        if(!ic.refnum2residArray) ic.refnum2residArray = {};
+        if(!ic.chainsMapping) ic.chainsMapping = {};
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
 console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.chainid2index[chainid]]);
@@ -289,6 +289,72 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
         else if(refnum >= 6000 && refnum < 7000) return "F" + oriRefnum;
         else if(refnum >= 7000 && refnum < 7200) return "G" + oriRefnum;
         else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
+    }
+
+    parseCustomRefFile(data) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.bShowCustomRefnum = true;
+
+        //refnum,11,12,,21,22
+        //1TUP_A,100,101,,,132
+        //1TUP_B,110,111,,141,142
+
+        let lineArray = data.split('\n');
+
+        if(!ic.resid2refnum) ic.resid2refnum = {};
+        if(!ic.refnum2residArray) ic.refnum2residArray = {};
+        if(!ic.chainsMapping) ic.chainsMapping = {};
+
+        let refAA = [];
+        for(let i = 0, il = lineArray.length; i < il; ++i) {
+            let numArray = lineArray[i].split(',');
+            refAA.push(numArray);
+        }
+
+        // assign ic.refnum2residArray
+        let refI = 0;
+        for(let j = 1, jl = refAA[refI].length; j < jl; ++j) {
+            if(!refAA[refI][j]) continue;
+
+            let refnum = refAA[refI][j].trim();
+            if(refnum) {
+                for(let i = 1, il = refAA.length; i < il; ++i) {
+                    if(!refAA[i][j]) continue;
+                    let chainid = refAA[i][0].trim();
+                    let resid = chainid + '_' + refAA[i][j].trim();
+                    if(!ic.refnum2residArray[refnum]) {
+                        ic.refnum2residArray[refnum] = [resid];
+                    }
+                    else {
+                        ic.refnum2residArray[refnum].push(resid);
+                    }
+                }
+            }
+        }
+
+        // assign ic.resid2refnum and ic.chainsMapping
+        for(let i = 1, il = refAA.length; i < il; ++i) {
+            let chainid = refAA[i][0].trim();
+
+            for(let j = 1, jl = refAA[i].length; j < jl; ++j) {
+                if(!refAA[i][j] || !refAA[refI][j]) continue;
+
+                let resi = refAA[i][j].trim();
+                let refnum = refAA[refI][j].trim();
+                if(resi && refnum) {
+                    let resid = chainid + '_' + resi;
+                    ic.resid2refnum[resid] = refnum;
+
+                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                        ic.chainsMapping[chainid] = {};
+                    }
+                    ic.chainsMapping[chainid][resid] = refnum;
+                }
+            }
+        }
+
+        // open sequence view
+        ic.showAnnoCls.showAnnotations();
+        ic.annotationCls.setAnnoViewAndDisplay('detailed view');
     }
  }
  
