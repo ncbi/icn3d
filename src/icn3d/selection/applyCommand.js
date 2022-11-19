@@ -1373,6 +1373,9 @@ class ApplyCommand {
 
         ic.resid2specCls.selectProperty(property, from, to);
       }
+      else if(command.indexOf('select each residue') !== -1) {
+        ic.selectionCls.saveEachResiInSel();
+      }
       else if(command.indexOf('select') == 0 && command.indexOf('name') !== -1) {
         let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 

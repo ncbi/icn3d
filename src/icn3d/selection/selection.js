@@ -381,6 +381,22 @@ class Selection {
         }
     }
 
+    saveEachResiInSel() { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.selectionCls.saveSelectionPrep();
+        
+        ic.selectedResidues = {}
+
+        ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+
+        for(let resid in ic.selectedResidues) {
+            let eachResidueHash = {};
+            eachResidueHash[resid] = 1;
+            let name = resid + '_' + ic.selectedResidues[resid];
+
+            this.selectResidueList(eachResidueHash, name, name);
+        }
+    }
+
     removeSelection() { let  ic = this.icn3d, me = ic.icn3dui;
         if(!ic.bAnnotations) {
             ic.hlUpdateCls.removeSeqChainBkgd();

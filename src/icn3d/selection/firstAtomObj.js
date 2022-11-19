@@ -81,7 +81,8 @@ class FirstAtomObj {
         for(let i in atomsHash) {
             if((ic.atoms[i].name == 'CA' && ic.proteins.hasOwnProperty(i)) || !ic.proteins.hasOwnProperty(i)) {
                 let  residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
-                residuesHash[residueid] = 1;
+                //residuesHash[residueid] = 1;
+                residuesHash[residueid] = ic.atoms[i].resn;
             }
         }
 

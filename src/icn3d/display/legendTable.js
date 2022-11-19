@@ -28,6 +28,9 @@
         else if(colorType == 'normalized hydrophobic') {
             colorLabel = 'Normalized Hydrophobicity';
         }
+        else if(colorType == 'hydrophobic') {
+            colorLabel = 'Hydrophobicity';
+        }
 
         let  html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -49,35 +52,55 @@
             html += this.getColorLegendForCharge(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
-        else if (colorType == 'normalized hydrophobic') {
-            let resSet = this.getRes2color(ic.hAtoms);
+        else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
+            let bOriResn = true;
+            let resSet = this.getRes2color(ic.hAtoms, bOriResn);
 
             // polar first - most to least
             // create hydrophobic table
             var items = Object.keys(resSet).map(
-                (key) => { return [key, Object.keys(resSet[key])[0]] 
+                //(key) => { return [key, Object.keys(resSet[key])[0]] 
+                (key) => { return [key, me.parasCls.hydrophobicValues[key]] 
             });
+
+            // items.sort(
+            //     (first, second) => { 
+            //         return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16)));
+            //     }
+            // );
 
             items.sort(
                 (first, second) => { 
-                    return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
+                    return parseFloat(first[1]) - parseFloat(second[1]);
+                }
             );
 
             var keys = items.map(
-                (e) => { return [e[0], e[1]]
+                //(e) => { return [e[0], e[1]]
+                (e) => { return [e[0], Object.keys(resSet[e[0]])[0]]
             });
 
             html += "<div>";
             
-            html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-            html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
-            html += "Grey: Charged, not hydrophobic<br><br>";
+            if(colorType == 'normalized hydrophobic') {
+                html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+                html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Grey: Charged, not hydrophobic<br><br>";
+            }
+            else {
+                html += "Green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+                html += "Yellow (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Red: Negatively Charged<br>";
+                html += "Blue: Positively Charged<br><br>";
+            }
 
             let cnt = 0;
             for (let key of keys) {
+                if(!me.parasCls.residueAbbrev[key[0]]) continue;
+
                 html += "<div style='display:inline-block; width:100px'>";
                 html += "<div style='width: 10px; height: 10px; background-color:#" + key[1] + "; border: 0px;display:inline-block;' ></div> ";
-                html +=  key[0] + "</div>"
+                html +=  me.parasCls.residueAbbrev[key[0]] + "</div>"
 
                 if(cnt % 4 == 3) html += "<br>";
 
@@ -141,31 +164,15 @@
         return html;
      }
 
-     getRes2color(atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
+     getRes2color(atomHash, bOriResn) { let  ic = this.icn3d, me = ic.icn3dui;
         let resSet = {};
-
-        const residueAbbrev = {
-            ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
-            ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
-            GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
-            ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
-            MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
-            SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
-            TYR: "Y (Tyr)",       VAL: "V (Val)",       
-            //ASX: "B (Asx)",       GLX: "Z (Glx)",   
-            ASX: "X (Asx)",       GLX: "X (Glx)",       
-            'G': "Guanine",       'A': "Adenine",
-            'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
-            'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
-            'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
-        };
 
         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
         for(let resid in residueHash){
             let atomHash = ic.residues[resid];
 
             let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
-            let resiLabel = residueAbbrev[atom.resn];
+            let resiLabel = (bOriResn) ? atom.resn : me.parasCls.residueAbbrev[atom.resn];
             let temp = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
             
             if (resiLabel != undefined){

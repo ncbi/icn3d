@@ -767,6 +767,7 @@ class SetMenu {
 
         html += me.htmlCls.setHtmlCls.getLink('mn2_saveselection', 'Save Selection', 1, 1);
         html += me.htmlCls.setHtmlCls.getLink('clearall', 'Clear Selection', undefined, 1);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_saveresidue', 'Save Res. in Sel.', 1, 1);
 
         html += me.htmlCls.setHtmlCls.getMenuSep();
 
@@ -1168,7 +1169,7 @@ class SetMenu {
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('mn5_elecmap2fofc', '2Fo-Fc Map', undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('mn5_elecmapfofc', 'Fo-Fc Map', undefined, 2);
-            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 2);
 
             html += "</ul>";
             html += "</li>";

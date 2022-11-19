@@ -154,11 +154,11 @@ class Cylinder {
             if (atom.ss === 'sheet') beta[atom.serial] = atom;
             if (atom.name !== 'CA') continue;
             if (atom.ss === 'helix' && atom.ssend) {
-                if (start !== null && currentChain === atom.chain && currentResi < atom.resi) {
+                if (start !== null && currentChain === atom.chain && parseInt(currentResi) < parseInt(atom.resi)) {
                     if(bHighlight === 1 || bHighlight === 2) {
                         this.createCylinder(start.coord, atom.coord, radius, ic.hColor, bHighlight);
                     }
-                    else {
+                    else {                
                         this.createCylinder(start.coord, atom.coord, radius, atom.color);
                     }
                 }

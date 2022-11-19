@@ -345,6 +345,57 @@ class ParasCls {
             'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.58 + 1.85)/2.5)
         };
 
+        this.hydrophobicValues = {
+            // charged residues
+            '  G': 3,     '  A': 3,     '  T': 3,
+            '  C': 3,     '  U': 3,     ' DG': 3,
+            ' DA': 3,     ' DT': 3,     ' DC': 3,
+            ' DU': 3,       'G': 3,       'A': 3,
+            'T': 3,         'C': 3,       'U': 3,
+            'DG': 3,       'DA': 3,      'DT': 3,
+            'DC': 3,       'DU': 3,     'ARG': 1,
+            'LYS': 1,     'ASP': 3,     'GLU': 3,
+            'HIS': 2,
+
+            // + 0.81)/(1.14 + 0.81)),
+            // hydrophobic
+            // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
+            // 0.65 ~ -1.85: white ~ green
+            'TRP': -1.85,
+            'PHE': -1.13,
+            'TYR': -0.94,
+            'LEU': -0.56,
+            'ILE': -0.31,
+            'CYS': -0.24,
+            'MET': -0.23,
+
+            // polar
+            'GLY': 0.01,
+            'VAL': 0.07,
+            'SER': 0.13,
+            'THR': 0.14,
+            'ALA': 0.17,
+            'ASN': 0.42,
+            'PRO': 0.45,
+            'GLN': 0.58
+        };
+
+        this.residueAbbrev = {
+            ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
+            ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
+            GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
+            ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
+            MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
+            SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
+            TYR: "Y (Tyr)",       VAL: "V (Val)",       
+            //ASX: "B (Asx)",       GLX: "Z (Glx)",   
+            ASX: "X (Asx)",       GLX: "X (Glx)",       
+            'G': "Guanine",       'A': "Adenine",
+            'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
+            'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
+            'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
+        };
+
         this.ssColors = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0x008000),

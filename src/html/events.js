@@ -2353,6 +2353,16 @@ class Events {
            //var description = $("#" + me.pre + "seq_command_desc2").val();
            ic.selectionCls.saveSelection(name, name);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_saveresidue", "click", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            
+            ic.selectionCls.saveEachResiInSel();
+
+            me.htmlCls.clickMenuCls.setLogCmd('select each residue', true);
+         });
+
     //    },
     //    clickAlignSeqSaveSelection: function() {
         me.myEventCls.onIds("#" + me.pre + "alignseq_saveselection", "click", function(e) { let ic = me.icn3d;

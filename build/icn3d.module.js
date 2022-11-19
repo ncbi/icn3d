@@ -4985,6 +4985,57 @@ class ParasCls {
             'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.58 + 1.85)/2.5)
         };
 
+        this.hydrophobicValues = {
+            // charged residues
+            '  G': 3,     '  A': 3,     '  T': 3,
+            '  C': 3,     '  U': 3,     ' DG': 3,
+            ' DA': 3,     ' DT': 3,     ' DC': 3,
+            ' DU': 3,       'G': 3,       'A': 3,
+            'T': 3,         'C': 3,       'U': 3,
+            'DG': 3,       'DA': 3,      'DT': 3,
+            'DC': 3,       'DU': 3,     'ARG': 1,
+            'LYS': 1,     'ASP': 3,     'GLU': 3,
+            'HIS': 2,
+
+            // + 0.81)/(1.14 + 0.81)),
+            // hydrophobic
+            // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
+            // 0.65 ~ -1.85: white ~ green
+            'TRP': -1.85,
+            'PHE': -1.13,
+            'TYR': -0.94,
+            'LEU': -0.56,
+            'ILE': -0.31,
+            'CYS': -0.24,
+            'MET': -0.23,
+
+            // polar
+            'GLY': 0.01,
+            'VAL': 0.07,
+            'SER': 0.13,
+            'THR': 0.14,
+            'ALA': 0.17,
+            'ASN': 0.42,
+            'PRO': 0.45,
+            'GLN': 0.58
+        };
+
+        this.residueAbbrev = {
+            ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
+            ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
+            GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
+            ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
+            MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
+            SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
+            TYR: "Y (Tyr)",       VAL: "V (Val)",       
+            //ASX: "B (Asx)",       GLX: "Z (Glx)",   
+            ASX: "X (Asx)",       GLX: "X (Glx)",       
+            'G': "Guanine",       'A': "Adenine",
+            'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
+            'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
+            'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
+        };
+
         this.ssColors = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0x008000),
@@ -6931,7 +6982,8 @@ class FirstAtomObj {
         for(let i in atomsHash) {
             if((ic.atoms[i].name == 'CA' && ic.proteins.hasOwnProperty(i)) || !ic.proteins.hasOwnProperty(i)) {
                 let  residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
-                residuesHash[residueid] = 1;
+                //residuesHash[residueid] = 1;
+                residuesHash[residueid] = ic.atoms[i].resn;
             }
         }
 
@@ -9298,11 +9350,11 @@ class Cylinder {
             if (atom.ss === 'sheet') beta[atom.serial] = atom;
             if (atom.name !== 'CA') continue;
             if (atom.ss === 'helix' && atom.ssend) {
-                if (start !== null && currentChain === atom.chain && currentResi < atom.resi) {
+                if (start !== null && currentChain === atom.chain && parseInt(currentResi) < parseInt(atom.resi)) {
                     if(bHighlight === 1 || bHighlight === 2) {
                         this.createCylinder(start.coord, atom.coord, radius, ic.hColor, bHighlight);
                     }
-                    else {
+                    else {                
                         this.createCylinder(start.coord, atom.coord, radius, atom.color);
                     }
                 }
@@ -35374,6 +35426,9 @@ class ApplyCommand {
 
         ic.resid2specCls.selectProperty(property, from, to);
       }
+      else if(command.indexOf('select each residue') !== -1) {
+        ic.selectionCls.saveEachResiInSel();
+      }
       else if(command.indexOf('select') == 0 && command.indexOf('name') !== -1) {
         let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
@@ -38894,7 +38949,7 @@ class MmcifParser {
                         }
 
                         // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
-                        if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
+                        if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && parseInt(resi) > maxMissingResi)) ) {
                             ic.chainMissingResidueArray[chainNum].push(resObject);
 
                             maxMissingResi = resi;
@@ -44238,6 +44293,22 @@ class Selection {
 
                 me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
             }
+        }
+    }
+
+    saveEachResiInSel() { let ic = this.icn3d; ic.icn3dui;
+        ic.selectionCls.saveSelectionPrep();
+        
+        ic.selectedResidues = {};
+
+        ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+
+        for(let resid in ic.selectedResidues) {
+            let eachResidueHash = {};
+            eachResidueHash[resid] = 1;
+            let name = resid + '_' + ic.selectedResidues[resid];
+
+            this.selectResidueList(eachResidueHash, name, name);
         }
     }
 
@@ -56232,15 +56303,19 @@ class ClickMenu {
            thisClass.setLogCmd('defined sets', true);
            //thisClass.setLogCmd('window defined sets', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "setOr", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'or';
+        $(document).on("click", "#" + me.pre + "setOr", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'or';
         });
-        me.myEventCls.onIds("#" + me.pre + "setAnd", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'and';
+        $(document).on("click", "#" + me.pre + "setAnd", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'and';
         });
-        me.myEventCls.onIds("#" + me.pre + "setNot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'not';
+        $(document).on("click", "#" + me.pre + "setNot", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'not';
         });
+
     //    },
     //    clkMn2_pkNo: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
@@ -58600,6 +58675,7 @@ class SetMenu {
 
         html += me.htmlCls.setHtmlCls.getLink('mn2_saveselection', 'Save Selection', 1, 1);
         html += me.htmlCls.setHtmlCls.getLink('clearall', 'Clear Selection', undefined, 1);
+        html += me.htmlCls.setHtmlCls.getLink('mn2_saveresidue', 'Save Res. in Sel.', 1, 1);
 
         html += me.htmlCls.setHtmlCls.getMenuSep();
 
@@ -58999,7 +59075,7 @@ class SetMenu {
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('mn5_elecmap2fofc', '2Fo-Fc Map', undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('mn5_elecmapfofc', 'Fo-Fc Map', undefined, 2);
-            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, undefined, 2);
+            html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2', undefined, 2);
 
             html += "</ul>";
             html += "</li>";
@@ -63942,6 +64018,16 @@ class Events {
            //var description = $("#" + me.pre + "seq_command_desc2").val();
            ic.selectionCls.saveSelection(name, name);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_saveresidue", "click", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            
+            ic.selectionCls.saveEachResiInSel();
+
+            me.htmlCls.clickMenuCls.setLogCmd('select each residue', true);
+         });
+
     //    },
     //    clickAlignSeqSaveSelection: function() {
         me.myEventCls.onIds("#" + me.pre + "alignseq_saveselection", "click", function(e) { let ic = me.icn3d;
@@ -65750,6 +65836,9 @@ class Alternate {
         else if(colorType == 'normalized hydrophobic') {
             colorLabel = 'Normalized Hydrophobicity';
         }
+        else if(colorType == 'hydrophobic') {
+            colorLabel = 'Hydrophobicity';
+        }
 
         let  html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -65771,35 +65860,55 @@ class Alternate {
             html += this.getColorLegendForCharge(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
-        else if (colorType == 'normalized hydrophobic') {
-            let resSet = this.getRes2color(ic.hAtoms);
+        else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
+            let bOriResn = true;
+            let resSet = this.getRes2color(ic.hAtoms, bOriResn);
 
             // polar first - most to least
             // create hydrophobic table
             var items = Object.keys(resSet).map(
-                (key) => { return [key, Object.keys(resSet[key])[0]] 
+                //(key) => { return [key, Object.keys(resSet[key])[0]] 
+                (key) => { return [key, me.parasCls.hydrophobicValues[key]] 
             });
+
+            // items.sort(
+            //     (first, second) => { 
+            //         return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16)));
+            //     }
+            // );
 
             items.sort(
                 (first, second) => { 
-                    return ((parseInt(second[1].substring(2,4), 16) - parseInt(second[1].substring(4,6), 16)) - (parseInt(first[1].substring(2,4), 16) - parseInt(first[1].substring(4,6), 16))) }
+                    return parseFloat(first[1]) - parseFloat(second[1]);
+                }
             );
 
             var keys = items.map(
-                (e) => { return [e[0], e[1]]
+                //(e) => { return [e[0], e[1]]
+                (e) => { return [e[0], Object.keys(resSet[e[0]])[0]]
             });
 
             html += "<div>";
             
-            html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-            html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
-            html += "Grey: Charged, not hydrophobic<br><br>";
+            if(colorType == 'normalized hydrophobic') {
+                html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+                html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Grey: Charged, not hydrophobic<br><br>";
+            }
+            else {
+                html += "Green (W, F, Y, L, I, C, M): Hydrophobic<br>";
+                html += "Yellow (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Red: Negatively Charged<br>";
+                html += "Blue: Positively Charged<br><br>";
+            }
 
             let cnt = 0;
             for (let key of keys) {
+                if(!me.parasCls.residueAbbrev[key[0]]) continue;
+
                 html += "<div style='display:inline-block; width:100px'>";
                 html += "<div style='width: 10px; height: 10px; background-color:#" + key[1] + "; border: 0px;display:inline-block;' ></div> ";
-                html +=  key[0] + "</div>";
+                html +=  me.parasCls.residueAbbrev[key[0]] + "</div>";
 
                 if(cnt % 4 == 3) html += "<br>";
 
@@ -65863,31 +65972,15 @@ class Alternate {
         return html;
      }
 
-     getRes2color(atomHash) { let ic = this.icn3d; ic.icn3dui;
+     getRes2color(atomHash, bOriResn) { let  ic = this.icn3d, me = ic.icn3dui;
         let resSet = {};
-
-        const residueAbbrev = {
-            ALA: "A (Ala)",       ARG: "R (Arg)",       ASN: "N (Asn)",
-            ASP: "D (Asp)",       CYS: "C (Cys)",       GLN: "Q (Gln)",
-            GLU: "E (Glu)",       GLY: "G (Gly)",       HIS: "H (His)",
-            ILE: "I (Ile)",       LEU: "L (Leu)",       LYS: "K (Lys)",
-            MET: "M (Met)",       PHE: "F (Phe)",       PRO: "P (Pro)",
-            SER: "S (Ser)",       THR: "T (Thr)",       TRP: "W (Trp)",
-            TYR: "Y (Tyr)",       VAL: "V (Val)",       
-            //ASX: "B (Asx)",       GLX: "Z (Glx)",   
-            ASX: "X (Asx)",       GLX: "X (Glx)",       
-            'G': "Guanine",       'A': "Adenine",
-            'T': "Thymine",         'C': "Cytosine",       'U': "Uracil",
-            'DG': "deoxy-Guanine",       'DA': "deoxy-Adenine",      'DT': "deoxy-Thymine",
-            'DC': "deoxy-Cytosine",       'DU': 'deoxy-Uracil'
-        };
 
         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
         for(let resid in residueHash){
             let atomHash = ic.residues[resid];
 
             let atom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
-            let resiLabel = residueAbbrev[atom.resn];
+            let resiLabel = (bOriResn) ? atom.resn : me.parasCls.residueAbbrev[atom.resn];
             let temp = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
             
             if (resiLabel != undefined){
