@@ -941,15 +941,19 @@ class ClickMenu {
            thisClass.setLogCmd('defined sets', true);
            //thisClass.setLogCmd('window defined sets', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "setOr", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'or';
+        $(document).on("click", "#" + me.pre + "setOr", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'or';
         });
-        me.myEventCls.onIds("#" + me.pre + "setAnd", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'and';
+        $(document).on("click", "#" + me.pre + "setAnd", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'and';
         });
-        me.myEventCls.onIds("#" + me.pre + "setNot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           ic.setOperation = 'not';
+        $(document).on("click", "#" + me.pre + "setNot", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            ic.setOperation = 'not';
         });
+
     //    },
     //    clkMn2_pkNo: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
