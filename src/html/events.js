@@ -1543,7 +1543,7 @@ class Events {
                   url: url,
                   type: 'POST',
                   data : {'mmciffile': dataStr},
-                  dataType: 'jsonp',
+                  dataType: 'json',
                   cache: true,
                   tryCount : 0,
                   retryLimit : 0, //1

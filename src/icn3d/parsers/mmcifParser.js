@@ -70,7 +70,7 @@ class MmcifParser {
            url: url,
            type: 'POST',
            data : {'mmciffile': data},
-           dataType: 'jsonp',
+           dataType: 'json',
            cache: true,
            tryCount : 0,
            retryLimit : 0, //1
@@ -287,7 +287,7 @@ class MmcifParser {
                   url: url,
                   type: 'POST',
                   data : {'mmcifheader': data},
-                  dataType: 'jsonp',
+                  dataType: 'json',
                   cache: true,
                   tryCount : 0,
                   retryLimit : 0, //1

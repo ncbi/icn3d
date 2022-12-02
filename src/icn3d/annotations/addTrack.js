@@ -45,7 +45,7 @@ class AddTrack {
               url: url,
               type: 'POST',
               data : {'targets': chainid, 'queries': gi},
-              dataType: 'jsonp',
+              dataType: 'json',
               //dataType: 'json',
               tryCount : 0,
               retryLimit : 0, //1
@@ -94,7 +94,7 @@ class AddTrack {
               url: url,
               type: 'POST',
               data : {'targets': targets, 'queries': fasta},
-              dataType: 'jsonp',
+              dataType: 'json',
               //dataType: 'json',
               tryCount : 0,
               retryLimit : 0, //1

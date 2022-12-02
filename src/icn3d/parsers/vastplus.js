@@ -112,7 +112,7 @@ class Vastplus {
             url: urltmalign,
             type: 'POST',
             data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-            dataType: 'jsonp',
+            dataType: 'json',
             cache: true
         });
 
