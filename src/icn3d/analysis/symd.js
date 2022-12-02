@@ -73,7 +73,7 @@ class Symd {
           url: url,
           type: 'POST',
           data : dataObj,
-          dataType: "jsonp",
+          dataType: "json",
           cache: true,
           tryCount : 0,
           retryLimit : 0, //1

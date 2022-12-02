@@ -20832,7 +20832,7 @@ var icn3d = (function (exports) {
               url: url,
               type: 'POST',
               data : dataObj,
-              dataType: "jsonp",
+              dataType: "json",
               cache: true,
               tryCount : 0,
               retryLimit : 0, //1
@@ -23686,7 +23686,6 @@ var icn3d = (function (exports) {
 
           let url = (window && window.location && window.location.hostname.indexOf('ncbi.nlm.nih.gov') != -1) ? "/Structure/mmcifparser/mmcifparser.cgi" :
             me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-          //let url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
             
           for(let i = 0, il = struArray.length; i < il; ++i) {
                let pdbStr = '';
@@ -23705,7 +23704,8 @@ var icn3d = (function (exports) {
                   url: url,
                   type: 'POST',
                   data: {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': pdbStr},
-                  dataType: 'jsonp',
+                  //dataType: 'jsonp',
+                  dataType: 'json',
                   cache: true
                });
 
@@ -25964,7 +25964,7 @@ var icn3d = (function (exports) {
                                     url: urlalign,
                                     type: 'POST',
                                     data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                                    dataType: 'jsonp',
+                                    dataType: 'json',
                                     cache: true
                                 });
                             }
@@ -25979,7 +25979,7 @@ var icn3d = (function (exports) {
                                     url: urltmalign,
                                     type: 'POST',
                                     data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                                    dataType: 'jsonp',
+                                    dataType: 'json',
                                     cache: true
                                 });                            
                             }
@@ -26188,7 +26188,7 @@ var icn3d = (function (exports) {
                             url: url,
                             type: 'POST',
                             data : {'targets': seq1, 'queries': seq2},
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             cache: true
                         });
 
@@ -26260,7 +26260,7 @@ var icn3d = (function (exports) {
                             url: url,
                             type: 'POST',
                             data : {'targets': seq1, 'queries': seq2},
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             cache: true
                         });
 
@@ -26465,7 +26465,7 @@ var icn3d = (function (exports) {
                                 url: urlalign,
                                 type: 'POST',
                                 data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                                dataType: 'jsonp',
+                                dataType: 'json',
                                 cache: true
                             });
                         }
@@ -26477,7 +26477,7 @@ var icn3d = (function (exports) {
                                 url: urltmalign,
                                 type: 'POST',
                                 data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                                dataType: 'jsonp',
+                                dataType: 'json',
                                 cache: true
                             });                        
                         }
@@ -32030,7 +32030,7 @@ var icn3d = (function (exports) {
                   url: url,
                   type: 'POST',
                   data : {'targets': chainid, 'queries': gi},
-                  dataType: 'jsonp',
+                  dataType: 'json',
                   //dataType: 'json',
                   tryCount : 0,
                   retryLimit : 0, //1
@@ -32079,7 +32079,7 @@ var icn3d = (function (exports) {
                   url: url,
                   type: 'POST',
                   data : {'targets': targets, 'queries': fasta},
-                  dataType: 'jsonp',
+                  dataType: 'json',
                   //dataType: 'json',
                   tryCount : 0,
                   retryLimit : 0, //1
@@ -38864,7 +38864,7 @@ var icn3d = (function (exports) {
                url: url,
                type: 'POST',
                data : {'mmciffile': data},
-               dataType: 'jsonp',
+               dataType: 'json',
                cache: true,
                tryCount : 0,
                retryLimit : 0, //1
@@ -39078,7 +39078,7 @@ var icn3d = (function (exports) {
                       url: url,
                       type: 'POST',
                       data : {'mmcifheader': data},
-                      dataType: 'jsonp',
+                      dataType: 'json',
                       cache: true,
                       tryCount : 0,
                       retryLimit : 0, //1
@@ -39904,7 +39904,7 @@ var icn3d = (function (exports) {
                       url: url,
                       type: 'POST',
                       data : dataObj,
-                      dataType: 'jsonp',
+                      dataType: 'json',
                       //dataType: 'json',
                       tryCount : 0,
                       retryLimit : 0, //1
@@ -63332,7 +63332,7 @@ var icn3d = (function (exports) {
                       url: url,
                       type: 'POST',
                       data : {'mmciffile': dataStr},
-                      dataType: 'jsonp',
+                      dataType: 'json',
                       cache: true,
                       tryCount : 0,
                       retryLimit : 0, //1
@@ -68049,7 +68049,7 @@ var icn3d = (function (exports) {
                 url: urltmalign,
                 type: 'POST',
                 data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                dataType: 'jsonp',
+                dataType: 'json',
                 cache: true
             });
 
@@ -68852,7 +68852,7 @@ var icn3d = (function (exports) {
                                 url: urltmalign,
                                 type: 'POST',
                                 data: {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]},
-                                dataType: 'jsonp',
+                                dataType: 'json',
                                 cache: true
                             });
 

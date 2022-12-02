@@ -136,7 +136,7 @@
                             url: urltmalign,
                             type: 'POST',
                             data: {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]},
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             cache: true
                         });
 

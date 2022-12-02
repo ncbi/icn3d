@@ -97,7 +97,7 @@ class ChainalignParser {
                             url: urlalign,
                             type: 'POST',
                             data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             cache: true
                         });
                     }
@@ -109,7 +109,7 @@ class ChainalignParser {
                             url: urltmalign,
                             type: 'POST',
                             data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             cache: true
                         });                        
                     }
