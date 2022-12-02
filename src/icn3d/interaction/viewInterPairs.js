@@ -28,6 +28,14 @@ class ViewInterPairs {
       bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { let  ic = this.icn3d, me = ic.icn3dui;
        let  bondCnt;
 
+       // reset
+       ic.hbondpnts = [];
+       ic.saltbridgepnts = [];
+       ic.contactpnts = [];
+       ic.halogenpnts = [];
+       ic.picationpnts = [];
+       ic.pistackingpnts = [];
+
        // type: view, save, forcegraph
        ic.bRender = false;
        let  hAtoms = {}
@@ -518,7 +526,7 @@ class ViewInterPairs {
             html += '<br><table class="icn3d-sticky" align=center border=1 cellpadding=10 cellspacing=0><thead>';
             html += '<tr><th rowspan=2>Residue</th><th rowspan=2># Hydrogen<br>Bond</th><th rowspan=2># Salt Bridge<br>/Ionic Interaction</th><th rowspan=2># Contact</th>';
             html += '<th rowspan=2># Halogen<br>Bond</th><th rowspan=2># &pi;-Cation</th><th rowspan=2># &pi;-Stacking</th>';
-            html += '<th>Hydrogen Bond</th><th>Salt Bridge/Ionic Interaction</th><th>Contact</th>';
+            html += '<th>Hydrogen Bond (backbone atoms: @CA, @N, @C, @O)</th><th>Salt Bridge/Ionic Interaction</th><th>Contact</th>';
             html += '<th>Halogen Bond</th><th>&pi;-Cation</th><th>&pi;-Stacking</th></tr>';
             html += '<tr>';
             let  tmpStr = '<td><table width="100%" class="icn3d-border"><tr><td>Atom1</td><td>Atom2</td><td>Distance(&#8491;)</td><td>Highlight in 3D</td></tr></table></td>';
@@ -687,7 +695,7 @@ class ViewInterPairs {
             }
         }
         let  text = '<div style="text-align:center"><br><b>' + cnt
-          + ' hydrogen bond pairs</b>:</div><br>';
+          + ' hydrogen bond pairs</b> (backbone atoms: @CA, @N, @C, @O):</div><br>';
         if(cnt > 0) {
             text += '<br><table align=center border=1 cellpadding=10 cellspacing=0>'
             + '<tr><th>Atom 1</th><th>Atom 2</th><th>Distance(&#8491;)</th>';

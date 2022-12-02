@@ -407,7 +407,7 @@ class AddTrack {
 
            thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 
-           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
+           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type custom", true);
         });
 
         // current selection
@@ -863,6 +863,9 @@ class AddTrack {
     simplifyText(text) { let ic = this.icn3d, me = ic.icn3dui;
         let out = ''; // 1-based text positions
         let bFoundText = false;
+
+        // replace 'undefined' to space
+        text = text.replace(/undefined/g, ' ');
 
         let i, il, prevEmptyPos = -1;
         for(i = 0, il = text.length; i < il; ++i) {

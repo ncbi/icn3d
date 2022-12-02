@@ -537,8 +537,19 @@ class SaveFile {
             if(!isNaN(resi) && atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
                 resi = resi - 1 + parseInt(atom.chain.substr(3));
             }
-            line +=(resi.toString().length <= 4) ? resi.toString().padStart(4, ' ') : resi.toString().substr(0, 4);
-            line += ' '.padStart(4, ' ');
+            let resiInt = parseInt(resi);
+            line +=(resiInt.toString().length <= 4) ? resiInt.toString().padStart(4, ' ') : resiInt.toString().substr(0, 4);
+            //line += ' '.padStart(4, ' ');
+            // insert
+            let lastChar = resi.toString().substr(resi.toString().length - 1, 1);
+            if(isNaN(lastChar)) {
+                line += lastChar;
+            }
+            else {
+                line += ' ';
+            }
+            line += ' '.padStart(3, ' ');
+
             line += atom.coord.x.toFixed(3).toString().padStart(8, ' ');
             line += atom.coord.y.toFixed(3).toString().padStart(8, ' ');
             line += atom.coord.z.toFixed(3).toString().padStart(8, ' ');

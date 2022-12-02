@@ -24,8 +24,10 @@ class Dssp {
 
       let ajaxArray = [];
 
-      //let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-      let url = "/Structure/mmcifparser/mmcifparser.cgi";
+      let url = (window && window.location && window.location.hostname.indexOf('ncbi.nlm.nih.gov') != -1) ? "/Structure/mmcifparser/mmcifparser.cgi" :
+        me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+      //let url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+        
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
 ///           pdbStr += ic.saveFileCls.getPDBHeader(i);

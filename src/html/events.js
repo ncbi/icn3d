@@ -186,8 +186,8 @@ class Events {
     }
 
     setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d;
-        if(Object.keys(ic.structures).length < 2) {
-            alert("At least two structures are required for alignment...");
+        if(Object.keys(ic.chains).length < 2) {
+            alert("At least two chains are required for alignment...");
             return;
         }
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
@@ -207,14 +207,14 @@ class Events {
     launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
         let flag = bBiounit ? '1' : '0';
 
-        ids = ids.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+        ids = ids.replace(/,/g, ' ').replace(/\s+/g, ',').trim();
 
         if(!ids) {
             alert("Please enter a list of PDB IDs or AlphaFold UniProt IDs...");
             return;
         }
 
-        let idArray = ids.split(' ');
+        let idArray = ids.split(',');
         if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
             window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
@@ -374,8 +374,8 @@ class Events {
         });
 
         me.myEventCls.onIds("#" + me.pre + "realignSelection", "click", function(e) { let ic = me.icn3d;
-            if(Object.keys(ic.structures).length < 2) {
-                alert("At least two structures are required for alignment...");
+            if(Object.keys(ic.chains).length < 2) {
+                alert("At least two chains are required for alignment...");
                 return;
             }
             

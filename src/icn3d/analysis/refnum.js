@@ -95,7 +95,6 @@
                 let subdomains = result.subdomains;
 
                 let domainAtomsArray = [];
-
                 if(subdomains.length <= 1) {
                     domainAtomsArray.push(ic.chains[chainid]);
 
