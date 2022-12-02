@@ -124,11 +124,11 @@ class ParserUtils {
             resi2pos_q[resi] = i + 1;
         }
 
-        for(let i = 0, il = ic.realignResid[struct_t].length; i < il && i < ic.realignResid[struct_q].length; ++i) {
-            let resid_t = ic.realignResid[struct_t][i].resid;
+        for(let i = 0, il = ic.realignResid[chainid_t].length; i < il && i < ic.realignResid[chainid_q].length; ++i) {
+            let resid_t = ic.realignResid[chainid_t][i].resid;
             let pos_t = resid_t.lastIndexOf('_');
             let resi_t = parseInt(resid_t.substr(pos_t + 1));
-            let resid_q = ic.realignResid[struct_q][i].resid;
+            let resid_q = ic.realignResid[chainid_q][i].resid;
             let pos_q = resid_q.lastIndexOf('_');
             let resi_q = parseInt(resid_q.substr(pos_q + 1));
 

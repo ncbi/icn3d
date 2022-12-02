@@ -841,7 +841,7 @@ class SetSeqAlign {
         if(ic.alnChainsSeq[chainid1]) {
             for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
                 //add gap before the mapping region       
-                if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == resi_t) {
+                if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
                     pos_t = j;
                     break;
                 }
@@ -1030,7 +1030,7 @@ class SetSeqAlign {
             result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
             pos1 = result.pos1;
             pos2 = result.pos2;
-  
+
             let k = 0;    
             for(let j = pos1; j <= pos2; ++j) {
                 // inherit the gaps from the template
@@ -1054,7 +1054,7 @@ class SetSeqAlign {
                     ++k;
                 }
             }
-
+            
             prevIndex1 = end1;
             prevIndex2 = end2;  
         }  
@@ -1076,13 +1076,13 @@ class SetSeqAlign {
           //var chainid_t = ic.chainidArray[0];
 
     //      let  structureArray = Object.keys(ic.structures);
-          let  structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
-          let  structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
+        //   let  structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
+        //   let  structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
 
-          if(structure1 == structure2) structure2 += me.htmlCls.postfix;
+        //   if(structure1 == structure2) structure2 += me.htmlCls.postfix;
 
-          ic.conservedName1 = structure1 + '_cons';
-          ic.conservedName2 = structure2 + '_cons';
+          ic.conservedName1 = chainid_t + '_cons';
+          ic.conservedName2 = chainid + '_cons';
 
           ic.consHash1 = {};
           ic.consHash2 = {};
@@ -1109,15 +1109,15 @@ class SetSeqAlign {
           if(!ic.chainsMapping[chainid_t]) ic.chainsMapping[chainid_t] = {};
           if(!ic.chainsMapping[chainid]) ic.chainsMapping[chainid] = {};
 
-          for(let i = 0, il = ic.realignResid[structure1].length; i < il; ++i) {
-              let  resObject1 = ic.realignResid[structure1][i];
+          for(let i = 0, il = ic.realignResid[chainid_t].length; i < il; ++i) {
+              let  resObject1 = ic.realignResid[chainid_t][i];
               let  pos1 = resObject1.resid.lastIndexOf('_');
               let  chainid1 = resObject1.resid.substr(0, pos1);
               let  resi1 = resObject1.resid.substr(pos1 + 1);
               resObject1.resi = resi1;
               resObject1.aligned = true;
 
-              let  resObject2 = ic.realignResid[structure2][i];
+              let  resObject2 = ic.realignResid[chainid][i];
               let  pos2 = resObject2.resid.lastIndexOf('_');
               let  chainid2 = resObject2.resid.substr(0, pos2);
               let  resi2 = resObject2.resid.substr(pos2 + 1);

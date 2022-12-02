@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.19.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.19.1.zip) was release on December 1, 2022. Fixed bugs in aligning two chains from the same structure, in mutational analysis, and in launching several PDB/AlphaFold IDs.
+
 [icn3d-3.19.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.19.0.zip) was release on November 16, 2022. Enabled users to add custom reference residue number with the menu "Analysis > Ref. Number", add (transparent) spheres or cubes for any sets with the menu "Style > Cartoon for a Set", add a line between two sets with the menu "Style > Line btw. Two Sets". Also improved the color legends.
 
 [icn3d-3.18.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.18.1.zip) was release on November 8, 2022. Added the annotation "Transmembrane" for PDB or AlphaFold structures based on data from OPM, Membranome, and UniProt; enabled to load a PAE file from a URL in the same domain.

@@ -508,6 +508,8 @@ class iCn3D {
     this.midValue = 50;
     this.endValue = 100;
 
+    this.crosslinkRadius = 0.4; 
+
     // classes
     this.sceneCls = new Scene(this);
     this.cameraCls = new Camera(this);

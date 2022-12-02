@@ -709,19 +709,19 @@ class ApplyCommand {
             let  para = p1Array[0];
             let  value = parseFloat(p1Array[1]);
 
-            if(para == 'linerad') ic.lineRadius = value;
-            if(para == 'coilrad') ic.coilWidth = value;
-            if(para == 'stickrad') ic.cylinderRadius = value;
-            if(para == 'crosslinkrad') ic.crosslinkRadius = value;
-            if(para == 'tracerad') ic.traceRadius = value;
-            if(para == 'ballscale') ic.dotSphereScale = value;
+            if(para == 'linerad' && !isNaN(value)) ic.lineRadius = value;
+            if(para == 'coilrad' && !isNaN(value)) ic.coilWidth = value;
+            if(para == 'stickrad' && !isNaN(value)) ic.cylinderRadius = value;
+            if(para == 'crosslinkrad' && !isNaN(value)) ic.crosslinkRadius = value;
+            if(para == 'tracerad' && !isNaN(value)) ic.traceRadius = value;
+            if(para == 'ballscale' && !isNaN(value)) ic.dotSphereScale = value;
 
-            if(para == 'ribbonthick') ic.ribbonthickness = value;
-            if(para == 'proteinwidth') ic.helixSheetWidth = value;
-            if(para == 'nucleotidewidth') ic.nucleicAcidWidth = value;
-
-            ic.drawCls.draw();
+            if(para == 'ribbonthick' && !isNaN(value)) ic.ribbonthickness = value;
+            if(para == 'proteinwidth' && !isNaN(value)) ic.helixSheetWidth = value;
+            if(para == 'nucleotidewidth' && !isNaN(value)) ic.nucleicAcidWidth = value;
         }
+
+        ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set light') == 0) {
         let  paraArray = command.split(' | ');
@@ -735,9 +735,9 @@ class ApplyCommand {
             if(para == 'light1') ic.light1 = value;
             if(para == 'light2') ic.light2 = value;
             if(para == 'light3') ic.light3 = value;
-
-            ic.drawCls.draw();
         }
+
+        ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set shininess') == 0) {
         let  pos = command.lastIndexOf(' ');

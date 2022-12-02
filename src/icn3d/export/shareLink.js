@@ -164,7 +164,8 @@ class ShareLink {
            if(ic.bAfMem) {
             paraHash['afmem'] = 'on';
            }
-           else {
+           //else {
+           else if(me.cfg.afid || (Object.keys(ic.structures).length == 1 && Object.keys(ic.structures)[0].length > 5) ) {
             paraHash['afmem'] = 'off';
            }
 
@@ -259,16 +260,16 @@ class ShareLink {
                else if(prevCommandStr.indexOf(toggleStr) !== -1) {
                    ++cntToggle;
                }
-            // adding this section will remove the first command!!!
-            //    else if(i === start + 1) {
-            //        //tmpUrl += prevCommandStr;
+               else if(i === start + 1) {
+                   //tmpUrl += prevCommandStr;
+                   
+                   //if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
+                   if(prevCommandStr.substr(0, 4) !== 'load') {
+                       tmpUrl += prevCommandStr;
+                   }
 
-            //        if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
-            //            tmpUrl += prevCommandStr;
-            //        }
-
-            //        //statefile += prevCommandStr + "\n";
-            //    }
+                   //statefile += prevCommandStr + "\n";
+               }
                else {
                    tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
                    //statefile += prevCommandStr + "\n";
