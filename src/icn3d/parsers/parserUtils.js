@@ -634,7 +634,7 @@ class ParserUtils {
           ic.selectionCls.saveSelectionIfSelected();
           ic.drawCls.draw();
       }
-
+      
 //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
       if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
@@ -642,11 +642,13 @@ class ParserUtils {
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          if(me.cfg.mmdbafid === undefined && me.cfg.afid === undefined) ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+          //if(me.cfg.mmdbafid === undefined && me.cfg.afid === undefined) ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+          ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
           //ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
           if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
       }
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
