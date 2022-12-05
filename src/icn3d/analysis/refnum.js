@@ -44,7 +44,8 @@
 
                 let pdbAjaxArray = [];
                 for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
-                    let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
+                    //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
+                    let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
 
                     let pdbAjax = $.ajax({
                         url: urlpdb,
@@ -93,7 +94,7 @@
                 // align each 3D domain with reference structure
                 let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
                 let subdomains = result.subdomains;
-
+                
                 let domainAtomsArray = [];
                 if(subdomains.length <= 1) {
                     domainAtomsArray.push(ic.chains[chainid]);
@@ -107,6 +108,7 @@
                     for(let k = 0, kl = subdomains.length; k < kl; ++k) {
                         let domainAtoms = {};
                         let segArray = subdomains[k];
+
                         for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
@@ -120,10 +122,9 @@
                         domainAtomsArray.push(domainAtoms);
                     }
                 }
-
+                
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
-
                     let domainid = chainid + '-' + k;
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                         let struct2 = "stru" + index;
@@ -215,14 +216,14 @@ console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + 
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
             }
         }
-
+        
         // combine domainid into chainid
         for(let domainid in domainid2segs) {
             let chainid = domainid.split('-')[0];
             if(!chainid2segs[chainid]) chainid2segs[chainid] = [];
             chainid2segs[chainid] = chainid2segs[chainid].concat(domainid2segs[domainid]);
         }
-
+        
         // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
         if(!ic.resid2refnum) ic.resid2refnum = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};

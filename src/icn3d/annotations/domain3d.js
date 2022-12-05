@@ -470,7 +470,7 @@ class Domain3d {
 	//list< pair< pair< int, let >, let > >
 	//c2b_AlphaContacts(let n0, let* x0, let* y0, let* z0,
 	//	const let incr = 4, const let dcut = 8.0) { let ic = this.icn3d, me = ic.icn3dui;
-	c2b_AlphaContacts(n0, x0, y0, z0, dcut) { let ic = this.icn3d, me = ic.icn3dui;
+	c2b_AlphaContacts(n0, x0, y0, z0, dcut, resiArray) { let ic = this.icn3d, me = ic.icn3dui;
 		//if(!incr) incr = 4;
 		if(!dcut) dcut = this.dcut;
 
@@ -484,7 +484,8 @@ class Domain3d {
 
 			//ResRec rr0;
 			let rr0 = {};
-			rr0.rnum = i + 1;
+			//rr0.rnum = i + 1;
+			rr0.rnum = resiArray[i];
 			rr0.x = x0[i];
 			rr0.y = y0[i];
 			rr0.z = z0[i];
@@ -512,7 +513,7 @@ class Domain3d {
 			for (j = i + 1; j < len; ++j) {	
 				//ResRec rr2 = *rrit2;
 				let rr2 = list_rr[j];
-				if ((rr1.rnum - rr2.rnum <= 3) && (rr2.rnum - rr1.rnum <= 3)) continue;
+				if ((parseInt(rr1.rnum) - parseInt(rr2.rnum) <= 3) && (parseInt(rr2.rnum) - parseInt(rr1.rnum) <= 3)) continue;
 				let x2 = rr2.x;
 				let y2 = rr2.y;
 				let z2 = rr2.z;
@@ -530,7 +531,7 @@ class Domain3d {
 				//pair< int, let > rpair;
 				let lpair = {}, rpair = {};
 
-				if (rr1.rnum < rr2.rnum) {
+				if (parseInt(rr1.rnum) < parseInt(rr2.rnum)) {
 					rpair.first = rr1.rnum;
 					rpair.second = rr2.rnum;
 				}
@@ -624,7 +625,7 @@ class Domain3d {
 	// x0, y0, z0: array of x,y,z coordinates of C-alpha atoms
 	//c2b_NewSplitChain(chnid, dcut) { let ic = this.icn3d, me = ic.icn3dui;
 	c2b_NewSplitChain(atoms, dcut) { let ic = this.icn3d, me = ic.icn3dui;
-		let x0 = [], y0 = [], z0 = [];
+		let x0 = [], y0 = [], z0 = [], resiArray = [];
 
 		//substruct: array of secondary structures, each of which has the keys: From (1-based), To (1-based), Sheet (0 or 1), also add these paras: x1, y1, z1, x2, y2, z2
 		let substruct = [];
@@ -644,6 +645,7 @@ class Domain3d {
 			let resid = residueArray[i];
 
             let resi = resid.substr(resid.lastIndexOf('_') + 1);
+/*			
 			if(i == 0) {
 				resiOffset = resi - 1;
 
@@ -653,10 +655,13 @@ class Domain3d {
 					z0.push(undefined);					
 				}
 			}
+*/
 
 			//let resid = chnid + "_" + resi;
 			let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
 
+			if(!atom) continue;    
+/*
 			if(atom) {
 				x0.push(atom.coord.x);
 				y0.push(atom.coord.y);
@@ -667,8 +672,13 @@ class Domain3d {
 				y0.push(undefined);
 				z0.push(undefined);
 			}
-
-			if(!atom) continue;           
+*/
+			//if(!atom) continue;   
+			
+			x0.push(atom.coord.x);
+			y0.push(atom.coord.y);
+			z0.push(atom.coord.z);
+			resiArray.push(resi);
 
 			if(atom.ssend) {
 				substructItem.To = parseInt(resi);
@@ -702,12 +712,13 @@ class Domain3d {
 			return {subdomains: subdomains, substruct: substruct};
 		}
 
-		let seqLen = residueArray.length + resiOffset;
+		let seqLen = residueArray.length; // + resiOffset;
+		let lastResi = resiArray[seqLen - 1];
 
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
-		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut);
-
+		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
+		
 		//
 		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
 		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE
@@ -952,13 +963,17 @@ class Domain3d {
 			let prts = list_parts[index];
 			//vector<int> resflags;
 			//resflags.clear();
-			let resflags = [];
+
+			//let resflags = [];
+			let resflags = {};
 
 			// a domain must have at least 3 SSEs...
 			if (prts.length <= 2) continue;
 
-			for (let i = 0; i < seqLen; i++)
-				resflags.push(0);
+			for (let i = 0; i < seqLen; i++) {
+				//resflags.push(0);
+				resflags[resiArray[i]] = 0;
+			}
 
 			for (let i = 0; i < prts.length; i++) {
 				let k = prts[i] - 1;
@@ -972,8 +987,10 @@ class Domain3d {
 				let From = sserec.From;
 				let To = sserec.To;
 
-				for (let j = From; j <= To; j++)
-					resflags[j - 1] = 1;
+				for (let j = From; j <= To; j++) {
+					//resflags[j - 1] = 1;
+					resflags[j] = 1;
+				}
 
 				if ((k == 0) && (From > 1)) {
 					// residues with negative residue numbers will not be included
@@ -981,17 +998,21 @@ class Domain3d {
 						//resflags[j - 1] = 1;
 						// include at most 10 residues
 						if(From - j <= 10) {
-							resflags[j - 1] = 1;
+							//resflags[j - 1] = 1;
+							resflags[j] = 1;
 						}
 					}
 				}
 
-				if ((k == substruct.length - 1) && (To < seqLen)) {
-					for (let j = To + 1; j <= seqLen; j++) {
+				//if ((k == substruct.length - 1) && (To < seqLen)) {
+				if ((k == substruct.length - 1) && (To < parseInt(lastResi))) {
+					//for (let j = To + 1; j <= seqLen; j++) {
+					for (let j = To + 1; j <= parseInt(lastResi); j++) {
 						//resflags[j - 1] = 1;
 						// include at most 10 residues
 						if(j - To <= 10) {
-							resflags[j - 1] = 1;
+							//resflags[j - 1] = 1;
+							resflags[j] = 1;
 						}
 					}
 				}
@@ -1005,8 +1026,10 @@ class Domain3d {
 					let ll = parseInt(0.5 * (From - To1 - 1));
 
 					if (ll > 0) {
-						for (let j = From - ll; j <= From - 1; j++)
-							resflags[j - 1] = 1;
+						for (let j = From - ll; j <= From - 1; j++) {
+							//resflags[j - 1] = 1;
+							resflags[j] = 1;
+						}
 					}
 				}
 
@@ -1022,8 +1045,10 @@ class Domain3d {
 					let ll = parseInt(0.5 * (From1 - To - 1) + 0.5);
 
 					if (ll > 0) {
-						for (let j = To + 1; j <= To + ll; j++)
-							resflags[j - 1] = 1;
+						for (let j = To + 1; j <= To + ll; j++) {
+							//resflags[j - 1] = 1;
+							resflags[j] = 1;
+						}
 					}
 				}
 			}
@@ -1036,11 +1061,13 @@ class Domain3d {
 			let segments = [];
 
 			for (let i = 0; i < seqLen; i++) {
-				let rf = resflags[i];
+				//let rf = resflags[i];
+				let rf = resflags[resiArray[i]];
 
 				if (!inseg && (rf == 1)) {
 					// new segment starts here
-					startseg = i + 1;
+					//startseg = i + 1;
+					startseg = resiArray[i];
 					inseg = true;
 					continue;
 				}
@@ -1048,7 +1075,8 @@ class Domain3d {
 				if (inseg && (rf == 0)) {
 					// segment ends
 					segments.push(startseg);
-					segments.push(i);
+					//segments.push(i);
+					segments.push(resiArray[i]);
 					inseg = false;
 				}
 			}
@@ -1056,7 +1084,8 @@ class Domain3d {
 			// check for the last segment
 			if (inseg) {
 				segments.push(startseg);
-				segments.push(seqLen);
+				//segments.push(seqLen);
+				segments.push(lastResi);
 			}
 
 			subdomains.push(segments);
