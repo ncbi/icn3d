@@ -1377,6 +1377,7 @@ class LoadScript {
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 
         if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
     }
 
     replayFirstStep(currentNumber) { let  ic = this.icn3d, me = ic.icn3dui;
