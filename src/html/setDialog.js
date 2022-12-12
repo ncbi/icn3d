@@ -172,7 +172,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
-        html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
+        html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='NP_001743.1' size=8> ";
         html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
         html += "</div>";
 
