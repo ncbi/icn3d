@@ -517,13 +517,20 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'NCBI MMDB ID (annotation) ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'RCSB MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'RCSB PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr, undefined, 2);
+
+        html += me.htmlCls.setHtmlCls.getMenuText('mn1_afwrap', 'AlphaFold Structures', undefined, undefined, 2);
+        html += "<ul>";
+        
+        html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI RefSeq ID ' + me.htmlCls.wifiStr, undefined, 3);
+        // html += me.htmlCls.setHtmlCls.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
+        html += "</ul>";
+
+        
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_refseq', 'NCBI RefSeq ' + me.htmlCls.wifiStr, undefined, 2);
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
         
         html += "</ul>";

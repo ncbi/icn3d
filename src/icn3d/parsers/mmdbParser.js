@@ -424,15 +424,15 @@ class MmdbParser {
         }
     }
 
-    downloadUniprotid(uniprotid) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadRefseq(refseqid) { let  ic = this.icn3d, me = ic.icn3dui;
        // get gis
-       let  url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
+       let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
 
        ic.bCid = undefined;
 
        $.ajax({
           url: url,
-          dataType: 'json',
+          dataType: 'jsonp',
           cache: true,
           tryCount : 0,
           retryLimit : 0, //1
@@ -443,10 +443,12 @@ class MmdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               let  giArray = data.result.uids;
+                me.cfg.afid = data.uniprot;
 
-               let  redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
-               window.open(redirectUrl, '_self');
+                let bAf = true;
+                $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
+                    ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+                });
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;

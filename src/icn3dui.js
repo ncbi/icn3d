@@ -178,7 +178,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.19.1';
+    this.REVISION = '3.20.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -467,11 +467,20 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.mmdbParserCls.downloadGi(me.cfg.gi);
     }
-    else if(me.cfg.uniprotid !== undefined) {
-       ic.loadCmd = 'load uniprotid ' + me.cfg.uniprotid;
-       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.mmdbParserCls.downloadUniprotid(me.cfg.uniprotid);
-    }
+    else if(me.cfg.refseqid !== undefined) {
+        ic.inputid = me.cfg.refseqid;
+        
+        ic.bNCBI = true;
+        ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
+     }
+    //  else if(me.cfg.proteinname !== undefined) {
+    //     ic.bNCBI = true;
+    //     ic.loadCmd = 'load proteinname ' + me.cfg.gi;
+    //     me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+    //     ic.mmdbParserCls.downloadProteinname(me.cfg.proteinname);
+    //  }
     else if(me.cfg.blast_rep_id !== undefined) {
        ic.bNCBI = true;
 
