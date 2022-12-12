@@ -40575,7 +40575,7 @@ class AnnoPTM {
                     return;
                 }
 
-                thisClass.getNoPTM(chnid);
+                thisClass.getNoPTM(chnid, type);
 
                 return;
               }
@@ -40625,7 +40625,7 @@ class AnnoPTM {
                 }
 
                 if(UniProtID == '') {
-                    thisClass.getNoPTM(chnid);
+                    thisClass.getNoPTM(chnid, type);
                 }
                 else {
                     let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
@@ -40647,7 +40647,7 @@ class AnnoPTM {
                                 return;
                             }
 
-                            thisClass.getNoPTM(chnid);
+                            thisClass.getNoPTM(chnid, type);
 
                             return;
                         }
@@ -40655,7 +40655,7 @@ class AnnoPTM {
                 }
               },
               error : function(xhr, textStatus, errorThrown ) {
-                thisClass.getNoPTM(chnid);
+                thisClass.getNoPTM(chnid, type);
               }
             });
         }
@@ -40820,12 +40820,14 @@ class AnnoPTM {
         $("#" + ic.pre + "tt_" + type + "_" + chnid).html(html3);
     }
 
-    getNoPTM(chnid) { let ic = this.icn3d; ic.icn3dui;
+    getNoPTM(chnid, type) { let ic = this.icn3d; ic.icn3dui;
         console.log( "No PTM data were found for the chain " + chnid + "..." );
+
+        let idStr = (type == 'ptm') ? 'ptm' : 'transmem';
    
-        $("#" + ic.pre + "dt_ptm_" + chnid).html('');
-        $("#" + ic.pre + "ov_ptm_" + chnid).html('');
-        $("#" + ic.pre + "tt_ptm_" + chnid).html('');
+        $("#" + ic.pre + "dt_" + idStr + "_" + chnid).html('');
+        $("#" + ic.pre + "ov_" + idStr + "_" + chnid).html('');
+        $("#" + ic.pre + "tt_" + idStr + "_" + chnid).html('');
 
         // add here after the ajax call
         ic.showAnnoCls.enableHlSeq();
@@ -60840,7 +60842,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
-        html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
+        html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='NP_001743.1' size=8> ";
         html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
         html += "</div>";
 
