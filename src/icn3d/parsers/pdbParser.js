@@ -32,7 +32,12 @@ class PdbParser {
 
         if(bAf) {
             url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
-            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+            if(me.cfg.refseqid) {
+                ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(RefSeq) in iCn3D');
+            }
+            else {
+                ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+            }
         }
         else {
             url = "https://files.rcsb.org/view/" + pdbid + ".pdb";

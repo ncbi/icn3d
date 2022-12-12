@@ -4298,7 +4298,8 @@ var saveAs = (function(view) {
                         var reader = new FileReader();
                         reader.onloadend = function() {
                             var url = is_chrome_ios ? reader.result : reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
-                            var popup = view.open(url, '_blank');
+                            var urlTarget = '_blank';
+                            var popup = view.open(url, urlTarget);
                             if(!popup) view.location.href = url;
                             url=undefined; // release reference before dispatching
                             filesaver.readyState = filesaver.DONE;
@@ -23861,13 +23862,18 @@ var icn3d = (function (exports) {
         //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
         //it can be chained together with other deferred functions for sequential execution. A wrapper
         //was added to support both http and https.
-        downloadPdb(pdbid, bAf) { let ic = this.icn3d; ic.icn3dui;
+        downloadPdb(pdbid, bAf) { let  ic = this.icn3d, me = ic.icn3dui;
           ic.deferredOpm = $.Deferred(function() {
             let  url, dataType;
 
             if(bAf) {
                 url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
-                ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+                if(me.cfg.refseqid) {
+                    ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(RefSeq) in iCn3D');
+                }
+                else {
+                    ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+                }
             }
             else {
                 url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
@@ -25513,15 +25519,15 @@ var icn3d = (function (exports) {
             }
         }
 
-        downloadUniprotid(uniprotid) { let ic = this.icn3d; ic.icn3dui;
+        downloadRefseq(refseqid) { let  ic = this.icn3d, me = ic.icn3dui;
            // get gis
-           let  url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
+           let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
 
            ic.bCid = undefined;
 
            $.ajax({
               url: url,
-              dataType: 'json',
+              dataType: 'jsonp',
               cache: true,
               tryCount : 0,
               retryLimit : 0, //1
@@ -25532,10 +25538,12 @@ var icn3d = (function (exports) {
                   //ic.ParserUtilsCls.hideLoading();
               },
               success: function(data) {
-                   let  giArray = data.result.uids;
+                    me.cfg.afid = data.uniprot;
 
-                   let  redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
-                   window.open(redirectUrl, '_self');
+                    let bAf = true;
+                    $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
+                        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+                    });
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -29454,6 +29462,14 @@ var icn3d = (function (exports) {
               me.cfg.gi = id;
               ic.mmdbParserCls.downloadGi(id);
             }
+            else if(command.indexOf('load refseq') !== -1) {
+                me.cfg.refseqid = id;
+                ic.mmdbParserCls.downloadRefseq(id);
+            }
+            // else if(command.indexOf('load proteinname') !== -1) {
+            //     me.cfg.proteinname = id;
+            //     ic.mmdbParserCls.downloadProteinname(id);
+            // }
             else if(command.indexOf('load seq_struct_ids ') !== -1) {
               ic.bSmithwm = false;
               ic.bLocalSmithwm = false;
@@ -30153,7 +30169,7 @@ var icn3d = (function (exports) {
             //let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
             //    'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
             //    'dl_symmetry', 'dl_symd', 'dl_rmsd', 'dl_legend', 'dl_disttable'];
-            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_uniprotid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteraction', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterplotcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
+            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_refseqid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteracton', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterploitcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
 
             for(let i in itemArray) {
                 let  item = itemArray[i];
@@ -35355,7 +35371,8 @@ var icn3d = (function (exports) {
             let  paraArray = command.split(' | ');
             let  url = paraArray[1];
 
-            window.open(url, '_blank');
+            let urlTarget = '_blank';
+            window.open(url, urlTarget);
           }
           else if(commandOri.indexOf('your note') == 0) {
             let  paraArray = commandOri.split(' | ');
@@ -55485,13 +55502,14 @@ var icn3d = (function (exports) {
             }
         }
 
-        setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d; ic.icn3dui;
+        setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
             if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
             //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
             let asymmetricStr = "";
 
             let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
+            if(me.cfg.refseqid) idName = 'NCBI RefSeq ID';
 
             $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }
@@ -55501,6 +55519,9 @@ var icn3d = (function (exports) {
 
            if(me.cfg.cid !== undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
+           }
+           else if(me.cfg.refseqid !== undefined) {
+            url = "https://www.ncbi.nlm.nih.gov/protein/";
            }
            else if(me.cfg.afid !== undefined) {
                url = "https://alphafold.ebi.ac.uk/search/text/";
@@ -55547,12 +55568,14 @@ var icn3d = (function (exports) {
           if(structArray.length === 1) {
               url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0];
               me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);
-              window.open(url, '_blank');
+              let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+              window.open(url, urlTarget);
           }
           else if(structArray.length === 2) {
               url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0] + " OR " + structArray[1];
               me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + " OR " + structArray[1] + ": " + url, false);
-              window.open(url, '_blank');
+              let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+              window.open(url, urlTarget);
           }
         }
     }
@@ -55747,6 +55770,14 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_afid', 'Please input AlphaFold UniProt ID');
             });
 
+            me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { me.icn3d; e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI RefSeq ID');
+             });
+
+            // me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+            //     me.htmlCls.dialogCls.openDlg('dl_proteinname', 'Please input protein name to search');
+            //  });
+
         //    },
         //    clkMn1_opmid: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { me.icn3d; e.preventDefault();
@@ -55819,11 +55850,12 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { me.icn3d; e.preventDefault();
                me.htmlCls.dialogCls.openDlg('dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { me.icn3d; e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                let url = $("#" + me.pre + "sharelinkurl").val();
                thisClass.setLogCmd("open " + url, false);
                localStorage.setItem('fixedversion', '1');
-               window.open(url, '_blank');
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(url, urlTarget);
             });
         //    },
         //    clkMn1_mmciffile: function() {
@@ -55855,13 +55887,6 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn1_refseq", "click", function(e) { me.icn3d; e.preventDefault();
-                me.htmlCls.dialogCls.openDlg('dl_grefseq', 'Please input protein RefSeq');
-             });
-
-            me.myEventCls.onIds("#" + me.pre + "mn1_uniprotid", "click", function(e) { me.icn3d; e.preventDefault();
-               me.htmlCls.dialogCls.openDlg('dl_uniprotid', 'Please input UniProt ID');
-            });
         //    },
         //    clkMn1_cid: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { me.icn3d; e.preventDefault();
@@ -56202,14 +56227,16 @@ var icn3d = (function (exports) {
         //    clkMn1_link_structure: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                let url = ic.saveFileCls.getLinkToStructureSummary(true);
-               window.open(url, '_blank');
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(url, urlTarget);
             });
         //    },
         //    clkMn1_link_bind: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + ic.inputid;
                thisClass.setLogCmd("link to 3D protein structures bound to CID " + ic.inputid + ": " + url, false);
-               window.open(url, '_blank');
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(url, urlTarget);
             });
         //    },
         //    clkMn1_link_vast: function() {
@@ -56236,8 +56263,10 @@ var icn3d = (function (exports) {
                            thisClass.setLogCmd("link to structures similar to " + idArray[0] + ": " + url, false);
                        }
                    }
-                   window.open(url, '_blank');
                }
+
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(url, urlTarget);
             });
         //    },
         //    clkMn1_link_pubmed: function() {
@@ -56246,7 +56275,8 @@ var icn3d = (function (exports) {
                    let url;
                    url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + ic.molTitle;
                    thisClass.setLogCmd("link to literature about " + ic.molTitle + ": " + url, false);
-                   window.open(url, '_blank');
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(url, urlTarget);
                }
                else if(ic.pmid) {
                    let idArray = ic.pmid.toString().split('_');
@@ -56259,7 +56289,8 @@ var icn3d = (function (exports) {
                        url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + idArray[0] + " OR " + idArray[1];
                        thisClass.setLogCmd("link to PubMed IDs " + idArray[0] + ", " + idArray[1] + ": " + url, false);
                    }
-                   window.open(url, '_blank');
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(url, urlTarget);
                }
                else if(isNaN(ic.inputid)) {
                    let idArray = ic.inputid.toString().split('_');
@@ -56272,7 +56303,8 @@ var icn3d = (function (exports) {
                        url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + idArray[0] + " OR " + idArray[1];
                        thisClass.setLogCmd("link to literature about PDB " + idArray[0] + " OR " + idArray[1] + ": " + url, false);
                    }
-                   window.open(url, '_blank');
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(url, urlTarget);
                }
                else {
                    if(me.cfg.cid !== undefined) {
@@ -56299,7 +56331,8 @@ var icn3d = (function (exports) {
               if(text.length > 0) text = text.substr(0, text.length - 4);
               let url = "https://www.ncbi.nlm.nih.gov/protein/?term=" + text;
               thisClass.setLogCmd("link to Entrez protein about PDB " + structArray + ": " + url, false);
-              window.open(url, '_blank');
+              let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+              window.open(url, urlTarget);
             });
         //    },
         }
@@ -57600,7 +57633,8 @@ var icn3d = (function (exports) {
                //else {
                    url = url.replace("full.html", "full2.html");
                    url += '&closepopup=1';
-                   window.open(url, '_blank');
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(url, urlTarget);
                    thisClass.setLogCmd('side by side | ' + url, true);
                //}
             });
@@ -57990,7 +58024,8 @@ var icn3d = (function (exports) {
 
                 let template = "<!doctype html>\n<head>\n<title>Loading Foldseek</title>\n<style>\n  body {\n    background-color: #121212;\n    color: #fff;\n    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\n    height: 100vh;\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n  }\n  .loader {\n    display: block;\n    width: 80px;\n    height: 80px;\n  }\n  .loader:after {\n    content: \" \";\n    display: block;\n    width: 64px;\n    height: 64px;\n    margin: 8px;\n    border-radius: 50%;\n    border: 6px solid #fff;\n    border-color: #fff transparent #fff transparent;\n    animation: loader 1.2s linear infinite;\n  }\n  @keyframes loader {\n    0% {\n      transform: rotate(0deg);\n    }\n    100% {\n      transform: rotate(360deg);\n    }\n  }\n</style>\n</head>\n<body>\n<div>Foldseek is loading...</div><div class=\"loader\"></div>\n</body>";
 
-                let w = window.open('', '_blank');
+                let urlTarget = '_blank';
+                let w = window.open('', urlTarget);
                 w.document.body.innerHTML = template;
 
                 $.ajax({
@@ -58578,13 +58613,20 @@ var icn3d = (function (exports) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'NCBI MMDB ID (annotation) ' + me.htmlCls.wifiStr, undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'RCSB MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'RCSB PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr, undefined, 2);
+
+            html += me.htmlCls.setHtmlCls.getMenuText('mn1_afwrap', 'AlphaFold Structures', undefined, undefined, 2);
+            html += "<ul>";
+            
+            html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI RefSeq ID ' + me.htmlCls.wifiStr, undefined, 3);
+            // html += me.htmlCls.setHtmlCls.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
+            html += "</ul>";
+
+            
             html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
-            //html += me.htmlCls.setHtmlCls.getLink('mn1_refseq', 'NCBI RefSeq ' + me.htmlCls.wifiStr, undefined, 2);
+            //html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
-            //html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
             
             html += "</ul>";
@@ -60792,6 +60834,16 @@ var icn3d = (function (exports) {
                 + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full (slow)</button>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
+            html += "NCBI RefSeq ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
+            html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
+            html += "</div>";
+
+            // html += me.htmlCls.divStr + "dl_proteinname' class='" + dialogClass + "'>";
+            // html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "proteinname' value='kinase' size=8> ";
+            // html += me.htmlCls.buttonStr + "reload_proteinname'>Load</button>";
+            // html += "</div>";
+
             html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
             html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "opmid' value='6JXR' size=8> ";
             html += me.htmlCls.buttonStr + "reload_opm'>Load</button>";
@@ -61008,17 +61060,6 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
             html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
             html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
-            html += "</div>";
-
-            html += me.htmlCls.divStr + "dl_refseq' class='" + dialogClass + "'>";
-            html += "Protein RefSeq: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseq' value='0308234A' size=8> ";
-            html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
-            html += "</div>";
-
-            html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
-            html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
-            html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
-            html += me.htmlCls.buttonStr + "reload_uniprotid'>Load</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
@@ -62024,7 +62065,7 @@ var icn3d = (function (exports) {
             $("#" + me.pre + id).resizable();
         }
 
-        launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui; me.icn3d;
+        launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
             let flag = bBiounit ? '1' : '0';
 
             ids = ids.replace(/,/g, ' ').replace(/\s+/g, ',').trim();
@@ -62037,11 +62078,13 @@ var icn3d = (function (exports) {
             let idArray = ids.split(',');
             if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
-                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
             }
             else {
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf" + flag + " " + ids, false);
-                window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
             }
         }
 
@@ -62390,18 +62433,20 @@ var icn3d = (function (exports) {
 
         //    },
         //    clickReload_mmtf: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_vastplus", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_vastplus", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 me.htmlCls.clickMenuCls.setLogCmd("vast+ search " + $("#" + me.pre + "vastpluspdbid").val(), false);
-                window.open('https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=' + $("#" + me.pre + "vastpluspdbid").val(), '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open('https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=' + $("#" + me.pre + "vastpluspdbid").val(), urlTarget);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 me.htmlCls.clickMenuCls.setLogCmd("vast search " + $("#" + me.pre + "vastpdbid").val() + "_" + $("#" + me.pre + "vastchainid").val(), false);
-                window.open('https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=' + $("#" + me.pre + "vastpdbid").val() + '&chain=' + $("#" + me.pre + "vastchainid").val(), '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open('https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=' + $("#" + me.pre + "vastpdbid").val() + '&chain=' + $("#" + me.pre + "vastchainid").val(), urlTarget);
              });
 
             me.myEventCls.onIds("#" + me.pre + "reload_foldseek", "click", function(e) { me.icn3d;
@@ -62419,50 +62464,55 @@ var icn3d = (function (exports) {
                 window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&showalignseq=1&bu=0', '_self');
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
-               window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
-                   window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
                }
             });
 
         //    },
         //    clickReload_pdb: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_pdb", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pdb", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
-               window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
-                   window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_af", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_af", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
-               window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", function(e) { let ic = me.icn3d;
@@ -62484,79 +62534,87 @@ var icn3d = (function (exports) {
                 ic.contactMapCls.afErrorMap(afid, true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
-                   window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
                }
             });
 
         //    },
         //    clickReload_opm: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
-               window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "opmid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "opmid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
-                   window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
                }
             });
 
         //    },
         //    clickReload_align_refined: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
                 me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1&bu=1', false);
-                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
-                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1&bu=1', '_blank');
+                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', urlTarget);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1&bu=1', urlTarget);
              });
         //    },
         //    clickReload_align_ori: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_align_ori", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_align_ori", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
                 me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
-                //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
+                //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', urlTarget);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', urlTarget);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_align_tmalign", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_align_tmalign", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
                 me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=2&bu=1', false);
-                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=2&bu=1', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=2&bu=1', urlTarget);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
-                window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', urlTarget);
               });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_alignaf_tmalign", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_alignaf_tmalign", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef | align tmalign", false);
-                window.open(hostUrl + '?chainalign=' + alignment + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?chainalign=' + alignment + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1', urlTarget);
               });
         //    },
         //    clickReload_chainalign: function() {
@@ -62575,11 +62633,11 @@ var icn3d = (function (exports) {
                }
 
                me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
-               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', urlTarget);
             });
     */
 
-            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
 
@@ -62587,10 +62645,11 @@ var icn3d = (function (exports) {
                let alignment_final = thisClass.convertUniProtInChains(alignment);
 
                me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
-               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym2", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym2", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
      
@@ -62599,10 +62658,11 @@ var icn3d = (function (exports) {
                 let resalign = $("#" + me.pre + "resalignids").val();
      
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
-                window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=&showalignseq=1&bu=0', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=&showalignseq=1&bu=0', urlTarget);
              });
 
-             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym3", "click", function(e) { me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym3", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
      
@@ -62616,7 +62676,8 @@ var icn3d = (function (exports) {
                 }
      
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef " + predefinedres, false);
-                window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', urlTarget);
              });
 
              me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", function(e) { let ic = me.icn3d;
@@ -62641,7 +62702,7 @@ var icn3d = (function (exports) {
                 me.htmlCls.clickMenuCls.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
 
@@ -62649,7 +62710,8 @@ var icn3d = (function (exports) {
                 let alignment_final = thisClass.convertUniProtInChains(alignment);
      
                 me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
-                window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
              });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
@@ -62681,7 +62743,8 @@ var icn3d = (function (exports) {
                else {
                     let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));           
                     me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
-                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', urlTarget);
                }
             });
 
@@ -62714,7 +62777,8 @@ var icn3d = (function (exports) {
                else {
                     let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
                     me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
-                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', urlTarget);
                }
             });
 
@@ -62771,44 +62835,49 @@ var icn3d = (function (exports) {
                     ic.resid2specCls.residueids2spec(residArray);
 
                     me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
-                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, urlTarget);
                }
             });
 
         //    },
         //    clickReload_mmcif: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_mmcif", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mmcif", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
-               window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
-                   window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
                }
             });
 
         //    },
         //    clickReload_mmdb: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', urlTarget);
             });
 
              me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { me.icn3d;
@@ -62830,12 +62899,13 @@ var icn3d = (function (exports) {
                 thisClass.launchMmdb(ids, 0, hostUrl);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    //if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
-                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', urlTarget);
                   }
             });
 
@@ -62850,7 +62920,7 @@ var icn3d = (function (exports) {
 
         //    },
         //    clickReload_blast_rep_id: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let query_id = $("#" + me.pre + "query_id").val();
@@ -62859,13 +62929,14 @@ var icn3d = (function (exports) {
                me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
                query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?from=icn3d&alg=blast&blast_rep_id=' + blast_rep_id
                  + '&query_id=' + query_id
                  + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
-                 + blast_rep_id + '; show selection', '_blank');
+                 + blast_rep_id + '; show selection', urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let query_id = $("#" + me.pre + "query_id").val();
@@ -62874,13 +62945,14 @@ var icn3d = (function (exports) {
                 me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
                 query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
                 
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?from=icn3d&alg=smithwm&blast_rep_id=' + blast_rep_id
                   + '&query_id=' + query_id
                   + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
-                  + blast_rep_id + '; show selection', '_blank');
+                  + blast_rep_id + '; show selection', urlTarget);
              });
 
-             me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let query_id = $("#" + me.pre + "query_id").val();
@@ -62889,75 +62961,84 @@ var icn3d = (function (exports) {
                 me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
                 query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
                 
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?from=icn3d&alg=local_smithwm&blast_rep_id=' + blast_rep_id
                   + '&query_id=' + query_id
                   + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
-                  + blast_rep_id + '; show selection', '_blank');
+                  + blast_rep_id + '; show selection', urlTarget);
              });
 
         //    },
         //    clickReload_gi: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
-               window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
-                me.htmlCls.clickMenuCls.setLogCmd("load refseq " + $("#" + me.pre + "refseq").val(), false);
-                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
-                window.open(hostUrl + '?refseq=' + $("#" + me.pre + "refseq").val(), '_blank');
+                me.htmlCls.clickMenuCls.setLogCmd("load refseq " + $("#" + me.pre + "refseqid").val(), false);
+                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?refseqid=' + $("#" + me.pre + "refseqid").val(), urlTarget);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
-                   window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
-               window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "uniprotid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "uniprotid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
-                   window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
                }
             });
 
         //    },
         //    clickReload_cid: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre 
+            + "reload_cid", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
-               window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { let ic = me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
                    if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
-                   window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+                   //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+                   let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                   window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
                }
             });
 
@@ -70733,7 +70814,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.19.1';
+        this.REVISION = '3.20.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -71022,11 +71103,20 @@ var icn3d = (function (exports) {
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
            ic.mmdbParserCls.downloadGi(me.cfg.gi);
         }
-        else if(me.cfg.uniprotid !== undefined) {
-           ic.loadCmd = 'load uniprotid ' + me.cfg.uniprotid;
-           me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.mmdbParserCls.downloadUniprotid(me.cfg.uniprotid);
-        }
+        else if(me.cfg.refseqid !== undefined) {
+            ic.inputid = me.cfg.refseqid;
+            
+            ic.bNCBI = true;
+            ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+            ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
+         }
+        //  else if(me.cfg.proteinname !== undefined) {
+        //     ic.bNCBI = true;
+        //     ic.loadCmd = 'load proteinname ' + me.cfg.gi;
+        //     me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        //     ic.mmdbParserCls.downloadProteinname(me.cfg.proteinname);
+        //  }
         else if(me.cfg.blast_rep_id !== undefined) {
            ic.bNCBI = true;
 

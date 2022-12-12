@@ -171,6 +171,16 @@ class SetDialog {
             + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full (slow)</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
+        html += "NCBI RefSeq ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
+        html += "</div>";
+
+        // html += me.htmlCls.divStr + "dl_proteinname' class='" + dialogClass + "'>";
+        // html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "proteinname' value='kinase' size=8> ";
+        // html += me.htmlCls.buttonStr + "reload_proteinname'>Load</button>";
+        // html += "</div>";
+
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
         html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "opmid' value='6JXR' size=8> ";
         html += me.htmlCls.buttonStr + "reload_opm'>Load</button>";
@@ -387,17 +397,6 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
         html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
-        html += "</div>";
-
-        html += me.htmlCls.divStr + "dl_refseq' class='" + dialogClass + "'>";
-        html += "Protein RefSeq: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseq' value='0308234A' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
-        html += "</div>";
-
-        html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
-        html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
-        html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_uniprotid'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";

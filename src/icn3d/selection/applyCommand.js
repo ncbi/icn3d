@@ -1164,7 +1164,8 @@ class ApplyCommand {
         let  paraArray = command.split(' | ');
         let  url = paraArray[1];
 
-        window.open(url, '_blank');
+        let urlTarget = '_blank';
+        window.open(url, urlTarget);
       }
       else if(commandOri.indexOf('your note') == 0) {
         let  paraArray = commandOri.split(' | ');

@@ -899,6 +899,14 @@ class LoadScript {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
         }
+        else if(command.indexOf('load refseq') !== -1) {
+            me.cfg.refseqid = id;
+            ic.mmdbParserCls.downloadRefseq(id);
+        }
+        // else if(command.indexOf('load proteinname') !== -1) {
+        //     me.cfg.proteinname = id;
+        //     ic.mmdbParserCls.downloadProteinname(id);
+        // }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
           ic.bLocalSmithwm = false;
