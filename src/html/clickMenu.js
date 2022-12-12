@@ -232,7 +232,7 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-            me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI RefSeq ID');
+            me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI Protein Accession');
          });
 
         // me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; e.preventDefault();

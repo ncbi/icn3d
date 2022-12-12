@@ -782,7 +782,7 @@ class SaveFile {
         let asymmetricStr = "";
 
         let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
-        if(me.cfg.refseqid) idName = 'NCBI RefSeq ID';
+        if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
         $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
     }

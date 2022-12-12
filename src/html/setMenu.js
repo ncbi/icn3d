@@ -522,7 +522,7 @@ class SetMenu {
         html += "<ul>";
         
         html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
-        html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI RefSeq ID ' + me.htmlCls.wifiStr, undefined, 3);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI Protein Accession ' + me.htmlCls.wifiStr, undefined, 3);
         // html += me.htmlCls.setHtmlCls.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
