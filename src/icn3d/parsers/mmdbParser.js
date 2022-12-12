@@ -443,12 +443,17 @@ class MmdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-                me.cfg.afid = data.uniprot;
+            if(!data || !data.uniprot) {
+                alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+                return;
+            }
 
-                let bAf = true;
-                $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-                    ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-                });
+            me.cfg.afid = data.uniprot;
+
+            let bAf = true;
+            $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
+                ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+            });
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -457,6 +462,7 @@ class MmdbParser {
                 $.ajax(this);
                 return;
             }
+            alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
             return;
           }
         });

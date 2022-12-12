@@ -33,7 +33,7 @@ class PdbParser {
         if(bAf) {
             url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
             if(me.cfg.refseqid) {
-                ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(RefSeq) in iCn3D');
+                ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(NCBI Protein Acc.) in iCn3D');
             }
             else {
                 ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
@@ -82,6 +82,8 @@ class PdbParser {
                     $.ajax(this);
                     return;
                 }
+
+                alert('The ID ' + pdbid + ' can not be found in the server ' + url + '...');
                 return;
             }
         });

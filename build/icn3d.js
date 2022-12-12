@@ -23869,7 +23869,7 @@ var icn3d = (function (exports) {
             if(bAf) {
                 url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
                 if(me.cfg.refseqid) {
-                    ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(RefSeq) in iCn3D');
+                    ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(NCBI Protein Acc.) in iCn3D');
                 }
                 else {
                     ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
@@ -23918,6 +23918,8 @@ var icn3d = (function (exports) {
                         $.ajax(this);
                         return;
                     }
+
+                    alert('The ID ' + pdbid + ' can not be found in the server ' + url + '...');
                     return;
                 }
             });
@@ -25538,12 +25540,17 @@ var icn3d = (function (exports) {
                   //ic.ParserUtilsCls.hideLoading();
               },
               success: function(data) {
-                    me.cfg.afid = data.uniprot;
+                if(!data || !data.uniprot) {
+                    alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+                    return;
+                }
 
-                    let bAf = true;
-                    $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-                        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-                    });
+                me.cfg.afid = data.uniprot;
+
+                let bAf = true;
+                $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
+                    ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+                });
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -25552,6 +25559,7 @@ var icn3d = (function (exports) {
                     $.ajax(this);
                     return;
                 }
+                alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
                 return;
               }
             });
@@ -55509,7 +55517,7 @@ var icn3d = (function (exports) {
             let asymmetricStr = "";
 
             let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
-            if(me.cfg.refseqid) idName = 'NCBI RefSeq ID';
+            if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
             $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }
@@ -55771,7 +55779,7 @@ var icn3d = (function (exports) {
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { me.icn3d; e.preventDefault();
-                me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI RefSeq ID');
+                me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI Protein Accession');
              });
 
             // me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; e.preventDefault();
@@ -58618,7 +58626,7 @@ var icn3d = (function (exports) {
             html += "<ul>";
             
             html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
-            html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI RefSeq ID ' + me.htmlCls.wifiStr, undefined, 3);
+            html += me.htmlCls.setHtmlCls.getLink('mn1_refseqid', 'NCBI Protein Accession ' + me.htmlCls.wifiStr, undefined, 3);
             // html += me.htmlCls.setHtmlCls.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
             html += "</ul>";
 
@@ -60835,7 +60843,7 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
-            html += "NCBI RefSeq ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
+            html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='0308234A' size=8> ";
             html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
             html += "</div>";
 
