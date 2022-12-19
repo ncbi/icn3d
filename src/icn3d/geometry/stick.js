@@ -2,12 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ReprSub} from '../geometry/reprSub.js';
-import {Cylinder} from '../geometry/cylinder.js';
-import {Sphere} from '../geometry/sphere.js';
-
 class Stick {
     constructor(icn3d) {
         this.icn3d = icn3d;

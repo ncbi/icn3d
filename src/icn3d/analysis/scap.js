@@ -2,21 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Resid2spec} from '../selection/resid2spec.js';
-import {ShowInter} from '../interaction/showInter.js';
-import {SaveFile} from '../export/saveFile.js';
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {SetColor} from '../display/setColor.js';
-import {SetOption} from '../display/setOption.js';
-import {Transform} from '../transform/transform.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Draw} from '../display/draw.js';
-
 class Scap {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -156,14 +141,14 @@ class Scap {
               let lines = pdbData.split('\n');
               let allChainResiHash = {};
               for (let i in lines) {
-                  let  line = lines[i];
-                  let  record = line.substr(0, 6);
+                  let line = lines[i];
+                  let record = line.substr(0, 6);
                   
                   if (record === 'ATOM  ' || record === 'HETATM') {
-                      let  chain = line.substr(20, 2).trim();
+                      let chain = line.substr(20, 2).trim();
                       if(chain === '') chain = 'A';
       
-                      let  resi = line.substr(22, 5).trim();
+                      let resi = line.substr(22, 5).trim();
                       let chainResi = chain + '_' + resi;
                       
                       if(chainResi2pdb.hasOwnProperty(chainResi)) {

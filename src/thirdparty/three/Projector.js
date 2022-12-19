@@ -4,7 +4,7 @@
  * @author julianwa / https://github.com/julianwa
  */
 
-//import * as THREE from 'three';
+
 
 THREE.RenderableObject = function () {
     "use strict";

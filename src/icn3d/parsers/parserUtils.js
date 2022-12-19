@@ -2,38 +2,16 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-import {RmsdSuprCls} from '../../utils/rmsdSuprCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Surface} from '../surface/surface.js';
-import {SetSeqAlign} from '../parsers/setSeqAlign.js';
-import {SetColor} from '../display/setColor.js';
-import {Diagram2d} from '../analysis/diagram2d.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-import {Draw} from '../display/draw.js';
-import {LoadScript} from '../selection/loadScript.js';
-import {Selection} from '../selection/selection.js';
-import {Transform} from '../transform/transform.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {ShowAnno} from '../annotations/showAnno.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-
 class ParserUtils {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    alignCoords(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex, bChainAlign) { let  ic = this.icn3d, me = ic.icn3dui;
+    alignCoords(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex, bChainAlign) { let ic = this.icn3d, me = ic.icn3dui;
       //var n = coordsFrom.length;
-      let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
+      let n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      let  hAtoms = {}, rmsd;
+      let hAtoms = {}, rmsd;
 
       if(n < 4) alert("Please select at least four residues in each structure...");
       if(n >= 4) {
@@ -41,11 +19,11 @@ class ParserUtils {
 
           // apply matrix for each atom
           if(ic.rmsd_suprTmp.rot !== undefined) {
-              let  rot = ic.rmsd_suprTmp.rot;
+              let rot = ic.rmsd_suprTmp.rot;
               if(rot[0] === null) alert("Please select more residues in each structure...");
 
-              let  centerFrom = ic.rmsd_suprTmp.trans1;
-              let  centerTo = ic.rmsd_suprTmp.trans2;
+              let centerFrom = ic.rmsd_suprTmp.trans1;
+              let centerTo = ic.rmsd_suprTmp.trans2;
               rmsd = ic.rmsd_suprTmp.rmsd;
 
               if(rmsd) {
@@ -61,12 +39,12 @@ class ParserUtils {
 
               let chainDone = {};
               for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
-                  let  chainidTmp = ic.structures[secondStruct][i];
+                  let chainidTmp = ic.structures[secondStruct][i];
                   // some chains were pushed twice in some cases
                   if(chainDone.hasOwnProperty(chainidTmp)) continue;
 
                   for(let j in ic.chains[chainidTmp]) {
-                    let  atom = ic.atoms[j];
+                    let atom = ic.atoms[j];
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
                   }
 
@@ -84,10 +62,10 @@ class ParserUtils {
               //if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
               ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
          
-              let  bShowHighlight = false;
-              let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+              let bShowHighlight = false;
+              let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
-              let  oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
+              let oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
               $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
               $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
@@ -106,9 +84,9 @@ class ParserUtils {
       return {hAtoms: hAtoms, rmsd: rmsd};
     }
 
-    getQtStartEndFromRealignResid(chainid_t, chainid_q) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  struct_t = chainid_t.substr(0, chainid_t.indexOf('_')); 
-        let  struct_q = chainid_q.substr(0, chainid_q.indexOf('_')); 
+    getQtStartEndFromRealignResid(chainid_t, chainid_q) { let ic = this.icn3d, me = ic.icn3dui;
+        let struct_t = chainid_t.substr(0, chainid_t.indexOf('_')); 
+        let struct_q = chainid_q.substr(0, chainid_q.indexOf('_')); 
 
         let qt_start_end = [];
 
@@ -141,7 +119,7 @@ class ParserUtils {
         return qt_start_end;
     }
 
-    getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
+    getMissingResidues(seqArray, type, chainid) { let ic = this.icn3d, me = ic.icn3dui;
         ic.chainsSeq[chainid] = [];
 
         // find the offset of MMDB sequence
@@ -157,7 +135,7 @@ class ParserUtils {
 
         let prevResi = 0;
         for(let i = 0, il = seqArray.length; i < il; ++i) {
-            let  seqName, resiPos;
+            let seqName, resiPos;
             // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
             if(type === 'mmdbid') {
                 seqName = seqArray[i][1];
@@ -179,7 +157,7 @@ class ParserUtils {
                 seqName = 'x';
             }
 
-            let  resObject = {};
+            let resObject = {};
 
             if(!ic.bUsePdbNum) {
                 resObject.resi = i + 1;
@@ -205,27 +183,27 @@ class ParserUtils {
 
     //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
     //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
-    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
+    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d, me = ic.icn3dui;
        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
 ///       mmdbid1 = mmdbid1.substr(0, 4);
 ///       mmdbid2 = mmdbid2.substr(0, 4);
 
-       let  url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-       let  url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+       let url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+       let url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
        if(me.cfg.inpara !== undefined) {
           url1 += me.cfg.inpara;
           url2 += me.cfg.inpara;
        }
 
-       let  request1 = $.ajax({
+       let request1 = $.ajax({
             url: url1,
             dataType: 'jsonp',
             cache: true
        });
 
-       let  request2 = request1.then(function( data ) {
+       let request2 = request1.then(function( data ) {
             ic.interactionData1 = data;
 
             ic.html2ddgm = '';
@@ -255,21 +233,21 @@ class ParserUtils {
        });
     }
 
-    set2DDiagramsForChainalign(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-        let  ajaxArray = [];
+        let ajaxArray = [];
         for(let index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
-           let  pos = chainidArray[index].indexOf('_');
-           let  mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
+           let pos = chainidArray[index].indexOf('_');
+           let mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
 
-           let  url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
+           let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
 
            if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
 
-           let  twodAjax = $.ajax({
+           let twodAjax = $.ajax({
                 url: url,
                 dataType: 'jsonp',
                 cache: true
@@ -281,7 +259,7 @@ class ParserUtils {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          let  dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
+          let dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parse2DDiagramsData(dataArray, chainidArray);
         })
         .fail(function() {
@@ -289,7 +267,7 @@ class ParserUtils {
         });
     }
 
-    parse2DDiagramsData(dataArray, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    parse2DDiagramsData(dataArray, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
         //var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
 
         ic.html2ddgm = '';
@@ -297,8 +275,8 @@ class ParserUtils {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-            let  data = dataArray[index][0];
-            let  mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
+            let data = dataArray[index][0];
+            let mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);
         }
@@ -312,11 +290,11 @@ class ParserUtils {
         if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
 
-    download2Ddgm(mmdbid, structureIndex) { let   me = this; "use strict";
+    download2Ddgm(mmdbid, structureIndex) { let  me = this; "use strict";
         this.set2DDiagrams(mmdbid);
     }
 
-    set2DDiagrams(mmdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+    set2DDiagrams(mmdbid) { let ic = this.icn3d, me = ic.icn3dui;
         me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.b2DShown === undefined || !ic.b2DShown) {
@@ -331,13 +309,13 @@ class ParserUtils {
         ic.b2DShown = true;
     }
 
-    showLoading() { let  ic = this.icn3d, me = ic.icn3dui;
+    showLoading() { let ic = this.icn3d, me = ic.icn3dui;
           if($("#" + ic.pre + "wait")) $("#" + ic.pre + "wait").show();
           if($("#" + ic.pre + "canvas")) $("#" + ic.pre + "canvas").hide();
           if($("#" + ic.pre + "cmdlog")) $("#" + ic.pre + "cmdlog").hide();
     }
 
-    hideLoading() { let  ic = this.icn3d, me = ic.icn3dui;
+    hideLoading() { let ic = this.icn3d, me = ic.icn3dui;
         //if(ic.bCommandLoad === undefined || !ic.bCommandLoad) {
           if($("#" + ic.pre + "wait")) $("#" + ic.pre + "wait").hide();
           if($("#" + ic.pre + "canvas")) $("#" + ic.pre + "canvas").show();
@@ -345,26 +323,26 @@ class ParserUtils {
         //}
     }
 
-    setYourNote(yournote) { let  ic = this.icn3d, me = ic.icn3dui;
+    setYourNote(yournote) { let ic = this.icn3d, me = ic.icn3dui;
         ic.yournote = yournote;
         $("#" + ic.pre + "yournote").val(ic.yournote);
         if(me.cfg.shownote) document.title = ic.yournote;
     }
 
-    transformToOpmOri(pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+    transformToOpmOri(pdbid) { let ic = this.icn3d, me = ic.icn3dui;
       // apply matrix for each atom
       if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-          let  rot = ic.rmsd_supr.rot;
-          let  centerFrom = ic.rmsd_supr.trans1;
-          let  centerTo = ic.rmsd_supr.trans2;
-          let  rmsd = ic.rmsd_supr.rmsd;
+          let rot = ic.rmsd_supr.rot;
+          let centerFrom = ic.rmsd_supr.trans1;
+          let centerTo = ic.rmsd_supr.trans2;
+          let rmsd = ic.rmsd_supr.rmsd;
 
-          let  dxymaxsq = 0;
+          let dxymaxsq = 0;
           for(let i in ic.atoms) {
-            let  atom = ic.atoms[i];
+            let atom = ic.atoms[i];
 
             atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-            let  xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+            let xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
             if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                 dxymaxsq = xysq;
             }
@@ -393,17 +371,17 @@ class ParserUtils {
       }
     }
 
-    transformToOpmOriForAlign(pdbid, chainresiCalphaHash2, bResi_ori) { let  ic = this.icn3d, me = ic.icn3dui;
+    transformToOpmOriForAlign(pdbid, chainresiCalphaHash2, bResi_ori) { let ic = this.icn3d, me = ic.icn3dui;
       if(chainresiCalphaHash2 !== undefined) {
-          let  chainresiCalphaHash1 = ic.loadPDBCls.getChainCalpha(ic.chains, ic.atoms, bResi_ori, pdbid);
+          let chainresiCalphaHash1 = ic.loadPDBCls.getChainCalpha(ic.chains, ic.atoms, bResi_ori, pdbid);
 
-          let  bOneChain =(Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
+          let bOneChain =(Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
 
-          let  coordsFrom = [], coordsTo = [];
+          let coordsFrom = [], coordsTo = [];
           for(let chain in chainresiCalphaHash1.chainresiCalphaHash) {
               if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chain)) {
-                  let  coord1 = chainresiCalphaHash1.chainresiCalphaHash[chain];
-                  let  coord2 = chainresiCalphaHash2.chainresiCalphaHash[chain];
+                  let coord1 = chainresiCalphaHash1.chainresiCalphaHash[chain];
+                  let coord2 = chainresiCalphaHash2.chainresiCalphaHash[chain];
 
                   if(coord1.length == coord2.length || bOneChain) {
                       coordsFrom = coordsFrom.concat(coord1);
@@ -415,28 +393,28 @@ class ParserUtils {
           }
 
           //var n = coordsFrom.length;
-          let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
+          let n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
           if(n >= 4) {
               ic.rmsd_supr = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
 
               // apply matrix for each atom
               if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
-                  let  rot = ic.rmsd_supr.rot;
-                  let  centerFrom = ic.rmsd_supr.trans1;
-                  let  centerTo = ic.rmsd_supr.trans2;
-                  let  rmsd = ic.rmsd_supr.rmsd;
+                  let rot = ic.rmsd_supr.rot;
+                  let centerFrom = ic.rmsd_supr.trans1;
+                  let centerTo = ic.rmsd_supr.trans2;
+                  let rmsd = ic.rmsd_supr.rmsd;
 
                   me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
                   //$("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                   //if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
-                  let  dxymaxsq = 0;
+                  let dxymaxsq = 0;
                   for(let i in ic.atoms) {
-                    let  atom = ic.atoms[i];
+                    let atom = ic.atoms[i];
 
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-                    let  xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+                    let xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
                     if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                         dxymaxsq = xysq;
                     }
@@ -469,13 +447,13 @@ class ParserUtils {
       }
     }
 
-    addOneDumAtom(pdbid, atomName, x, y, z, lastSerial) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  resn = 'DUM';
-      let  chain = 'MEM';
-      let  resi = 1;
-      let  coord = new THREE.Vector3(x, y, z);
+    addOneDumAtom(pdbid, atomName, x, y, z, lastSerial) { let ic = this.icn3d, me = ic.icn3dui;
+      let resn = 'DUM';
+      let chain = 'MEM';
+      let resi = 1;
+      let coord = new THREE.Vector3(x, y, z);
 
-      let  atomDetails = {
+      let atomDetails = {
           het: true, // optional, used to determine chemicals, water, ions, etc
           serial: ++lastSerial,         // required, unique atom id
           name: atomName,             // required, atom name
@@ -506,13 +484,13 @@ class ParserUtils {
       return lastSerial;
     }
 
-    addMemAtoms(dmem, pdbid, dxymax) { let  ic = this.icn3d, me = ic.icn3dui;
+    addMemAtoms(dmem, pdbid, dxymax) { let ic = this.icn3d, me = ic.icn3dui;
       if(!pdbid) return;
 
-      let  npoint=40; // points in radius
-      let  step = 2;
-      let  maxpnt=2*npoint+1; // points in diameter
-      let  fn=step*npoint; // center point
+      let npoint=40; // points in radius
+      let step = 2;
+      let maxpnt=2*npoint+1; // points in diameter
+      let fn=step*npoint; // center point
 
       //var dxymax = npoint / 2.0 * step;
 
@@ -524,8 +502,8 @@ class ParserUtils {
 
       ic.chainsSeq[pdbid + '_MEM'] = [{'name':'DUM', 'resi': 1}];
 
-      let  m=0;
-      let  lastSerial = Object.keys(ic.atoms).length;
+      let m=0;
+      let lastSerial = Object.keys(ic.atoms).length;
       for(let i = 0; i < 1000; ++i) {
           if(!ic.atoms.hasOwnProperty(lastSerial + i)) {
               lastSerial = lastSerial + i - 1;
@@ -536,11 +514,11 @@ class ParserUtils {
       for(let i=0; i < maxpnt; ++i) {
          for(let j=0; j < maxpnt; ++j) {
             ++m;
-            let  a=step*i-fn;
-            let  b=step*j-fn;
-            let  dxy=Math.sqrt(a*a+b*b);
+            let a=step*i-fn;
+            let b=step*j-fn;
+            let dxy=Math.sqrt(a*a+b*b);
             if(dxy < dxymax) {
-                  let  c=-dmem-0.4;
+                  let c=-dmem-0.4;
                   // Resn: DUM, name: N, a,b,c
                   lastSerial = this.addOneDumAtom(pdbid, 'N', a, b, c, lastSerial);
 
@@ -552,15 +530,15 @@ class ParserUtils {
       }
     }
 
-    setMaxD() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  pmin = new THREE.Vector3( 9999, 9999, 9999);
-        let  pmax = new THREE.Vector3(-9999,-9999,-9999);
-        let  psum = new THREE.Vector3();
-        let  cnt = 0;
+    setMaxD() { let ic = this.icn3d, me = ic.icn3dui;
+        let pmin = new THREE.Vector3( 9999, 9999, 9999);
+        let pmax = new THREE.Vector3(-9999,-9999,-9999);
+        let psum = new THREE.Vector3();
+        let cnt = 0;
         // assign atoms
         for(let i in ic.atoms) {
-            let  atom = ic.atoms[i];
-            let  coord = atom.coord;
+            let atom = ic.atoms[i];
+            let coord = atom.coord;
             psum.add(coord);
             pmin.min(coord);
             pmax.max(coord);
@@ -599,9 +577,9 @@ class ParserUtils {
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
           if(ic.bOpm &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
-              let  resid = ic.selectedPdbid + '_MEM_1';
+              let resid = ic.selectedPdbid + '_MEM_1';
               for(let i in ic.residues[resid]) {
-                  let  atom = ic.atoms[i];
+                  let atom = ic.atoms[i];
                   atom.style = 'stick';
                   atom.color = me.parasCls.atomColors[atom.name];
                   ic.atomPrevColors[i] = atom.color;
@@ -617,8 +595,8 @@ class ParserUtils {
               ic.drawCls.draw();
           }
           if(ic.bOpm) {
-              let  axis = new THREE.Vector3(1,0,0);
-              let  angle = -0.5 * Math.PI;
+              let axis = new THREE.Vector3(1,0,0);
+              let angle = -0.5 * Math.PI;
               ic.transformCls.setRotation(axis, angle);
           }
           //if(Object.keys(ic.structures).length > 1) {
@@ -638,7 +616,7 @@ class ParserUtils {
 //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
       if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
-              let  id = Object.keys(ic.structures)[0];
+              let id = Object.keys(ic.structures)[0];
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
@@ -667,21 +645,21 @@ class ParserUtils {
               }
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
-                  let  id = ic.pre + 'selection';
+                  let id = ic.pre + 'selection';
                   $("#" + id).show();
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
 
                   if(me.cfg.align !== undefined && me.cfg.atype != 2) { // atype = 2: dynamic VAST+
-                      let  bShowHighlight = false;                  
-                      let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+                      let bShowHighlight = false;                  
+                      let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                       $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
                   }
               }
               //ic.definedSetsCls.setProtNuclLigInMenu();
               if(me.cfg.showanno) {
-                   let  cmd = "view annotations";
+                   let cmd = "view annotations";
                    me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                    ic.showAnnoCls.showAnnotations(); 
               }
@@ -732,8 +710,8 @@ class ParserUtils {
 
         // rotate for links from Membranome
         if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
-            let  axis = new THREE.Vector3(1,0,0);
-            let  angle = -90 / 180.0 * Math.PI;
+            let axis = new THREE.Vector3(1,0,0);
+            let angle = -90 / 180.0 * Math.PI;
 
             ic.transformCls.setRotation(axis, angle);
         }
@@ -741,7 +719,7 @@ class ParserUtils {
 
     checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
       //ic.deferredAfMem = $.Deferred(function() {
-        let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
 
         $.ajax({
           url: url,
@@ -756,7 +734,7 @@ class ParserUtils {
                 if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               }
               else if (me.cfg.afmem == 'on' || confirm(question)) {           
-                let  url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
+                let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
                 $.ajax({
                   url: url2,
                   dataType: 'text',

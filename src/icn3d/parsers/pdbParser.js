@@ -2,22 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {OpmParser} from '../parsers/opmParser.js';
-import {SdfParser} from '../parsers/sdfParser.js';
-import {XyzParser} from '../parsers/xyzParser.js';
-import {Mol2Parser} from '../parsers/mol2Parser.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-import {MmcifParser} from '../parsers/mmcifParser.js';
-import {Dssp} from '../analysis/dssp.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-import {SaveFile} from '../export/saveFile.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-
 class PdbParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -26,9 +10,9 @@ class PdbParser {
     //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
-    downloadPdb(pdbid, bAf) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadPdb(pdbid, bAf) { let ic = this.icn3d, me = ic.icn3dui;
       ic.deferredOpm = $.Deferred(function() {
-        let  url, dataType;
+        let url, dataType;
 
         if(bAf) {
             url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
@@ -95,8 +79,8 @@ class PdbParser {
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
     //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
-    downloadUrl(url, type, command) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  thisClass = this;
+    downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
        let pos = url.lastIndexOf('/');
        if(pos != -1) {
@@ -108,7 +92,7 @@ class PdbParser {
            ic.filename = url.substr(0, posDot);
        }
 
-       let  dataType = "text";
+       let dataType = "text";
 
        ic.bCid = undefined;
 
@@ -172,7 +156,7 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bAppend && (type === undefined || type === 'target')) {
             // if a command contains "load...", the commands should not be cleared with init()
             let bKeepCmd = (ic.bCommandLoad) ? true : false;
@@ -229,16 +213,16 @@ class PdbParser {
         return hAtoms;
     }
 
-    applyCommandDssp(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         ic.deferredSecondary = $.Deferred(function() {
-            let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
             ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
         }); // end of me.deferred = $.Deferred(function() {
 
         return ic.deferredSecondary.promise();
     }
 
-    loadPdbDataRender(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPdbDataRender(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.pmid = ic.pmid;
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {

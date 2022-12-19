@@ -2,14 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Contact} from '../interaction/contact.js';
-import {ShowSeq} from '../annotations/showSeq.js';
-import {HlSeq} from '../highlight/hlSeq.js';
-
 class AnnoContact {
     constructor(icn3d) {
         this.icn3d = icn3d;

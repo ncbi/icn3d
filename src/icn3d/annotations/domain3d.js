@@ -3,8 +3,6 @@
  * Modified from Tom Madej's C++ code
 */
 
-//import * as THREE from 'three';
-
 class Domain3d {
     constructor(icn3d) {
 		this.icn3d = icn3d;
@@ -1089,6 +1087,21 @@ class Domain3d {
 			}
 
 			subdomains.push(segments);
+		}
+
+		// update ic.tddomains
+		if(!ic.tddomains) ic.tddomains = {};
+		for(let i = 0, il = subdomains.length; i < il; ++i) {
+			// domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
+			let domainName = 'domain3d-' + Object.keys(ic.tddomains).length;
+			ic.tddomains[domainName] = {};
+
+			for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
+				for(let k = subdomains[i][j]; k <= subdomains[i][j+1]; ++k) {
+					let resid = chnid + '_' + k;
+					ic.tddomains[domainName][resid] = 1;
+				}
+			}
 		}
 
 		return {subdomains: subdomains, substruct: substruct};

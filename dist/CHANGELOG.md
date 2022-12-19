@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.20.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.20.1.zip) was release on December 19, 2022. Removed unnecessary import and cleaned some codes.
+
 [icn3d-3.20.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.20.0.zip) was release on December 12, 2022. Enabled users to show AlphaFold structures with NCBI RefSeq IDs as input.
 
 [icn3d-3.19.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.19.1.zip) was release on December 1, 2022. Fixed bugs in retrieving data with the POST method, in aligning two chains from the same structure, in mutational analysis, and in launching several PDB/AlphaFold IDs.

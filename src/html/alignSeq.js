@@ -2,10 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import { Html } from './html.js';
-import { HashUtilsCls } from '../utils/hashUtilsCls.js';
-import { FirstAtomObj } from '../icn3d/selection/firstAtomObj.js';
-
 class AlignSeq {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -41,8 +37,7 @@ class AlignSeq {
         }
 
         let bHighlightChain;
-        let index = 0,
-            prevResCnt2nd = 0;
+        let index = 0, prevResCnt2nd = 0;
         let firstChainid, oriChainid;
 
         //  for(let i in ic.alnChains) {
@@ -65,8 +60,7 @@ class AlignSeq {
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.alnChains[i]);
             }
 
-            let resiHtmlArray = [],
-                seqHtml = "";
+            let resiHtmlArray = [], seqHtml = "";
             let seqLength = (ic.alnChainsSeq[i] !== undefined) ? ic.alnChainsSeq[i].length : 0;
 
             if (seqLength > maxSeqCnt) maxSeqCnt = seqLength;
@@ -96,9 +90,7 @@ class AlignSeq {
 
             for (let k = 0, kl = seqLength; k < kl; ++k) {
                 // resiId is empty if it's gap
-                let resiId = 'N/A',
-                    resIdFull = '',
-                    color = '#000';
+                let resiId = 'N/A', resIdFull = '', color = '#000';
                 if (ic.alnChainsSeq[i][k].resi !== '' && !isNaN(ic.alnChainsSeq[i][k].resi)) {
                     resiId = ic.alnChainsSeq[i][k].resi;
                     resIdFull = structure + "_" + chain + "_" + resiId;
@@ -120,7 +112,8 @@ class AlignSeq {
                 }
 
                 let colorRes;
-                if (!ic.residues.hasOwnProperty(resIdFull)) {
+
+                if (!ic.residues.hasOwnProperty(resIdFull)) {                  
                     colorRes = '#000000;';
                 } else {
                     let firstAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resIdFull]);

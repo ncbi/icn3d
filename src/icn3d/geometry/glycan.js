@@ -2,16 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Box} from '../geometry/box.js';
-import {Sphere} from '../geometry/sphere.js';
-import {Cylinder} from '../geometry/cylinder.js';
-import {Axes} from '../geometry/axes.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-
 class Glycan {
     constructor(icn3d) {
         this.icn3d = icn3d;

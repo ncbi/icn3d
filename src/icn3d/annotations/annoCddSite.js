@@ -2,12 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from '../../html/html.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {ShowAnno} from '../annotations/showAnno.js';
-import {ShowSeq} from '../annotations/showSeq.js';
-
 class AnnoCddSite {
     constructor(icn3d) {
         this.icn3d = icn3d;

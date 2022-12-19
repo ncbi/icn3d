@@ -2,11 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {ApplyDisplay} from '../display/applyDisplay.js';
-import {Draw} from '../display/draw.js';
-
 class HlObjects {
     constructor(icn3d) {
         this.icn3d = icn3d;

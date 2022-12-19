@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-import {SetSeqAlign} from '../parsers/setSeqAlign.js';
-import {SaveFile} from '../export/saveFile.js';
-
 class LoadAtomData {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -24,21 +12,21 @@ class LoadAtomData {
 
     //This function was used to parse atom "data" to set up parameters for the 3D viewer. "type" is mmcifid or mmdbid.
     //"id" is the MMDB ID or mmCIF ID.
-    loadAtomDataIn(data, id, type, seqalign, alignType, chainidInput, chainIndex, bLastQuery, bNoSeqalign) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadAtomDataIn(data, id, type, seqalign, alignType, chainidInput, chainIndex, bLastQuery, bNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
         ic.pmin = new THREE.Vector3( 9999, 9999, 9999);
         ic.pmax = new THREE.Vector3(-9999,-9999,-9999);
         ic.psum = new THREE.Vector3();
 
-        let  atoms = data.atoms;
+        let atoms = data.atoms;
 
-        //let  serialBase =(alignType === undefined || alignType === 'target') ? 0 : ic.lastTargetSerial;
-        let  serialBase = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
+        //let serialBase =(alignType === undefined || alignType === 'target') ? 0 : ic.lastTargetSerial;
+        let serialBase = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
 
-        let  serial = serialBase;
+        let serial = serialBase;
 
-        let  serial2structure = {}; // for "align" only
-        let  mmdbid2pdbid = {}; // for "align" only
+        let serial2structure = {}; // for "align" only
+        let mmdbid2pdbid = {}; // for "align" only
 /*
         if(alignType === undefined || alignType === 'target') {
             ic.pmid = data.pubmedId;
@@ -55,7 +43,7 @@ class LoadAtomData {
         if(ic.chainid2title === undefined) ic.chainid2title = {};
         if(ic.chainid2sid === undefined) ic.chainid2sid = {};
 
-        let  chainid2seq = {}, chainid2kind = {}, chainid2color = {}
+        let chainid2seq = {}, chainid2kind = {}, chainid2color = {}
 
         if(type === 'align') {
           //serial2structure
@@ -74,14 +62,14 @@ class LoadAtomData {
 
           let bTitle = false;
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
-              let  structure = data.alignedStructures[0][i];
+              let structure = data.alignedStructures[0][i];
 
               if(i === 1) {
                   ic.secondId = structure.pdbId; // set the second pdbid to add indent in the structure and chain mns
               }
 
-              let  pdbidTmp = structure.pdbId;
-              let  mmdbidTmp = structure.mmdbId;
+              let pdbidTmp = structure.pdbId;
+              let mmdbidTmp = structure.mmdbId;
 
               for(let j = structure.serialInterval[0], jl = structure.serialInterval[1]; j <= jl; ++j) {
                   serial2structure[j] = pdbidTmp.toString();
@@ -89,13 +77,13 @@ class LoadAtomData {
               }
 
               for(let j = 0, jl = structure.molecules.length; j < jl; ++j) {
-                  let  chain = structure.molecules[j].chain;
-                  let  kind = structure.molecules[j].kind;
-                  let  title = structure.molecules[j].name;
+                  let chain = structure.molecules[j].chain;
+                  let kind = structure.molecules[j].kind;
+                  let title = structure.molecules[j].name;
                   //var seq = structure.molecules[j].sequence;
-                  let  sid = structure.molecules[j].sid;
+                  let sid = structure.molecules[j].sid;
 
-                  let  chainid = pdbidTmp + '_' + chain;
+                  let chainid = pdbidTmp + '_' + chain;
 
                   //if(ic.bFullUi) chainid2seq[chainid] = seq;
                   chainid2kind[chainid] = kind;
@@ -122,18 +110,18 @@ class LoadAtomData {
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;
             if(type === 'mmdbid') {
-              let  pdbidTmp = (isNaN(id)) ? id : data.pdbId;
-              let  chainHash = {};
+              let pdbidTmp = (isNaN(id)) ? id : data.pdbId;
+              let chainHash = {};
 
               if(ic.alignmolid2color === undefined) ic.alignmolid2color = [];
 
-              let  molidCnt = 1;
+              let molidCnt = 1;
            
               for(let molid in data.moleculeInfor) {
                   if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
 
-                  let  chain = data.moleculeInfor[molid].chain.trim();
-                  let  chainid = pdbidTmp + '_' + chain;
+                  let chain = data.moleculeInfor[molid].chain.trim();
+                  let chainid = pdbidTmp + '_' + chain;
 
                   if(chainHash.hasOwnProperty(chain)) {
                       ++chainHash[chain];
@@ -149,9 +137,9 @@ class LoadAtomData {
 
                   //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
  
-                  let  kind = data.moleculeInfor[molid].kind;
-                  let  color = data.moleculeInfor[molid].color;
-                  let  sid = data.moleculeInfor[molid].sid;
+                  let kind = data.moleculeInfor[molid].kind;
+                  let color = data.moleculeInfor[molid].color;
+                  let sid = data.moleculeInfor[molid].sid;
 
                   chainid2kind[chainid] = kind;
                   chainid2color[chainid] = color;
@@ -171,7 +159,7 @@ class LoadAtomData {
                   //}
 
                   if(chain == chainid.substr(chainid.lastIndexOf('_')) ) {
-                      let  tmpHash = {}
+                      let tmpHash = {}
                       tmpHash[molid] = molidCnt.toString();
                       ic.alignmolid2color.push(tmpHash);
                   }
@@ -181,34 +169,34 @@ class LoadAtomData {
             }
         }
         
-        let  atomid2serial = {};
-        let  prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
-        let  structureNum = '', chainNum = '', residueNum = '';
-        let  currContinueSeq = '';
-        let  oldResi, prevOldResi = -999;
-        let  prevResi = 0, prevResiOri = 0, prevResn = ''; // continuous from 1 for each chain
-        let  missingResIndex = 0;
-        let  bChainSeqSet = true;
-        let  bAddedNewSeq = false;
+        let atomid2serial = {};
+        let prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
+        let structureNum = '', chainNum = '', residueNum = '';
+        let currContinueSeq = '';
+        let oldResi, prevOldResi = -999;
+        let prevResi = 0, prevResiOri = 0, prevResn = ''; // continuous from 1 for each chain
+        let missingResIndex = 0;
+        let bChainSeqSet = true;
+        let bAddedNewSeq = false;
 
         // In align, chemicals do not have assigned chains. Assembly will have the same residue id so that two different residues will be combined in one residue. To avoid this, build an array to check for molid
-        let  resiArray = [];
-        let  molid, prevMolid = '', prevmmdbId = '';
+        let resiArray = [];
+        let molid, prevMolid = '', prevmmdbId = '';
 
-        let  bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
-        let  miscCnt = 0;
-        let  CSerial, prevCSerial, OSerial, prevOSerial;
+        let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
+        let miscCnt = 0;
+        let CSerial, prevCSerial, OSerial, prevOSerial;
 
-        let  biopolymerChainsHash = {};
+        let biopolymerChainsHash = {};
         for(let i in atoms) {
             ++serial;
 
             atomid2serial[i] = serial;
 
-            let  atm = atoms[i];
+            let atm = atoms[i];
             atm.serial = serial;
 
-            let  mmdbId;
+            let mmdbId;
 
             if(type === 'mmdbid' || type === 'mmcifid') {
               mmdbId = id; // here mmdbId is pdbid or mmcif id
@@ -217,7 +205,7 @@ class LoadAtomData {
               mmdbId = serial2structure[serial]; // here mmdbId is pdbid
             }
 
-            let  bSetResi = false;
+            let bSetResi = false;
 
             //if(mmdbId !== prevmmdbId) resiArray = [];
             if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
@@ -225,11 +213,11 @@ class LoadAtomData {
                   molid = atm.ids.m;
 
                   if(ic.molid2chain[molid] !== undefined) {
-                      let  pos = ic.molid2chain[molid].indexOf('_');
+                      let pos = ic.molid2chain[molid].indexOf('_');
                       atm.chain = ic.molid2chain[molid].substr(pos + 1);
                   }
                   else {
-                      let  miscName = 'Misc';
+                      let miscName = 'Misc';
 
                       //if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
                       if((chainid2kind[chainNum] === 'protein' && chainid2kind[chainNum] === 'nucleotide' && atm.resi != prevResiOri)
@@ -257,7 +245,7 @@ class LoadAtomData {
                       atm.chain = ic.pdbid_molid2chain[mmdbId + '_' + molid];
                   }
                   else {
-                      let  miscName = 'Misc';
+                      let miscName = 'Misc';
 
                       //if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
                       if((chainid2kind[chainNum] === 'protein' && chainid2kind[chainNum] === 'nucleotide' && atm.resi != prevResiOri)
@@ -313,7 +301,7 @@ class LoadAtomData {
 
                 //resiCorrection = atm.resi - atm.resi_ori;
 
-                let  pos = atm.resn.indexOf(' ');
+                let pos = atm.resn.indexOf(' ');
                 if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
 
                 // remember NCBI residue number
@@ -352,7 +340,7 @@ class LoadAtomData {
                 atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
             }
 
-            let  oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
+            let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
 
             if((type === 'mmdbid' || type === 'align') && ic.bFullUi ) {
                 // set ic.mmdbMolidResid2mmdbChainResi
@@ -364,15 +352,15 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let  bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            let bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
+            let bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
+            let bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
             //var bChemicalIons =(me.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
             // kind: other, otherPolymer, etc
-            let  bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            let bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
             if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
                 if(atm.name === 'CA' && atm.elem === 'C') {
@@ -453,11 +441,11 @@ class LoadAtomData {
 
             // from DSSP C++ code
             if(!atm.het && atm.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
-                let  dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
+                let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
 
-                let  x2 = atm.coord.x +(ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
-                let  y2 = atm.coord.y +(ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
-                let  z2 = atm.coord.z +(ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
+                let x2 = atm.coord.x +(ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
+                let y2 = atm.coord.y +(ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
+                let z2 = atm.coord.z +(ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
 
                 atm.hcoord = new THREE.Vector3(x2, y2, z2);
             }
@@ -470,14 +458,14 @@ class LoadAtomData {
             ic.hAtoms[serial] = 1;
 
             // chain level
-            let  chainid = atm.structure + '_' + atm.chain;
+            let chainid = atm.structure + '_' + atm.chain;
             //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainid += me.htmlCls.postfix;
 
             if(ic.chains[chainid] === undefined) ic.chains[chainid] = {}
             ic.chains[chainid][serial] = 1;
 
             // residue level
-            let  residueid = chainid + '_' + atm.resi;
+            let residueid = chainid + '_' + atm.resi;
             if(ic.residues[residueid] === undefined) ic.residues[residueid] = {}
             ic.residues[residueid][serial] = 1;
 
@@ -499,7 +487,7 @@ class LoadAtomData {
 
             ic.residueId2Name[residueid] = oneLetterRes;
 
-            let  secondaries = '-';
+            let secondaries = '-';
             if(atm.ss === 'helix') {
                 secondaries = 'H';
             }
@@ -530,10 +518,10 @@ class LoadAtomData {
                       ic.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
                   }
                   else if(!bChainSeqSet || !ic.chainsSeq[chainid].hasOwnProperty(atm.resi - 1)) {
-                      let  resObject = {}
+                      let resObject = {}
                       resObject.resi = atm.resi;
                       resObject.name = oneLetterRes;
-                      let  numberStr = '';
+                      let numberStr = '';
                       if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
 
                       ic.chainsSeq[chainid].push(resObject);
@@ -578,7 +566,7 @@ class LoadAtomData {
             if(biopolymerChainsHash[chainid] === 'chemical') continue;
 
             for(let serial in ic.chains[chainid]) {
-                let  atm = ic.atoms[serial];
+                let atm = ic.atoms[serial];
 
                 delete ic.chemicals[serial];
                 atm.het = false;
@@ -615,8 +603,8 @@ class LoadAtomData {
         if(ic.bFullUi) {
             if(type === 'mmdbid' || type === 'mmcifid') {
                 for(let chain in data.sequences) {
-                    let  seqArray = data.sequences[chain];
-                    let  chainid = id + '_' + chain;
+                    let seqArray = data.sequences[chain];
+                    let chainid = id + '_' + chain;
 
                     if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
                         //chainid += me.htmlCls.postfix;
@@ -629,7 +617,7 @@ class LoadAtomData {
             else if(type === 'align') {
                 //for(let chainid in chainid2seq) {
                 for(let chainid in ic.chainid2seq) {
-                    let  seqArray = ic.chainid2seq[chainid];
+                    let seqArray = ic.chainid2seq[chainid];
 
                     ic.ParserUtilsCls.getMissingResidues(seqArray, type, chainid);
                 }
@@ -640,9 +628,9 @@ class LoadAtomData {
         if(type !== 'mmcifid') {
         //for(let i in ic.atoms) {
         for(let i in atoms) {
-            let  currSerial = atomid2serial[i];
+            let currSerial = atomid2serial[i];
 
-            let  bondLength =(ic.atoms[currSerial].bonds === undefined) ? 0 : ic.atoms[currSerial].bonds.length;
+            let bondLength =(ic.atoms[currSerial].bonds === undefined) ? 0 : ic.atoms[currSerial].bonds.length;
 
             for(let j = 0; j < bondLength; ++j) {
                 ic.atoms[currSerial].bonds[j] = atomid2serial[ic.atoms[currSerial].bonds[j]];
@@ -678,21 +666,21 @@ class LoadAtomData {
         }
         
         if(type === 'mmdbid' && Object.keys(ic.structures).length == 1) {
-            let  disulfideArray = data.disulfides;
+            let disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
                 for(let i = 0, il = disulfideArray.length; i < il; ++i) {
-                    let  serial1 = disulfideArray[i][0].ca;
-                    let  serial2 = disulfideArray[i][1].ca;
+                    let serial1 = disulfideArray[i][0].ca;
+                    let serial2 = disulfideArray[i][1].ca;
 
-                    let  atom1 = ic.atoms[serial1];
-                    let  atom2 = ic.atoms[serial2];
+                    let atom1 = ic.atoms[serial1];
+                    let atom2 = ic.atoms[serial2];
 
-                    let  chain1 = atom1.chain;
-                    let  chain2 = atom2.chain;
+                    let chain1 = atom1.chain;
+                    let chain2 = atom2.chain;
 
-                    let  resid1 = atom1.structure + '_' + chain1 + '_' + atom1.resi;
-                    let  resid2 = atom2.structure + '_' + chain2 + '_' + atom2.resi;
+                    let resid1 = atom1.structure + '_' + chain1 + '_' + atom1.resi;
+                    let resid2 = atom2.structure + '_' + chain2 + '_' + atom2.resi;
 
                     if(ic.ssbondpnts[atom1.structure] === undefined) ic.ssbondpnts[atom1.structure] = [];
 
@@ -702,32 +690,32 @@ class LoadAtomData {
             }
         }
         else if(type === 'mmcifid' && Object.keys(ic.structures).length == 1) {
-            let  disulfideArray = data.disulfides;
+            let disulfideArray = data.disulfides;
 
             if(disulfideArray !== undefined) {
                 if(ic.ssbondpnts[id] === undefined) ic.ssbondpnts[id] = [];
 
                 for(let i = 0, il = disulfideArray.length; i < il; ++i) {
-                    let  resid1 = disulfideArray[i][0];
-                    let  resid2 = disulfideArray[i][1];
+                    let resid1 = disulfideArray[i][0];
+                    let resid2 = disulfideArray[i][1];
                   
                     ic.ssbondpnts[id].push(resid1);
                     ic.ssbondpnts[id].push(resid2);
                 }
 
                 // copy disulfide bonds
-                let  structureArray = Object.keys(ic.structures);
+                let structureArray = Object.keys(ic.structures);
                 for(let s = 0, sl = structureArray.length; s < sl; ++s) {
-                    let  structure = structureArray[s];
+                    let structure = structureArray[s];
 
                     if(structure == id) continue;
 
                     if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
 
                     for(let j = 0, jl = ic.ssbondpnts[id].length; j < jl; ++j) {
-                        let  ori_resid = ic.ssbondpnts[id][j];
-                        let  pos = ori_resid.indexOf('_');
-                        let  resid = structure + ori_resid.substr(pos);
+                        let ori_resid = ic.ssbondpnts[id][j];
+                        let pos = ori_resid.indexOf('_');
+                        let resid = structure + ori_resid.substr(pos);
                         ic.ssbondpnts[structure].push(resid);
                     }
                 }
@@ -744,7 +732,7 @@ class LoadAtomData {
         // set up sequence alignment
         // display the structure right away. load the mns and sequences later
     //        setTimeout(function(){
-        let  hAtoms = {};
+        let hAtoms = {};
     
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
@@ -755,9 +743,9 @@ class LoadAtomData {
             if(chainIndex) {
                 ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
-                let  bReverse = false;
-                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+                let bReverse = false;
+                let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
                 hAtoms = ic.hAtoms;
 
@@ -775,7 +763,7 @@ class LoadAtomData {
         if(!me.cfg.mmdbafid && type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
             if(alignType === 'target' || alignType === 'query') {
                 for(let i in atoms) {
-                    let  atom = atoms[i];
+                    let atom = atoms[i];
                     atom.coord.x -= ic.center.x;
                     atom.coord.y -= ic.center.y;
                     atom.coord.z -= ic.center.z;

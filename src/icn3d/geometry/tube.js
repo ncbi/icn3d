@@ -2,15 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-import {SubdivideCls} from '../../utils/subdivideCls.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Box} from '../geometry/box.js';
-
 class Tube {
     constructor(icn3d) {
         this.icn3d = icn3d;

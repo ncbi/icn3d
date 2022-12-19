@@ -2,19 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-import {OpmParser} from '../parsers/opmParser.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-
 class MmcifParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -22,10 +9,10 @@ class MmcifParser {
 
     //Ajax call was used to get the atom data from the "mmcifid". This function was deferred
     //so that it can be chained together with other deferred functions for sequential execution.
-    downloadMmcif(mmcifid) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  thisClass = this;
+    downloadMmcif(mmcifid) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
-       let  url, dataType;
+       let url, dataType;
 
        url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
 
@@ -62,8 +49,8 @@ class MmcifParser {
         });
     }
 
-    parseMmcifData(data, mmcifid, command) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    parseMmcifData(data, mmcifid, command) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
         
         let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         $.ajax({
@@ -96,8 +83,8 @@ class MmcifParser {
          });
     }
 
-    downloadMmcifSymmetry(mmcifid, type) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
@@ -107,10 +94,10 @@ class MmcifParser {
       return ic.deferredSymmetry.promise();
     }
 
-    downloadMmcifSymmetryBase(mmcifid, type) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  thisClass = this;
+    downloadMmcifSymmetryBase(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
-       let  url, dataType;
+       let url, dataType;
 /*
        if(me.utilsCls.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
            url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
@@ -135,16 +122,16 @@ class MmcifParser {
           success: function(data) {
               // notebook has a problem in posting data to mmcifparser.cgi
               if(me.cfg.notebook) {
-                let  lines = data.split('\n');
+                let lines = data.split('\n');
 
-                let  bEmd = false;
-                let  bOrganism = false, bStartOrganism = false;
-                let  bMatrix = false, bStartMatrix = false, matrixLineCnt = 0, matrixStr = '', comLine = '';
-                let  bResidues = false, bStartResidues = false, resStr = '';
+                let bEmd = false;
+                let bOrganism = false, bStartOrganism = false;
+                let bMatrix = false, bStartMatrix = false, matrixLineCnt = 0, matrixStr = '', comLine = '';
+                let bResidues = false, bStartResidues = false, resStr = '';
 
-                let  prevLine = '';
+                let prevLine = '';
                 for(let i in lines) {
-                    let  line = lines[i];
+                    let line = lines[i];
 
                     //EMDB  EMD-3906
                     if(line.substr(0, 10) == 'EMDB  EMD-') {
@@ -158,7 +145,7 @@ class MmcifParser {
                     }
                     else if(bStartOrganism && !bOrganism && prevLine.substr(0, 23) == '_entity_src_nat.details') {
                         //1 1 sample 1 99  Human 'Homo sapiens' 9606 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
-                        let  itemArray = line.split(/\s+/);
+                        let itemArray = line.split(/\s+/);
                         ic.organism =(itemArray.length > 5) ? itemArray[5] : '';
                         bOrganism = true;
                     }
@@ -169,8 +156,8 @@ class MmcifParser {
                         bStartMatrix = true;
                         ++matrixLineCnt;
 
-                        let  pos1 = line.indexOf(' ');
-                        let  pos2 = line.indexOf("' ");
+                        let pos1 = line.indexOf(' ');
+                        let pos2 = line.indexOf("' ");
                         comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
 
                         matrixStr += '[';
@@ -188,12 +175,12 @@ class MmcifParser {
 
                         if(matrixLineCnt % 2 == 0) {
                             comLine += line;
-                            let  itemArray = comLine.split(/\s+/);
+                            let itemArray = comLine.split(/\s+/);
 
                             if(itemArray[0] != 'X0' && itemArray[0] != 'P' && itemArray.length > 14) {
-                                let  m11 = itemArray[3], m12 = itemArray[4], m13 = itemArray[5], m14 = itemArray[6];
-                                let  m21 = itemArray[7], m22 = itemArray[8], m23 = itemArray[9], m24 = itemArray[10];
-                                let  m31 = itemArray[11], m32 = itemArray[12], m33 = itemArray[13], m34 = itemArray[14];
+                                let m11 = itemArray[3], m12 = itemArray[4], m13 = itemArray[5], m14 = itemArray[6];
+                                let m21 = itemArray[7], m22 = itemArray[8], m23 = itemArray[9], m24 = itemArray[10];
+                                let m31 = itemArray[11], m32 = itemArray[12], m33 = itemArray[13], m34 = itemArray[14];
 
                                 matrixStr += "[" + m11 + "," + m21 + "," + m31 + ", 0, " + m12 + "," + m22 + "," + m32 + ", 0, "
                                   + m13 + "," + m23 + "," + m33 + ", 0, " + m14 + "," + m24 + "," + m34 + ", 1" + "],";
@@ -202,8 +189,8 @@ class MmcifParser {
                             comLine = '';
                         }
                         else {
-                            let  pos1 = line.indexOf(' ');
-                            let  pos2 = line.indexOf("' ");
+                            let pos1 = line.indexOf(' ');
+                            let pos2 = line.indexOf("' ");
                             comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
                         }
                     }
@@ -222,12 +209,12 @@ class MmcifParser {
                         }
 
                         //A 1 1   ASP 1   1   ?   ?   ?   A . n
-                        let  itemArray = line.split(/\s+/);
-                        let  resn = itemArray[3];
-                        let  chain = itemArray[9];
-                        let  resi = itemArray[5];
+                        let itemArray = line.split(/\s+/);
+                        let resn = itemArray[3];
+                        let chain = itemArray[9];
+                        let resi = itemArray[5];
 
-                        let  authResi = itemArray[6];
+                        let authResi = itemArray[6];
 
                         if(authResi == "?") {
                           resStr += "{\"resn\": \"" + resn + "\", \"chain\": \"" + chain + "\", \"resi\": " + resi + "},";
@@ -244,21 +231,21 @@ class MmcifParser {
                 if(ic.bAssemblyUseAsu) thisClass.loadMmcifSymmetry(JSON.parse(matrixStr));
 
                 if(resStr == "") resStr = "[]";
-                let  missingseq = JSON.parse(resStr);
+                let missingseq = JSON.parse(resStr);
                 if(type === 'mmtfid' && missingseq !== undefined) {
                     // adjust missing residues
-                    let  maxMissingResi = 0, prevMissingChain = '';
-                    //let  chainMissingResidueArray = {}
+                    let maxMissingResi = 0, prevMissingChain = '';
+                    //let chainMissingResidueArray = {}
                     for(let i = 0, il = missingseq.length; i < il; ++i) {
 
-                        let  resn = missingseq[i].resn;
-                        let  chain = missingseq[i].chain;
-                        let  resi = missingseq[i].resi;
+                        let resn = missingseq[i].resn;
+                        let chain = missingseq[i].chain;
+                        let resi = missingseq[i].resi;
 
-                        let  chainNum = mmcifid + '_' + chain;
+                        let chainNum = mmcifid + '_' + chain;
 
                         if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
-                        let  resObject = {}
+                        let resObject = {}
                         resObject.resi = resi;
                         resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
 
@@ -299,18 +286,18 @@ class MmcifParser {
 
                       if(type === 'mmtfid' && data.missingseq !== undefined) {
                             // adjust missing residues
-                            let  maxMissingResi = 0, prevMissingChain = '';
-                            //let  chainMissingResidueArray = {}
+                            let maxMissingResi = 0, prevMissingChain = '';
+                            //let chainMissingResidueArray = {}
                             for(let i = 0, il = data.missingseq.length; i < il; ++i) {
 
-                                let  resn = data.missingseq[i].resn;
-                                let  chain = data.missingseq[i].chain;
-                                let  resi = data.missingseq[i].resi;
+                                let resn = data.missingseq[i].resn;
+                                let chain = data.missingseq[i].chain;
+                                let resi = data.missingseq[i].resi;
 
-                                let  chainNum = mmcifid + '_' + chain;
+                                let chainNum = mmcifid + '_' + chain;
 
                                 if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
-                                let  resObject = {}
+                                let resObject = {}
                                 resObject.resi = resi;
                                 resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
 
@@ -341,6 +328,9 @@ class MmcifParser {
                     }
 
                     if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
+
+                    alert("The mmCIF data of " + mmcifid + " can not be parsed...");
+
                     return;
                   }
                 });
@@ -355,14 +345,21 @@ class MmcifParser {
             }
 
             if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
+
+            alert("The structure " + mmcifid + " was not found...");
+
             return;
           }
+        })
+        .fail(function() {
+            alert("The structure " + mmcifid + " was not found...");
+            return;
         });
     }
 
     //Atom "data" from mmCIF file was parsed to set up parameters for the 3D viewer by calling the function
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-    loadMmcifData(data, mmcifid) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadMmcifData(data, mmcifid) { let ic = this.icn3d, me = ic.icn3dui;
         if(!mmcifid) mmcifid = data.mmcif;
         if(!mmcifid) mmcifid = 'stru';
 
@@ -397,13 +394,13 @@ class MmcifParser {
         }
     }
 
-    loadMmcifSymmetry(assembly) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadMmcifSymmetry(assembly) { let ic = this.icn3d, me = ic.icn3dui;
         // load assembly info
         //var assembly = data.assembly;
         //var pmatrix = data.pmatrix;
 
         for(let i = 0, il = assembly.length; i < il; ++i) {
-          let  mat4 = new THREE.Matrix4();
+          let mat4 = new THREE.Matrix4();
           mat4.fromArray(assembly[i]);
 
           ic.biomtMatrices[i] = mat4;
@@ -417,13 +414,13 @@ class MmcifParser {
         }
     }
 
-    loadMmcifOpmDataPart2(data, pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadMmcifOpmDataPart2(data, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
         // load assembly info
-        let  assembly =(data.assembly !== undefined) ? data.assembly : [];
+        let assembly =(data.assembly !== undefined) ? data.assembly : [];
         for(let i = 0, il = assembly.length; i < il; ++i) {
           if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
 

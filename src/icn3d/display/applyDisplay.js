@@ -2,22 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Box} from '../geometry/box.js';
-import {SetStyle} from '../display/setStyle.js';
-import {Strand} from '../geometry/strand.js';
-import {Cylinder} from '../geometry/cylinder.js';
-import {Line} from '../geometry/line.js';
-import {Sphere} from '../geometry/sphere.js';
-import {Stick} from '../geometry/stick.js';
-import {Tube} from '../geometry/tube.js';
-import {CartoonNucl} from '../geometry/cartoonNucl.js';
-import {ResidueLabels} from '../geometry/residueLabels.js';
-import {Label} from '../geometry/label.js';
-
 class ApplyDisplay {
     constructor(icn3d) {
         this.icn3d = icn3d;

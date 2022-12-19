@@ -2,23 +2,12 @@
  * @author Jack Lin <th3linja@yahoo.com> / https://github.com/ncbi/icn3d
  */
 
- import {MyEventCls} from '../../utils/myEventCls.js';
- import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
- import {UtilsCls} from '../../utils/utilsCls.js';
- 
- import {Html} from '../../html/html.js';
- import {ParasCls} from '../../utils/parasCls.js';
- 
- import {HlUpdate} from '../highlight/hlUpdate.js';
- import {Annotation} from '../annotations/annotation.js';
- import { ApplyOther } from '../display/applyOther.js';
- 
  class LegendTable {
      constructor(icn3d) {
          this.icn3d = icn3d;
      }
 
-     showColorLegend(colorType) { let  ic = this.icn3d, me = ic.icn3dui;
+     showColorLegend(colorType) { let ic = this.icn3d, me = ic.icn3dui;
         let bClose = false;
 
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
@@ -32,7 +21,7 @@
             colorLabel = 'Hydrophobicity';
         }
 
-        let  html = "Color by <b>" + colorLabel + "</b><br><br>";
+        let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
         //if (ic.legendClick == 1){
         if (colorType == 'atom'){  
@@ -130,7 +119,7 @@
         }
      }
 
-     getColorLegendForElem(category, atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
+     getColorLegendForElem(category, atomHash) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '';
         let elemSet = {};
 
@@ -164,7 +153,7 @@
         return html;
      }
 
-     getRes2color(atomHash, bOriResn) { let  ic = this.icn3d, me = ic.icn3dui;
+     getRes2color(atomHash, bOriResn) { let ic = this.icn3d, me = ic.icn3dui;
         let resSet = {};
 
         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
@@ -186,7 +175,7 @@
         return resSet;
      }
 
-     getColorLegendForResidue(atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
+     getColorLegendForResidue(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '';
 
         let resSet = this.getRes2color(atomHash);
@@ -226,7 +215,7 @@
         return html;
      }
 
-     getColorLegendForCharge(atomHash) { let  ic = this.icn3d, me = ic.icn3dui;
+     getColorLegendForCharge(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '';
 
         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);

@@ -2,11 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {HlObjects} from '../highlight/hlObjects.js';
-
 class ResidueLabels {
     constructor(icn3d) {
         this.icn3d = icn3d;

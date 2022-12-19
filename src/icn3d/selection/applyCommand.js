@@ -2,68 +2,22 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {SaveFile} from '../export/saveFile.js';
-import {ShareLink} from '../export/shareLink.js';
-import {ThreeDPrint} from '../export/threeDPrint.js';
-import {Export3D} from '../export/export3D.js';
-import {ShowInter} from '../interaction/showInter.js';
-import {ViewInterPairs} from '../interaction/viewInterPairs.js';
-import {Selection} from '../selection/selection.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {Draw} from '../display/draw.js';
-import {ApplyMap} from '../surface/applyMap.js';
-import {SetColor} from '../display/setColor.js';
-import {SetOption} from '../display/setOption.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {Axes} from '../geometry/axes.js';
-import {ResidueLabels} from '../geometry/residueLabels.js';
-import {Fog} from '../display/fog.js';
-import {Contact} from '../interaction/contact.js';
-import {HBond} from '../interaction/hBond.js';
-import {PiHalogen} from '../interaction/piHalogen.js';
-import {Saltbridge} from '../interaction/saltbridge.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-import {Transform} from '../transform/transform.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {Annotation} from '../annotations/annotation.js';
-import {AddTrack} from '../annotations/addTrack.js';
-import {Analysis} from '../analysis/analysis.js';
-import {Diagram2d} from '../analysis/diagram2d.js';
-import {AnnoSsbond} from '../annotations/annoSsbond.js';
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {RealignParser} from '../parsers/realignParser.js';
-import {GetGraph} from '../interaction/getGraph.js';
-import {Picking} from '../picking/picking.js';
-import {Scap} from '../analysis/scap.js';
-import {SelectByCommand} from '../selection/selectByCommand.js';
-
-import {Cartoon2d} from '../analysis/cartoon2d.js';
-
 class ApplyCommand {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     //Execute a command. If the command is to load a structure, use the Method "applyCommandLoad".
-    applyCommand(commandStr) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommand(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
       ic.bAddCommands = false;
 
-      let  commandTransformation = commandStr.split('|||');
+      let commandTransformation = commandStr.split('|||');
       let commandTransformation2 = commandTransformation[0].split('%7C%7C%7C'); // sometimes encoded transformation is also included
 
-      let  commandOri = commandTransformation2[0].replace(/\s+/g, ' ').trim();
-      let  command = commandOri.toLowerCase();
+      let commandOri = commandTransformation2[0].replace(/\s+/g, ' ').trim();
+      let command = commandOri.toLowerCase();
 
-      let  bShowLog = true;
+      let bShowLog = true;
 
     // exact match =============
 
@@ -77,7 +31,7 @@ class ApplyCommand {
       else if(command.indexOf('export canvas') == 0) {
         setTimeout(function(){
                //ic.saveFileCls.saveFile(file_pref + '_icn3d_loadable.png', 'png');
-               let  scaleStr = command.substr(13).trim();
+               let scaleStr = command.substr(13).trim();
                ic.scaleFactor = (scaleStr === '') ? 1 : parseInt(scaleStr);
                let bPngOnly = (scaleStr === '') ? false : true;
                ic.shareLinkCls.shareLink(true, bPngOnly);
@@ -329,8 +283,8 @@ class ApplyCommand {
           ic.resid2specCls.switchHighlightLevelDown();
       }
       else if(command.indexOf('hide annotation') == 0) {
-          let  pos = command.lastIndexOf(' ');
-          let  type = command.substr(pos + 1);
+          let pos = command.lastIndexOf(' ');
+          let type = command.substr(pos + 1);
 
           if(type == 'all') {
               ic.annotationCls.hideAnnoTabAll();
@@ -424,20 +378,20 @@ class ApplyCommand {
          ic.resizeCanvasCls.rotStruc('down');
       }
       else if(command == 'rotate x') {
-          let  axis = new THREE.Vector3(1,0,0);
-          let  angle = 0.5 * Math.PI;
+          let axis = new THREE.Vector3(1,0,0);
+          let angle = 0.5 * Math.PI;
 
           ic.transformCls.setRotation(axis, angle);
       }
       else if(command == 'rotate y') {
-          let  axis = new THREE.Vector3(0,1,0);
-          let  angle = 0.5 * Math.PI;
+          let axis = new THREE.Vector3(0,1,0);
+          let angle = 0.5 * Math.PI;
 
           ic.transformCls.setRotation(axis, angle);
       }
       else if(command == 'rotate z') {
-          let  axis = new THREE.Vector3(0,0,1);
-          let  angle = 0.5 * Math.PI;
+          let axis = new THREE.Vector3(0,0,1);
+          let angle = 0.5 * Math.PI;
 
           ic.transformCls.setRotation(axis, angle);
       }
@@ -582,27 +536,27 @@ class ApplyCommand {
 
     // start with =================
       else if(commandOri.indexOf('define helix sets') == 0) {
-         let  chainStr = commandOri.split(' | ')[1];
-         let  chainid = chainStr.split(' ')[1];
+         let chainStr = commandOri.split(' | ')[1];
+         let chainid = chainStr.split(' ')[1];
 
          ic.addTrackCls.defineSecondary(chainid, 'helix');
       }
       else if(commandOri.indexOf('define sheet sets') == 0) {
-         let  chainStr = commandOri.split(' | ')[1];
-         let  chainid = chainStr.split(' ')[1];
+         let chainStr = commandOri.split(' | ')[1];
+         let chainid = chainStr.split(' ')[1];
 
          ic.addTrackCls.defineSecondary(chainid, 'sheet');
       }
       else if(commandOri.indexOf('define coil sets') == 0) {
-         let  chainStr = commandOri.split(' | ')[1];
-         let  chainid = chainStr.split(' ')[1];
+         let chainStr = commandOri.split(' | ')[1];
+         let chainid = chainStr.split(' ')[1];
 
          ic.addTrackCls.defineSecondary(chainid, 'coil');
       }
       else if(commandOri.indexOf('select interaction') == 0) {
-        let  idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) {
-            let  mmdbid = idArray[0].split('_')[0];
+            let mmdbid = idArray[0].split('_')[0];
             if(!ic.b2DShown) ic.ParserUtilsCls.download2Ddgm(mmdbid.toUpperCase());
 
             ic.diagram2dCls.selectInteraction(idArray[0], idArray[1]);
@@ -613,22 +567,22 @@ class ApplyCommand {
         // backward compatible: convert previous aligned_protein to protein_aligned
         commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
 
-        let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
+        let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
-        let  select = paraArray[0].replace(/,/g, ' or ');
+        let select = paraArray[0].replace(/,/g, ' or ');
 
-        let  pos = 19; // 'select saved atoms '
+        let pos = 19; // 'select saved atoms '
         if(commandOri.indexOf('select sets') == 0) pos = 12; // 'select sets '
 
-        let  strSets = select.substr(pos);
+        let strSets = select.substr(pos);
 
-        let  commandname = strSets;
+        let commandname = strSets;
 
         if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
         ic.definedSetsCls.selectCombinedSets(strSets, commandname);
       }
       else if(commandOri.indexOf('select chain') !== -1) {
-        let  idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
 
         //if(idArray !== null) ic.changeChainid(idArray);
         for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -636,7 +590,7 @@ class ApplyCommand {
         }
       }
       else if(commandOri.indexOf('select alignChain') !== -1) {
-        let  idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
 
         //if(idArray !== null) ic.changeChainid(idArray);
         for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -644,7 +598,7 @@ class ApplyCommand {
         }
       }
       else if(commandOri.indexOf('select zone cutoff') == 0) {
-        let  ret = this.getThresholdNameArrays(commandOri);
+        let ret = this.getThresholdNameArrays(commandOri);
 
         ic.showInterCls.pickCustomSphere(ret.threshold, ret.nameArray2, ret.nameArray, ret.bHbondCalc);
         ic.bSphereCalc = true;
@@ -654,7 +608,7 @@ class ApplyCommand {
       else if(command.indexOf('set surface opacity') == 0) {
         ic.transparentRenderOrder = false;
 
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['opacity'] = parseFloat(value);
         ic.applyMapCls.applySurfaceOptions();
 
@@ -662,28 +616,28 @@ class ApplyCommand {
       }
       else if(command.indexOf('set surface2 opacity') == 0) {
         ic.transparentRenderOrder = true;
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['opacity'] = parseFloat(value);
         ic.applyMapCls.applySurfaceOptions();
 
         if(parseInt(100*value) < 100) ic.bTransparentSurface = true;
       }
       else if(command.indexOf('set label scale') == 0) {
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         ic.labelScale = parseFloat(value);
       }
       else if(command.indexOf('set surface') == 0) {
-        let  value = command.substr(12);
+        let value = command.substr(12);
 
         ic.opts['surface'] = value;
         ic.applyMapCls.applySurfaceOptions();
       }
       else if(command.indexOf('set camera') == 0) {
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['camera'] = value;
       }
       else if(command.indexOf('set background') == 0) {
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['background'] = value;
 
         if(value == 'black') {
@@ -699,15 +653,15 @@ class ApplyCommand {
         ic.labelcolor = command.substr(command.lastIndexOf(' ') + 1);
       }
       else if(commandOri.indexOf('set thickness') == 0) {
-        let  paraArray = command.split(' | ');
+        let paraArray = command.split(' | ');
 
         ic.bSetThickness = true;
 
         for(let i = 1, il = paraArray.length; i < il; ++i) {
-            let  p1Array = paraArray[i].split(' ');
+            let p1Array = paraArray[i].split(' ');
 
-            let  para = p1Array[0];
-            let  value = parseFloat(p1Array[1]);
+            let para = p1Array[0];
+            let value = parseFloat(p1Array[1]);
 
             if(para == 'linerad' && !isNaN(value)) ic.lineRadius = value;
             if(para == 'coilrad' && !isNaN(value)) ic.coilWidth = value;
@@ -724,13 +678,13 @@ class ApplyCommand {
         ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set light') == 0) {
-        let  paraArray = command.split(' | ');
+        let paraArray = command.split(' | ');
 
         for(let i = 1, il = paraArray.length; i < il; ++i) {
-            let  p1Array = paraArray[i].split(' ');
+            let p1Array = paraArray[i].split(' ');
 
-            let  para = p1Array[0];
-            let  value = parseFloat(p1Array[1]);
+            let para = p1Array[0];
+            let value = parseFloat(p1Array[1]);
 
             if(para == 'light1') ic.light1 = value;
             if(para == 'light2') ic.light2 = value;
@@ -740,34 +694,34 @@ class ApplyCommand {
         ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set shininess') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
 
         ic.shininess = parseFloat(command.substr(pos + 1));
 
         ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set glycan') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
 
         ic.bGlycansCartoon = parseInt(command.substr(pos + 1));
 
         ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set membrane') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
 
         ic.bMembrane = parseInt(command.substr(pos + 1));
 
         ic.drawCls.draw();
       }
       else if(commandOri.indexOf('set cmdwindow') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
 
         let bCmdWindow = parseInt(command.substr(pos + 1));
         me.htmlCls.setMenuCls.setLogWindow(true, bCmdWindow);
       }
       else if(command.indexOf('set highlight color') == 0) {
-           let  color = command.substr(20);
+           let color = command.substr(20);
            if(color === 'yellow') {
                ic.hColor = me.parasCls.thr(0xFFFF00);
                ic.matShader = ic.setColorCls.setOutlineColor('yellow');
@@ -783,7 +737,7 @@ class ApplyCommand {
            ic.drawCls.draw(); // required to make it work properly
       }
       else if(command.indexOf('set highlight style') == 0) {
-            let  style = command.substr(20);
+            let style = command.substr(20);
 
            if(style === 'outline') {
                ic.bHighlight = 1;
@@ -795,14 +749,14 @@ class ApplyCommand {
            ic.drawCls.draw();
       }
       else if(command.indexOf('add line') == 0) {
-        let  paraArray = command.split(' | ');
-        let  p1Array = paraArray[1].split(' ');
-        let  p2Array = paraArray[2].split(' ');
-        let  color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
-        let  dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
-        let  type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
-        let  radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
-        let  opacity = (paraArray.length > 7) ? paraArray[7].substr(paraArray[7].lastIndexOf(' ') + 1) : 1.0;
+        let paraArray = command.split(' | ');
+        let p1Array = paraArray[1].split(' ');
+        let p2Array = paraArray[2].split(' ');
+        let color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
+        let dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
+        let type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
+        let radius = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0;
+        let opacity = (paraArray.length > 7) ? paraArray[7].substr(paraArray[7].lastIndexOf(' ') + 1) : 1.0;
 
         ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius), parseFloat(opacity));
         ic.drawCls.draw();
@@ -824,14 +778,14 @@ class ApplyCommand {
         //ic.drawCls.draw();
       }
       else if(commandOri.indexOf('add label') == 0) {
-        let  paraArray = commandOri.split(' | ');
-        let  text = paraArray[0].substr(('add label').length + 1);
+        let paraArray = commandOri.split(' | ');
+        let text = paraArray[0].substr(('add label').length + 1);
 
         // add label Text | x 40.45 y 24.465000000000003 z 53.48 | size 40 | color #ffff00 | background #cccccc | type custom
-        let  x,y,z, size, color, background, type;
-        let  bPosition = false;
+        let x,y,z, size, color, background, type;
+        let bPosition = false;
         for(let i = 1, il = paraArray.length; i < il; ++i) {
-            let  wordArray = paraArray[i].split(' ');
+            let wordArray = paraArray[i].split(' ');
             if(wordArray[0] == 'x') {
                 bPosition = true;
                 x = parseFloat(wordArray[1]);
@@ -853,7 +807,7 @@ class ApplyCommand {
         }
 
         if(!bPosition) {
-          let  position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms));
+          let position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.hAtoms, ic.atoms));
           x = parseFloat(position.center.x);
           y = parseFloat(position.center.y);
           z = parseFloat(position.center.z);
@@ -864,13 +818,13 @@ class ApplyCommand {
       }
       else if(commandOri.indexOf('msa') == 0) {
           //"msa | " + JSON.stringify(ic.targetGapHash)
-          let  paraArray = commandOri.split(' | ');
+          let paraArray = commandOri.split(' | ');
 
-          let  pos_from_toArray = paraArray[1].split(' ');
+          let pos_from_toArray = paraArray[1].split(' ');
 
           ic.targetGapHash = {}
           for(let i = 0, il = pos_from_toArray.length; i < il; ++i) {
-              let  pos_from_to = pos_from_toArray[i].split('_');
+              let pos_from_to = pos_from_toArray[i].split('_');
               ic.targetGapHash[parseInt(pos_from_to[0])] = {"from": parseInt(pos_from_to[1]), "to": parseInt(pos_from_to[2])}
           }
 
@@ -879,16 +833,16 @@ class ApplyCommand {
       else if(commandOri.indexOf('add track') == 0) {
           //"add track | chainid " + chainid + " | title " + title + " | text " + text
           // + " | type " + type + " | color " + color + " | msa " + color
-          let  paraArray = commandOri.split(' | ');
+          let paraArray = commandOri.split(' | ');
 
-          let  chainid = paraArray[1].substr(8);
-          let  title = paraArray[2].substr(6);
-          let  text = paraArray[3].substr(5);
-          let  type;
+          let chainid = paraArray[1].substr(8);
+          let title = paraArray[2].substr(6);
+          let text = paraArray[3].substr(5);
+          let type;
           if(paraArray.length >= 5) type = paraArray[4].substr(5);
-          let  color;
+          let color;
           if(paraArray.length >= 6) color = paraArray[5].substr(6);
-          let  msa;
+          let msa;
           if(paraArray.length >= 7) msa = paraArray[6].substr(4);
 
           $("#" + ic.pre + "anno_custom")[0].checked = true;
@@ -899,10 +853,10 @@ class ApplyCommand {
           ic.addTrackCls.checkGiSeq(chainid, title, text, type, color, msa, 0);
       }
       else if(command.indexOf('remove one stabilizer') == 0) {
-        let  paraArray = command.split(' | ');
-        let  p1Array = paraArray[1].split(' ');
+        let paraArray = command.split(' | ');
+        let p1Array = paraArray[1].split(' ');
 
-        let  rmLineArray = [];
+        let rmLineArray = [];
         rmLineArray.push(parseInt(p1Array[0]));
         rmLineArray.push(parseInt(p1Array[1]));
 
@@ -911,8 +865,8 @@ class ApplyCommand {
         ic.drawCls.draw();
       }
       else if(command.indexOf('add one stabilizer') == 0) {
-        let  paraArray = command.split(' | ');
-        let  p1Array = paraArray[1].split(' ');
+        let paraArray = command.split(' | ');
+        let p1Array = paraArray[1].split(' ');
 
          if(ic.pairArray === undefined) ic.pairArray = [];
          ic.pairArray.push(parseInt(p1Array[0]));
@@ -921,19 +875,19 @@ class ApplyCommand {
          ic.drawCls.draw();
       }
       else if(command.indexOf('select planes z-axis') == 0) {
-        let  paraArray = command.split(' ');
+        let paraArray = command.split(' ');
         if(paraArray.length == 5) {
-            let  large = parseFloat(paraArray[3]);
-            let  small = parseFloat(paraArray[4]);
+            let large = parseFloat(paraArray[3]);
+            let small = parseFloat(paraArray[4]);
 
             ic.selectionCls.selectBtwPlanes(large, small);
         }
       }
       else if(command.indexOf('adjust membrane z-axis') == 0) {
-        let  paraArray = command.split(' ');
+        let paraArray = command.split(' ');
         if(paraArray.length == 5) {
-            let  large = parseFloat(paraArray[3]);
-            let  small = parseFloat(paraArray[4]);
+            let large = parseFloat(paraArray[3]);
+            let small = parseFloat(paraArray[4]);
 
             ic.selectionCls.adjustMembrane(large, small);
         }
@@ -942,39 +896,39 @@ class ApplyCommand {
         ic.selectionCls.toggleMembrane();
       }
       else if(commandOri.indexOf('calc buried surface') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
-            let  setNameArray = paraArray[1].split(' ');
+            let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
-                let  nameArray2 = setNameArray[0].split(',');
-                let  nameArray = setNameArray[1].split(',');
+                let nameArray2 = setNameArray[0].split(',');
+                let nameArray = setNameArray[1].split(',');
 
                 ic.analysisCls.calcBuriedSurface(nameArray2, nameArray);
             }
         }
       }
       else if(commandOri.indexOf('dist ') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
-            let  setNameArray = paraArray[1].split(' ');
+            let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
-                let  nameArray = setNameArray[0].split(',');
-                let  nameArray2 = setNameArray[1].split(',');
+                let nameArray = setNameArray[0].split(',');
+                let nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
             }
         }
       }
       else if(commandOri.indexOf('disttable') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
-            let  setNameArray = paraArray[1].split(' ');
+            let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
-                let  nameArray = setNameArray[0].split(',');
-                let  nameArray2 = setNameArray[1].split(',');
+                let nameArray = setNameArray[0].split(',');
+                let nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistManySets(nameArray, nameArray2);
                 me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
@@ -988,29 +942,29 @@ class ApplyCommand {
           || commandOri.indexOf('line graph interaction pairs') == 0
           || commandOri.indexOf('scatterplot interaction pairs') == 0
           ) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length >= 3) {
-            let  setNameArray = paraArray[1].split(' ');
+            let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
-                let  nameArray2 = setNameArray[0].split(',');
-                let  nameArray = setNameArray[1].split(',');
+                let nameArray2 = setNameArray[0].split(',');
+                let nameArray = setNameArray[1].split(',');
 
-                let  bHbond = paraArray[2].indexOf('hbonds') !== -1;
-                let  bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-                let  bInteraction = paraArray[2].indexOf('interactions') !== -1;
+                let bHbond = paraArray[2].indexOf('hbonds') !== -1;
+                let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+                let bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
-                let  bHalogen = paraArray[2].indexOf('halogen') !== -1;
-                let  bPication = paraArray[2].indexOf('pi-cation') !== -1;
-                let  bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+                let bHalogen = paraArray[2].indexOf('halogen') !== -1;
+                let bPication = paraArray[2].indexOf('pi-cation') !== -1;
+                let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
 
-                let  bHbondCalc;
+                let bHbondCalc;
                 if(paraArray.length >= 4) {
                     bHbondCalc =(paraArray[3] == 'true') ? true : false;
                 }
 
                 if(paraArray.length >= 5) {
-                   let  thresholdArray = paraArray[4].split(' ');
+                   let thresholdArray = paraArray[4].split(' ');
 
                    if(thresholdArray.length >= 4) {
                        $("#" + ic.pre + "hbondthreshold").val(thresholdArray[1]);
@@ -1025,7 +979,7 @@ class ApplyCommand {
                    }
                 }
 
-                let  type;
+                let type;
                 if(commandOri.indexOf('display interaction 3d') == 0) {
                     type = '3d';
                 }
@@ -1050,21 +1004,21 @@ class ApplyCommand {
         }
       }
       else if(commandOri.indexOf('export pairs') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 3) {
-            let  setNameArray = paraArray[1].split(' ');
+            let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
-                let  nameArray2 = setNameArray[0].split(',');
-                let  nameArray = setNameArray[1].split(',');
+                let nameArray2 = setNameArray[0].split(',');
+                let nameArray = setNameArray[1].split(',');
 
-                let  distArray = paraArray[2].split(' ');
-                let  radius = distArray[1];
+                let distArray = paraArray[2].split(' ');
+                let radius = distArray[1];
 
                 ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
-                let  text = ic.viewInterPairsCls.exportSpherePairs();
-                let  file_pref =(ic.inputid) ? ic.inputid : "custom";
+                let text = ic.viewInterPairsCls.exportSpherePairs();
+                let file_pref =(ic.inputid) ? ic.inputid : "custom";
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
             }
         }
@@ -1073,8 +1027,8 @@ class ApplyCommand {
            me.htmlCls.setHtmlCls.exportPqr();
       }
       else if(command.indexOf('graph label') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  className = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let className = command.substr(pos + 1);
 
         $("#" + me.svgid + "_label").val(className);
 
@@ -1082,8 +1036,8 @@ class ApplyCommand {
         $("#" + me.svgid + " text").addClass(className);
       }
       else if(command.indexOf('cartoon label') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  className = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let className = command.substr(pos + 1);
 
         $("#" + me.svgid_ct + "_label").val(className);
 
@@ -1091,45 +1045,45 @@ class ApplyCommand {
         $("#" + me.svgid_ct + " text").addClass(className);
       }
       else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  type = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let type = command.substr(pos + 1);
 
         ic.cartoon2dCls.draw2Dcartoon(type);
       }
       else if(command.indexOf('line graph scale') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  scale = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let scale = command.substr(pos + 1);
 
         $("#" + me.linegraphid + "_scale").val(scale);
 
         $("#" + me.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('scatterplot scale') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  scale = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let scale = command.substr(pos + 1);
 
         $("#" + me.scatterplotid + "_scale").val(scale);
 
         $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('contactmap scale') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  scale = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let scale = command.substr(pos + 1);
 
         $("#" + me.contactmapid + "_scale").val(scale);
 
         $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('alignerrormap scale') == 0) {
-        let  pos = command.lastIndexOf(' ');
-        let  scale = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' ');
+        let scale = command.substr(pos + 1);
 
         $("#" + me.alignerrormapid + "_scale").val(scale);
 
         $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('graph force') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
         me.htmlCls.force = parseInt(command.substr(pos + 1));
 
         $("#" + me.svgid + "_force").val(me.htmlCls.force);
@@ -1137,7 +1091,7 @@ class ApplyCommand {
         ic.getGraphCls.handleForce();
       }
       else if(command.indexOf('hide edges') == 0) {
-        let  pos = command.lastIndexOf(' ');
+        let pos = command.lastIndexOf(' ');
         me.htmlCls.hideedges = parseInt(command.substr(pos + 1));
 
         $("#" + me.svgid + "_hideedges").val(me.htmlCls.hideedges);
@@ -1161,14 +1115,14 @@ class ApplyCommand {
         ic.viewInterPairsCls.resetInteractionPairs();
       }
       else if(command.indexOf('side by side') == 0) {
-        let  paraArray = command.split(' | ');
-        let  url = paraArray[1];
+        let paraArray = command.split(' | ');
+        let url = paraArray[1];
 
         let urlTarget = '_blank';
         window.open(url, urlTarget);
       }
       else if(commandOri.indexOf('your note') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         ic.yournote = paraArray[1];
 
         $("#" + ic.pre + "yournote").val(ic.yournote);
@@ -1188,43 +1142,61 @@ class ApplyCommand {
 
     // start with, single word =============
       else if(command.indexOf('contact map') == 0) {
-        let  strArray = command.split(" | ");
+        let strArray = command.split(" | ");
 
         if(strArray.length === 3) {
-            let  contactdist = parseFloat(strArray[1].split(' ')[1]);
-            let  contacttype = strArray[2].split(' ')[1];
+            let contactdist = parseFloat(strArray[1].split(' ')[1]);
+            let contacttype = strArray[2].split(' ')[1];
 
             ic.contactMapCls.contactMap(contactdist, contacttype);
         }
       }
       else if(command.indexOf('pickatom') == 0) {
-        let  atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
+        let atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
 
         ic.pAtom = ic.atoms[atomid];
 
         ic.pickingCls.showPicking(ic.pAtom);
       }
       else if(commandOri.indexOf('set color spectrum') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
-            let  nameArray = paraArray[1].split(',');
+            let nameArray = paraArray[1].split(',');
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorAcrossSets(nameArray, bSpectrum);
+        }
+      }
+      else if(commandOri.indexOf('set residues color spectrum') == 0) {
+        let paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let nameArray = paraArray[1].split(',');
 
             let bSpectrum = true;
             ic.setColorCls.setColorBySets(nameArray, bSpectrum);
         }
       }
       else if(commandOri.indexOf('set color rainbow') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         if(paraArray.length == 2) {
-            let  nameArray = paraArray[1].split(',');
+            let nameArray = paraArray[1].split(',');
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorAcrossSets(nameArray, bSpectrum);
+        }
+      }
+      else if(commandOri.indexOf('set residues color rainbow') == 0) {
+        let paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let nameArray = paraArray[1].split(',');
 
             let bSpectrum = false;
             ic.setColorCls.setColorBySets(nameArray, bSpectrum);
         }
       }
       else if(commandOri.indexOf('color') == 0) {
-        let  strArray = commandOri.split(" | ");
-        let  color = strArray[0].substr(strArray[0].indexOf(' ') + 1);
+        let strArray = commandOri.split(" | ");
+        let color = strArray[0].substr(strArray[0].indexOf(' ') + 1);
         ic.opts['color'] = color;
 
         if(color == "residue custom" && strArray.length == 2) {
@@ -1234,12 +1206,12 @@ class ApplyCommand {
             }
         }
         else if(color == "align custom" && strArray.length == 3) {
-            let  chainid = strArray[1];
-            let  resiScoreArray = strArray[2].split(', ');
+            let chainid = strArray[1];
+            let resiScoreArray = strArray[2].split(', ');
             ic.queryresi2score = {}
             ic.queryresi2score[chainid] = {}
             for(let i = 0, il = resiScoreArray.length; i < il; ++i) {
-                let  resi_score = resiScoreArray[i].split(' ');
+                let resi_score = resiScoreArray[i].split(' ');
 
                 ic.queryresi2score[chainid][resi_score[0]] = resi_score[1];
             }
@@ -1264,22 +1236,22 @@ class ApplyCommand {
         $("#" + me.pre + "legend").hide();
       }
       else if(commandOri.indexOf('custom tube') == 0) {
-        let  strArray = commandOri.split(" | ");
+        let strArray = commandOri.split(" | ");
 
         this.setQueryresi2score(strArray);
 
         ic.setOptionCls.setStyle('proteins', 'custom tube');
       }
       else if(command.indexOf('style') == 0) {
-        let  secondPart = command.substr(command.indexOf(' ') + 1);
+        let secondPart = command.substr(command.indexOf(' ') + 1);
 
-        let  selectionType = secondPart.substr(0, secondPart.indexOf(' '));
-        let  style = secondPart.substr(secondPart.indexOf(' ') + 1);
+        let selectionType = secondPart.substr(0, secondPart.indexOf(' '));
+        let style = secondPart.substr(secondPart.indexOf(' ') + 1);
 
         ic.setOptionCls.setStyle(selectionType, style);
       }
       else if(command.indexOf('window') == 0) {
-        let  secondPart = command.substr(command.indexOf(' ') + 1);
+        let secondPart = command.substr(command.indexOf(' ') + 1);
 
         if(secondPart == "aligned sequences") {
             me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
@@ -1298,11 +1270,11 @@ class ApplyCommand {
         }
       }
       else if(command.indexOf('set theme') == 0) {
-        let  color = command.substr(command.lastIndexOf(' ') + 1);
+        let color = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.setMenuCls.setTheme(color);
       }
       else if(command.indexOf('set double color') == 0) {
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         if(value == 'on') {
             ic.bDoublecolor = true;
             ic.setOptionCls.setStyle('proteins', 'ribbon');
@@ -1312,11 +1284,11 @@ class ApplyCommand {
         }
       }
       else if(command.indexOf('adjust dialog') == 0) {
-        let  id = command.substr(command.lastIndexOf(' ') + 1);
+        let id = command.substr(command.lastIndexOf(' ') + 1);
         ic.scapCls.adjust2DWidth(id);
       }
       else if(command.indexOf('glycans cartoon') == 0) {
-        let  value = command.substr(command.lastIndexOf(' ') + 1);
+        let value = command.substr(command.lastIndexOf(' ') + 1);
         if(value == 'yes') {
             ic.bGlycansCartoon = true;
         }
@@ -1325,7 +1297,7 @@ class ApplyCommand {
         }
       }
       else if(command.indexOf('save html') == 0) {
-        let  id = command.substr(command.lastIndexOf(' ') + 1);
+        let id = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.eventsCls.saveHtml(id);
       }
       else if(command.indexOf('resdef') == 0) {
@@ -1348,7 +1320,7 @@ class ApplyCommand {
         ic.refnumCls.hideIgRefNum();
       }
       else if(command.indexOf('custom refnum') == 0) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
         let dataStr = paraArray[1].replace(/\\n/g, '\n');
         ic.refnumCls.parseCustomRefFile(dataStr);
       }
@@ -1361,13 +1333,13 @@ class ApplyCommand {
         ic.hlUpdateCls.updateHlAll();
       }
       else if(command.indexOf('select prop') !== -1) {
-        let  paraArray = commandOri.split(' | ');
+        let paraArray = commandOri.split(' | ');
 
-        let  property = paraArray[0].substr('select prop'.length + 1);
+        let property = paraArray[0].substr('select prop'.length + 1);
 
-        let  from, to;
+        let from, to;
         if(paraArray.length == 2) {
-            let  from_to = paraArray[1].split('_');
+            let from_to = paraArray[1].split('_');
             from = from_to[0];
             to = from_to[1];
         }
@@ -1378,11 +1350,11 @@ class ApplyCommand {
         ic.selectionCls.saveEachResiInSel();
       }
       else if(command.indexOf('select') == 0 && command.indexOf('name') !== -1) {
-        let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
+        let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
-        let  select = '', commandname = '', commanddesc = '';
+        let select = '', commandname = '', commanddesc = '';
         for(let i = 0, il = paraArray.length; i < il; ++i) {
-            let  para = paraArray[i];
+            let para = paraArray[i];
 
             if(para.indexOf('select') !== -1) {
                 select = para.substr(para.indexOf(' ') + 1);
@@ -1402,10 +1374,10 @@ class ApplyCommand {
       }
       else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 
           || command.indexOf('select %') !== -1 || command.indexOf('select @') !== -1) {
-        let  paraArray = commandOri.split(' | '); // atom names might be case-sensitive
+        let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
-        let  select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
-        let  commandname = '', commanddesc = '';
+        let select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
+        let commandname = '', commanddesc = '';
 
         if(paraArray.length > 1) {
             commandname = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
@@ -1430,9 +1402,9 @@ class ApplyCommand {
       ic.bAddCommands = true;
     }
 
-    setStrengthPara(paraArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    setStrengthPara(paraArray) { let ic = this.icn3d, me = ic.icn3dui;
         if(paraArray.length >= 5) {
-           let  thresholdArray = paraArray[4].split(' ');
+           let thresholdArray = paraArray[4].split(' ');
 
            if(thresholdArray.length >= 4) {
                $("#" + ic.pre + "hbondthreshold").val(thresholdArray[1]);
@@ -1447,7 +1419,7 @@ class ApplyCommand {
         }
 
         if(paraArray.length == 6) {
-            let  thicknessArray = paraArray[5].split(' ');
+            let thicknessArray = paraArray[5].split(' ');
 
             if(thicknessArray.length >= 6) {
                 $("#" + ic.pre + "dist_ss").val(thicknessArray[0]);
@@ -1466,22 +1438,15 @@ class ApplyCommand {
         }
     }
 
-    getThresholdNameArrays(commandOri) { let  ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-           let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+    getThresholdNameArrays(commandOri) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.clickMenuCls.SetChainsAdvancedMenu();
 
-           ic.definedSetsCls.setPredefinedInMenu();
-           ic.bSetChainsAdvancedMenu = true;
+        let paraArray = commandOri.split(' | ');
 
-           ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-        }
-
-        let  paraArray = commandOri.split(' | ');
-
-        let  threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
-        let  nameArray = [], nameArray2 = [];
+        let threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
+        let nameArray = [], nameArray2 = [];
         if(paraArray.length >= 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
-            let  setsArray = paraArray[1].split(" ");
+            let setsArray = paraArray[1].split(" ");
             if(setsArray.length > 1) nameArray2 = setsArray[1].split(",");
             if(setsArray.length > 2) nameArray = setsArray[2].split(",");
         }
@@ -1490,7 +1455,7 @@ class ApplyCommand {
             nameArray = ['non-selected'];
         }
 
-        let  bHbondCalc;
+        let bHbondCalc;
         if(paraArray.length == 3) {
             bHbondCalc =(paraArray[2] == 'true') ? true : false;
         }
@@ -1498,14 +1463,14 @@ class ApplyCommand {
         return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
     }
 
-    setQueryresi2score(strArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  chainid = strArray[1];
-        let  start_end = strArray[2].split(' ')[1].split('_');
-        let  resiScoreStr = strArray[3]; // score 0-9
+    setQueryresi2score(strArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid = strArray[1];
+        let start_end = strArray[2].split(' ')[1].split('_');
+        let resiScoreStr = strArray[3]; // score 0-9
         if(ic.queryresi2score === undefined) ic.queryresi2score = {}
         //if(ic.queryresi2score[chainid] === undefined) ic.queryresi2score[chainid] = {}
         ic.queryresi2score[chainid] = {}
-        let  factor = 100 / 9;
+        let factor = 100 / 9;
         for(let resi = parseInt(start_end[0]), i = 0; resi <= parseInt(start_end[1]); ++resi, ++i) {
             if(resiScoreStr[i] != '_') {
                 ic.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
@@ -1514,26 +1479,26 @@ class ApplyCommand {
 
         // color range
         if(strArray.length > 4) {
-            let  colorArray = strArray[4].split(' ');
+            let colorArray = strArray[4].split(' ');
             ic.startColor = colorArray[1];
             ic.midColor = colorArray[2];
             ic.endColor = colorArray[3];
 
-            let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
+            let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
             //$("#" + me.pre + "legend").html(legendHtml).show();
             $("#" + me.pre + "dl_legend").html(legendHtml);
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
     }
 
-    addShape(command, shape) { let  ic = this.icn3d, me = ic.icn3dui;
+    addShape(command, shape) { let ic = this.icn3d, me = ic.icn3dui;
       ic.shapeCmdHash[command] = 1;
       
-      let  paraArray = command.split(' | ');
-      let  p1Array = paraArray[1].split(' ');
-      let  colorStr = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
-      let  opacity = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
-      let  radius = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+      let paraArray = command.split(' | ');
+      let p1Array = paraArray[1].split(' ');
+      let colorStr = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
+      let opacity = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
+      let radius = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
 
       colorStr = '#' + colorStr.replace(/\#/g, '');
       let color = me.parasCls.thr(colorStr);
@@ -1548,17 +1513,17 @@ class ApplyCommand {
       }
     }
 
-    getMenuFromCmd(cmd) { let  ic = this.icn3d, me = ic.icn3dui;
+    getMenuFromCmd(cmd) { let ic = this.icn3d, me = ic.icn3dui;
         cmd = cmd.trim();
 
-        let  seqAnnoStr = 'Windows > View Sequences & Annotations';
-        let  hbondIntStr = 'Analysis > H-Bonds & Interactions';
-        let  forceStr = hbondIntStr + ' > 2D Graph(Force-Directed)';
-        let  rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
-        let  rotStr2 = 'View > Rotate > Rotate 90 deg > ';
-        let  sel3dStr = 'Select > Select on 3D > ';
-        let  labelStr = 'Analysis > Label > ';
-        let  printStr = 'File > 3D Printing > ';
+        let seqAnnoStr = 'Windows > View Sequences & Annotations';
+        let hbondIntStr = 'Analysis > H-Bonds & Interactions';
+        let forceStr = hbondIntStr + ' > 2D Graph(Force-Directed)';
+        let rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
+        let rotStr2 = 'View > Rotate > Rotate 90 deg > ';
+        let sel3dStr = 'Select > Select on 3D > ';
+        let labelStr = 'Analysis > Label > ';
+        let printStr = 'File > 3D Printing > ';
 
         if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
         else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';

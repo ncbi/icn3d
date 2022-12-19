@@ -2,14 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {ApplyMap} from '../surface/applyMap.js';
-
 class SetColor {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -58,7 +50,7 @@ class SetColor {
         }
     }
 
-    setColorBySets(nameArray, bSpectrum) { let ic = this.icn3d, me = ic.icn3dui;
+    setColorAcrossSets(nameArray, bSpectrum) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = nameArray.length;
 
@@ -78,6 +70,21 @@ class SetColor {
                 ic.atomPrevColors[serial] = atom.color;
             }
             ++idx;
+        }
+
+        ic.drawCls.draw();
+    }
+
+    setColorBySets(nameArray, bSpectrum) { let ic = this.icn3d, me = ic.icn3dui;
+        for(let i = 0, il = nameArray.length; i < il; ++i) {
+            let atoms = ic.definedSetsCls.getAtomsFromNameArray([nameArray[i]]);
+
+            if(bSpectrum) {
+                this.colorSpectrum(atoms);
+            }
+            else { // rainbow
+                this.colorRainbow(atoms);
+            }
         }
 
         ic.drawCls.draw();

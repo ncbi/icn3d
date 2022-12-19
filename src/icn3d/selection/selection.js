@@ -2,31 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {MyEventCls} from '../../utils/myEventCls.js';
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {ApplyDisplay} from '../display/applyDisplay.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Draw} from '../display/draw.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {LineGraph} from '../interaction/lineGraph.js';
-import {Annotation} from '../annotations/annotation.js';
-import {LoadScript} from '../selection/loadScript.js';
-import {SelectByCommand} from '../selection/selectByCommand.js';
-
 class Selection {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     //Select all atom in the structures.
-    selectAll() { let  ic = this.icn3d, me = ic.icn3dui;
+    selectAll() { let ic = this.icn3d, me = ic.icn3dui;
         this.selectAll_base();
 
         ic.hlObjectsCls.removeHlObjects();
@@ -44,12 +26,12 @@ class Selection {
 
         ic.definedSetsCls.setMode('all');
 
-        //let  title =(ic.molTitle.length > 40) ? ic.molTitle.substr(0, 40) + "..." : ic.molTitle;
+        //let title =(ic.molTitle.length > 40) ? ic.molTitle.substr(0, 40) + "..." : ic.molTitle;
         //$("#" + ic.pre + "title").html(title);
         ic.saveFileCls.showTitle();
     }
 
-    selectAll_base() { let  ic = this.icn3d, me = ic.icn3dui;
+    selectAll_base() { let ic = this.icn3d, me = ic.icn3dui;
         ic.hAtoms = {}
         ic.dAtoms = {}
 
@@ -64,9 +46,9 @@ class Selection {
     }
 
     //Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".
-    selectAChain(chainid, commandname, bAlign, bUnion) { let  ic = this.icn3d, me = ic.icn3dui;
+    selectAChain(chainid, commandname, bAlign, bUnion) { let ic = this.icn3d, me = ic.icn3dui;
         commandname = commandname.replace(/\s/g, '');
-        let  command =(bAlign !== undefined || bAlign) ? 'select alignChain ' + chainid : 'select chain ' + chainid;
+        let command =(bAlign !== undefined || bAlign) ? 'select alignChain ' + chainid : 'select chain ' + chainid;
 
         //var residueHash = {}, chainHash = {}
 
@@ -84,17 +66,17 @@ class Selection {
 
         //chainHash[chainid] = 1;
 
-        let  chnsSeq =(bAlign) ? ic.alnChainsSeq[chainid] : ic.chainsSeq[chainid];
-        let  chnsSeqLen;
+        let chnsSeq =(bAlign) ? ic.alnChainsSeq[chainid] : ic.chainsSeq[chainid];
+        let chnsSeqLen;
         if(chnsSeq === undefined) chnsSeqLen = 0;
         else chnsSeqLen = chnsSeq.length;
 
-        let  oriResidueHash = {}
+        let oriResidueHash = {}
         for(let i = 0, il = chnsSeqLen; i < il; ++i) { // get residue number
-            let  resObj = chnsSeq[i];
-            let  residueid = chainid + "_" + resObj.resi;
+            let resObj = chnsSeq[i];
+            let residueid = chainid + "_" + resObj.resi;
 
-            let  value = resObj.name;
+            let value = resObj.name;
 
             if(value !== '' && value !== '-') {
               oriResidueHash[residueid] = 1;
@@ -108,7 +90,7 @@ class Selection {
             this.addCustomSelection(Object.keys(oriResidueHash), commandname, commandname, command, true);
         }
 
-        let  bForceHighlight = true;
+        let bForceHighlight = true;
 
         if(bAlign) {
             ic.hlUpdateCls.updateHlAll(undefined, undefined, bUnion, bForceHighlight);
@@ -118,7 +100,7 @@ class Selection {
         }
     }
 
-    selectResidueList(residueHash, commandname, commanddescr, bUnion, bUpdateHighlight, bAtom) { let  ic = this.icn3d, me = ic.icn3dui;
+    selectResidueList(residueHash, commandname, commanddescr, bUnion, bUpdateHighlight, bAtom) { let ic = this.icn3d, me = ic.icn3dui;
       if(residueHash !== undefined && Object.keys(residueHash).length > 0) {
         if(bUnion === undefined || !bUnion) {
             ic.hAtoms = {};
@@ -145,7 +127,7 @@ class Selection {
 
         ic.nameArray.push(commandname);
 
-        let  select, bSelectResidues;
+        let select, bSelectResidues;
 
         if(bAtom) {
             select = "select " + ic.resid2specCls.atoms2spec(ic.hAtoms);
@@ -156,7 +138,7 @@ class Selection {
             bSelectResidues = true;
         }
 
-        let  residueAtomArray = Object.keys(residueHash);
+        let residueAtomArray = Object.keys(residueHash);
 
         //if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(commandname)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(commandname)) ) {
             this.addCustomSelection(residueAtomArray, commandname, commanddescr, select, bSelectResidues);
@@ -166,8 +148,8 @@ class Selection {
       }
     }
 
-    selectMainChains() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+    selectMainChains() { let ic = this.icn3d, me = ic.icn3dui;
+        let currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
         ic.hAtoms = ic.applyDisplayCls.selectMainChainSubset(currHAtoms);
 
@@ -175,10 +157,10 @@ class Selection {
     }
 
     //Select only the side chain atoms of the current selection.
-    selectSideChains() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+    selectSideChains() { let ic = this.icn3d, me = ic.icn3dui;
+        let currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-        //let  nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+        //let nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
 
         ic.hAtoms = {}
         for(let i in currHAtoms) {
@@ -193,8 +175,8 @@ class Selection {
         ic.hlUpdateCls.showHighlight();
     }
 
-    selectMainSideChains() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+    selectMainSideChains() { let ic = this.icn3d, me = ic.icn3dui;
+        let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
 
         ic.hAtoms = {}
         for(let resid in residHash) {
@@ -207,9 +189,9 @@ class Selection {
         ic.hlUpdateCls.showHighlight();
     }
 
-    clickShow_selected() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        me.myEventCls.onIds(["#" + ic.pre + "show_selected", "#" + ic.pre + "mn2_show_selected"], "click", function(e) { let  ic = thisClass.icn3d;
+    clickShow_selected() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        me.myEventCls.onIds(["#" + ic.pre + "show_selected", "#" + ic.pre + "mn2_show_selected"], "click", function(e) { let ic = thisClass.icn3d;
            //me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
 
            thisClass.showSelection();
@@ -217,25 +199,25 @@ class Selection {
         });
     }
 
-    clickHide_selected() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        me.myEventCls.onIds("#" + ic.pre + "mn2_hide_selected", "click", function(e) { let  ic = thisClass.icn3d;
+    clickHide_selected() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        me.myEventCls.onIds("#" + ic.pre + "mn2_hide_selected", "click", function(e) { let ic = thisClass.icn3d;
            thisClass.hideSelection();
            me.htmlCls.clickMenuCls.setLogCmd("hide selection", true);
         });
     }
 
-    getGraphDataForDisplayed() { let  ic = this.icn3d, me = ic.icn3dui;
-          let  graphJson = JSON.parse(ic.graphStr);
+    getGraphDataForDisplayed() { let ic = this.icn3d, me = ic.icn3dui;
+          let graphJson = JSON.parse(ic.graphStr);
 
-          let  residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.dAtoms);
+          let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.dAtoms);
 
-          let  nodeArray = [], linkArray = [];
+          let nodeArray = [], linkArray = [];
 
-          let  nodeHash = {}
+          let nodeHash = {}
           for(let i = 0, il = graphJson.nodes.length; i < il; ++i) {
-              let  node = graphJson.nodes[i];
-              let  resid = node.r.substr(4); // 1_1_1KQ2_A_1
+              let node = graphJson.nodes[i];
+              let resid = node.r.substr(4); // 1_1_1KQ2_A_1
 
               if(residHash.hasOwnProperty(resid)) {
                   nodeArray.push(node);
@@ -244,7 +226,7 @@ class Selection {
           }
 
           for(let i = 0, il = graphJson.links.length; i < il; ++i) {
-              let  link = graphJson.links[i];
+              let link = graphJson.links[i];
 
               if(nodeHash.hasOwnProperty(link.source) && nodeHash.hasOwnProperty(link.target)) {
                   linkArray.push(link);
@@ -259,8 +241,8 @@ class Selection {
           return ic.graphStr;
     }
 
-    updateSelectionNameDesc() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
+    updateSelectionNameDesc() { let ic = this.icn3d, me = ic.icn3dui;
+        let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
 
         $("#" + ic.pre + "seq_command_name").val("seq_" + numDef);
         //$("#" + ic.pre + "seq_command_desc").val("seq_desc_" + numDef);
@@ -275,7 +257,7 @@ class Selection {
     //Define a custom selection based on the array of residues or atoms. The custom selection is defined
     //by the "command" with the name "commandname" and the description "commanddesc". If "bResidue" is true,
     //the custom selection is based on residues. Otherwise, the custom selection is based on atoms.
-    addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues) { let  ic = this.icn3d, me = ic.icn3dui;
+    addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues) { let ic = this.icn3d, me = ic.icn3dui;
         if(bSelectResidues) {
             ic.defNames2Residues[commandname] = residueAtomArray;
         }
@@ -290,7 +272,7 @@ class Selection {
     }
 
     //Show the selection.
-    showSelection() { let  ic = this.icn3d, me = ic.icn3dui;
+    showSelection() { let ic = this.icn3d, me = ic.icn3dui;
         //ic.dAtoms = {};
 
         if(Object.keys(ic.hAtoms).length == 0) {
@@ -302,7 +284,7 @@ class Selection {
         ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         ic.ALTERNATE_STRUCTURE = -1;
 
-        let  centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
+        let centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;
         if(ic.maxD < 5) ic.maxD = 5;
 
@@ -332,12 +314,12 @@ class Selection {
         */
     }
 
-    hideSelection() { let  ic = this.icn3d, me = ic.icn3dui;
+    hideSelection() { let ic = this.icn3d, me = ic.icn3dui;
         ic.dAtoms = me.hashUtilsCls.exclHash(ic.dAtoms, ic.hAtoms);
 
         ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
 
-        let  centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
+        let centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;
         if(ic.maxD < 5) ic.maxD = 5;
 
@@ -355,14 +337,14 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
     }
 
-    saveSelection(name, description) { let  ic = this.icn3d, me = ic.icn3dui;
+    saveSelection(name, description) { let ic = this.icn3d, me = ic.icn3dui;
         ic.selectedResidues = {}
 
         ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
         if(Object.keys(ic.selectedResidues).length > 0) {
             if(ic.pk == 1) {
-                let  bAtom = true;
+                let bAtom = true;
                 this.selectResidueList(ic.hAtoms, name, description,undefined, undefined, bAtom);
                 //ic.hlUpdateCls.updateHlAll();
 
@@ -381,7 +363,7 @@ class Selection {
         }
     }
 
-    saveEachResiInSel() { let  ic = this.icn3d, me = ic.icn3dui;
+    saveEachResiInSel() { let ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
         
         ic.selectedResidues = {}
@@ -397,7 +379,7 @@ class Selection {
         }
     }
 
-    removeSelection() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeSelection() { let ic = this.icn3d, me = ic.icn3dui;
         if(!ic.bAnnotations) {
             ic.hlUpdateCls.removeSeqChainBkgd();
         }
@@ -418,7 +400,7 @@ class Selection {
           ic.hlUpdateCls.removeHl2D();
     }
 
-    resetAll() { let  ic = this.icn3d, me = ic.icn3dui;
+    resetAll() { let ic = this.icn3d, me = ic.icn3dui;
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
 
@@ -437,21 +419,21 @@ class Selection {
         ic.hlUpdateCls.removeHlMenus();
     }
 
-    loadSelection(dataStr) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  nameCommandArray = dataStr.trim().split('\n');
+    loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
+      let nameCommandArray = dataStr.trim().split('\n');
 
       for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
-          //let  nameCommand = nameCommandArray[i].split('\t');
-          //let  name = nameCommand[0];
-          //let  command = nameCommand[1];
+          //let nameCommand = nameCommandArray[i].split('\t');
+          //let name = nameCommand[0];
+          //let command = nameCommand[1];
 
-          let  nameCommand = nameCommandArray[i].replace(/\t/g, ' ');
+          let nameCommand = nameCommandArray[i].replace(/\t/g, ' ');
           let pos1 = nameCommand.indexOf(' ');
           
-          let  name = nameCommand.substr(0, pos1)
-          let  command = nameCommand.substr(pos1 + 1)
+          let name = nameCommand.substr(0, pos1)
+          let command = nameCommand.substr(pos1 + 1)
 
-          let  pos = command.indexOf(' '); // select ...
+          let pos = command.indexOf(' '); // select ...
 
           ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
 
@@ -459,17 +441,17 @@ class Selection {
       }
     }
 
-    oneStructurePerWindow() { let  ic = this.icn3d, me = ic.icn3dui;
+    oneStructurePerWindow() { let ic = this.icn3d, me = ic.icn3dui;
         // only display one of the two aligned structures
 
-        let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
+        let structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
         if(me.cfg.bSidebyside && structureArray.length == 2) {
-            let  dividArray = Object.keys(window.icn3duiHash);
-            let  pos = dividArray.indexOf(ic.divid);
+            let dividArray = Object.keys(window.icn3duiHash);
+            let pos = dividArray.indexOf(ic.divid);
 
-            let  structure = structureArray[pos];
-            let  chainArray = ic.structures[structure];
-            let  structAtoms = {}
+            let structure = structureArray[pos];
+            let chainArray = ic.structures[structure];
+            let structAtoms = {}
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 structAtoms = me.hashUtilsCls.unionHash(structAtoms, ic.chains[chainArray[i]]);
             }
@@ -487,7 +469,7 @@ class Selection {
 
     saveSelectionIfSelected(id, value) {var ic = this.icn3d, me = ic.icn3dui;
       if(ic.bSelectResidue || ic.bSelectAlignResidue) {
-          let  name = $("#" + ic.pre + "seq_command_name2").val().replace(/\s+/g, '_');
+          let name = $("#" + ic.pre + "seq_command_name2").val().replace(/\s+/g, '_');
           //var description = $("#" + ic.pre + "seq_command_desc2").val();
           if(name === "") {
             name = $("#" + ic.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
@@ -515,16 +497,16 @@ class Selection {
     }
     selectOneResid(idStr, bUnchecked) {var ic = this.icn3d, me = ic.icn3dui;
       //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP
-      //change to: let  idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or ASP $1KQ2.B:40
-      let  posStructure = idStr.indexOf('$');
-      let  posChain = idStr.indexOf('.');
-      let  posRes = idStr.indexOf(':');
-      let  posAtom = idStr.indexOf('@');
+      //change to: let idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or ASP $1KQ2.B:40
+      let posStructure = idStr.indexOf('$');
+      let posChain = idStr.indexOf('.');
+      let posRes = idStr.indexOf(':');
+      let posAtom = idStr.indexOf('@');
       if(posAtom == -1) posAtom = idStr.length; //idStr.indexOf(' ');
-      let  structure = idStr.substr(posStructure + 1, posChain - posStructure - 1);
-      let  chain = idStr.substr(posChain + 1, posRes - posChain - 1);
-      let  resi = idStr.substr(posRes + 1, posAtom - posRes - 1);
-      let  resid = structure + '_' + chain + '_' + resi;
+      let structure = idStr.substr(posStructure + 1, posChain - posStructure - 1);
+      let chain = idStr.substr(posChain + 1, posRes - posChain - 1);
+      let resi = idStr.substr(posRes + 1, posAtom - posRes - 1);
+      let resid = structure + '_' + chain + '_' + resi;
       for(let j in ic.residues[resid]) {
           if(bUnchecked) {
               delete ic.hAtoms[j];
@@ -539,7 +521,7 @@ class Selection {
       else {
           ic.selectedResidues[resid] = 1;
       }
-      let  cmd = '$' + structure + '.' + chain + ':' + resi;
+      let cmd = '$' + structure + '.' + chain + ':' + resi;
       return cmd;
     }
 
@@ -559,15 +541,15 @@ class Selection {
     }
 
     toggleMembrane(bShowMembrane) {var ic = this.icn3d, me = ic.icn3dui;
-        let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
+        let structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
 
         for(let i = 0, il = structureArray.length; i < il; ++i) {
-            let  structure = structureArray[i];
-            let  atomsHash = ic.residues[structure + '_MEM_1'];
-            let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomsHash);
+            let structure = structureArray[i];
+            let atomsHash = ic.residues[structure + '_MEM_1'];
+            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomsHash);
             if(firstAtom === undefined) continue;
 
-            let  oriStyle = firstAtom.style;
+            let oriStyle = firstAtom.style;
             if(!ic.dAtoms.hasOwnProperty(firstAtom.serial)) {
                 // add membrane to displayed atoms if the membrane is not part of the display
                 ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atomsHash);
@@ -575,7 +557,7 @@ class Selection {
             }
 
             for(let j in atomsHash) {
-                let  atom = ic.atoms[j];
+                let atom = ic.atoms[j];
                 if(oriStyle !== 'nothing') {
                     atom.style = 'nothing';
                 }
@@ -594,7 +576,7 @@ class Selection {
 
     adjustMembrane(extra_mem_z, intra_mem_z) {var ic = this.icn3d, me = ic.icn3dui;
         for(let i in ic.chains[ic.inputid.toUpperCase() + '_MEM']) {
-            let  atom = ic.atoms[i];
+            let atom = ic.atoms[i];
             if(atom.name == 'O') {
                 atom.coord.z = extra_mem_z;
             }
@@ -603,28 +585,28 @@ class Selection {
             }
         }
         // reset transmembrane set
-        let  bReset = true;
+        let bReset = true;
         ic.definedSetsCls.setTransmemInMenu(extra_mem_z, intra_mem_z, bReset);
         ic.hlUpdateCls.updateHlMenus();
         ic.drawCls.draw();
     }
     selectBtwPlanes(large, small) {var ic = this.icn3d, me = ic.icn3dui;
         if(large < small) {
-            let  tmp = small;
+            let tmp = small;
             small = large;
             large = tmp;
         }
-        let  residueHash = {}
+        let residueHash = {}
         for(let i in ic.atoms) {
-            let  atom = ic.atoms[i];
+            let atom = ic.atoms[i];
             if(atom.resn == 'DUM') continue;
             if(atom.coord.z >= small && atom.coord.z <= large) {
-                let  resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                 residueHash[resid] = 1;
             }
         }
-        let  commandname = "z_planes_" + large + "_" + small;
-        let  commanddescr = commandname;
+        let commandname = "z_planes_" + large + "_" + small;
+        let commanddescr = commandname;
         this.selectResidueList(residueHash, commandname, commanddescr, false);
     }
 }

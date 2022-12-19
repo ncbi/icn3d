@@ -2,20 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {MyEventCls} from '../../utils/myEventCls.js';
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Selection} from '../selection/selection.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {Analysis} from '../analysis/analysis.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {Draw} from '../display/draw.js';
-import {ShowAnno} from '../annotations/showAnno.js';
-import {ShowSeq} from '../annotations/showSeq.js';
-
 class AnnoSnpClinVar {
     constructor(icn3d) {
         this.icn3d = icn3d;

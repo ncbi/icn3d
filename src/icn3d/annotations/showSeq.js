@@ -2,12 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from '../../html/html.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {SetColor} from '../display/setColor.js';
-import {Domain3d} from '../annotations/domain3d.js';
-
 class ShowSeq {
     constructor(icn3d) {
         this.icn3d = icn3d;

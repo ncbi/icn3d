@@ -2,35 +2,22 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {SelectByCommand} from '../selection/selectByCommand.js';
-import {ApplyMap} from '../surface/applyMap.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Draw} from '../display/draw.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {Picking} from '../picking/picking.js';
-
 class Resid2spec {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     residueids2spec(residueArray) {var ic = this.icn3d, me = ic.icn3dui;
-         let  spec = "";
+         let spec = "";
 
          if(residueArray !== undefined){
-             let  residueArraySorted = residueArray.sort(function(a, b) {
+             let residueArraySorted = residueArray.sort(function(a, b) {
                 if(a !== '' && !isNaN(a)) {
                     return parseInt(a) - parseInt(b);
                 }
                 else {
-                    let  lastPosA = a.lastIndexOf('_');
-                    let  lastPosB = b.lastIndexOf('_');
+                    let lastPosA = a.lastIndexOf('_');
+                    let lastPosB = b.lastIndexOf('_');
                     if(a.substr(0, lastPosA) < b.substr(0, lastPosB)) return -1;
                     else if(a.substr(0, lastPosA) > b.substr(0, lastPosB)) return 1;
                     else if(a.substr(0, lastPosA) == b.substr(0, lastPosB)) {
@@ -40,11 +27,11 @@ class Resid2spec {
                     }
                 }
              });
-             let  prevChain = '', chain, prevResi = 0, resi, lastDashPos, firstDashPos, struturePart, chainPart;
-             let  startResi;
-             let  bMultipleStructures =(Object.keys(ic.structures).length == 1) ? false : true;
+             let prevChain = '', chain, prevResi = 0, resi, lastDashPos, firstDashPos, struturePart, chainPart;
+             let startResi;
+             let bMultipleStructures =(Object.keys(ic.structures).length == 1) ? false : true;
              for(let j = 0, jl = residueArraySorted.length; j < jl; ++j) {
-                 let  residueid = residueArraySorted[j];
+                 let residueid = residueArraySorted[j];
                  lastDashPos = residueid.lastIndexOf('_');
                  chain = residueid.substr(0, lastDashPos);
                  // allow resi such as 35A
@@ -127,9 +114,9 @@ class Resid2spec {
     }
 
     atoms2spec(atomHash) {var ic = this.icn3d, me = ic.icn3dui;
-        let  spec = "";
-        let  i = 0;
-        let  structureHash = {}, chainHash = {}, resiHash = {};
+        let spec = "";
+        let i = 0;
+        let structureHash = {}, chainHash = {}, resiHash = {};
 
         let atom;
         for(let serial in atomHash) {
@@ -147,15 +134,15 @@ class Resid2spec {
         }
 
         if(Object.keys(resiHash).length == 1) {
-            let  tmpStr = '\\$' + atom.structure + '\\.' + atom.chain + ':' + atom.resi;
+            let tmpStr = '\\$' + atom.structure + '\\.' + atom.chain + ':' + atom.resi;
             spec = spec.replace(new RegExp(tmpStr,'g'), '');
         }
         else if(Object.keys(chainHash).length == 1) {
-            let  tmpStr = '\\$' + atom.structure + '\\.' + atom.chain;
+            let tmpStr = '\\$' + atom.structure + '\\.' + atom.chain;
             spec = spec.replace(new RegExp(tmpStr,'g'), '');
         }
         else if(Object.keys(structureHash).length == 1) {
-            let  tmpStr = '\\$' + atom.structure;
+            let tmpStr = '\\$' + atom.structure;
             spec = spec.replace(new RegExp(tmpStr,'g'), '');
         }
 
@@ -163,17 +150,17 @@ class Resid2spec {
     }
 
     atoms2residues(atomArray) {var ic = this.icn3d, me = ic.icn3dui;
-         let  atoms = {};
+         let atoms = {};
          for(let j = 0, jl = atomArray.length; j < jl; ++j) {
              atoms[atomArray[j]] = 1;
          }
          //var residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(atoms);
-         let  residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+         let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
          return Object.keys(residueHash);
     }
 
     atoms2structureArray(atoms) {var ic = this.icn3d, me = ic.icn3dui;
-         let  structures = {};
+         let structures = {};
          for(let i in atoms) {
              let atom = ic.atoms[i];
              structures[atom.structure] = 1;
@@ -182,42 +169,42 @@ class Resid2spec {
     }
 
     selectProperty(property, from, to) {var ic = this.icn3d, me = ic.icn3dui;
-        let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         if(property == 'positive') {
-            let  select = ':r,k,h';
+            let select = ':r,k,h';
             ic.hAtoms = {};
             ic.selByCommCls.selectBySpec(select, select, select);
         }
         else if(property == 'negative') {
-            let  select = ':d,e';
+            let select = ':d,e';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
             // add nucleotides
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.nucleotides);
         }
         else if(property == 'hydrophobic') {
-            let  select = ':w,f,y,l,i,c,m';
+            let select = ':w,f,y,l,i,c,m';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
             // only proteins
             ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
         }
         else if(property == 'polar') {
-            let  select = ':g,v,s,t,a,n,p,q';
+            let select = ':g,v,s,t,a,n,p,q';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
             // only proteins
             ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
         }
         else if(property == 'b factor') {
-            let  atoms = me.hashUtilsCls.cloneHash(ic.calphas);
+            let atoms = me.hashUtilsCls.cloneHash(ic.calphas);
             atoms = me.hashUtilsCls.unionHash(atoms, ic.nucleotidesO3);
             atoms = me.hashUtilsCls.unionHash(atoms, ic.chemicals);
             atoms = me.hashUtilsCls.unionHash(atoms, ic.ions);
             atoms = me.hashUtilsCls.unionHash(atoms, ic.water);
             ic.hAtoms = {}
             for(let i in atoms) {
-                let  atom = ic.atoms[i];
+                let atom = ic.atoms[i];
                 if(atom.b >= from && atom.b <= to) {
                     ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[atom.structure + '_' + atom.chain + '_' + atom.resi]);
                 }
@@ -231,13 +218,13 @@ class Resid2spec {
            ic.hAtoms = {}
 
            for(let resid in ic.resid2area) { // resid: structure_chain_resi_resn
-                let  pos = resid.lastIndexOf('_');
-                let  resn = resid.substr(pos + 1);
+                let pos = resid.lastIndexOf('_');
+                let resn = resid.substr(pos + 1);
 
                 if(me.parasCls.residueArea.hasOwnProperty(resn)) {
-                    let  percent = parseInt(ic.resid2area[resid] / me.parasCls.residueArea[resn] * 100);
+                    let percent = parseInt(ic.resid2area[resid] / me.parasCls.residueArea[resn] * 100);
                     if(percent >= from && percent <= to) {
-                        let  residReal = resid.substr(0, pos);
+                        let residReal = resid.substr(0, pos);
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[residReal]);
                     }
                 }
@@ -249,8 +236,8 @@ class Resid2spec {
     }
 
     //Select the complement of the current selection.
-    selectComplement() { let  ic = this.icn3d, me = ic.icn3dui;
-       let  complement = {}
+    selectComplement() { let ic = this.icn3d, me = ic.icn3dui;
+       let complement = {}
        for(let i in ic.atoms) {
            if(!ic.hAtoms.hasOwnProperty(i)) {
                complement[i] = 1;
@@ -264,10 +251,10 @@ class Resid2spec {
     switchHighlightLevel() {var ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
 
-      let  thisClass = this;
+      let thisClass = this;
 
-      //$(document).bind('keydown', function(e) { let  ic = thisClass.icn3d;
-      document.addEventListener('keydown', function(e) { let  ic = thisClass.icn3d;
+      //$(document).bind('keydown', function(e) { let ic = thisClass.icn3d;
+      document.addEventListener('keydown', function(e) { let ic = thisClass.icn3d;
         if(e.keyCode === 38) { // arrow up, select upper level of atoms
           e.preventDefault();
           if(Object.keys(ic.pickedAtomList).length == 0 || !ic.hAtoms.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList).serial)) {
@@ -304,7 +291,7 @@ class Resid2spec {
       }
       if(ic.highlightlevel === 1) { // atom -> residue
           ic.highlightlevel = 2;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) {
               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
         }
@@ -314,7 +301,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 2) { // residue -> strand
           ic.highlightlevel = 3;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) {
               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.pickingCls.selectStrandHelixFromAtom(firstAtom));
         }
@@ -323,10 +310,10 @@ class Resid2spec {
         }
       }
       else if(ic.highlightlevel === 3) {
-          let  atomLevel4;
+          let atomLevel4;
           if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // strand -> domain
               ic.highlightlevel = 4;
-              let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+              let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
               if(!ic.bShift && !ic.bCtrl) {
                   ic.hAtoms = me.hashUtilsCls.cloneHash(atomLevel4);
@@ -337,7 +324,7 @@ class Resid2spec {
           }
           if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // strand -> chain
               ic.highlightlevel = 5;
-              let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+              let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {
                   ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[firstAtom.structure + '_' + firstAtom.chain]);
               }
@@ -348,7 +335,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 4) { // domain -> chain
           ic.highlightlevel = 5;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) {
               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[firstAtom.structure + '_' + firstAtom.chain]);
           }
@@ -358,9 +345,9 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 5 || ic.highlightlevel === 6) { // chain -> structure
           ic.highlightlevel = 6;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) ic.hAtoms = {}
-          let  chainArray = ic.structures[firstAtom.structure];
+          let chainArray = ic.structures[firstAtom.structure];
           for(let i = 0, il = chainArray.length; i < il; ++i) {
               ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainArray[i]]);
         }
@@ -390,14 +377,14 @@ class Resid2spec {
         }
       }
       else if(ic.highlightlevel === 3) { // strand -> residue
-        let  residueHash = {}
+        let residueHash = {}
         for(let i in ic.pickedAtomList) {
             residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
             residueHash[residueid] = 1;
         }
         if(Object.keys(residueHash).length === 1) {
             ic.highlightlevel = 2;
-            let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
             if(!ic.bShift && !ic.bCtrl) {
                 ic.hAtoms = me.hashUtilsCls.cloneHash(ic.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
             }
@@ -408,7 +395,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 4) { // domain -> strand
           ic.highlightlevel = 3;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) {
               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.pickingCls.selectStrandHelixFromAtom(firstAtom));
           }
@@ -417,10 +404,10 @@ class Resid2spec {
           }
       }
       else if(ic.highlightlevel === 5) {
-          let  atomLevel4;
+          let atomLevel4;
           if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // chain -> domain
               ic.highlightlevel = 4;
-              let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+              let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
               if(!ic.bShift && !ic.bCtrl) {
                   ic.hAtoms = me.hashUtilsCls.cloneHash(atomLevel4);
@@ -431,7 +418,7 @@ class Resid2spec {
           }
           if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // chain -> strand
               ic.highlightlevel = 3;
-              let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+              let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {
                   ic.hAtoms = me.hashUtilsCls.cloneHash(ic.pickingCls.selectStrandHelixFromAtom(firstAtom));
               }
@@ -442,7 +429,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 6) { // structure -> chain
           ic.highlightlevel = 5;
-          let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+          let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
           if(!ic.bShift && !ic.bCtrl) {
               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[firstAtom.structure + '_' + firstAtom.chain]);
         }

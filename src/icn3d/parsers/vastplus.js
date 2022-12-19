@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {LoadAtomData} from '../parsers/loadAtomData.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-
 class Vastplus {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -21,11 +9,11 @@ class Vastplus {
 
     //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
     // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
-    vastplusAlign(structArray, vastplusAtype, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         // 1. pairwise alignment
-        let  ajaxArray = [], chainidpairArray = [];
+        let ajaxArray = [], chainidpairArray = [];
         if(structArray.length != 2) {
             console.log("VAST+ needs two input structures...");
             return;
@@ -83,7 +71,7 @@ class Vastplus {
         }
 
         $.when.apply(undefined, ajaxArray).then(function() {
-            let  dataArray = (structArray.length == 1) ? [arguments] : Array.from(arguments);
+            let dataArray = (structArray.length == 1) ? [arguments] : Array.from(arguments);
             // 2. cluster pairs
             thisClass.clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype);
 
@@ -99,7 +87,7 @@ class Vastplus {
         });
     }
 
-    setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+    setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
         let sel_t = (bRealign) ? me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid1]) : ic.chains[chainid1];
@@ -119,7 +107,7 @@ class Vastplus {
         return alignAjax;
     }
 
-    realignOnVastplus() { let  ic = this.icn3d, me = ic.icn3dui;
+    realignOnVastplus() { let ic = this.icn3d, me = ic.icn3dui;
         let structHash = [];
         for(let struct in ic.structures) {
             let chainidArray = ic.structures[struct];
@@ -135,10 +123,10 @@ class Vastplus {
         ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
     }
 
-    getResisFromSegs(segArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    getResisFromSegs(segArray) { let ic = this.icn3d, me = ic.icn3dui;
         let resiArray_t = [], resiArray_q = [];
         for(let i = 0, il = segArray.length; i < il; ++i) {
-            let  seg = segArray[i];
+            let seg = segArray[i];
             // for(let j = 0; j <= seg.t_end - seg.t_start; ++j) {
             //     resiArray_t.push(j);
             // }
@@ -152,12 +140,12 @@ class Vastplus {
         return {resiArray_t: resiArray_t, resiArray_q: resiArray_q};
     }
 
-    clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         let queryDataArray = [];
         for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
-            let  queryData = dataArray[index][0];
+            let queryData = dataArray[index][0];
 
             queryDataArray.push(queryData);
 /*
@@ -302,7 +290,7 @@ class Vastplus {
             // ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
             // align residue by residue
-            let  n =(coor_q.length < coor_t.length) ? coor_q.length : coor_t.length;
+            let n =(coor_q.length < coor_t.length) ? coor_q.length : coor_t.length;
    
             if(n < 4) continue;
 
@@ -311,12 +299,12 @@ class Vastplus {
      
                 // superpose
                 if(ic.rmsd_suprTmp.rot !== undefined) {
-                    let  rot = ic.rmsd_suprTmp.rot;
+                    let rot = ic.rmsd_suprTmp.rot;
                     if(rot[0] === null) continue;
       
-                    let  centerFrom = ic.rmsd_suprTmp.trans1;
-                    let  centerTo = ic.rmsd_suprTmp.trans2;
-                    let  rmsd = ic.rmsd_suprTmp.rmsd;
+                    let centerFrom = ic.rmsd_suprTmp.trans1;
+                    let centerTo = ic.rmsd_suprTmp.trans2;
+                    let rmsd = ic.rmsd_suprTmp.rmsd;
 
                     if(rmsd < badRmsd) {
                         bAligned = true;
@@ -366,7 +354,7 @@ class Vastplus {
     }
 
     // src/internal/structure/MMDBUpdateTools/Interactions/compbu/qaAlignment.cpp
-    RotMatrixTransDist(qpa1, qpa2, outlier, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
+    RotMatrixTransDist(qpa1, qpa2, outlier, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
         let cosval = 0.866, lenval = 8.0; 
 
         if(!qpa1 || !qpa2) return outlier;
@@ -469,7 +457,7 @@ class Vastplus {
         return Math.sqrt(sum);
     }
     
-    GetRotMatrix(qpa, scaleFactor, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
+    GetRotMatrix(qpa, scaleFactor, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
         let result = [];
         if (result) {
             result[0] = qpa.q_rotation.x1 / scaleFactor;
@@ -531,7 +519,7 @@ class Vastplus {
     // http://linkinghub.elsevier.com/retrieve/pii/016781919500017I
     
     // single linkage method
-    clusterLinkage(threshold, distmat, bLastTiedValue) { let  ic = this.icn3d, me = ic.icn3dui;
+    clusterLinkage(threshold, distmat, bLastTiedValue) { let ic = this.icn3d, me = ic.icn3dui;
         let cumul = [];
     
         let CBU_ROOT = -1, CBU_TERMINAL = -2, CBU_MAX_DIST = 2;
@@ -716,7 +704,7 @@ class Vastplus {
         return cumul;
     }
 
-    GetChainMappings(m_clusteringResult, chainidpairArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    GetChainMappings(m_clusteringResult, chainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
         let mappings = [];
     
         let isClusterOk;
@@ -771,7 +759,7 @@ class Vastplus {
         return mappings;
     }
     
-    getClusters(tree, includeSingletons) { let  ic = this.icn3d, me = ic.icn3dui;
+    getClusters(tree, includeSingletons) { let ic = this.icn3d, me = ic.icn3dui;
         let clusters = [], scores = [];
 
         let result = 0;

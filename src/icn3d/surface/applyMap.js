@@ -2,17 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Surface} from './surface.js';
-
 class ApplyMap {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     //Apply the surface options.
-    applySurfaceOptions(options) { let  ic = this.icn3d, me = ic.icn3dui;
+    applySurfaceOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         //switch (options.wirefraic.toLowerCase()) {
@@ -27,7 +23,7 @@ class ApplyMap {
 
         options.opacity = parseFloat(options.opacity);
 
-        let  atoms, currAtoms;
+        let atoms, currAtoms;
 
         // only show the surface for atoms which are displaying
         atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
@@ -66,7 +62,7 @@ class ApplyMap {
     }
 
     //Apply options for electron density map.
-    applyMapOptions(options) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyMapOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         switch (options.mapwireframe) {
@@ -78,7 +74,7 @@ class ApplyMap {
                 break;
         }
 
-        let  atoms, currAtoms;
+        let atoms, currAtoms;
 
         // only show the surface for atoms which are displaying
         atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
@@ -100,7 +96,7 @@ class ApplyMap {
     }
 
     //Apply options for EM density map.
-    applyEmmapOptions(options) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyEmmapOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         switch (options.emmapwireframe) {
@@ -112,7 +108,7 @@ class ApplyMap {
                 break;
         }
 
-        let  atoms, currAtoms;
+        let atoms, currAtoms;
 
         // only show the surface for atoms which are displaying
         atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
@@ -130,7 +126,7 @@ class ApplyMap {
         }
     }
 
-    applyPhimapOptions(options) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyPhimapOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         switch (options.phimapwireframe) {
@@ -142,7 +138,7 @@ class ApplyMap {
                 break;
         }
 
-        let  atoms, currAtoms;
+        let atoms, currAtoms;
 
         // only show the surface for atoms which are displaying
         atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
@@ -160,7 +156,7 @@ class ApplyMap {
         }
     }
 
-    applyphisurfaceOptions(options) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyphisurfaceOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         //switch (options.wirefraic.toLowerCase()) {
@@ -175,7 +171,7 @@ class ApplyMap {
 
         options.phisurfop = parseFloat(ic.phisurfop);
 
-        let  atoms, currAtoms;
+        let atoms, currAtoms;
 
         // only show the surface for atoms which are displaying
         atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
@@ -196,7 +192,7 @@ class ApplyMap {
     }
 
     //Remove previously drawn surfaces.
-    removeSurfaces() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeSurfaces() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        for(let i = 0, il = ic.prevSurfaces.length; i < il; ++i) {
            ic.mdl.remove(ic.prevSurfaces[i]);
@@ -205,7 +201,7 @@ class ApplyMap {
        ic.prevSurfaces = [];
     }
 
-    removeLastSurface() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeLastSurface() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        if(ic.prevSurfaces.length > 0) {
            ic.mdl.remove(ic.prevSurfaces[ic.prevSurfaces.length - 1]);
@@ -213,7 +209,7 @@ class ApplyMap {
        }
     }
 
-    removeMaps() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeMaps() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        for(let i = 0, il = ic.prevMaps.length; i < il; ++i) {
            ic.mdl.remove(ic.prevMaps[i]);
@@ -222,7 +218,7 @@ class ApplyMap {
        ic.prevMaps = [];
     }
 
-    removeEmmaps() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeEmmaps() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        for(let i = 0, il = ic.prevEmmaps.length; i < il; ++i) {
            ic.mdl.remove(ic.prevEmmaps[i]);
@@ -231,7 +227,7 @@ class ApplyMap {
        ic.prevEmmaps = [];
     }
 
-    removePhimaps() { let  ic = this.icn3d, me = ic.icn3dui;
+    removePhimaps() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
 
        for(let i = 0, il = ic.prevPhimaps.length; i < il; ++i) {
@@ -241,7 +237,7 @@ class ApplyMap {
        ic.prevPhimaps = [];
     }
 
-    removeLastMap() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeLastMap() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        if(ic.prevMaps.length > 0) {
            ic.mdl.remove(ic.prevMaps[ic.prevMaps.length - 1]);
@@ -249,7 +245,7 @@ class ApplyMap {
        }
     }
 
-    removeLastEmmap() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeLastEmmap() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        if(ic.prevEmmaps.length > 0) {
            ic.mdl.remove(ic.prevEmmaps[ic.prevEmmaps.length - 1]);
@@ -257,7 +253,7 @@ class ApplyMap {
        }
     }
 
-    removeLastPhimap() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeLastPhimap() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
        if(ic.prevPhimaps.length > 0) {
            ic.mdl.remove(ic.prevPhimaps[ic.prevPhimaps.length - 1]);

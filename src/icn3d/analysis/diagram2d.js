@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Selection} from '../selection/selection.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {Annotation} from '../annotations/annotation.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-
 class Diagram2d {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -648,32 +636,6 @@ class Diagram2d {
             e.stopImmediatePropagation();
 
             thisClass.clickNode(this);
-
-/*
-            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
-
-            let resid = $(this).attr('resid');
-
-            if(!ic.bCtrl && !ic.bShift) {
-              ic.hAtoms = {}
-
-              thisClass.removeScatterplotSelection();
-            }
-
-            let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
-            $(this).find('circle').attr('stroke-width', strokeWidth);
-
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
-
-            let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
-
-            ic.hlUpdateCls.updateHlAll();
-
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
-
-            ic.bSelectResidue = false;
-*/
         });
 
         //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
@@ -707,94 +669,18 @@ class Diagram2d {
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
-
-/*
-            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
-
-            let resid1 = $(this).attr('resid1');
-            let resid2 = $(this).attr('resid2');
-
-            if(!ic.bCtrl && !ic.bShift) {
-              ic.hAtoms = {}
-
-              thisClass.removeScatterplotSelection();
-            }
-
-            let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
-            $(this).find('rect').attr('stroke-width', strokeWidth);
-
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
-
-            let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
-
-            ic.hlUpdateCls.updateHlAll();
-
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
-*/
         });
 
         $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
-/*
-            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
-
-            let resid1 = $(this).attr('resid1');
-            let resid2 = $(this).attr('resid2');
-
-            if(!ic.bCtrl && !ic.bShift) {
-              ic.hAtoms = {}
-
-              thisClass.removeScatterplotSelection();
-            }
-
-            let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
-            $(this).find('rect').attr('stroke-width', strokeWidth);
-
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
-
-            let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
-
-            ic.hlUpdateCls.updateHlAll();
-
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
-*/
         });
 
         $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickNode(this);
-/*
-            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
-
-            let resid = $(this).attr('resid');
-
-            if(!ic.bCtrl && !ic.bShift) {
-              ic.hAtoms = {}
-
-              thisClass.removeScatterplotSelection();
-            }
-
-            let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
-            $(this).find('circle').attr('stroke-width', strokeWidth);
-
-            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
-
-            let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
-
-            ic.hlUpdateCls.updateHlAll();
-
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
-
-            ic.bSelectResidue = false;
-*/
         });
 
         $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-interaction", function(e) { let ic = thisClass.icn3d;

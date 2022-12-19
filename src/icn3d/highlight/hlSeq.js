@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-
-import {Html} from '../../html/html.js';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Selection} from '../selection/selection.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {Analysis} from '../analysis/analysis.js';
-import {Draw} from '../display/draw.js';
-
 class HlSeq {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -124,18 +112,7 @@ class HlSeq {
 
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
-/*
-          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
-          if($(this).parents('span').parents('div').attr('id') === ic.pre + "dl_sequence2") {
-              ic.bAlignSeq = true;
-              ic.bAnnotations = false;
-          }
-          //else if($(this).attr('id') === ic.pre + "dl_annotations") {
-          else {
-              ic.bAlignSeq = false;
-              ic.bAnnotations = true;
-          }
-*/
+
           // select residues
           //$("span.ui-selected", this).each(function() {
               let id = $(this).attr('id');

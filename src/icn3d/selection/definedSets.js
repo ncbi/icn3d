@@ -2,22 +2,12 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {MyEventCls} from '../../utils/myEventCls.js';
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Selection} from '../selection/selection.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {Annotation} from '../annotations/annotation.js';
-
 class DefinedSets {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    setProtNuclLigInMenu() { let  ic = this.icn3d, me = ic.icn3dui;
+    setProtNuclLigInMenu() { let ic = this.icn3d, me = ic.icn3dui;
         // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
         if(Object.keys(ic.proteins).length > 0) {
           //ic.defNames2Atoms['proteins'] = Object.keys(ic.proteins);
@@ -36,10 +26,10 @@ class DefinedSets {
         if(Object.keys(ic.chemicals).length > 0) {
           //ic.defNames2Atoms['chemicals'] = Object.keys(ic.chemicals);
           if(ic.bOpm) {
-              let  chemicalResHash = {}, memResHash = {}
+              let chemicalResHash = {}, memResHash = {}
               for(let serial in ic.chemicals) {
-                  let  atom = ic.atoms[serial];
-                  let  residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                  let atom = ic.atoms[serial];
+                  let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                   if(atom.resn === 'DUM') {
                       memResHash[residueid] = 1;
                   }
@@ -84,7 +74,7 @@ class DefinedSets {
         this.setTransmemInMenu(ic.halfBilayerSize, -ic.halfBilayerSize);
     }
 
-    setPredefinedInMenu() { let  ic = this.icn3d, me = ic.icn3dui;
+    setPredefinedInMenu() { let ic = this.icn3d, me = ic.icn3dui;
           // predefined sets: all chains
           this.setChainsInMenu();
 
@@ -111,16 +101,16 @@ class DefinedSets {
             ic.selectionCls.selectResidueList(ic.nalignHash2, ic.notAlignedName2, ic.notAlignedName2, false, false);
 
             // for alignment, show aligned residues, chemicals, and ions
-            let  dAtoms = {}
+            let dAtoms = {}
             for(let alignChain in ic.alnChains) {
                 dAtoms = me.hashUtilsCls.unionHash(dAtoms, ic.alnChains[alignChain]);
             }
 
-            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(dAtoms);
+            let residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(dAtoms);
 
-            let  commandname = 'protein_aligned';
-            let  commanddescr = 'aligned protein and nucleotides';
-            let  select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
+            let commandname = 'protein_aligned';
+            let commanddescr = 'aligned protein and nucleotides';
+            let select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
 
             //ic.selectionCls.addCustomSelection(Object.keys(residuesHash), Object.keys(dAtoms), commandname, commanddescr, select, true);
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
@@ -128,15 +118,15 @@ class DefinedSets {
     }
 
     //Set the menu of defined sets with an array of defined names "commandnameArray".
-    setAtomMenu(commandnameArray) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  html = "";
+    setAtomMenu(commandnameArray) { let ic = this.icn3d, me = ic.icn3dui;
+      let html = "";
 
-      let  nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
-      let  nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
+      let nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
+      let nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
 
-      let  nameArrayTmp = nameArray1.concat(nameArray2).sort();
+      let nameArrayTmp = nameArray1.concat(nameArray2).sort();
 
-      let  nameArray = [];
+      let nameArray = [];
     //  $.each(nameArrayTmp, function(i, el){
     //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
     //  });
@@ -146,16 +136,16 @@ class DefinedSets {
 
       //for(let i in ic.defNames2Atoms) {
       for(let i = 0, il = nameArray.length; i < il; ++i) {
-          let  name = nameArray[i];
+          let name = nameArray[i];
 
-          let  atom, atomHash;
+          let atom, atomHash;
           if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(name)) {
-              let  atomArray = ic.defNames2Atoms[name];
+              let atomArray = ic.defNames2Atoms[name];
 
               if(atomArray.length > 0) atom = ic.atoms[atomArray[0]];
           }
           else if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(name)) {
-              let  residueArray = ic.defNames2Residues[name];
+              let residueArray = ic.defNames2Residues[name];
               if(residueArray.length > 0) {
                   atomHash = ic.residues[residueArray[0]]
                   if(atomHash) {
@@ -164,8 +154,8 @@ class DefinedSets {
               }
           }
 
-          let  colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-          let  color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
+          let colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+          let color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
           if(commandnameArray.indexOf(name) != -1) {
             html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
@@ -178,7 +168,7 @@ class DefinedSets {
       return html;
     }
 
-    setChainsInMenu() { let  ic = this.icn3d, me = ic.icn3dui;
+    setChainsInMenu() { let ic = this.icn3d, me = ic.icn3dui;
         for(let chainid in ic.chains) {
             // skip chains with one residue/chemical
             if(ic.chainsSeq[chainid] && ic.chainsSeq[chainid].length > 1) {
@@ -186,9 +176,9 @@ class DefinedSets {
               ic.defNames2Residues[chainid] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]));
               ic.defNames2Descr[chainid] = chainid;
 
-              let  pos = chainid.indexOf('_');
-              let  structure = chainid.substr(0, pos);
-              let  chain = chainid.substr(pos + 1);
+              let pos = chainid.indexOf('_');
+              let structure = chainid.substr(0, pos);
+              let chain = chainid.substr(pos + 1);
 
               ic.defNames2Command[chainid] = 'select $' + structure + '.' + chain;
             }
@@ -196,7 +186,7 @@ class DefinedSets {
 
         // select whole structure
         if(Object.keys(ic.structures) == 1) {
-          let  structure = Object.keys(ic.structures)[0];
+          let structure = Object.keys(ic.structures)[0];
 
           ic.defNames2Residues[structure] = Object.keys(ic.residues);
           ic.defNames2Descr[structure] = structure;
@@ -204,12 +194,12 @@ class DefinedSets {
           ic.defNames2Command[structure] = 'select $' + structure;
         }
         else {
-            let  resArray = Object.keys(ic.residues);
-            let  structResHash = {}
+            let resArray = Object.keys(ic.residues);
+            let structResHash = {}
             for(let i = 0, il = resArray.length; i < il; ++i) {
-                let  resid = resArray[i];
-                let  pos = resid.indexOf('_');
-                let  structure = resid.substr(0, pos);
+                let resid = resArray[i];
+                let pos = resid.indexOf('_');
+                let structure = resid.substr(0, pos);
                 if(structResHash[structure] === undefined) {
                     structResHash[structure] = [];
                 }
@@ -225,16 +215,16 @@ class DefinedSets {
         }
     }
 
-    setTransmemInMenu(posZ, negZ, bReset) { let  ic = this.icn3d, me = ic.icn3dui;
+    setTransmemInMenu(posZ, negZ, bReset) { let ic = this.icn3d, me = ic.icn3dui;
         // set transmembrane, extracellular, intracellular
         if(ic.bOpm) {
-          let  transmembraneHash = {}, extracellularHash = {}, intracellularHash = {}
+          let transmembraneHash = {}, extracellularHash = {}, intracellularHash = {}
           for(let serial in ic.atoms) {
-              let  atom = ic.atoms[serial];
+              let atom = ic.atoms[serial];
 
               if(atom.resn === 'DUM') continue;
 
-              let  residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+              let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
               if(atom.coord.z > posZ) {
                   extracellularHash[residueid] = 1;
               }
@@ -246,7 +236,7 @@ class DefinedSets {
               }
           }
 
-          let  extraStr =(bReset) ? '2' : '';
+          let extraStr =(bReset) ? '2' : '';
 
           if(Object.keys(transmembraneHash).length > 0) {
               ic.defNames2Residues['transmembrane' + extraStr] = Object.keys(transmembraneHash);
@@ -270,7 +260,7 @@ class DefinedSets {
 
     //Display the menu of defined sets. All chains and defined custom sets are listed in the menu.
     //All new custom sets will be displayed in the menu.
-    showSets() { let  ic = this.icn3d, me = ic.icn3dui;
+    showSets() { let ic = this.icn3d, me = ic.icn3dui;
         if(!me.bNode) {
             me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
             $("#" + ic.pre + "dl_setsmenu").show();
@@ -281,8 +271,8 @@ class DefinedSets {
             $("#" + ic.pre + "atomsCustom").resizable();
         }
 
-        let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-        let  prevDAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        let prevDAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
 
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu || ic.bResetSets) {
            this.setPredefinedInMenu();
@@ -296,18 +286,18 @@ class DefinedSets {
         ic.hlUpdateCls.updateHlMenus();
     }
 
-    clickCustomAtoms() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let  ic = thisClass.icn3d;
-        $("#" + ic.pre + "atomsCustom").change(function(e) { let  ic = thisClass.icn3d;
-           let  nameArray = $(this).val();
+    clickCustomAtoms() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let ic = thisClass.icn3d;
+        $("#" + ic.pre + "atomsCustom").change(function(e) { let ic = thisClass.icn3d;
+           let nameArray = $(this).val();
            ic.nameArray = nameArray;
 
            if(nameArray !== null) {
              // log the selection
              //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
 
-             let  bUpdateHlMenus = false;
+             let bUpdateHlMenus = false;
              thisClass.changeCustomAtoms(nameArray, bUpdateHlMenus);
              //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
              me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
@@ -316,17 +306,17 @@ class DefinedSets {
            }
         });
 
-        me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "focus", function(e) { let  ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "focus", function(e) { let ic = thisClass.icn3d;
            if(me.utilsCls.isMobile()) $("#" + ic.pre + "atomsCustom").val("");
         });
     }
 
     //Delete selected sets in the menu of "Defined Sets".
-    deleteSelectedSets() { let  ic = this.icn3d, me = ic.icn3dui;
-       let  nameArray = $("#" + ic.pre + "atomsCustom").val();
+    deleteSelectedSets() { let ic = this.icn3d, me = ic.icn3dui;
+       let nameArray = $("#" + ic.pre + "atomsCustom").val();
 
        for(let i = 0; i < nameArray.length; ++i) {
-         let  selectedSet = nameArray[i];
+         let selectedSet = nameArray[i];
 
          if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
 
@@ -345,16 +335,16 @@ class DefinedSets {
     //HighlightAtoms are set up based on the selected custom names "nameArray" in the atom menu.
     //The corresponding atoms are neither highlighted in the sequence dialog nor in the 3D structure
     //since not all residue atom are selected.
-    changeCustomAtoms(nameArray, bUpdateHlMenus) { let  ic = this.icn3d, me = ic.icn3dui;
+    changeCustomAtoms(nameArray, bUpdateHlMenus) { let ic = this.icn3d, me = ic.icn3dui;
        ic.hAtoms = {}
 
        for(let i = 0; i < nameArray.length; ++i) {
-         let  selectedSet = nameArray[i];
+         let selectedSet = nameArray[i];
 
          if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
 
          if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
-             let  atomArray = ic.defNames2Atoms[selectedSet];
+             let atomArray = ic.defNames2Atoms[selectedSet];
 
              for(let j = 0, jl = atomArray.length; j < jl; ++j) {
                  ic.hAtoms[atomArray[j]] = 1;
@@ -362,9 +352,9 @@ class DefinedSets {
          }
 
          if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(selectedSet)) {
-             let  residueArrayTmp = ic.defNames2Residues[selectedSet];
+             let residueArrayTmp = ic.defNames2Residues[selectedSet];
 
-             let  atomHash = {}
+             let atomHash = {}
              for(let j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
                  atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueArrayTmp[j]]);
              }
@@ -385,9 +375,9 @@ class DefinedSets {
 
        // update the commands in the dialog
        for(let i = 0, il = nameArray.length; i < il; ++i) {
-           let  atomArray = ic.defNames2Atoms[nameArray[i]];
-           let  residueArray = ic.defNames2Residues[nameArray[i]];
-           let  atomTitle = ic.defNames2Descr[nameArray[i]];
+           let atomArray = ic.defNames2Atoms[nameArray[i]];
+           let residueArray = ic.defNames2Residues[nameArray[i]];
+           let atomTitle = ic.defNames2Descr[nameArray[i]];
 
            if(i === 0) {
              //$("#" + ic.pre + "command").val(atomCommand);
@@ -395,7 +385,7 @@ class DefinedSets {
              $("#" + ic.pre + "command_name").val(nameArray[i]);
            }
            else {
-             let  prevValue = $("#" + ic.pre + "command").val();
+             let prevValue = $("#" + ic.pre + "command").val();
              $("#" + ic.pre + "command").val(prevValue + ' ' + ic.setOperation + ' ' + nameArray[i]);
 
              prevValue = $("#" + ic.pre + "command_name").val();
@@ -404,15 +394,15 @@ class DefinedSets {
        } // outer for
     }
 
-    setHAtomsFromSets(nameArray, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    setHAtomsFromSets(nameArray, type) { let ic = this.icn3d, me = ic.icn3dui;
        for(let i = 0; i < nameArray.length; ++i) {
-         let  selectedSet = nameArray[i];
+         let selectedSet = nameArray[i];
 
          if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
 
          if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
 
-             let  atomArray = ic.defNames2Atoms[selectedSet];
+             let atomArray = ic.defNames2Atoms[selectedSet];
 
              if(type === 'or') {
                  for(let j = 0, jl = atomArray.length; j < jl; ++j) {
@@ -420,7 +410,7 @@ class DefinedSets {
                  }
              }
              else if(type === 'and') {
-                 let  atomHash = {}
+                 let atomHash = {}
                  for(let j = 0, jl = atomArray.length; j < jl; ++j) {
                      atomHash[atomArray[j]] = 1;
                  }
@@ -432,7 +422,7 @@ class DefinedSets {
                  //    ic.hAtoms[atomArray[j]] = undefined;
                  //}
 
-                 let  atomHash = {}
+                 let atomHash = {}
                  for(let j = 0, jl = atomArray.length; j < jl; ++j) {
                      atomHash[atomArray[j]] = 1;
                  }
@@ -442,9 +432,9 @@ class DefinedSets {
          }
 
          if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(selectedSet)) {
-             let  residueArrayTmp = ic.defNames2Residues[selectedSet];
+             let residueArrayTmp = ic.defNames2Residues[selectedSet];
 
-             let  atomHash = {}
+             let atomHash = {}
              for(let j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
                  atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueArrayTmp[j]]);
              }
@@ -462,16 +452,16 @@ class DefinedSets {
        } // outer for
     }
 
-    updateAdvancedCommands(nameArray, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    updateAdvancedCommands(nameArray, type) { let ic = this.icn3d, me = ic.icn3dui;
        // update the commands in the dialog
-       let  separator = ' ' + type + ' ';
+       let separator = ' ' + type + ' ';
        for(let i = 0, il = nameArray.length; i < il; ++i) {
            if(i === 0 && type == 'or') {
              $("#" + ic.pre + "command").val('saved atoms ' + nameArray[i]);
              $("#" + ic.pre + "command_name").val(nameArray[i]);
            }
            else {
-             let  prevValue = $("#" + ic.pre + "command").val();
+             let prevValue = $("#" + ic.pre + "command").val();
              $("#" + ic.pre + "command").val(prevValue + separator + nameArray[i]);
 
              prevValue = $("#" + ic.pre + "command_name").val();
@@ -480,7 +470,7 @@ class DefinedSets {
        } // outer for
     }
 
-    combineSets(orArray, andArray, notArray, commandname) { let  ic = this.icn3d, me = ic.icn3dui;
+    combineSets(orArray, andArray, notArray, commandname) { let ic = this.icn3d, me = ic.icn3dui;
        ic.hAtoms = {}
        this.setHAtomsFromSets(orArray, 'or');
 
@@ -508,17 +498,17 @@ class DefinedSets {
        this.updateAdvancedCommands(notArray, 'not');
 
        if(commandname !== undefined) {
-           let  select = "select " + $("#" + ic.pre + "command").val();
+           let select = "select " + $("#" + ic.pre + "command").val();
 
            $("#" + ic.pre + "command_name").val(commandname);
            ic.selectionCls.addCustomSelection(Object.keys(ic.hAtoms), commandname, commandname, select, false);
        }
     }
 
-    commandSelect(postfix) { let  ic = this.icn3d, me = ic.icn3dui;
-           let  select = $("#" + ic.pre + "command" + postfix).val();
+    commandSelect(postfix) { let ic = this.icn3d, me = ic.icn3dui;
+           let select = $("#" + ic.pre + "command" + postfix).val();
 
-           let  commandname = $("#" + ic.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
+           let commandname = $("#" + ic.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
 
            if(select) {
                ic.selByCommCls.selectByCommand(select, commandname, commandname);
@@ -526,26 +516,26 @@ class DefinedSets {
            }
     }
 
-    clickCommand_apply() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", function(e) { let  ic = thisClass.icn3d;
+    clickCommand_apply() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", function(e) { let ic = thisClass.icn3d;
            e.preventDefault();
 
            thisClass.commandSelect('');
         });
 
-        me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", function(e) { let  ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", function(e) { let ic = thisClass.icn3d;
            e.preventDefault();
            thisClass.commandSelect('2');
         });
 
     }
 
-    selectCombinedSets(strSets, commandname) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  idArray = strSets.split(' ');
+    selectCombinedSets(strSets, commandname) { let ic = this.icn3d, me = ic.icn3dui;
+        let idArray = strSets.split(' ');
 
-        let  orArray = [], andArray = [], notArray = [];
-        let  prevLabel = 'or';
+        let orArray = [], andArray = [], notArray = [];
+        let prevLabel = 'or';
 
         for(let i = 0, il = idArray.length; i < il; ++i) {
             if(idArray[i] === 'or' || idArray[i] === 'and' || idArray[i] === 'not') {
@@ -568,8 +558,8 @@ class DefinedSets {
         if(idArray !== null) this.combineSets(orArray, andArray, notArray, commandname);
     }
 
-    clickModeswitch() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    clickModeswitch() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
         me.myEventCls.onIds("#" + ic.pre + "modeswitch", "click", function(e) {
             if($("#" + ic.pre + "modeswitch")[0] !== undefined && $("#" + ic.pre + "modeswitch")[0].checked) { // mode: selection
                 thisClass.setModeAndDisplay('selection');
@@ -580,7 +570,7 @@ class DefinedSets {
         });
     }
 
-    setModeAndDisplay(mode) { let  ic = this.icn3d, me = ic.icn3dui;
+    setModeAndDisplay(mode) { let ic = this.icn3d, me = ic.icn3dui;
         if(mode === 'all') { // mode all
             this.setMode('all');
 
@@ -611,7 +601,7 @@ class DefinedSets {
         }
     }
 
-    setMode(mode) { let  ic = this.icn3d, me = ic.icn3dui;
+    setMode(mode) { let ic = this.icn3d, me = ic.icn3dui;
         if(mode === 'all') { // mode all
             // set text
             $("#" + ic.pre + "modeall").show();
@@ -640,8 +630,8 @@ class DefinedSets {
             //}
         }
     }
-    getAtomsFromOneSet(commandname) {  let  ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
-       let  residuesHash = {}
+    getAtomsFromOneSet(commandname) {  let ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
+       let residuesHash = {}
        // defined sets is not set up
        if(ic.defNames2Residues['proteins'] === undefined) {
            this.showSets();
@@ -654,7 +644,7 @@ class DefinedSets {
            else {
                if(ic.defNames2Residues[commandname] !== undefined && ic.defNames2Residues[commandname].length > 0) {
                    for(let j = 0, jl = ic.defNames2Residues[commandname].length; j < jl; ++j) {
-                       let  resid = ic.defNames2Residues[commandname][j]; // return an array of resid
+                       let resid = ic.defNames2Residues[commandname][j]; // return an array of resid
                        residuesHash = me.hashUtilsCls.unionHash(residuesHash, ic.residues[resid]);
                    }
                }
@@ -662,7 +652,7 @@ class DefinedSets {
                    for(let j = 0, jl = ic.defNames2Atoms[commandname].length; j < jl; ++j) {
                        //var resid = ic.defNames2Atoms[commandname][j]; // return an array of serial
                        //residuesHash = me.hashUtilsCls.unionHash(residuesHash, ic.residues[resid]);
-                       let  serial = ic.defNames2Atoms[commandname][j]; // return an array of serial
+                       let serial = ic.defNames2Atoms[commandname][j]; // return an array of serial
                        residuesHash[serial] = 1;
                    }
                }
@@ -670,24 +660,12 @@ class DefinedSets {
        //}
        return residuesHash;
     }
-
-/*
-    getAtomsFromSets(nameArray) {  let  ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
-       let  residuesHash = {}
-       for(let i = 0, il = nameArray.length; i < il; ++i) {
-           commandname = nameArray[i];
-           let  residuesHashTmp = this.getAtomsFromOneSet(commandname);
-           residuesHash = me.hashUtilsCls.unionHash(residuesHash, residuesHashTmp);
-       }
-       return residuesHash;
-    }
-*/
-
-    getAtomsFromNameArray(nameArray) {  let  ic = this.icn3d, me = ic.icn3dui;
-        let  selAtoms = {}
+    
+    getAtomsFromNameArray(nameArray) {  let ic = this.icn3d, me = ic.icn3dui;
+        let selAtoms = {}
         for(let i = 0, il = nameArray.length; i < il; ++i) {
             if(nameArray[i] === 'non-selected') { // select all hAtoms
-               let  currAtoms = {}
+               let currAtoms = {}
                for(let i in ic.atoms) {
                    if(!ic.hAtoms.hasOwnProperty(i) && ic.dAtoms.hasOwnProperty(i)) {
                        currAtoms[i] = ic.atoms[i];

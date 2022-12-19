@@ -2,22 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {MyEventCls} from '../../utils/myEventCls.js';
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Annotation} from '../annotations/annotation.js';
-import {SetColor} from '../display/setColor.js';
-import {SetOption} from '../display/setOption.js';
-import {Draw} from '../display/draw.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {ShowAnno} from '../annotations/showAnno.js';
-import {ShowSeq} from '../annotations/showSeq.js';
-
 class AddTrack {
     constructor(icn3d) {
         this.icn3d = icn3d;
