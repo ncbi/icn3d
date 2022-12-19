@@ -2,14 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-import {ConvertTypeCls} from '../../utils/convertTypeCls.js';
-
-import {ApplyMap} from '../surface/applyMap.js';
-
 class Export3D {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -102,15 +94,15 @@ class Export3D {
     // generate a binary STL file for 3D printing
     // https://en.wikipedia.org/wiki/STL_(file_format)#Binary_STL
     /*
-    UINT8[80] – Header
-    UINT32 – Number of triangles
+    UINT8[80] ï¿½ Header
+    UINT32 ï¿½ Number of triangles
 
     foreach triangle
-    REAL32[3] – Normal vector
-    REAL32[3] – Vertex 1
-    REAL32[3] – Vertex 2
-    REAL32[3] – Vertex 3
-    UINT16 – Attribute byte count
+    REAL32[3] ï¿½ Normal vector
+    REAL32[3] ï¿½ Vertex 1
+    REAL32[3] ï¿½ Vertex 2
+    REAL32[3] ï¿½ Vertex 3
+    UINT16 ï¿½ Attribute byte count
     end
     */
 
@@ -155,7 +147,7 @@ class Export3D {
 
         let stlArray = new Uint8Array(84);
 
-        // UINT8[80] – Header
+        // UINT8[80] ï¿½ Header
         let title = 'STL file for the structure(s) ';
         let structureArray = Object.keys(ic.structures);
         for(let i = 0, il = structureArray.length; i < il; ++i) {
@@ -174,7 +166,7 @@ class Export3D {
             }
         }
 
-        // UINT32 – Number of triangles
+        // UINT32 ï¿½ Number of triangles
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
           && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
             stlArray = this.updateArray( stlArray, me.convertTypeCls.passInt32([cntFaces * ic.biomtMatrices.length]), 80 );
@@ -227,11 +219,6 @@ class Export3D {
 
              let geometry = mesh.geometry;
 
-//             let vertices = geometry.vertices;
-//             let faces = geometry.faces;
-
-//             if(faces === undefined) continue;
-
              let positionArray = geometry.getAttribute('position').array;
              let indexArray = geometry.getIndex().array;
 
@@ -240,18 +227,11 @@ class Export3D {
 
              let matrix = mesh.matrix;
 
-//             let stlArray = new Uint8Array(faces.length * 50);
              let stlArray = new Uint8Array(indexArray.length / 3 * 50);
 
              let index = 0;
 
-//             for(let j = 0, jl = faces.length; j < jl; ++j) {
              for(let j = 0, jl = indexArray.length; j < jl; j += 3) {
-//                 let a = faces[j].a;
-//                 let b = faces[j].b;
-//                 let c = faces[j].c;
-//                 let normal = faces[j].normal;
-
                  let a = indexArray[j];
                  let b = indexArray[j+1];
                  let c = indexArray[j+2];
@@ -265,35 +245,20 @@ class Export3D {
                  let v1, v2, v3;
 
                  if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-//                     v1 = vertices[a].clone().multiply(scale).add(position);
-//                     v2 = vertices[b].clone().multiply(scale).add(position);
-//                     v3 = vertices[c].clone().multiply(scale).add(position);
                      v1 = va.clone().multiply(scale).add(position);
                      v2 = vb.clone().multiply(scale).add(position);
                      v3 = vc.clone().multiply(scale).add(position);
                  }
                   else if(geometry.type == 'CylinderGeometry') {
-//                     v1 = vertices[a].clone().applyMatrix4(matrix);
-//                     v2 = vertices[b].clone().applyMatrix4(matrix);
-//                     v3 = vertices[c].clone().applyMatrix4(matrix);
                      v1 = va.clone().applyMatrix4(matrix);
                      v2 = vb.clone().applyMatrix4(matrix);
                      v3 = vc.clone().applyMatrix4(matrix);
                  }
                  else {
-//                     v1 = vertices[a].clone();
-//                     v2 = vertices[b].clone();
-//                     v3 = vertices[c].clone();
                      v1 = va.clone();
                      v2 = vb.clone();
                      v3 = vc.clone();
                  }
-
-                 //REAL32[3] – Normal vector
-                 //REAL32[3] – Vertex 1
-                 //REAL32[3] – Vertex 2
-                 //REAL32[3] – Vertex 3
-                 //UINT16 – Attribute byte count
 
                  if(normal !== undefined) {
                      if(mat !== undefined) normal.applyMatrix4(mat);
@@ -382,148 +347,101 @@ class Export3D {
 
     // The file lost face color after being repaired by https://service.netfabb.com/. It only works with vertex color
     // convert face color to vertex color
-    processVrmlMeshGroup( mdl, vrmlStrArray, vertexCnt, mat ){ let ic = this.icn3d, me = ic.icn3dui;
+    processVrmlMeshGroup( mdl, vrmlStrArray, vertexCnt, mat ) { let ic = this.icn3d, me = ic.icn3dui;
         for(let i = 0, il = mdl.children.length; i < il; ++i) {
-             let mesh = mdl.children[i];
-             if(mesh.type === 'Sprite') continue;
+            let mesh = mdl.children[i];
+            if(mesh.type === 'Sprite') continue;
 
-             let geometry = mesh.geometry;
+            let geometry = mesh.geometry;
 
-             let materialType = mesh.material.type;
-             let bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
+            let materialType = mesh.material.type;
+            let bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
 
-//             let vertices = geometry.vertices;
+            let positionArray = geometry.getAttribute('position').array;
+            let colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
+            let indexArray = geometry.getIndex().array;
 
-//             if(vertices === undefined) continue;
-//             vertexCnt += vertices.length;
+            let position = mesh.position;
+            let scale = mesh.scale;
 
-//             let faces = geometry.faces;
+            let matrix = mesh.matrix;
 
-             let positionArray = geometry.getAttribute('position').array;
-             let colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
-             let indexArray = geometry.getIndex().array;
+            let meshColor = me.parasCls.thr(1, 1, 1);
+            if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
+                if(mesh.material !== undefined) meshColor = mesh.material.color;
+            }
 
-             let position = mesh.position;
-             let scale = mesh.scale;
+            vrmlStrArray.push('Shape {\n');
+            vrmlStrArray.push('geometry IndexedFaceSet {\n');
 
-             let matrix = mesh.matrix;
+            vrmlStrArray.push('coord Coordinate { point [ ');
 
-             let meshColor = me.parasCls.thr(1, 1, 1);
-             if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
-                 if(mesh.material !== undefined) meshColor = mesh.material.color;
-             }
+            let vertexColorStrArray = [];
+            for(let j = 0, jl = positionArray.length; j < jl; j += 3) {
+                let va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
 
-             vrmlStrArray.push('Shape {\n');
-             vrmlStrArray.push('geometry IndexedFaceSet {\n');
+                let vertex;
+                if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
+                    vertex = va.clone().multiply(scale).add(position);
+                }
+                else if(geometry.type == 'CylinderGeometry') {
+                    vertex = va.clone().applyMatrix4(matrix);
+                }
+                else {
+                    vertex = va.clone();
+                }
 
-             vrmlStrArray.push('coord Coordinate { point [ ');
+                if(mat !== undefined) vertex.applyMatrix4(mat);
 
-             let vertexColorStrArray = [];
-//             for(let j = 0, jl = vertices.length; j < jl; ++j) {
-             for(let j = 0, jl = positionArray.length; j < jl; j += 3) {
-                 let va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
+                vrmlStrArray.push(vertex.x.toPrecision(5) + ' ' + vertex.y.toPrecision(5) + ' ' + vertex.z.toPrecision(5));
+                vertex = undefined;
 
-                 let vertex;
-                 if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-//                     vertex = vertices[j].clone().multiply(scale).add(position);
-                     vertex = va.clone().multiply(scale).add(position);
-                 }
-                  else if(geometry.type == 'CylinderGeometry') {
-//                     vertex = vertices[j].clone().applyMatrix4(matrix);
-                     vertex = va.clone().applyMatrix4(matrix);
-                 }
-                 else {
-//                     vertex = vertices[j].clone()
-                     vertex = va.clone()
-                 }
+                if(j < jl - 3) vrmlStrArray.push(', ');
 
-                 if(mat !== undefined) vertex.applyMatrix4(mat);
+                vertexColorStrArray.push(me.parasCls.thr(1, 1, 1));
+            }
+            vrmlStrArray.push(' ] }\n');
 
-                 vrmlStrArray.push(vertex.x.toPrecision(5) + ' ' + vertex.y.toPrecision(5) + ' ' + vertex.z.toPrecision(5));
-                 vertex = undefined;
+            let coordIndexStr = '', colorStr = '', colorIndexStr = '';
 
-//                 if(j < jl - 1) vrmlStrArray.push(', ');
-                 if(j < jl - 3) vrmlStrArray.push(', ');
+            for(let j = 0, jl = indexArray.length; j < jl; j += 3) {
+                let a = indexArray[j];
+                let b = indexArray[j+1];
+                let c = indexArray[j+2];
 
-                 vertexColorStrArray.push(me.parasCls.thr(1, 1, 1));
-             }
-             vrmlStrArray.push(' ] }\n');
+                let color;
+                if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
+                    color = meshColor;
+                }
+                else {
+                    color = new THREE.Color(colorArray[3*a], colorArray[3*a+1], colorArray[3*a+2]);
+                }
 
-             let coordIndexStr = '', colorStr = '', colorIndexStr = '';
-/*
-             if(bSurfaceVertex) {
-                 for(let j = 0, jl = faces.length; j < jl; ++j) {
-                     let a = faces[j].a;
-                     let b = faces[j].b;
-                     let c = faces[j].c;
+                coordIndexStr += a + ' ' + b + ' ' + c;
+                // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
+                // use -1 to separate polygons
+                if(j < jl - 3) coordIndexStr += ', -1, ';
 
-                     coordIndexStr += a + ' ' + b + ' ' + c;
-                     // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
-                     // use -1 to separate polygons
-                     if(j < jl - 1) coordIndexStr += ', -1, ';
+                // update vertexColorStrArray
+                vertexColorStrArray[a] = color;
+                vertexColorStrArray[b] = color;
+                vertexColorStrArray[c] = color;
+            }
 
-                     // update vertexColorStrArray
-                     vertexColorStrArray[a] = faces[j].vertexColors[0];
-                     vertexColorStrArray[b] = faces[j].vertexColors[1];
-                     vertexColorStrArray[c] = faces[j].vertexColors[2];
-                 }
+            for(let j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
+                let color = vertexColorStrArray[j];
+                colorStr += color.r.toPrecision(3) + ' ' + color.g.toPrecision(3) + ' ' + color.b.toPrecision(3);
+                if(j < jl - 1) colorStr += ', ';
+            }
 
-                 for(let j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
-                     let color = vertexColorStrArray[j];
-                     colorStr += color.r.toPrecision(3) + ' ' + color.g.toPrecision(3) + ' ' + color.b.toPrecision(3);
-                     if(j < jl - 1) colorStr += ', ';
-                 }
+            vrmlStrArray.push('coordIndex [ ' + coordIndexStr + ' ]\n');
+            vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
 
-                 vrmlStrArray.push('coordIndex [ ' + coordIndexStr + ' ]\n');
-                 vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
-             }
-             else {
-*/
-//                 for(let j = 0, jl = faces.length; j < jl; ++j) {
-                 for(let j = 0, jl = indexArray.length; j < jl; j += 3) {
-//                     let a = faces[j].a;
-//                     let b = faces[j].b;
-//                     let c = faces[j].c;
-                     let a = indexArray[j];
-                     let b = indexArray[j+1];
-                     let c = indexArray[j+2];
-
-                     let color;
-                     if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
-                         color = meshColor;
-                     }
-                     else {
-//                         color = faces[j].color;
-                         color = new THREE.Color(colorArray[3*a], colorArray[3*a+1], colorArray[3*a+2]);
-                     }
-
-                     coordIndexStr += a + ' ' + b + ' ' + c;
-                     // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
-                     // use -1 to separate polygons
-//                     if(j < jl - 1) coordIndexStr += ', -1, ';
-                     if(j < jl - 3) coordIndexStr += ', -1, ';
-
-                     // update vertexColorStrArray
-                     vertexColorStrArray[a] = color;
-                     vertexColorStrArray[b] = color;
-                     vertexColorStrArray[c] = color;
-                 }
-
-                 for(let j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
-                     let color = vertexColorStrArray[j];
-                     colorStr += color.r.toPrecision(3) + ' ' + color.g.toPrecision(3) + ' ' + color.b.toPrecision(3);
-                     if(j < jl - 1) colorStr += ', ';
-                 }
-
-                 vrmlStrArray.push('coordIndex [ ' + coordIndexStr + ' ]\n');
-                 vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
-//             }
-
-             vrmlStrArray.push('  }\n');
-             vrmlStrArray.push('}\n');
+            vrmlStrArray.push('  }\n');
+            vrmlStrArray.push('}\n');
         }
 
-        return {'vrmlStrArray': vrmlStrArray,'vertexCnt': vertexCnt}
+        return {'vrmlStrArray': vrmlStrArray,'vertexCnt': vertexCnt};
     }
 }
 

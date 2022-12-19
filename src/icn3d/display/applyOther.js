@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Line} from '../geometry/line.js';
-import {Contact} from '../interaction/contact.js';
-import {HBond} from '../interaction/hBond.js';
-import {Box} from '../geometry/box.js';
-import {Axes} from '../geometry/axes.js';
-import {Glycan} from '../geometry/glycan.js';
-import {ApplySymd} from '../analysis/applySymd.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {Transform} from '../transform/transform.js';
-
 class ApplyOther {
     constructor(icn3d) {
         this.icn3d = icn3d;

@@ -2,13 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {SaveFile} from '../export/saveFile.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {Draw} from '../display/draw.js';
-import {Contact} from '../interaction/contact.js';
-
 class ThreeDPrint {
     constructor(icn3d) {
         this.icn3d = icn3d;

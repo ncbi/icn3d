@@ -2,15 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Diagram2d} from '../analysis/diagram2d.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {Draw} from '../display/draw.js';
-
 class HlUpdate {
     constructor(icn3d) {
         this.icn3d = icn3d;

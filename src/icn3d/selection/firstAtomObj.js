@@ -8,23 +8,23 @@ class FirstAtomObj {
     }
 
     //Return the first atom in the atom hash, which has the atom serial number as the key.
-    getFirstAtomObj(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
+    getFirstAtomObj(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return undefined;
         }
 
-        let  atomKeys = Object.keys(atomsHash);
-        let  firstIndex = atomKeys[0];
+        let atomKeys = Object.keys(atomsHash);
+        let firstIndex = atomKeys[0];
 
         return ic.atoms[firstIndex];
     }
 
-    getFirstCalphaAtomObj(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
+    getFirstCalphaAtomObj(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return undefined;
         }
 
-        let  firstIndex;
+        let firstIndex;
 
         for(let i in atomsHash) {
             if(ic.atoms[i].name == 'CA') {
@@ -36,12 +36,12 @@ class FirstAtomObj {
         return (firstIndex !== undefined) ? ic.atoms[firstIndex] : this.getFirstAtomObj(atomsHash);
     }
 
-    getFirstAtomObjByName(atomsHash, atomName) { let  ic = this.icn3d, me = ic.icn3dui;
+    getFirstAtomObjByName(atomsHash, atomName) { let ic = this.icn3d, me = ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return ic.atoms[0];
         }
 
-        let  firstIndex;
+        let firstIndex;
 
         for(let i in atomsHash) {
             if(ic.atoms[i].name == atomName) {
@@ -54,33 +54,33 @@ class FirstAtomObj {
     }
 
     //Return the last atom in the atom hash, which has the atom serial number as the key.
-    getLastAtomObj(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
+    getLastAtomObj(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return ic.atoms[0];
         }
 
-        let  atomKeys = Object.keys(atomsHash);
-        let  lastIndex = atomKeys[atomKeys.length - 1];
+        let atomKeys = Object.keys(atomsHash);
+        let lastIndex = atomKeys[atomKeys.length - 1];
 
         return ic.atoms[lastIndex];
     }
 
     //Return the residue hash from the atom hash. The residue hash has the resid as the key and 1 as the value.
-    getResiduesFromAtoms(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  residuesHash = {}
+    getResiduesFromAtoms(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let residuesHash = {}
         for(let i in atomsHash) {
-            let  residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
+            let residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
             residuesHash[residueid] = 1;
         }
 
         return residuesHash;
     }
 
-    getResiduesFromCalphaAtoms(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  residuesHash = {}
+    getResiduesFromCalphaAtoms(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let residuesHash = {}
         for(let i in atomsHash) {
             if((ic.atoms[i].name == 'CA' && ic.proteins.hasOwnProperty(i)) || !ic.proteins.hasOwnProperty(i)) {
-                let  residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
+                let residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
                 //residuesHash[residueid] = 1;
                 residuesHash[residueid] = ic.atoms[i].resn;
             }
@@ -90,11 +90,11 @@ class FirstAtomObj {
     }
 
     //Return the chain hash from the atom hash. The chain hash has the chainid as the key and 1 as the value.
-    getChainsFromAtoms(atomsHash) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  chainsHash = {}
+    getChainsFromAtoms(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainsHash = {}
         for(let i in atomsHash) {
-           let  atom = ic.atoms[i];
-           let  chainid = atom.structure + "_" + atom.chain;
+           let atom = ic.atoms[i];
+           let chainid = atom.structure + "_" + atom.chain;
 
            chainsHash[chainid] = 1;
         }
@@ -102,7 +102,7 @@ class FirstAtomObj {
         return chainsHash;
     }
 
-    getAtomFromResi(resid, atomName) { let  ic = this.icn3d, me = ic.icn3dui;
+    getAtomFromResi(resid, atomName) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.residues.hasOwnProperty(resid)) {
             for(let i in ic.residues[resid]) {
                 if(ic.atoms[i].name === atomName && !ic.atoms[i].het) {
@@ -114,10 +114,10 @@ class FirstAtomObj {
         return undefined;
     }
 
-    getAtomCoordFromResi(resid, atomName) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  atom = this.getAtomFromResi(resid, atomName);
+    getAtomCoordFromResi(resid, atomName) { let ic = this.icn3d, me = ic.icn3dui;
+        let atom = this.getAtomFromResi(resid, atomName);
         if(atom !== undefined) {
-            let  coord = (atom.coord2 !== undefined) ? atom.coord2 : atom.coord;
+            let coord = (atom.coord2 !== undefined) ? atom.coord2 : atom.coord;
 
             return coord;
         }

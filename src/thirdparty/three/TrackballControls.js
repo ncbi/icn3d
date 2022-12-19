@@ -4,7 +4,7 @@
  * modified by Jiyao Wang
  */
 
-//import * as THREE from 'three';
+
 
 THREE.TrackballControls = function ( object, domElement, icn3d ) {
     "use strict";

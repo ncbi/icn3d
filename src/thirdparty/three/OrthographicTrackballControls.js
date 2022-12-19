@@ -5,7 +5,7 @@
  * modified by Jiyao Wang
  */
 
-//import * as THREE from 'three';
+
 
 THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { var me = this, ic = me.icn3d; "use strict";
     var _this = this;

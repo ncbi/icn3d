@@ -2,43 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {Delphi} from '../analysis/delphi.js';
-import {Scap} from '../analysis/scap.js';
-import {Symd} from '../analysis/symd.js';
-import {Draw} from '../display/draw.js';
-import {Annotation} from '../annotations/annotation.js';
-import {ApplyCommand} from '../selection/applyCommand.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {MmcifParser} from '../parsers/mmcifParser.js';
-import {MmdbParser} from '../parsers/mmdbParser.js';
-import {MmtfParser} from '../parsers/mmtfParser.js';
-import {OpmParser} from '../parsers/opmParser.js';
-import {PdbParser} from '../parsers/pdbParser.js';
-import {AlignParser} from '../parsers/alignParser.js';
-import {ChainalignParser} from '../parsers/chainalignParser.js';
-import {Dsn6Parser} from '../parsers/dsn6Parser.js';
-import {RealignParser} from '../parsers/realignParser.js';
-import {Selection} from '../selection/selection.js';
-import {ViewInterPairs} from '../interaction/viewInterPairs.js';
-import {ShowAnno} from '../annotations/showAnno.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-
-import {Cartoon2d} from '../analysis/cartoon2d.js';
-
 class LoadScript {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
-    loadScript(dataStr, bStatefile, bStrict) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
       if(!dataStr) return;
       
       // allow the "loading structure..." message to be shown while loading script
@@ -50,15 +20,15 @@ class LoadScript {
       // firebase dynamic links replace " " with "+". So convert it back
       dataStr =(bStatefile) ? dataStr.replace(/\+/g, ' ') : dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
 
-      let  preCommands = [];
+      let preCommands = [];
       if(!bStrict && ic.commands.length > 0) preCommands[0] = ic.commands[0];
 
-      let  commandArray = dataStr.trim().split('\n');
+      let commandArray = dataStr.trim().split('\n');
       ic.commands = commandArray;
 
-      let  pos = commandArray[0].indexOf('command=');
+      let pos = commandArray[0].indexOf('command=');
       if(bStatefile && pos != -1) {
-          let  commandFirst = commandArray[0].substr(0, pos - 1);
+          let commandFirst = commandArray[0].substr(0, pos - 1);
           ic.commands.splice(0, 1, commandFirst);
       }
       
@@ -90,7 +60,7 @@ class LoadScript {
     }
 
     //Execute a list of commands. "steps" is the total number of commands.
-    execCommands(start, end, steps, bStrict) { let  ic = this.icn3d, me = ic.icn3dui;
+    execCommands(start, end, steps, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bRender = false;
 
         // fresh start
@@ -101,12 +71,12 @@ class LoadScript {
         this.execCommandsBase(start, end, steps);
     }
 
-    execCommandsBase(start, end, steps, bFinalStep) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
-      let  i;
+    execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
+      let i;
 
       for(i=start; i <= end; ++i) {
-          let  bFinalStep =(i === steps - 1) ? true : false;
+          let bFinalStep =(i === steps - 1) ? true : false;
 
           if(!ic.commands[i].trim()) continue;
           if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
@@ -152,16 +122,16 @@ class LoadScript {
           }
           else if(ic.commands[i].trim().indexOf('set map') == 0 && ic.commands[i].trim().indexOf('set map wireframe') == -1) {
               //set map 2fofc sigma 1.5
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
-              let  urlArray = strArray[0].trim().split(' | ');
+              let urlArray = strArray[0].trim().split(' | ');
 
-              let  str = urlArray[0].substr(8);
-              let  paraArray = str.split(" ");
+              let str = urlArray[0].substr(8);
+              let paraArray = str.split(" ");
 
               if(paraArray.length == 3 && paraArray[1] == 'sigma') {
-                let  sigma = paraArray[2];
-                let  type = paraArray[0];
+                let sigma = paraArray[2];
+                let type = paraArray[0];
 
                 if((type == '2fofc' &&(ic.bAjax2fofc === undefined || !ic.bAjax2fofc))
                   ||(type == 'fofc' &&(ic.bAjaxfofc === undefined || !ic.bAjaxfofc)) ) {
@@ -179,13 +149,13 @@ class LoadScript {
           }
           else if(ic.commands[i].trim().indexOf('set emmap') == 0 && ic.commands[i].trim().indexOf('set emmap wireframe') == -1) {
               //set emmap percentage 70
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
-              let  str = strArray[0].trim().substr(10);
-              let  paraArray = str.split(" ");
+              let str = strArray[0].trim().substr(10);
+              let paraArray = str.split(" ");
 
               if(paraArray.length == 2 && paraArray[0] == 'percentage') {
-                let  percentage = paraArray[1];
+                let percentage = paraArray[1];
 
                 if(ic.bAjaxEm === undefined || !ic.bAjaxEm) {
                     $.when(thisClass.applyCommandEmmap(strArray[0].trim())).then(function() {
@@ -201,7 +171,7 @@ class LoadScript {
               }
           }
           else if(ic.commands[i].trim().indexOf('set phi') == 0) {
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               $.when(ic.delphiCls.applyCommandPhi(strArray[0].trim())).then(function() {
                   thisClass.execCommandsBase(i + 1, end, steps);
@@ -210,7 +180,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               $.when(ic.delphiCls.applyCommandDelphi(strArray[0].trim())).then(function() {
                   thisClass.execCommandsBase(i + 1, end, steps);
@@ -222,7 +192,7 @@ class LoadScript {
             //|| ic.commands[i].trim().indexOf('set annotation cdd') == 0
             //|| ic.commands[i].trim().indexOf('set annotation site') == 0
             ) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
               if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxCddSite === undefined || !ic.bAjaxCddSite) ) {
                   $.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
                       thisClass.execCommandsBase(i + 1, end, steps);
@@ -239,7 +209,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar) ) {
                   $.when(thisClass.applyCommandClinvar(strArray[0].trim())).then(function() {
@@ -257,7 +227,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp) ) {
                   $.when(thisClass.applyCommandSnp(strArray[0].trim())).then(function() {
@@ -275,7 +245,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
-            let  strArray = ic.commands[i].split("|||");
+            let strArray = ic.commands[i].split("|||");
 
             if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxPTM === undefined || !ic.bAjaxPTM) ) {
                 $.when(thisClass.applyCommandPTM(strArray[0].trim())).then(function() {
@@ -293,7 +263,7 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('ig refnum on') == 0 ) { 
-            let  strArray = ic.commands[i].split("|||");
+            let strArray = ic.commands[i].split("|||");
 
             if(Object.keys(ic.resid2refnum).length == 0) {
                 $.when(thisClass.applyCommandRefnum(strArray[0].trim())).then(function() {
@@ -309,7 +279,7 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               if(Object.keys(ic.proteins).length > 0 && ic.mmdb_data === undefined &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain)) {
                   //$.when(thisClass.applyCommand3ddomain(strArray[0].trim())).then(function() {
@@ -328,7 +298,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
               //$.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
               //  .then(thisClass.applyCommandSnpClinvar(strArray[0].trim()))
 
@@ -426,7 +396,7 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
-              let  strArray = ic.commands[i].split("|||");
+              let strArray = ic.commands[i].split("|||");
 
               if(ic.b2DShown === undefined || !ic.b2DShown) {
                   $.when(thisClass.applyCommandViewinteraction(strArray[0].trim())).then(function() {
@@ -442,10 +412,10 @@ class LoadScript {
           else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
             ic.bAxisOnly = false;
 
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
-            let  title = command.substr(command.indexOf(' ') + 1);
+            let title = command.substr(command.indexOf(' ') + 1);
             ic.symmetrytitle =(title === 'none') ? undefined : title;
 
             if(title !== 'none') {
@@ -472,8 +442,8 @@ class LoadScript {
           else if(ic.commands[i].trim().indexOf('symd symmetry') == 0) {
             ic.bAxisOnly = false;
 
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             //var title = command.substr(command.lastIndexOf(' ') + 1);
             //ic.symdtitle =(title === 'none') ? undefined : title;
@@ -500,8 +470,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('scap') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             $.when(ic.scapCls.applyCommandScap(command)).then(function() {
                //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
@@ -513,12 +483,12 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('realign on seq align') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
-            let  paraArray = command.split(' | ');
+            let paraArray = command.split(' | ');
             if(paraArray.length == 2) {
-                let  nameArray = paraArray[1].split(',');
+                let nameArray = paraArray[1].split(',');
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
 
@@ -529,12 +499,12 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('realign on structure align') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
-            let  paraArray = command.split(' | ');
+            let paraArray = command.split(' | ');
             if(paraArray.length == 2) {
-                let  nameArray = paraArray[1].split(',');
+                let nameArray = paraArray[1].split(',');
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
 
@@ -567,8 +537,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             if(ic.bD3 === undefined) {
                 $.when(thisClass.applyCommandGraphinteraction(command)).then(function() {
@@ -583,8 +553,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('cartoon 2d domain') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             if(!ic.chainid2pssmid) {
                 $.when(thisClass.applyCommandCartoon2d(command)).then(function() {
@@ -599,8 +569,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('set half pae map') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             $.when(thisClass.applyCommandAfmap(command)).then(function() {
                //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
@@ -612,8 +582,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('set full pae map') == 0) {
-            let  strArray = ic.commands[i].split("|||");
-            let  command = strArray[0].trim();
+            let strArray = ic.commands[i].split("|||");
+            let command = strArray[0].trim();
 
             $.when(thisClass.applyCommandAfmap(command, true)).then(function() {
                //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
@@ -631,42 +601,30 @@ class LoadScript {
 
       //if(i === steps - 1) {
       if(i === steps || bFinalStep) {
-    /*
-          // enable ic.ParserUtilsCls.hideLoading
-          ic.bCommandLoad = false;
-
-          // hide "loading ..."
-          ic.ParserUtilsCls.hideLoading();
-
-          //ic.bRender = true;
-
-          // end of all commands
-          if(i + 1 === ic.commands.length) ic.bAddCommands = true;
-    */
           this.renderFinalStep(i);
       }
     }
 
-    pressCommandtext() { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        $("#" + ic.pre + "logtext").keypress(function(e) { let  ic = thisClass.icn3d;
+    pressCommandtext() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        $("#" + ic.pre + "logtext").keypress(function(e) { let ic = thisClass.icn3d;
            ic.bAddLogs = false; // turn off log
-           let  code =(e.keyCode ? e.keyCode : e.which);
+           let code =(e.keyCode ? e.keyCode : e.which);
            if(code == 13) { //Enter keycode
               e.preventDefault();
-              let  dataStr = $(this).val();
+              let dataStr = $(this).val();
               ic.bRender = true;
-              let  commandArray = dataStr.split('\n');
+              let commandArray = dataStr.split('\n');
 
-              let  prevLogLen = ic.logs.length;
+              let prevLogLen = ic.logs.length;
               for(let i = prevLogLen, il = commandArray.length; i < il; ++i) {
-                  let  lastCommand = (i == prevLogLen) ? commandArray[i].substr(2).trim() : commandArray[i].trim(); // skip "> "
+                  let lastCommand = (i == prevLogLen) ? commandArray[i].substr(2).trim() : commandArray[i].trim(); // skip "> "
                   if(lastCommand === '') continue;
 
                   ic.logs.push(lastCommand);
                   //$("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
                   //if(lastCommand !== '') {
-                    let  transformation = {}
+                    let transformation = {}
                     transformation.factor = ic._zoomFactor;
                     transformation.mouseChange = ic.mouseChange;
                     transformation.quaternion = ic.quaternion;
@@ -724,7 +682,7 @@ class LoadScript {
                         thisClass.applyCommandViewinteraction(lastCommand);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
-                        let  title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                        let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
                         ic.symmetrytitle =(title === 'none') ? undefined : title;
                         if(title !== 'none') {
                             if(ic.symmetryHash === undefined) {
@@ -745,17 +703,17 @@ class LoadScript {
                         ic.scapCls.applyCommandScap(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on seq align') == 0) {
-                        let  paraArray = lastCommand.split(' | ');
+                        let paraArray = lastCommand.split(' | ');
                         if(paraArray.length == 2) {
-                            let  nameArray = paraArray[1].split(',');
+                            let nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         thisClass.applyCommandRealign(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on structure align') == 0) {
-                        let  paraArray = lastCommand.split(' | ');
+                        let paraArray = lastCommand.split(' | ');
                         if(paraArray.length == 2) {
-                            let  nameArray = paraArray[1].split(',');
+                            let nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
 
@@ -764,9 +722,9 @@ class LoadScript {
                         thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on tmalign') == 0) {
-                        let  paraArray = lastCommand.split(' | ');
+                        let paraArray = lastCommand.split(' | ');
                         if(paraArray.length == 2) {
-                            let  nameArray = paraArray[1].split(',');
+                            let nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         
@@ -775,9 +733,9 @@ class LoadScript {
                         thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on vastplus') == 0) {
-                        let  paraArray = lastCommand.split(' | ');
+                        let paraArray = lastCommand.split(' | ');
                         if(paraArray.length == 2) {
-                            let  nameArray = paraArray[1].split(',');
+                            let nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         
@@ -805,8 +763,8 @@ class LoadScript {
 
     //Execute the command to load a structure. This step is different from the rest steps since
     //it has to finish before the rest steps start.
-    applyCommandLoad(commandStr) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       //ic.bCommandLoad = true;
 
@@ -815,17 +773,17 @@ class LoadScript {
       // chain functions together
       ic.deferred2 = $.Deferred(function() {
       ic.bAddCommands = false;
-      let  commandTransformation = commandStr.split('|||');
+      let commandTransformation = commandStr.split('|||');
 
-      let  commandOri = commandTransformation[0].replace(/\s\s/g, ' ').trim();
-      let  command = commandOri; //.toLowerCase();
+      let commandOri = commandTransformation[0].replace(/\s\s/g, ' ').trim();
+      let command = commandOri; //.toLowerCase();
 
       if(command.indexOf('load') !== -1) { // 'load pdb [pdbid]'
-        let  load_parameters = command.split(' | ');
+        let load_parameters = command.split(' | ');
 
-        let  loadStr = load_parameters[0];
+        let loadStr = load_parameters[0];
         if(load_parameters.length > 1) {
-            let  firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
+            let firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
             me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
             if(me.cfg.inpara === 'undefined') {
                 me.cfg.inpara = '';
@@ -833,7 +791,7 @@ class LoadScript {
         }
 
         // load pdb, mmcif, mmdb, cid
-        let  id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
+        let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
@@ -880,21 +838,6 @@ class LoadScript {
 
             ic.chainalignParserCls.downloadMmdbAf(id);
         }
-        /*
-        else if(command.indexOf('load vastsearch') !== -1) {
-            let idArray = loadStr.split(' || ');
-            let mmdbafid = idArray[1].substr(idArray[1].indexOf(' ') + 1);
-            ic.chainidArray = idArray[2].substr(idArray[2].indexOf(' ') + 1);
-            me.cfg.matchedchains = ic.chainidArray;
-
-            // load multiple PDBs
-            ic.bNCBI = true;
-            ic.bMmdbafid = true;
-
-            let bQuery = true;
-            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
-        }
-        */
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
@@ -903,10 +846,6 @@ class LoadScript {
             me.cfg.refseqid = id;
             ic.mmdbParserCls.downloadRefseq(id);
         }
-        // else if(command.indexOf('load proteinname') !== -1) {
-        //     me.cfg.proteinname = id;
-        //     ic.mmdbParserCls.downloadProteinname(id);
-        // }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
           ic.bLocalSmithwm = false;
@@ -937,7 +876,7 @@ class LoadScript {
         }
         else if(command.indexOf('load chainalignment') !== -1) {
           //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
-          let  urlArray = command.split(" | ");
+          let urlArray = command.split(" | ");
           if(urlArray.length > 1 && urlArray[1].indexOf('resnum') != -1) {
                 me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
           }
@@ -952,9 +891,9 @@ class LoadScript {
           ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
         }
         else if(command.indexOf('load url') !== -1) {
-            let  typeStr = load_parameters[1]; // type pdb
-            let  pos =(typeStr !== undefined) ? typeStr.indexOf('type ') : -1;
-            let  type = 'pdb';
+            let typeStr = load_parameters[1]; // type pdb
+            let pos =(typeStr !== undefined) ? typeStr.indexOf('type ') : -1;
+            let type = 'pdb';
 
             if(pos !== -1) {
                 type = typeStr.substr(pos + 5);
@@ -972,21 +911,21 @@ class LoadScript {
     }
 
     //Apply the command to show electron density map.
-    applyCommandMap(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandMap(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
-      ic.deferredMap = $.Deferred(function() { let  ic = thisClass.icn3d;
+      ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
           //"set map 2fofc sigma 1.5"
           // or "set map 2fofc sigma 1.5 | [url]"
-          let  urlArray = command.split(" | ");
+          let urlArray = command.split(" | ");
 
-          let  str = urlArray[0].substr(8);
-          let  paraArray = str.split(" ");
+          let str = urlArray[0].substr(8);
+          let paraArray = str.split(" ");
 
           if(paraArray.length == 3 && paraArray[1] == 'sigma') {
-              let  sigma = paraArray[2];
-              let  type = paraArray[0];
+              let sigma = paraArray[2];
+              let type = paraArray[0];
 
               if(urlArray.length == 2) {
                   ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
@@ -1001,17 +940,17 @@ class LoadScript {
     }
 
     //Apply the command to show EM density map.
-    applyCommandEmmap(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandEmmap(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
-      ic.deferredEmmap = $.Deferred(function() { let  ic = thisClass.icn3d;
-          let  str = command.substr(10);
-          let  paraArray = str.split(" ");
+      ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
+          let str = command.substr(10);
+          let paraArray = str.split(" ");
 
           if(paraArray.length == 2 && paraArray[0] == 'percentage') {
-              let  percentage = paraArray[1];
-              let  type = 'em';
+              let percentage = paraArray[1];
+              let type = 'em';
 
               ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
           }
@@ -1020,12 +959,12 @@ class LoadScript {
       return ic.deferredEmmap.promise();
     }
 
-    applyCommandSymmetryBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandSymmetryBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0])
     }
 
-    applyCommandSymmetry(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandSymmetry(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
@@ -1035,13 +974,13 @@ class LoadScript {
       return ic.deferredSymmetry.promise();
     }
 
-    applyCommandRealignBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandRealignBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.drawCls.draw();
         ic.realignParserCls.realignOnSeqAlign();
     }
 
-    applyCommandRealign(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandRealign(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredRealign = new $.Deferred(function() {
@@ -1051,13 +990,13 @@ class LoadScript {
       return ic.deferredRealign.promise();
     }
 
-    applyCommandRealignByStructBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandRealignByStructBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         ic.drawCls.draw();
         ic.realignParserCls.realignOnStructAlign();
     }
 
-    applyCommandRealignByStruct(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandRealignByStruct(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredRealignByStruct = new $.Deferred(function() {
@@ -1067,13 +1006,13 @@ class LoadScript {
       return ic.deferredRealignByStruct.promise();
     }
 
-    applyCommandRealignByVastplusBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandRealignByVastplusBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.drawCls.draw();
         ic.vastplusCls.realignOnVastplus();
     }
 
-    applyCommandRealignByVastplus(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandRealignByVastplus(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredRealignByVastplus = new $.Deferred(function() {
@@ -1083,14 +1022,14 @@ class LoadScript {
       return ic.deferredRealignByVastplus.promise();
     }
 
-    applyCommandAfmapBase(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandAfmapBase(command, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         let afid = command.substr(command.lastIndexOf(' ') + 1);
      
         ic.contactMapCls.afErrorMap(afid, bFull);
     }
 
-    applyCommandAfmap(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandAfmap(command, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredAfmap = new $.Deferred(function() {
@@ -1100,22 +1039,22 @@ class LoadScript {
       return ic.deferredAfmap.promise();
     }
 
-    applyCommandGraphinteractionBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  paraArray = command.split(' | ');
+    applyCommandGraphinteractionBase(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let paraArray = command.split(' | ');
         if(paraArray.length >= 3) {
-            let  setNameArray = paraArray[1].split(' ');
-            let  nameArray2 = setNameArray[0].split(',');
-            let  nameArray = setNameArray[1].split(',');
+            let setNameArray = paraArray[1].split(' ');
+            let nameArray2 = setNameArray[0].split(',');
+            let nameArray = setNameArray[1].split(',');
 
-            let  bHbond = paraArray[2].indexOf('hbonds') !== -1;
-            let  bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-            let  bInteraction = paraArray[2].indexOf('interactions') !== -1;
+            let bHbond = paraArray[2].indexOf('hbonds') !== -1;
+            let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+            let bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
-            let  bHalogen = paraArray[2].indexOf('halogen') !== -1;
-            let  bPication = paraArray[2].indexOf('pi-cation') !== -1;
-            let  bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+            let bHalogen = paraArray[2].indexOf('halogen') !== -1;
+            let bPication = paraArray[2].indexOf('pi-cation') !== -1;
+            let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
 
-            let  bHbondCalc;
+            let bHbondCalc;
             if(paraArray.length >= 4) {
                 bHbondCalc =(paraArray[3] == 'true') ? true : false;
             }
@@ -1127,8 +1066,8 @@ class LoadScript {
         }
     }
 
-    applyCommandGraphinteraction(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandGraphinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredGraphinteraction = $.Deferred(function() {
@@ -1138,13 +1077,13 @@ class LoadScript {
       return ic.deferredGraphinteraction.promise();
     }
 
-    applyCommandCartoon2dBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  type = command.substr(command.lastIndexOf(' ') + 1);
+    applyCommandCartoon2dBase(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let type = command.substr(command.lastIndexOf(' ') + 1);
         ic.cartoon2dCls.draw2Dcartoon(type);
     }
 
-    applyCommandCartoon2d(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandCartoon2d(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredCartoon2d = $.Deferred(function() {
@@ -1154,7 +1093,7 @@ class LoadScript {
       return ic.deferredCartoon2d.promise();
     }
 
-    applyCommandAnnotationsAndCddSiteBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandAnnotationsAndCddSiteBase(command) { let ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
       if(command == "view annotations") {
           //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
@@ -1166,8 +1105,8 @@ class LoadScript {
     //The annotation window calls many Ajax calls. Thus the command "view interactions"
     //(in Share Link or loading state file) is handled specially to wait for the Ajax calls
     //to finish before executing the next command.
-    applyCommandAnnotationsAndCddSite(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandAnnotationsAndCddSite(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredAnnoCddSite = $.Deferred(function() {
@@ -1177,24 +1116,24 @@ class LoadScript {
       return ic.deferredAnnoCddSite.promise();
     }
 
-    applyCommandClinvarBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandClinvarBase(command) { let ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
-      let  pos = command.lastIndexOf(' '); // set annotation clinvar
-      let  type = command.substr(pos + 1);
+      let pos = command.lastIndexOf(' '); // set annotation clinvar
+      let type = command.substr(pos + 1);
 
       ic.annotationCls.setAnnoTabClinvar();
     }
 
-    applyCommandSnpBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandSnpBase(command) { let ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
-      let  pos = command.lastIndexOf(' '); // set annotation clinvar
-      let  type = command.substr(pos + 1);
+      let pos = command.lastIndexOf(' '); // set annotation clinvar
+      let type = command.substr(pos + 1);
 
       ic.annotationCls.setAnnoTabSnp();
     }
 
-    applyCommandClinvar(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandClinvar(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredClinvar = $.Deferred(function() {
@@ -1204,8 +1143,8 @@ class LoadScript {
       return ic.deferredClinvar.promise();
     }
 
-    applyCommandSnp(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandSnp(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       ic.deferredSnp = $.Deferred(function() {
@@ -1215,16 +1154,16 @@ class LoadScript {
       return ic.deferredSnp.promise();
     }
 
-    applyCommandPTMBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandPTMBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         // chain functions together
-        let  pos = command.lastIndexOf(' '); // set annotation clinvar
-        let  type = command.substr(pos + 1);
+        let pos = command.lastIndexOf(' '); // set annotation clinvar
+        let type = command.substr(pos + 1);
   
         ic.annotationCls.setAnnoTabPTM();
     }
 
-    applyCommandPTM(command) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    applyCommandPTM(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
   
         // chain functions together
         ic.deferredPTM = $.Deferred(function() {
@@ -1234,13 +1173,13 @@ class LoadScript {
         return ic.deferredPTM.promise();
     }
 
-    applyCommandRefnumBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandRefnumBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         // chain functions together
         ic.refnumCls.showIgRefNum();
     }
 
-    applyCommandRefnum(command) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    applyCommandRefnum(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
   
         // chain functions together
         ic.deferredRefnum = $.Deferred(function() {
@@ -1250,18 +1189,18 @@ class LoadScript {
         return ic.deferredRefnum.promise();
     }
 
-    applyCommand3ddomainBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommand3ddomainBase(command) { let ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
-      let  pos = command.lastIndexOf(' ');
-      let  type = command.substr(pos + 1);
+      let pos = command.lastIndexOf(' ');
+      let type = command.substr(pos + 1);
 
       if(type == '3ddomain' || type == 'all') {
           ic.annotationCls.setAnnoTab3ddomain();
       }
     }
 
-    applyCommand3ddomain(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommand3ddomain(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
 
       // chain functions together
       //ic.deferred3ddomain = $.Deferred(function() {
@@ -1271,16 +1210,16 @@ class LoadScript {
       //return ic.deferred3ddomain.promise();
     }
 
-    applyCommandViewinteractionBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandViewinteractionBase(command) { let ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
          if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-             let  structureArray = Object.keys(ic.structures);
+             let structureArray = Object.keys(ic.structures);
              ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
          }
     }
 
-    applyCommandViewinteraction(command) { let  ic = this.icn3d, me = ic.icn3dui;
-      let  thisClass = this;
+    applyCommandViewinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
       // chain functions together
       ic.deferredViewinteraction = $.Deferred(function() {
          thisClass.applyCommandViewinteractionBase(command);
@@ -1290,7 +1229,7 @@ class LoadScript {
     }
 
     //When reading a list of commands, apply transformation at the last step.
-    renderFinalStep(steps) { let  ic = this.icn3d, me = ic.icn3dui;
+    renderFinalStep(steps) { let ic = this.icn3d, me = ic.icn3dui;
         // enable ic.ParserUtilsCls.hideLoading
         ic.bCommandLoad = false;
 
@@ -1305,10 +1244,10 @@ class LoadScript {
 
         ic.bRender = true;
 
-        let  commandTransformation = (ic.commands[steps-1]) ? ic.commands[steps-1].split('|||') : [];
+        let commandTransformation = (ic.commands[steps-1]) ? ic.commands[steps-1].split('|||') : [];
 
         if(commandTransformation.length == 2) {
-            let  transformation = JSON.parse(commandTransformation[1]);
+            let transformation = JSON.parse(commandTransformation[1]);
 
             ic._zoomFactor = transformation.factor;
 
@@ -1336,7 +1275,7 @@ class LoadScript {
     //        }
 
             if(ic.optsHistory.length >= steps) {
-                let  pkOption = ic.optsHistory[steps - 1].pk;
+                let pkOption = ic.optsHistory[steps - 1].pk;
                 if(pkOption === 'no') {
                     ic.pk = 0;
                 }
@@ -1388,7 +1327,7 @@ class LoadScript {
         if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
     }
 
-    replayFirstStep(currentNumber) { let  ic = this.icn3d, me = ic.icn3dui;
+    replayFirstStep(currentNumber) { let ic = this.icn3d, me = ic.icn3dui;
           // fresh start
           ic.reinitAfterLoad();
           //ic.selectionCls.resetAll();
@@ -1397,15 +1336,15 @@ class LoadScript {
 
           this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
 
-          let  cmdStrOri = ic.commands[currentNumber];
+          let cmdStrOri = ic.commands[currentNumber];
           //var pos = ic.commands[currentNumber].indexOf(' | ');
-          let  pos = ic.commands[currentNumber].indexOf('|');
+          let pos = ic.commands[currentNumber].indexOf('|');
           if(pos != -1) cmdStrOri = ic.commands[currentNumber].substr(0, pos);
 
-          let  maxLen = 20;
-          let  cmdStr =(cmdStrOri.length > maxLen) ? cmdStrOri.substr(0, maxLen) + '...' : cmdStrOri;
+          let maxLen = 20;
+          let cmdStr =(cmdStrOri.length > maxLen) ? cmdStrOri.substr(0, maxLen) + '...' : cmdStrOri;
 
-          let  menuStr = ic.applyCommandCls.getMenuFromCmd(cmdStrOri); // 'File > Retrieve by ID, Align';
+          let menuStr = ic.applyCommandCls.getMenuFromCmd(cmdStrOri); // 'File > Retrieve by ID, Align';
 
           $("#" + ic.pre + "replay_cmd").html('Cmd: ' + cmdStr);
           $("#" + ic.pre + "replay_menu").html('Menu: ' + menuStr);
@@ -1421,13 +1360,13 @@ class LoadScript {
           ic.drawCls.draw();
     }
 
-    getHAtoms(fullcommand) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  strArray = fullcommand.split("|||");
-        let  command = strArray[0].trim();
+    getHAtoms(fullcommand) { let ic = this.icn3d, me = ic.icn3dui;
+        let strArray = fullcommand.split("|||");
+        let command = strArray[0].trim();
 
-        let  paraArray = command.split(' | ');
+        let paraArray = command.split(' | ');
         if(paraArray.length == 2) {
-            let  nameArray = paraArray[1].split(',');
+            let nameArray = paraArray[1].split(',');
             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         }
     }

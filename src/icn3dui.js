@@ -14,21 +14,6 @@ import {ConvertTypeCls} from './utils/convertTypeCls.js';
 import {Html} from './html/html.js';
 import {iCn3D} from './icn3d/icn3d.js';
 
-/*
-import {ResizeCanvas} from './icn3d/transform/resizeCanvas.js';
-import {SetStyle} from './icn3d/display/setStyle.js';
-import {ApplyCenter} from './icn3d/display/applyCenter.js';
-import {LoadScript} from './icn3d/selection/loadScript.js';
-import {PdbParser} from './icn3d/parsers/pdbParser.js';
-import {MmtfParser} from './icn3d/parsers/mmtfParser.js';
-import {OpmParser} from './icn3d/parsers/opmParser.js';
-import {MmdbParser} from './icn3d/parsers/mmdbParser.js';
-import {SdfParser} from './icn3d/parsers/sdfParser.js';
-import {MmcifParser} from './icn3d/parsers/mmcifParser.js';
-import {AlignParser} from './icn3d/parsers/alignParser.js';
-import {ChainalignParser} from './icn3d/parsers/chainalignParser.js';
-*/
-
 // import all classes so that we can export all classes for modification
 // from Html
 import {ClickMenu} from './html/clickMenu.js';
@@ -235,11 +220,6 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
 
     me.setIcn3d();
     let ic = me.icn3d;
-
-    //ic.initUI();
-    //ic.modifyIcn3d();
-
-    //me.utilsCls.setViewerWidthHeight(me);
 
     if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.getCommandsBeforeCrash();
 
@@ -655,25 +635,6 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
   });
   return me.deferred.promise();
 };
-
-/*
-iCn3DUI.prototype.initUI = function() { let me = this;
-    ic.bSelectResidue = false;
-    ic.bSelectAlignResidue = false;
-    ic.selectedResidues = {}
-    ic.bAnnoShown = false;
-    ic.bSetChainsAdvancedMenu = false;
-    ic.b2DShown = false;
-    ic.bCrashed = false;
-    ic.prevCommands = "";
-    ic.bAddCommands = true;
-    ic.bAddLogs = true;
-    ic.bNotLoadStructure = false;
-    //ic.bInputfile = false;
-    $("#" + ic.pre + "dl_annotations").html('');
-    $("#" + ic.pre + "dl_2ddgm").html('');
-};
-*/
 
 iCn3DUI.prototype.setIcn3d = function() { let me = this;
     let str1 = "<label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left(\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right(\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";

@@ -2,9 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../utils/hashUtilsCls.js';
+// import {HashUtilsCls} from '../utils/hashUtilsCls.js';
 
 import {Scene} from './display/scene.js';
 import {Camera} from './display/camera.js';
@@ -28,9 +26,9 @@ import {Axes} from './geometry/axes.js';
 import {Glycan} from './geometry/glycan.js';
 
 import {Surface} from './surface/surface.js';
-import {ElectronMap} from './surface/electronMap.js';
-import {MarchingCube} from './surface/marchingCube.js';
-import {ProteinSurface} from './surface/proteinSurface.js';
+// import {ElectronMap} from './surface/electronMap.js';
+// import {MarchingCube} from './surface/marchingCube.js';
+// import {ProteinSurface} from './surface/proteinSurface.js';
 
 import {ApplyCenter} from './display/applyCenter.js';
 import {ApplyClbonds} from './display/applyClbonds.js';

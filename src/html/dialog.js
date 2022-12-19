@@ -2,14 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from './html.js';
-import {UtilsCls} from '../utils/utilsCls.js';
-
-import {ResizeCanvas} from '../icn3d/transform/resizeCanvas.js';
-import {Annotation} from '../icn3d/annotations/annotation.js';
-
-import {Cartoon2d} from '../icn3d/analysis/cartoon2d.js';
-
 class Dialog {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -186,13 +178,6 @@ class Dialog {
                   d3.select("#" + me.svgid).attr("width", width).attr("height", height);
               }
               else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
-                    //var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
-                    //var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
-
-                    //var bTwoddgmInit2 = false, bSetsInit2 = false;
-                    //if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
-                    //if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
-
                   let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                   let ratio = $("#" + id).width() / oriWidth;
 
@@ -271,28 +256,7 @@ class Dialog {
           resizeStop: function(e, ui) {
             ic.resizeRatioX = ui.size.width / me.htmlCls.width2d; //ui.originalSize.width;
             ic.resizeRatioY = ui.size.height / (me.htmlCls.width2d + 70); //ui.originalSize.height;
-/*
-            $("#" + me.svgid_ct).empty();
-            let bResize = true;
-            ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
-            ic.cartoon2dCls.setEventsForCartoon2d();
-*/
           }
-/*
-          resizeStop: function(e, ui) {
-              if(id == me.pre + 'dl_2dctn') {
-                // redraw 2D
-                let widthDialog = ui.size.width;
-                let heightDialog = ui.size.height;
-                me.htmlCls.width2d = (widthDialog > heightDialog) ? heightDialog : widthDialog;
-
-                ic.cartoon2dCls.initCartoonSvg();
-                let bResize = true;
-                ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
-                ic.cartoon2dCls.setEventsForCartoon2d();
-              }
-          }
-*/
         });
 
         this.addSaveButton(id);
@@ -377,13 +341,6 @@ class Dialog {
                           d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                       }
                       else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
-                            //var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
-                            //var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
-
-                            //var bTwoddgmInit2 = false, bSetsInit2 = false;
-                            //if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
-                            //if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
-
                           let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                           let ratio = $("#" + id).width() / oriWidth;
 

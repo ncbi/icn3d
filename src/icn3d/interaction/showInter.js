@@ -2,23 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {DefinedSets} from '../selection/definedSets.js';
-import {ViewInterPairs} from '../interaction/viewInterPairs.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Contact} from '../interaction/contact.js';
-import {HBond} from '../interaction/hBond.js';
-import {PiHalogen} from '../interaction/piHalogen.js';
-import {Saltbridge} from '../interaction/saltbridge.js';
-import {Selection} from '../selection/selection.js';
-import {Draw} from '../display/draw.js';
-import {ApplyClbonds} from '../display/applyClbonds.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-
 class ShowInter {
     constructor(icn3d) {
         this.icn3d = icn3d;

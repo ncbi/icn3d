@@ -2,10 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from './html.js';
-
-import {UtilsCls} from '../utils/utilsCls.js';
-
 class SetDialog {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -176,11 +172,6 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
         html += "</div>";
 
-        // html += me.htmlCls.divStr + "dl_proteinname' class='" + dialogClass + "'>";
-        // html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "proteinname' value='kinase' size=8> ";
-        // html += me.htmlCls.buttonStr + "reload_proteinname'>Load</button>";
-        // html += "</div>";
-
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
         html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "opmid' value='6JXR' size=8> ";
         html += me.htmlCls.buttonStr + "reload_opm'>Load</button>";
@@ -290,11 +281,6 @@ class SetDialog {
         html += "<div style='width:500px'>";
         html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[<b>uppercase</b> PDB ID or AlphaFold UniProt ID]_[Chain ID]_[Residue Number]_[One Letter Mutant Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/><br/>';
         html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
-
-        // html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";
-        // html += "<option value='mmdbid' selected>PDB ID</option>";
-        // html += "<option value='afid'>AlphaFold UniProt ID</option>";
-        // html += "</select><br/><br/>";
  
         html += '<b>ID Type</b>: ';
         html += '<input type="radio" name="' + me.pre + 'idsource" id="' + me.pre + 'type_mmdbid" value="mmdbid" checked>PDB ID';
@@ -493,13 +479,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_symd' style='max-width:400px' class='" + dialogClass + "'><br>";
-    /*
-        html += "The symmetry is dynamically calculated using <a href='https://symd.nci.nih.gov/'>SymD</a><br><br>";
-        html += me.htmlCls.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymd'>";
-        html += "</select>" + me.htmlCls.space3;
-        html += me.htmlCls.buttonStr + "applysymd'>Apply</button>" + me.htmlCls.space3;
-        html += me.htmlCls.buttonStr + "clearsymd'>Clear</button></div>";
-    */
+
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_contact' class='" + dialogClass + "'>";
@@ -583,18 +563,8 @@ class SetDialog {
         html += "</select></div>";
 
         html += "</td></tr></table>";
-/*
-        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-            html += "<div>4. <b>Cross Structure Interactions</b>: <select id='" + me.pre + "crossstrucinter'>";
-            html += me.htmlCls.optionStr + "'1'>Yes</option>";
-            html += me.htmlCls.optionStr + "'0' selected>No</option>";
-            html += "</select></div><br>";
-            html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
-        }
-        else {
-*/            
-            html += "<div>4. " + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
-//        }
+        
+        html += "<div>4. " + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.htmlCls.buttonStr + "sortSet1'> Set 1</button>" + me.htmlCls.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
@@ -652,14 +622,35 @@ class SetDialog {
         html += "</div>";
 
 
+        html += me.htmlCls.divStr + "dl_colorspectrumacrosssets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrumAcross' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorSpectrumAcrossSets'>Spectrum Color for Sets</button></div><br>";
+        html += "</div>";
+
+        
         html += me.htmlCls.divStr + "dl_colorspectrumbysets' class='" + dialogClass + "'>";
 
         html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrum' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorSpectrumBySets'>Spectrum Color for Sets</button></div><br>";
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorSpectrumBySets'>Spectrum Color for Residues in Sets</button></div><br>";
         html += "</div>";
+
+        
+        html += me.htmlCls.divStr + "dl_colorrainbowacrosssets' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbowAcross' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorRainbowAcrossSets'>Rainbow Color for Sets</button></div><br>";
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_colorrainbowbysets' class='" + dialogClass + "'>";
 
@@ -667,7 +658,7 @@ class SetDialog {
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbow' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorRainbowBySets'>Rainbow Color for Sets</button></div><br>";
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyColorRainbowBySets'>Rainbow Color for Residues in Sets</button></div><br>";
         html += "</div>";
 
 
@@ -1108,9 +1099,6 @@ class SetDialog {
         html += '.node .selected { stroke: ' + me.htmlCls.ORANGE + '; }';
         html += '.link { stroke: #999; stroke-opacity: 0.6; }';
 
-    //    html += '.links line { stroke-opacity: 0.6; }';
-    //    html += '.nodes circle { stroke: #fff; stroke-width: 1.5px; }';
-    //    html += 'text { font-family: sans-serif; font-weight: bold; font-size: 18px;}';
         html += '</style>';
 
         html += me.htmlCls.divNowrapStr + '<b>Zoom</b>: mouse wheel; ' + me.htmlCls.space3 + ' <b>Move</b>: left button; ' + me.htmlCls.space3 + ' <b>Select Multiple Nodes</b>: Ctrl Key and drag an Area' + me.htmlCls.space3;

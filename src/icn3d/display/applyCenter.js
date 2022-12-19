@@ -2,12 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Camera} from '../display/camera.js';
-
 class ApplyCenter {
     constructor(icn3d) {
         this.icn3d = icn3d;

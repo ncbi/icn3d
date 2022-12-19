@@ -2,21 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-import {SaveFile} from '../export/saveFile.js';
-
 class Mol2Parser {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    loadMol2Data(data) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  bResult = this.loadMol2AtomData(data);
+    loadMol2Data(data) { let ic = this.icn3d, me = ic.icn3dui;
+        let bResult = this.loadMol2AtomData(data);
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
@@ -37,37 +29,37 @@ class Mol2Parser {
         }
     }
 
-    loadMol2AtomData(data) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  lines = data.split(/\r?\n|\r/);
+    loadMol2AtomData(data) { let ic = this.icn3d, me = ic.icn3dui;
+        let lines = data.split(/\r?\n|\r/);
         if(lines.length < 4) return false;
 
         ic.init();
 
-        let  structure = 1;
-        let  chain = 'A';
-        let  resn = 'LIG';
-        let  resi = 1;
+        let structure = 1;
+        let chain = 'A';
+        let resn = 'LIG';
+        let resi = 1;
 
-        let  AtomHash = {}
-        let  moleculeNum = 1, chainNum = '1_A', residueNum = '1_A_1';
-        let  atomCount, bondCount, atomIndex = 0, bondIndex = 0;
-        let  serial=1;
+        let AtomHash = {}
+        let moleculeNum = 1, chainNum = '1_A', residueNum = '1_A_1';
+        let atomCount, bondCount, atomIndex = 0, bondIndex = 0;
+        let serial=1;
 
-        let  bAtomSection = false, bBondSection = false;
+        let bAtomSection = false, bBondSection = false;
 
-        let  atomid2serial = {}
-        let  skipAtomids = {}
+        let atomid2serial = {}
+        let skipAtomids = {}
 
-        let  prevBondType = '', contiArrBondCnt = 0;
+        let prevBondType = '', contiArrBondCnt = 0;
 
         for(let i = 0, il = lines.length; i < il; ++i) {
-            let  line = lines[i].trim();
+            let line = lines[i].trim();
             if(line === '') continue;
             if(line.substr(0, 1) === '#') continue;
 
             if(line == '@<TRIPOS>MOLECULE') {
                 ic.molTitle = lines[i + 1].trim();
-                let  atomCnt_bondCnt = lines[i + 2].trim().replace(/\s+/g, " ").split(" ");
+                let atomCnt_bondCnt = lines[i + 2].trim().replace(/\s+/g, " ").split(" ");
                 atomCount = atomCnt_bondCnt[0];
                 bondCount = atomCnt_bondCnt[1];
                 i = i + 4;
@@ -97,21 +89,21 @@ class Mol2Parser {
 
             if(bAtomSection && atomIndex < atomCount) {
                 // 1    C1    1.207    2.091    0.000    C.ar    1    BENZENE    0.000
-                let  atomArray = line.replace(/\s+/g, " ").split(" ");
+                let atomArray = line.replace(/\s+/g, " ").split(" ");
 
-                let  atomid = parseInt(atomArray[0]);
+                let atomid = parseInt(atomArray[0]);
                 atomid2serial[atomid] = serial;
 
-                let  name = atomArray[1];
-                let  x = parseFloat(atomArray[2]);
-                let  y = parseFloat(atomArray[3]);
-                let  z = parseFloat(atomArray[4]);
-                let  coord = new THREE.Vector3(x, y, z);
+                let name = atomArray[1];
+                let x = parseFloat(atomArray[2]);
+                let y = parseFloat(atomArray[3]);
+                let z = parseFloat(atomArray[4]);
+                let coord = new THREE.Vector3(x, y, z);
 
-                let  elemFull = atomArray[5];
-                let  pos = elemFull.indexOf('.');
+                let elemFull = atomArray[5];
+                let pos = elemFull.indexOf('.');
 
-                let  elem;
+                let elem;
                 if(pos === -1) {
                     elem = elemFull;
                 }
@@ -124,7 +116,7 @@ class Mol2Parser {
                     skipAtomids[atomid] = 1;
                 }
                 else {
-                    let  atomDetails = {
+                    let atomDetails = {
                         het: true,              // optional, used to determine chemicals, water, ions, etc
                         serial: serial,         // required, unique atom id
                         name: name,             // required, atom name
@@ -154,13 +146,13 @@ class Mol2Parser {
 
             if(bBondSection && bondIndex < bondCount) {
                 // 1    1    2    ar
-                let  bondArray = line.replace(/\s+/g, " ").split(" ");
-                let  fromAtomid = parseInt(bondArray[1]);
-                let  toAtomid = parseInt(bondArray[2]);
-                let  bondType = bondArray[3];
-                let  finalBondType = bondType;
+                let bondArray = line.replace(/\s+/g, " ").split(" ");
+                let fromAtomid = parseInt(bondArray[1]);
+                let toAtomid = parseInt(bondArray[2]);
+                let bondType = bondArray[3];
+                let finalBondType = bondType;
 
-                //• 1 = single • 2 = double • 3 = triple • am = amide • ar = aromatic • du = dummy • un = unknown(cannot be determined from the parameter tables) • nc = not connected
+                //ï¿½ 1 = single ï¿½ 2 = double ï¿½ 3 = triple ï¿½ am = amide ï¿½ ar = aromatic ï¿½ du = dummy ï¿½ un = unknown(cannot be determined from the parameter tables) ï¿½ nc = not connected
                 if(bondType === 'am') {
                     finalBondType = '1';
                 }
@@ -170,9 +162,9 @@ class Mol2Parser {
                 }
 
                 if(!skipAtomids.hasOwnProperty(fromAtomid) && !skipAtomids.hasOwnProperty(toAtomid) &&(finalBondType === '1' || finalBondType === '2' || finalBondType === '3' || finalBondType === '1.5') ) {
-                    let  order = finalBondType;
-                    let  from = atomid2serial[fromAtomid];
-                    let  to = atomid2serial[toAtomid];
+                    let order = finalBondType;
+                    let from = atomid2serial[fromAtomid];
+                    let to = atomid2serial[toAtomid];
 
                     // skip all bonds between H and C
                     //if( !(ic.atoms[from].elem === 'H' && ic.atoms[to].elem === 'C') && !(ic.atoms[from].elem === 'C' && ic.atoms[to].elem === 'H') ) {
@@ -211,7 +203,7 @@ class Mol2Parser {
 
         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
-        let  resObject = {}
+        let resObject = {}
         resObject.resi = resi;
         resObject.name = resn;
 

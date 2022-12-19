@@ -2,17 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Scene} from '../display/scene.js';
-import {Impostor} from '../geometry/impostor.js';
-import {Instancing} from '../geometry/instancing.js';
-import {SetColor} from '../display/setColor.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-
 class Draw {
     constructor(icn3d) {
         this.icn3d = icn3d;

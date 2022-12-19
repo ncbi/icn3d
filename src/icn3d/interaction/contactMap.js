@@ -2,23 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {DefinedSets} from '../selection/definedSets.js';
-import {ViewInterPairs} from '../interaction/viewInterPairs.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Contact} from '../interaction/contact.js';
-import {HBond} from '../interaction/hBond.js';
-import {PiHalogen} from '../interaction/piHalogen.js';
-import {Saltbridge} from '../interaction/saltbridge.js';
-import {Selection} from '../selection/selection.js';
-import {Draw} from '../display/draw.js';
-import {ApplyClbonds} from '../display/applyClbonds.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-
 class ContactMap {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -45,12 +28,12 @@ class ContactMap {
        }
     }
 
-    afErrorMap(afid, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
+    afErrorMap(afid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
 
-        let  url, dataType;
+        let url, dataType;
     
         //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
         url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
@@ -248,9 +231,9 @@ class ContactMap {
         let bContactMap = true;
 
         if(bAfMap) { // cleaned the code by using "use" in SVG, but didn't improve rendering
-            let  factor = 1;
-            let  r = 3 * factor;
-            let  rectSize = 2 * r;
+            let factor = 1;
+            let r = 3 * factor;
+            let rectSize = 2 * r;
 
             ic.hex2id = {};
             let threshold = 29.0 / max;

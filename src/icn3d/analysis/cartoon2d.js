@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Selection} from '../selection/selection.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {Annotation} from '../annotations/annotation.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-
 class Cartoon2d {
     constructor(icn3d) {
         this.icn3d = icn3d;

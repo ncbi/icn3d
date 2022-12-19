@@ -2,24 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {PdbParser} from '../parsers/pdbParser.js';
-import {LoadAtomData} from '../parsers/loadAtomData.js';
-import {MmtfParser} from '../parsers/mmtfParser.js';
-import {AlignParser} from '../parsers/alignParser.js';
-import {MmcifParser} from '../parsers/mmcifParser.js';
-
 class OpmParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    downloadOpm(opmid) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  url, dataType;
+    downloadOpm(opmid) { let ic = this.icn3d, me = ic.icn3dui;
+       let url, dataType;
 
        url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
 
@@ -67,9 +56,9 @@ class OpmParser {
        });
     }
 
-    loadOpmData(data, pdbid, bFull, type, pdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
-        let  url, dataType;
+    loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+        let url, dataType;
 
         if(!pdbid) pdbid = 'stru';
 
@@ -84,12 +73,6 @@ class OpmParser {
           retryLimit : 0, //1
           success: function(opmdata) {
               thisClass.setOpmData(opmdata); // set ic.bOpm
-
-    //          $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
-    //          $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
-
-    //          $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
-    //          $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
               thisClass.parseAtomData(data, pdbid, bFull, type, pdbid2);
 
@@ -111,7 +94,7 @@ class OpmParser {
         });
     }
 
-    setOpmData(data) { let  ic = this.icn3d, me = ic.icn3dui;
+    setOpmData(data) { let ic = this.icn3d, me = ic.icn3dui;
         if(data.opm !== undefined && data.opm.rot !== undefined) {
             ic.bOpm = true;
 
@@ -133,7 +116,7 @@ class OpmParser {
         }
     }
 
-    parseAtomData(data, pdbid, bFull, type, pdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseAtomData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
           if(type === 'mmtf') {
               ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
 

@@ -2,12 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
 class LoadPDB {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -15,18 +9,18 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;
-        let  lines = src.split('\n');
+        let lines = src.split('\n');
 
-        let  chainsTmp = {} // serial -> atom
-        let  residuesTmp = {} // serial -> atom
+        let chainsTmp = {} // serial -> atom
+        let residuesTmp = {} // serial -> atom
 
         if(!ic.atoms) bAppend = false;
 
-        let  serial, moleculeNum;
+        let serial, moleculeNum;
         if(!bMutation && !bAppend) {
             ic.init();
             moleculeNum = 1;
@@ -35,8 +29,8 @@ class LoadPDB {
         else {
             // remove the last structure
             // if(ic.alertAlt) {
-            //     let  nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
-            //     let   chainArray = ic.structures[nStru - 1];
+            //     let nStru = ic.oriNStru + 1; //Object.keys(ic.structures).length;
+            //     let  chainArray = ic.structures[nStru - 1];
             //     for(let i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
             //         for(let j in ic.chains[chainArray[i]]) {
             //             delete ic.atoms[j];
@@ -60,27 +54,27 @@ class LoadPDB {
         //let helices = [], sheets = [];
         let sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
 
-        let  chainNum, residueNum, oriResidueNum;
-        let  prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '', prevResi = 0;
-        let  prevRecord = '';
-        let  bModifyResi = false;
+        let chainNum, residueNum, oriResidueNum;
+        let prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '', prevResi = 0;
+        let prevRecord = '';
+        let bModifyResi = false;
 
-        let  oriSerial2NewSerial = {}
+        let oriSerial2NewSerial = {}
 
-        //let  chainMissingResidueArray = {}
+        //let chainMissingResidueArray = {}
 
-        let  id = (pdbid) ? pdbid : 'stru';
+        let id = (pdbid) ? pdbid : 'stru';
 
-        let  maxMissingResi = 0, prevMissingChain = '';
-        let  CSerial, prevCSerial, OSerial, prevOSerial;
+        let maxMissingResi = 0, prevMissingChain = '';
+        let CSerial, prevCSerial, OSerial, prevOSerial;
 
-        let  structure = "stru";
+        let structure = "stru";
 
         let bHeader = false;
 
         for (let i in lines) {
-            let  line = lines[i];
-            let  record = line.substr(0, 6);
+            let line = lines[i];
+            let record = line.substr(0, 6);
 
             if (record === 'HEADER' && !bHeader) {              
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
@@ -109,16 +103,16 @@ class LoadPDB {
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
-                let  name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
+                let name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
 
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;
 
-                //let  startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
-                let  startChain = (line.substr(18, 2).trim() == '') ? 'A' : line.substr(18, 2).trim();
-                let  startResi = parseInt(line.substr(21, 4));
-                let  endResi = parseInt(line.substr(33, 4));
+                //let startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
+                let startChain = (line.substr(18, 2).trim() == '') ? 'A' : line.substr(18, 2).trim();
+                let startResi = parseInt(line.substr(21, 4));
+                let endResi = parseInt(line.substr(33, 4));
 
                 for(let j = startResi; j <= endResi; ++j) {
                   let resid = structure + "_" + startChain + "_" + j;
@@ -126,28 +120,18 @@ class LoadPDB {
 
                   if(j === startResi) helixStart.push(resid);
                   if(j === endResi) helixEnd.push(resid);
-                }
-/*
-                helices.push({
-                    structure: structure,
-                    chain: startChain,
-                    initialResidue: startResi,
-                    initialInscode: line.substr(25, 1),
-                    terminalResidue: endResi,
-                    terminalInscode: line.substr(37, 1),
-                });
-*/                
+                }               
             } else if (record === 'SHEET ') {
                 //ic.bSecondaryStructure = true;
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
-                //let  startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
-                let  startChain = (line.substr(20, 2).trim() == '') ? 'A' : line.substr(20, 2).trim();
-                let  startResi = parseInt(line.substr(22, 4));
-                let  endResi = parseInt(line.substr(33, 4));
+                //let startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
+                let startChain = (line.substr(20, 2).trim() == '') ? 'A' : line.substr(20, 2).trim();
+                let startResi = parseInt(line.substr(22, 4));
+                let endResi = parseInt(line.substr(33, 4));
 
                 for(let j = startResi; j <= endResi; ++j) {
-                  let  resid = structure + "_" + startChain + "_" + j;
+                  let resid = structure + "_" + startChain + "_" + j;
                   sheetArray.push(resid);
 
                   if(j === startResi) sheetStart.push(resid);
@@ -158,20 +142,20 @@ class LoadPDB {
             } else if (record === 'SSBOND') {
                 ic.bSsbondProvided = true;
                 //SSBOND   1 CYS E   48    CYS E   51                          2555
-                let  chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
-                let  resi1 = line.substr(17, 4).trim();
-                let  resid1 = id + '_' + chain1 + '_' + resi1;
+                let chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
+                let resi1 = line.substr(17, 4).trim();
+                let resid1 = id + '_' + chain1 + '_' + resi1;
 
-                let  chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
-                let  resi2 = line.substr(31, 4).trim();
-                let  resid2 = id + '_' + chain2 + '_' + resi2;
+                let chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
+                let resi2 = line.substr(31, 4).trim();
+                let resid2 = id + '_' + chain2 + '_' + resi2;
 
                 if(ic.ssbondpnts[id] === undefined) ic.ssbondpnts[id] = [];
 
                 ic.ssbondpnts[id].push(resid1);
                 ic.ssbondpnts[id].push(resid2);
             } else if (record === 'REMARK') {
-                 let  remarkType = parseInt(line.substr(7, 3));
+                 let remarkType = parseInt(line.substr(7, 3));
 
                  if(line.indexOf('1/2 of bilayer thickness:') !== -1) { // OPM transmembrane protein
                     ic.halfBilayerSize = parseFloat(line.substr(line.indexOf(':') + 1).trim());
@@ -182,9 +166,9 @@ class LoadPDB {
                      }
                  }
                  else if (remarkType == 350 && line.substr(13, 5) == 'BIOMT') {
-                    let  n = parseInt(line[18]) - 1;
+                    let n = parseInt(line[18]) - 1;
                     //var m = parseInt(line.substr(21, 2));
-                    let  m = parseInt(line.substr(21, 2)) - 1; // start from 1
+                    let m = parseInt(line.substr(21, 2)) - 1; // start from 1
                     if (ic.biomtMatrices[m] == undefined) ic.biomtMatrices[m] = new THREE.Matrix4().identity();
                     ic.biomtMatrices[m].elements[n] = parseFloat(line.substr(24, 9));
                     ic.biomtMatrices[m].elements[n + 4] = parseFloat(line.substr(34, 9));
@@ -194,20 +178,20 @@ class LoadPDB {
                  }
                  // missing residues
                  else if (remarkType == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
-                    let  resn = line.substr(15, 3);
-                    //let  chain = line.substr(19, 1);
-                    let  chain = line.substr(18, 2).trim();
-                    //let  resi = parseInt(line.substr(21, 5));
-                    let  resi = line.substr(21, 5);
+                    let resn = line.substr(15, 3);
+                    //let chain = line.substr(19, 1);
+                    let chain = line.substr(18, 2).trim();
+                    //let resi = parseInt(line.substr(21, 5));
+                    let resi = line.substr(21, 5);
 
                     //var structure = parseInt(line.substr(13, 1));
                     //if(line.substr(13, 1) == ' ') structure = 1;
 
                     //var chainNum = structure + '_' + chain;
-                    let  chainNum = id + '_' + chain;
+                    let chainNum = id + '_' + chain;
 
                     if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
-                    let  resObject = {}
+                    let resObject = {}
                     resObject.resi = resi;
                     resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
 
@@ -267,32 +251,32 @@ class LoadPDB {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
-                let  alt = line.substr(16, 1);
+                let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
 
                 // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
                 // Concatenation of two pdbs will have several atoms for the same serial
                 ++serial;
 
-                let  serial2 = parseInt(line.substr(6, 5));
+                let serial2 = parseInt(line.substr(6, 5));
                 oriSerial2NewSerial[serial2] = serial;
 
-                let  elem = line.substr(76, 2).trim();
+                let elem = line.substr(76, 2).trim();
                 if (elem === '') { // for some incorrect PDB files, important to use substr(12,2), not (12,4)
                    elem = line.substr(12, 2).trim();
                 }
-                let  atom = line.substr(12, 4).trim();
-                let  resn = line.substr(17, 3);
+                let atom = line.substr(12, 4).trim();
+                let resn = line.substr(17, 3);
 
-                //let  chain = line.substr(21, 1);
+                //let chain = line.substr(21, 1);
                 //if(chain === ' ') chain = 'A';
-                let  chain = line.substr(20, 2).trim();
+                let chain = line.substr(20, 2).trim();
                 if(chain === '') chain = 'A';
 
                 //var oriResi = line.substr(22, 4).trim();
-                let  oriResi = line.substr(22, 5).trim();
+                let oriResi = line.substr(22, 5).trim();
 
-                let  resi = oriResi; //parseInt(oriResi);
+                let resi = oriResi; //parseInt(oriResi);
                 if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
                   bModifyResi = true;
                   //resi = (prevResi == 0) ? resi : prevResi + 1;
@@ -316,14 +300,14 @@ class LoadPDB {
 
                 residueNum = chainNum + "_" + resi;
 
-                //let  chain_resi = chain + "_" + resi;
+                //let chain_resi = chain + "_" + resi;
 
-                let  x = parseFloat(line.substr(30, 8));
-                let  y = parseFloat(line.substr(38, 8));
-                let  z = parseFloat(line.substr(46, 8));
-                let  coord = new THREE.Vector3(x, y, z);
+                let x = parseFloat(line.substr(30, 8));
+                let y = parseFloat(line.substr(38, 8));
+                let z = parseFloat(line.substr(46, 8));
+                let coord = new THREE.Vector3(x, y, z);
 
-                let  atomDetails = {
+                let atomDetails = {
                     het: record[0] === 'H', // optional, used to determine chemicals, water, ions, etc
                     serial: serial,         // required, unique atom id
                     name: atom,             // required, atom name
@@ -351,11 +335,11 @@ class LoadPDB {
 
                 // from DSSP C++ code
                 if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
-                    let  dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
+                    let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
 
-                    let  x2 = atomDetails.coord.x + (ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
-                    let  y2 = atomDetails.coord.y + (ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
-                    let  z2 = atomDetails.coord.z + (ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
+                    let x2 = atomDetails.coord.x + (ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
+                    let y2 = atomDetails.coord.y + (ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
+                    let z2 = atomDetails.coord.z + (ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
 
                     atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
                 }
@@ -392,7 +376,7 @@ class LoadPDB {
                   }
                 }
 
-                let  secondaries = '-';
+                let secondaries = '-';
                 if(ic.atoms[serial].ss === 'helix') {
                     secondaries = 'H';
                 }
@@ -414,7 +398,7 @@ class LoadPDB {
                 // different residue
                 //if(residueNum !== prevResidueNum) {
                 if(oriResidueNum !== prevOriResidueNum) {
-                    let  residue = me.utilsCls.residueName2Abbr(resn);
+                    let residue = me.utilsCls.residueName2Abbr(resn);
                     ic.residueId2Name[residueNum] = residue;
 
                     if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;
@@ -441,7 +425,7 @@ class LoadPDB {
 
                         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
-                        let  resObject = {}
+                        let resObject = {}
                         resObject.resi = resi;
                         resObject.name = residue;
 
@@ -451,7 +435,7 @@ class LoadPDB {
                         prevCSerial = CSerial;
                         prevOSerial = OSerial;
 
-                        let  resObject = {}
+                        let resObject = {}
                         resObject.resi = resi;
                         resObject.name = residue;
 
@@ -469,9 +453,9 @@ class LoadPDB {
                 prevOriResidueNum = oriResidueNum;
 
             } else if (record === 'CONECT') {
-                let  from = parseInt(line.substr(6, 5));
+                let from = parseInt(line.substr(6, 5));
                 for (let j = 0; j < 4; ++j) {
-                    let  to = parseInt(line.substr([11, 16, 21, 26][j], 5));
+                    let to = parseInt(line.substr([11, 16, 21, 26][j], 5));
                     if (isNaN(to)) continue;
 
                     if(ic.atoms[oriSerial2NewSerial[from]] !== undefined) ic.atoms[oriSerial2NewSerial[from]].bonds.push(oriSerial2NewSerial[to]);
@@ -491,16 +475,16 @@ class LoadPDB {
 
     //    ic.missingResidues = [];
     //    for(let chainid in chainMissingResidueArray) {
-    //        let  resArray = chainMissingResidueArray[chainid];
+    //        let resArray = chainMissingResidueArray[chainid];
     //        for(let i = 0; i < resArray.length; ++i) {
     //            ic.missingResidues.push(chainid + '_' + resArray[i].resi);
     //        }
     //    }
 
         // copy disulfide bonds
-        let  structureArray = Object.keys(ic.structures);
+        let structureArray = Object.keys(ic.structures);
         for(let s = 0, sl = structureArray.length; s < sl; ++s) {
-            let  structure = structureArray[s];
+            let structure = structureArray[s];
 
             if(structure == id) continue;
 
@@ -508,9 +492,9 @@ class LoadPDB {
 
             if(ic.ssbondpnts[id] !== undefined) {
                 for(let j = 0, jl = ic.ssbondpnts[id].length; j < jl; ++j) {
-                    let  ori_resid = ic.ssbondpnts[id][j];
-                    let  pos = ori_resid.indexOf('_');
-                    let  resid = structure + ori_resid.substr(pos);
+                    let ori_resid = ic.ssbondpnts[id][j];
+                    let pos = ori_resid.indexOf('_');
+                    let resid = structure + ori_resid.substr(pos);
 
                     ic.ssbondpnts[structure].push(resid);
                 }
@@ -526,22 +510,22 @@ class LoadPDB {
         lines = null;
 
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.hAtoms);
-        let  curChain = firstAtom.chain, curResi = firstAtom.resi, curInsc, curResAtoms = [];
+        let curChain = firstAtom.chain, curResi = firstAtom.resi, curInsc, curResAtoms = [];
       
-        let  pmin = new THREE.Vector3( 9999, 9999, 9999);
-        let  pmax = new THREE.Vector3(-9999,-9999,-9999);
-        let  psum = new THREE.Vector3();
-        let  cnt = 0;
+        let pmin = new THREE.Vector3( 9999, 9999, 9999);
+        let pmax = new THREE.Vector3(-9999,-9999,-9999);
+        let psum = new THREE.Vector3();
+        let cnt = 0;
 
         // lipids may be considered as protein if "ATOM" instead of "HETATM" was used
-        let  lipidResidHash = {}
+        let lipidResidHash = {}
 
         // assign atoms
         let prevCarbonArray = [firstAtom]; // add a dummy atom
         //for (let i in ic.atoms) {
         for (let i in ic.hAtoms) {    
-            let  atom = ic.atoms[i];
-            let  coord = atom.coord;
+            let atom = ic.atoms[i];
+            let coord = atom.coord;
             psum.add(coord);
             pmin.min(coord);
             pmax.max(coord);
@@ -612,9 +596,9 @@ class LoadPDB {
 
         // reset lipid
         for(let resid in lipidResidHash) {
-            let  atomHash = ic.residues[resid];
+            let atomHash = ic.residues[resid];
             for(serial in atomHash) {
-                let  atom = ic.atoms[serial];
+                let atom = ic.atoms[serial];
 
                 atom.het = true;
                 ic.chemicals[atom.serial] = 1;
@@ -662,12 +646,12 @@ class LoadPDB {
     }
 
     // refresh for atoms in each residue
-    refreshBonds(curResAtoms, prevCarbon) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  n = curResAtoms.length;
+    refreshBonds(curResAtoms, prevCarbon) { let ic = this.icn3d, me = ic.icn3dui;
+        let n = curResAtoms.length;
         for (let j = 0; j < n; ++j) {
-            let  atom0 = curResAtoms[j];
+            let atom0 = curResAtoms[j];
             for (let k = j + 1; k < n; ++k) {
-                let  atom1 = curResAtoms[k];
+                let atom1 = curResAtoms[k];
                 if (atom0.alt === atom1.alt && me.utilsCls.hasCovalentBond(atom0, atom1)) {
                 //if (me.utilsCls.hasCovalentBond(atom0, atom1)) {
                     atom0.bonds.push(atom1.serial);
@@ -683,21 +667,21 @@ class LoadPDB {
         }
     }
 
-    adjustSeq(chainMissingResidueArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    adjustSeq(chainMissingResidueArray) { let ic = this.icn3d, me = ic.icn3dui;
         // adjust sequences
         for(let chainNum in ic.chainsSeq) {
             if(chainMissingResidueArray[chainNum] === undefined) continue;
 
-            //let  A = ic.chainsSeq[chainNum];
-            //let  B = chainMissingResidueArray[chainNum];
+            //let A = ic.chainsSeq[chainNum];
+            //let B = chainMissingResidueArray[chainNum];
 
-            let  A = chainMissingResidueArray[chainNum];
-            let  B = ic.chainsSeq[chainNum];
+            let A = chainMissingResidueArray[chainNum];
+            let B = ic.chainsSeq[chainNum];
 
-            let  m = A.length;
-            let  n = B.length;
+            let m = A.length;
+            let n = B.length;
 
-            let  C = new Array(m + n);
+            let C = new Array(m + n);
             //var C2 = new Array(m + n);
             //var C3 = new Array(m + n);
 
@@ -705,7 +689,7 @@ class LoadPDB {
             // m - size of A
             // n - size of B
             // size of C array must be equal or greater than m + n
-              let  i, j, k;
+              let i, j, k;
               i = 0;
               j = 0;
               k = 0;
@@ -755,13 +739,13 @@ class LoadPDB {
         }
     }
 
-    setSsbond() { let  ic = this.icn3d, me = ic.icn3dui;
+    setSsbond() { let ic = this.icn3d, me = ic.icn3dui;
         // get all Cys residues
-        let  structure2cys_resid = {};
+        let structure2cys_resid = {};
 
         for(let chainid in ic.chainsSeq) {
-            let  seq = ic.chainsSeq[chainid];
-            let  structure = chainid.substr(0, chainid.indexOf('_'));
+            let seq = ic.chainsSeq[chainid];
+            let structure = chainid.substr(0, chainid.indexOf('_'));
 
             for(let i = 0, il = seq.length; i < il; ++i) {
                 // each seq[i] = {"resi": 1, "name":"C"}
@@ -774,17 +758,17 @@ class LoadPDB {
 
         // determine whether there are disulfide bonds
         // disulfide bond is about 2.05 angstrom
-        let  distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
-        let  distSqrMax = distMax * distMax;
+        let distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
+        let distSqrMax = distMax * distMax;
         for(let structure in structure2cys_resid) {
-            let  cysArray = structure2cys_resid[structure];
+            let cysArray = structure2cys_resid[structure];
 
             for(let i = 0, il = cysArray.length; i < il; ++i) {
                 for(let j = i + 1, jl = cysArray.length; j < jl; ++j) {
-                    let  resid1 = cysArray[i];
-                    let  resid2 = cysArray[j];
+                    let resid1 = cysArray[i];
+                    let resid2 = cysArray[j];
 
-                    let  coord1 = undefined, coord2 = undefined;
+                    let coord1 = undefined, coord2 = undefined;
                     for(let serial in ic.residues[resid1]) {
                         if(ic.atoms[serial].elem == 'S') {
                             coord1 = ic.atoms[serial].coord;
@@ -803,7 +787,7 @@ class LoadPDB {
                     if(Math.abs(coord1.x - coord2.x) > distMax) continue;
                     if(Math.abs(coord1.y - coord2.y) > distMax) continue;
                     if(Math.abs(coord1.z - coord2.z) > distMax) continue;
-                    let  distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
+                    let distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
 
                     if(distSqr < distSqrMax) { // disulfide bond
                         if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
@@ -815,33 +799,33 @@ class LoadPDB {
         }
     }
 
-    getChainCalpha(chains, atoms, bResi_ori, pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  chainCalphaHash = {}
+    getChainCalpha(chains, atoms, bResi_ori, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainCalphaHash = {}
 
         for(let chainid in chains) {
             if(pdbid !== undefined) {
-                let  textArray =  chainid.split('_');
+                let textArray =  chainid.split('_');
                 if(textArray[0] !== pdbid) continue; // skip different chain
             }
 
-            let  serialArray = Object.keys(chains[chainid]);
+            let serialArray = Object.keys(chains[chainid]);
 
-            let  calphaArray = [];
-            let  cnt = 0;
-            let  lastResi = 0;
-            let  bBaseResi = true, baseResi = 1;
+            let calphaArray = [];
+            let cnt = 0;
+            let lastResi = 0;
+            let bBaseResi = true, baseResi = 1;
             for(let i = 0, il = serialArray.length; i < il; ++i) {
-                let  atom = atoms[serialArray[i]];
+                let atom = atoms[serialArray[i]];
                 if( (ic.proteins.hasOwnProperty(serialArray[i]) && atom.name == "CA")
                   || (ic.nucleotides.hasOwnProperty(serialArray[i]) && (atom.name == "O3'" || atom.name == "O3*")) ) {
                     if(atom.resi == lastResi) continue; // e.g., Alt A and B
 
-                    let  resn = (atom.resn.trim().length > 3) ? atom.resn.trim().substr(0, 3) : atom.resn.trim();
+                    let resn = (atom.resn.trim().length > 3) ? atom.resn.trim().substr(0, 3) : atom.resn.trim();
                     if(!me.parasCls.chargeColors.hasOwnProperty(resn)) {
                         continue; // regular residues
                     }
 
-                    let  resi = (bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
+                    let resi = (bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
 
                     if(bBaseResi) {
                         baseResi = resi;
@@ -860,7 +844,7 @@ class LoadPDB {
 
             if(cnt > 0) {
                 //var chainid = atoms[serialArray[0]].structure + '_' + atoms[serialArray[0]].chain;
-                let  chain = atoms[serialArray[0]].chain;
+                let chain = atoms[serialArray[0]].chain;
                 chainCalphaHash[chain] = calphaArray;
             }
         }
@@ -868,7 +852,7 @@ class LoadPDB {
         return {'chainresiCalphaHash': chainCalphaHash, 'center': ic.center.clone()}
     }
 
-    isSecondary(resid, residArray, bNMR) { let  ic = this.icn3d, me = ic.icn3dui;
+    isSecondary(resid, residArray, bNMR) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bNMR) {
             return $.inArray(resid, residArray) != -1;
         }

@@ -2,25 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from './html.js';
-
-import {HashUtilsCls} from '../utils/hashUtilsCls.js';
-import {UtilsCls} from '../utils/utilsCls.js';
-import {MyEventCls} from '../utils/myEventCls.js';
-
-import {SaveFile} from '../icn3d/export/saveFile.js';
-import {LoadScript} from '../icn3d/selection/loadScript.js';
-import {ParserUtils} from '../icn3d/parsers/parserUtils.js';
-import {Dsn6Parser} from '../icn3d/parsers/dsn6Parser.js';
-import {PdbParser} from '../icn3d/parsers/pdbParser.js';
-import {MmtfParser} from '../icn3d/parsers/mmtfParser.js';
-import {OpmParser} from '../icn3d/parsers/opmParser.js';
-import {MmdbParser} from '../icn3d/parsers/mmdbParser.js';
-import {SdfParser} from '../icn3d/parsers/sdfParser.js';
-import {MmcifParser} from '../icn3d/parsers/mmcifParser.js';
-import {AlignParser} from '../icn3d/parsers/alignParser.js';
-import {ChainalignParser} from '../icn3d/parsers/chainalignParser.js';
-
 class SetHtml {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -594,14 +575,6 @@ class SetHtml {
         html += "<br>" + this.getFootHtml(type, name1 + "tab2_foot");
         html += "</div>";
 
-        //html += me.htmlCls.divStr + name1 + "tab3'>";
-
-        //html += me.htmlCls.buttonStr + name1 + "pdb'>Download PDB</button> ";
-        //html += me.htmlCls.buttonStr + name1 + "pqr' style='margin-left:30px'>Download PQR</button>(with partial charges)<br>";
-
-        //html += "<br>" + footHtml;
-        //html += "</div>";
-
         html += "</div>";
         html += "</div>";
 
@@ -609,24 +582,8 @@ class SetHtml {
     }
 
     exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
-       let chainHash = {}, ionHash = {}
-       let atomHash = {}
-    /*
-       for(let i in ic.hAtoms) {
-           let atom = ic.atoms[i];
-
-           if(ic.ions.hasOwnProperty(i)) {
-             ionHash[i] = 1;
-           }
-           else {
-             chainHash[atom.structure + '_' + atom.chain] = 1;
-           }
-       }
-
-       for(let chainid in chainHash) {
-           atomHash = me.hashUtilsCls.unionHash(atomHash, ic.chains[chainid]);
-       }
-    */
+       let chainHash = {}, ionHash = {};
+       let atomHash = {};
 
        let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
        for(let i in atoms) {
@@ -643,7 +600,7 @@ class SetHtml {
        let fileExt = (bPdb) ? 'pdb' : 'pqr';
        if(me.cfg.cid) {
           let pqrStr = '';
-///          pqrStr += ic.saveFileCls.getPDBHeader();
+          
           let bPqr = (bPdb) ? false : true;
           pqrStr += ic.saveFileCls.getAtomPDB(atomHash, bPqr) + ic.saveFileCls.getAtomPDB(ionHash, bPqr);
 
@@ -658,7 +615,6 @@ class SetHtml {
            }
 
            let pdbstr = '';
-///           pdbstr += ic.saveFileCls.getPDBHeader();
 
            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);

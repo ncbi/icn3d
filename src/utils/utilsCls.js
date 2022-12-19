@@ -2,9 +2,9 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
 
-import {ParasCls} from './parasCls.js';
+
+// import {ParasCls} from './parasCls.js';
 
 class UtilsCls {
     constructor(icn3dui) {

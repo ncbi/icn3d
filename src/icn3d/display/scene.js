@@ -2,23 +2,11 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Camera} from '../display/camera.js';
-import {Fog} from '../display/fog.js';
-import {ApplyClbonds} from '../display/applyClbonds.js';
-import {ApplyDisplay} from '../display/applyDisplay.js';
-import {ApplyOther} from '../display/applyOther.js';
-import {ApplySsbonds} from '../display/applySsbonds.js';
-
-// The following four files are for VR view:
-import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
-import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
-import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
-import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
+// // The following four files are for VR view:
+// import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
+// import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
+// import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
+// import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
 import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
 import {ControllerGestures} from "../../thirdparty/three/vr/ControllerGestures.js";
 

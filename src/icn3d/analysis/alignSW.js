@@ -2,13 +2,6 @@
  * @author Jack Lin, modified from https://github.com/lh3/bioseq-js/blob/master/bioseq.js
  */
 
-//import { HashUtilsCls } from '../../utils/hashUtilsCls.js';
-
-//import { Html } from '../../html/html.js';
-
-//import { SaveFile } from '../export/saveFile.js';
-//import { PdbParser } from '../parsers/pdbParser.js';
-
 class AlignSW {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -24,30 +17,6 @@ class AlignSW {
         str += 'alignment:\n\n';
         let fmt = this.bsa_cigar2gaps(target, query, rst[1], rst[2]);
 
-/*
-        //let anno_seq = document.getElementById("div0_dl_annotations")
-        let algn = "<div id=waterman_alignment><span>" + 'score: ' + rst[0] + '<br>' + 'start: ' + rst[1] + '<br>' + 'cigar: ' + this.bsa_cigar2str(rst[2]) + '<br><br>' + 'alignment:' + '<br>'
-
-        let linelen = 100,
-            n_lines = 10;
-        for (let l = 0; l < fmt[0].length; l += linelen) {
-            str += fmt[0].substr(l, linelen) + '\n';
-            str += fmt[2].substr(l, linelen) + '\n';
-            str += fmt[1].substr(l, linelen) + '\n\n';
-            n_lines += 4;
-        }
-
-        algn += '<pre>'
-        algn += fmt[0] + '<br>';
-        algn += fmt[2] + '<br>';
-        algn += fmt[1] + '<br><br>';
-        algn += '</pre><br>' + "</span></div>"
-
-        //anno_seq.innerHTML += algn
-
-        //let elapse = (new Date().getTime() - time_start) / 1000.0;
-        //console.log("in " + elapse.toFixed(3) + "s");
-*/
         let algn = {};
         algn.score = rst[0];
         algn.start = rst[1];
@@ -75,21 +44,6 @@ class AlignSW {
             s[i] = table[seq.charCodeAt(i)];
         return s;
     }
-
-    /*
-        ks_revcomp(s) { let ic = this.icn3d, me = ic.icn3dui;
-            let ks_comp = {'A':'T','C':'G','G':'C','T':'A','M':'K','K':'M','Y':'R','R':'Y','V':'B','B':'V','H':'D','D':'H',
-                        'a':'t','c':'g','g':'c','t':'a','m':'k','k':'m','y':'r','r':'y','v':'b','b':'v','h':'d','d':'h'};
-
-            let i, t = '';
-            for (i = 0; i < s.length; ++i) {
-                let c = s.charAt(s.length - 1 - i);
-                let d = ks_comp[c];
-                t += d? d : c;
-            }
-            return t;
-        }
-    */
 
     /**************************
      *** Pairwise alignment ***

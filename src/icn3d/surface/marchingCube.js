@@ -5,15 +5,13 @@
 
 //var $3Dmol = $3Dmol || {};
 
-//import * as THREE from 'three';
-
 class MarchingCube {
     constructor(icn3d) {
         this.icn3d = icn3d;
 
 //Encapsulate marching cube algorithm for isosurface generation
 //(currently used by protein surface rendering and generic volumetric data reading)
-//$3Dmol.MarchingCubeInitializer = function() { let  me = this, ic = me.icn3d; "use strict";
+//$3Dmol.MarchingCubeInitializer = function() { let me = this, ic = me.icn3d; "use strict";
 
     //Marching cube algorithm - assume data has been pre-treated so isovalue is 0
     //(i.e. select points greater than 0)
@@ -38,7 +36,7 @@ class MarchingCube {
          * sensible corner numbering scheme and the discrete nature of our voxel data
          *(resulting in fewer faces).
          */
-        let  edgeTableOri = [ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+        let edgeTableOri = [ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
                 0xb00, 0x0, 0x0, 0x0, 0x700, 0x0, 0xd00, 0xe00, 0xf00, 0x0, 0x0, 0x0,
                 0x8a, 0x0, 0x15, 0x0, 0x86, 0x0, 0x0, 0x0, 0x28c, 0x0, 0x813, 0xf19,
                 0xe10, 0x0, 0x0, 0x0, 0x2a, 0x0, 0x0, 0x0, 0x126, 0x0, 0x0, 0x15, 0x1c,
@@ -328,17 +326,17 @@ class MarchingCube {
 
 MarchingCube.prototype.march = function(data, verts, faces, spec) {
 
-    let  fulltable = !!(spec.fulltable);
-    let  origin =(spec.hasOwnProperty('origin') && spec.origin.hasOwnProperty('x')) ? spec.origin : {x:0, y:0, z:0};
-    let  voxel = !!(spec.voxel);
-    let  transform = spec.matrix; //if this is set, it overrides origin and unitCube
+    let fulltable = !!(spec.fulltable);
+    let origin =(spec.hasOwnProperty('origin') && spec.origin.hasOwnProperty('x')) ? spec.origin : {x:0, y:0, z:0};
+    let voxel = !!(spec.voxel);
+    let transform = spec.matrix; //if this is set, it overrides origin and unitCube
 
-    let  nX = spec.nX || 0;
-    let  nY = spec.nY || 0;
-    let  nZ = spec.nZ || 0;
+    let nX = spec.nX || 0;
+    let nY = spec.nY || 0;
+    let nZ = spec.nZ || 0;
 
-    let  scale = spec.scale || 1.0;
-    let  unitCube = null;
+    let scale = spec.scale || 1.0;
+    let unitCube = null;
     if(spec.unitCube) {
         unitCube = spec.unitCube;
     } else {
@@ -346,9 +344,9 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
     }
 
     //keep track of calculated vertices to avoid repeats
-    let  vertnums = new Int32Array(nX*nY*nZ);
+    let vertnums = new Int32Array(nX*nY*nZ);
 
-    let  i, il;
+    let i, il;
 
     for(i = 0, il = vertnums.length; i < il; ++i)
         vertnums[i] = -1;
@@ -356,13 +354,13 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
     // create(or retrieve) a vertex at the appropriate point for
     // the edge(p1,p2)
 
-    let  getVertex = function(i, j, k, code, p1, p2) {
-        let  pt = {x:0,y:0,z:0};
-        let  val1 = !!(code &(1 << p1));
-        let  val2 = !!(code &(1 << p2));
+    let getVertex = function(i, j, k, code, p1, p2) {
+        let pt = {x:0,y:0,z:0};
+        let val1 = !!(code &(1 << p1));
+        let val2 = !!(code &(1 << p2));
 
         // p1 if they are the same or if !val1
-        let  p = p1;
+        let p = p1;
         if(!val1 && val2)
             p = p2;
 
@@ -384,7 +382,7 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
             pt.z = origin.z+unitCube.z*k;
         }
 
-        let  index =((nY * i) + j) * nZ + k;
+        let index =((nY * i) + j) * nZ + k;
 
         //Have to add option to do voxels
         if(!voxel) {
@@ -405,10 +403,10 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
 
     };
 
-    let  intersects = new Int32Array(12);
+    let intersects = new Int32Array(12);
 
-    let  etable =(fulltable) ? this.edgeTable2 : this.edgeTable;
-    let  tritable =(fulltable) ? this.triTable2 : this.triTable;
+    let etable =(fulltable) ? this.edgeTable2 : this.edgeTable;
+    let tritable =(fulltable) ? this.triTable2 : this.triTable;
 
     //Run marching cubes algorithm
     for(i = 0; i < nX-1; ++i) {
@@ -417,14 +415,14 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
 
             for(let k = 0; k < nZ-1; ++k){
 
-                let  code = 0;
+                let code = 0;
 
                 for(let p = 0; p < 8; ++p) {
-                    let  index =((nY *(i +((p & 4) >> 2))) + j +((p & 2) >> 1)) *
+                    let index =((nY *(i +((p & 4) >> 2))) + j +((p & 2) >> 1)) *
                                     nZ + k +(p & 1);
 
                     //TODO: Need to fix vpBits in protein surface for this to work
-                    let  val = !!(data[index] & this.ISDONE);
+                    let val = !!(data[index] & this.ISDONE);
                     //var val = !!(data[index] > 0);
 
                     code |= val << p;
@@ -433,12 +431,12 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
                 if(code === 0 || code === 255)
                     continue;
 
-                let  ecode = etable[code];
+                let ecode = etable[code];
 
                 if(ecode === 0)
                     continue;
 
-                let  ttable = tritable[code];
+                let ttable = tritable[code];
 
                 if(ecode & 1)
                     intersects[0] = getVertex(i, j, k, code, 0, 1);
@@ -467,7 +465,7 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
 
                 for(let t = 0; t < ttable.length; t += 3) {
 
-                    let  a = intersects[ttable[t]],
+                    let a = intersects[ttable[t]],
                         b = intersects[ttable[t+1]],
                         c = intersects[ttable[t+2]];
 
@@ -489,22 +487,22 @@ MarchingCube.prototype.march = function(data, verts, faces, spec) {
 };
 
 MarchingCube.prototype.laplacianSmooth = function(numiter, verts, faces) {
-    let  tps = new Array(verts.length);
-    let  i, il, j, jl, k, kl;
+    let tps = new Array(verts.length);
+    let i, il, j, jl, k, kl;
     for(i = 0, il = verts.length; i < il; i++)
             tps[i] = {
                 x : 0,
                 y : 0,
                 z : 0
             };
-    let  vertdeg = new Array(20);
-    let  flagvert;
+    let vertdeg = new Array(20);
+    let flagvert;
     for(i = 0; i < 20; i++)
             vertdeg[i] = new Array(verts.length);
     for(i = 0, il = verts.length; i < il; i++)
             vertdeg[0][i] = 0;
     for(i = 0, il = faces.length / 3; i < il; i++) {
-        let  aoffset = i*3, boffset = i*3 + 1, coffset = i*3 + 2;
+        let aoffset = i*3, boffset = i*3 + 1, coffset = i*3 + 2;
         flagvert = true;
         for(j = 0, jl = vertdeg[0][faces[aoffset]]; j < jl; j++) {
             if(faces[boffset] == vertdeg[j + 1][faces[aoffset]]) {
@@ -575,11 +573,11 @@ MarchingCube.prototype.laplacianSmooth = function(numiter, verts, faces) {
         }
     }
 
-    let  wt = 1.00;
-    let  wt2 = 0.50;
-    let  ssign;
-    let  scaleFactor = 1;
-    let  outwt = 0.75 /(scaleFactor + 3.5); // area-preserving
+    let wt = 1.00;
+    let wt2 = 0.50;
+    let ssign;
+    let scaleFactor = 1;
+    let outwt = 0.75 /(scaleFactor + 3.5); // area-preserving
     for(k = 0; k < numiter; k++) {
             for(i = 0, il = verts.length; i < il; i++) {
                     if(vertdeg[0][i] < 3) {

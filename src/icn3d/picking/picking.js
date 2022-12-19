@@ -2,15 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-
 class Picking {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -18,7 +9,7 @@ class Picking {
 
     //Define actions when an atom is picked. By default, the atom information
     //($[structure id].[chain id]:[residue number]@[atom name]) is displayed.
-    showPicking(atom, x, y) { let  ic = this.icn3d, me = ic.icn3dui;
+    showPicking(atom, x, y) { let ic = this.icn3d, me = ic.icn3dui;
       //me = ic.setIcn3dui(ic.id);
       if(me.cfg.cid !== undefined && ic.pk != 0) {
           ic.pk = 1; // atom
@@ -34,7 +25,7 @@ class Picking {
             if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
                 y += me.htmlCls.MENU_HEIGHT;
             }
-            let  text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+            let text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
                 text = atom.structure + '_' + atom.chain + ' ' + text;
                 $("#" + ic.pre + "popup").css("width", "160px");
@@ -48,7 +39,7 @@ class Picking {
           else {
               // highlight the sequence background
               ic.hlUpdateCls.updateHlAll();
-              let  transformation = {}
+              let transformation = {}
               transformation.factor = ic._zoomFactor;
               transformation.mouseChange = ic.mouseChange;
               //transformation.quaternion = ic.quaternion;
@@ -82,13 +73,13 @@ class Picking {
       }
     }
 
-    showPickingBase(atom, x, y) { let  ic = this.icn3d, me = ic.icn3dui;
+    showPickingBase(atom, x, y) { let ic = this.icn3d, me = ic.icn3dui;
       if(x === undefined && y === undefined) { // NOT mouse over
           this.showPickingHilight(atom); // including render step
       }
     }
 
-    showPickingHilight(atom) {  let  ic = this.icn3d, me = ic.icn3dui;
+    showPickingHilight(atom) {  let ic = this.icn3d, me = ic.icn3dui;
       if(!ic.bShift && !ic.bCtrl) ic.hlObjectsCls.removeHlObjects();
 
       ic.pickedAtomList = {}
@@ -96,7 +87,7 @@ class Picking {
         ic.pickedAtomList[atom.serial] = 1;
       }
       else if(ic.pk === 2) {
-        let  residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+        let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
         ic.pickedAtomList = ic.residues[residueid];
       }
       else if(ic.pk === 3) {
@@ -106,7 +97,7 @@ class Picking {
         ic.pickedAtomList = this.select3ddomainFromAtom(atom);
       }
       else if(ic.pk === 5) {
-        let  chainid = atom.structure + '_' + atom.chain;
+        let chainid = atom.structure + '_' + atom.chain;
         ic.pickedAtomList = ic.chains[chainid];
       }
 
@@ -117,8 +108,8 @@ class Picking {
           ic.bShowHighlight = true;
       }
 
-      let  intersectAtoms = (Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) ? {} : me.hashUtilsCls.intHash(ic.hAtoms, ic.pickedAtomList);
-      let  intersectAtomsSize = Object.keys(intersectAtoms).length;
+      let intersectAtoms = (Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) ? {} : me.hashUtilsCls.intHash(ic.hAtoms, ic.pickedAtomList);
+      let intersectAtomsSize = Object.keys(intersectAtoms).length;
 
       if(!ic.bShift && !ic.bCtrl) {
           //if(intersectAtomsSize > 0) {
@@ -135,22 +126,22 @@ class Picking {
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.pickedAtomList);
         }
         else {
-            let  prevAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.prevPickedAtomList);
-            let  currAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
+            let prevAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.prevPickedAtomList);
+            let currAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
 
-            let  prevChainid = prevAtom.structure + '_' + prevAtom.chain;
-            let  currChainid = currAtom.structure + '_' + currAtom.chain;
+            let prevChainid = prevAtom.structure + '_' + prevAtom.chain;
+            let currChainid = currAtom.structure + '_' + currAtom.chain;
 
             if(prevChainid != currChainid) {
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.pickedAtomList);
             }
             else { // range in the same chain only
-                let  combinedAtomList;
+                let combinedAtomList;
                 combinedAtomList = me.hashUtilsCls.unionHash(combinedAtomList, ic.prevPickedAtomList);
                 combinedAtomList = me.hashUtilsCls.unionHash(combinedAtomList, ic.pickedAtomList);
 
-                let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(combinedAtomList);
-                let  lastAtom = ic.firstAtomObjCls.getLastAtomObj(combinedAtomList);
+                let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(combinedAtomList);
+                let lastAtom = ic.firstAtomObjCls.getLastAtomObj(combinedAtomList);
 
                 for(let i = firstAtom.serial; i <= lastAtom.serial; ++i) {
                     ic.hAtoms[i] = 1;
@@ -174,13 +165,13 @@ class Picking {
       ic.hlObjectsCls.addHlObjects();
     }
 
-    select3ddomainFromAtom(atom) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  chainid = atom.structure + '_' + atom.chain;
-        let  resid = chainid + '_' + atom.resi;
+    select3ddomainFromAtom(atom) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid = atom.structure + '_' + atom.chain;
+        let resid = chainid + '_' + atom.resi;
 
-        let  domainid;
+        let domainid;
         for(let id in ic.tddomains) { // 3GVU_A_3d_domain_1
-            let  pos = id.indexOf('_3d_domain');
+            let pos = id.indexOf('_3d_domain');
             if(id.substr(0, pos) == chainid) {
                 if(Object.keys(ic.tddomains[id]).indexOf(resid) !== -1) {
                     domainid = id;
@@ -189,7 +180,7 @@ class Picking {
             }
         }
 
-        let  atomList = {}
+        let atomList = {}
         for(let resid in ic.tddomains[domainid]) {
             atomList = me.hashUtilsCls.unionHash(atomList, ic.residues[resid]);
         }
@@ -198,20 +189,20 @@ class Picking {
     }
 
     //For an "atom", select all atoms in the same strand, helix, or coil.
-    selectStrandHelixFromAtom(atom) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  firstAtom = atom;
-        let  lastAtom = atom;
+    selectStrandHelixFromAtom(atom) { let ic = this.icn3d, me = ic.icn3dui;
+        let firstAtom = atom;
+        let lastAtom = atom;
 
-        let  atomsHash = {}
+        let atomsHash = {}
 
         // fill the beginning
-        let  beginResi = firstAtom.resi;
+        let beginResi = firstAtom.resi;
         if(!firstAtom.ssbegin && !isNaN(firstAtom.resi)) {
             for(let i = firstAtom.resi - 1; i > 0; --i) {
-                let  residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                 if(!ic.residues.hasOwnProperty(residueid)) break;
 
-                let  atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
                 beginResi = atom.resi;
 
                 if( (firstAtom.ss !== 'coil' && atom.ss === firstAtom.ss && atom.ssbegin)
@@ -224,19 +215,19 @@ class Picking {
             }
 
             for(let i = beginResi; i <= firstAtom.resi; ++i) {
-                let  residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                 atomsHash = me.hashUtilsCls.unionHash(atomsHash, me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
             }
         }
 
         // fill the end
-        let  endResi = lastAtom.resi;
-        let  endChainResi = ic.firstAtomObjCls.getLastAtomObj(ic.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
+        let endResi = lastAtom.resi;
+        let endChainResi = ic.firstAtomObjCls.getLastAtomObj(ic.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
         for(let i = parseInt(lastAtom.resi) + 1; i <= parseInt(endChainResi); ++i) {
-            let  residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+            let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
             if(!ic.residues.hasOwnProperty(residueid)) break;
 
-            let  atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+            let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
             endResi = atom.resi;
 
             if( (lastAtom.ss !== 'coil' && atom.ss === lastAtom.ss && atom.ssend) || (lastAtom.ss === 'coil' && atom.ss !== lastAtom.ss) ) {
@@ -248,7 +239,7 @@ class Picking {
         }
 
         for(let i = parseInt(lastAtom.resi) + 1; i <= parseInt(endResi); ++i) {
-            let  residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+            let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
             atomsHash = me.hashUtilsCls.unionHash(atomsHash, me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
         }
 

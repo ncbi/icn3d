@@ -2,63 +2,24 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from './html.js';
-
-import {MyEventCls} from '../utils/myEventCls.js';
-import {HashUtilsCls} from '../utils/hashUtilsCls.js';
-import {UtilsCls} from '../utils/utilsCls.js';
-import {ParasCls} from '../utils/parasCls.js';
-
-import {ResizeCanvas} from '../icn3d/transform/resizeCanvas.js';
-import {Draw} from '../icn3d/display/draw.js';
-import {ApplyCenter} from '../icn3d/display/applyCenter.js';
-import {DefinedSets} from '../icn3d/selection/definedSets.js';
-import {Selection} from '../icn3d/selection/selection.js';
-import {LoadScript} from '../icn3d/selection/loadScript.js';
-import {SelectByCommand} from '../icn3d/selection/selectByCommand.js';
-
-import {Diagram2d} from '../icn3d/analysis/diagram2d.js';
-import {AddTrack} from '../icn3d/annotations/addTrack.js';
-import {Annotation} from '../icn3d/annotations/annotation.js';
-import {ShowAnno} from '../icn3d/annotations/showAnno.js';
-import {Resid2spec} from '../icn3d/selection/resid2spec.js';
-import {HlSeq} from '../icn3d/highlight/hlSeq.js';
-import {HlUpdate} from '../icn3d/highlight/hlUpdate.js';
-import {HlObjects} from '../icn3d/highlight/hlObjects.js';
-
-import {ViewInterPairs} from '../icn3d/interaction/viewInterPairs.js';
-import {ShowInter} from '../icn3d/interaction/showInter.js';
-import {GetGraph} from '../icn3d/interaction/getGraph.js';
-
-import {ClickMenu} from './clickMenu.js';
-import {Delphi} from '../icn3d/analysis/delphi.js';
-import {Scap} from '../icn3d/analysis/scap.js';
-import {SaveFile} from '../icn3d/export/saveFile.js';
-
-import {ParserUtils} from '../icn3d/parsers/parserUtils.js';
-import {Dsn6Parser} from '../icn3d/parsers/dsn6Parser.js';
-import {PdbParser} from '../icn3d/parsers/pdbParser.js';
-import {MmtfParser} from '../icn3d/parsers/mmtfParser.js';
-import {OpmParser} from '../icn3d/parsers/opmParser.js';
-import {MmdbParser} from '../icn3d/parsers/mmdbParser.js';
-import {SdfParser} from '../icn3d/parsers/sdfParser.js';
-import {MmcifParser} from '../icn3d/parsers/mmcifParser.js';
-import {AlignParser} from '../icn3d/parsers/alignParser.js';
-import {ChainalignParser} from '../icn3d/parsers/chainalignParser.js';
-
 class Events {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
     }
 
+    // simplify setLogCmd from clickMenuCls
+    setLogCmd(str, bSetCommand, bAddLogs) {var me = this.icn3dui, ic = me.icn3d;
+        me.htmlCls.clickMenuCls.setLogCmd(str, bSetCommand, bAddLogs);
+    }
+
     // ====== events start ===============
-    fullScreenChange() { let me = this.icn3dui, ic = me.icn3d; // event handler uses ".bind(inputAsThis)" to define "this"
+    fullScreenChange() { let me = this.icn3dui, ic = me.icn3d, thisClass = this; // event handler uses ".bind(inputAsThis)" to define "this"
         if(me.bNode) return;
 
         let fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
           || document.mozFullscreenElement || document.msFullscreenElement;
         if(!fullscreenElement) {
-            me.htmlCls.clickMenuCls.setLogCmd("exit full screen", false);
+            thisClass.setLogCmd("exit full screen", false);
             ic.bFullscreen = false;
             me.utilsCls.setViewerWidthHeight(me, true);
             ic.applyCenterCls.setWidthHeight(me.htmlCls.WIDTH, me.htmlCls.HEIGHT);
@@ -66,7 +27,7 @@ class Events {
         }
     }
 
-    convertUniProtInChains(alignment) { let me = this.icn3dui, ic = me.icn3d;
+    convertUniProtInChains(alignment) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let idArray = alignment.split(',');
         let alignment_final = '';
         for(let i = 0, il = idArray.length; i < il; ++i) {
@@ -77,7 +38,7 @@ class Events {
         return alignment_final;
     }
 
-    searchSeq() { let me = this.icn3dui, ic = me.icn3d;
+    searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        let select = $("#" + me.pre + "search_seq").val();
        if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
        && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
@@ -86,12 +47,10 @@ class Events {
        let commandname = select.replace(/\s+/g, '_');
        let commanddesc = commandname;
        ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
-       me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+       thisClass.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
-    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d;
-        let thisClass = this;
-
+    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
         
@@ -100,8 +59,8 @@ class Events {
             //++ic.loadedFileCnt;
 
             let dataStr = e.target.result; // or = reader.result;
-            //me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-            me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + file.name, false);
+            //thisClass.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+            thisClass.setLogCmd(commandName + ' pdb file ' + file.name, false);
 
             if(!bAppend) {
                 ic.init();
@@ -137,7 +96,7 @@ class Events {
         }
     }
 
-    loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
+    loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
 
        //me = ic.setIcn3dui(this.id);
@@ -173,7 +132,7 @@ class Events {
        }
     }
 
-    saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
+    saveHtml(id) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let html = '';
         html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
         html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
@@ -185,17 +144,12 @@ class Events {
         ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
     }
 
-    setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d;
+    setPredefinedMenu(id) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         if(Object.keys(ic.chains).length < 2) {
             alert("At least two chains are required for alignment...");
             return;
         }
-        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
-            let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-            ic.definedSetsCls.setPredefinedInMenu();
-            ic.bSetChainsAdvancedMenu = true;
-            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-        }
+        ic.clickMenuCls.SetChainsAdvancedMenu();
         let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
         if($("#" + me.pre + id).length) {
             $("#" + me.pre + id).html(definedAtomsHtml);
@@ -204,7 +158,7 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
-    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
+    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let flag = bBiounit ? '1' : '0';
 
         ids = ids.replace(/,/g, ' ').replace(/\s+/g, ',').trim();
@@ -216,12 +170,12 @@ class Events {
 
         let idArray = ids.split(',');
         if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdb" + flag + " " + ids, false);
+            thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
         }
         else {
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdbaf" + flag + " " + ids, false);
+            thisClass.setLogCmd("load mmdbaf" + flag + " " + ids, false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
         }
@@ -271,26 +225,23 @@ class Events {
         me.htmlCls.clickMenuCls.clickMenu5();
         me.htmlCls.clickMenuCls.clickMenu6();
 
-    // back and forward arrows
-    //    clickBack: function() {
+        // back and forward arrows
         me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           me.htmlCls.clickMenuCls.setLogCmd("back", false);
+           thisClass.setLogCmd("back", false);
            ic.resizeCanvasCls.back();
         });
-    //    },
-    //    clickForward: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "forward", "#" + me.pre + "mn6_forward"], "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           me.htmlCls.clickMenuCls.setLogCmd("forward", false);
+           thisClass.setLogCmd("forward", false);
            ic.resizeCanvasCls.forward();
         });
-    //    },
-    //    clickFullscreen: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "fullscreen", "#" + me.pre + "mn6_fullscreen"], "click", function(e) { let ic = me.icn3d; // from expand icon for mobilemenu
            e.preventDefault();
            //me = ic.setIcn3dui($(this).attr('id'));
-           me.htmlCls.clickMenuCls.setLogCmd("enter full screen", false);
+           thisClass.setLogCmd("enter full screen", false);
            ic.bFullscreen = true;
            me.htmlCls.WIDTH = $( window ).width();
            me.htmlCls.HEIGHT = $( window ).height();
@@ -299,78 +250,65 @@ class Events {
            ic.resizeCanvasCls.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
 
-        //$(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', this.fullScreenChange.bind(this));
         document.addEventListener('fullscreenchange', this.fullScreenChange.bind(this));
         document.addEventListener('webkitfullscreenchange', this.fullScreenChange.bind(this));
         document.addEventListener('mozfullscreenchange', this.fullScreenChange.bind(this));
         document.addEventListener('msfullscreenchange', this.fullScreenChange.bind(this));
 
-    //    },
-    //    clickToggle: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "toggle", "#" + me.pre + "mn2_toggle"], "click", function(e) { let ic = me.icn3d;
-           //me.htmlCls.clickMenuCls.setLogCmd("toggle selection", true);
+           //thisClass.setLogCmd("toggle selection", true);
            ic.selectionCls.toggleSelection();
-           me.htmlCls.clickMenuCls.setLogCmd("toggle selection", true);
+           thisClass.setLogCmd("toggle selection", true);
         });
-    //    },
-    //    clickHlColorYellow: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_clrYellow", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.clickMenuCls.setLogCmd("set highlight color yellow", true);
+           thisClass.setLogCmd("set highlight color yellow", true);
            ic.hColor = me.parasCls.thr(0xFFFF00);
            ic.matShader = ic.setColorCls.setOutlineColor('yellow');
            ic.drawCls.draw(); // required to make it work properly
         });
-    //    },
-    //    clickHlColorGreen: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_clrGreen", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.clickMenuCls.setLogCmd("set highlight color green", true);
+           thisClass.setLogCmd("set highlight color green", true);
            ic.hColor = me.parasCls.thr(0x00FF00);
            ic.matShader = ic.setColorCls.setOutlineColor('green');
            ic.drawCls.draw(); // required to make it work properly
         });
-    //    },
-    //    clickHlColorRed: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_clrRed", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.clickMenuCls.setLogCmd("set highlight color red", true);
+           thisClass.setLogCmd("set highlight color red", true);
            ic.hColor = me.parasCls.thr(0xFF0000);
            ic.matShader = ic.setColorCls.setOutlineColor('red');
            ic.drawCls.draw(); // required to make it work properly
         });
-    //    },
-    //    clickHlStyleOutline: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_styleOutline", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.clickMenuCls.setLogCmd("set highlight style outline", true);
+           thisClass.setLogCmd("set highlight style outline", true);
            ic.bHighlight = 1;
            ic.hlUpdateCls.showHighlight();
         });
-    //    },
-    //    clickHlStyleObject: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_styleObject", "click", function(e) { let ic = me.icn3d;
-           me.htmlCls.clickMenuCls.setLogCmd("set highlight style 3d", true);
+           thisClass.setLogCmd("set highlight style 3d", true);
            ic.bHighlight = 2;
            ic.hlUpdateCls.showHighlight();
         });
-    //    },
-    //    clickHlStyleNone: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_hl_styleNone", "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             ic.hlUpdateCls.clearHighlight();
-            me.htmlCls.clickMenuCls.setLogCmd("clear selection", true);
+            thisClass.setLogCmd("clear selection", true);
         });
-    //    },
-    //    clickAlternate: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", function(e) { let ic = me.icn3d;
            ic.bAlternate = true;
            ic.alternateCls.alternateStructures();
            ic.bAlternate = false;
 
-           me.htmlCls.clickMenuCls.setLogCmd("alternate structures", false);
-           //var structures = Object.keys(ic.structures);
-           //me.htmlCls.clickMenuCls.setLogCmd("select $" + structures[ic.ALTERNATE_STRUCTURE] + " | name " + structures[ic.ALTERNATE_STRUCTURE], true);
-           //me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+           thisClass.setLogCmd("alternate structures", false);
         });
-    //    },
-    //    clickRealign: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_realignresbyres", "click", function(e) { let ic = me.icn3d;
             me.htmlCls.dialogCls.openDlg('dl_realignresbyres', 'Align multiple chains residue by residue');
         });
@@ -382,10 +320,9 @@ class Events {
             }
             
            ic.realignParserCls.realign();
-           me.htmlCls.clickMenuCls.setLogCmd("realign", true);
+           thisClass.setLogCmd("realign", true);
         });
-    //    },
-    //    clickRealignonseqalign: function() {
+
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
 
@@ -404,8 +341,7 @@ class Events {
             thisClass.setPredefinedMenu('atomsCustomRealignByStruct2');
         });
 
-    //    },
-    //    clickApplyRealign: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -414,18 +350,13 @@ class Events {
                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
            }
 
-           // save the current selection
-           //ic.selectionCls.saveSelectionPrep();
-           //let name = 'realignSetsBySeq';
-           //ic.selectionCls.saveSelection(name, name);
-
            ic.realignParserCls.realignOnSeqAlign();
 
            if(nameArray.length > 0) {
-               me.htmlCls.clickMenuCls.setLogCmd("realign on seq align | " + nameArray, true);
+               thisClass.setLogCmd("realign on seq align | " + nameArray, true);
            }
            else {
-               me.htmlCls.clickMenuCls.setLogCmd("realign on seq align", true);
+               thisClass.setLogCmd("realign on seq align", true);
            }
         });
 
@@ -441,10 +372,10 @@ class Events {
  
             ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align | " + nameArray, true);
+                thisClass.setLogCmd("realign on structure align | " + nameArray, true);
             }
             else {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align", true);
+                thisClass.setLogCmd("realign on structure align", true);
             }
          });
 
@@ -460,10 +391,10 @@ class Events {
  
             ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
+                thisClass.setLogCmd("realign on tmalign | " + nameArray, true);
             }
             else {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign", true);
+                thisClass.setLogCmd("realign on tmalign", true);
             }
          });
 
@@ -480,13 +411,28 @@ class Events {
             ic.vastplusCls.realignOnVastplus();
 
             if(nameArray.length > 0) {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on vastplus | " + nameArray, true);
+                thisClass.setLogCmd("realign on vastplus | " + nameArray, true);
             }
             else {
-                me.htmlCls.clickMenuCls.setLogCmd("realign on vastplus", true);
+                thisClass.setLogCmd("realign on vastplus", true);
             }
          });
-    //    },
+
+
+        me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumAcrossSets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorSpectrumAcross").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = true;
+            ic.setColorCls.setColorAcrossSets(nameArray, bSpectrum);
+
+            thisClass.setLogCmd("set color spectrum | " + nameArray, true);
+        });
 
         me.myEventCls.onIds("#" + me.pre + "applyColorSpectrumBySets", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -500,7 +446,22 @@ class Events {
             let bSpectrum = true;
             ic.setColorCls.setColorBySets(nameArray, bSpectrum);
 
-            me.htmlCls.clickMenuCls.setLogCmd("set color spectrum | " + nameArray, true);
+            thisClass.setLogCmd("set residues color spectrum | " + nameArray, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applyColorRainbowAcrossSets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomColorRainbowAcross").val();
+            if(nameArray.length == 0) {
+                alert("Please select some sets");
+                return;
+            }
+
+            let bSpectrum = false;
+            ic.setColorCls.setColorAcrossSets(nameArray, bSpectrum);
+
+            thisClass.setLogCmd("set color rainbow | " + nameArray, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "applyColorRainbowBySets", "click", function(e) { let ic = me.icn3d;
@@ -515,49 +476,41 @@ class Events {
             let bSpectrum = false;
             ic.setColorCls.setColorBySets(nameArray, bSpectrum);
 
-            me.htmlCls.clickMenuCls.setLogCmd("set color rainbow | " + nameArray, true);
+            thisClass.setLogCmd("set residues color rainbow | " + nameArray, true);
         });
 
-    // other
-    //    clickViewswitch: function() {
+        // other
         me.myEventCls.onIds("#" + me.pre + "anno_summary", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.annotationCls.setAnnoViewAndDisplay('overview');
-            me.htmlCls.clickMenuCls.setLogCmd("set view overview", true);
+            thisClass.setLogCmd("set view overview", true);
         });
         me.myEventCls.onIds("#" + me.pre + "anno_details", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
-            me.htmlCls.clickMenuCls.setLogCmd("set view detailed view", true);
+            thisClass.setLogCmd("set view detailed view", true);
         });
-    //    },
-    //    clickShow_annotations: function() {
+
         me.myEventCls.onIds("#" + me.pre + "show_annotations", "click", function(e) { let ic = me.icn3d;
              ic.showAnnoCls.showAnnotations();
-             me.htmlCls.clickMenuCls.setLogCmd("view annotations", true);
+             thisClass.setLogCmd("view annotations", true);
         });
-    //    },
-    //    clickShowallchains: function() {
+
         me.myEventCls.onIds("#" + me.pre + "showallchains", "click", function(e) { let ic = me.icn3d;
            ic.annotationCls.showAnnoAllChains();
-           me.htmlCls.clickMenuCls.setLogCmd("show annotations all chains", true);
-           ////$( ".icn3d-accordion" ).accordion(me.htmlCls.closeAc);
+           thisClass.setLogCmd("show annotations all chains", true);
         });
-    //    },
-    //    clickShow_alignsequences: function() {
+
         me.myEventCls.onIds("#" + me.pre + "show_alignsequences", "click", function(e) { let ic = me.icn3d;
              me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         });
-    //    },
-    //    clickShow_2ddgm: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", function(e) { let ic = me.icn3d;
              me.htmlCls.dialogCls.openDlg('dl_2ddgm', '2D Diagram');
              ic.viewInterPairsCls.retrieveInteractionData();
-             me.htmlCls.clickMenuCls.setLogCmd("view interactions", true);
-             //me.htmlCls.clickMenuCls.setLogCmd("window interactions", true);
+             thisClass.setLogCmd("view interactions", true);
         });
-    //    },
-    //    clickSearchSeq: function() {
+
         me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            thisClass.searchSeq();
@@ -570,12 +523,11 @@ class Events {
            }
         });
 
-    //    },
-    //    clickReload_mmtf: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_vastplus", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("vast+ search " + $("#" + me.pre + "vastpluspdbid").val(), false);
+            thisClass.setLogCmd("vast+ search " + $("#" + me.pre + "vastpluspdbid").val(), false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open('https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=' + $("#" + me.pre + "vastpluspdbid").val(), urlTarget);
          });
@@ -583,7 +535,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_vast", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("vast search " + $("#" + me.pre + "vastpdbid").val() + "_" + $("#" + me.pre + "vastchainid").val(), false);
+            thisClass.setLogCmd("vast search " + $("#" + me.pre + "vastpdbid").val() + "_" + $("#" + me.pre + "vastchainid").val(), false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open('https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=' + $("#" + me.pre + "vastpdbid").val() + '&chain=' + $("#" + me.pre + "vastchainid").val(), urlTarget);
          });
@@ -592,22 +544,17 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
 
-            // me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + $("#" + me.pre + "foldseekchainids").val(), true);
-            // window.open(hostUrl + '?chainalign=' + $("#" + me.pre + "foldseekchainids").val(), '_self');
-
-
             let alignment = $("#" + me.pre + "foldseekchainids").val();
             let alignment_final = thisClass.convertUniProtInChains(alignment);
 
-            me.htmlCls.clickMenuCls.setLogCmd("load chainalignment " + alignment_final, true);
+            thisClass.setLogCmd("load chainalignment " + alignment_final, true);
             window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&showalignseq=1&bu=0', '_self');
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+           thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
         });
@@ -616,20 +563,17 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+               thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_pdb: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_pdb", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
+           thisClass.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
         });
@@ -638,8 +582,7 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
+               thisClass.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
            }
@@ -648,8 +591,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_af", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
+           thisClass.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
         });
@@ -659,7 +601,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
-            me.htmlCls.clickMenuCls.setLogCmd("set half pae map " + afid, true);
+            thisClass.setLogCmd("set half pae map " + afid, true);
             
             ic.contactMapCls.afErrorMap(afid);
         });
@@ -668,7 +610,7 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
-            me.htmlCls.clickMenuCls.setLogCmd("set full pae map " + afid, true);
+            thisClass.setLogCmd("set full pae map " + afid, true);
             
             ic.contactMapCls.afErrorMap(afid, true);
         });
@@ -677,20 +619,16 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
+               thisClass.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_opm: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
+           thisClass.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
         });
@@ -699,32 +637,26 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
+               thisClass.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_align_refined: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1&bu=1', false);
-            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', urlTarget);
+            thisClass.setLogCmd("load alignment " + alignment + ' | parameters &atype=1&bu=1', false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1&bu=1', urlTarget);
          });
-    //    },
-    //    clickReload_align_ori: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_align_ori", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
-            //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', urlTarget);
+            thisClass.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', urlTarget);
          });
@@ -733,7 +665,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=2&bu=1', false);
+            thisClass.setLogCmd("load alignment " + alignment + ' | parameters &atype=2&bu=1', false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=2&bu=1', urlTarget);
          });
@@ -742,7 +674,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
+            thisClass.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', urlTarget);
           });
@@ -751,30 +683,11 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef | align tmalign", false);
+            thisClass.setLogCmd("load chains " + alignment + " | residues | resdef | align tmalign", false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?chainalign=' + alignment + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1', urlTarget);
           });
-    //    },
-    //    clickReload_chainalign: function() {
-/*        
-        me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
 
-           let alignment = $("#" + me.pre + "chainalignids").val();
-           let alignment_final = thisClass.convertUniProtInChains(alignment);
-           let resalign = $("#" + me.pre + "resalignids").val();
-           let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ': ');
-           if(predefinedres && alignment_final.split(',').length - 1 != predefinedres.split(': ').length) {
-               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
-               return;
-           }
-
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " | residues " + resalign + " | resdef " + predefinedres, false);
-           window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', urlTarget);
-        });
-*/
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -783,7 +696,7 @@ class Events {
            let alignment = $("#" + me.pre + "chainalignids").val();
            let alignment_final = thisClass.convertUniProtInChains(alignment);
 
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
+           thisClass.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
         });
@@ -796,7 +709,7 @@ class Events {
             let alignment_final = thisClass.convertUniProtInChains(alignment);
             let resalign = $("#" + me.pre + "resalignids").val();
  
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
+            thisClass.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues " + resalign + " | resdef ", false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=' + resalign + '&resdef=&showalignseq=1&bu=0', urlTarget);
          });
@@ -814,7 +727,7 @@ class Events {
                 return;
             }
  
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef " + predefinedres, false);
+            thisClass.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef " + predefinedres, false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', urlTarget);
          });
@@ -838,7 +751,7 @@ class Events {
             let chainidArray = alignment_final.split(',');
             ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
  
-            me.htmlCls.clickMenuCls.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
+            thisClass.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
          });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_tmalign", "click", function(e) { let ic = me.icn3d;
@@ -848,7 +761,7 @@ class Events {
             let alignment = $("#" + me.pre + "chainalignids").val();
             let alignment_final = thisClass.convertUniProtInChains(alignment);
  
-            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
+            thisClass.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef | align tmalign", false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
          });
@@ -876,12 +789,12 @@ class Events {
                 let snp = mutationids;
 
                 ic.scapCls.retrieveScap(snp);
-                me.htmlCls.clickMenuCls.setLogCmd('scap 3d ' + snp, true);
-                me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+                thisClass.setLogCmd('scap 3d ' + snp, true);
+                thisClass.setLogCmd("select displayed set", true);
            }
            else {
                 let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));           
-                me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
+                thisClass.setLogCmd("3d of mutation " + mutationids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', urlTarget);
            }
@@ -911,11 +824,11 @@ class Events {
 
                 let bPdb = true;
                 ic.scapCls.retrieveScap(snp, undefined, bPdb);
-                me.htmlCls.clickMenuCls.setLogCmd('scap pdb ' + snp, true);
+                thisClass.setLogCmd('scap pdb ' + snp, true);
            }
            else {
                 let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
-                me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
+                thisClass.setLogCmd("pdb of mutation " + mutationids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', urlTarget);
            }
@@ -945,15 +858,15 @@ class Events {
 
                 let bInteraction = true;
                 ic.scapCls.retrieveScap(snp, bInteraction);
-                me.htmlCls.clickMenuCls.setLogCmd('scap interaction ' + snp, true);
+                thisClass.setLogCmd('scap interaction ' + snp, true);
 
                 let idArray = snp.split('_'); //stru_chain_resi_snp
                 let select = '.' + idArray[1] + ':' + idArray[2];
                 let name = 'snp_' + idArray[1] + '_' + idArray[2];
-                me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
-                me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
-                me.htmlCls.clickMenuCls.setLogCmd("adjust dialog dl_linegraph", true);
-                me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+                thisClass.setLogCmd("select " + select + " | name " + name, true);
+                thisClass.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+                thisClass.setLogCmd("adjust dialog dl_linegraph", true);
+                thisClass.setLogCmd("select displayed set", true);
            }
            else {
                 let mutationArray = mutationids.split(',');
@@ -973,19 +886,16 @@ class Events {
                 }
                 let selectSpec = ic.resid2specCls.residueids2spec(residArray);
 
-                me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
+                thisClass.setLogCmd("interaction change of mutation " + mutationids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_mmcif: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmcif", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+           thisClass.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
         });
@@ -994,34 +904,32 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+               thisClass.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_mmdb: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+           
+           thisClass.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
+            
+            thisClass.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', urlTarget);
         });
 
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
 
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
@@ -1031,7 +939,7 @@ class Events {
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
 
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
@@ -1041,8 +949,8 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
-               //if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+               
+               thisClass.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', urlTarget);
               }
@@ -1057,17 +965,15 @@ class Events {
                }
          });
 
-    //    },
-    //    clickReload_blast_rep_id: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let query_id = $("#" + me.pre + "query_id").val();
            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
+           thisClass.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?from=icn3d&alg=blast&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
@@ -1081,7 +987,7 @@ class Events {
             let query_id = $("#" + me.pre + "query_id").val();
             let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
             let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
-            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
+            thisClass.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
             query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
             
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -1097,7 +1003,7 @@ class Events {
             let query_id = $("#" + me.pre + "query_id").val();
             let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
             let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
-            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
+            thisClass.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
             query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
             
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -1107,13 +1013,11 @@ class Events {
               + blast_rep_id + '; show selection', urlTarget);
          });
 
-    //    },
-    //    clickReload_gi: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+           thisClass.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
         });
@@ -1121,8 +1025,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            me.htmlCls.clickMenuCls.setLogCmd("load refseq " + $("#" + me.pre + "refseqid").val(), false);
-            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+            thisClass.setLogCmd("load refseq " + $("#" + me.pre + "refseqid").val(), false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?refseqid=' + $("#" + me.pre + "refseqid").val(), urlTarget);
          });
@@ -1131,8 +1034,7 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+               thisClass.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
            }
@@ -1141,8 +1043,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
+           thisClass.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
         });
@@ -1151,21 +1052,18 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
+               thisClass.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), urlTarget);
            }
         });
 
-    //    },
-    //    clickReload_cid: function() {
+
         me.myEventCls.onIds("#" + me.pre 
         + "reload_cid", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+           thisClass.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
         });
@@ -1174,18 +1072,15 @@ class Events {
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+               thisClass.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
            }
         });
 
-    //    },
 
         me.htmlCls.setHtmlCls.clickReload_pngimage();
 
-    //    clickReload_state: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_state", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1213,7 +1108,7 @@ class Events {
                ic.bStatefile = true;
 
                let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load state file ' + $("#" + me.pre + "state").val(), false);
+               thisClass.setLogCmd('load state file ' + $("#" + me.pre + "state").val(), false);
                ic.commands = [];
                ic.optsHistory = [];
                ic.loadScriptCls.loadScript(dataStr, true);
@@ -1221,8 +1116,7 @@ class Events {
              reader.readAsText(file);
            }
         });
-    //    },
-    //    clickReload_selectionfile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_selectionfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1235,15 +1129,13 @@ class Events {
              let reader = new FileReader();
              reader.onload = function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               //me.htmlCls.clickMenuCls.setLogCmd('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
                ic.selectionCls.loadSelection(dataStr);
-               me.htmlCls.clickMenuCls.setLogCmd('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
+               thisClass.setLogCmd('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
              }
              reader.readAsText(file);
            }
         });
-    //    },
-    //    clickReload_dsn6file: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1352,8 +1244,7 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6FileUrl('fofc');
         });
-    //    },
-    //    clickReload_pdbfile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
 
@@ -1368,8 +1259,6 @@ class Events {
            thisClass.loadPdbFile(ic.bAppend);
         });
 
-    //    },
-    //    clickReload_mol2file: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -1390,7 +1279,7 @@ class Events {
              let reader = new FileReader();
              reader.onload = function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load mol2 file ' + $("#" + me.pre + "mol2file").val(), false);
+               thisClass.setLogCmd('load mol2 file ' + $("#" + me.pre + "mol2file").val(), false);
                ic.molTitle = "";
                ic.inputid = undefined;
                //ic.initUI();
@@ -1403,8 +1292,7 @@ class Events {
              reader.readAsText(file);
            }
         });
-    //    },
-    //    clickReload_sdffile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_sdffile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -1425,7 +1313,7 @@ class Events {
              let reader = new FileReader();
              reader.onload = function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load sdf file ' + $("#" + me.pre + "sdffile").val(), false);
+               thisClass.setLogCmd('load sdf file ' + $("#" + me.pre + "sdffile").val(), false);
                ic.molTitle = "";
                ic.inputid = undefined;
                //ic.initUI();
@@ -1438,8 +1326,7 @@ class Events {
              reader.readAsText(file);
            }
         });
-    //    },
-    //    clickReload_xyzfile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_xyzfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -1460,7 +1347,7 @@ class Events {
              let reader = new FileReader();
              reader.onload = function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load xyz file ' + $("#" + me.pre + "xyzfile").val(), false);
+               thisClass.setLogCmd('load xyz file ' + $("#" + me.pre + "xyzfile").val(), false);
                ic.molTitle = "";
                ic.inputid = undefined;
                //ic.initUI();
@@ -1494,7 +1381,7 @@ class Events {
               let reader = new FileReader();
               reader.onload = function(e) {
                 let dataStr = e.target.result; // or = reader.result;
-                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
+                thisClass.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                 
                 me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                 ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
@@ -1523,7 +1410,7 @@ class Events {
               let reader = new FileReader();
               reader.onload = function(e) {
                 let dataStr = e.target.result; // or = reader.result;
-                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
+                thisClass.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                 
                 me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                 ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr), true);
@@ -1531,8 +1418,7 @@ class Events {
               reader.readAsText(file);
             }
          });
-    //    },
-    //    clickReload_urlfile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -1553,8 +1439,7 @@ class Events {
            ic.bInputUrlfile = true;
            ic.pdbParserCls.downloadUrl(url, type);
         });
-    //    },
-    //    clickReload_mmciffile: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reload_mmciffile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -1575,7 +1460,7 @@ class Events {
              let reader = new FileReader();
              reader.onload = function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
+               thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                ic.molTitle = "";
                 let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                 ic.bCid = undefined;
@@ -1615,23 +1500,21 @@ class Events {
              reader.readAsText(file);
            }
         });
-    //    },
-    //    clickApplycustomcolor: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applycustomcolor", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.setOptionCls.setOption("color", $("#" + me.pre + "colorcustom").val());
-           me.htmlCls.clickMenuCls.setLogCmd("color " + $("#" + me.pre + "colorcustom").val(), true);
+           thisClass.setLogCmd("color " + $("#" + me.pre + "colorcustom").val(), true);
         });
-    //    },
-    //    clickApplypick_aroundsphere: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "atomsCustomSphere2", "#" + me.pre + "atomsCustomSphere", "#" + me.pre + "radius_aroundsphere"], "change", function(e) { let ic = me.icn3d;
             ic.bSphereCalc = false;
-            //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+            //thisClass.setLogCmd('set calculate sphere false', true);
         });
         me.myEventCls.onIds("#" + me.pre + "applypick_aroundsphere", "click", function(e) { let ic = me.icn3d;
             //e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
             let nameArray = $("#" + me.pre + "atomsCustomSphere").val();
             let nameArray2 = $("#" + me.pre + "atomsCustomSphere2").val();
@@ -1642,14 +1525,14 @@ class Events {
                 let select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray + " | " + ic.bSphereCalc;
                 if(!ic.bSphereCalc) ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
-                //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere true', true);
+                //thisClass.setLogCmd('set calculate sphere true', true);
                 ic.hlUpdateCls.updateHlAll();
-                me.htmlCls.clickMenuCls.setLogCmd(select, true);
+                thisClass.setLogCmd(select, true);
             }
         });
         me.myEventCls.onIds("#" + me.pre + "sphereExport", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
             let nameArray = $("#" + me.pre + "atomsCustomSphere").val();
             let nameArray2 = $("#" + me.pre + "atomsCustomSphere2").val();
@@ -1663,11 +1546,10 @@ class Events {
                 let file_pref =(ic.inputid) ? ic.inputid : "custom";
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
 
-                me.htmlCls.clickMenuCls.setLogCmd("export pairs | " + nameArray2 + " " + nameArray + " | dist " + radius, true);
+                thisClass.setLogCmd("export pairs | " + nameArray2 + " " + nameArray + " | dist " + radius, true);
             }
         });
-    //    },
-    //    clickApply_adjustmem: function() {
+
         me.myEventCls.onIds("#" + me.pre + "apply_adjustmem", "click", function(e) { let ic = me.icn3d;
             //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1675,10 +1557,9 @@ class Events {
             let intra_mem_z = parseFloat($("#" + me.pre + "intra_mem_z").val());
             ic.selectionCls.adjustMembrane(extra_mem_z, intra_mem_z);
             let select = "adjust membrane z-axis " + extra_mem_z + " " + intra_mem_z;
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
+            thisClass.setLogCmd(select, true);
         });
-    //    },
-    //    clickApply_selectplane: function() {
+
         me.myEventCls.onIds("#" + me.pre + "apply_selectplane", "click", function(e) { let ic = me.icn3d;
             //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1686,23 +1567,22 @@ class Events {
             let small = parseFloat($("#" + me.pre + "selectplane_z2").val());
             ic.selectionCls.selectBtwPlanes(large, small);
             let select = "select planes z-axis " + large + " " + small;
-            me.htmlCls.clickMenuCls.setLogCmd(select, true);
+            thisClass.setLogCmd(select, true);
         });
-    //    },
-    //    clickApplyhbonds: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "atomsCustomHbond2", "#" + me.pre + "atomsCustomHbond", "#" + me.pre + "analysis_hbond", "#" + me.pre + "analysis_saltbridge", "#" + me.pre + "analysis_contact", "#" + me.pre + "hbondthreshold", "#" + me.pre + "saltbridgethreshold", "#" + me.pre + "contactthreshold"], "change", function(e) { let ic = me.icn3d;
             ic.bHbondCalc = false;
-            //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+            //thisClass.setLogCmd('set calculate hbond false', true);
         });
         me.myEventCls.onIds("#" + me.pre + "crossstrucinter", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.crossstrucinter = parseInt($("#" + me.pre + "crossstrucinter").val());
-           me.htmlCls.clickMenuCls.setLogCmd("cross structure interaction " + ic.crossstrucinter, true);
+           thisClass.setLogCmd("cross structure interaction " + ic.crossstrucinter, true);
         });
         me.myEventCls.onIds("#" + me.pre + "applyhbonds", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('3d');
         });
         me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", function(e) { let ic = me.icn3d;
@@ -1713,54 +1593,54 @@ class Events {
            let contacttype = $("#" + ic.pre + "contacttype").val();
 
            ic.contactMapCls.contactMap(contactdist, contacttype);
-           me.htmlCls.clickMenuCls.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
+           thisClass.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
         });
         me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('view');
         });
         me.myEventCls.onIds("#" + me.pre + "areaWindow", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let nameArray = $("#" + me.pre + "atomsCustomHbond").val();
            let nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
            ic.analysisCls.calcBuriedSurface(nameArray2, nameArray);
-           me.htmlCls.clickMenuCls.setLogCmd("calc buried surface | " + nameArray2 + " " + nameArray, true);
+           thisClass.setLogCmd("calc buried surface | " + nameArray2 + " " + nameArray, true);
         });
         me.myEventCls.onIds("#" + me.pre + "sortSet1", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('save1');
         });
         $(document).on("click", "." + me.pre + "showintercntonly", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             $(".icn3d-border").hide();
-            me.htmlCls.clickMenuCls.setLogCmd("table inter count only", true);
+            thisClass.setLogCmd("table inter count only", true);
         });
         $(document).on("click", "." + me.pre + "showinterdetails", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             $(".icn3d-border").show();
-            me.htmlCls.clickMenuCls.setLogCmd("table inter details", true);
+            thisClass.setLogCmd("table inter details", true);
         });
         me.myEventCls.onIds("#" + me.pre + "sortSet2", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('save2');
         });
         me.myEventCls.onIds("#" + me.pre + "hbondGraph", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('graph');
         });
         me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('linegraph');
         });
         me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.showInterCls.showInteractions('scatterplot');
         });
         // select residues
@@ -1777,17 +1657,17 @@ class Events {
         });
         me.myEventCls.onIds("#" + me.svgid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.saveSvg(me.svgid, ic.inputid + "_force_directed_graph.svg");
         });
         me.myEventCls.onIds("#" + me.svgid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.savePng(me.svgid, ic.inputid + "_force_directed_graph.png");
         });
         me.myEventCls.onIds("#" + me.svgid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let graphStr2 = ic.graphStr.substr(0, ic.graphStr.lastIndexOf('}'));
             graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
 
@@ -1796,43 +1676,43 @@ class Events {
 
         $(document).on("click", "#" + me.svgid_ct + "_svg", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.saveSvg(me.svgid_ct, ic.inputid + "_cartoon.svg");
         });
         $(document).on("click", "#" + me.svgid_ct + "_png", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png");
         });
         $(document).on("click", "#" + me.svgid_ct + "_json", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             //let graphStr2 = ic.graphStr.substr(0, ic.graphStr.lastIndexOf('}'));
 
             ic.saveFileCls.saveFile(ic.inputid + "_cartoon.json", "text", [ic.graphStr]);
         });
         $(document).on("change", "#" + me.svgid_ct + "_label", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let className = $("#" + me.svgid_ct + "_label").val();
            $("#" + me.svgid_ct + " text").removeClass();
            $("#" + me.svgid_ct + " text").addClass(className);
-           me.htmlCls.clickMenuCls.setLogCmd("cartoon label " + className, true);
+           thisClass.setLogCmd("cartoon label " + className, true);
         });
 
         me.myEventCls.onIds("#" + me.linegraphid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.saveSvg(me.linegraphid, ic.inputid + "_line_graph.svg");
         });
         me.myEventCls.onIds("#" + me.linegraphid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.savePng(me.linegraphid, ic.inputid + "_line_graph.png");
         });
         me.myEventCls.onIds("#" + me.linegraphid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let graphStr2 = ic.lineGraphStr.substr(0, ic.lineGraphStr.lastIndexOf('}'));
 
             graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
@@ -1841,24 +1721,24 @@ class Events {
         });
         me.myEventCls.onIds("#" + me.linegraphid + "_scale", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let scale = $("#" + me.linegraphid + "_scale").val();
            $("#" + me.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
-           me.htmlCls.clickMenuCls.setLogCmd("line graph scale " + scale, true);
+           thisClass.setLogCmd("line graph scale " + scale, true);
         });
         me.myEventCls.onIds("#" + me.scatterplotid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.saveSvg(me.scatterplotid, ic.inputid + "_scatterplot.svg");
         });
         me.myEventCls.onIds("#" + me.scatterplotid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.savePng(me.scatterplotid, ic.inputid + "_scatterplot.png");
         });
         me.myEventCls.onIds("#" + me.scatterplotid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let graphStr2 = ic.scatterplotStr.substr(0, ic.scatterplotStr.lastIndexOf('}'));
 
             graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
@@ -1867,25 +1747,25 @@ class Events {
         });
         me.myEventCls.onIds("#" + me.scatterplotid + "_scale", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let scale = $("#" + me.scatterplotid + "_scale").val();
            $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
-           me.htmlCls.clickMenuCls.setLogCmd("scatterplot scale " + scale, true);
+           thisClass.setLogCmd("scatterplot scale " + scale, true);
         });
 
         me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg", true);
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", true);
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let graphStr2 = ic.contactmapStr.substr(0, ic.contactmapStr.lastIndexOf('}'));
 
             graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
@@ -1894,15 +1774,15 @@ class Events {
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_scale", "change", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let scale = $("#" + me.contactmapid + "_scale").val();
             $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
-            me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+            thisClass.setLogCmd("contactmap scale " + scale, true);
          });
 
         me.myEventCls.onIds("#" + me.alignerrormapid + "_svg", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let scale = 1;
             $("#" + me.alignerrormapid + "_scale").val(scale);
             $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
@@ -1911,7 +1791,7 @@ class Events {
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_png", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             let scale = 1;
             $("#" + me.alignerrormapid + "_scale").val(scale);
             $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
@@ -1920,13 +1800,13 @@ class Events {
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             ic.contactMapCls.afErrorMap(afid, true);
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
              
-             //if(!me.cfg.notebook) dialog.dialog( "close" );
+             
              let graphStr2 = ic.alignerrormapStr.substr(0, ic.alignerrormapStr.lastIndexOf('}'));
  
              graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
@@ -1936,23 +1816,23 @@ class Events {
 
         me.myEventCls.onIds("#" + me.alignerrormapid + "_scale", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let scale = $("#" + me.alignerrormapid + "_scale").val();
            $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
-           me.htmlCls.clickMenuCls.setLogCmd("alignerrormap scale " + scale, true);
+           thisClass.setLogCmd("alignerrormap scale " + scale, true);
         });
 
         me.myEventCls.onIds("#" + me.svgid + "_label", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            let className = $("#" + me.svgid + "_label").val();
            $("#" + me.svgid + " text").removeClass();
            $("#" + me.svgid + " text").addClass(className);
-           me.htmlCls.clickMenuCls.setLogCmd("graph label " + className, true);
+           thisClass.setLogCmd("graph label " + className, true);
         });
         me.myEventCls.onIds("#" + me.svgid + "_hideedges", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            me.htmlCls.hideedges = parseInt($("#" + me.svgid + "_hideedges").val());
            if(me.htmlCls.hideedges) {
                 me.htmlCls.contactInsideColor = 'FFF';
@@ -1966,26 +1846,25 @@ class Events {
            }
            if(ic.graphStr !== undefined) {
                if(ic.bRender && me.htmlCls.force) me.drawGraph(ic.graphStr, me.pre + 'dl_graph');
-               me.htmlCls.clickMenuCls.setLogCmd("hide edges " + me.htmlCls.hideedges, true);
+               thisClass.setLogCmd("hide edges " + me.htmlCls.hideedges, true);
            }
         });
         me.myEventCls.onIds("#" + me.svgid + "_force", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            me.htmlCls.force = parseInt($("#" + me.svgid + "_force").val());
            if(ic.graphStr !== undefined) {
-               me.htmlCls.clickMenuCls.setLogCmd("graph force " + me.htmlCls.force, true);
+               thisClass.setLogCmd("graph force " + me.htmlCls.force, true);
                ic.getGraphCls.handleForce();
            }
         });
         me.myEventCls.onIds("#" + me.pre + "hbondReset", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           
            ic.viewInterPairsCls.resetInteractionPairs();
-           me.htmlCls.clickMenuCls.setLogCmd("reset interaction pairs", true);
+           thisClass.setLogCmd("reset interaction pairs", true);
         });
-    //    },
-    //    clickApplypick_labels: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applypick_labels", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2003,19 +1882,17 @@ class Events {
              let x =(ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
              let y =(ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
              let z =(ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
-             //me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
              ic.analysisCls.addLabel(text, x, y, z, size, color, background, 'custom');
              ic.pickpair = false;
              let sizeStr = '', colorStr = '', backgroundStr = '';
              if(size != 0) sizeStr = ' | size ' + size;
              if(color != 0) colorStr = ' | color ' + color;
              if(background != 0) backgroundStr = ' | background ' + background;
-             me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
+             thisClass.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
              ic.drawCls.draw();
            }
         });
-    //    },
-    //    clickApplyselection_labels: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applyselection_labels", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2030,13 +1907,13 @@ class Events {
              let x = position.center.x;
              let y = position.center.y;
              let z = position.center.z;
-             //me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
+             //thisClass.setLogCmd('add label ' + text + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
              ic.analysisCls.addLabel(text, x, y, z, size, color, background, 'custom');
              let sizeStr = '', colorStr = '', backgroundStr = '';
              if(size != 0) sizeStr = ' | size ' + size;
              if(color != 0) colorStr = ' | color ' + color;
              if(background != 0) backgroundStr = ' | background ' + background;
-             me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
+             thisClass.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
              ic.drawCls.draw();
         });
 
@@ -2045,11 +1922,10 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.labelcolor = $("#" + me.pre + "labelcolorall" ).val();
 
-            me.htmlCls.clickMenuCls.setLogCmd('set label color ' + ic.labelcolor, true);
+            thisClass.setLogCmd('set label color ' + ic.labelcolor, true);
             ic.drawCls.draw();
         });
-    //    },
-    //    clickApplypick_stabilizer: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applypick_stabilizer", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2058,7 +1934,7 @@ class Events {
            }
            else {
              ic.pickpair = false;
-             me.htmlCls.clickMenuCls.setLogCmd('add one stabilizer | ' + ic.pAtom.serial + ' ' + ic.pAtom2.serial, true);
+             thisClass.setLogCmd('add one stabilizer | ' + ic.pAtom.serial + ' ' + ic.pAtom2.serial, true);
              if(ic.pairArray === undefined) ic.pairArray = [];
              ic.pairArray.push(ic.pAtom.serial);
              ic.pairArray.push(ic.pAtom2.serial);
@@ -2067,7 +1943,7 @@ class Events {
              ic.drawCls.draw();
            }
         });
-    //    },
+
     // https://github.com/tovic/color-picker
     // https://tovic.github.io/color-picker/color-picker.value-update.html
     //    pickColor: function() {
@@ -2112,8 +1988,7 @@ class Events {
             let color = $("#" + me.pre + "labelcolorall").val();
             picker2.set('#' + color).enter();
         });    
-    //    },
-    //    clickApplypick_stabilizer_rm: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applypick_stabilizer_rm", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2122,7 +1997,7 @@ class Events {
            }
            else {
              ic.pickpair = false;
-             me.htmlCls.clickMenuCls.setLogCmd('remove one stabilizer | ' + ic.pAtom.serial + ' ' + ic.pAtom2.serial, true);
+             thisClass.setLogCmd('remove one stabilizer | ' + ic.pAtom.serial + ' ' + ic.pAtom2.serial, true);
              let rmLineArray = [];
              rmLineArray.push(ic.pAtom.serial);
              rmLineArray.push(ic.pAtom2.serial);
@@ -2131,8 +2006,7 @@ class Events {
              ic.drawCls.draw();
            }
         });
-    //    },
-    //    clickApplypick_measuredistance: function() {
+
         me.myEventCls.onIds("#" + me.pre + "applypick_measuredistance", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2154,12 +2028,12 @@ class Events {
              if(size != 0) sizeStr = ' | size ' + size;
              if(color != 0) colorStr = ' | color ' + color;
              if(background != 0) backgroundStr = ' | background ' + background;
-             me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type distance', true);
+             thisClass.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type distance', true);
              ic.drawCls.draw();
              ic.pk = 2;
            }
         });
-    //    },
+
 
         me.myEventCls.onIds("#" + me.pre + "applydist2", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -2170,7 +2044,7 @@ class Events {
            let nameArray2 = $("#" + me.pre + "atomsCustomDist2").val();
 
            ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
-           me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+           thisClass.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
         });
 
         $(document).on("click", ".icn3d-distance", function(e) { let ic = me.icn3d;
@@ -2187,7 +2061,7 @@ class Events {
             let nameArray2 = [sets[1]];
  
             ic.analysisCls.measureDistTwoSets(nameArray, nameArray2);
-            me.htmlCls.clickMenuCls.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+            thisClass.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
          });
 
         me.myEventCls.onIds("#" + me.pre + "applydisttable", "click", function(e) { let ic = me.icn3d;
@@ -2201,12 +2075,12 @@ class Events {
             ic.analysisCls.measureDistManySets(nameArray, nameArray2);
             me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
 
-            me.htmlCls.clickMenuCls.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
+            thisClass.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "applylinebtwsets", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             ic.bLinebtwsets = false;
  
             let nameArray = $("#" + me.pre + "linebtwsets").val();
@@ -2229,7 +2103,7 @@ class Events {
 
             let command = 'add line | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type + ' | radius ' + radius + ' | opacity ' + opacity;
 
-            me.htmlCls.clickMenuCls.setLogCmd(command, true);
+            thisClass.setLogCmd(command, true);
 
             ic.analysisCls.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, dashed, type, radius, opacity);
             ic.drawCls.draw();
@@ -2237,7 +2111,7 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "applycartoonshape", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
             ic.bCartoonshape = false;
  
             let nameArray = $("#" + me.pre + "cartoonshape").val();
@@ -2264,7 +2138,7 @@ class Events {
                 command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
             }
 
-            me.htmlCls.clickMenuCls.setLogCmd(command, true);
+            thisClass.setLogCmd(command, true);
             ic.shapeCmdHash[command] = 1;
 
             ic.drawCls.draw();
@@ -2272,25 +2146,24 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "clearlinebtwsets", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
 
             ic.lines['cylinder'] = [];
-            me.htmlCls.clickMenuCls.setLogCmd('clear line between sets', true);
+            thisClass.setLogCmd('clear line between sets', true);
 
             ic.drawCls.draw();
         });
 
         me.myEventCls.onIds("#" + me.pre + "clearcartoonshape", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            
 
             ic.shapeCmdHash = {};
-            me.htmlCls.clickMenuCls.setLogCmd('clear shape', true);
+            thisClass.setLogCmd('clear shape', true);
 
             ic.drawCls.draw();
         });
 
-    //    clickApply_thickness: function() {
         me.myEventCls.onIds("#" + me.pre + "apply_thickness_3dprint", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
 
@@ -2315,40 +2188,37 @@ class Events {
             me.htmlCls.setMenuCls.setLogWindow(true);
         });
 
-    //    },
-    //    clickReset: function() {
+
         me.myEventCls.onIds("#" + me.pre + "reset", "click", function(e) { let ic = me.icn3d;
             ic.selectionCls.resetAll();
 
             // need to render
             if(ic.bRender) ic.drawCls.draw(); //ic.drawCls.render();
         });
-    //    },
-    //    clickToggleHighlight: function() {
+
         me.myEventCls.onIds(["#" + me.pre + "toggleHighlight", "#" + me.pre + "toggleHighlight2"], "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             ic.hlUpdateCls.toggleHighlight();
-            me.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
+            thisClass.setLogCmd("toggle highlight", true);
         });
         me.myEventCls.onIds("#" + me.pre + "seq_clearselection", "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.hlUpdateCls.clearHighlight();
-            me.htmlCls.clickMenuCls.setLogCmd("clear selection", true);
+            thisClass.setLogCmd("clear selection", true);
         });
         me.myEventCls.onIds("#" + me.pre + "seq_clearselection2", "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             e.preventDefault();
             ic.hlUpdateCls.clearHighlight();
-            me.htmlCls.clickMenuCls.setLogCmd("clear selection", true);
+            thisClass.setLogCmd("clear selection", true);
         });
         me.myEventCls.onIds("#" + me.pre + "alignseq_clearselection", "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             ic.hlUpdateCls.clearHighlight();
-            me.htmlCls.clickMenuCls.setLogCmd("clear selection", true);
+            thisClass.setLogCmd("clear selection", true);
         });
-    //    },
-    //    clickReplay: function() {
+
         me.myEventCls.onIds("#" + me.pre + "replay", "click", function(e) { let ic = me.icn3d;
              e.stopImmediatePropagation();
              ic.CURRENTNUMBER++;
@@ -2368,16 +2238,15 @@ class Events {
                   $("#" + me.pre + "replay_cmd").html('Cmd: ' + cmdStr);
                   $("#" + me.pre + "replay_menu").html('Menu: ' + menuStr);
 
-                  me.htmlCls.clickMenuCls.setLogCmd(cmdStrOri, true);
+                  thisClass.setLogCmd(cmdStrOri, true);
 
                   ic.drawCls.draw();
              }
         });
-    //    },
+
 
         ic.loadScriptCls.pressCommandtext();
 
-    //    clickSeqSaveSelection: function() {
         me.myEventCls.onIds("#" + me.pre + "seq_saveselection", "click", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2400,11 +2269,10 @@ class Events {
             
             ic.selectionCls.saveEachResiInSel();
 
-            me.htmlCls.clickMenuCls.setLogCmd('select each residue', true);
+            thisClass.setLogCmd('select each residue', true);
          });
 
-    //    },
-    //    clickAlignSeqSaveSelection: function() {
+
         me.myEventCls.onIds("#" + me.pre + "alignseq_saveselection", "click", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            ic.selectionCls.saveSelectionPrep();
@@ -2412,26 +2280,23 @@ class Events {
            //var description = $("#" + me.pre + "alignseq_command_desc").val();
            ic.selectionCls.saveSelection(name, name);
         });
-    //    },
-    //    clickOutputSelection: function() {
+
         $(document).on("click", "." + me.pre + "outputselection", function(e) { let ic = me.icn3d;
               e.stopImmediatePropagation();
             ic.bSelectResidue = false;
             ic.bSelectAlignResidue = false;
-            me.htmlCls.clickMenuCls.setLogCmd('output selection', true);
+            thisClass.setLogCmd('output selection', true);
             ic.threeDPrintCls.outputSelection();
         });
-    //    },
-    //    clickSaveDialog: function() {
+
         $(document).on("click", ".icn3d-saveicon", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            let id = $(this).attr('pid');
 
            thisClass.saveHtml(id);
-           me.htmlCls.clickMenuCls.setLogCmd("save html " + id, true);
+           thisClass.setLogCmd("save html " + id, true);
         });
-    //    },
-    //    clickHideDialog: function() {
+
         $(document).on("click", ".icn3d-hideicon", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            let id = $(this).attr('pid');
@@ -2466,8 +2331,7 @@ class Events {
                }
            }
         });
-    //    },
-    //    clickResidueOnInteraction: function() {
+
         // highlight a pair residues
         $(document).on("click", "." + me.pre + "selres", function(e) { let ic = me.icn3d;
               e.stopImmediatePropagation();
@@ -2486,7 +2350,7 @@ class Events {
                   cmd += ic.selectionCls.selectOneResid(idStr);
               }
               ic.hlUpdateCls.updateHlAll();
-              me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
+              thisClass.setLogCmd(cmd, true);
         });
         // highlight a residue
         $(document).on("click", "." + me.pre + "seloneres", function(e) { let ic = me.icn3d;
@@ -2518,11 +2382,10 @@ class Events {
               ic.selByCommCls.selectByCommand(cmd, '', '');
               ic.hlObjectsCls.removeHlObjects();  // render() is called
               ic.hlObjectsCls.addHlObjects();  // render() is called
-              me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
+              thisClass.setLogCmd(cmd, true);
         });
-    //    },
 
-    //    clickAddTrack: function() {
+
         $(document).on("click", ".icn3d-addtrack", function(e) { let ic = me.icn3d;
           e.stopImmediatePropagation();
           $("#" + me.pre + "anno_custom")[0].checked = true;
@@ -2533,8 +2396,7 @@ class Events {
           me.htmlCls.dialogCls.openDlg('dl_addtrack', 'Add track for Chain: ' + chainid);
           $( "#" + me.pre + "track_gi" ).focus();
         });
-    //    },
-    //    clickCustomColor: function() {
+
         $(document).on("click", ".icn3d-customcolor", function(e) { let ic = me.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
@@ -2542,41 +2404,36 @@ class Events {
           $("#" + me.pre + "customcolor_chainid").val(chainid);
           me.htmlCls.dialogCls.openDlg('dl_customcolor', 'Apply custom color or tube for Chain: ' + chainid);
         });
-    //    },
-    //    clickDefineHelix: function() {
+
         $(document).on("click", ".icn3d-helixsets", function(e) { let ic = me.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let chainid = $(this).attr('chainid');
           ic.addTrackCls.defineSecondary(chainid, 'helix');
-          me.htmlCls.clickMenuCls.setLogCmd('define helix sets | chain ' + chainid, true);
+          thisClass.setLogCmd('define helix sets | chain ' + chainid, true);
         });
-    //    },
-    //    clickDefineSheet: function() {
+
         $(document).on("click", ".icn3d-sheetsets", function(e) { let ic = me.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let chainid = $(this).attr('chainid');
           ic.addTrackCls.defineSecondary(chainid, 'sheet');
-          me.htmlCls.clickMenuCls.setLogCmd('define sheet sets | chain ' + chainid, true);
+          thisClass.setLogCmd('define sheet sets | chain ' + chainid, true);
         });
-    //    },
-    //    clickDefineCoil: function() {
+
         $(document).on("click", ".icn3d-coilsets", function(e) { let ic = me.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let chainid = $(this).attr('chainid');
           ic.addTrackCls.defineSecondary(chainid, 'coil');
-          me.htmlCls.clickMenuCls.setLogCmd('define coil sets | chain ' + chainid, true);
+          thisClass.setLogCmd('define coil sets | chain ' + chainid, true);
         });
-    //    },
-    //    clickDeleteSets: function() {
+
         me.myEventCls.onIds("#" + me.pre + "deletesets", "click", function(e) { let ic = me.icn3d;
              ic.definedSetsCls.deleteSelectedSets();
-             me.htmlCls.clickMenuCls.setLogCmd("delete selected sets", true);
+             thisClass.setLogCmd("delete selected sets", true);
         });
-    //    },
-    //    bindMouseup: function() {
+
         $(document).on('mouseup touchend', "accordion", function(e) { let ic = me.icn3d;
           if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
@@ -2593,8 +2450,7 @@ class Events {
               }
           }
         });
-    //    },
-    //    bindMousedown: function() {
+
        $(document).on('mousedown touchstart', "accordion", function(e) { let ic = me.icn3d;
           if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
@@ -2611,8 +2467,7 @@ class Events {
               }
           }
         });
-    //    },
-    //    expandShrink: function() {
+
         //$("[id$=_cddseq_expand]").on('click', '.ui-icon-plus', function(e) { let ic = me.icn3d;
         $(document).on("click", ".icn3d-expand", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
@@ -2633,8 +2488,7 @@ class Events {
             $("#" + id + "_expand").show();
             $("#" + id + "_shrink").hide();
         });
-    //    },
-    //    scrollAnno: function() {
+
         window.onscroll = function(e) { let ic = me.icn3d;
             if(ic.view == 'detailed view' && $(window).scrollTop() == 0 && $(window).scrollTop() == 0 && $("#" + me.pre + "dl_selectannotations").scrollTop() == 0) {
                 // show fixed titles
@@ -2655,34 +2509,20 @@ class Events {
                 ic.annotationCls.hideFixedTitle();
             }
         });
-    //    },
+
 
         me.myEventCls.onIds("#" + me.pre + "mn6_themeBlue", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.setMenuCls.setTheme('blue');
-           me.htmlCls.clickMenuCls.setLogCmd("set theme blue", true);
+           thisClass.setLogCmd("set theme blue", true);
         });
         me.myEventCls.onIds("#" + me.pre + "mn6_themeOrange", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.setMenuCls.setTheme('orange');
-           me.htmlCls.clickMenuCls.setLogCmd("set theme orange", true);
+           thisClass.setLogCmd("set theme orange", true);
         });
         me.myEventCls.onIds("#" + me.pre + "mn6_themeBlack", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.setMenuCls.setTheme('black');
-           me.htmlCls.clickMenuCls.setLogCmd("set theme black", true);
+           thisClass.setLogCmd("set theme black", true);
         });
-
-/*
-        me.myEventCls.onIds("#" + me.pre + "mn6_doublecolorYes", "click", function(e) { let ic = me.icn3d;
-           ic.bDoublecolor = true;
-           ic.setOptionCls.setStyle('proteins', 'ribbon');
-           //ic.drawCls.draw();
-           me.htmlCls.clickMenuCls.setLogCmd("set double color on", true);
-        });
-        me.myEventCls.onIds("#" + me.pre + "mn6_doublecolorNo", "click", function(e) { let ic = me.icn3d;
-           ic.bDoublecolor = false;
-           ic.drawCls.draw();
-           me.htmlCls.clickMenuCls.setLogCmd("set double color off", true);
-        });
-*/
 
         $(document).on("click", "." + me.pre + "snpin3d", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
@@ -2690,8 +2530,8 @@ class Events {
             let snp = $(this).attr('snp');
 
             ic.scapCls.retrieveScap(snp);
-            me.htmlCls.clickMenuCls.setLogCmd('scap 3d ' + snp, true);
-            me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+            thisClass.setLogCmd('scap 3d ' + snp, true);
+            thisClass.setLogCmd("select displayed set", true);
         });
 
         $(document).on("click", "." + me.pre + "snpinter", function(e) { let ic = me.icn3d;
@@ -2701,15 +2541,15 @@ class Events {
 
             let bInteraction = true;
             ic.scapCls.retrieveScap(snp, bInteraction);
-            me.htmlCls.clickMenuCls.setLogCmd('scap interaction ' + snp, true);
+            thisClass.setLogCmd('scap interaction ' + snp, true);
 
             let idArray = snp.split('_'); //stru_chain_resi_snp
             let select = '.' + idArray[1] + ':' + idArray[2];
             let name = 'snp_' + idArray[1] + '_' + idArray[2];
-            me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
-            me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
-            me.htmlCls.clickMenuCls.setLogCmd("adjust dialog dl_linegraph", true);
-            me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+            thisClass.setLogCmd("select " + select + " | name " + name, true);
+            thisClass.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+            thisClass.setLogCmd("adjust dialog dl_linegraph", true);
+            thisClass.setLogCmd("select displayed set", true);
         });
 
         $(document).on("click", "." + me.pre + "snppdb", function(e) { let ic = me.icn3d;
@@ -2719,7 +2559,7 @@ class Events {
 
             let bPdb = true;
             ic.scapCls.retrieveScap(snp, undefined, bPdb);
-            me.htmlCls.clickMenuCls.setLogCmd('scap pdb ' + snp, true);
+            thisClass.setLogCmd('scap pdb ' + snp, true);
         });
 
     }

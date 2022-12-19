@@ -2,13 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-
 class PiHalogen {
     constructor(icn3d) {
         this.icn3d = icn3d;

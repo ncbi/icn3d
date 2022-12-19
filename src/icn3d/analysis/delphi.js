@@ -2,18 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {SetOption} from '../display/setOption.js';
-import {SaveFile} from '../export/saveFile.js';
-
-
 class Delphi {
     constructor(icn3d) {
         this.icn3d = icn3d;

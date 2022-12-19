@@ -2,13 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
- import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
- import {Html} from '../../html/html.js';
- 
- import {SaveFile} from '../export/saveFile.js';
- import {PdbParser} from '../parsers/pdbParser.js';
- 
  class Refnum {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -163,8 +156,8 @@
        });    
     }
 
-    parseAlignData(dataArray, domainidpairArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         let tmscoreThreshold = 0.4; //0.5;
 
@@ -173,7 +166,7 @@
         ic.chainid2index = {};
         ic.domainid2ig2kabat = {};
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
-            let  queryData = dataArray[i][0];
+            let queryData = dataArray[i][0];
             if(queryData.length == 0) continue;
             if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
 
@@ -275,7 +268,7 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
         }
     }
 
-    getLabelFromRefnum(oriRefnum) { let  ic = this.icn3d, me = ic.icn3dui;
+    getLabelFromRefnum(oriRefnum) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
         if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
@@ -291,7 +284,7 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
         else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
     }
 
-    parseCustomRefFile(data) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bShowCustomRefnum = true;
 
         //refnum,11,12,,21,22

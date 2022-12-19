@@ -2,16 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {RmsdSuprCls} from '../../utils/rmsdSuprCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Cylinder} from '../geometry/cylinder.js';
-import {ApplyCenter} from '../display/applyCenter.js';
-import {Draw} from '../display/draw.js';
-
 class Axes {
     constructor(icn3d) {
         this.icn3d = icn3d;

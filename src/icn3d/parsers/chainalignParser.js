@@ -2,32 +2,18 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {MmdbParser} from '../parsers/mmdbParser.js';
-import {RealignParser} from '../parsers/realignParser.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-import {Selection} from '../selection/selection.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-import {ResizeCanvas} from '../transform/resizeCanvas.js';
-import {LoadPDB} from '../parsers/loadPDB.js';
-
 class ChainalignParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        let  hAtoms = {}, hAtomsTmp = {};
+        let hAtoms = {}, hAtomsTmp = {};
         let mmdbid_t, mmdbid_q;
         mmdbid_t = chainidArray[0].substr(0, chainidArray[0].indexOf('_'));
-        let  bLastQuery = false;
+        let bLastQuery = false;
         if(mmdbid_t.length > 5) { 
             let bAppend = false, bNoDssp = true;
             hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
@@ -76,7 +62,7 @@ class ChainalignParser {
                 }
 
                 // dynamicly align pairs in ic.afChainIndexHash
-                let  ajaxArray = [], indexArray = [], struArray = [];
+                let ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
                 //let urltmalign = "https://test.ncbi.nlm.nih.gov/Structure/tmalign/tmalign.cgi";
@@ -122,7 +108,7 @@ class ChainalignParser {
                 //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
                 //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
                 $.when.apply(undefined, ajaxArray).then(function() {
-                    let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
+                    let dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
 
                     thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
                 })
@@ -133,7 +119,7 @@ class ChainalignParser {
         }
     }
 
-    downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
         //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
         // modify the previous trans and rotation matrix
@@ -164,36 +150,7 @@ class ChainalignParser {
             this.transformStructure(mmdbid_q, index, 'query');
         }
 
-/*
-        // transform the target 
-        this.transformStructure(mmdbid_t, 0, 'target');
-
-        // transform the queries
-        for(let i = 1, il = chainidArray.length; i < il; ++i) {
-            let mmdbid_q = chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
-
-            this.transformStructure(mmdbid_q, i - 1, 'query');
-        }
-*/
-
         let hAtomsTmp = {}, hAtomsAll = {};
-        // set up the view of sequence alignment
-/*       
-        for(let i = 1, il = chainidArray.length; i < il; ++i) {
-            if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-                hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
-
-                hAtomsAll = me.hashUtilsCls.unionHash(hAtomsAll, hAtomsTmp);
-
-                let  bReverse = false;
-                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
-
-                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-            }
-        }
-*/
 
         if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
             // set multiple seqeunce alignment from ic.qt_start_end
@@ -210,7 +167,7 @@ class ChainalignParser {
         this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
-    setMsa(chainidArray, bVastplus, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
+    setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         // get aligned length for each pair
         let index_alignLen = [];
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
@@ -233,9 +190,9 @@ class ChainalignParser {
             ic.setColorCls.setColorByOptions(ic.opts, hAtomsAll);
         }
 
-        let  bReverse = false;
-        let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-        let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+        let bReverse = false;
+        let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+        let oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
         $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
         $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -245,7 +202,7 @@ class ChainalignParser {
         return hAtomsAll;
     }
 
-    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let ic = this.icn3d, me = ic.icn3dui;
         // set trans and rotation matrix
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -361,9 +318,9 @@ class ChainalignParser {
                 let hAtomsTmp = ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
 
-                let  bReverse = false;
-                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
-                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+                let bReverse = false;
+                let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
                 $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
                 $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -392,7 +349,7 @@ class ChainalignParser {
         if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
     }
 
-    transformStructure(mmdbid, index, alignType, bForce) { let  ic = this.icn3d, me = ic.icn3dui;
+    transformStructure(mmdbid, index, alignType, bForce) { let ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
 
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
@@ -406,7 +363,7 @@ class ChainalignParser {
         }
     }
 
-    transformAtom(atm, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
+    transformAtom(atm, index, alignType) { let ic = this.icn3d, me = ic.icn3dui;
         if(alignType === 'target') {
             // atm.coord.x += ic.t_trans_add[index].x;
             // atm.coord.y += ic.t_trans_add[index].y;
@@ -419,9 +376,9 @@ class ChainalignParser {
                 atm.coord.z -= ic.q_trans_sub[index].z;
             }
 
-            let  x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
-            let  y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
-            let  z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
+            let x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
+            let y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
+            let z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
 
             if(me.cfg.aligntool != 'tmalign') {
                 x -= ic.t_trans_add[index].x;
@@ -442,9 +399,9 @@ class ChainalignParser {
         return atm;
     }
 
-    downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let ic = this.icn3d, me = ic.icn3dui;
         // select all
-        let  allAtoms = {}
+        let allAtoms = {}
         for(let i in ic.atoms) {
             allAtoms[i] = 1;
         }
@@ -469,11 +426,11 @@ class ChainalignParser {
 
         //if(ic.chainidArray.length > 2) {
         if(chainidArray.length > 2) {
-            let  residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
+            let residuesHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
 
-            let  commandname = 'protein_aligned';
-            let  commanddescr = 'protein aligned';
-            let  select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
+            let commandname = 'protein_aligned';
+            let commanddescr = 'protein aligned';
+            let select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
 
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
         }
@@ -505,11 +462,11 @@ class ChainalignParser {
         //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
-    addPostfixForChainids(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+    addPostfixForChainids(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let struct2cnt = {};
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
-            let  chainid = chainidArray[i];
-            let  pos = chainid.indexOf('_');
+            let chainid = chainidArray[i];
+            let pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos); 
             if(struct != 'stru') struct = struct.toUpperCase();
 
@@ -528,25 +485,25 @@ class ChainalignParser {
         return chainidArray;
     }
 
-    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         ic.opts['proteins'] = 'c alpha trace';
 
-        let  alignArray = chainalign.split(',');
+        let alignArray = chainalign.split(',');
         let domainArray = (me.cfg.domainids) ? me.cfg.domainids.split(',') : [];
         if(domainArray.length < alignArray.length) domainArray = [];
 
         ic.chainidArray = this.addPostfixForChainids(alignArray);
 
-        let  pos1 = alignArray[0].indexOf('_');
+        let pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
 
-        let  ajaxArray = [];
-        let  targetAjax;
+        let ajaxArray = [];
+        let targetAjax;
 
-        let  url_t;
+        let url_t;
         if(ic.mmdbid_t.length > 5) {
             url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
@@ -578,13 +535,13 @@ class ChainalignParser {
         ic.afChainIndexHash = {};
         ic.pdbChainIndexHash = {};
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
-            let  pos2 = alignArray[index].indexOf('_');
+            let pos2 = alignArray[index].indexOf('_');
             let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
             ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
 
             ic.chain_q = alignArray[index].substr(pos2+1);
 
-            let  url_q, queryAjax;
+            let url_q, queryAjax;
             if(ic.mmdbid_q.length > 5) {
                 url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
@@ -609,19 +566,19 @@ class ChainalignParser {
         }
         
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
-            let  pos2 = alignArray[index].indexOf('_');
+            let pos2 = alignArray[index].indexOf('_');
             let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
             ic.mmdbid_q = (mmdbid_q_tmp.length == 5) ? mmdbid_q_tmp.substr(0, 4) : mmdbid_q_tmp; // added postfix for same PDB IDs
 
             ic.chain_q = alignArray[index].substr(pos2+1);
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
-                let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
+                let chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
                 let domainalign = (domainArray.length > 0) ? domainArray[index] + "," + domainArray[0] : undefined;
 
                 // TM-align (me.cfg.aligntool == 'tmalign') needs to input PDB
                 if(me.cfg.aligntool != 'tmalign' && ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
-                    let  urlalign;
+                    let urlalign;
                     
                     if(domainArray.length > 0) {
                         urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?domainpairs=" + domainalign;
@@ -630,7 +587,7 @@ class ChainalignParser {
                         urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
                     }
                     
-                    let  alignAjax = $.ajax({
+                    let alignAjax = $.ajax({
                         url: urlalign,
                         dataType: 'jsonp',
                         cache: true
@@ -650,7 +607,7 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          let  dataArray =(alignArray.length == 1) ? [arguments] : Array.from(arguments);
+          let dataArray =(alignArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
         })
         .fail(function() {
@@ -660,15 +617,15 @@ class ChainalignParser {
         });
     }
 
-    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         //var dataArray =(chainidArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         // index = 0: the mmdb data of target
-        let  targetData = dataArray[0][0];
+        let targetData = dataArray[0][0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
         if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
@@ -683,13 +640,13 @@ class ChainalignParser {
         ic.mmdbidArray = [];
         ic.mmdbidArray.push(mmdbid_t);
 
-        let  queryDataArray = [];
+        let queryDataArray = [];
 
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-            let  queryData = dataArray[index][0];
+            let queryData = dataArray[index][0];
 
-            let  pos = chainidArray[index].indexOf('_');
-            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
+            let pos = chainidArray[index].indexOf('_');
+            let mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
             let header = 'HEADER                                                        ' + mmdbid_q + '\n';
             if(isNaN(mmdbid_q) && mmdbid_q.length > 5) queryData = header + queryData;
@@ -708,14 +665,14 @@ class ChainalignParser {
         let missedChainCnt = 0;
         //for(let index = chainidArray.length, indexl = dataArray.length; index < indexl; index += step) {
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-            let  queryData = queryDataArray[index - 1]; 
+            let queryData = queryDataArray[index - 1]; 
 
-            let  pos = chainidArray[index].indexOf('_');
-            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
-            let  chain_q = chainidArray[index].substr(pos+1);
+            let pos = chainidArray[index].indexOf('_');
+            let mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
+            let chain_q = chainidArray[index].substr(pos+1);
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
-                let  index2 = chainidArray.length + index - 1;
+                let index2 = chainidArray.length + index - 1;
                 if(ic.afChainIndexHash.hasOwnProperty(index)) {
                     ++missedChainCnt;
 
@@ -744,7 +701,7 @@ class ChainalignParser {
         this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
     }
 
-    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
+    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
         if((!align || align.length == 0) && !bNoAlert) {
             let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
@@ -787,7 +744,7 @@ class ChainalignParser {
                 ic.q_rotation[index] = align[0].q_rotation;
                 ic.qt_start_end[index] = align[0].segs;
 
-                let  rmsd = align[0].super_rmsd;
+                let rmsd = align[0].super_rmsd;
 
                 let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
                 if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
@@ -804,8 +761,8 @@ class ChainalignParser {
         return bAligned;
     }
 
-    loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         if(me.cfg.resnum || me.cfg.resdef) {
             if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
@@ -814,7 +771,7 @@ class ChainalignParser {
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
         else {
-            let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
+            let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
             $.ajax({
               url: url,
@@ -823,7 +780,7 @@ class ChainalignParser {
               //tryCount : 0,
               //retryLimit : 0, //1
               success: function(data) {
-                let  mmdbid = data.mmdbid;
+                let mmdbid = data.mmdbid;
                 ic.selectedPdbid = mmdbid;
 
                 if(!mmdbid) {
@@ -833,7 +790,7 @@ class ChainalignParser {
                   if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                 }
                 else {
-                    let  url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
+                    let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
                     $.ajax({
                       url: url2,
                       dataType: 'text',
@@ -842,8 +799,8 @@ class ChainalignParser {
                       //retryLimit : 0, //1
                       success: function(opmdata) {
                           ic.bOpm = true;
-                          let  bVector = true;
-                          let  chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbid, ic.bOpm, bVector); // defined in the core library
+                          let bVector = true;
+                          let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbid, ic.bOpm, bVector); // defined in the core library
 
                           $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
                           $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
@@ -877,16 +834,16 @@ class ChainalignParser {
         }
     }
 
-    downloadMmdbAf(idlist, bQuery, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         ic.deferredMmdbaf = $.Deferred(function() {
         ic.structArray = idlist.split(',');
 
-        let  ajaxArray = [];
+        let ajaxArray = [];
 
         for(let i = 0, il = ic.structArray.length; i < il; ++i) {
-            let  url_t, targetAjax;
+            let url_t, targetAjax;
             let structure = ic.structArray[i];
 
             if(isNaN(structure) && structure.length > 5) {
@@ -920,7 +877,7 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          let  dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
+          let dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
           if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
         })
@@ -932,12 +889,12 @@ class ChainalignParser {
       return ic.deferredMmdbaf.promise();
     }
 
-    parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         let queryDataArray = [];
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
-            let  queryData = dataArray[index][0];
+            let queryData = dataArray[index][0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
             if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 
@@ -953,8 +910,8 @@ class ChainalignParser {
 
         if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
         
-        let  hAtoms = {}, hAtomsTmp = {};
-        let  bLastQuery = false;
+        let hAtoms = {}, hAtomsTmp = {};
+        let bLastQuery = false;
 
         ic.opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 

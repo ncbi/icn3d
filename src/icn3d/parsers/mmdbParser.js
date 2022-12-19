@@ -2,24 +2,12 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {ParasCls} from '../../utils/parasCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {LoadAtomData} from '../parsers/loadAtomData.js';
-import {OpmParser} from '../parsers/opmParser.js';
-import {MmcifParser} from '../parsers/mmcifParser.js';
-import {SetStyle} from '../display/setStyle.js';
-import {SetColor} from '../display/setColor.js';
-
 class MmdbParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    parseMmdbDataPart1(data, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseMmdbDataPart1(data, type) { let ic = this.icn3d, me = ic.icn3dui;
         // if type is defined, always process target before query
         if(data.atoms === undefined && data.molid2rescount === undefined) {
             alert('invalid MMDB data.');
@@ -50,7 +38,7 @@ class MmdbParser {
             ic.mmdb_data = data;
         }
 
-        let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
         if(type === 'query') {
             ic.inputid2 = id;
         }
@@ -59,20 +47,20 @@ class MmdbParser {
         }
 
         // get molid2color = {}, chain2molid = {}, molid2chain = {}
-        let  labelsize = 40;
+        let labelsize = 40;
 
-        let  molid2rescount = data.moleculeInfor;
-        let  molid2color = {}, chain2molid = {}, molid2chain = {}
+        let molid2rescount = data.moleculeInfor;
+        let molid2color = {}, chain2molid = {}, molid2chain = {}
 
         //var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
 
-        let  index = 1;
-        let  chainNameHash = {};       
+        let index = 1;
+        let chainNameHash = {};       
         for(let i in molid2rescount) {
           if(Object.keys(molid2rescount[i]).length === 0) continue;
 
-          let  color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
-          let  chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
+          let color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
+          let chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
           if(chainNameHash[chainName] === undefined) {
               chainNameHash[chainName] = 1;
           }
@@ -80,8 +68,8 @@ class MmdbParser {
               ++chainNameHash[chainName];
           }
 
-          let  chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
-          let  chain = id + '_' + chainNameFinal;
+          let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
+          let chain = id + '_' + chainNameFinal;
 
           molid2color[i] = color;
           chain2molid[chain] = i;
@@ -89,9 +77,9 @@ class MmdbParser {
 
           ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
 
-          let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
-          let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
-          let  geneDesc =(molid2rescount[i].geneDesc === undefined) ? '' : molid2rescount[i].geneDesc;
+          let geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
+          let geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
+          let geneDesc =(molid2rescount[i].geneDesc === undefined) ? '' : molid2rescount[i].geneDesc;
           ic.chainsGene[chain] = {'geneId': geneId, 'geneSymbol': geneSymbol, 'geneDesc': geneDesc}
           ++index;
         }
@@ -107,10 +95,10 @@ class MmdbParser {
         //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
     }
 
-    parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
         if(type === undefined) {
             //ic.deferredOpm = $.Deferred(function() {
-                  let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+                  let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
                   this.loadMmdbOpmData(data, id, type);
             //});
@@ -122,10 +110,10 @@ class MmdbParser {
         else {        
             this.parseMmdbDataPart1(data, type);
 
-            let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+            let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
             if(chainid) id = chainid.substr(0, chainid.indexOf('_'));
 
-            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
+            let hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
 
             this.loadMmdbOpmDataPart2(data, id, type);
 
@@ -139,10 +127,10 @@ class MmdbParser {
 
     //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-    downloadMmdb(mmdbid, bGi) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  thisClass = this;
+    downloadMmdb(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
-       let  url;
+       let url;
 
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
@@ -177,15 +165,20 @@ class MmdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
+            if(!data || data.error) {
+                thisClass.getNoData(mmdbid, bGi);
+                return;
+            }
+
             if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
                 // use mmtfid
-                let  pdbid = data.pdbId;
+                let pdbid = data.pdbId;
                 ic.mmtfParserCls.downloadMmtf(pdbid);
 
                 return;
             }
 
-            let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
 
             if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
                 thisClass.parseMmdbData(data);
@@ -216,12 +209,7 @@ class MmdbParser {
                         return;
                     }
 
-                    if(bGi) {
-                      alert("This gi " + mmdbid + " has no corresponding 3D structure...");
-                    }
-                    else {
-                      alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
-                    }
+                    thisClass.getNoData(mmdbid, bGi);
 
                     return;
                   } // success
@@ -236,19 +224,23 @@ class MmdbParser {
                 return;
             }
 
-            if(bGi) {
-              alert("This gi " + mmdbid + " has no corresponding 3D structure...");
-            }
-            else {
-              alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
-            }
+            thisClass.getNoData(mmdbid, bGi);
 
             return;
           } // success
         }); // ajax
     }
 
-    downloadMmdbPart2(type) { let  ic = this.icn3d, me = ic.icn3dui;
+    getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bGi) {
+            alert("This gi " + mmdbid + " has no corresponding 3D structure...");
+        }
+        else {
+            alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
+        }
+    }
+
+    downloadMmdbPart2(type) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bAssemblyUseAsu) { 
             $("#" + ic.pre + "assemblyWrapper").show();
             //ic.bAssembly = true;
@@ -308,9 +300,9 @@ class MmdbParser {
     //it can be chained together with other deferred functions for sequential execution. Note that
     //only one structure corresponding to the gi will be shown. If there is no structures available
     //for the gi, a warning message will be shown.
-    downloadGi(gi) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadGi(gi) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bCid = undefined;
-        let  bGi = true;
+        let bGi = true;
         this.downloadMmdb(gi, bGi);
     }
 
@@ -319,19 +311,19 @@ class MmdbParser {
     //This function was deferred so that it can be chained together with other deferred functions for
     //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
     //If there is no structures available for the blast_rep_id, a warning message will be shown.
-    downloadBlast_rep_id(sequence_structure_ids) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bCid = undefined;
 
-        let  idArray = sequence_structure_ids.split(',');
+        let idArray = sequence_structure_ids.split(',');
         me.cfg.query_id = idArray[0];
         me.cfg.blast_rep_id = idArray[1];
 
-        let  mmdbid = me.cfg.blast_rep_id.split('_')[0];
+        let mmdbid = me.cfg.blast_rep_id.split('_')[0];
 
         this.downloadMmdb(mmdbid);
     }
 
-    loadMmdbOpmData(data, pdbid, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadMmdbOpmData(data, pdbid, type) { let ic = this.icn3d, me = ic.icn3dui;
       if(data.opm !== undefined && data.opm.rot !== undefined) {
           ic.bOpm = true;
 
@@ -351,11 +343,11 @@ class MmdbParser {
       }
     }
 
-    loadMmdbOpmDataPart2(data, pdbid, type) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  thisClass = this;
+    loadMmdbOpmDataPart2(data, pdbid, type) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
         // set 3d domains
-        let  structure = data.pdbId;
+        let structure = data.pdbId;
 
         if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
 
@@ -367,19 +359,19 @@ class MmdbParser {
             let domainArray = data.domains[molid].domains;
 
             for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
-                let  domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
+                let domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
                 ic.tddomains[domainName] = {}
 
-                let  subdomainArray = domainArray[index].intervals;
+                let subdomainArray = domainArray[index].intervals;
 
                 // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-                let  domainFromHash = {}, domainToHash = {}
+                let domainFromHash = {}, domainToHash = {}
 
                 //var fromArray = [], toArray = [];
                 //var resCnt = 0
                 for(let i = 0, il = subdomainArray.length; i < il; ++i) {
-                    let  domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
-                    let  domainTo = Math.round(subdomainArray[i][1]) - 1;
+                    let domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                    let domainTo = Math.round(subdomainArray[i][1]) - 1;
 
                     if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
                         continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
@@ -424,9 +416,9 @@ class MmdbParser {
         }
     }
 
-    downloadRefseq(refseqid) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
        // get gis
-       let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+       let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
 
        ic.bCid = undefined;
 

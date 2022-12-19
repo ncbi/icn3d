@@ -2,22 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {Html} from '../../html/html.js';
-
-import {UtilsCls} from '../../utils/utilsCls.js';
-import {MyEventCls} from '../../utils/myEventCls.js';
-
-import {ShowAnno} from '../annotations/showAnno.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {AnnoCddSite} from '../annotations/annoCddSite.js';
-import {AnnoPTM} from '../annotations/annoPTM.js';
-import {AnnoContact} from '../annotations/annoContact.js';
-import {AnnoCrossLink} from '../annotations/annoCrossLink.js';
-import {AnnoDomain} from '../annotations/annoDomain.js';
-import {AnnoSnpClinVar} from '../annotations/annoSnpClinVar.js';
-import {AnnoSsbond} from '../annotations/annoSsbond.js';
-import {AnnoTransMem} from '../annotations/annoTransMem.js';
-
 class Annotation {
     constructor(icn3d) {
         this.icn3d = icn3d;

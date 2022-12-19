@@ -26,8 +26,6 @@ TODO: Improved performance on Firefox
       Refactor!
  */
 
-//import * as THREE from 'three';
-
 import {MarchingCube} from './marchingCube.js';
 
 // dkoes
@@ -161,19 +159,19 @@ ProteinSurface.prototype.inOrigExtent = function(x, y, z) {
 };
 
 ProteinSurface.prototype.getFacesAndVertices = function() {
-    let  i, il;
-    let  vertices = this.verts;
+    let i, il;
+    let vertices = this.verts;
     for(i = 0, il = vertices.length; i < il; i++) {
         vertices[i].x = vertices[i].x / this.scaleFactor - this.ptranx;
         vertices[i].y = vertices[i].y / this.scaleFactor - this.ptrany;
         vertices[i].z = vertices[i].z / this.scaleFactor - this.ptranz;
     }
 
-    let  finalfaces = [];
+    let finalfaces = [];
     for(i = 0, il = this.faces.length; i < il; i += 3) {
         //var f = faces[i];
-        let  fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
-        let  a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
+        let fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
+        let a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
 
         // must be a unique face for each atom
         if(!this.atomsToShow[a] || !this.atomsToShow[b] || !this.atomsToShow[c]) {
@@ -220,7 +218,7 @@ ProteinSurface.prototype.initparm = function(extent, btype, in_bCalcArea, atomli
     //if(volume > 1000000) //heuristical decrease resolution to avoid large memory consumption
     //    this.scaleFactor = this.defaultScaleFactor/2;
 
-    let  margin =(1 / this.scaleFactor) * 5.5; // need margin to avoid
+    let margin =(1 / this.scaleFactor) * 5.5; // need margin to avoid
                                             // boundary/round off effects
     this.origextent = extent;
     this.pminx = extent[0][0]; this.pmaxx = extent[1][0];
@@ -256,9 +254,9 @@ ProteinSurface.prototype.initparm = function(extent, btype, in_bCalcArea, atomli
 
     // !!! different between 3Dmol and iCn3D
     // copied from surface.js from iview
-    let  boxLength = 129;
+    let boxLength = 129;
     //maxLen = this.pmaxx - this.pminx + 2*(this.probeRadius + 5.5/2)
-    let  maxLen = this.pmaxx - this.pminx;
+    let maxLen = this.pmaxx - this.pminx;
     if((this.pmaxy - this.pminy) > maxLen) maxLen = this.pmaxy - this.pminy;
     if((this.pmaxz - this.pminz) > maxLen) maxLen = this.pmaxz - this.pminz;
     this.scaleFactor =(boxLength - 1.0) / maxLen;
@@ -294,14 +292,14 @@ ProteinSurface.prototype.initparm = function(extent, btype, in_bCalcArea, atomli
 };
 
 ProteinSurface.prototype.boundingatom = function(btype) {
-    let  tradius = [];
-    let  txz, tdept, sradius, indx;
+    let tradius = [];
+    let txz, tdept, sradius, indx;
     //flagradius = btype;
 
     for(let i in this.vdwRadii) {
         if(!this.vdwRadii.hasOwnProperty(i))
             continue;
-        let  r = this.vdwRadii[i];
+        let r = this.vdwRadii[i];
         if(!btype)
             tradius[i] = r * this.scaleFactor + 0.5;
         else
@@ -330,7 +328,7 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
     // seqterm,bool
     // atomtype,atom*
     // proseq,bool bcolor)
-    let  i, j, k, il;
+    let i, j, k, il;
     for(i = 0, il = this.vpBits.length; i < il; i++) {
         this.vpBits[i] = 0;
         this.vpDistance[i] = -1.0;
@@ -341,7 +339,7 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
     }
 
     for(i in atomlist) {
-        let  atom = atoms[atomlist[i]];
+        let atom = atoms[atomlist[i]];
         if(atom === undefined || atom.resn === 'DUM')
             continue;
         this.fillAtom(atom, atoms);
@@ -349,30 +347,30 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
 
     // show delphi potential on surface
     if(this.dataArray) {
-        let  pminx2 = 0, pmaxx2 = this.header.xExtent - 1;
-        let  pminy2 = 0, pmaxy2 = this.header.yExtent - 1;
-        let  pminz2 = 0, pmaxz2 = this.header.zExtent - 1;
+        let pminx2 = 0, pmaxx2 = this.header.xExtent - 1;
+        let pminy2 = 0, pmaxy2 = this.header.yExtent - 1;
+        let pminz2 = 0, pmaxz2 = this.header.zExtent - 1;
 
-        let  scaleFactor2 = 1; // angstrom / grid
+        let scaleFactor2 = 1; // angstrom / grid
 
-        let  pLength2 = Math.floor(0.5 + scaleFactor2 *(pmaxx2 - pminx2)) + 1;
-        let  pWidth2 = Math.floor(0.5 + scaleFactor2 *(pmaxy2 - pminy2)) + 1;
-        let  pHeight2 = Math.floor(0.5 + scaleFactor2 *(pmaxz2 - pminz2)) + 1;
+        let pLength2 = Math.floor(0.5 + scaleFactor2 *(pmaxx2 - pminx2)) + 1;
+        let pWidth2 = Math.floor(0.5 + scaleFactor2 *(pmaxy2 - pminy2)) + 1;
+        let pHeight2 = Math.floor(0.5 + scaleFactor2 *(pmaxz2 - pminz2)) + 1;
 
         // fill the color
-        let  widthHeight2 = pWidth2 * pHeight2;
-        let  height2 = pHeight2;
+        let widthHeight2 = pWidth2 * pHeight2;
+        let height2 = pHeight2;
 
         // generate the correctly ordered this.dataArray
-        let  vData = new Float32Array(pLength2 * pWidth2 * pHeight2);
+        let vData = new Float32Array(pLength2 * pWidth2 * pHeight2);
 
         // loop through the delphi box
         for(i = 0; i < pLength2; ++i) {
             for(j = 0; j < pWidth2; ++j) {
                 for(k = 0; k < pHeight2; ++k) {
-                    let  index = i * widthHeight2 + j * height2 + k;
+                    let index = i * widthHeight2 + j * height2 + k;
 
-                    let  index2;
+                    let index2;
                     if(this.header.filetype == 'phi') { // loop z, y, x
                         index2 = k * widthHeight2 + j * height2 + i;
                     }
@@ -387,26 +385,26 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
             }
         }
 
-        let  widthHeight = this.pWidth * this.pHeight;
-        let  height = this.pHeight;
+        let widthHeight = this.pWidth * this.pHeight;
+        let height = this.pHeight;
 
         // loop through the surface box
         for(i = 0; i < this.pLength; ++i) {
             for(j = 0; j < this.pWidth; ++j) {
                 for(k = 0; k < this.pHeight; ++k) {
-                    let  x = i / this.finalScaleFactor.x - this.ptranx;
-                    let  y = j / this.finalScaleFactor.y - this.ptrany;
-                    let  z = k / this.finalScaleFactor.z - this.ptranz;
+                    let x = i / this.finalScaleFactor.x - this.ptranx;
+                    let y = j / this.finalScaleFactor.y - this.ptrany;
+                    let z = k / this.finalScaleFactor.z - this.ptranz;
 
-                    let  r = new THREE.Vector3(x, y, z);
+                    let r = new THREE.Vector3(x, y, z);
 
                     // scale to the grid
                     r.sub(this.header.ori).multiplyScalar(this.header.scale);
 
                     // determine the neighboring grid coordinate
-                    let  nx0 = Math.floor(r.x), nx1 = Math.ceil(r.x);
-                    let  ny0 = Math.floor(r.y), ny1 = Math.ceil(r.y);
-                    let  nz0 = Math.floor(r.z), nz1 = Math.ceil(r.z);
+                    let nx0 = Math.floor(r.x), nx1 = Math.ceil(r.x);
+                    let ny0 = Math.floor(r.y), ny1 = Math.ceil(r.y);
+                    let nz0 = Math.floor(r.z), nz1 = Math.ceil(r.z);
                     if(nx1 == nx0) nx1 = nx0 + 1;
                     if(ny1 == ny0) ny1 = ny0 + 1;
                     if(nz1 == nz0) nz1 = nz0 + 1;
@@ -416,30 +414,30 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
                     if(nz1 > pHeight2) nz1 = pHeight2;
 
                     //https://en.wikipedia.org/wiki/Trilinear_interpolation
-                    let  c000 = vData[nx0 * widthHeight2 + ny0 * height2 + nz0];
-                    let  c100 = vData[nx1 * widthHeight2 + ny0 * height2 + nz0];
-                    let  c010 = vData[nx0 * widthHeight2 + ny1 * height2 + nz0];
-                    let  c001 = vData[nx0 * widthHeight2 + ny0 * height2 + nz1];
-                    let  c110 = vData[nx1 * widthHeight2 + ny1 * height2 + nz0];
-                    let  c011 = vData[nx0 * widthHeight2 + ny1 * height2 + nz1];
-                    let  c101 = vData[nx1 * widthHeight2 + ny0 * height2 + nz1];
-                    let  c111 = vData[nx1 * widthHeight2 + ny1 * height2 + nz1];
+                    let c000 = vData[nx0 * widthHeight2 + ny0 * height2 + nz0];
+                    let c100 = vData[nx1 * widthHeight2 + ny0 * height2 + nz0];
+                    let c010 = vData[nx0 * widthHeight2 + ny1 * height2 + nz0];
+                    let c001 = vData[nx0 * widthHeight2 + ny0 * height2 + nz1];
+                    let c110 = vData[nx1 * widthHeight2 + ny1 * height2 + nz0];
+                    let c011 = vData[nx0 * widthHeight2 + ny1 * height2 + nz1];
+                    let c101 = vData[nx1 * widthHeight2 + ny0 * height2 + nz1];
+                    let c111 = vData[nx1 * widthHeight2 + ny1 * height2 + nz1];
 
-                    let  xd = r.x - nx0;
-                    let  yd = r.y - ny0;
-                    let  zd = r.z - nz0;
+                    let xd = r.x - nx0;
+                    let yd = r.y - ny0;
+                    let zd = r.z - nz0;
 
-                    let  c00 = c000 *(1 - xd) + c100 * xd;
-                    let  c01 = c001 *(1 - xd) + c101 * xd;
-                    let  c10 = c010 *(1 - xd) + c110 * xd;
-                    let  c11 = c011 *(1 - xd) + c111 * xd;
+                    let c00 = c000 *(1 - xd) + c100 * xd;
+                    let c01 = c001 *(1 - xd) + c101 * xd;
+                    let c10 = c010 *(1 - xd) + c110 * xd;
+                    let c11 = c011 *(1 - xd) + c111 * xd;
 
-                    let  c0 = c00 *(1 - yd) + c10 * yd;
-                    let  c1 = c01 *(1 - yd) + c11 * yd;
+                    let c0 = c00 *(1 - yd) + c10 * yd;
+                    let c1 = c01 *(1 - yd) + c11 * yd;
 
-                    let  c = c0 *(1 - zd) + c1 * zd;
+                    let c = c0 *(1 - zd) + c1 * zd;
 
-                    let  index = i * widthHeight + j * height + k;
+                    let index = i * widthHeight + j * height + k;
 
                     this.vpPot[index] = c;
 
@@ -447,7 +445,7 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
                     if(c > this.isovalue) c = this.isovalue;
                     if(c < -this.isovalue) c = -this.isovalue;
 
-                    let  color;
+                    let color;
                     if(c > 0) {
                         c /= 1.0 * this.isovalue;
                         color = new THREE.Color(1-c, 1-c, 1);
@@ -471,18 +469,18 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
 
 
 ProteinSurface.prototype.fillAtom = function(atom, atoms) {
-    let  cx, cy, cz, ox, oy, oz, mi, mj, mk, i, j, k, si, sj, sk;
-    let  ii, jj, kk, n;
+    let cx, cy, cz, ox, oy, oz, mi, mj, mk, i, j, k, si, sj, sk;
+    let ii, jj, kk, n;
 
     // !!! different between 3Dmol and iCn3D
     cx = Math.floor(0.5 + this.scaleFactor *(atom.coord.x + this.ptranx));
     cy = Math.floor(0.5 + this.scaleFactor *(atom.coord.y + this.ptrany));
     cz = Math.floor(0.5 + this.scaleFactor *(atom.coord.z + this.ptranz));
 
-    let  at = this.getVDWIndex(atom);
-    let  nind = 0;
-    let  cnt = 0;
-    let  pWH = this.pWidth*this.pHeight;
+    let at = this.getVDWIndex(atom);
+    let nind = 0;
+    let cnt = 0;
+    let pWH = this.pWidth*this.pHeight;
 
     for(i = 0, n = this.widxz[at]; i < n; i++) {
         for(j = 0; j < n; j++) {
@@ -504,13 +502,13 @@ ProteinSurface.prototype.fillAtom = function(atom, atoms) {
                             sj >= this.pWidth ||
                             sk >= this.pHeight)
                         continue;
-                    let  index = si * pWH + sj * this.pHeight + sk;
+                    let index = si * pWH + sj * this.pHeight + sk;
 
                     if(!(this.vpBits[index] & this.INOUT)) {
                         this.vpBits[index] |= this.INOUT;
                         this.vpAtomID[index] = atom.serial;
                     } else {
-                        let  atom2 = atoms[this.vpAtomID[index]];
+                        let atom2 = atoms[this.vpAtomID[index]];
                         if(atom2.serial != atom.serial) {
                             ox = cx + mi - Math.floor(0.5 + this.scaleFactor *
                                    (atom2.x + this.ptranx));
@@ -536,12 +534,12 @@ ProteinSurface.prototype.fillAtom = function(atom, atoms) {
 };
 
 ProteinSurface.prototype.fillvoxelswaals = function(atoms, atomlist) {
-    let  i, il;
+    let i, il;
     for(i = 0, il = this.vpBits.length; i < il; i++)
         this.vpBits[i] &= ~this.ISDONE; // not isdone
 
     for(i in atomlist) {
-        let  atom = atoms[atomlist[i]];
+        let atom = atoms[atomlist[i]];
         if(atom === undefined)
             continue;
 
@@ -550,16 +548,16 @@ ProteinSurface.prototype.fillvoxelswaals = function(atoms, atomlist) {
 };
 
 ProteinSurface.prototype.fillAtomWaals = function(atom, atoms) {
-    let  cx, cy, cz, ox, oy, oz, nind = 0;
-    let  mi, mj, mk, si, sj, sk, i, j, k, ii, jj, kk, n;
+    let cx, cy, cz, ox, oy, oz, nind = 0;
+    let mi, mj, mk, si, sj, sk, i, j, k, ii, jj, kk, n;
 
     // !!! different between 3Dmol and iCn3D
     cx = Math.floor(0.5 + this.scaleFactor *(atom.coord.x + this.ptranx));
     cy = Math.floor(0.5 + this.scaleFactor *(atom.coord.y + this.ptrany));
     cz = Math.floor(0.5 + this.scaleFactor *(atom.coord.z + this.ptranz));
 
-    let  at = this.getVDWIndex(atom);
-    let  pWH = this.pWidth*this.pHeight;
+    let at = this.getVDWIndex(atom);
+    let pWH = this.pWidth*this.pHeight;
     for(i = 0, n = this.widxz[at]; i < n; i++) {
         for(j = 0; j < n; j++) {
             if(this.depty[at][nind] != -1) {
@@ -580,12 +578,12 @@ ProteinSurface.prototype.fillAtomWaals = function(atom, atoms) {
                             sj >= this.pWidth ||
                             sk >= this.pHeight)
                         continue;
-                    let  index = si * pWH + sj * this.pHeight + sk;
+                    let index = si * pWH + sj * this.pHeight + sk;
                     if(!(this.vpBits[index] & this.ISDONE)) {
                         this.vpBits[index] |= this.ISDONE;
                         this.vpAtomID[index] = atom.serial;
                     }  else {
-                        let  atom2 = atoms[this.vpAtomID[index]];
+                        let atom2 = atoms[this.vpAtomID[index]];
                         if(atom2.serial != atom.serial) {
                             ox = cx + mi - Math.floor(0.5 + this.scaleFactor *
                                    (atom2.x + this.ptranx));
@@ -610,16 +608,16 @@ ProteinSurface.prototype.fillAtomWaals = function(atom, atoms) {
 };
 
 ProteinSurface.prototype.buildboundary = function() {
-    let  pWH = this.pWidth*this.pHeight;
+    let pWH = this.pWidth*this.pHeight;
     for(let i = 0; i < this.pLength; i++) {
         for(let j = 0; j < this.pHeight; j++) {
             for(let k = 0; k < this.pWidth; k++) {
-                let  index = i * pWH + k * this.pHeight + j;
+                let index = i * pWH + k * this.pHeight + j;
                 if(this.vpBits[index] & this.INOUT) {
-                    let  flagbound = false;
-                    let  ii = 0;
+                    let flagbound = false;
+                    let ii = 0;
                     while(ii < 26) {
-                        let  ti = i + this.nb[ii][0], tj = j + this.nb[ii][2], tk = k +
+                        let ti = i + this.nb[ii][0], tj = j + this.nb[ii][2], tk = k +
                                 this.nb[ii][1];
                         if(ti > -1 &&
                             ti < this.pLength &&
@@ -640,19 +638,19 @@ ProteinSurface.prototype.buildboundary = function() {
 };
 
 ProteinSurface.prototype.fastdistancemap = function() {
-    let  eliminate = 0;
-    let  certificate;
-    let  i, j, k, n;
+    let eliminate = 0;
+    let certificate;
+    let i, j, k, n;
 
     // a little class for 3d array, should really generalize this and
     // use throughout...
-    let  PointGrid = function(length, width, height) {
+    let PointGrid = function(length, width, height) {
         // the standard says this is zero initialized
-        let  data = new Int32Array(length * width * height * 3);
+        let data = new Int32Array(length * width * height * 3);
 
         // set position x,y,z to pt, which has ix,iy,and iz
         this.set = function(x, y, z, pt) {
-            let  index =((((x * width) + y) * height) + z) * 3;
+            let index =((((x * width) + y) * height) + z) * 3;
             data[index] = pt.ix;
             data[index + 1] = pt.iy;
             data[index + 2] = pt.iz;
@@ -660,7 +658,7 @@ ProteinSurface.prototype.fastdistancemap = function() {
 
         // return point at x,y,z
         this.get = function(x, y, z) {
-            let  index =((((x * width) + y) * height) + z) * 3;
+            let index =((((x * width) + y) * height) + z) * 3;
             return {
                 ix : data[index],
                 iy : data[index + 1],
@@ -669,14 +667,14 @@ ProteinSurface.prototype.fastdistancemap = function() {
         };
     };
 
-    let  boundPoint = new PointGrid(this.pLength, this.pWidth, this.pHeight);
-    let  pWH = this.pWidth*this.pHeight;
-    let  cutRSq = this.cutRadius*this.cutRadius;
+    let boundPoint = new PointGrid(this.pLength, this.pWidth, this.pHeight);
+    let pWH = this.pWidth*this.pHeight;
+    let cutRSq = this.cutRadius*this.cutRadius;
 
-    let  inarray = [];
-    let  outarray = [];
+    let inarray = [];
+    let outarray = [];
 
-    let  index;
+    let index;
 
     for(i = 0; i < this.pLength; i++) {
         for(j = 0; j < this.pWidth; j++) {
@@ -685,7 +683,7 @@ ProteinSurface.prototype.fastdistancemap = function() {
                 this.vpBits[index] &= ~this.ISDONE; // isdone = false
                 if(this.vpBits[index] & this.INOUT) {
                     if(this.vpBits[index] & this.ISBOUND) {
-                        let  triple = {
+                        let triple = {
                             ix : i,
                             iy : j,
                             iz : k
@@ -722,10 +720,10 @@ ProteinSurface.prototype.fastdistancemap = function() {
     outarray = [];
     boundPoint = null;
 
-    let  cutsf = this.scaleFactor - 0.5;
+    let cutsf = this.scaleFactor - 0.5;
     if(cutsf < 0)
         cutsf = 0;
-    let  cutoff = cutRSq - 0.50 /(0.1 + cutsf);
+    let cutoff = cutRSq - 0.50 /(0.1 + cutsf);
     for(i = 0; i < this.pLength; i++) {
         for(j = 0; j < this.pWidth; j++) {
             for(k = 0; k < this.pHeight; k++) {
@@ -748,21 +746,21 @@ ProteinSurface.prototype.fastoneshell = function(inarray, boundPoint) { //(int* 
     // *allocout,voxel2
     // ***boundPoint, int*
     // outnum, int *elimi)
-    let  tx, ty, tz;
-    let  dx, dy, dz;
-    let  i, j, n;
-    let  square;
-    let  bp, index;
-    let  outarray = [];
+    let tx, ty, tz;
+    let dx, dy, dz;
+    let i, j, n;
+    let square;
+    let bp, index;
+    let outarray = [];
     if(inarray.length === 0)
         return outarray;
 
-    let  tnv = {
+    let tnv = {
         ix : -1,
         iy : -1,
         iz : -1
     };
-    let  pWH = this.pWidth*this.pHeight;
+    let pWH = this.pWidth*this.pHeight;
     for( i = 0, n = inarray.length; i < n; i++) {
         tx = inarray[i].ix;
         ty = inarray[i].iy;
@@ -929,7 +927,7 @@ ProteinSurface.prototype.fastoneshell = function(inarray, boundPoint) { //(int* 
 };
 
 ProteinSurface.prototype.marchingcubeinit = function(stype) {
-    for( let  i = 0, lim = this.vpBits.length; i < lim; i++) {
+    for( let i = 0, lim = this.vpBits.length; i < lim; i++) {
         if(stype == 1) {// vdw
             this.vpBits[i] &= ~this.ISBOUND;
         } else if(stype == 4) { // ses
@@ -951,8 +949,8 @@ ProteinSurface.prototype.marchingcubeinit = function(stype) {
 // this code allows me to empirically prune the marching cubes code tables
 // to more efficiently handle discrete data
 ProteinSurface.prototype.counter = function() {
-    let  data = Array(256);
-    for( let  i = 0; i < 256; i++)
+    let data = Array(256);
+    for( let i = 0; i < 256; i++)
         data[i] = [];
 
     this.incrementUsed = function(i, j) {
@@ -974,12 +972,12 @@ ProteinSurface.prototype.counter = function() {
 
     };
 
-    let  redoTable = function(triTable) {
-        let  str = "[";
-        for( let  i = 0; i < triTable.length; i++) {
-            let  code = 0;
-            let  table = triTable[i];
-            for( let  j = 0; j < table.length; j++) {
+    let redoTable = function(triTable) {
+        let str = "[";
+        for( let i = 0; i < triTable.length; i++) {
+            let code = 0;
+            let table = triTable[i];
+            for( let j = 0; j < table.length; j++) {
                 code |=(1 <<(table[j]));
             }
             str += "0x" + code.toString(16) + ", ";
@@ -989,13 +987,13 @@ ProteinSurface.prototype.counter = function() {
 
     this.print = function() {
 
-        let  table = this.marchingCube.triTable;
-        let  str;
-        let  newtable = [];
-        for( let  i = 0; i < table.length; i++) {
-            let  newarr = [];
-            for( let  j = 0; j < table[i].length; j += 3) {
-                let  k = j / 3;
+        let table = this.marchingCube.triTable;
+        let str;
+        let newtable = [];
+        for( let i = 0; i < table.length; i++) {
+            let newarr = [];
+            for( let j = 0; j < table[i].length; j += 3) {
+                let k = j / 3;
                 if(typeof data[i][k] === 'undefined' || !data[i][k].unused) {
                     newarr.push(table[i][j]);
                     newarr.push(table[i][j + 1]);
@@ -1020,7 +1018,7 @@ ProteinSurface.prototype.marchingcube = function(stype) {
         nZ : this.pHeight
     });
 
-    let  pWH = this.pWidth*this.pHeight;
+    let pWH = this.pWidth*this.pHeight;
     for(let i = 0, vlen = this.verts.length; i < vlen; i++) {
         this.verts[i]['atomid'] = this.vpAtomID[this.verts[i].x * pWH + this.pHeight *
                 this.verts[i].y + this.verts[i].z];
@@ -1031,19 +1029,19 @@ ProteinSurface.prototype.marchingcube = function(stype) {
     }
 
     // calculate surface area
-    let  serial2area, maxScaleFactor, area = 0;
+    let serial2area, maxScaleFactor, area = 0;
     if(this.bCalcArea) {
-        let  faceHash = {};
+        let faceHash = {};
         serial2area = {};
         for(let i = 0, il = this.faces.length; i < il; i += 3) {
-            let  fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
+            let fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
 
             if(fa == fb || fb == fc || fa == fc) continue;
 
-            let  fmin = Math.min(fa, fb, fc);
-            let  fmax = Math.max(fa, fb, fc);
-            let  fmid = fa + fb + fc - fmin - fmax;
-            let  fmin_fmid_fmax = fmin + '_' + fmid + '_' + fmax;
+            let fmin = Math.min(fa, fb, fc);
+            let fmax = Math.max(fa, fb, fc);
+            let fmid = fa + fb + fc - fmin - fmax;
+            let fmin_fmid_fmax = fmin + '_' + fmid + '_' + fmax;
 
             if(faceHash.hasOwnProperty(fmin_fmid_fmax)) {
                 continue;
@@ -1051,31 +1049,31 @@ ProteinSurface.prototype.marchingcube = function(stype) {
 
             faceHash[fmin_fmid_fmax] = 1;
 
-            let  ai = this.verts[fa]['atomid'], bi = this.verts[fb]['atomid'], ci = this.verts[fc]['atomid'];
+            let ai = this.verts[fa]['atomid'], bi = this.verts[fb]['atomid'], ci = this.verts[fc]['atomid'];
 
             if(!this.atomsToShow[ai] || !this.atomsToShow[bi] || !this.atomsToShow[ci]) {
                 continue;
             }
 
             //if(fa !== fb && fb !== fc && fa !== fc){
-                let  a = this.verts[fa];
-                let  b = this.verts[fb];
-                let  c = this.verts[fc];
+                let a = this.verts[fa];
+                let b = this.verts[fb];
+                let c = this.verts[fc];
 
-                let  ab2 =(a.x - b.x) *(a.x - b.x) +(a.y - b.y) *(a.y - b.y) +(a.z - b.z) *(a.z - b.z);
-                let  ac2 =(a.x - c.x) *(a.x - c.x) +(a.y - c.y) *(a.y - c.y) +(a.z - c.z) *(a.z - c.z);
-                let  cb2 =(c.x - b.x) *(c.x - b.x) +(c.y - b.y) *(c.y - b.y) +(c.z - b.z) *(c.z - b.z);
+                let ab2 =(a.x - b.x) *(a.x - b.x) +(a.y - b.y) *(a.y - b.y) +(a.z - b.z) *(a.z - b.z);
+                let ac2 =(a.x - c.x) *(a.x - c.x) +(a.y - c.y) *(a.y - c.y) +(a.z - c.z) *(a.z - c.z);
+                let cb2 =(c.x - b.x) *(c.x - b.x) +(c.y - b.y) *(c.y - b.y) +(c.z - b.z) *(c.z - b.z);
 
-                let  min = Math.min(ab2, ac2, cb2);
-                let  max = Math.max(ab2, ac2, cb2);
-                let  mid = ab2 + ac2 + cb2 - min - max;
+                let min = Math.min(ab2, ac2, cb2);
+                let max = Math.max(ab2, ac2, cb2);
+                let mid = ab2 + ac2 + cb2 - min - max;
 
                 // there are only three kinds of triangles as shown at
                 // https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0008140
                 // case 1: 1, 1, sqrt(2)     area: 0.5 * a * a;
                 // case 2: sqrt(2), sqrt(2), sqrt(2)    area: 0.5 * a * a * sqrt(3) * 0.5;
                 // case 3: 1, sqrt(2), sqrt(3)      area: 0.5 * a * b
-                let  currArea = 0;
+                let currArea = 0;
                 if(parseInt((max - min)*100) == 0) { // case 2
                     currArea = 0.433 * min;
                 }
@@ -1086,7 +1084,7 @@ ProteinSurface.prototype.marchingcube = function(stype) {
                     currArea = 0.707 * min;
                 }
 
-                let  partArea = currArea / 3;
+                let partArea = currArea / 3;
 
                 if(serial2area[ai] === undefined) serial2area[ai] = partArea;
                 else serial2area[ai] += partArea;

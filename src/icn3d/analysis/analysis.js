@@ -2,17 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {ApplyMap} from '../surface/applyMap.js';
-import {DefinedSets} from '../selection/definedSets.js';
-import {Contact} from '../interaction/contact.js';
-import {HlObjects} from '../highlight/hlObjects.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-
 class Analysis {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -106,10 +95,6 @@ class Analysis {
            if(ic.distPnts === undefined) ic.distPnts = [];
            ic.distPnts.push(pos1);
            ic.distPnts.push(pos2);
-
-           //var bOther = true;
-           //ic.boxCls.createBox_base(pos1, ic.originSize, ic.hColor, false, bOther);
-           //ic.boxCls.createBox_base(pos2, ic.originSize, ic.hColor, false, bOther);
 
            let color = $("#" + ic.pre + "distancecolor2" ).val();
 

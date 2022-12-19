@@ -2,8 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {UtilsCls} from '../utils/utilsCls.js';
-
 import {ClickMenu} from '../html/clickMenu.js';
 import {SetMenu} from '../html/setMenu.js';
 import {Dialog} from '../html/dialog.js';

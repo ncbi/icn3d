@@ -2,31 +2,14 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
-import {UtilsCls} from '../../utils/utilsCls.js';
-
-import {Html} from '../../html/html.js';
-
-import {DefinedSets} from '../selection/definedSets.js';
-import {ShowInter} from '../interaction/showInter.js';
-import {FirstAtomObj} from '../selection/firstAtomObj.js';
-import {Selection} from '../selection/selection.js';
-import {Draw} from '../display/draw.js';
-import {Resid2spec} from '../selection/resid2spec.js';
-import {LineGraph} from '../interaction/lineGraph.js';
-import {GetGraph} from '../interaction/getGraph.js';
-import {ParserUtils} from '../parsers/parserUtils.js';
-import {SaveFile} from '../export/saveFile.js';
-import {HlUpdate} from '../highlight/hlUpdate.js';
-
 class ViewInterPairs {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
     viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
-      bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  bondCnt;
+      bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { let ic = this.icn3d, me = ic.icn3dui;
+       let bondCnt;
 
        // reset
        ic.hbondpnts = [];
@@ -38,15 +21,15 @@ class ViewInterPairs {
 
        // type: view, save, forcegraph
        ic.bRender = false;
-       let  hAtoms = {}
-       let  prevHatoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+       let hAtoms = {}
+       let prevHatoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-       let  bContactMapLocal = (type == 'calpha' || type == 'cbeta' || type == 'heavyatoms');
+       let bContactMapLocal = (type == 'calpha' || type == 'cbeta' || type == 'heavyatoms');
 
-       let  atomSet1 = {}, atomSet2 = {};
+       let atomSet1 = {}, atomSet2 = {};
        if(bContactMapLocal) { // contact map
            for(let i in ic.hAtoms) {
-               let  atom = ic.atoms[i];
+               let atom = ic.atoms[i];
 
                // skip solvent
                if(atom.resn == 'HOH' || atom.resn == 'WAT' || atom.resn == 'SOL') continue;
@@ -65,12 +48,12 @@ class ViewInterPairs {
            atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
        }
 
-       let  labelType; // residue, chain, structure
-       let  cntChain = 0, cntStructure = 0;
+       let labelType; // residue, chain, structure
+       let cntChain = 0, cntStructure = 0;
        for(let structure in ic.structures) {
-           let  bStructure = false;
+           let bStructure = false;
            for(let i = 0, il = ic.structures[structure].length; i < il; ++i) {
-               let  chainid = ic.structures[structure][i];
+               let chainid = ic.structures[structure][i];
                for(let serial in ic.chains[chainid]) {
                    if(atomSet1.hasOwnProperty(serial) || atomSet2.hasOwnProperty(serial)) {
                        ++cntChain;
@@ -85,7 +68,7 @@ class ViewInterPairs {
        else if(cntChain > 1) labelType = 'chain';
        else labelType = 'residue';
        // fixed order of interaction type
-       let  interactionTypes = [];
+       let interactionTypes = [];
        if(bHbond) {
            interactionTypes.push('hbonds');
        }
@@ -109,7 +92,7 @@ class ViewInterPairs {
            ic.resids2interAll = {}
        }
        if(bSaltbridge) {
-           let  threshold = parseFloat($("#" + ic.pre + "saltbridgethreshold" ).val());
+           let threshold = parseFloat($("#" + ic.pre + "saltbridgethreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsIonic;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
@@ -119,7 +102,7 @@ class ViewInterPairs {
            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.hAtoms);
        }
        if(bHbond) {
-           let  threshold = parseFloat($("#" + ic.pre + "hbondthreshold" ).val());
+           let threshold = parseFloat($("#" + ic.pre + "hbondthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsHbond;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
@@ -128,7 +111,7 @@ class ViewInterPairs {
            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.hAtoms);
        }
        // switch display order, show hydrogen first
-       let  tableHtml = '';
+       let tableHtml = '';
        if(bHbond) {
            tableHtml += this.exportHbondPairs(type, labelType);
        }
@@ -136,7 +119,7 @@ class ViewInterPairs {
            tableHtml += this.exportSaltbridgePairs(type, labelType);
        }
        if(bHalogen) {
-           let  threshold = parseFloat($("#" + ic.pre + "halogenthreshold" ).val());
+           let threshold = parseFloat($("#" + ic.pre + "halogenthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsHalogen;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
@@ -146,7 +129,7 @@ class ViewInterPairs {
            tableHtml += this.exportHalogenPiPairs(type, labelType, 'halogen');
        }
        if(bPication) {
-           let  threshold = parseFloat($("#" + ic.pre + "picationthreshold" ).val());
+           let threshold = parseFloat($("#" + ic.pre + "picationthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsPication;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
@@ -156,7 +139,7 @@ class ViewInterPairs {
            tableHtml += this.exportHalogenPiPairs(type, labelType, 'pi-cation');
        }
        if(bPistacking) {
-           let  threshold = parseFloat($("#" + ic.pre + "pistackingthreshold" ).val());
+           let threshold = parseFloat($("#" + ic.pre + "pistackingthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsPistacking;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
@@ -164,11 +147,11 @@ class ViewInterPairs {
            }
            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.hAtoms);
            //tableHtml += this.exportHalogenPiPairs(type, labelType, 'pi-stacking');
-           let  tmp = this.exportHalogenPiPairs(type, labelType, 'pi-stacking');
+           let tmp = this.exportHalogenPiPairs(type, labelType, 'pi-stacking');
            tableHtml += tmp;
        }
        if(bInteraction) {
-           let  threshold = (bContactMapLocal) ? contactDist : parseFloat($("#" + ic.pre + "contactthreshold" ).val());
+           let threshold = (bContactMapLocal) ? contactDist : parseFloat($("#" + ic.pre + "contactthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsContact;
            if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
                 if(!bHbondCalc) {
@@ -180,23 +163,23 @@ class ViewInterPairs {
            }
            else { // contact in a set, atomSet1 same as atomSet2
                 if(!bHbondCalc) {
-                    let  residues = {};
-                    let  resid2ResidhashInteractions = {};
+                    let residues = {};
+                    let resid2ResidhashInteractions = {};
 
                     if(bContactMapLocal) {
-                        let  bIncludeTarget = true;
-                        let  result = ic.showInterCls.pickCustomSphere_base(threshold, atomSet1, atomSet2, bHbondCalc, true, undefined, undefined, true, bIncludeTarget);
+                        let bIncludeTarget = true;
+                        let result = ic.showInterCls.pickCustomSphere_base(threshold, atomSet1, atomSet2, bHbondCalc, true, undefined, undefined, true, bIncludeTarget);
                         residues = me.hashUtilsCls.unionHash(residues, result.residues);
                         for(let resid in result.resid2Residhash) {
                             resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
                         }
                     }
                     else {
-                        let  ssAtomsArray = [];
-                        let  prevSS = '', prevChain = '';
-                        let  ssAtoms = {}
+                        let ssAtomsArray = [];
+                        let prevSS = '', prevChain = '';
+                        let ssAtoms = {}
                         for(let i in atomSet1) {
-                            let  atom = ic.atoms[i];
+                            let atom = ic.atoms[i];
                             if(atom.ss != prevSS || atom.chain != prevChain) {
                                 if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
                                 ssAtoms = {}
@@ -207,15 +190,15 @@ class ViewInterPairs {
                         }
                         // last ss
                         if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
-                        let  len = ssAtomsArray.length;
-                        let  interStr = '';
+                        let len = ssAtomsArray.length;
+                        let interStr = '';
                         select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
                         ic.opts['contact'] = "yes";
 
                         for(let i = 0; i < len; ++i) {
                             for(let j = i + 1; j < len; ++j) {
                                 ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
-                                let  result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
+                                let result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
                                 residues = me.hashUtilsCls.unionHash(residues, result.residues);
                                 for(let resid in result.resid2Residhash) {
                                     resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
@@ -225,18 +208,18 @@ class ViewInterPairs {
                     }
 
                     ic.resid2ResidhashInteractions = resid2ResidhashInteractions;
-                    let  residueArray = Object.keys(residues);
+                    let residueArray = Object.keys(residues);
                     ic.hAtoms = {}
                     for(let index = 0, indexl = residueArray.length; index < indexl; ++index) {
-                      let  residueid = residueArray[index];
+                      let residueid = residueArray[index];
                       for(let i in ic.residues[residueid]) {
                         ic.hAtoms[i] = 1;
                       }
                     }
                     // do not change the set of displaying atoms
                     //ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
-                    let  commandname, commanddesc;
-                    let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(residues);
+                    let commandname, commanddesc;
+                    let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(residues);
                     if(firstAtom !== undefined) {
                         commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
                         if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
@@ -254,49 +237,49 @@ class ViewInterPairs {
        ic.bRender = true;
        //ic.hlUpdateCls.updateHlAll();
        ic.drawCls.draw();
-       let  residHash, select, commandname, commanddesc;
+       let residHash, select, commandname, commanddesc;
        residHash = ic.firstAtomObjCls.getResiduesFromAtoms(hAtoms);
        select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residHash));
        commandname = 'interface_all';
        commanddesc = commandname;
        ic.selectionCls.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
-       let  interface1 = me.hashUtilsCls.intHash(hAtoms, atomSet1);
+       let interface1 = me.hashUtilsCls.intHash(hAtoms, atomSet1);
        residHash = ic.firstAtomObjCls.getResiduesFromAtoms(interface1);
        select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residHash));
        commandname = 'interface_1';
        commanddesc = commandname;
        ic.selectionCls.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
-       let  interface2 = me.hashUtilsCls.intHash(hAtoms, atomSet2);
+       let interface2 = me.hashUtilsCls.intHash(hAtoms, atomSet2);
        residHash = ic.firstAtomObjCls.getResiduesFromAtoms(interface2);
        select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residHash));
        commandname = 'interface_2';
        commanddesc = commandname;
        ic.selectionCls.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
        //var html = '<div style="text-align:center"><b>Hydrogen Bonds, Salt Bridges, Contacts, Halogen Bonds, &pi;-cation, &pi;-stacking between Two Sets:</b><br>';
-       let  html = '<div style="text-align:center"><b>' + interactionTypes.join(', ') + ' between Two Sets:</b><br>';
-       let  residueArray1 = ic.resid2specCls.atoms2residues(Object.keys(atomSet1));
-       let  residueArray2 = ic.resid2specCls.atoms2residues(Object.keys(atomSet2));
-       let  cmd1 = 'select ' + ic.resid2specCls.residueids2spec(residueArray1);
-       let  cmd2 = 'select ' + ic.resid2specCls.residueids2spec(residueArray2);
+       let html = '<div style="text-align:center"><b>' + interactionTypes.join(', ') + ' between Two Sets:</b><br>';
+       let residueArray1 = ic.resid2specCls.atoms2residues(Object.keys(atomSet1));
+       let residueArray2 = ic.resid2specCls.atoms2residues(Object.keys(atomSet2));
+       let cmd1 = 'select ' + ic.resid2specCls.residueids2spec(residueArray1);
+       let cmd2 = 'select ' + ic.resid2specCls.residueids2spec(residueArray2);
        html += 'Set 1: ' + nameArray2 + ' <button class="' + ic.pre + 'selset" cmd="' + cmd1 + '">Highlight in 3D</button><br>';
        html += 'Set 2: ' + nameArray + ' <button class="' + ic.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br></div>';
        html += '<div style="text-align:center"><b>The interfaces are:</b><br>';
-       let  residueArray3 = ic.resid2specCls.atoms2residues(Object.keys(interface1));
-       let  residueArray4 = ic.resid2specCls.atoms2residues(Object.keys(interface2));
-       let  cmd3 = 'select ' + ic.resid2specCls.residueids2spec(residueArray3);
-       let  cmd4 = 'select ' + ic.resid2specCls.residueids2spec(residueArray4);
+       let residueArray3 = ic.resid2specCls.atoms2residues(Object.keys(interface1));
+       let residueArray4 = ic.resid2specCls.atoms2residues(Object.keys(interface2));
+       let cmd3 = 'select ' + ic.resid2specCls.residueids2spec(residueArray3);
+       let cmd4 = 'select ' + ic.resid2specCls.residueids2spec(residueArray4);
        html += 'interface_1 <button class="' + ic.pre + 'selset" cmd="' + cmd3 + '">Highlight in 3D</button><br>';
        html += 'interface_2 <button class="' + ic.pre + 'selset" cmd="' + cmd4 + '">Highlight in 3D</button><br><br></div>';
        html += '<div><b>Note</b>: Each checkbox below selects the corresponding residue. '
          + 'You can click "Save Selection" in the "Select" menu to save the selection '
          + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
-       let  header = html;
+       let header = html;
        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot' || bContactMapLocal) html = '';
        html += tableHtml;
 
        if(type == 'save1' || type == 'save2') {
            html = header;
-           let  tmpText = '';
+           let tmpText = '';
            if(type == 'save1') {
                tmpText = 'Set 1';
            }
@@ -317,30 +300,30 @@ class ViewInterPairs {
        }
        else if(type == 'linegraph') {
            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
-           let  bLine = true;
+           let bLine = true;
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bLinegraph = true;
            // draw SVG
-           let  svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr);
+           let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr);
            $("#" + ic.pre + "linegraphDiv").html(svgHtml);
        }
        else if(type == 'scatterplot') {
            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
-           let  bLine = true;
+           let bLine = true;
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bScatterplot = true;
            // draw SVG
-           let  svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+           let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
        }
        else if(bContactMapLocal) {
            me.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
-           let  bLine = true;
-           let  bAnyAtom = true;
-           let  graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
+           let bLine = true;
+           let bAnyAtom = true;
+           let graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
            ic.bContactMap = true;
            // draw SVG
-           let  svgHtml = ic.contactMapCls.drawContactMap(graphStr);
+           let svgHtml = ic.contactMapCls.drawContactMap(graphStr);
            $("#" + ic.pre + "contactmapDiv").html(svgHtml);
        }
        else if(type == 'graph') {
@@ -391,7 +374,7 @@ class ViewInterPairs {
     }
 
 /*
-    removeForce() { let  ic = this.icn3d, me = ic.icn3dui;
+    removeForce() { let ic = this.icn3d, me = ic.icn3dui;
        setTimeout(function(){
            me.htmlCls.force = 0;
            me.htmlCls.clickMenuCls.setLogCmd("graph force " + me.htmlCls.force, true);
@@ -400,7 +383,7 @@ class ViewInterPairs {
     }
 */
 
-    clearInteractions() { let  ic = this.icn3d, me = ic.icn3dui;
+    clearInteractions() { let ic = this.icn3d, me = ic.icn3dui;
         ic.lines['hbond'] = [];
         ic.hbondpnts = [];
         ic.lines['saltbridge'] = [];
@@ -416,7 +399,7 @@ class ViewInterPairs {
         ic.pistackingpnts = [];
     }
 
-    resetInteractionPairs() { let  ic = this.icn3d, me = ic.icn3dui;
+    resetInteractionPairs() { let ic = this.icn3d, me = ic.icn3dui;
        ic.bHbondCalc = false;
        //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
        ic.showInterCls.hideHbondsContacts();
@@ -426,10 +409,10 @@ class ViewInterPairs {
        ic.resids2interAll = {}
     }
 
-    retrieveInteractionData() { let  ic = this.icn3d, me = ic.icn3dui;
+    retrieveInteractionData() { let ic = this.icn3d, me = ic.icn3dui;
          if(!ic.b2DShown) {
              if(me.cfg.align !== undefined) {
-                 let  structureArray = Object.keys(ic.structures);
+                 let structureArray = Object.keys(ic.structures);
 
                  if(me.cfg.atype == 2) {
                     let bDiagramOnly = true;
@@ -439,7 +422,7 @@ class ViewInterPairs {
                  ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
              }
              else if(me.cfg.chainalign !== undefined) {
-                 let  structureArray = Object.keys(ic.structures);
+                 let structureArray = Object.keys(ic.structures);
                  //if(structureArray.length == 2) {
                  //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
                  //}
@@ -455,10 +438,10 @@ class ViewInterPairs {
          }
     }
 
-    getAllInteractionTable(type) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  bondCnt = [];
+    getAllInteractionTable(type) { let ic = this.icn3d, me = ic.icn3dui;
+        let bondCnt = [];
 
-        let  residsArray = Object.keys(ic.resids2inter);
+        let residsArray = Object.keys(ic.resids2inter);
         if(type == 'save1') {
            residsArray.sort(function(a,b) {
               return me.utilsCls.compResid(a, b, type);
@@ -470,17 +453,17 @@ class ViewInterPairs {
            });
         }
         //ic.resids2inter
-        let  tmpText = '';
-        let  prevResidname1 = '', prevIds = '';
-        let  strHbond = '', strIonic = '', strContact = '', strHalegen = '', strPication = '', strPistacking = '';
-        let  cntHbond = 0, cntIonic = 0, cntContact = 0, cntHalegen = 0, cntPication = 0, cntPistacking = 0;
+        let tmpText = '';
+        let prevResidname1 = '', prevIds = '';
+        let strHbond = '', strIonic = '', strContact = '', strHalegen = '', strPication = '', strPistacking = '';
+        let cntHbond = 0, cntIonic = 0, cntContact = 0, cntHalegen = 0, cntPication = 0, cntPistacking = 0;
         for(let i = 0, il = residsArray.length; i < il; ++i) {
-            let  resids = residsArray[i];
-            let  residname1_residname2 = resids.split(',');
-            let  residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
-            let  residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
+            let resids = residsArray[i];
+            let residname1_residname2 = resids.split(',');
+            let residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
+            let residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
             // stru_chain_resi_resn
-            let  ids = residname1.split('_');
+            let ids = residname1.split('_');
             if(i > 0 && residname1 != prevResidname1) {
                 bondCnt.push({cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
@@ -489,7 +472,7 @@ class ViewInterPairs {
                 strHbond = ''; strIonic = ''; strContact = ''; strHalegen = ''; strPication = ''; strPistacking = '';
                 cntHbond = 0; cntIonic = 0; cntContact = 0; cntHalegen = 0; cntPication = 0; cntPistacking = 0;
             }
-            let  labels2dist, result;
+            let labels2dist, result;
             labels2dist = ic.resids2inter[resids]['hbond'];
             result = this.getInteractionPairDetails(labels2dist, type, 'hbond');
             strHbond += result.html;
@@ -521,7 +504,7 @@ class ViewInterPairs {
 
         tmpText += this.getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
           cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking);
-        let  html = '';
+        let html = '';
         if(residsArray.length > 0) {
             html += '<br><table class="icn3d-sticky" align=center border=1 cellpadding=10 cellspacing=0><thead>';
             html += '<tr><th rowspan=2>Residue</th><th rowspan=2># Hydrogen<br>Bond</th><th rowspan=2># Salt Bridge<br>/Ionic Interaction</th><th rowspan=2># Contact</th>';
@@ -529,7 +512,7 @@ class ViewInterPairs {
             html += '<th>Hydrogen Bond (backbone atoms: @CA, @N, @C, @O)</th><th>Salt Bridge/Ionic Interaction</th><th>Contact</th>';
             html += '<th>Halogen Bond</th><th>&pi;-Cation</th><th>&pi;-Stacking</th></tr>';
             html += '<tr>';
-            let  tmpStr = '<td><table width="100%" class="icn3d-border"><tr><td>Atom1</td><td>Atom2</td><td>Distance(&#8491;)</td><td>Highlight in 3D</td></tr></table></td>';
+            let tmpStr = '<td><table width="100%" class="icn3d-border"><tr><td>Atom1</td><td>Atom2</td><td>Distance(&#8491;)</td><td>Highlight in 3D</td></tr></table></td>';
             html += tmpStr;
             html += tmpStr;
             html += '<td><table width="100%" class="icn3d-border"><tr><td>Atom1</td><td>Atom2</td><td># Contacts</td><td>Min Distance(&#8491;)</td><td>C-alpha Distance(&#8491;)</td><td>Highlight in 3D</td></tr></table></td>';
@@ -544,34 +527,34 @@ class ViewInterPairs {
         return  {html: html, bondCnt: bondCnt};
     }
     getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
-      cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
+      cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking) { let ic = this.icn3d, me = ic.icn3dui;
+        let tmpText = '';
         tmpText += '<tr align="center"><th>' + prevIds[3] + prevIds[2] + '</th><td>' + cntHbond + '</td><td>' + cntIonic + '</td><td>' + cntContact + '</td><td>' + cntHalegen + '</td><td>' + cntPication + '</td><td>' + cntPistacking + '</td>';
 
-        let  itemArray = [strHbond, strIonic, strContact, strHalegen, strPication, strPistacking];
+        let itemArray = [strHbond, strIonic, strContact, strHalegen, strPication, strPistacking];
         for(let i in itemArray) {
-            let  item = itemArray[i];
+            let item = itemArray[i];
             tmpText += '<td valign="top"><table width="100%" class="icn3d-border">' + item + '</table></td>';
         }
         tmpText += '</tr>';
         return tmpText;
     }
-    getInteractionPairDetails(labels2dist, type, interactionType) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '', cnt = 0;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+    getInteractionPairDetails(labels2dist, type, interactionType) { let ic = this.icn3d, me = ic.icn3dui;
+        let tmpText = '', cnt = 0;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         if(labels2dist !== undefined) {
             for(let labels in labels2dist) {
-                let  resid1_resid2 = labels.split(',');
-                let  resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                let  resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
-                let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-                let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-                let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist = Math.sqrt(labels2dist[labels]).toFixed(1);
+                let resid1_resid2 = labels.split(',');
+                let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+                let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+                let color1 = (atom1.color) ? atom1.color.getHexString() : '';
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist = Math.sqrt(labels2dist[labels]).toFixed(1);
                 tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + interactionType + '2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + interactionType + '2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + dist + '</td>';
                 tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
@@ -580,27 +563,27 @@ class ViewInterPairs {
         }
         return {html: tmpText, cnt: cnt}
     }
-    getContactPairDetails(labels2dist, type) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '', cnt = 0;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+    getContactPairDetails(labels2dist, type) { let ic = this.icn3d, me = ic.icn3dui;
+        let tmpText = '', cnt = 0;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         if(labels2dist !== undefined) {
             for(let labels in labels2dist) {
-                let  resid1_resid2 = labels.split(',');
-                let  resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                let  resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
-                let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-                let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-                let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
-                let  dist1 = dist1_dist2_atom1_atom2[0];
-                let  dist2 = dist1_dist2_atom1_atom2[1];
-                let  atom1Name = dist1_dist2_atom1_atom2[2];
-                let  atom2Name = dist1_dist2_atom1_atom2[3];
-                let  contactCnt = dist1_dist2_atom1_atom2[4];
+                let resid1_resid2 = labels.split(',');
+                let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+                let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+                let color1 = (atom1.color) ? atom1.color.getHexString() : '';
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
+                let dist1 = dist1_dist2_atom1_atom2[0];
+                let dist2 = dist1_dist2_atom1_atom2[1];
+                let atom1Name = dist1_dist2_atom1_atom2[2];
+                let atom2Name = dist1_dist2_atom1_atom2[3];
+                let contactCnt = dist1_dist2_atom1_atom2[4];
                 tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1Name + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2Name + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                 tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
@@ -612,55 +595,55 @@ class ViewInterPairs {
 
     //Export the list of residues in some chain interacting with residues in another chain.
     exportInteractions() {var ic = this.icn3d, me = ic.icn3dui;
-       let  text = '<html><body><div style="text-align:center"><br><b>Interacting residues</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
+       let text = '<html><body><div style="text-align:center"><br><b>Interacting residues</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
        for(let fisrtChainid in ic.chainname2residues) {
            for(let name in ic.chainname2residues[fisrtChainid]) {
-               let  secondChainid = fisrtChainid.substr(0, fisrtChainid.indexOf('_')) + '_' + name.substr(0, name.indexOf(' '));
+               let secondChainid = fisrtChainid.substr(0, fisrtChainid.indexOf('_')) + '_' + name.substr(0, name.indexOf(' '));
                text += '<tr><td>' + fisrtChainid + ': ';
                text += ic.resid2specCls.residueids2spec(ic.chainname2residues[fisrtChainid][name]);
                text += '</td><td>' + secondChainid + '</td></tr>';
            }
        }
        text += '</table><br/></div></body></html>';
-       let  file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref =(ic.inputid) ? ic.inputid : "custom";
        ic.saveFileCls.saveFile(file_pref + '_interactions.html', 'html', text);
     }
     exportSsbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
+        let tmpText = '';
+        let cnt = 0;
         for(let structure in ic.structures) {
-            let  ssbondArray = ic.ssbondpnts[structure];
+            let ssbondArray = ic.ssbondpnts[structure];
             if(ssbondArray === undefined) {
                 break;
             }
             for(let i = 0, il = ssbondArray.length; i < il; i = i + 2) {
-                let  resid1 = ssbondArray[i];
-                let  resid2 = ssbondArray[i+1];
+                let resid1 = ssbondArray[i];
+                let resid2 = ssbondArray[i+1];
                 tmpText += '<tr><td>' + resid1 + ' Cys</td><td>' + resid2 + ' Cys</td></tr>';
                 ++cnt;
             }
         }
-        let  text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' disulfide pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+        let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' disulfide pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let  file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref =(ic.inputid) ? ic.inputid : "custom";
         ic.saveFileCls.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
     }
     exportClbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
-        let  residHash = {}
+        let tmpText = '';
+        let cnt = 0;
+        let residHash = {}
         for(let structure in ic.structures) {
-            let  clbondArray = ic.clbondpnts[structure];
+            let clbondArray = ic.clbondpnts[structure];
             if(clbondArray === undefined) {
                 break;
             }
             for(let i = 0, il = clbondArray.length; i < il; i = i + 2) {
-                let  resid1 = clbondArray[i];
-                let  resid2 = clbondArray[i+1];
+                let resid1 = clbondArray[i];
+                let resid2 = clbondArray[i+1];
                 if(!residHash.hasOwnProperty(resid1 + '_' + resid2)) {
-                    let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]);
-                    let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]);
+                    let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]);
+                    let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]);
                     tmpText += '<tr><td>' + resid1 + ' ' + atom1.resn + '</td><td>' + resid2 + ' ' + atom2.resn + '</td></tr>';
                     ++cnt;
                 }
@@ -668,33 +651,33 @@ class ViewInterPairs {
                 residHash[resid2 + '_' + resid1] = 1;
             }
         }
-        let  text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' cross-linkage pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+        let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' cross-linkage pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let  file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref =(ic.inputid) ? ic.inputid : "custom";
         ic.saveFileCls.saveFile(file_pref + '_crosslinkage_pairs.html', 'html', text);
     }
     exportHbondPairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+        let tmpText = '';
+        let cnt = 0;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         for(let resid1 in ic.resid2ResidhashHbond) {
-            let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-            let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-            let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
+            let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+            let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+            let color1 = (atom1.color) ? atom1.color.getHexString() : '';
             for(let resid2 in ic.resid2ResidhashHbond[resid1]) {
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist = Math.sqrt(ic.resid2ResidhashHbond[resid1][resid2]).toFixed(1);
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist = Math.sqrt(ic.resid2ResidhashHbond[resid1][resid2]).toFixed(1);
                 tmpText += '<tr><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
             }
         }
-        let  text = '<div style="text-align:center"><br><b>' + cnt
+        let text = '<div style="text-align:center"><br><b>' + cnt
           + ' hydrogen bond pairs</b> (backbone atoms: @CA, @N, @C, @O):</div><br>';
         if(cnt > 0) {
             text += '<br><table align=center border=1 cellpadding=10 cellspacing=0>'
@@ -705,7 +688,7 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, me.htmlCls.hbondColor, labelType, me.htmlCls.hbondValue);
+            let hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, me.htmlCls.hbondColor, labelType, me.htmlCls.hbondValue);
             return hbondStr;
         }
         else {
@@ -713,26 +696,26 @@ class ViewInterPairs {
         }
     }
     exportSaltbridgePairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+        let tmpText = '';
+        let cnt = 0;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         for(let resid1 in ic.resid2ResidhashSaltbridge) {
-            let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-            let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-            let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
+            let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+            let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+            let color1 = (atom1.color) ? atom1.color.getHexString() : '';
             for(let resid2 in ic.resid2ResidhashSaltbridge[resid1]) {
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist = Math.sqrt(ic.resid2ResidhashSaltbridge[resid1][resid2]).toFixed(1);
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist = Math.sqrt(ic.resid2ResidhashSaltbridge[resid1][resid2]).toFixed(1);
                 tmpText += '<tr><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
             }
         }
-        let  text = '<div style="text-align:center"><br><b>' + cnt
+        let text = '<div style="text-align:center"><br><b>' + cnt
           + ' salt bridge/ionic interaction pairs</b>:</div><br>';
         if(cnt > 0) {
             text += '<br><table align=center border=1 cellpadding=10 cellspacing=0>'
@@ -743,7 +726,7 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, me.htmlCls.ionicColor, labelType, me.htmlCls.ionicValue);
+            let hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, me.htmlCls.ionicColor, labelType, me.htmlCls.ionicValue);
             return hbondStr;
         }
         else {
@@ -751,11 +734,11 @@ class ViewInterPairs {
         }
     }
     exportHalogenPiPairs(type, labelType, interactionType) {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
-        let  resid2Residhash, color, value;
+        let tmpText = '';
+        let cnt = 0;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+        let resid2Residhash, color, value;
         if(interactionType == 'halogen') {
             resid2Residhash = ic.resid2ResidhashHalogen;
             color = me.htmlCls.halogenColor;
@@ -772,21 +755,21 @@ class ViewInterPairs {
             value = me.htmlCls.pistackingValue;
         }
         for(let resid1 in resid2Residhash) {
-            let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-            let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-            let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
+            let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+            let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+            let color1 = (atom1.color) ? atom1.color.getHexString() : '';
             for(let resid2 in resid2Residhash[resid1]) {
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist = Math.sqrt(resid2Residhash[resid1][resid2]).toFixed(1);
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist = Math.sqrt(resid2Residhash[resid1][resid2]).toFixed(1);
                 tmpText += '<tr><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + interactionType + '_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + interactionType + '_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
             }
         }
-        let  text = '<div style="text-align:center"><br><b>' + cnt
+        let text = '<div style="text-align:center"><br><b>' + cnt
           + ' ' + interactionType + ' pairs</b>:</div><br>';
         if(cnt > 0) {
             text += '<br><table align=center border=1 cellpadding=10 cellspacing=0>'
@@ -797,7 +780,7 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(resid2Residhash, resid2Residhash, color, labelType, value);
+            let hbondStr = ic.getGraphCls.getGraphLinks(resid2Residhash, resid2Residhash, color, labelType, value);
             return hbondStr;
         }
         else {
@@ -805,25 +788,25 @@ class ViewInterPairs {
         }
     }
     exportSpherePairs(bInteraction, type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
-        let  tmpText = '';
-        let  cnt = 0;
-        let  residHash =(bInteraction) ? ic.resid2ResidhashInteractions : ic.resid2ResidhashSphere;
-        let  colorText1 = ' <span style="background-color:#';
-        let  colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
+        let tmpText = '';
+        let cnt = 0;
+        let residHash =(bInteraction) ? ic.resid2ResidhashInteractions : ic.resid2ResidhashSphere;
+        let colorText1 = ' <span style="background-color:#';
+        let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         for(let resid1 in residHash) { // e.g., resid1: TYR $1KQ2.A:42
-            let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
-            let  atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
-            let  color1 = (atom1.color) ? atom1.color.getHexString() : '';
+            let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+            let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+            let color1 = (atom1.color) ? atom1.color.getHexString() : '';
             for(let resid2 in residHash[resid1]) {
-                let  resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
-                let  atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
-                let  color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let  dist1_dist2_atom1_atom2 = residHash[resid1][resid2].split('_');
-                let  dist1 = dist1_dist2_atom1_atom2[0];
-                let  dist2 = dist1_dist2_atom1_atom2[1];
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist1_dist2_atom1_atom2 = residHash[resid1][resid2].split('_');
+                let dist1 = dist1_dist2_atom1_atom2[0];
+                let dist2 = dist1_dist2_atom1_atom2[1];
                 atom1 = dist1_dist2_atom1_atom2[2];
                 atom2 = dist1_dist2_atom1_atom2[3];
-                let  contactCnt = dist1_dist2_atom1_atom2[4];
+                let contactCnt = dist1_dist2_atom1_atom2[4];
                 if(bInteraction) {
                     tmpText += '<tr><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                     if(type == 'view') tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
@@ -835,8 +818,8 @@ class ViewInterPairs {
                 ++cnt;
             }
         }
-        let  nameStr =(bInteraction) ? "the contacts" : "sphere";
-        let  text = '<div style="text-align:center"><br><b>' + cnt
+        let nameStr =(bInteraction) ? "the contacts" : "sphere";
+        let text = '<div style="text-align:center"><br><b>' + cnt
           + ' residue pairs in ' + nameStr + '</b>:</div><br>';
         if(cnt > 0) {
             if(bInteraction) {
@@ -854,7 +837,7 @@ class ViewInterPairs {
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot'
           || type == 'calpha' || type == 'cbeta' || type == 'heavyatoms') {
-            let  interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, me.htmlCls.contactColor, labelType, me.htmlCls.contactValue);
+            let interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, me.htmlCls.contactColor, labelType, me.htmlCls.contactValue);
             return interStr;
         }
         else {

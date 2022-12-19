@@ -2,23 +2,15 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {ApplyCenter} from '../display/applyCenter.js';
-import {Alternate} from '../display/alternate.js';
-import {Draw} from '../display/draw.js';
-import {Transform} from '../transform/transform.js';
-import {Ray} from '../picking/ray.js';
-
 class Control {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
 
-    setControl() { let  ic = this.icn3d, me = ic.icn3dui;
+    setControl() { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
-        let  thisClass = this;
+        let thisClass = this;
 
         // adjust the size
         ic.WIDTH = ic.container.width(), ic.HEIGHT = ic.container.height();
@@ -68,12 +60,12 @@ class Control {
 
           ic.bStopRotate = true;
 
-          let  rotAngle = (ic.bShift) ? 90 : 5;
+          let rotAngle = (ic.bShift) ? 90 : 5;
 
           if(!ic.typetext) {
             // zoom
             if(e.keyCode === 90 ) { // Z
-              let  para = {};
+              let para = {};
 
               if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
@@ -118,7 +110,7 @@ class Control {
               if(ic.bRender) ic.drawCls.render();
             }
             else if(e.keyCode === 88 ) { // X
-              let  para = {};
+              let para = {};
 
               if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
@@ -167,26 +159,26 @@ class Control {
 
             // rotate
             else if(e.keyCode === 76 ) { // L, rotate left
-              let  axis = new THREE.Vector3(0,1,0);
-              let  angle = -rotAngle / 180.0 * Math.PI;
+              let axis = new THREE.Vector3(0,1,0);
+              let angle = -rotAngle / 180.0 * Math.PI;
 
               ic.transformCls.setRotation(axis, angle);
             }
             else if(e.keyCode === 74 ) { // J, rotate right
-              let  axis = new THREE.Vector3(0,1,0);
-              let  angle = rotAngle / 180.0 * Math.PI;
+              let axis = new THREE.Vector3(0,1,0);
+              let angle = rotAngle / 180.0 * Math.PI;
 
               ic.transformCls.setRotation(axis, angle);
             }
             else if(e.keyCode === 73 ) { // I, rotate up
-              let  axis = new THREE.Vector3(1,0,0);
-              let  angle = -rotAngle / 180.0 * Math.PI;
+              let axis = new THREE.Vector3(1,0,0);
+              let angle = -rotAngle / 180.0 * Math.PI;
 
               ic.transformCls.setRotation(axis, angle);
             }
             else if(e.keyCode === 77 ) { // M, rotate down
-              let  axis = new THREE.Vector3(1,0,0);
-              let  angle = rotAngle / 180.0 * Math.PI;
+              let axis = new THREE.Vector3(1,0,0);
+              let angle = rotAngle / 180.0 * Math.PI;
 
               ic.transformCls.setRotation(axis, angle);
             }
@@ -221,7 +213,7 @@ class Control {
             if(ic.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
                 ic.highlightlevel = ic.pk;
 
-                let  bClick = true;
+                let bClick = true;
                 ic.rayCls.rayCaster(e, bClick);
             }
 
@@ -251,7 +243,7 @@ class Control {
             $("#" + ic.pre + "popup").hide();
 
             //var bClick = false;
-            let  bClick = true;
+            let bClick = true;
             ic.rayCls.rayCaster(e, bClick);
 
             if(ic.bControlGl && !me.bNode) {
@@ -317,7 +309,7 @@ class Control {
         });
     }
 
-    mouseMove(e) { let  ic = this.icn3d, me = ic.icn3dui;
+    mouseMove(e) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         //e.preventDefault();
@@ -329,7 +321,7 @@ class Control {
         //$("[id$=popup]").hide();
         $("#" + ic.pre + "popup").hide();
 
-        let  bClick = false;
+        let bClick = false;
         ic.rayCls.rayCaster(e, bClick);
 
         if(ic.bControlGl && !me.bNode) {
@@ -337,7 +329,7 @@ class Control {
           window.controls.update();
 
           for(let divid in window.icn3duiHash) {
-              let  icTmp = window.icn3duiHash[divid].icn3d;
+              let icTmp = window.icn3duiHash[divid].icn3d;
               if(icTmp.bRender) icTmp.drawCls.render();
           }
         }

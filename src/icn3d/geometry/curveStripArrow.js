@@ -2,13 +2,6 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-//import * as THREE from 'three';
-
-import {SubdivideCls} from '../../utils/subdivideCls.js';
-
-import {Strip} from '../geometry/strip.js';
-import {Curve} from '../geometry/curve.js';
-
 class CurveStripArrow {
     constructor(icn3d) {
         this.icn3d = icn3d;
