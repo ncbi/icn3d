@@ -8,7 +8,7 @@ class ApplyCommand {
     }
 
     //Execute a command. If the command is to load a structure, use the Method "applyCommandLoad".
-    applyCommand(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommand(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
       ic.bAddCommands = false;
 
       let commandTransformation = commandStr.split('|||');
@@ -23,18 +23,18 @@ class ApplyCommand {
 
       //var file_pref =(ic.inputid) ? ic.inputid : "custom";
       if(command == 'share link') {
-        ic.shareLinkCls.shareLink();
+        await ic.shareLinkCls.shareLink();
       }
       else if(command == 'export state file') { // last step to update transformation
         // the last transformation will be applied
       }
       else if(command.indexOf('export canvas') == 0) {
-        setTimeout(function(){
+        setTimeout(async function(){
                //ic.saveFileCls.saveFile(file_pref + '_icn3d_loadable.png', 'png');
                let scaleStr = command.substr(13).trim();
                ic.scaleFactor = (scaleStr === '') ? 1 : parseInt(scaleStr);
                let bPngOnly = (scaleStr === '') ? false : true;
-               ic.shareLinkCls.shareLink(true, bPngOnly);
+               await ic.shareLinkCls.shareLink(true, bPngOnly);
             }, 500);
       }
       else if(command == 'export interactions') {
@@ -259,8 +259,8 @@ class ApplyCommand {
           ic.annotationCls.setAnnoTabInteraction();
       }
       else if(command == 'set annotation ptm') {
-        ic.annotationCls.setAnnoTabPTM();
-    }
+        await ic.annotationCls.setAnnoTabPTM();
+      }
       else if(command == 'set annotation cdd') {
           ic.annotationCls.setAnnoTabCdd();
       }
@@ -274,7 +274,7 @@ class ApplyCommand {
           ic.annotationCls.setAnnoTabCrosslink();
       }
       else if(command == 'set annotation transmembrane') {
-          ic.annotationCls.setAnnoTabTransmem();
+          await ic.annotationCls.setAnnoTabTransmem();
       }
       else if(command == 'highlight level up') {
           ic.resid2specCls.switchHighlightLevelUp();
@@ -449,10 +449,10 @@ class ApplyCommand {
         ic.showInterCls.showClbonds();
       }
       else if(command == 'back') {
-         ic.resizeCanvasCls.back();
+        await ic.resizeCanvasCls.back();
       }
       else if(command == 'forward') {
-         ic.resizeCanvasCls.forward();
+        await ic.resizeCanvasCls.forward();
       }
       else if(command == 'clear all') {
          ic.selectionCls.selectAll();
@@ -504,7 +504,7 @@ class ApplyCommand {
         let chainidArray = chainids_resdef.substr(0, pos).split(',');
         me.cfg.resdef = chainids_resdef.substr(pos + 1).replace(/:/gi, ';'); // should be 1,5,10-50 | 1,5,10-50; 2,6,11-51 | 1,5,10-50
 
-        ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, true, true);
+        await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, true, true);
      }
       else if(command == 'area') {
          ic.analysisCls.calculateArea();
@@ -575,7 +575,7 @@ class ApplyCommand {
         if(commandOri.indexOf('select sets') == 0) pos = 12; // 'select sets '
 
         let strSets = select.substr(pos);
-
+        
         let commandname = strSets;
 
         if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
@@ -828,7 +828,7 @@ class ApplyCommand {
               ic.targetGapHash[parseInt(pos_from_to[0])] = {"from": parseInt(pos_from_to[1]), "to": parseInt(pos_from_to[2])}
           }
 
-          ic.annotationCls.resetAnnoAll();
+          await ic.annotationCls.resetAnnoAll();
       }
       else if(commandOri.indexOf('add track') == 0) {
           //"add track | chainid " + chainid + " | title " + title + " | text " + text
@@ -999,7 +999,7 @@ class ApplyCommand {
                     type = 'scatterplot';
                 }
 
-                ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
+                await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
             }
         }
       }
@@ -1023,9 +1023,6 @@ class ApplyCommand {
             }
         }
       }
-      else if(commandOri.indexOf('export pqr') == 0) {
-           me.htmlCls.setHtmlCls.exportPqr();
-      }
       else if(command.indexOf('graph label') == 0) {
         let pos = command.lastIndexOf(' ');
         let className = command.substr(pos + 1);
@@ -1043,12 +1040,6 @@ class ApplyCommand {
 
         $("#" + me.svgid_ct + " text").removeClass();
         $("#" + me.svgid_ct + " text").addClass(className);
-      }
-      else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
-        let pos = command.lastIndexOf(' ');
-        let type = command.substr(pos + 1);
-
-        ic.cartoon2dCls.draw2Dcartoon(type);
       }
       else if(command.indexOf('line graph scale') == 0) {
         let pos = command.lastIndexOf(' ');
@@ -1134,10 +1125,10 @@ class ApplyCommand {
         $("#" + ic.pre + "crossstrucinter").val(ic.crossstrucinter);
       }
       else if(command == 'replay on') {
-        ic.resizeCanvasCls.replayon();
+        await ic.resizeCanvasCls.replayon();
       }
       else if(command == 'replay off') {
-        ic.resizeCanvasCls.replayoff();
+        await ic.resizeCanvasCls.replayoff();
       }
 
     // start with, single word =============
@@ -1148,7 +1139,7 @@ class ApplyCommand {
             let contactdist = parseFloat(strArray[1].split(' ')[1]);
             let contacttype = strArray[2].split(' ')[1];
 
-            ic.contactMapCls.contactMap(contactdist, contacttype);
+            await ic.contactMapCls.contactMap(contactdist, contacttype);
         }
       }
       else if(command.indexOf('pickatom') == 0) {
@@ -1247,7 +1238,7 @@ class ApplyCommand {
 
         let selectionType = secondPart.substr(0, secondPart.indexOf(' '));
         let style = secondPart.substr(secondPart.indexOf(' ') + 1);
-
+        
         ic.setOptionCls.setStyle(selectionType, style);
       }
       else if(command.indexOf('window') == 0) {
@@ -1307,7 +1298,7 @@ class ApplyCommand {
         ic.chainidArray = commandOri.substr(commandOri.indexOf(' ') + 1).split(',');
 
         let bRealign = true, bPredefined = true;
-        ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+        await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
 
         // reset annotations
         // $("#" + ic.pre + "dl_annotations").html("");
@@ -1317,12 +1308,12 @@ class ApplyCommand {
         // }
       }
       else if(command.indexOf('ig refnum off') == 0) {
-        ic.refnumCls.hideIgRefNum();
+        await ic.refnumCls.hideIgRefNum();
       }
       else if(command.indexOf('custom refnum') == 0) {
         let paraArray = commandOri.split(' | ');
         let dataStr = paraArray[1].replace(/\\n/g, '\n');
-        ic.refnumCls.parseCustomRefFile(dataStr);
+        await ic.refnumCls.parseCustomRefFile(dataStr);
       }
 
     // special, select ==========
@@ -1370,7 +1361,7 @@ class ApplyCommand {
     //    if(paraArray.length < 3) commanddesc = commandname;
         commanddesc = commandname;
 
-        ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+        await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
       }
       else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 
           || command.indexOf('select %') !== -1 || command.indexOf('select @') !== -1) {
@@ -1388,10 +1379,10 @@ class ApplyCommand {
         }
 
         if(select.indexOf(' or ') !== -1) { // "select " command without " | name"
-            ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+            await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
         }
         else { // only single query from selectByCommand()
-            ic.selByCommCls.selectBySpec(select, commandname, commanddesc);
+            await ic.selByCommCls.selectBySpec(select, commandname, commanddesc);
         }
       }
 
@@ -1439,7 +1430,7 @@ class ApplyCommand {
     }
 
     getThresholdNameArrays(commandOri) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.clickMenuCls.SetChainsAdvancedMenu();
+        me.htmlCls.clickMenuCls.SetChainsAdvancedMenu();
 
         let paraArray = commandOri.split(' | ');
 

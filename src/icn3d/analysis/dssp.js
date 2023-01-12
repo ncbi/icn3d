@@ -7,7 +7,7 @@ class Dssp {
         this.icn3d = icn3d;
     }
 
-    applyDssp(bCalphaOnly, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyDssp(bCalphaOnly, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       let calphaonly =(bCalphaOnly) ? '1' : '0';
@@ -22,7 +22,6 @@ class Dssp {
         
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
-///           pdbStr += ic.saveFileCls.getPDBHeader(i);
 
            let atomHash = {};
            let chainidArray = ic.structures[struArray[i]];
@@ -33,43 +32,37 @@ class Dssp {
 
            pdbStr += ic.saveFileCls.getAtomPDB(atomHash, undefined, true);
 
-           let dssp = $.ajax({
-              url: url,
-              type: 'POST',
-              data: {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': pdbStr},
-              //dataType: 'jsonp',
-              dataType: 'json',
-              cache: true
-           });
+           let dataObj = {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': pdbStr};
+           let dssp = me.getAjaxPostPromise(url, dataObj);
 
            ajaxArray.push(dssp);
       }
 
-      //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-      //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-      $.when.apply(undefined, ajaxArray).then(function() {
-            let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
-            thisClass.parseDsspData(dataArray, struArray, bAppend);
+        let allPromise = Promise.allSettled(ajaxArray);
+        try {
+            let dataArray = await allPromise;
+            await thisClass.parseDsspData(dataArray, struArray, bAppend);
             
-            ic.ParserUtilsCls.checkMemProteinAndRotate();
-      })
-      .fail(function() {
-          console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
+            await ic.ParserUtilsCls.checkMemProteinAndRotate();
+        }
+        catch(err) {
+            console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
 
-          ic.pdbParserCls.loadPdbDataRender(bAppend);
+            await ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-          if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-          if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
-      });
+            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
+        }
     }
 
-    parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         //var dataArray =(struArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-            let ssHash = dataArray[index][0];
+            //let ssHash = dataArray[index][0];
+            let ssHash = dataArray[index].value;
 
             if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
               for(let chainNum in ic.chainsSeq) {
@@ -175,10 +168,10 @@ class Dssp {
             }
         }
 
-        ic.pdbParserCls.loadPdbDataRender(bAppend);
+        await ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-        //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-        if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
+        ///// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }
 }
 

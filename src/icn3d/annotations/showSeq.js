@@ -30,13 +30,15 @@ class ShowSeq {
             }
         }
         giSeq = giSeqTmp;
+
         //let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
         let divLength = me.htmlCls.RESIDUE_WIDTH * (ic.giSeq[chnid].length + ic.nTotalGap) + 200;
 
-        let seqLength = ic.giSeq[chnid].length
-        if(seqLength > ic.maxAnnoLength) {
-            ic.maxAnnoLength = seqLength;
-        }
+        // let seqLength = ic.giSeq[chnid].length
+        // if(seqLength > ic.maxAnnoLength) {
+        //     ic.maxAnnoLength = seqLength;
+        // }
+
         //let itemArray = ['giseq', 'cddsite', 'ptm', 'clinvar', 'snp', 'domain', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
         let itemArray = ['giseq', 'cddsite', 'clinvar', 'snp', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
         for(let i in itemArray) {
@@ -68,12 +70,13 @@ class ShowSeq {
             for(let i = 0, il = giSeq.length; i < il; ++i) {
               html += this.insertGap(chnid, i, '-');
               let currResi;
-              if(bNonMmdb) {
-                currResi = giSeq[i].resi;
-              }
-              else {
-                currResi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-              }
+            //   if(bNonMmdb) {
+            //     currResi = giSeq[i].resi;
+            //   }
+            //   else {
+            //     currResi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+            //   }
+              currResi = ic.ParserUtilsCls.getResi(chnid, i);
               html += '<span>'
               if( currResi % 10 === 0) {
                 //html += currResi + ' ';
@@ -135,9 +138,8 @@ class ShowSeq {
         html += htmlTmp + '<span class="icn3d-seqLine">';
         for(let i = 0, il = giSeq.length; i < il; ++i) {
           html += this.insertGap(chnid, i, '-');
-    //      let resi =(ic.baseResi[chnid] + i+1).toString();
-    //      let resi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-          let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+        //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+          let resi = ic.ParserUtilsCls.getResi(chnid, i);
           let residueid = chnid + '_' + resi;
           if( ic.residues.hasOwnProperty(residueid) ) {
             if(ic.secondaries[residueid] == 'H') {
@@ -220,9 +222,10 @@ class ShowSeq {
           if(cFull.length > 1) {
               c = cFull[0] + '..';
           }
-    //      pos =(ic.baseResi[chnid] + i+1).toString();
-    //      pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-          pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+          
+        //   pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+          pos = ic.ParserUtilsCls.getResi(chnid, i);
+              
           if( !ic.residues.hasOwnProperty(chnid + '_' + pos) ) {
               c = c.toLowerCase();
               html += '<span title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
@@ -400,8 +403,9 @@ class ShowSeq {
                 html += htmlTmp + '<span class="icn3d-seqLine">';
                 for(let i = 0, il = giSeq.length; i < il; ++i) {
                     html += this.insertGap(chnid, i, '-');
-                    if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                      let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                    //if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                    //   let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                      let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                       let residueid = chnid + '_' + currResi;
                       if(!ic.residues.hasOwnProperty(residueid)) {
                           html += '<span></span>';
@@ -415,10 +419,10 @@ class ShowSeq {
                           }
                           html += '</span>';
                       }
-                    }
-                    else {
-                      html += '<span></span>';
-                    }
+                    // }
+                    // else {
+                    //   html += '<span></span>';
+                    // }
                 }
                 html += '<span class="icn3d-residueNum"></span>';
                 html += '</span>';
@@ -479,8 +483,9 @@ class ShowSeq {
         html += htmlTmp + '<span class="icn3d-seqLine">';
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             html += this.insertGap(chnid, i, '-');
-            if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+            // if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                // let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                 let residueid = chnid + '_' + currResi;
                 let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
                 if(!ic.residues.hasOwnProperty(residueid)) {
@@ -565,10 +570,10 @@ class ShowSeq {
                         html += '<span></span>';
                     }
                 }
-            }
-            else {
-                html += '<span></span>';
-            }
+            // }
+            // else {
+            //     html += '<span></span>';
+            // }
         }
         html += '<span class="icn3d-residueNum"></span>';
         html += '</span>';
@@ -655,6 +660,7 @@ class ShowSeq {
         ic.matchedPos[chnid] = 0;
         ic.baseResi[chnid] = ic.chainsSeq[chnid][0].resi - ic.matchedPos[chnid] - 1;
     }
+
     getProteinName(chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let fullProteinName = '';
         if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {

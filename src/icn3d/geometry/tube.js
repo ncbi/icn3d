@@ -34,7 +34,7 @@ class Tube {
 
                 if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
 //                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
-                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
+                  || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
                   ) ) {
                     if(bHighlight !== 2) {
                         if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
@@ -199,7 +199,7 @@ class Tube {
             this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray);
         }
 
-        pnts_colors_radii_prevone_nexttwo = [];
+        pnts_colors_radii_prevone_nexttwo = [];    
     }
 
     getCustomtubesize(resid) { let ic = this.icn3d, me = ic.icn3dui;

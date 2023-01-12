@@ -359,14 +359,14 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.setHtmlCls.exportPqr();
+        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await me.htmlCls.setHtmlCls.exportPqr();
            thisClass.setLogCmd("export pqr", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             let bPdb = true;
-            me.htmlCls.setHtmlCls.exportPqr(bPdb);
+            await me.htmlCls.setHtmlCls.exportPqr(bPdb);
             thisClass.setLogCmd("export pdbh", false);
          });
 
@@ -400,40 +400,40 @@ class ClickMenu {
            ic.export3DCls.exportVrmlFile('_stab');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export interactions", false);
-           if(me.cfg.mmdbid !== undefined) ic.viewInterPairsCls.retrieveInteractionData();
+           if(me.cfg.mmdbid !== undefined) await ic.viewInterPairsCls.retrieveInteractionData();
            ic.viewInterPairsCls.exportInteractions();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            // do not record the export command
            //thisClass.setLogCmd("export canvas", true);
            thisClass.setLogCmd("export canvas", false);
            //var file_pref =(ic.inputid) ? ic.inputid : "custom";
            //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
            let bPngHtml = true;
-           ic.shareLinkCls.shareLink(bPngHtml);
+           await ic.shareLinkCls.shareLink(bPngHtml);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 1", true);
            ic.scaleFactor = 1;
-           ic.shareLinkCls.shareLink(true, true);
+           await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 2", true);
            ic.scaleFactor = 2;
-           ic.shareLinkCls.shareLink(true, true);
+           await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 4", true);
            ic.scaleFactor = 4;
-           ic.shareLinkCls.shareLink(true, true);
+           await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 8", true);
            ic.scaleFactor = 8;
-           ic.shareLinkCls.shareLink(true, true);
+           await ic.shareLinkCls.shareLink(true, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -484,16 +484,16 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            ic.shareLinkCls.shareLink();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            await ic.shareLinkCls.shareLink();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-          ic.resizeCanvasCls.replayon();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+          await ic.resizeCanvasCls.replayon();
           thisClass.setLogCmd("replay on", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            ic.resizeCanvasCls.replayoff();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            await ic.resizeCanvasCls.replayoff();
             thisClass.setLogCmd("replay off", true);
         });
 
@@ -708,8 +708,8 @@ class ClickMenu {
 
         let thisClass = this;
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           ic.showAnnoCls.showAnnotations();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await ic.showAnnoCls.showAnnotations();
            thisClass.setLogCmd("view annotations", true);
            //thisClass.setLogCmd("window annotations", true);
         });
@@ -1345,9 +1345,9 @@ class ClickMenu {
             else {
                 me.utilsCls.checkFileAPI();
                 let reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     let dataStr = e.target.result; // or = reader.result;
-                    ic.refnumCls.parseCustomRefFile(dataStr);
+                    await ic.refnumCls.parseCustomRefFile(dataStr);
 
                     dataStr = dataStr.replace(/\r/g, '').replace(/\n/g, '\\n');
 
@@ -1660,14 +1660,14 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum on', true);
-            ic.refnumCls.showIgRefNum();
+            await ic.refnumCls.showIgRefNum();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
-            ic.refnumCls.hideIgRefNum();
+            await ic.refnumCls.hideIgRefNum();
          });
 
 
@@ -1978,15 +1978,15 @@ class ClickMenu {
            thisClass.setLogCmd('set axis off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
-           ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
+           await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
            //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
-           ic.symdCls.retrieveSymd();
+           await ic.symdCls.retrieveSymd();
            ic.bSymd = true;
 
            thisClass.setLogCmd('symd symmetry', true);

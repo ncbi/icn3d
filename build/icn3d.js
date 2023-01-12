@@ -5039,6 +5039,10 @@ var icn3d = (function (exports) {
 
           return sum;
         }
+
+        getMemDesc() {
+          return "<div style='width:150px'><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br></div>";
+        }
     }
 
     /**
@@ -6881,14 +6885,14 @@ var icn3d = (function (exports) {
                ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { me.icn3d; //e.preventDefault();
-               me.htmlCls.setHtmlCls.exportPqr();
+            me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { me.icn3d; //e.preventDefault();
+               await me.htmlCls.setHtmlCls.exportPqr();
                thisClass.setLogCmd("export pqr", true);
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", function(e) { me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { me.icn3d; //e.preventDefault();
                 let bPdb = true;
-                me.htmlCls.setHtmlCls.exportPqr(bPdb);
+                await me.htmlCls.setHtmlCls.exportPqr(bPdb);
                 thisClass.setLogCmd("export pdbh", false);
              });
 
@@ -6922,40 +6926,40 @@ var icn3d = (function (exports) {
                ic.export3DCls.exportVrmlFile('_stab');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export interactions", false);
-               if(me.cfg.mmdbid !== undefined) ic.viewInterPairsCls.retrieveInteractionData();
+               if(me.cfg.mmdbid !== undefined) await ic.viewInterPairsCls.retrieveInteractionData();
                ic.viewInterPairsCls.exportInteractions();
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                // do not record the export command
                //thisClass.setLogCmd("export canvas", true);
                thisClass.setLogCmd("export canvas", false);
                //var file_pref =(ic.inputid) ? ic.inputid : "custom";
                //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
                let bPngHtml = true;
-               ic.shareLinkCls.shareLink(bPngHtml);
+               await ic.shareLinkCls.shareLink(bPngHtml);
             });
-            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export canvas 1", true);
                ic.scaleFactor = 1;
-               ic.shareLinkCls.shareLink(true, true);
+               await ic.shareLinkCls.shareLink(true, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export canvas 2", true);
                ic.scaleFactor = 2;
-               ic.shareLinkCls.shareLink(true, true);
+               await ic.shareLinkCls.shareLink(true, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export canvas 4", true);
                ic.scaleFactor = 4;
-               ic.shareLinkCls.shareLink(true, true);
+               await ic.shareLinkCls.shareLink(true, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export canvas 8", true);
                ic.scaleFactor = 8;
-               ic.shareLinkCls.shareLink(true, true);
+               await ic.shareLinkCls.shareLink(true, true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -7006,16 +7010,16 @@ var icn3d = (function (exports) {
                ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-                ic.shareLinkCls.shareLink();
+            me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+                await ic.shareLinkCls.shareLink();
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-              ic.resizeCanvasCls.replayon();
+            me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+              await ic.resizeCanvasCls.replayon();
               thisClass.setLogCmd("replay on", true);
             });
-            me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-                ic.resizeCanvasCls.replayoff();
+            me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+                await ic.resizeCanvasCls.replayoff();
                 thisClass.setLogCmd("replay off", true);
             });
 
@@ -7229,8 +7233,8 @@ var icn3d = (function (exports) {
 
             let thisClass = this;
 
-            me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-               ic.showAnnoCls.showAnnotations();
+            me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+               await ic.showAnnoCls.showAnnotations();
                thisClass.setLogCmd("view annotations", true);
                //thisClass.setLogCmd("window annotations", true);
             });
@@ -7866,9 +7870,9 @@ var icn3d = (function (exports) {
                 else {
                     me.utilsCls.checkFileAPI();
                     let reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         let dataStr = e.target.result; // or = reader.result;
-                        ic.refnumCls.parseCustomRefFile(dataStr);
+                        await ic.refnumCls.parseCustomRefFile(dataStr);
 
                         dataStr = dataStr.replace(/\r/g, '').replace(/\n/g, '\\n');
 
@@ -8181,14 +8185,14 @@ var icn3d = (function (exports) {
                ic.drawCls.draw();
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                 thisClass.setLogCmd('ig refnum on', true);
-                ic.refnumCls.showIgRefNum();
+                await ic.refnumCls.showIgRefNum();
              });
 
-             me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+             me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                 thisClass.setLogCmd('ig refnum off', true);
-                ic.refnumCls.hideIgRefNum();
+                await ic.refnumCls.hideIgRefNum();
              });
 
 
@@ -8497,15 +8501,15 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd('set axis off', true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                ic.bAxisOnly = false;
-               ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
+               await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
                //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
                ic.bAxisOnly = false;
-               ic.symdCls.retrieveSymd();
+               await ic.symdCls.retrieveSymd();
                ic.bSymd = true;
 
                thisClass.setLogCmd('symd symmetry', true);
@@ -12458,7 +12462,7 @@ var icn3d = (function (exports) {
             return alignment_final;
         }
 
-        searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        async searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
            let select = $("#" + me.pre + "search_seq").val();
            if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
            && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
@@ -12466,7 +12470,7 @@ var icn3d = (function (exports) {
            }
            let commandname = select.replace(/\s+/g, '_');
            let commanddesc = commandname;
-           ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+           await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
            thisClass.setLogCmd('select ' + select + ' | name ' + commandname, true);
         }
 
@@ -12475,7 +12479,7 @@ var icn3d = (function (exports) {
             let commandName = (bAppend) ? 'append': 'load';
             
             let reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 //++ic.loadedFileCnt;
 
                 let dataStr = e.target.result; // or = reader.result;
@@ -12504,7 +12508,7 @@ var icn3d = (function (exports) {
                         ic.hAtoms = {};
                         ic.dAtoms = {};
                     }
-                    ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+                    await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
                 }
                 else {
                     thisClass.readFile(bAppend, files, index + 1, dataStrAll);
@@ -12516,7 +12520,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
+        async loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
            let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
 
            //me = ic.setIcn3dui(this.id);
@@ -12547,7 +12551,7 @@ var icn3d = (function (exports) {
                 if(bAppend) {
                     if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
                     //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
-                    if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+                    if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                 }
            }
         }
@@ -12569,7 +12573,7 @@ var icn3d = (function (exports) {
                 alert("At least two chains are required for alignment...");
                 return;
             }
-            ic.clickMenuCls.SetChainsAdvancedMenu();
+            me.htmlCls.clickMenuCls.SetChainsAdvancedMenu();
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
             if($("#" + me.pre + id).length) {
                 $("#" + me.pre + id).html(definedAtomsHtml);
@@ -12646,16 +12650,16 @@ var icn3d = (function (exports) {
             me.htmlCls.clickMenuCls.clickMenu6();
 
             // back and forward arrows
-            me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                thisClass.setLogCmd("back", false);
-               ic.resizeCanvasCls.back();
+               await ic.resizeCanvasCls.back();
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "forward", "#" + me.pre + "mn6_forward"], "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds(["#" + me.pre + "forward", "#" + me.pre + "mn6_forward"], "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                thisClass.setLogCmd("forward", false);
-               ic.resizeCanvasCls.forward();
+               await ic.resizeCanvasCls.forward();
             });
 
             me.myEventCls.onIds(["#" + me.pre + "fullscreen", "#" + me.pre + "mn6_fullscreen"], "click", function(e) { let ic = me.icn3d; // from expand icon for mobilemenu
@@ -12762,7 +12766,7 @@ var icn3d = (function (exports) {
             });
 
 
-            me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let nameArray = $("#" + me.pre + "atomsCustomRealign").val();
@@ -12770,7 +12774,7 @@ var icn3d = (function (exports) {
                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                }
 
-               ic.realignParserCls.realignOnSeqAlign();
+               await ic.realignParserCls.realignOnSeqAlign();
 
                if(nameArray.length > 0) {
                    thisClass.setLogCmd("realign on seq align | " + nameArray, true);
@@ -12780,7 +12784,7 @@ var icn3d = (function (exports) {
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
@@ -12790,7 +12794,7 @@ var icn3d = (function (exports) {
      
                 me.cfg.aligntool = 'vast';
      
-                ic.realignParserCls.realignOnStructAlign();
+                await ic.realignParserCls.realignOnStructAlign();
                 if(nameArray.length > 0) {
                     thisClass.setLogCmd("realign on structure align | " + nameArray, true);
                 }
@@ -12799,7 +12803,7 @@ var icn3d = (function (exports) {
                 }
              });
 
-             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", function(e) { let ic = me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
@@ -12809,7 +12813,7 @@ var icn3d = (function (exports) {
 
                 me.cfg.aligntool = 'tmalign';
      
-                ic.realignParserCls.realignOnStructAlign();
+                await ic.realignParserCls.realignOnStructAlign();
                 if(nameArray.length > 0) {
                     thisClass.setLogCmd("realign on tmalign | " + nameArray, true);
                 }
@@ -12818,7 +12822,7 @@ var icn3d = (function (exports) {
                 }
              });
 
-             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", function(e) { let ic = me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct2").val();
@@ -12828,7 +12832,7 @@ var icn3d = (function (exports) {
 
                 //me.cfg.aligntool = 'tmalign';
 
-                ic.vastplusCls.realignOnVastplus();
+                await ic.vastplusCls.realignOnVastplus();
 
                 if(nameArray.length > 0) {
                     thisClass.setLogCmd("realign on vastplus | " + nameArray, true);
@@ -12911,9 +12915,9 @@ var icn3d = (function (exports) {
                 thisClass.setLogCmd("set view detailed view", true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "show_annotations", "click", function(e) { let ic = me.icn3d;
-                 ic.showAnnoCls.showAnnotations();
-                 thisClass.setLogCmd("view annotations", true);
+            me.myEventCls.onIds("#" + me.pre + "show_annotations", "click", async function(e) { let ic = me.icn3d;
+                await ic.showAnnoCls.showAnnotations();
+                thisClass.setLogCmd("view annotations", true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "showallchains", "click", function(e) { let ic = me.icn3d;
@@ -12925,21 +12929,21 @@ var icn3d = (function (exports) {
                  me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", async function(e) { let ic = me.icn3d;
                  me.htmlCls.dialogCls.openDlg('dl_2ddgm', '2D Diagram');
-                 ic.viewInterPairsCls.retrieveInteractionData();
+                 await ic.viewInterPairsCls.retrieveInteractionData();
                  thisClass.setLogCmd("view interactions", true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", async function(e) { me.icn3d;
                e.stopImmediatePropagation();
-               thisClass.searchSeq();
+               await thisClass.searchSeq();
             });
 
-            me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", async function(e) { me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
-                   thisClass.searchSeq();
+                   await thisClass.searchSeq();
                }
             });
 
@@ -13016,23 +13020,23 @@ var icn3d = (function (exports) {
                window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
                 thisClass.setLogCmd("set half pae map " + afid, true);
                 
-                ic.contactMapCls.afErrorMap(afid);
+                await ic.contactMapCls.afErrorMap(afid);
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
                 let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
                 thisClass.setLogCmd("set full pae map " + afid, true);
                 
-                ic.contactMapCls.afErrorMap(afid, true);
+                await ic.contactMapCls.afErrorMap(afid, true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
@@ -13152,7 +13156,7 @@ var icn3d = (function (exports) {
                 window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', urlTarget);
              });
 
-             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", function(e) { let ic = me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
      
@@ -13169,7 +13173,7 @@ var icn3d = (function (exports) {
 
                 let bRealign = true, bPredefined = true;
                 let chainidArray = alignment_final.split(',');
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+                await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
      
                 thisClass.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
              });
@@ -13186,7 +13190,7 @@ var icn3d = (function (exports) {
                 window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
@@ -13208,7 +13212,7 @@ var icn3d = (function (exports) {
                if(pdbsource == 'currentpage') {
                     let snp = mutationids;
 
-                    ic.scapCls.retrieveScap(snp);
+                    await ic.scapCls.retrieveScap(snp);
                     thisClass.setLogCmd('scap 3d ' + snp, true);
                     thisClass.setLogCmd("select displayed set", true);
                }
@@ -13220,7 +13224,7 @@ var icn3d = (function (exports) {
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
@@ -13243,7 +13247,7 @@ var icn3d = (function (exports) {
                     let snp = mutationids;
 
                     let bPdb = true;
-                    ic.scapCls.retrieveScap(snp, undefined, bPdb);
+                    await ic.scapCls.retrieveScap(snp, undefined, bPdb);
                     thisClass.setLogCmd('scap pdb ' + snp, true);
                }
                else {
@@ -13254,7 +13258,7 @@ var icn3d = (function (exports) {
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
@@ -13277,7 +13281,7 @@ var icn3d = (function (exports) {
                     let snp = mutationids;
 
                     let bInteraction = true;
-                    ic.scapCls.retrieveScap(snp, bInteraction);
+                    await ic.scapCls.retrieveScap(snp, bInteraction);
                     thisClass.setLogCmd('scap interaction ' + snp, true);
 
                     let idArray = snp.split('_'); //stru_chain_resi_snp
@@ -13524,14 +13528,14 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    ic.bStatefile = true;
 
                    let dataStr = e.target.result; // or = reader.result;
                    thisClass.setLogCmd('load state file ' + $("#" + me.pre + "state").val(), false);
                    ic.commands = [];
                    ic.optsHistory = [];
-                   ic.loadScriptCls.loadScript(dataStr, true);
+                   await ic.loadScriptCls.loadScript(dataStr, true);
                  };
                  reader.readAsText(file);
                }
@@ -13547,9 +13551,9 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    let dataStr = e.target.result; // or = reader.result;
-                   ic.selectionCls.loadSelection(dataStr);
+                   await ic.selectionCls.loadSelection(dataStr);
                    thisClass.setLogCmd('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
                  };
                  reader.readAsText(file);
@@ -13567,10 +13571,10 @@ var icn3d = (function (exports) {
                ic.dsn6ParserCls.loadDsn6File('fofc');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadDelphiFile('delphi');
+               await ic.delphiCls.loadDelphiFile('delphi');
             });
             me.myEventCls.onIds("#" + me.pre + "reload_pqrfile", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
@@ -13587,29 +13591,29 @@ var icn3d = (function (exports) {
                if(!me.cfg.notebook) dialog.dialog( "close" );
                ic.delphiCls.loadPhiFile('cube');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('pqrurl');
+               await ic.delphiCls.loadPhiFileUrl('pqrurl');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('phiurl');
+               await ic.delphiCls.loadPhiFileUrl('phiurl');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('cubeurl');
+               await ic.delphiCls.loadPhiFileUrl('cubeurl');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_delphifile2", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_delphifile2", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                me.htmlCls.setHtmlCls.updateSurfPara('delphi');
 
                if(!me.cfg.notebook) dialog.dialog( "close" );
 
-               ic.delphiCls.loadDelphiFile('delphi2');
+               await ic.delphiCls.loadDelphiFile('delphi2');
             });
             me.myEventCls.onIds("#" + me.pre + "reload_pqrfile2", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
@@ -13632,26 +13636,26 @@ var icn3d = (function (exports) {
                if(!me.cfg.notebook) dialog.dialog( "close" );
                ic.delphiCls.loadPhiFile('cube2');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile2", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile2", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('pqrurl2');
+               await ic.delphiCls.loadPhiFileUrl('pqrurl2');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile2", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile2", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('phiurl2');
+               await ic.delphiCls.loadPhiFileUrl('phiurl2');
             });
-            me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile2", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile2", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.delphiCls.loadPhiFileUrl('cubeurl2');
+               await ic.delphiCls.loadPhiFileUrl('cubeurl2');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurl2fofc", "click", function(e) { let ic = me.icn3d;
@@ -13665,18 +13669,18 @@ var icn3d = (function (exports) {
                ic.dsn6ParserCls.loadDsn6FileUrl('fofc');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { me.icn3d;
                e.preventDefault();
 
                let bAppend = false;
-               thisClass.loadPdbFile(bAppend);
+               await thisClass.loadPdbFile(bAppend);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
 
                ic.bAppend = true;
-               thisClass.loadPdbFile(ic.bAppend);
+               await thisClass.loadPdbFile(ic.bAppend);
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
@@ -13697,7 +13701,7 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    let dataStr = e.target.result; // or = reader.result;
                    thisClass.setLogCmd('load mol2 file ' + $("#" + me.pre + "mol2file").val(), false);
                    ic.molTitle = "";
@@ -13707,7 +13711,7 @@ var icn3d = (function (exports) {
                    ic.bInputfile = true;
                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                    ic.InputfileType = 'mol2';
-                   ic.mol2ParserCls.loadMol2Data(dataStr);
+                   await ic.mol2ParserCls.loadMol2Data(dataStr);
                  };
                  reader.readAsText(file);
                }
@@ -13731,7 +13735,7 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    let dataStr = e.target.result; // or = reader.result;
                    thisClass.setLogCmd('load sdf file ' + $("#" + me.pre + "sdffile").val(), false);
                    ic.molTitle = "";
@@ -13741,7 +13745,7 @@ var icn3d = (function (exports) {
                    ic.bInputfile = true;
                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                    ic.InputfileType = 'sdf';
-                   ic.sdfParserCls.loadSdfData(dataStr);
+                   await ic.sdfParserCls.loadSdfData(dataStr);
                  };
                  reader.readAsText(file);
                }
@@ -13765,7 +13769,7 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    let dataStr = e.target.result; // or = reader.result;
                    thisClass.setLogCmd('load xyz file ' + $("#" + me.pre + "xyzfile").val(), false);
                    ic.molTitle = "";
@@ -13775,7 +13779,7 @@ var icn3d = (function (exports) {
                    ic.bInputfile = true;
                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                    ic.InputfileType = 'xyz';
-                   ic.xyzParserCls.loadXyzData(dataStr);
+                   await ic.xyzParserCls.loadXyzData(dataStr);
                  };
                  reader.readAsText(file);
                }
@@ -13839,7 +13843,7 @@ var icn3d = (function (exports) {
                 }
              });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                ic.bInitial = true;
                if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -13857,7 +13861,7 @@ var icn3d = (function (exports) {
                ic.init();
                ic.bInputfile = true;
                ic.bInputUrlfile = true;
-               ic.pdbParserCls.downloadUrl(url, type);
+               await ic.pdbParserCls.downloadUrl(url, type);
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mmciffile", "click", function(e) { let ic = me.icn3d;
@@ -13878,44 +13882,22 @@ var icn3d = (function (exports) {
                else {
                  me.htmlCls.setHtmlCls.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
-                   let dataStr = e.target.result; // or = reader.result;
-                   thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
-                   ic.molTitle = "";
+                 reader.onload = async function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
+                    ic.molTitle = "";
                     let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                    ic.bCid = undefined;
-                   $.ajax({
-                      url: url,
-                      type: 'POST',
-                      data : {'mmciffile': dataStr},
-                      dataType: 'json',
-                      cache: true,
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      beforeSend: function() {
-                          ic.ParserUtilsCls.showLoading();
-                      },
-                      complete: function() {
-                          //ic.ParserUtilsCls.hideLoading();
-                      },
-                      success: function(data) {
-                          //ic.initUI();
-                          ic.init();
-                          ic.bInputfile = true;
-                          ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-                          ic.InputfileType = 'mmcif';
-                          ic.mmcifParserCls.loadMmcifData(data);
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-                        return;
-                      }
-                    });
+                    //ic.bCid = undefined;
+
+                    let dataObj = {'mmciffile': dataStr};
+                    let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                    //ic.initUI();
+                    ic.init();
+                    ic.bInputfile = true;
+                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                    ic.InputfileType = 'mmcif';
+                    await ic.mmcifParserCls.loadMmcifData(data); //await 
                  };
                  reader.readAsText(file);
                }
@@ -14000,25 +13982,25 @@ var icn3d = (function (exports) {
                ic.crossstrucinter = parseInt($("#" + me.pre + "crossstrucinter").val());
                thisClass.setLogCmd("cross structure interaction " + ic.crossstrucinter, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "applyhbonds", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "applyhbonds", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('3d');
+               await ic.showInterCls.showInteractions('3d');
             });
-            me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
 
                let contactdist = parseFloat($("#" + ic.pre + "contactdist").val());
                let contacttype = $("#" + ic.pre + "contacttype").val();
 
-               ic.contactMapCls.contactMap(contactdist, contacttype);
+               await ic.contactMapCls.contactMap(contactdist, contacttype);
                thisClass.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('view');
+               await ic.showInterCls.showInteractions('view');
             });
             me.myEventCls.onIds("#" + me.pre + "areaWindow", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
@@ -14028,10 +14010,10 @@ var icn3d = (function (exports) {
                ic.analysisCls.calcBuriedSurface(nameArray2, nameArray);
                thisClass.setLogCmd("calc buried surface | " + nameArray2 + " " + nameArray, true);
             });
-            me.myEventCls.onIds("#" + me.pre + "sortSet1", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "sortSet1", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('save1');
+               await ic.showInterCls.showInteractions('save1');
             });
             $(document).on("click", "." + me.pre + "showintercntonly", function(e) { me.icn3d;
                 e.stopImmediatePropagation();
@@ -14043,25 +14025,25 @@ var icn3d = (function (exports) {
                 $(".icn3d-border").show();
                 thisClass.setLogCmd("table inter details", true);
             });
-            me.myEventCls.onIds("#" + me.pre + "sortSet2", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "sortSet2", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('save2');
+               await ic.showInterCls.showInteractions('save2');
             });
-            me.myEventCls.onIds("#" + me.pre + "hbondGraph", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "hbondGraph", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('graph');
+               await ic.showInterCls.showInteractions('graph');
             });
-            me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('linegraph');
+               await ic.showInterCls.showInteractions('linegraph');
             });
-            me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                
-               ic.showInterCls.showInteractions('scatterplot');
+               await ic.showInterCls.showInteractions('scatterplot');
             });
             // select residues
             $(document).on("click", "#" + me.svgid + " circle.selected", function(e) { let ic = me.icn3d;
@@ -14218,10 +14200,10 @@ var icn3d = (function (exports) {
                 
                 ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
              });
-             me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
+             me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", async function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 
-                ic.contactMapCls.afErrorMap(afid, true);
+                await ic.contactMapCls.afErrorMap(afid, true);
              });
              me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
                  e.preventDefault();
@@ -14637,7 +14619,7 @@ var icn3d = (function (exports) {
                 thisClass.setLogCmd("clear selection", true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "replay", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "replay", "click", async function(e) { let ic = me.icn3d;
                  e.stopImmediatePropagation();
                  ic.CURRENTNUMBER++;
                  let currentNumber =(me.cfg.replay) ? ic.STATENUMBER : ic.STATENUMBER - 1;
@@ -14647,7 +14629,7 @@ var icn3d = (function (exports) {
                       $("#" + me.pre + "replay").hide();
                  }
                  else if(ic.commands.length > 0 && ic.commands[ic.CURRENTNUMBER]) {
-                      ic.loadScriptCls.execCommandsBase(ic.CURRENTNUMBER, ic.CURRENTNUMBER, ic.STATENUMBER);
+                      await ic.loadScriptCls.execCommandsBase(ic.CURRENTNUMBER, ic.CURRENTNUMBER, ic.STATENUMBER);
                       let pos = ic.commands[ic.CURRENTNUMBER].indexOf('|||');
                       let cmdStrOri =(pos != -1) ? ic.commands[ic.CURRENTNUMBER].substr(0, pos) : ic.commands[ic.CURRENTNUMBER];
                       let maxLen = 30;
@@ -14789,7 +14771,7 @@ var icn3d = (function (exports) {
                   ic.hlUpdateCls.updateHlAll();
             });
             // highlight a set of residues
-            $(document).on("click", "." + me.pre + "selset", function(e) { let ic = me.icn3d;
+            $(document).on("click", "." + me.pre + "selset", async function(e) { let ic = me.icn3d;
                   e.stopImmediatePropagation();
                   ic.bSelOneRes = false;
                   let elems = $( "." + me.pre + "seloneres" );
@@ -14797,7 +14779,7 @@ var icn3d = (function (exports) {
                       elems[i].checked = false;
                   }
                   let cmd = $(this).attr('cmd');
-                  ic.selByCommCls.selectByCommand(cmd, '', '');
+                  await ic.selByCommCls.selectByCommand(cmd, '', '');
                   ic.hlObjectsCls.removeHlObjects();  // render() is called
                   ic.hlObjectsCls.addHlObjects();  // render() is called
                   thisClass.setLogCmd(cmd, true);
@@ -14942,23 +14924,23 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd("set theme black", true);
             });
 
-            $(document).on("click", "." + me.pre + "snpin3d", function(e) { let ic = me.icn3d;
+            $(document).on("click", "." + me.pre + "snpin3d", async function(e) { let ic = me.icn3d;
                 e.stopImmediatePropagation();
 
                 let snp = $(this).attr('snp');
 
-                ic.scapCls.retrieveScap(snp);
+                await ic.scapCls.retrieveScap(snp);
                 thisClass.setLogCmd('scap 3d ' + snp, true);
                 thisClass.setLogCmd("select displayed set", true);
             });
 
-            $(document).on("click", "." + me.pre + "snpinter", function(e) { let ic = me.icn3d;
+            $(document).on("click", "." + me.pre + "snpinter", async function(e) { let ic = me.icn3d;
                 e.stopImmediatePropagation();
 
                 let snp = $(this).attr('snp');
 
                 let bInteraction = true;
-                ic.scapCls.retrieveScap(snp, bInteraction);
+                await ic.scapCls.retrieveScap(snp, bInteraction);
                 thisClass.setLogCmd('scap interaction ' + snp, true);
 
                 let idArray = snp.split('_'); //stru_chain_resi_snp
@@ -14970,13 +14952,13 @@ var icn3d = (function (exports) {
                 thisClass.setLogCmd("select displayed set", true);
             });
 
-            $(document).on("click", "." + me.pre + "snppdb", function(e) { let ic = me.icn3d;
+            $(document).on("click", "." + me.pre + "snppdb", async function(e) { let ic = me.icn3d;
                 e.stopImmediatePropagation();
 
                 let snp = $(this).attr('snp');
 
                 let bPdb = true;
-                ic.scapCls.retrieveScap(snp, undefined, bPdb);
+                await ic.scapCls.retrieveScap(snp, undefined, bPdb);
                 thisClass.setLogCmd('scap pdb ' + snp, true);
             });
 
@@ -15796,7 +15778,7 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
+        async exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
            let ionHash = {};
            let atomHash = {};
 
@@ -15823,84 +15805,61 @@ var icn3d = (function (exports) {
               ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
            }
            else {
-               let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
-               if(bCalphaOnly) {
-                   alert("The potential will not be shown because the side chains are missing in the structure...");
-                   return;
-               }
+                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+                if(bCalphaOnly) {
+                    alert("The potential will not be shown because the side chains are missing in the structure...");
+                    return;
+                }
 
-               let pdbstr = '';
+                let pdbstr = '';
 
-               pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
-               pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+                pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
+                pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
-               let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+                let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
 
-               let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+                let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
 
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'pdb2pqr': pdbstr, 'pdbid': pdbid},
-                  dataType: 'text',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1,
-                  beforeSend: function() {
-                      ic.ParserUtilsCls.showLoading();
-                  },
-                  complete: function() {
-                      ic.ParserUtilsCls.hideLoading();
-                  },
-                  success: function(data) {
-                      let pqrStr = data;
+                let dataObj = {'pdb2pqr': pdbstr, 'pdbid': pdbid};
+                let data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, true, 'text');
 
-                      if(bPdb) {
-                        let lineArray = pqrStr.split('\n');
+                let pqrStr = data;
 
-                        let pdbStr = '';
-                        for(let i = 0, il = lineArray.length; i < il; ++i) {
-                            let line = lineArray[i];
-                            if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
-                                let atomName = line.substr(12, 4).trim();
-                                let elem;
-                                if(line.substr(0, 6) == 'ATOM  ') {
-                                    elem = atomName.substr(0, 1);
-                                }
-                                else {
-                                    let twochar = atomName.substr(0, 2);
-                                    if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
-                                        elem = twochar;
-                                    }
-                                    else {
-                                        elem = atomName.substr(0, 1);
-                                    }
-                                }
+                if(bPdb) {
+                let lineArray = pqrStr.split('\n');
 
-                                pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
+                let pdbStr = '';
+                for(let i = 0, il = lineArray.length; i < il; ++i) {
+                    let line = lineArray[i];
+                    if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
+                        let atomName = line.substr(12, 4).trim();
+                        let elem;
+                        if(line.substr(0, 6) == 'ATOM  ') {
+                            elem = atomName.substr(0, 1);
+                        }
+                        else {
+                            let twochar = atomName.substr(0, 2);
+                            if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
+                                elem = twochar;
                             }
                             else {
-                                pdbStr += line + '\n';
+                                elem = atomName.substr(0, 1);
                             }
                         }
 
-                        pqrStr = pdbStr;
-                      }
-
-                      let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                      ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
+                        pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
                     }
-                    return;
-                  }
-               });
-           }
+                    else {
+                        pdbStr += line + '\n';
+                    }
+                }
+
+                pqrStr = pdbStr;
+                }
+
+                let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
+            }
         }
 
         clickReload_pngimage() { let me = this.icn3dui; me.icn3d;
@@ -15927,16 +15886,16 @@ var icn3d = (function (exports) {
                else {
                  thisClass.fileSupport();
                  let reader = new FileReader();
-                 reader.onload = function(e) {
+                 reader.onload = async function(e) {
                    let imageStr = e.target.result; // or = reader.result;
-                   thisClass.loadPng(imageStr);
+                   await thisClass.loadPng(imageStr);
                  };
                  reader.readAsText(file);
                }
             });
         }
 
-        loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
+        async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
            let matchedStr = 'Share Link: ';
            let pos = imageStr.indexOf(matchedStr);
            let matchedStrState = "Start of state file======\n";
@@ -15974,29 +15933,28 @@ var icn3d = (function (exports) {
                    statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
                     if(type === 'pdb') {
-                        $.when( ic.pdbParserCls.loadPdbData(data))
-                         .then(function() {
-                             ic.commands = [];
-                             ic.optsHistory = [];
-                             ic.loadScriptCls.loadScript(statefile, true);
-                         });
+                        await ic.pdbParserCls.loadPdbData(data);
+
+                        ic.commands = [];
+                        ic.optsHistory = [];
+                        await ic.loadScriptCls.loadScript(statefile, true);
                     }
                     else {
                         if(type === 'mol2') {
-                            ic.mol2ParserCls.loadMol2Data(data);
+                            await ic.mol2ParserCls.loadMol2Data(data);
                         }
                         else if(type === 'sdf') {
-                            ic.sdfParserCls.loadSdfData(data);
+                            await ic.sdfParserCls.loadSdfData(data);
                         }
                         else if(type === 'xyz') {
-                            ic.xyzParserCls.loadXyzData(data);
+                            await ic.xyzParserCls.loadXyzData(data);
                         }
                         else if(type === 'mmcif') {
-                            ic.mmcifParserCls.loadMmcifData(data);
+                            await ic.mmcifParserCls.loadMmcifData(data);
                         }
                        ic.commands = [];
                        ic.optsHistory = [];
-                       ic.loadScriptCls.loadScript(statefile, true);
+                       await ic.loadScriptCls.loadScript(statefile, true);
                    }
                }
                else { // url length > 4000
@@ -16009,7 +15967,7 @@ var icn3d = (function (exports) {
 
                    ic.commands = [];
                    ic.optsHistory = [];
-                   ic.loadScriptCls.loadScript(statefile, true);
+                   await  ic.loadScriptCls.loadScript(statefile, true);
                }
                me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
            }
@@ -16267,7 +16225,7 @@ var icn3d = (function (exports) {
 
         //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
         this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
-            ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
+            ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://test.ncbi.nlm.nih.gov/Structure/";
         this.divStr = "<div id='" + this.icn3dui.pre;
         this.divNowrapStr = "<div style='white-space:nowrap'>";
         this.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -21943,11 +21901,13 @@ var icn3d = (function (exports) {
     */                            
             }
 
-            $("#" + me.pre + "VRButton").remove();
-            $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+            if(!me.bNode) {
+                $("#" + me.pre + "VRButton").remove();
+                $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
 
-            $("#" + me.pre + "ARButton").remove();
-            $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+                $("#" + me.pre + "ARButton").remove();
+                $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+            }
         }
 
         getControllers() { let ic = this.icn3d; ic.icn3dui;
@@ -22901,14 +22861,20 @@ var icn3d = (function (exports) {
 
             let atom, maxDistance = 8.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
 
+            let chainid, currentChainid;
+
             for (i in atoms) {
                 atom = atoms[i];
                 if (atom.het) continue;
 
+                chainid = atom.structure + '_' + atom.chain;
+                currentChainid = atom.structure + '_' + currentChain;
+
                 //if (atom.name !== atomName) continue;
                 if(atomNameArray.indexOf(atom.name) == -1) continue;
 
-                if (start !== null && currentChain === atom.chain && currentResi != atom.resi //currentResi + 1 === atom.resi
+                if (start !== null && currentChain === atom.chain 
+                    && ic.ParserUtilsCls.getResiNCBI(currentChainid, currentResi) + 1 === ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
                     && Math.abs(start.coord.x - atom.coord.x) < maxDistance
                     && Math.abs(start.coord.y - atom.coord.y) < maxDistance
                     && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
@@ -22945,7 +22911,8 @@ var icn3d = (function (exports) {
 
                 if(bHighlight === 2) ic.boxCls.createBox(atom, undefined, undefined, undefined, undefined, bHighlight);
             }
-            if (start !== null && currentChain === atom.chain && currentResi != atom.resi //currentResi + 1 === atom.resi
+            if (start !== null && currentChain === atom.chain 
+                && ic.ParserUtilsCls.getResiNCBI(currentChainid, currentResi) + 1 === ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
                 && Math.abs(start.coord.x - atom.coord.x) < maxDistance
                 && Math.abs(start.coord.y - atom.coord.y) < maxDistance
                 && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
@@ -23725,8 +23692,8 @@ var icn3d = (function (exports) {
             let bShowArray = [];
             let calphaIdArray = []; // used to store one of the final positions drawn in 3D
             let colors = [];
-            let currentChain, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
-            let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
+            let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
+            let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevAtomSelected = null, prevResi = null, calphaid = null, prevCalphaid = null;
             let strandWidth, bSheetSegment = false, bHelixSegment = false;
             let atom, tubeAtoms = {};
 
@@ -23749,8 +23716,11 @@ var icn3d = (function (exports) {
 
             let caArray = []; // record all C-alpha atoms to predict the helix
 
+            let maxDist = 6.0;
+
             for (let i in atomsAdjust) {
               atom = atomsAdjust[i];
+              let chainid = atom.structure + '_' + atom.chain;
               if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
                 // "CA" has to appear before "O"
 
@@ -23777,11 +23747,12 @@ var icn3d = (function (exports) {
                         currentO = atom.coord;
                     }
                     // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
-                    let bSameChain = true;
-    //                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
-                    if (currentChain !== atom.chain) {
-                        bSameChain = false;
-                    }
+                   
+                    // let bSameChain = true;
+                    // if (currentChain !== atom.chain) {
+                    // //if (currentChain !== atom.chain) {
+                    //     bSameChain = false;
+                    // }
 
                     if(atom.ssend && atom.ss === 'sheet') {
                         bSheetSegment = true;
@@ -23867,8 +23838,21 @@ var icn3d = (function (exports) {
                         ++drawnResidueCount;
                     }
 
-                    let maxDist = 6.0;
-                    let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                    //let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+
+                    let prevCoor = (prevAtomSelected) ? prevAtomSelected.coord : undefined;
+                    
+                    let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoor && Math.abs(currentCA.x - prevCoor.x) > maxDist) || (prevCoor && Math.abs(currentCA.y - prevCoor.y) > maxDist) || (prevCoor && Math.abs(currentCA.z - prevCoor.z) > maxDist);
+
+                    // check whether the atoms are continuous
+                    // atomsAdjusted has all atoms in the secondary structure
+                    // atoms has all selected atoms
+                    // let bBrokenSs = false;
+                    // if(prevAtomSelected && prevAtomid == prevAtomSelected.serial && !atoms.hasOwnProperty(atom.serial)) {
+                    //     bBrokenSs = true;                  
+                    // }
+
+
                     // The following code didn't work to select one residue
                     // let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
@@ -23879,9 +23863,10 @@ var icn3d = (function (exports) {
                     //     bHelixSegment = true;
                     // }
 
-                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+                    //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+                    if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0) {
                         let atomName = 'CA';
-
+                    
                         let prevone = [], nexttwo = [];
 
                         if(isNaN(ic.atoms[prevAtomid].resi)) {
@@ -23907,7 +23892,8 @@ var icn3d = (function (exports) {
                             }
                         }
 
-                        if(!bBrokenSs) { // include the current residue
+                        // include the current residue
+                        if(!bBrokenSs) { 
                             // assign the current joint residue to the previous segment
                             if(bHighlight === 1 || bHighlight === 2) {
                                 colors.push(ic.hColor);
@@ -24022,8 +24008,8 @@ var icn3d = (function (exports) {
                     } // end if (atom.ssbegin || atom.ssend)
 
                     // end of a chain
-    //                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
-                    if ((currentChain !== atom.chain) && pnts[0].length > 0) {
+                    if ((currentChain !== atom.chain || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) && pnts[0].length > 0) {
+                    //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                         let atomName = 'CA';
 
@@ -24076,9 +24062,11 @@ var icn3d = (function (exports) {
                     }
 
                     currentChain = atom.chain;
+                    currentResi = atom.resi;
                     ss = atom.ss;
                     ssend = atom.ssend;
                     prevAtomid = atom.serial;
+                    if(atoms.hasOwnProperty(atom.serial)) prevAtomSelected = atom;
                     prevResi = atom.resi;
 
                     prevCalphaid = calphaid;
@@ -24113,9 +24101,9 @@ var icn3d = (function (exports) {
               if(prevChain === undefined) firstAtom = atoms[serial];
 
               if( (currChain !== prevChain && prevChain !== undefined)
-               || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) || index === length - 1) {
+               || (currResi !== prevResi && ic.resid2ncbi[currResi] !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) || index === length - 1) {
                 if( (currChain !== prevChain && prevChain !== undefined)
-                  || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) ) {
+                  || (currResi !== prevResi && currResi !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) ) {
                     lastAtom = prevAtom;
                 }
                 else if(index === length - 1) {
@@ -24574,7 +24562,7 @@ var icn3d = (function (exports) {
 
                     if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
     //                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
-                      || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
+                      || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
                       ) ) {
                         if(bHighlight !== 2) {
                             if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
@@ -24739,7 +24727,7 @@ var icn3d = (function (exports) {
                 this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray);
             }
 
-            pnts_colors_radii_prevone_nexttwo = [];
+            pnts_colors_radii_prevone_nexttwo = [];    
         }
 
         getCustomtubesize(resid) { let ic = this.icn3d; ic.icn3dui;
@@ -25000,9 +24988,13 @@ var icn3d = (function (exports) {
               let atom = atomlist[i];
               if (atom === undefined) continue;
 
+              let chainid = atom.structure + '_' + atom.chain;
+              let currentChainid = atom.structure + '_' + currentChain;
+
               if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
                  if (atom.name === 'O3\'' || atom.name === 'O3*') { // to connect 3' end. FIXME: better way to do?
-                    if (currentChain !== atom.chain || parseInt(currentResi) + 1 !== parseInt(atom.resi)) {
+                    if (currentChain !== atom.chain 
+                      || ic.ParserUtilsCls.getResiNCBI(currentChainid, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) {
         //            if (currentChain !== atom.chain) {
                        if (currentO3 && prevOO) {
                           for (j = 0; j < num; j++) {
@@ -31518,7 +31510,7 @@ var icn3d = (function (exports) {
             if(ic.bOpm) {
                 //if(window.dialog) window.dialog.dialog( "close" );
                 
-                let html = "<br><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
+                let html = me.utilsCls.getMemDesc();
                 $("#" + ic.pre + "dl_rmsd").html(html);
                 if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Membranes');
             }
@@ -33966,6 +33958,9 @@ var icn3d = (function (exports) {
                         else {
                             let b = atom.b;
 
+                            // PDB
+                            b = (atom.structure.length < 6) ? 100 - b : b;
+
                             if(b >= 90) {
                                 atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
                             }
@@ -34000,6 +33995,9 @@ var icn3d = (function (exports) {
                         else {
                             let b = atom.b;
                             if(b > 100) b = 100;
+
+                            // AlphaFold
+                            b = (atom.structure.length > 5) ? 100 - b : b;
 
                             let s1 = (ic.middB - b) * ic.spanBinv1;
                             let s2 = (b - ic.middB) * ic.spanBinv2;
@@ -34039,7 +34037,10 @@ var icn3d = (function (exports) {
                             atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                         }
                         else {
-                            let percentile = ic.bfactorArray.indexOf(atom.b) / totalCnt;
+                            // AlphaFold
+                            let b = (atom.structure > 5) ? 100 - atom.b : atom.b;
+
+                            let percentile = ic.bfactorArray.indexOf(b) / totalCnt;
 
                             atom.color = percentile < 0.5 ? me.parasCls.thr().setRGB(percentile * 2, percentile * 2, 1) : me.parasCls.thr().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
                         }
@@ -34750,7 +34751,7 @@ var icn3d = (function (exports) {
         }
 
         //Show the annotations of CDD domains and binding sites.
-        showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
+        async showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.chainid2pssmid = {};
@@ -34759,78 +34760,60 @@ var icn3d = (function (exports) {
             let chnidArray = Object.keys(ic.protein_chainid);
             // show conserved domains and binding sites
             // live search
-            let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;     
+            let url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;     
             // precalculated
-            //let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+            //let url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
             // live search for AlphaFold structures
             //if(me.cfg.afid) {
 
             // use precalculated CDD annotation if
             if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
                 || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
-                $.ajax({
-                  url: url,
-                  dataType: 'jsonp',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                    thisClass.parseCddData([data], chnidArray);
-                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
+                    let data = {};
+                    try {
+                        data.value = await me.getAjaxPromise(url, 'jsonp');
+                     
+                        thisClass.parseCddData([data], chnidArray);
+                        /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+                    }
+                    catch(err) {
+                        thisClass.getNoCdd(chnidBaseArray);
+                        /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
                         return;
                     }
-
-                    thisClass.getNoCdd(chnidBaseArray);
-                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-
-                    return;
-                  }
-                });
             }
             else {
-              let ajaxArray = [];
+                let ajaxArray = [];
 
-              for(let i = 0, il = chnidArray.length; i < il; ++i) {
-                   //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
-                   let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
+                for(let i = 0, il = chnidArray.length; i < il; ++i) {
+                    //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+                    let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
 
-                   // remove water molecules
-                   seq = seq.replace(/O/g, '');
+                    // remove water molecules
+                    seq = seq.replace(/O/g, '');
 
-                   //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
-                   // live searchE
-                   url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;             
-                   // precalculated
-                   //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+                    //url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+                    // live searchE
+                    url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;             
+                    // precalculated
+                    //url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
 
-                   let cdd = $.ajax({
-                      url: url,
-                      dataType: 'jsonp',
-                      cache: true
-                   });
+                    let cdd = me.getAjaxPromise(url, 'jsonp');
 
-                   ajaxArray.push(cdd);
-              }
+                    ajaxArray.push(cdd);
+                }
 
-              //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-              //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-              $.when.apply(undefined, ajaxArray).then(function() {
-                  let dataArray =(chnidArray.length == 1) ? [arguments] : Array.from(arguments);
-                  thisClass.parseCddData(dataArray, chnidArray, true);
-                  if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-              })
-              .fail(function() {
-                  thisClass.getNoCdd(chnidBaseArray);
-                  if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+                let allPromise = Promise.allSettled(ajaxArray);
+                try {
+                    let dataArray = await allPromise;
 
-                  return;
-              });
+                    thisClass.parseCddData(dataArray, chnidArray, true);
+                    /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+                }
+                catch(err) {
+                    
+                }            
             }
         }
 
@@ -34843,8 +34826,10 @@ var icn3d = (function (exports) {
                 if(!ic.resid2cdd) ic.resid2cdd = {};
                 if(!ic.resid2site) ic.resid2site = {};
             }
+
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+                //let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+                let data = dataArray[i].value;
 
                 for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
                     let cddData = data.data[chainI];
@@ -34898,13 +34883,13 @@ var icn3d = (function (exports) {
                         for(let i = 0, il = siteArray[index].locs.length; i < il; ++i) {
                             resPosArray = siteArray[index].locs[i].coords;
                             for(let j = 0, jl = resPosArray.length; j < jl; ++j) {
-                                //adjustedResPosArray.push(Math.round(resPosArray[j]) + ic.baseResi[chnid]);
-                                if(ic.bNCBI) {
-                                    adjustedResPosArray.push(Math.round(resPosArray[j]));
-                                }
-                                else {
-                                    adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                                }
+                                // if(ic.bNCBI) {
+                                //     adjustedResPosArray.push(Math.round(resPosArray[j]));
+                                // }
+                                // else {
+                                //     adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                                // }
+                                adjustedResPosArray.push(ic.ParserUtilsCls.getResi(chnid, Math.round(resPosArray[j])) );
                             }
                         }
 
@@ -34931,36 +34916,36 @@ var icn3d = (function (exports) {
                         let prevLineWidth = 0;
                         let widthPerRes = 1;
                         for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
-                          html += ic.showSeqCls.insertGap(chnid, i, '-');
-                          if(resPosArray.indexOf(i) != -1) {
-                              let cFull = ic.giSeq[chnid][i];
-                              let c = cFull;
-                              if(cFull.length > 1) {
-                                  c = cFull[0] + '..';
-                              }
-                              //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                              let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                            html += ic.showSeqCls.insertGap(chnid, i, '-');
+                            if(resPosArray.indexOf(i) != -1) {
+                                let cFull = ic.giSeq[chnid][i];
+                                let c = cFull;
+                                if(cFull.length > 1) {
+                                    c = cFull[0] + '..';
+                                }
+                                //let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                                let pos = ic.ParserUtilsCls.getResi(chnid, i);
+                                
+                                html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                                if(me.bNode) {
+                                    let obj = {};
+                                    obj[chnid + '_' + pos] = 'site: ' + siteArray[index].title;
+                                    ic.resid2site[chnid].push(obj);
+                                }
 
-                            html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
-                            if(me.bNode) {
-                                let obj = {};
-                                obj[chnid + '_' + pos] = 'site: ' + siteArray[index].title;
-                                ic.resid2site[chnid].push(obj);
+                                html2 += ic.showSeqCls.insertGapOverview(chnid, i);
+                                let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                                //if(emptyWidth < 0) emptyWidth = 0;
+                                if(emptyWidth >= 0) {
+                                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+                                    html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
+                                    prevEmptyWidth += emptyWidth;
+                                    prevLineWidth += widthPerRes;
+                                }
                             }
-
-                            html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                            let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
-                            //if(emptyWidth < 0) emptyWidth = 0;
-                            if(emptyWidth >= 0) {
-                            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                            html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
-                            prevEmptyWidth += emptyWidth;
-                            prevLineWidth += widthPerRes;
+                            else {
+                                html += '<span>-</span>'; //'<span>-</span>';
                             }
-                          }
-                          else {
-                            html += '<span>-</span>'; //'<span>-</span>';
-                          }
                         }
                         htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
                         htmlTmp += '</span>';
@@ -35009,7 +34994,6 @@ var icn3d = (function (exports) {
         }
 
         setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;
-            let thisClass = this;
 
             let pssmid2name, pssmid2fromArray, pssmid2toArray;
             if(bDomain) {
@@ -35058,16 +35042,19 @@ var icn3d = (function (exports) {
                     for(let s = 0, sl = segArray.length; s < sl; ++s) {
                         let domainFrom = Math.round(segArray[s].from);
                         let domainTo = Math.round(segArray[s].to);
-                        //fromArray.push(domainFrom + ic.baseResi[chnid]);
-                        //toArray.push(domainTo + ic.baseResi[chnid]);
-                        if(ic.bNCBI) {
-                            fromArray.push(domainFrom);
-                            toArray.push(domainTo);
-                        }
-                        else {
-                            fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                            toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                        }
+                        
+                        // if(ic.bNCBI) {
+                        //     fromArray.push(domainFrom);
+                        //     toArray.push(domainTo);
+                        // }
+                        // else {
+                        //     fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                        //     toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                        // }
+
+                        fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
+                        toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+
                         for(let i = domainFrom; i <= domainTo; ++i) {
                             resiHash[i] = 1;
                         }
@@ -35083,9 +35070,12 @@ var icn3d = (function (exports) {
 
                     let bCoordinates = false;
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
-                        let from = fromArray[i], to = toArray[i];
+                        let from = parseInt(fromArray[i]), to = parseInt(toArray[i]);
+                                           
                         for(let j = from; j <= to; ++j) {
+                            
                             let resid = chnid + "_" + j;
+                            
                             if(ic.residues.hasOwnProperty(resid)) {
                                 bCoordinates = true;
                                 break;
@@ -35112,14 +35102,15 @@ var icn3d = (function (exports) {
                     let pre = type + index.toString();
                     for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                       html += ic.showSeqCls.insertGap(chnid, i, '-');
+
                       if(resiHash.hasOwnProperty(i)) {
                           let cFull = ic.giSeq[chnid][i];
                           let c = cFull;
                           if(cFull.length > 1) {
                               c = cFull[0] + '..';
                           }
-                          //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                          let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                          // let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                          let pos = ic.ParserUtilsCls.getResi(chnid, i);
                           html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                           if(me.bNode) {
                             let obj = {};
@@ -35150,7 +35141,7 @@ var icn3d = (function (exports) {
                         let fromArray2 = [], toArray2 = [];
                         for(let i = 0, il = fromArray.length; i < il; ++i) {
                             fromArray2.push(fromArray[i]);
-                            for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                            for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                                 if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                                     toArray2.push(j - 1);
                                     fromArray2.push(j);
@@ -35180,9 +35171,9 @@ var icn3d = (function (exports) {
               pssmid2name: pssmid2name, pssmid2fromArray: pssmid2fromArray, pssmid2toArray: pssmid2toArray}
         }
 
-        getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d; ic.icn3dui;
-            return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
-        }
+        // getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
+        //     return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
+        // }
 
         showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;
             let html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
@@ -35199,7 +35190,8 @@ var icn3d = (function (exports) {
             let resPosArray = [];
             for(let i = 0, il = residueArray.length; i < il; ++i) {
                 let resid = residueArray[i];
-                let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                //let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                let resi = resid.substr(residueArray[i].lastIndexOf('_') + 1);
                 resPosArray.push( resi );
             }
             let resCnt = resPosArray.length;
@@ -35216,15 +35208,21 @@ var icn3d = (function (exports) {
             let widthPerRes = 1;
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
-              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              let resi = ic.ParserUtilsCls.getResi(chnid, i);
+              //if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              if(resPosArray.indexOf(resi) != -1) {
                   let cFull = ic.giSeq[chnid][i];
                   let c = cFull;
                   if(cFull.length > 1) {
                       c = cFull[0] + '..';
                   }
-                  let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                  let resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
-                  let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
+                //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                //   let resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
+                //   let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
+                  let pos = resi;
+                  let resid = chnid + '_' + resi;
+                  let title = cFull + resi;
+                  
                   if(type == 'ssbond') {
                       title = 'Residue ' + resid + ' has disulfide bond with';
                       let sstitle = '';
@@ -35330,17 +35328,19 @@ var icn3d = (function (exports) {
         }
 
         //Show the residues interacting with the chain.
-        showInteraction(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-            let thisClass = this;
-            if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
-                // 2d interaction didn't finish loading data yet
-                setTimeout(function(){
-                  thisClass.showInteraction_base(chnid, chnidBase);
-                }, 1000);
-            }
-            else {
-                this.showInteraction_base(chnid, chnidBase);
-            }
+        showInteraction(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+            // let thisClass = this;
+            // if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
+            //     // 2d interaction didn't finish loading data yet
+            //     setTimeout(function(){
+            //       thisClass.showInteraction_base(chnid, chnidBase);
+            //     }, 1000);
+            // }
+            // else {
+            //     this.showInteraction_base(chnid, chnidBase);
+            // }
+
+            this.showInteraction_base(chnid, chnidBase);
         }
         showInteraction_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) {
@@ -35409,14 +35409,16 @@ var icn3d = (function (exports) {
             let index = 0;
             for(let chainname in ic.chainname2residues[chnid]) {
                 let residueArray = ic.chainname2residues[chnid][chainname];
+                if(!residueArray) continue; // same chain
+
                 let title = "Interact ." + chainname;
                 if(title.length > 17) title = title.substr(0, 17) + '...';
                 let fulltitle = "Interact ." + chainname;
                 let resPosArray = [];
                 for(let i = 0, il = residueArray.length; i < il; ++i) {
                     let resid = residueArray[i];
-    //                let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
-                    let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                    //let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                    let resi = resid.substr(residueArray[i].lastIndexOf('_') + 1);
 
     //                resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
 
@@ -35442,19 +35444,21 @@ var icn3d = (function (exports) {
                 let prevEmptyWidth = 0;
                 let prevLineWidth = 0;
                 let widthPerRes = 1;
+
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
-                  if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+                  let resi = ic.ParserUtilsCls.getResi(chnid, i);           
+                //   if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+                  if(resPosArray.indexOf(resi) != -1) {
     //              if(resPosArray.indexOf(i+1) != -1) {
                       let cFull = ic.giSeq[chnid][i];
                       let c = cFull;
                       if(cFull.length > 1) {
                           c = cFull[0] + '..';
                       }
-
-        //            let pos =(ic.baseResi[chnid] + i+1).toString();
-        //            let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-                      let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                      
+                    //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                      let pos = resi;
                       html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
                       if(me.bNode) {
                           let obj = {};
@@ -35511,7 +35515,7 @@ var icn3d = (function (exports) {
         }
 
         //Show the annotations of CDD domains and binding sites.
-        showPTM(chnid, chnidBase, type, begin, end) { let ic = this.icn3d; ic.icn3dui;
+        async showPTM(chnid, chnidBase, type, begin, end) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             // UniProt ID
@@ -35524,30 +35528,19 @@ var icn3d = (function (exports) {
             }
             // UniProt ID
             else if( structure.length > 5 ) {
-                let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
-                $.ajax({
-                  url: url,
-                  dataType: 'json',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                    thisClass.parsePTM(data, chnid, type);
-                    if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
+                let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure; 
+                let data;
+                try {
+                    data = await me.getAjaxPromise(url, 'json');
 
+                    thisClass.parsePTM(data, chnid, type);
+                    /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+                }
+                catch {
                     thisClass.getNoPTM(chnid, type);
 
                     return;
-                  }
-                });
+                }
             }
             else { // PDB
                 // get PDB to UniProt mapping
@@ -35556,15 +35549,16 @@ var icn3d = (function (exports) {
                 let structLower = structure.substr(0, 4).toLowerCase();
                 let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
 
-                $.ajax({
-                  url: urlMap,
-                  dataType: 'json',
-                  cache: true,
-                  success: function(dataMap) {
+                let dataMap;
+                try {
+                    dataMap = await me.getAjaxPromise(urlMap, 'json');
+
                     let UniProtID = '';
                     if(!ic.UPResi2ResiPosPerChain) ic.UPResi2ResiPosPerChain = {};
                     ic.UPResi2ResiPosPerChain[chnid] = {};
                     let mapping = dataMap[structLower].UniProt;
+
+                    let bFound = false;
                     for(let up in mapping) {
                         let chainArray = mapping[up].mappings;
                         //if(bFound) break;
@@ -35587,45 +35581,44 @@ var icn3d = (function (exports) {
                                 }
 
                                 if(UniProtID == '' || UniProtID.length != 6) UniProtID = up;
+                                bFound = true;
                                 //break;
                             }
                         }
                     }
 
+                    if(!ic.annoPtmData) ic.annoPtmData = {};
+
                     if(UniProtID == '') {
                         thisClass.getNoPTM(chnid, type);
                     }
                     else {
-                        let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
-                        $.ajax({
-                            url: url,
-                            dataType: 'json',
-                            cache: true,
-                            tryCount : 0,
-                            retryLimit : 0, //1
-                            success: function(data) {
+                        // call just once for one UniProt ID
+                        if(ic.annoPtmData.hasOwnProperty(UniProtID)) {
+                            thisClass.parsePTM(ic.annoPtmData[UniProtID], chnid, type);
+                        }
+                        else {
+                            
+                            let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
+                            let data;
+                            try {
+                                data = await me.getAjaxPromise(url, 'json');
+                                ic.annoPtmData[UniProtID] = data;
+
                                 thisClass.parsePTM(data, chnid, type);
-                                if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-                            },
-                            error : function(xhr, textStatus, errorThrown ) {
-                                this.tryCount++;
-                                if(this.tryCount <= this.retryLimit) {
-                                    //try again
-                                    $.ajax(this);
-                                    return;
-                                }
-
+                                /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+                            }
+                            catch(err) {
                                 thisClass.getNoPTM(chnid, type);
-
                                 return;
                             }
-                        });
+                        }
                     }
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
+                }
+                catch(err) {
                     thisClass.getNoPTM(chnid, type);
-                  }
-                });
+                    return;
+                }
             }
         }
 
@@ -35747,8 +35740,9 @@ var icn3d = (function (exports) {
                         if(cFull.length > 1) {
                             c = cFull[0] + '..';
                         }
-                        let pos = ic.annoCddSiteCls.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
-
+                        // let pos = ic.annoCddSiteCls.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                        let pos = ic.ParserUtilsCls.getResi(chnid, i);
+                        
                         html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                         if(me.bNode) {
                             let obj = {};
@@ -35800,7 +35794,7 @@ var icn3d = (function (exports) {
             // add here after the ajax call
             ic.showAnnoCls.enableHlSeq();
             ic.bAjaxPTM = true;
-            if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+            /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
         }
     }
 
@@ -35912,7 +35906,7 @@ var icn3d = (function (exports) {
                         let subdomains = result.subdomains;
                         //let substruct = result.substruct;
                         //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
-                
+
                         for(let i = 0, il = subdomains.length; i < il; ++i) {
                             // domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
                             let domain = {};
@@ -36009,14 +36003,14 @@ var icn3d = (function (exports) {
                     }
 
                     // use the NCBI residue number, and convert to PDB residue number during selection
-                    if(ic.bNCBI || bCalcDirect) {
+                    // if(ic.bNCBI || bCalcDirect) {
                         fromArray.push(domainFrom);
                         toArray.push(domainTo);
-                    }
-                    else {
-                        fromArray.push(domainFrom + ic.baseResi[chnid]);
-                        toArray.push(domainTo + ic.baseResi[chnid]);
-                    }
+                    // }
+                    // else {
+                    //     fromArray.push(domainFrom + ic.baseResi[chnid]);
+                    //     toArray.push(domainTo + ic.baseResi[chnid]);
+                    // }
 
                     resCnt += domainTo - domainFrom + 1;
                     for(let j = domainFrom; j <= domainTo; ++j) {
@@ -36031,8 +36025,8 @@ var icn3d = (function (exports) {
                     if(!ic.resid2domain) ic.resid2domain = {};
                     if(!ic.resid2domain[chnid]) ic.resid2domain[chnid] = [];
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
-                        let from = fromArray[i];
-                        let to = toArray[i];
+                        let from = parseInt(fromArray[i]);
+                        let to = parseInt(toArray[i]);
                         for(let j = from; j <= to; ++j) {
                             // 0-based
                             let obj = {};
@@ -36052,16 +36046,17 @@ var icn3d = (function (exports) {
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
                   //if(i >= domainFrom && i <= domainTo) {
+                  let resi = ic.ParserUtilsCls.getResi(chnid, i);
                   if(resiHash.hasOwnProperty(i+1)) {
-                    let cFull = ic.giSeq[chnid][i];
+                      let cFull = ic.giSeq[chnid][i];
                       let c = cFull;
                       if(cFull.length > 1) {
                           c = cFull[0] + '..';
                       }
-    //                let pos =(ic.baseResi[chnid] + i+1).toString();
-    //                let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-                      let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                    html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                      
+                    //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                      let pos = resi;
+                      html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                   }
                   else {
                     html += '<span>-</span>'; //'<span>-</span>';
@@ -36081,7 +36076,7 @@ var icn3d = (function (exports) {
                     let fromArray2 = [], toArray2 = [];
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         fromArray2.push(fromArray[i]);
-                        for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                        for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                             if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                                 toArray2.push(j - 1);
                                 fromArray2.push(j);
@@ -36121,57 +36116,46 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        showSnp(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
-            this.showSnpClinvar(chnid, chnidBase, true);
+        async showSnp(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+            await this.showSnpClinvar(chnid, chnidBase, true);
         }
-        showClinvar(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
-            this.showSnpClinvar(chnid, chnidBase, false);
+        async showClinvar(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+            await this.showSnpClinvar(chnid, chnidBase, false);
         }
 
         //Show the annotations of SNPs and ClinVar.
-        showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
+        async showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
 
-           // get gi from acc
-           //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-           let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
-           $.ajax({
-              url: url2,
-              dataType: 'jsonp', //'text',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data2) {
+            // get gi from acc
+            //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
+            let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+            try {
+                let data2 = await me.getAjaxPromise(url2, 'jsonp');
+
                 //ic.chainid2repgi = JSON.parse(data2);
                 //var gi = ic.chainid2repgi[chnidBase];
                 let snpgi = data2.snpgi;
                 let gi = data2.gi;
                 if(bSnpOnly) {
-                    thisClass.showSnpPart2(chnid, chnidBase, snpgi);
+                    await thisClass.showSnpPart2(chnid, chnidBase, snpgi);
                 }
                 else {
                     let specialGiArray = [6137708,1942289,224510717,2624886,253723219,2554905,75765331,3660278,312207882,319443632,342350956,1827805,109157826,1065265,40889086,6730307,163931185,494469,163931091,60594093,55669745,18655489,17942684,6980537,166235465,6435586,4139398,4389047,364506122,78101667,262118402,20664221,2624640,158430173,494395,28948777,34810587,13399647,3660342,261278854,342350965,384482350,378792570,15988303,213424334,4558333,2098365,10835631,3318817,374074330,332639529,122919696,4389286,319443573,2781341,67464020,194709238,210061039,364506106,28949044,40889076,161172338,17943181,4557976,62738484,365813173,6137343,350610552,17942703,576308,223674070,15826518,1310997,93279697,4139395,255311799,157837067,361132363,357380836,146387678,383280379,1127268,299856826,13786789,1311054,46015217,3402130,381353319,30750059,218766885,340707375,27065817,355333104,2624634,62738384,241913553,304446010];
                     let giUsed = snpgi;
                     if(specialGiArray.includes(gi)) giUsed = gi;
-                    thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
+                    await thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
                 }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
+            }
+            catch(err) {
                 if(bSnpOnly) {
                     thisClass.processNoSnp(chnid);
                 }
-                else {
+                else {             
                     thisClass.processNoClinvar(chnid);
                 }
                 return;
-              }
-           });
+            }
         }
 
         navClinVar(chnid) { let ic = this.icn3d; ic.icn3dui;
@@ -36253,6 +36237,7 @@ var icn3d = (function (exports) {
                 }
                 if(bVirus) break;
             }
+               
             if(bStartEndRes) {
                 let title1 = 'ClinVar', title2 = 'SNP', warning = "", warning2 = "";
                 if(!bVirus && ic.organism !== undefined && ic.organism !== 'human' && ic.organism !== 'homo sapiens') {
@@ -36274,7 +36259,7 @@ var icn3d = (function (exports) {
             else {
                 html += '<div class="icn3d-seqTitle"></div>';
             }
-
+            
             let pre = altName;
             let snpCnt = 0, clinvarCnt = 0;
             let snpTypeHash = {}, currSnpTypeHash = {};
@@ -36292,7 +36277,7 @@ var icn3d = (function (exports) {
                                 diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + '); ';
                             //}
                         }
-
+                        
                         if(diseaseTitle != '') {
                             snpTypeHash[i] = 'icn3d-clinvar';
                             if(j == line - 2) { // just check the current line, "line = 2" means the first SNP
@@ -36302,6 +36287,7 @@ var icn3d = (function (exports) {
                                 }
                             }
                         }
+                        
                         allDiseaseTitle += diseaseTitle + ' | ';
                     }
                     if(allDiseaseTitle.indexOf('Pathogenic') != -1) {
@@ -36313,6 +36299,7 @@ var icn3d = (function (exports) {
                     }
                 }
             }
+            
             if(snpCnt == 0 && !bClinvar) {
                 $("#" + ic.pre + 'dt_clinvar_' + chnid).html('');
                 $("#" + ic.pre + 'ov_clinvar_' + chnid).html('');
@@ -36340,7 +36327,7 @@ var icn3d = (function (exports) {
                 return html + '<br>';
             }
             html += '<span class="icn3d-seqLine">';
-
+            
             let diseaseStr = '';
             let prevEmptyWidth = 0;
             let prevLineWidth = 0;
@@ -36354,7 +36341,8 @@ var icn3d = (function (exports) {
                         if(cFull.length > 1) {
                             c = cFull[0] + '..';
                         }
-                        let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                        // let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                        let pos = ic.ParserUtilsCls.getResi(chnid, i - 1);
                         let snpTitle = pos + c + '>';
                         for(let j = 0, jl = resi2snp[i].length; j < jl; ++j) {
                             snpTitle += resi2snp[i][j];
@@ -36406,7 +36394,8 @@ var icn3d = (function (exports) {
                         if(cFull.length > 1) {
                           c = cFull[0] + '..';
                         }
-                        let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                        // let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                        let pos = ic.ParserUtilsCls.getResi(chnid, i - 1);
                         let snpStr = "", snpTitle = "<div class='snptip'>";
                         //var snpType = '';
                         let jl = resi2snp[i].length;
@@ -36505,7 +36494,7 @@ var icn3d = (function (exports) {
                             //if(jl > shownResCnt && line == 3) snpStr += '..';
                             if(jl > shownResCnt && line == 2) snpStr += '..';
                         }
-                        else { // if(bClinvar)
+                        else { // if(bClinvar)       
                             shownResCnt = 1;
                             let diseaseCnt = 0;
                             for(let j = start; j < jl && j < end; ++j) {
@@ -36522,6 +36511,7 @@ var icn3d = (function (exports) {
                                 let sigArray = resi2sig[i][j].split('; ');
                                 let diseaseTitle = '';
                                 let index = 0;
+                                
                                 for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
                                     // relax the restriction to show all clinvar
                                     //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
@@ -36535,6 +36525,7 @@ var icn3d = (function (exports) {
                                         ++index;
                                     //}
                                 }
+
                                 if(diseaseTitle != '') {
                                     if(diseaseCnt < shownResCnt) snpStr += resi2snp[i][j];
                                     snpTitle += pos + c + '>' + resi2snp[i][j];
@@ -36559,7 +36550,7 @@ var icn3d = (function (exports) {
                             if(diseaseCnt > shownResCnt && line == 2) snpStr += '..';
                         } // else { // if(bClinvar)
                         snpTitle += '</div>';
-                        if(bClinvar) {
+                        if(bClinvar) {                
                             if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
                                 if(line == 1) {
                                     html += '<span>&dArr;</span>'; // or down triangle &#9660;
@@ -36597,6 +36588,7 @@ var icn3d = (function (exports) {
                   }
                 } // if(bOverview) {
             } // for
+            
             //var end = bStartEndRes ? ic.chainsSeq[chnid][ic.giSeq[chnid].length - 1 - ic.matchedPos[chnid] ].resi : '';
             if(line == 1) {
                 html += '<span class="icn3d-residueNum" title="residue count">&nbsp;' + cnt + ' Residues</span>';
@@ -36609,7 +36601,7 @@ var icn3d = (function (exports) {
 
             return html;
         }
-        processSnpClinvar(data, chnid, chnidBase, bSnpOnly, bVirus) { let ic = this.icn3d, me = ic.icn3dui;
+        processSnpClinvar(data, chnid, chnidBase, bSnpOnly, bVirus) { let ic = this.icn3d, me = ic.icn3dui;    
             let html = '<div id="' + ic.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
             let html2 = html;
             let html3 = html;
@@ -36636,6 +36628,7 @@ var icn3d = (function (exports) {
                     if(!ic.resid2clinvar[chnid]) ic.resid2clinvar[chnid] = [];
                 }
             }
+
             for(let i = 0, il = lineArray.length; i < il; ++i) {
              //bSnpOnly: false
              //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
@@ -36672,8 +36665,11 @@ var icn3d = (function (exports) {
               let clinSig = bSnpOnly ? '' : fieldArray[7];     // Clinical significance, When more than 2+ diseases, they are separated by "; "
               // "*" means terminating codon, "-" means deleted codon
               //if(currRes !== '-' && currRes !== '*' && snpRes !== '-' && snpRes !== '*') {
-                    posHash[resi + ic.baseResi[chnid]] = 1;
-                    if(disease != '') posClinHash[resi + ic.baseResi[chnid]] = 1;
+                    let realResi = ic.ParserUtilsCls.getResi(chnid, resi - 1);
+                    // posHash[resi + ic.baseResi[chnid]] = 1;
+                    // if(disease != '') posClinHash[resi + ic.baseResi[chnid]] = 1;
+                    posHash[realResi] = 1;
+                    if(disease != '') posClinHash[realResi] = 1;
                     resi2index[resi] = i + 1;
                     if(resi2snp[resi] === undefined) {
                         resi2snp[resi] = [];
@@ -36704,6 +36700,7 @@ var icn3d = (function (exports) {
               //}
              }
             }
+              
             let posarray = Object.keys(posHash);
             let posClinArray = Object.keys(posClinHash);
             if(bSnpOnly) {
@@ -36722,7 +36719,7 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + 'ov_snp_' + chnid).html(html2);
                 $("#" + ic.pre + 'tt_snp_' + chnid).html(html3);
             }
-            else {
+            else {           
             //if(!bSnpOnly && ic.bClinvarCnt) {
                 let bClinvar = true;
                 htmlClinvar += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
@@ -36734,24 +36731,26 @@ var icn3d = (function (exports) {
                 htmlClinvar2 += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
                 htmlClinvar += '</div>';
                 htmlClinvar2 += '</div>';
-                htmlClinvar3 += '</div>';          
+                htmlClinvar3 += '</div>';    
+                              
                 $("#" + ic.pre + 'dt_clinvar_' + chnid).html(htmlClinvar);
                 $("#" + ic.pre + 'ov_clinvar_' + chnid).html(htmlClinvar2);
                 $("#" + ic.pre + 'tt_clinvar_' + chnid).html(htmlClinvar3);
                 this.navClinVar(chnid, chnidBase);
             }
+                       
             // add here after the ajax call
             ic.showAnnoCls.enableHlSeq();
             if(bSnpOnly) {
                 ic.bAjaxSnp = true;
-                if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+                /// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
             }
             else {
                 ic.bAjaxClinvar = true;
-                if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+                /// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
             }
         }
-        showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
+        async showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
             //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
             //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
@@ -36759,106 +36758,54 @@ var icn3d = (function (exports) {
             if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
                 url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
             }
-            $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(indata) {
+
+            try {
+                let indata = await me.getAjaxPromise(url, 'jsonp');
+
                 if(indata && indata.data && indata.data.length > 0) {
                     let bSnpOnly = false;
-                    let data = indata;             
+                    let data = indata;         
+                    
                     thisClass.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
                 }
-                else {
+                else {               
                     thisClass.processNoClinvar(chnid);
                 }
-                //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
+            }
+            catch(err) {            
                 thisClass.processNoClinvar(chnid);
-                //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+                ///// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
                 return;
-              }
-            });
+            }
         }
 
-        showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
+        async showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
-            if(gi !== undefined) {
-          /*      
-                let url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&connect=MSSNPSUBMISSION1&gi=" + gi;
+            if(gi !== undefined) {          
+                let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+                if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+                    url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+                }
 
-                $.ajax({
-                  url: url3,
-                  dataType: 'text',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data3) {
-                    if(data3) {
+                try {
+                    let data4 = await me.getAjaxPromise(url4, 'jsonp');
+
+                    if(data4 && data4.data && data4.data.length > 0) {
                         let bSnpOnly = true;
-                        thisClass.processSnpClinvar(data3, chnid, chnidBase, bSnpOnly);
-                    } //if(data3 != "") {
+                        let bVirus = true;
+                        
+                        thisClass.processSnpClinvar(data4, chnid, chnidBase, bSnpOnly, bVirus);
+                    } //if(data4 != "") {
                     else {
-           */             
-                        let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
-                        if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
-                            url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
-                        }
-                        $.ajax({
-                          url: url4,
-                          dataType: 'jsonp', //'text',
-                          cache: true,
-                          tryCount : 0,
-                          retryLimit : 0, //1
-                          success: function(data4) {
-                            if(data4 && data4.data && data4.data.length > 0) {
-                                let bSnpOnly = true;
-                                let bVirus = true;
-                                thisClass.processSnpClinvar(data4, chnid, chnidBase, bSnpOnly, bVirus);
-                            } //if(data4 != "") {
-                            else {
-                                thisClass.processNoSnp(chnid);
-                            }
-                            //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-                          },
-                          error : function(xhr, textStatus, errorThrown ) {
-                            this.tryCount++;
-                            if(this.tryCount <= this.retryLimit) {
-                                //try again
-                                $.ajax(this);
-                                return;
-                            }
-                            thisClass.processNoSnp(chnid);
-                            //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-                            return;
-                          }
-                        });
-             /*           
+                        thisClass.processNoSnp(chnid);
                     }
-                    //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    this.processNoSnp(chnid);
-                    //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+                    ///// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+                }
+                catch(err) {
+                    thisClass.processNoSnp(chnid);
+                    ///// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
                     return;
-                  }
-                });
-            */    
+                }
             }
             else {
                 this.processNoSnp(chnid);
@@ -36871,7 +36818,7 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + 'ov_clinvar_' + chnid).html('');
                 ic.showAnnoCls.enableHlSeq();
                 ic.bAjaxClinvar = true;
-                if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+                /// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
         }
         processNoSnp(chnid) { let ic = this.icn3d; ic.icn3dui;
                 console.log( "No SNP data were found for the protein " + chnid + "..." );
@@ -36879,7 +36826,7 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + 'ov_snp_' + chnid).html('');
                 ic.showAnnoCls.enableHlSeq();
                 ic.bAjaxSnp = true;
-                if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+                /// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
         }
 
     }
@@ -38185,7 +38132,7 @@ var icn3d = (function (exports) {
         clickAddTrackButton() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
             // ncbi gi/accession
-            me.myEventCls.onIds("#" + ic.pre + "addtrack_button1", "click", function(e) { let ic = thisClass.icn3d;
+            me.myEventCls.onIds("#" + ic.pre + "addtrack_button1", "click", async function(e) { let ic = thisClass.icn3d;
                e.stopImmediatePropagation();
 
                //e.preventDefault();
@@ -38198,33 +38145,16 @@ var icn3d = (function (exports) {
                let title =(isNaN(gi)) ? 'Acc ' + gi : 'gi ' + gi;
 
                //var text = $("#" + ic.pre + "track_text").val();
-               let url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
+               let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=track';
 
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'targets': chainid, 'queries': gi},
-                  dataType: 'json',
-                  //dataType: 'json',
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                      thisClass.alignSequenceToStructure(chainid, data, title);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    return;
-                  }
-                });
+               let dataObj = {'targets': chainid, 'queries': gi};
+               let data = await me.getAjaxPostPromise(url, dataObj);
+
+               thisClass.alignSequenceToStructure(chainid, data, title);
             });
 
             // FASTA
-            me.myEventCls.onIds("#" + ic.pre + "addtrack_button2", "click", function(e) { let ic = thisClass.icn3d;
+            me.myEventCls.onIds("#" + ic.pre + "addtrack_button2", "click", async function(e) { let ic = thisClass.icn3d;
                e.stopImmediatePropagation();
                //e.preventDefault();
                dialog.dialog( "close" );
@@ -38248,32 +38178,15 @@ var icn3d = (function (exports) {
                }
 
                //var text = $("#" + ic.pre + "track_text").val();
-               let url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'targets': targets, 'queries': fasta},
-                  dataType: 'json',
-                  //dataType: 'json',
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                      thisClass.alignSequenceToStructure(chainid, data, title);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    return;
-                  }
-                });
+               let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=track';
+               let dataObj = {'targets': targets, 'queries': fasta};
+               let data = await me.getAjaxPostPromise(url, dataObj);
+
+               thisClass.alignSequenceToStructure(chainid, data, title);
             });
 
             // FASTA Alignment
-            me.myEventCls.onIds("#" + ic.pre + "addtrack_button2b", "click", function(e) { let ic = thisClass.icn3d;
+            me.myEventCls.onIds("#" + ic.pre + "addtrack_button2b", "click", async function(e) { let ic = thisClass.icn3d;
                e.stopImmediatePropagation();
                //e.preventDefault();
                dialog.dialog( "close" );
@@ -38304,7 +38217,8 @@ var icn3d = (function (exports) {
 
                let startposGiSeq = undefined;
                for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
-                   let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+                   //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+                   let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
                    if(pos != startpos) {
                        continue;
@@ -38350,7 +38264,7 @@ var icn3d = (function (exports) {
                   }
                }
 
-               ic.annotationCls.resetAnnoAll();
+               await ic.annotationCls.resetAnnoAll();
 
                let targetGapHashStr = '';
                let cntTmp = 0;
@@ -38593,7 +38507,8 @@ var icn3d = (function (exports) {
                       c = cFull[0]; // one letter for each residue
                   }
 
-                  let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+                  //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+                  let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
                   if( residueHash.hasOwnProperty(chainid + '_' + pos) ) {
                       let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[chainid + '_' + pos]);
@@ -38792,7 +38707,7 @@ var icn3d = (function (exports) {
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     fromArray2.push(fromArray[i]);
 
-                    for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                    for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                         if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                             toArray2.push(j - 1);
                             fromArray2.push(j);
@@ -38881,7 +38796,8 @@ var icn3d = (function (exports) {
                       let colorHexStr = ic.showAnnoCls.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
                       cssColorArray.push("#" + colorHexStr);
 
-                      let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
+                    //   let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
+                      let resi =  ic.ParserUtilsCls.getResi(chainid, i);
                       for(let serial in ic.residues[chainid + '_' + resi]) {
                           let color = me.parasCls.thr("#" + colorHexStr);
                           ic.atoms[serial].color = color;
@@ -38924,8 +38840,6 @@ var icn3d = (function (exports) {
             // clear selection
             ic.hAtoms = {};
 
-            //for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
-              //var currResi =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
             for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
               let currResi = ic.chainsSeq[chainid][i].resi;
 
@@ -39192,11 +39106,8 @@ var icn3d = (function (exports) {
         }
 
         hideAllAnno() { let ic = this.icn3d; ic.icn3dui;
-                this.hideAllAnnoBase();
-                $("[id^=" + ic.pre + "custom]").hide();
-        }
-        hideAllAnnoBase() { let ic = this.icn3d; ic.icn3dui;
             this.setAnnoSeqBase(false);
+            $("[id^=" + ic.pre + "custom]").hide();
         }
         setAnnoSeqBase(bShow) {  let ic = this.icn3d; ic.icn3dui;
             //let itemArray = ['site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
@@ -39219,23 +39130,23 @@ var icn3d = (function (exports) {
                 if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
             }
         }
-        setAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
+        async setAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
             this.setAnnoTabBase(true);
             this.setAnnoSeqBase(true);
-            this.updateClinvar();
-            this.updateSnp();
+            await this.updateClinvar();
+            await this.updateSnp();
             this.updateDomain();
-            this.updatePTM();
+            await this.updatePTM();
             this.updateSsbond();
             this.updateCrosslink();
-            this.updateTransmem();
+            await this.updateTransmem();
             this.updateInteraction();
         }
         hideAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
             this.setAnnoTabBase(false);
             this.hideAllAnno();
         }
-        resetAnnoAll() {  let ic = this.icn3d; ic.icn3dui;
+        async resetAnnoAll() {  let ic = this.icn3d; ic.icn3dui;
            // reset annotations
            //$("#" + ic.pre + "dl_annotations").html("");
            //ic.bAnnoShown = false;
@@ -39244,7 +39155,7 @@ var icn3d = (function (exports) {
            $("[id^=" + ic.pre + "dt_]").html("");
            $("[id^=" + ic.pre + "tt_]").html("");
            $("[id^=" + ic.pre + "ov_]").html("");
-           ic.showAnnoCls.processSeqData(ic.chainid_seq);
+           await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
            //if($("#" + ic.pre + "dt_giseq_" + chainid).css("display") != 'block') {
            //    this.setAnnoViewAndDisplay('overview');
@@ -39252,22 +39163,22 @@ var icn3d = (function (exports) {
            //else {
                this.setAnnoViewAndDisplay('detailed view');
            //}
-           this.resetAnnoTabAll();
+           await this.resetAnnoTabAll();
         }
 
-        resetAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
+        async resetAnnoTabAll() {  let ic = this.icn3d; ic.icn3dui;
             if($("#" + ic.pre + "anno_binding").length && $("#" + ic.pre + "anno_binding")[0].checked) {
                 $("[id^=" + ic.pre + "site]").show();
             }
             if($("#" + ic.pre + "anno_snp").length && $("#" + ic.pre + "anno_snp")[0].checked) {
                 $("[id^=" + ic.pre + "snp]").show();
                 ic.bSnpShown = false;
-                this.updateSnp();
+                await this.updateSnp();
             }
             if($("#" + ic.pre + "anno_clinvar").length && $("#" + ic.pre + "anno_clinvar")[0].checked) {
                 $("[id^=" + ic.pre + "clinvar]").show();
                 ic.bClinvarShown = false;
-                this.updateClinvar();
+                await this.updateClinvar();
             }
             if($("#" + ic.pre + "anno_cdd").length && $("#" + ic.pre + "anno_cdd")[0].checked) {
                 $("[id^=" + ic.pre + "cdd]").show();
@@ -39285,7 +39196,7 @@ var icn3d = (function (exports) {
             if($("#" + ic.pre + "anno_ptm").length && $("#" + ic.pre + "anno_ptm")[0].checked) {
                 $("[id^=" + ic.pre + "ptm]").show();
                 ic.bPTMShown = false;
-                this.updatePTM();
+                await this.updatePTM();
             }
             if($("#" + ic.pre + "anno_custom").length && $("#" + ic.pre + "anno_custom")[0].checked) {
                 $("[id^=" + ic.pre + "custom]").show();
@@ -39303,7 +39214,7 @@ var icn3d = (function (exports) {
             if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
                 $("[id^=" + ic.pre + "transmem]").show();
                 ic.bTranememShown = false;
-                this.updateTransmem();
+                await this.updateTransmem();
             }
         }
         setAnnoTabCustom() {  let ic = this.icn3d; ic.icn3dui;
@@ -39314,19 +39225,19 @@ var icn3d = (function (exports) {
             $("[id^=" + ic.pre + "custom]").hide();
             if($("#" + ic.pre + "anno_custom").length) $("#" + ic.pre + "anno_custom")[0].checked = false;
         }
-        setAnnoTabClinvar() {  let ic = this.icn3d; ic.icn3dui;
+        async setAnnoTabClinvar() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "clinvar]").show();
             if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = true;
-            this.updateClinvar();
+            await this.updateClinvar();
         }
         hideAnnoTabClinvar() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "clinvar]").hide();
             if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = false;
         }
-        setAnnoTabSnp() {  let ic = this.icn3d; ic.icn3dui;
+        async setAnnoTabSnp() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "snp]").show();
             if($("#" + ic.pre + "anno_snp").length) $("#" + ic.pre + "anno_snp")[0].checked = true;
-            this.updateSnp();
+            await this.updateSnp();
         }
         hideAnnoTabSnp() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "snp]").hide();
@@ -39368,10 +39279,10 @@ var icn3d = (function (exports) {
             $("[id^=" + ic.pre + "interaction]").hide();
             if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
         }
-        setAnnoTabPTM() {  let ic = this.icn3d; ic.icn3dui;
+        async setAnnoTabPTM() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "ptm]").show();
             if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = true;
-            this.updatePTM();
+            await this.updatePTM();
         }
         hideAnnoTabPTM() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "ptm]").hide();
@@ -39395,10 +39306,10 @@ var icn3d = (function (exports) {
             $("[id^=" + ic.pre + "crosslink]").hide();
             if($("#" + ic.pre + "anno_crosslink").length) $("#" + ic.pre + "anno_crosslink")[0].checked = false;
         }
-        setAnnoTabTransmem() {  let ic = this.icn3d; ic.icn3dui;
+        async setAnnoTabTransmem() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "transmem]").show();
             if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = true;
-            this.updateTransmem();
+            await this.updateTransmem();
         }
         hideAnnoTabTransmem() {  let ic = this.icn3d; ic.icn3dui;
             $("[id^=" + ic.pre + "transmem]").hide();
@@ -39411,10 +39322,10 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + "dl_addtrack_tabs").tabs();
             $("#" + ic.pre + "dl_anno_view_tabs").tabs();
             //$("#" + ic.pre + "anno_all", "click", function(e) {
-            me.myEventCls.onIds("#" + ic.pre + "anno_all", "click", function(e) {
+            me.myEventCls.onIds("#" + ic.pre + "anno_all", "click", async function(e) {
 
             if($("#" + ic.pre + "anno_all")[0].checked) {
-                thisClass.setAnnoTabAll();
+                await thisClass.setAnnoTabAll();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
             }
             else {
@@ -39436,9 +39347,9 @@ var icn3d = (function (exports) {
             });
 
             //$("#" + ic.pre + "anno_snp", "click", function(e) {
-            me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", function(e) {
+            me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", async function(e) {
             if($("#" + ic.pre + "anno_snp")[0].checked) {
-                thisClass.setAnnoTabSnp();
+                await thisClass.setAnnoTabSnp();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
             }
             else {
@@ -39448,9 +39359,9 @@ var icn3d = (function (exports) {
             });
 
             //$("#" + ic.pre + "anno_clinvar", "click", function(e) {
-            me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", function(e) {
+            me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", async function(e) {
             if($("#" + ic.pre + "anno_clinvar")[0].checked) {
-                thisClass.setAnnoTabClinvar();
+                await thisClass.setAnnoTabClinvar();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
             }
             else {
@@ -39488,9 +39399,9 @@ var icn3d = (function (exports) {
             }
             });
 
-            me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", function(e) {
+            me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", async function(e) {
                 if($("#" + ic.pre + "anno_ptm")[0].checked) {
-                    thisClass.setAnnoTabPTM();
+                    await thisClass.setAnnoTabPTM();
                     me.htmlCls.clickMenuCls.setLogCmd("set annotation ptm", true);
                 }
                 else {
@@ -39536,9 +39447,9 @@ var icn3d = (function (exports) {
             });
 
             //$("#" + ic.pre + "anno_transmem", "click", function(e) {
-            me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", function(e) {
+            me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", async function(e) {
             if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
-                thisClass.setAnnoTabTransmem();
+                await thisClass.setAnnoTabTransmem();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
             }
             else {
@@ -39632,20 +39543,20 @@ var icn3d = (function (exports) {
         // the following will be called only when the annotation is selected: showSnpClinvar, showDomain, showInteraction
         // showSnpClinvar and showDomain will loop through ic.protein_chainid
         // showInteraction will loop through ic.interactChainbase
-        updateClinvar() { let ic = this.icn3d; ic.icn3dui;
+        async updateClinvar() { let ic = this.icn3d; ic.icn3dui;
             if(ic.bClinvarShown === undefined || !ic.bClinvarShown) {
                 for(let chainid in ic.protein_chainid) {
                     let chainidBase = ic.protein_chainid[chainid];
-                    ic.annoSnpClinVarCls.showClinvar(chainid, chainidBase);
+                    await ic.annoSnpClinVarCls.showClinvar(chainid, chainidBase);
                 }
             }
             ic.bClinvarShown = true;
         }
-        updateSnp() { let ic = this.icn3d; ic.icn3dui;
+        async updateSnp() { let ic = this.icn3d; ic.icn3dui;
             if(ic.bSnpShown === undefined || !ic.bSnpShown) {
                 for(let chainid in ic.protein_chainid) {
                     let chainidBase = ic.protein_chainid[chainid];
-                    ic.annoSnpClinVarCls.showSnp(chainid, chainidBase);
+                    await ic.annoSnpClinVarCls.showSnp(chainid, chainidBase);
                 }
             }
             ic.bSnpShown = true;
@@ -39665,11 +39576,11 @@ var icn3d = (function (exports) {
             }
             ic.bInteractionShown = true;
         }
-        updatePTM() { let ic = this.icn3d; ic.icn3dui;
+        async updatePTM() { let ic = this.icn3d; ic.icn3dui;
             if(ic.bPTMShown === undefined || !ic.bPTMShown) {
                 for(let chainid in ic.PTMChainbase) {
                     let chainidBase = ic.PTMChainbase[chainid];
-                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
+                    await ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
                 }
             }
             ic.bPTMShown = true;
@@ -39692,7 +39603,8 @@ var icn3d = (function (exports) {
             }
             ic.bCrosslinkShown = true;
         }
-        updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
+
+        async updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
             if(ic.bTranememShown === undefined || !ic.bTranememShown) {
                 for(let chainid in ic.protein_chainid) {
                     let chainidBase = ic.protein_chainid[chainid];
@@ -39702,10 +39614,10 @@ var icn3d = (function (exports) {
                     else if(ic.bAfMem && ic.afmem_start_end) {
                         let begin = ic.afmem_start_end[0];
                         let end = ic.afmem_start_end[1];
-                        ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
+                        await ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
                     }
                     else {
-                        ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
+                        await ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
                     }
                 }
             }
@@ -39766,13 +39678,7 @@ var icn3d = (function (exports) {
                     dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
                 }
                 ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
-                ic.maxAnnoLength = 1;
-                for(let chainid in ic.chainsSeq) {
-                    if(ic.chainsSeq[chainid].length > ic.maxAnnoLength) {
-                        ic.maxAnnoLength = ic.chainsSeq[chainid].length;
-                    }
-                }
-
+                
                 for(let i = 0, il = chainArray.length; i < il; ++i) {
                     Math.round(chainArray[i].indexOf('_'));
                     //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
@@ -39831,12 +39737,20 @@ var icn3d = (function (exports) {
                         } // for(let r = 0
                     } // if(me.cfg.mmdbid
                 } // for(let i = 0
+
+                ic.maxAnnoLength = 1;
+                for(let chainid in ic.chainsSeq) {
+                    // use protein or nucleotide as the max length
+                    if(ic.chainsSeq[chainid].length > ic.maxAnnoLength && (ic.protein_chainid.hasOwnProperty(chainid) || nucleotide_chainid.hasOwnProperty(chainid)) ) {
+                        ic.maxAnnoLength = ic.chainsSeq[chainid].length;
+                    }
+                }
             }
 
             return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
         }
 
-        showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
+        async showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             let result = this.showAnnotations_part1();
@@ -39848,58 +39762,39 @@ var icn3d = (function (exports) {
             if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
                 if(me.cfg.blast_rep_id === undefined) {
                    if(ic.bFullUi) {
-                       if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
-                           let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
-                           $.when(ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
-                               thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                           });
-                       }
-                       else {
-                           this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                       }
+                        if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
+                            let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+
+                            await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
+                        }
+                        
+                        await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                    }
                 }
                 else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
-                   let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
-                   let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
-                   if(me.cfg.query_from_to !== undefined ) {
-                       // convert from 1-based to 0-based
-                       let query_from_to_array = me.cfg.query_from_to.split(':');
-                       for(let i = 0, il = query_from_to_array.length; i < il; ++i) {
-                           query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
-                       }
-                       dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
-                   }
-                   if(me.cfg.target_from_to !== undefined) {
-                       // convert from 1-based to 0-based
-                       let target_from_to_array = me.cfg.target_from_to.split(':');
-                       for(let i = 0, il = target_from_to_array.length; i < il; ++i) {
-                           target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
-                       }
-                       dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
-                   }
-                   $.ajax({
-                      url: url,
-                      type: 'POST',
-                      data : dataObj,
-                      dataType: 'json',
-                      //dataType: 'json',
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      success: function(data) {
-                        ic.seqStructAlignData = data;
-                        thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
+                    let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
+                    let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
+                    if(me.cfg.query_from_to !== undefined ) {
+                        // convert from 1-based to 0-based
+                        let query_from_to_array = me.cfg.query_from_to.split(':');
+                        for(let i = 0, il = query_from_to_array.length; i < il; ++i) {
+                            query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
                         }
-                        return;
-                      }
-                    });
+                        dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
+                    }
+                    if(me.cfg.target_from_to !== undefined) {
+                        // convert from 1-based to 0-based
+                        let target_from_to_array = me.cfg.target_from_to.split(':');
+                        for(let i = 0, il = target_from_to_array.length; i < il; ++i) {
+                            target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
+                        }
+                        dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
+                    }
+
+                    let data = await me.getAjaxPostPromise(url, dataObj);
+
+                    ic.seqStructAlignData = data;
+                    await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                 } // align seq to structure
                 else if(me.cfg.blast_rep_id !== undefined && (ic.bSmithwm || ic.bLocalSmithwm)) { // align sequence to structure
                     //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
@@ -39919,53 +39814,33 @@ var icn3d = (function (exports) {
                     // show the sequence and 3D structure
                     //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
                     let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
+                    let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
 
-                    $.ajax({
-                        url: url,
-                        dataType: 'jsonp', //'text',
-                        cache: true,
-                        tryCount : 0,
-                        retryLimit : 0, //1
-                        success: function(chainid_seq) {
-                            let index = 0;
-                            for(let acc in chainid_seq) {
-                                if(index == 0) {
-                                    target = chainid_seq[acc];
-                                }
-                                else if(!query) {
-                                    query = chainid_seq[acc];
-                                }
-
-                                ++index;
-                            }
-
-                            let match_score = 1, mismatch = -1, gap = -1, extension = -1;
-
-                            let bLocal = (ic.bLocalSmithwm) ? true : false;
-                            ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
-
-                            thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                        },
-                        error : function(xhr, textStatus, errorThrown ) {
-                            this.tryCount++;
-                            if(this.tryCount <= this.retryLimit) {
-                                //try again
-                                $.ajax(this);
-                                return;
-                            }
-
-                            alert("Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
-
-                            return;
+                    let index = 0;
+                    for(let acc in chainid_seq) {
+                        if(index == 0) {
+                            target = chainid_seq[acc];
                         }
-                    });
+                        else if(!query) {
+                            query = chainid_seq[acc];
+                        }
+
+                        ++index;
+                    }
+
+                    let match_score = 1, mismatch = -1, gap = -1, extension = -1;
+
+                    let bLocal = (ic.bLocalSmithwm) ? true : false;
+                    ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
+
+                    await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                  } // align seq to structure
             }
             ic.bAnnoShown = true;
         }
 
-        showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
-            if(!me.bNode) this.getAnnotationData();
+        async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
+            if(!me.bNode) await this.getAnnotationData();
 
             let i = 0;
             for(let chain in nucleotide_chainid) {
@@ -39994,15 +39869,17 @@ var icn3d = (function (exports) {
 
             if(!me.bNode) {
                 this.enableHlSeq();
-
-                setTimeout(function(){
                 ic.annotationCls.hideAllAnno();
+
+                // setTimeout(function(){
+                //     ic.annotationCls.clickCdd();
+                // }, 0);
+
                 ic.annotationCls.clickCdd();
-                }, 0);
             }
         }
 
-        getAnnotationData() { let ic = this.icn3d, me = ic.icn3dui;
+        async getAnnotationData() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
             let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
             let index = 0;
@@ -40047,26 +39924,16 @@ var icn3d = (function (exports) {
             let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
             if(ic.chainid_seq !== undefined) {     
-                this.processSeqData(ic.chainid_seq);
+                await this.processSeqData(ic.chainid_seq);
             }
             else {       
-                $.ajax({
-                  url: url,
-                  dataType: 'jsonp', //'text',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1,
-                  success: function(data) {
+                try {
+                    let data = await me.getAjaxPromise(url, 'jsonp');
+
                     ic.chainid_seq = data;
-                    thisClass.processSeqData(ic.chainid_seq);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
+                    await thisClass.processSeqData(ic.chainid_seq);
+                }
+                catch(err) {
                     thisClass.enableHlSeq();
                     if(!me.bNode) console.log( "No data were found for the protein " + chnidBaseArray + "..." );
                     for(let chnid in ic.protein_chainid) {
@@ -40075,10 +39942,9 @@ var icn3d = (function (exports) {
                         ic.showSeqCls.showSeq(chnid, chnidBase);
                     }
                     // get CDD/Binding sites
-                    ic.annoCddSiteCls.showCddSiteAll();
+                    await ic.annoCddSiteCls.showCddSiteAll();
                     return;
-                  }
-                });
+                }
             }
         }
 
@@ -40170,11 +40036,12 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + 'ov_giseq_' + name).html(html2);
         }
 
-        processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
+        async processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
             for(let chnid in ic.protein_chainid) {
                 let chnidBase = ic.protein_chainid[chnid];
                 //if(chainid_seq.hasOwnProperty(chnid)) {
                 //    let allSeq = chainid_seq[chnid];
+
                 if(chainid_seq.hasOwnProperty(chnidBase)) {
                     let allSeq = chainid_seq[chnidBase];
                     ic.giSeq[chnid] = allSeq;
@@ -40194,9 +40061,10 @@ var icn3d = (function (exports) {
                     }
                 }
                 else {
-                    if(!me.bNode) console.log( "No data were found for the protein " + chnid + "..." );
+                    if(!me.bNode) console.log( "No data were found for the chain " + chnid + "..." );
                     ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
                 }
+                
                 if(me.cfg.blast_rep_id != chnid) {
                     ic.showSeqCls.showSeq(chnid, chnidBase);
                 }
@@ -40213,7 +40081,7 @@ var icn3d = (function (exports) {
                   let text = "cannot be aligned";
                   ic.queryStart = '';
                   ic.queryEnd = '';
-                  alert('The sequence can NOT be aligned to the structure');
+                  if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
                   ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
                 }
                 else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
@@ -40322,7 +40190,7 @@ var icn3d = (function (exports) {
                       // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                       let nGap = 0;
                       ic.alnChainsSeq[chnid] = [];
-                      let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
+                      //let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
                       for(let i = 0, il = targetSeq.length; i < il; ++i) {
                           //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
                           if(ic.targetGapHash.hasOwnProperty(i)) {
@@ -40332,7 +40200,8 @@ var icn3d = (function (exports) {
                           }
                           compText += ic.showSeqCls.insertGap(chnid, i, '-', true);
                           if(ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
-                          let pos =(ic.bUsePdbNum) ? i+1 + offset : i+1;
+                          //let pos =(ic.bUsePdbNum) ? i+1 + offset : i+1;
+                          let pos =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chnid, i) : i+1;
                           if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
                               text += querySeq[target2queryHash[i]];
                               let colorHexStr = this.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
@@ -40364,7 +40233,7 @@ var icn3d = (function (exports) {
                   }
                   else {
                       text += "cannot be aligned";
-                      alert('The sequence can NOT be aligned to the structure');
+                      if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
                   }
                   let compTitle = (ic.seqStructAlignData !== undefined) ? 'BLAST, E: ' + evalue : 'Score: ' + evalue;
                   ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
@@ -40387,7 +40256,7 @@ var icn3d = (function (exports) {
             if(!me.bNode) {
                 this.enableHlSeq();
                 // get CDD/Binding sites
-                ic.annoCddSiteCls.showCddSiteAll();
+                await ic.annoCddSiteCls.showCddSiteAll();
             }
         }
 
@@ -40490,13 +40359,15 @@ var icn3d = (function (exports) {
                 }
             }
             giSeq = giSeqTmp;
+
             //let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
             let divLength = me.htmlCls.RESIDUE_WIDTH * (ic.giSeq[chnid].length + ic.nTotalGap) + 200;
 
-            let seqLength = ic.giSeq[chnid].length;
-            if(seqLength > ic.maxAnnoLength) {
-                ic.maxAnnoLength = seqLength;
-            }
+            // let seqLength = ic.giSeq[chnid].length
+            // if(seqLength > ic.maxAnnoLength) {
+            //     ic.maxAnnoLength = seqLength;
+            // }
+
             //let itemArray = ['giseq', 'cddsite', 'ptm', 'clinvar', 'snp', 'domain', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
             let itemArray = ['giseq', 'cddsite', 'clinvar', 'snp', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
             for(let i in itemArray) {
@@ -40528,12 +40399,13 @@ var icn3d = (function (exports) {
                 for(let i = 0, il = giSeq.length; i < il; ++i) {
                   html += this.insertGap(chnid, i, '-');
                   let currResi;
-                  if(bNonMmdb) {
-                    currResi = giSeq[i].resi;
-                  }
-                  else {
-                    currResi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                  }
+                //   if(bNonMmdb) {
+                //     currResi = giSeq[i].resi;
+                //   }
+                //   else {
+                //     currResi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                //   }
+                  currResi = ic.ParserUtilsCls.getResi(chnid, i);
                   html += '<span>';
                   if( currResi % 10 === 0) {
                     //html += currResi + ' ';
@@ -40595,9 +40467,8 @@ var icn3d = (function (exports) {
             html += htmlTmp + '<span class="icn3d-seqLine">';
             for(let i = 0, il = giSeq.length; i < il; ++i) {
               html += this.insertGap(chnid, i, '-');
-        //      let resi =(ic.baseResi[chnid] + i+1).toString();
-        //      let resi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-              let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+            //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+              let resi = ic.ParserUtilsCls.getResi(chnid, i);
               let residueid = chnid + '_' + resi;
               if( ic.residues.hasOwnProperty(residueid) ) {
                 if(ic.secondaries[residueid] == 'H') {
@@ -40680,9 +40551,10 @@ var icn3d = (function (exports) {
               if(cFull.length > 1) {
                   c = cFull[0] + '..';
               }
-        //      pos =(ic.baseResi[chnid] + i+1).toString();
-        //      pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-              pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+              
+            //   pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+              pos = ic.ParserUtilsCls.getResi(chnid, i);
+                  
               if( !ic.residues.hasOwnProperty(chnid + '_' + pos) ) {
                   c = c.toLowerCase();
                   html += '<span title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
@@ -40859,8 +40731,9 @@ var icn3d = (function (exports) {
                     html += htmlTmp + '<span class="icn3d-seqLine">';
                     for(let i = 0, il = giSeq.length; i < il; ++i) {
                         html += this.insertGap(chnid, i, '-');
-                        if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                          let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                        //if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                        //   let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                          let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                           let residueid = chnid + '_' + currResi;
                           if(!ic.residues.hasOwnProperty(residueid)) {
                               html += '<span></span>';
@@ -40874,10 +40747,10 @@ var icn3d = (function (exports) {
                               }
                               html += '</span>';
                           }
-                        }
-                        else {
-                          html += '<span></span>';
-                        }
+                        // }
+                        // else {
+                        //   html += '<span></span>';
+                        // }
                     }
                     html += '<span class="icn3d-residueNum"></span>';
                     html += '</span>';
@@ -40938,8 +40811,9 @@ var icn3d = (function (exports) {
             html += htmlTmp + '<span class="icn3d-seqLine">';
             for(let i = 0, il = giSeq.length; i < il; ++i) {
                 html += this.insertGap(chnid, i, '-');
-                if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                    let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                // if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
+                    // let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
+                    let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                     let residueid = chnid + '_' + currResi;
                     let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
                     if(!ic.residues.hasOwnProperty(residueid)) {
@@ -41024,10 +40898,10 @@ var icn3d = (function (exports) {
                             html += '<span></span>';
                         }
                     }
-                }
-                else {
-                    html += '<span></span>';
-                }
+                // }
+                // else {
+                //     html += '<span></span>';
+                // }
             }
             html += '<span class="icn3d-residueNum"></span>';
             html += '</span>';
@@ -41114,6 +40988,7 @@ var icn3d = (function (exports) {
             ic.matchedPos[chnid] = 0;
             ic.baseResi[chnid] = ic.chainsSeq[chnid][0].resi - ic.matchedPos[chnid] - 1;
         }
+
         getProteinName(chnid) { let ic = this.icn3d, me = ic.icn3dui;
             let fullProteinName = '';
             if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
@@ -41431,24 +41306,27 @@ var icn3d = (function (exports) {
 
                                 // protein chains
                                 let residueid, from, to;
-                                let structure = chainid.substr(0, chainid.indexOf('_'));
+                                chainid.substr(0, chainid.indexOf('_'));
                                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                                     from = parseInt(fromArray[i]);
                                     to = parseInt(toArray[i]);
 
                                     for(let j = from; j <= to; ++j) {
-                                        if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                        // if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                        if( ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                             let residNCBI = chainid + '_' + (j+1).toString();
                                             // AlphaFold domains calculated on-the-fly have no conversion
-                                            if(structure.length > 5) {
-                                                residueid = residNCBI;
-                                            }
-                                            else if(ic.residNCBI2resid[residNCBI]) {
-                                                residueid = ic.residNCBI2resid[residNCBI];
-                                            }
-                                            else {
-                                                residueid = residNCBI;
-                                            }
+                                            // if(structure.length > 5) {
+                                            //     residueid = residNCBI;
+                                            // }
+                                            // else if(ic.ncbi2resid[residNCBI]) {
+                                            //     residueid = ic.ncbi2resid[residNCBI];
+                                            // }
+                                            // else {
+                                            //     residueid = residNCBI;
+                                            // }
+
+                                            residueid = ic.ncbi2resid[residNCBI];
                                         }
                                         else {
                                             residueid = chainid + '_' + (j+1).toString();
@@ -41481,25 +41359,27 @@ var icn3d = (function (exports) {
 
                                 //var  atomHash = {}, residueidHash = {}
                                 let residueid;
-                                let structure = chainid.substr(0, chainid.indexOf('_'));
+                                chainid.substr(0, chainid.indexOf('_'));
                                 for(let i = 0, il = posArray.length; i < il; ++i) {
                                     if($(that).attr('site') !== undefined || $(that).attr('ptm') !== undefined) {
-                                        if(ic.bNCBI) {
+                                        // if(ic.bNCBI) {
                                             let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                             // AlphaFold domains calculated on-the-fly have no conversion
-                                            if(structure.length > 5) {
-                                                residueid = residNCBI;
-                                            }
-                                            else if(ic.residNCBI2resid[residNCBI]) {
-                                                residueid = ic.residNCBI2resid[residNCBI];
-                                            }
-                                            else {
-                                                residueid = residNCBI;
-                                            }
-                                        }
-                                        else {
-                                            residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
-                                        }
+                                            // if(structure.length > 5) {
+                                            //     residueid = residNCBI;
+                                            // }
+                                            // else if(ic.ncbi2resid[residNCBI]) {
+                                            //     residueid = ic.ncbi2resid[residNCBI];
+                                            // }
+                                            // else {
+                                            //     residueid = residNCBI;
+                                            // }
+
+                                            residueid = ic.ncbi2resid[residNCBI];
+                                        // }
+                                        // else {
+                                        //     residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
+                                        // }
                                     }
                                     //else if($(that).attr('clinvar') !== undefined) {
                                     else {
@@ -42962,12 +42842,13 @@ var icn3d = (function (exports) {
                    // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
                    let residLabel = '1_1_' + resid;
                    //if(cnt > 0) nodeStr += ', ';
+                   let colorStr = (atom.color) ? atom.color.getHexString().toUpperCase() : '000';
                    nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
-                       + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
-                   if(cnt > 0 && prevChain == atom.chain &&(parseInt(atom.resi) == parseInt(prevResi) + 1 || atom.resi == prevResi) ) {
+                       + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + colorStr + '"}');
+                   if(cnt > 0 && prevChain == atom.chain &&(ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi] + 1 || ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi]) ) {
                        //if(linkCnt > 0) linkStr += ', ';
                        linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
-                           + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+                           + '", "v": ' + thickness + ', "c": "' + colorStr + '"}');
                        if(atom.ssbegin) thickness = me.htmlCls.ssValue;
                        if(atom.ssend) thickness = me.htmlCls.coilValue;
                    }
@@ -43162,7 +43043,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
+        async showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
            let nameArray = $("#" + ic.pre + "atomsCustomHbond").val();
            let nameArray2 = $("#" + ic.pre + "atomsCustomHbond2").val();
            if(nameArray2.length == 0) {
@@ -43184,7 +43065,7 @@ var icn3d = (function (exports) {
                let thresholdPistacking = $("#" + ic.pre + "pistackingthreshold").val();
                let thresholdStr = 'threshold ' + thresholdHbond + ' ' + thresholdSaltbridge + ' ' + thresholdContact
                 + ' ' + thresholdHalogen + ' ' + thresholdPication + ' ' + thresholdPistacking;
-               let result = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, ic.bHbondCalc, type,
+               let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, ic.bHbondCalc, type,
                     bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
                let interactionTypes = result.interactionTypes;
 
@@ -43247,7 +43128,7 @@ var icn3d = (function (exports) {
             let firstSetAtoms, complement;
             firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
             complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+            ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
             if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
                 let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
                 let commanddesc;
@@ -43272,7 +43153,9 @@ var icn3d = (function (exports) {
                         //ic.atoms[i].style2 = 'lines';
                     }
                 }
-                let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+
+                //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+                let commandname = hbonds_saltbridge + '_auto';
                 ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
                 ic.selectionCls.saveSelectionIfSelected();
                 ic.drawCls.draw();
@@ -43372,7 +43255,7 @@ var icn3d = (function (exports) {
             let firstSetAtoms, complement;
             firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
             complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+            ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
             if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
                 let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
                 let commanddesc;
@@ -43392,7 +43275,8 @@ var icn3d = (function (exports) {
                         //ic.atoms[i].style2 = 'lines';
                     }
                 }
-                let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+                //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+                let commandname = hbonds_saltbridge + '_auto';
                 ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
                 ic.selectionCls.saveSelectionIfSelected();
                 ic.drawCls.draw();
@@ -43406,7 +43290,7 @@ var icn3d = (function (exports) {
             let firstSetAtoms, complement;
             firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
             complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+            ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
             if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
                 let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), type, interactionType );
                 let commanddesc;
@@ -43436,7 +43320,8 @@ var icn3d = (function (exports) {
                         //ic.atoms[i].style2 = 'lines';
                     }
                 }
-                let commandname = interactionType + '_' + firstAtom.serial;
+                //let commandname = interactionType + '_' + firstAtom.serial;
+                let commandname = interactionType + '_auto';
                 ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
                 ic.selectionCls.saveSelectionIfSelected();
                 ic.drawCls.draw();
@@ -43560,7 +43445,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
+        async viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
           bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { let ic = this.icn3d, me = ic.icn3dui;
            let bondCnt;
 
@@ -43883,33 +43768,16 @@ var icn3d = (function (exports) {
                }
 
                if(ic.bD3 === undefined) {
-                   //var url = "https://d3js.org/d3.v4.min.js";
-                   var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
-                   $.ajax({
-                      url: url,
-                      dataType: "script",
-                      cache: true,
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      success: function(data) {
-                           ic.bD3 = true;
+                    //var url = "https://d3js.org/d3.v4.min.js";
+                    var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                    await me.getAjaxPromise(url, 'script');
 
-                           $("#" + me.svgid).empty();
-                           me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-                           ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
-                           if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-                        if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
-                        return;
-                      }
-                   });
+                    ic.bD3 = true;
+
+                    $("#" + me.svgid).empty();
+                    me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                    ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+                    /// if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
                }
                else {
                    $("#" + me.svgid).empty();
@@ -43919,16 +43787,6 @@ var icn3d = (function (exports) {
            }
            return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
         }
-
-    /*
-        removeForce() { let ic = this.icn3d, me = ic.icn3dui;
-           setTimeout(function(){
-               me.htmlCls.force = 0;
-               me.htmlCls.clickMenuCls.setLogCmd("graph force " + me.htmlCls.force, true);
-               ic.getGraphCls.handleForce();
-           }, 300);
-        }
-    */
 
         clearInteractions() { let ic = this.icn3d; ic.icn3dui;
             ic.lines['hbond'] = [];
@@ -43956,17 +43814,17 @@ var icn3d = (function (exports) {
            ic.resids2interAll = {};
         }
 
-        retrieveInteractionData() { let ic = this.icn3d, me = ic.icn3dui;
+        async retrieveInteractionData() { let ic = this.icn3d, me = ic.icn3dui;
              if(!ic.b2DShown) {
                  if(me.cfg.align !== undefined) {
                      let structureArray = Object.keys(ic.structures);
 
                      if(me.cfg.atype == 2) {
                         let bDiagramOnly = true;
-                        ic.alignParserCls.downloadAlignment(structureArray[0] + ',' + structureArray[1], bDiagramOnly);
+                        await ic.alignParserCls.downloadAlignment(structureArray[0] + ',' + structureArray[1], bDiagramOnly);
                      }
                      
-                     ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
+                     await ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
                  }
                  else if(me.cfg.chainalign !== undefined) {
                      Object.keys(ic.structures);
@@ -43977,7 +43835,7 @@ var icn3d = (function (exports) {
                      //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
                      //}
 
-                     ic.ParserUtilsCls.set2DDiagramsForChainalign(ic.chainidArray);
+                     await ic.ParserUtilsCls.set2DDiagramsForChainalign(ic.chainidArray);
                  }
                  else {
                      ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
@@ -44857,7 +44715,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        contactMap(contactDist, type) { let ic = this.icn3d; ic.icn3dui;
+        async contactMap(contactDist, type) { let ic = this.icn3d; ic.icn3dui;
            let nameArray = ['selected'];
            let nameArray2 = ['selected'];
            if(nameArray2.length == 0) {
@@ -44871,43 +44729,21 @@ var icn3d = (function (exports) {
                let bHalogen = false;
                let bPication = false;
                let bPistacking = false;
-               ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+               await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
                     bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist);
            }
         }
 
-        afErrorMap(afid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+        async afErrorMap(afid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
-
-            let url, dataType;
         
-            //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
-            url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
+            let url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
 
-            dataType = "json";
-        
-            $.ajax({
-                url: url,
-                dataType: dataType,
-                cache: true,
-                tryCount : 0,
-                retryLimit : 0, //1
-                success: function(data) {
-                    thisClass.processAfErrorMap(data, bFull);
-                },
-                error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    alert("There are some problems in loading the PAE file...");
-                    return;
-                }
-            });      
+            let data = await me.getAjaxPromise(url, 'json', false, 'There are some problems in loading the PAE file...');
+
+            thisClass.processAfErrorMap(data, bFull);
         }
 
         processAfErrorMap(dataJson, bFull) { let ic = this.icn3d, me = ic.icn3dui;
@@ -45012,7 +44848,7 @@ var icn3d = (function (exports) {
             let bAfMap = true;
             this.drawContactMap(lineGraphStr, bAfMap, max);    
             
-            if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
+            /// if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
         }
 
         drawContactMap(lineGraphStr, bAfMap, max) { let ic = this.icn3d, me = ic.icn3dui;
@@ -45139,7 +44975,7 @@ var icn3d = (function (exports) {
         }
 
         //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
-        downloadAlignment(align, bDiagramOnly) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadAlignment(align, bDiagramOnly) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.opts['proteins'] = 'c alpha trace';
@@ -45160,263 +44996,227 @@ var icn3d = (function (exports) {
               url2 += me.cfg.inpara;
             }
 
-            ic.bCid = undefined;
+            //ic.bCid = undefined;
 
             // define for 'align' only
             ic.pdbid_chain2title = {};
 
             if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
-            let request = $.ajax({
-               url: url2,
-               dataType: 'jsonp',
-               cache: true,
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              }
-            });
-
             let seqalign = {};
 
-            request
-            .fail(function() {
-                alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
+            let errMess = "These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"";
+
+            let data = await me.getAjaxPromise(url2, 'jsonp', true, errMess);
+
+            seqalign = data.seqalign;
+            if(seqalign === undefined) {
+                alert(errMess);
                 return false;
-            })
-            .then(function( data ) {
-                seqalign = data.seqalign;
-                if(seqalign === undefined) {
-                    alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
-                    return false;
+            }
+
+            // set ic.pdbid_molid2chain and ic.chainsColor
+            ic.pdbid_molid2chain = {};
+            ic.chainsColor = {};
+            //ic.mmdbidArray = [];
+            //for(let i in data) {
+
+            for(let i = 0, il = 2; i < il; ++i) {
+                //if(i === 'seqalign') continue;
+                let mmdbTmp = data['alignedStructures'][0][i];
+
+                //var pdbid =(data[i].pdbid !== undefined) ? data[i].pdbid : i;
+                let pdbid =(mmdbTmp.pdbId !== undefined) ? mmdbTmp.pdbId : mmdbTmp.mmdbId;
+                //ic.mmdbidArray.push(pdbid); // here two molecules are in alphabatic order, themaster molecule could not be the first one
+
+                let chainNameHash = {}; // chain name may be the same in assembly
+                //for(let molid in mmdbTmp.molecules) {
+                for(let j = 0, jl = mmdbTmp.molecules.length; j < jl; ++j) {
+                    let molecule = mmdbTmp.molecules[j];
+                    let molid = molecule.moleculeId;
+                    let chainName = molecule.chain.trim();
+                    if(chainNameHash[chainName] === undefined) {
+                        chainNameHash[chainName] = 1;
+                    }
+                    else {
+                        ++chainNameHash[chainName];
+                    }
+
+                    let finalChain =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
+
+                    ic.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
+
+                    if(molecule.kind === 'p' || molecule.kind === 'n') {
+                        ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(me.htmlCls.GREY8);
+                    }
                 }
+            }
 
-                // set ic.pdbid_molid2chain and ic.chainsColor
-                ic.pdbid_molid2chain = {};
-                ic.chainsColor = {};
-                //ic.mmdbidArray = [];
-                //for(let i in data) {
-
-                for(let i = 0, il = 2; i < il; ++i) {
-                    //if(i === 'seqalign') continue;
+            //var index = 0;
+            //for(let mmdbid in data) {
+            ic.mmdbidArray = [];
+            for(let i = 0, il = 2; i < il; ++i) {
+                //if(index < 2) {
                     let mmdbTmp = data['alignedStructures'][0][i];
 
-                    //var pdbid =(data[i].pdbid !== undefined) ? data[i].pdbid : i;
-                    let pdbid =(mmdbTmp.pdbId !== undefined) ? mmdbTmp.pdbId : mmdbTmp.mmdbId;
-                    //ic.mmdbidArray.push(pdbid); // here two molecules are in alphabatic order, themaster molecule could not be the first one
+                    let pdbid = mmdbTmp.pdbId;
+                    ic.mmdbidArray.push(pdbid);
 
-                    let chainNameHash = {}; // chain name may be the same in assembly
-                    //for(let molid in mmdbTmp.molecules) {
-                    for(let j = 0, jl = mmdbTmp.molecules.length; j < jl; ++j) {
-                      let molecule = mmdbTmp.molecules[j];
-                      let molid = molecule.moleculeId;
-                      let chainName = molecule.chain.trim();
-                      if(chainNameHash[chainName] === undefined) {
-                          chainNameHash[chainName] = 1;
-                      }
-                      else {
-                          ++chainNameHash[chainName];
-                      }
-
-                      let finalChain =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
-
-                      ic.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
-
-                      if(molecule.kind === 'p' || molecule.kind === 'n') {
-                          ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(me.htmlCls.GREY8);
-                      }
+                    let molecule = mmdbTmp.molecules;
+                    for(let molname in molecule) {
+                        let chain = molecule[molname].chain;
+                        ic.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
                     }
-                }
+                //}
 
-                //var index = 0;
-                //for(let mmdbid in data) {
-                ic.mmdbidArray = [];
-                for(let i = 0, il = 2; i < il; ++i) {
-                    //if(index < 2) {
-                        let mmdbTmp = data['alignedStructures'][0][i];
+                //++index;
+            }
 
-                        let pdbid = mmdbTmp.pdbId;
-                        ic.mmdbidArray.push(pdbid);
+            // get the color for each aligned chain pair
+            ic.alignmolid2color = [];
+            //ic.alignmolid2color[0] = {}
+            //ic.alignmolid2color[1] = {}
+            me.parasCls.stdChainColors.length;
 
-                        let molecule = mmdbTmp.molecules;
-                        for(let molname in molecule) {
-                            let chain = molecule[molname].chain;
-                            ic.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
+            for(let i = 0, il = seqalign.length; i < il; ++i) {
+                let molid1 = seqalign[i][0].moleculeId;
+                let molid2 = seqalign[i][1].moleculeId;
+
+                //ic.alignmolid2color[0][molid1] =(i+1).toString();
+                //ic.alignmolid2color[1][molid2] =(i+1).toString();
+
+                let tmpHash = {};
+                tmpHash[molid1] =(i+1).toString();
+                ic.alignmolid2color.push(tmpHash);
+
+                tmpHash = {};
+                tmpHash[molid2] =(i+1).toString();
+                ic.alignmolid2color.push(tmpHash);
+            }
+
+            if(!bDiagramOnly) {
+                //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
+                //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
+                // need the parameter moleculeInfor
+                let url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
+                let url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
+
+                let d3 = me.getAjaxPromise(url3, 'jsonp', true);
+                let d4 = me.getAjaxPromise(url4, 'jsonp', true);
+
+                let allPromise = Promise.allSettled([d3, d4]);
+
+                let dataArray = await allPromise;
+
+                let data2 = data;
+                let data3 = dataArray[0].value; //v3[0];
+                let data4 = dataArray[1].value; //v4[0];
+
+                if(data3.atoms !== undefined && data4.atoms !== undefined) {
+                    // ic.deferredOpm = $.Deferred(function() {
+                        //ic.mmdbidArray = [];
+                        //for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
+                        //    ic.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
+                        //}
+
+                        ic.ParserUtilsCls.setYourNote((ic.mmdbidArray[0] + ',' + ic.mmdbidArray[1]).toUpperCase() + '(VAST+) in iCn3D');
+
+                        // get transformation factors
+                        let factor = 1; //10000;
+                        //var scale = data2.transform.scale / factor;
+                        let tMaster = data2.transform.translate.master;
+                        let tMVector = new THREE.Vector3(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
+                        let tSlave = data2.transform.translate.slave;
+                        let tSVector = new THREE.Vector3(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
+                        let rotation = data2.transform.rotate;
+                        let rMatrix = [];
+                        for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements
+                            rMatrix.push(rotation[i] / factor);
                         }
-                    //}
 
-                    //++index;
-                }
-
-                // get the color for each aligned chain pair
-                ic.alignmolid2color = [];
-                //ic.alignmolid2color[0] = {}
-                //ic.alignmolid2color[1] = {}
-                me.parasCls.stdChainColors.length;
-
-                for(let i = 0, il = seqalign.length; i < il; ++i) {
-                    let molid1 = seqalign[i][0].moleculeId;
-                    let molid2 = seqalign[i][1].moleculeId;
-
-                    //ic.alignmolid2color[0][molid1] =(i+1).toString();
-                    //ic.alignmolid2color[1][molid2] =(i+1).toString();
-
-                    let tmpHash = {};
-                    tmpHash[molid1] =(i+1).toString();
-                    ic.alignmolid2color.push(tmpHash);
-
-                    tmpHash = {};
-                    tmpHash[molid2] =(i+1).toString();
-                    ic.alignmolid2color.push(tmpHash);
-                }
-
-                if(!bDiagramOnly) {
-                    //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
-                    //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
-                    // need the parameter moleculeInfor
-                    let url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
-                    let url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
-
-                    let d3 = $.ajax({
-                    url: url3,
-                    dataType: 'jsonp',
-                    cache: true,
-                    beforeSend: function() {
-                        ic.ParserUtilsCls.showLoading();
-                    },
-                    complete: function() {
-                        //ic.ParserUtilsCls.hideLoading();
-                    }
-                    });
-                    let d4 = $.ajax({
-                    url: url4,
-                    dataType: 'jsonp',
-                    cache: true,
-                    beforeSend: function() {
-                        ic.ParserUtilsCls.showLoading();
-                    },
-                    complete: function() {
-                        //ic.ParserUtilsCls.hideLoading();
-                    }
-                    });
-
-                    $.when( d3, d4 ).then(function( v3, v4 ) {
-                        // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
-                        //var data2 = v2[0];
-                        let data2 = data;
-                        let data3 = v3[0];
-                        let data4 = v4[0];
-
-                        if(data3.atoms !== undefined && data4.atoms !== undefined) {
-                            ic.deferredOpm = $.Deferred(function() {
-                                //ic.mmdbidArray = [];
-                                //for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
-                                //    ic.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
-                                //}
-
-                                ic.ParserUtilsCls.setYourNote((ic.mmdbidArray[0] + ',' + ic.mmdbidArray[1]).toUpperCase() + '(VAST+) in iCn3D');
-
-                                // get transformation factors
-                                let factor = 1; //10000;
-                                //var scale = data2.transform.scale / factor;
-                                let tMaster = data2.transform.translate.master;
-                                let tMVector = new THREE.Vector3(tMaster[0] / factor, tMaster[1] / factor, tMaster[2] / factor);
-                                let tSlave = data2.transform.translate.slave;
-                                let tSVector = new THREE.Vector3(tSlave[0] / factor, tSlave[1] / factor, tSlave[2] / factor);
-                                let rotation = data2.transform.rotate;
-                                let rMatrix = [];
-                                for(let i = 0, il = rotation.length; i < il; ++i) { // 9 elements
-                                    rMatrix.push(rotation[i] / factor);
-                                }
-
-                                // get sequence
-                                ic.chainid2seq = {};
-                                for(let chain in data3.sequences) {
-                                    let chainid = ic.mmdbidArray[0] + '_' + chain;
-                                    ic.chainid2seq[chainid] = data3.sequences[chain]; // ["0","D","ASP"],
-                                }
-                                for(let chain in data4.sequences) {
-                                    let chainid = ic.mmdbidArray[1] + '_' + chain;
-                                    ic.chainid2seq[chainid] = data4.sequences[chain]; // ["0","D","ASP"],
-                                }
-
-                                // atoms
-                                let atomsM = data3.atoms;
-                                let atomsS = data4.atoms;
-
-                                // fix serialInterval
-                                let nAtom1 = data3.atomCount;
-                                let nAtom2 = data4.atomCount;
-
-                                for(let i = 0, il = data2.alignedStructures[0].length; i < il; ++i) {
-                                let structure = data2.alignedStructures[0][i];
-
-                                structure.serialInterval = [];
-                                if(i == 0) {
-                                    structure.serialInterval.push(1);
-                                    structure.serialInterval.push(nAtom1);
-                                }
-                                else if(i == 1) {
-                                    structure.serialInterval.push(nAtom1 + 1);
-                                    structure.serialInterval.push(nAtom1 + nAtom2);
-                                }
-                                }
-
-                                let allAtoms = {};
-                                for(let i in atomsM) {
-                                    let atm = atomsM[i];
-
-                                    atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                                    atm.coord.add(tMVector);
-
-                                    let x = atm.coord.x * rMatrix[0] + atm.coord.y * rMatrix[1] + atm.coord.z * rMatrix[2];
-                                    let y = atm.coord.x * rMatrix[3] + atm.coord.y * rMatrix[4] + atm.coord.z * rMatrix[5];
-                                    let z = atm.coord.x * rMatrix[6] + atm.coord.y * rMatrix[7] + atm.coord.z * rMatrix[8];
-
-                                    atm.coord.x = x;
-                                    atm.coord.y = y;
-                                    atm.coord.z = z;
-
-                                    allAtoms[i] = atm;
-                                }
-
-                                for(let i in atomsS) {
-                                    let atm = atomsS[i];
-
-                                    atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                                    atm.coord.add(tSVector);
-
-                                    // update the bonds
-                                    for(let j = 0, jl = atm.bonds.length; j < jl; ++j) {
-                                        atm.bonds[j] += nAtom1;
-                                    }
-
-                                    allAtoms[(parseInt(i) + nAtom1).toString()] = atm;
-                                }
-
-                                // combine data
-                                let allData = {};
-                                allData.alignedStructures = data2.alignedStructures;
-                                allData.alignment = data2.alignment;
-                                allData.atoms = allAtoms;
-
-                                thisClass.loadOpmDataForAlign(allData, seqalign, ic.mmdbidArray);
-                            });
-
-                            return ic.deferredOpm.promise();
+                        // get sequence
+                        ic.chainid2seq = {};
+                        for(let chain in data3.sequences) {
+                            let chainid = ic.mmdbidArray[0] + '_' + chain;
+                            ic.chainid2seq[chainid] = data3.sequences[chain]; // ["0","D","ASP"],
                         }
-                        else {
-                            alert('invalid atoms data.');
-                            return false;
+                        for(let chain in data4.sequences) {
+                            let chainid = ic.mmdbidArray[1] + '_' + chain;
+                            ic.chainid2seq[chainid] = data4.sequences[chain]; // ["0","D","ASP"],
                         }
-                    });
+
+                        // atoms
+                        let atomsM = data3.atoms;
+                        let atomsS = data4.atoms;
+
+                        // fix serialInterval
+                        let nAtom1 = data3.atomCount;
+                        let nAtom2 = data4.atomCount;
+
+                        for(let i = 0, il = data2.alignedStructures[0].length; i < il; ++i) {
+                        let structure = data2.alignedStructures[0][i];
+
+                        structure.serialInterval = [];
+                        if(i == 0) {
+                            structure.serialInterval.push(1);
+                            structure.serialInterval.push(nAtom1);
+                        }
+                        else if(i == 1) {
+                            structure.serialInterval.push(nAtom1 + 1);
+                            structure.serialInterval.push(nAtom1 + nAtom2);
+                        }
+                        }
+
+                        let allAtoms = {};
+                        for(let i in atomsM) {
+                            let atm = atomsM[i];
+
+                            atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                            atm.coord.add(tMVector);
+
+                            let x = atm.coord.x * rMatrix[0] + atm.coord.y * rMatrix[1] + atm.coord.z * rMatrix[2];
+                            let y = atm.coord.x * rMatrix[3] + atm.coord.y * rMatrix[4] + atm.coord.z * rMatrix[5];
+                            let z = atm.coord.x * rMatrix[6] + atm.coord.y * rMatrix[7] + atm.coord.z * rMatrix[8];
+
+                            atm.coord.x = x;
+                            atm.coord.y = y;
+                            atm.coord.z = z;
+
+                            allAtoms[i] = atm;
+                        }
+
+                        for(let i in atomsS) {
+                            let atm = atomsS[i];
+
+                            atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                            atm.coord.add(tSVector);
+
+                            // update the bonds
+                            for(let j = 0, jl = atm.bonds.length; j < jl; ++j) {
+                                atm.bonds[j] += nAtom1;
+                            }
+
+                            allAtoms[(parseInt(i) + nAtom1).toString()] = atm;
+                        }
+
+                        // combine data
+                        let allData = {};
+                        allData.alignedStructures = data2.alignedStructures;
+                        allData.alignment = data2.alignment;
+                        allData.atoms = allAtoms;
+
+                        await thisClass.loadOpmDataForAlign(allData, seqalign, ic.mmdbidArray);
+                    // });
+                    // return ic.deferredOpm.promise();
                 }
-            });
+                else {
+                    alert('invalid atoms data.');
+                    return false;
+                }
+            }
         }
 
-        downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let ic = this.icn3d, me = ic.icn3dui;
             //ic.init();
             ic.loadAtomDataCls.loadAtomDataIn(data, undefined, 'align', seqalign);
 
@@ -45439,7 +45239,7 @@ var icn3d = (function (exports) {
             // memebrane is determined by one structure. But transform both structures
             if(chainresiCalphaHash2 !== undefined) ic.ParserUtilsCls.transformToOpmOriForAlign(ic.selectedPdbid, chainresiCalphaHash2, true);
 
-            ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
 
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
@@ -45452,84 +45252,65 @@ var icn3d = (function (exports) {
             }
 
             if(me.cfg.show2d && ic.bFullUi) {
-                ic.ParserUtilsCls.set2DDiagramsForAlign(ic.mmdbidArray[0].toUpperCase(), ic.mmdbidArray[1].toUpperCase());
+                await ic.ParserUtilsCls.set2DDiagramsForAlign(ic.mmdbidArray[0].toUpperCase(), ic.mmdbidArray[1].toUpperCase());
             }
 
-            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+            //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
 
-        loadOpmDataForAlign(data, seqalign, mmdbidArray) { let ic = this.icn3d; ic.icn3dui;
+        async loadOpmDataForAlign(data, seqalign, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            let url, dataType;
+            let url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+            let prms1 = me.getAjaxPromise(url, 'text');
+            let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+            let prms2 = me.getAjaxPromise(url2, 'text');
 
-            url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+            let allPromise = Promise.allSettled([prms1, prms2]);
+            try {
+                let dataArray = await allPromise;
+                
+                let bFound = false;
+                for(let i = 0, il = dataArray.length; i < il; ++i) {
+                    let opmdata = dataArray[i].value;
 
-            dataType = "text";
+                    if(!opmdata) continue;
 
-            $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              //tryCount : 0,
-              //retryLimit : 0, //1
-              success: function(opmdata) {
-                  ic.selectedPdbid = mmdbidArray[0];
+                    ic.selectedPdbid = mmdbidArray[i];
 
-                  ic.bOpm = true;
-                  let bVector = true;
-                  let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbidArray[0], ic.bOpm, bVector); // defined in the core library
+                    ic.bOpm = true;
+                    let bVector = true;
+                    let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbidArray[i], ic.bOpm, bVector); // defined in the core library
 
-                  $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
-                  $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+                    $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
+                    $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
 
-                  $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
-                  $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+                    $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
+                    $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
-                  ic.init(); // remove all previously loaded data
-                  thisClass.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
+                    ic.init(); // remove all previously loaded data
+                    await thisClass.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
 
-                  if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+                    bFound = true;
 
-                $.ajax({
-                  url: url2,
-                  dataType: dataType,
-                  cache: true,
-                  //tryCount : 0,
-                  //retryLimit : 0, //1
-                  success: function(opmdata) {
-                      ic.selectedPdbid = mmdbidArray[1];
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
 
-                      ic.bOpm = true;
-                      let bVector = true;
-                      let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbidArray[1], ic.bOpm, bVector); // defined in the core library
+                    // use the first one with membrane
+                    break;
+                }
 
-                      $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
-                      $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+                if(!bFound) {
+                    ic.init(); // remove all previously loaded data
+                    await thisClass.downloadAlignmentPart2(data, seqalign);
+                }
+            }
+            catch(err) {
+                ic.init(); // remove all previously loaded data
+                await thisClass.downloadAlignmentPart2(data, seqalign);
 
-                      $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
-                      $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
-
-                      ic.init(); // remove all previously loaded data
-                      thisClass.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
-
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                      ic.init(); // remove all previously loaded data
-                      thisClass.downloadAlignmentPart2(data, seqalign);
-
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                      return;
-                  }
-                });
-
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                 return;
-              }
-            });
+            }
         }
     }
 
@@ -45542,7 +45323,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             let hAtoms = {}, hAtomsTmp = {};
@@ -45551,11 +45332,11 @@ var icn3d = (function (exports) {
             let bLastQuery = false;
             if(mmdbid_t.length > 5) { 
                 let bAppend = false, bNoDssp = true;
-                hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
+                hAtoms = await ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
             }
             else {
                 let bNoSeqalign = true;
-                hAtoms = ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0, bLastQuery, bNoSeqalign);
+                hAtoms = await ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0, bLastQuery, bNoSeqalign);
             }
 
             for(let i = 0, il = data2Array.length; i < il; ++i) {
@@ -45567,24 +45348,26 @@ var icn3d = (function (exports) {
                 //if(mmdbid_q.length > 4) {
                 if(mmdbid_q.length > 5) {  // PDB ID plus postfix could be 5 
                     let bAppend = true, bNoDssp = true;
-                    hAtomsTmp = ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
+                    hAtomsTmp = await ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
                 }
                 else {
                     let bNoSeqalign = true;
-                    hAtomsTmp = ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery, bNoSeqalign);
+                    hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery, bNoSeqalign);
                 }
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }
 
             if(me.cfg.resnum) {
-                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
+                await ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
             }
             else if(me.cfg.resdef) {
-                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
+                await ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
             }
             else {
                 // calculate secondary structures with applyCommandDssp
-                $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+                //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+                    await ic.pdbParserCls.applyCommandDssp(true);
+
                     // align PDB chains
                     for(let index in ic.pdbChainIndexHash) {
                         let idArray = ic.pdbChainIndexHash[index].split('_');
@@ -45614,25 +45397,15 @@ var icn3d = (function (exports) {
                             let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
                             let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
                                 
-                            alignAjax = $.ajax({
-                                url: urlalign,
-                                type: 'POST',
-                                data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                                dataType: 'json',
-                                cache: true
-                            });
+                            let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                            alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                         }
                         else {
                             let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
                             let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
-                                
-                            alignAjax = $.ajax({
-                                url: urltmalign,
-                                type: 'POST',
-                                data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                                dataType: 'json',
-                                cache: true
-                            });                        
+
+                            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                            alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                
                         }
 
                         ajaxArray.push(alignAjax);
@@ -45640,26 +45413,24 @@ var icn3d = (function (exports) {
                         struArray.push(mmdbid_q);
                     }
 
-                    //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-                    //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-                    $.when.apply(undefined, ajaxArray).then(function() {
-                        let dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
-
-                        thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
-                    })
-                    .fail(function() {
-                        alert("These structures can NOT be aligned to each other...");
-                    });    
-                });
+                    let allPromise = Promise.allSettled(ajaxArray);
+                    try {
+                        let dataArray = await allPromise;
+                        await thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
+                    }
+                    catch(err) {
+                        if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+                    }                  
+                //});
             }
         }
 
-        downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
             //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
             // modify the previous trans and rotation matrix
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                let align = dataArray[i][0];
+                let align = dataArray[i].value;//[0];
 
                 let mmdbid_q = struArray[i];
                 let index = indexArray[i];
@@ -45699,7 +45470,7 @@ var icn3d = (function (exports) {
             ic.transformCls.zoominSelection();
 
             // do the rest
-            this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
+            await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
         }
 
         setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -45751,7 +45522,7 @@ var icn3d = (function (exports) {
                  
             let bFoundAlignment = false;
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                let align = dataArray[i][0];
+                let align = dataArray[i].value;//[0];
 
                 let bEqualMmdbid = false;
                 let bEqualChain = false;
@@ -45779,8 +45550,8 @@ var icn3d = (function (exports) {
             }
 
             if(!bFoundAlignment) {
-                if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
-                alert("These structures can NOT be aligned...");
+                /// if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+                if(ic.bRender) alert("These structures can NOT be aligned...");
                 return;
             }
 
@@ -45881,7 +45652,7 @@ var icn3d = (function (exports) {
             
             ic.hlUpdateCls.updateHlAll();
 
-            if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+            /// if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
         }
 
         transformStructure(mmdbid, index, alignType, bForce) { let ic = this.icn3d, me = ic.icn3dui;
@@ -45930,7 +45701,7 @@ var icn3d = (function (exports) {
             return atm;
         }
 
-        downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let ic = this.icn3d, me = ic.icn3dui;
             // select all
             let allAtoms = {};
             for(let i in ic.atoms) {
@@ -45953,7 +45724,7 @@ var icn3d = (function (exports) {
             ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
             ic.dAtoms = me.hashUtilsCls.cloneHash(hAtoms);
             
-            ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
 
             //if(ic.chainidArray.length > 2) {
             if(chainidArray.length > 2) {
@@ -45985,12 +45756,12 @@ var icn3d = (function (exports) {
                     }
                     else {
                         //ic.ParserUtilsCls.set2DDiagramsForAlign(ic.inputid2.toUpperCase(), ic.inputid.toUpperCase());
-                        ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
+                        await ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
                     }
                 }
             }
 
-            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+            //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
 
         addPostfixForChainids(chainidArray) { let ic = this.icn3d; ic.icn3dui;
@@ -46016,7 +45787,7 @@ var icn3d = (function (exports) {
             return chainidArray;
         }
 
-        downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.opts['proteins'] = 'c alpha trace';
@@ -46038,27 +45809,19 @@ var icn3d = (function (exports) {
             if(ic.mmdbid_t.length > 5) {
                 url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
-                targetAjax = $.ajax({
-                    url: url_t,
-                    dataType: 'text',
-                    cache: true
-                  });
+                targetAjax = me.getAjaxPromise(url_t, 'text');
             }
             else {
                 url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
                 if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
-                targetAjax = $.ajax({
-                    url: url_t,
-                    dataType: 'jsonp',
-                    cache: true
-                  });
+                targetAjax = me.getAjaxPromise(url_t, 'jsonp');
             }
 
             ajaxArray.push(targetAjax);
 
             ic.ParserUtilsCls.setYourNote(chainalign.toUpperCase() + ' in iCn3D');
-            ic.bCid = undefined;
+            //ic.bCid = undefined;
             // define for 'align' only
             ic.pdbid_chain2title = {};
             if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
@@ -46076,21 +45839,13 @@ var icn3d = (function (exports) {
                 if(ic.mmdbid_q.length > 5) {
                     url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
-                    queryAjax = $.ajax({
-                        url: url_q,
-                        dataType: 'text',
-                        cache: true
-                    });
+                    queryAjax = me.getAjaxPromise(url_q, 'text');
                 }
                 else {
                     url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
                     if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
-                    queryAjax = $.ajax({
-                        url: url_q,
-                        dataType: 'jsonp',
-                        cache: true
-                    });
+                    queryAjax = me.getAjaxPromise(url_q, 'jsonp');
                 }
 
                 ajaxArray.push(queryAjax);
@@ -46118,11 +45873,7 @@ var icn3d = (function (exports) {
                             urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
                         }
                         
-                        let alignAjax = $.ajax({
-                            url: urlalign,
-                            dataType: 'jsonp',
-                            cache: true
-                        });
+                        let alignAjax = me.getAjaxPromise(urlalign, 'jsonp');
 
                         ajaxArray.push(alignAjax);
 
@@ -46135,27 +45886,26 @@ var icn3d = (function (exports) {
                 }
             }
 
-            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-            $.when.apply(undefined, ajaxArray).then(function() {
-              let dataArray =(alignArray.length == 1) ? [arguments] : Array.from(arguments);
-              thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
-            })
-            .fail(function() {
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+                await thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
+            }
+            catch(err) {
                 let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
-                alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
-    //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-            });
+             
+                if(ic.bRender) alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
+            }          
         }
 
-        parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d, me = ic.icn3dui;
 
             //var dataArray =(chainidArray.length == 1) ? [data] : data;
 
             // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
             //var data2 = v2[0];
             // index = 0: the mmdb data of target
-            let targetData = dataArray[0][0];
+            let targetData = dataArray[0].value; //[0];
             let header = 'HEADER                                                        ' + mmdbid_t + '\n';
             if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
@@ -46173,7 +45923,7 @@ var icn3d = (function (exports) {
             let queryDataArray = [];
 
             for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-                let queryData = dataArray[index][0];
+                let queryData = dataArray[index].value;//[0];
 
                 let pos = chainidArray[index].indexOf('_');
                 let mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
@@ -46216,7 +45966,7 @@ var icn3d = (function (exports) {
                         ic.qt_start_end[index-1] = undefined;
                     }
                     else {
-                        let align = dataArray[index2 - missedChainCnt][0];
+                        let align = dataArray[index2 - missedChainCnt].value;//[0];
 
                         let bEqualMmdbid = (mmdbid_q == mmdbid_t);
                         let bEqualChain = (chain_q == chain_t);
@@ -46228,14 +45978,15 @@ var icn3d = (function (exports) {
 
             ic.mmdb_data_q = queryDataArray;
 
-            this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
+            await this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
         }
 
         processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
             let bAligned = false;
             if((!align || align.length == 0) && !bNoAlert) {
                 let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
-                alert("These chains can not be aligned by " + serverName + ".");
+            
+                if(ic.bRender) alert("These chains can not be aligned by " + serverName + ".");
                 return bAligned;
             }
 
@@ -46291,83 +46042,74 @@ var icn3d = (function (exports) {
             return bAligned;
         }
 
-        loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             if(me.cfg.resnum || me.cfg.resdef) {
                 if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                await this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
             }
             else {
                 let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
-                $.ajax({
-                  url: url,
-                  dataType: 'jsonp',
-                  cache: true,
-                  //tryCount : 0,
-                  //retryLimit : 0, //1
-                  success: function(data) {
+                try {
+                    let data = await me.getAjaxPromise(url, 'jsonp');
+
                     let mmdbid = data.mmdbid;
                     ic.selectedPdbid = mmdbid;
 
                     if(!mmdbid) {
                       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                      thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                      await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                      /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                     }
                     else {
                         let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
-                        $.ajax({
-                          url: url2,
-                          dataType: 'text',
-                          cache: true,
-                          //tryCount : 0,
-                          //retryLimit : 0, //1
-                          success: function(opmdata) {
-                              ic.bOpm = true;
-                              let bVector = true;
-                              let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbid, ic.bOpm, bVector); // defined in the core library
 
-                              $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
-                              $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+                        try {
+                            let opmdata = await me.getAjaxPromise(url2, 'text');
 
-                              $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
-                              $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+                            ic.bOpm = true;
+                            let bVector = true;
+                            let chainresiCalphaHash = ic.loadPDBCls.loadPDB(opmdata, mmdbid, ic.bOpm, bVector); // defined in the core library
 
-                              if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                              thisClass.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash, chainidArray);
+                            $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
+                            $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
 
-                              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                          },
-                          error : function(xhr, textStatus, errorThrown ) {
-                              if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                              thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                            $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
+                            $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
-                              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                              return;
-                          }
-                        });
+                            if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+                            await thisClass.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash, chainidArray);
+
+                            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                        }
+                        catch(err) {
+                            if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+                            await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+
+                            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                            return;
+                        }
                     }
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
+                }
+                catch(err) {
                       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                      thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                      await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                      /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                       return;
-                  }
-                });
+                }
             }
         }
 
-        downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            ic.deferredMmdbaf = $.Deferred(function() {
+            // ic.deferredMmdbaf = $.Deferred(function() {
             ic.structArray = idlist.split(',');
 
             let ajaxArray = [];
@@ -46379,51 +46121,42 @@ var icn3d = (function (exports) {
                 if(isNaN(structure) && structure.length > 5) {
                     url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
-                    targetAjax = $.ajax({
-                        url: url_t,
-                        dataType: 'text',
-                        cache: true
-                    });
+                    targetAjax = me.getAjaxPromise(url_t, 'text');
                 }
                 else {
                     url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
                     if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
-                    targetAjax = $.ajax({
-                        url: url_t,
-                        dataType: 'jsonp',
-                        cache: true
-                    });
+                    targetAjax = me.getAjaxPromise(url_t, 'jsonp');
                 }
 
                 ajaxArray.push(targetAjax);
             }
 
             ic.ParserUtilsCls.setYourNote(ic.structArray + ' in iCn3D');
-            ic.bCid = undefined;
+            //ic.bCid = undefined;
 
             ic.ParserUtilsCls.showLoading();
 
-            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-            $.when.apply(undefined, ajaxArray).then(function() {
-              let dataArray =(ic.structArray.length == 1) ? [arguments] : Array.from(arguments);
-              thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
-              if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
-            })
-            .fail(function() {
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+                await thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
+                if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
+            }
+            catch(err) {
                 alert("There are some problems in retrieving the coordinates...");
-            });
-          });
+            }          
+        //   });
         
-          return ic.deferredMmdbaf.promise();
+        //   return ic.deferredMmdbaf.promise();
         }
 
-        parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
 
             let queryDataArray = [];
             for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
-                let queryData = dataArray[index][0];
+                let queryData = dataArray[index].value;//[0];
                 let header = 'HEADER                                                        ' + structArray[index] + '\n';
                 if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 
@@ -46461,11 +46194,11 @@ var icn3d = (function (exports) {
                 if(isNaN(structArray[i]) && structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                     //let bNoDssp = true;
                     let bNoDssp = false; // get secondary structure info
-                    hAtomsTmp = ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
+                    hAtomsTmp = await ic.pdbParserCls.loadPdbData(queryDataArray[i], structArray[i], false, bAppend, targetOrQuery, bLastQuery, bNoDssp);
                 }
                 else {
                     let bNoSeqalign = true;
-                    hAtomsTmp = ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
+                    hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
                 }
                         
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
@@ -46474,13 +46207,13 @@ var icn3d = (function (exports) {
             // parseMmdbData() didn't render structures for mmdbafid input
             if(structArray.length > 1) ic.opts['color'] = 'structure';
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-            ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             if(bQuery && me.cfg.matchedchains) {          
                // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                     let bRealign = true, bPredefined = true;
-                    ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+                    await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
                     // reset annotations
                     $("#" + ic.pre + "dl_annotations").html("");
                     ic.bAnnoShown = false;
@@ -46493,16 +46226,16 @@ var icn3d = (function (exports) {
                 // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
                 // VAST+ on the fly
                 let structArray = Object.keys(ic.structures);
-                ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
+                await ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
             }
 
-            // if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            // /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
 
             // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
             //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
             // }
             // else {
-            //     if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            //     /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
             // }
         }
     }
@@ -46546,8 +46279,6 @@ var icn3d = (function (exports) {
 
                 oReq.onreadystatechange = function() {
                     if(this.readyState == 4) {
-                       //ic.ParserUtilsCls.hideLoading();
-
                        if(this.status == 200) {
                            let arrayBuffer = oReq.response;
                            thisClass.loadDsn6Data(arrayBuffer, type, sigma);
@@ -46565,7 +46296,7 @@ var icn3d = (function (exports) {
                             alert("RCSB server has no corresponding eletron density map for this structure.");
                         }
 
-                        if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
+                        /// if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
                     }
                     else {
                         ic.ParserUtilsCls.showLoading();
@@ -46816,354 +46547,89 @@ var icn3d = (function (exports) {
 
         //Ajax call was used to get the atom data from the "mmcifid". This function was deferred
         //so that it can be chained together with other deferred functions for sequential execution.
-        downloadMmcif(mmcifid) { let ic = this.icn3d; ic.icn3dui;
-           let thisClass = this;
+        async downloadMmcif(mmcifid) { let ic = this.icn3d, me = ic.icn3dui;
+            //ic.bCid = undefined;
 
-           let url, dataType;
+            ic.ParserUtilsCls.setYourNote(mmcifid.toUpperCase() + '(MMCIF) in iCn3D');
 
-           url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+            let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+            let data = await me.getAjaxPromise(url, 'text', true);
 
-           dataType = "text";
+            url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            let dataObj = {'mmciffile': data};
+            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
 
-           ic.bCid = undefined;
+            await this.loadMmcifData(data2, mmcifid);
+        }
 
-           ic.ParserUtilsCls.setYourNote(mmcifid.toUpperCase() + '(MMCIF) in iCn3D');
+        async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
+            let url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
-           $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                thisClass.parseMmcifData(data, mmcifid);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
+            //ic.bCid = undefined;
+     
+            let data1 = await me.getAjaxPromise(url, 'text', false, 'The structure " + mmcifid + " was not found...');
+
+            url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            let dataObj = {'mmcifheader': data1};
+            let data = await me.getAjaxPostPromise(url, dataObj, false, 'The mmCIF data of " + mmcifid + " can not be parsed...');
+
+            if(data.emd !== undefined) ic.emd = data.emd;
+            if(data.organism !== undefined) ic.organism = data.organism;
+
+            if(ic.bAssemblyUseAsu) {
+                for(let i = 0, il = data.assembly.length; i < il; ++i) {
+                    let mat4 = new THREE.Matrix4();
+                    mat4.fromArray(data.assembly[i]);
+        
+                    ic.biomtMatrices[i] = mat4;
                 }
-                return;
-              }
-            });
-        }
+        
+                ic.asuCnt = ic.biomtMatrices.length;
+        
+                // show bioassembly 
+                if(me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.asuCnt > ic.maxatomcnt) {
+                    ic.bAssembly = true;
+                }
+            }
 
-        parseMmcifData(data, mmcifid, command) { let ic = this.icn3d, me = ic.icn3dui;
-            let thisClass = this;
-            
-            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-            $.ajax({
-               url: url,
-               type: 'POST',
-               data : {'mmciffile': data},
-               dataType: 'json',
-               cache: true,
-               tryCount : 0,
-               retryLimit : 0, //1
-               beforeSend: function() {
-                   ic.ParserUtilsCls.showLoading();
-               },
-               complete: function() {
-                   //ic.ParserUtilsCls.hideLoading();
-               },
-               success: function(data) {
-                   thisClass.loadMmcifData(data, mmcifid);
-                   //if(command) ic.loadScriptCls.loadScript(command, undefined, true);
-               },
-               error : function(xhr, textStatus, errorThrown ) {
-                 this.tryCount++;
-                 if(this.tryCount <= this.retryLimit) {
-                     //try again
-                     $.ajax(this);
-                     return;
-                 }
-                 return;
-               }
-             });
-        }
+            if(type === 'mmtfid' && data.missingseq !== undefined) {
+                // adjust missing residues
+                let maxMissingResi = 0, prevMissingChain = '';
+                //let chainMissingResidueArray = {}
+                for(let i = 0, il = data.missingseq.length; i < il; ++i) {
+                    let resn = data.missingseq[i].resn;
+                    let chain = data.missingseq[i].chain;
+                    let resi = data.missingseq[i].resi;
 
-        downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
+                    let chainNum = mmcifid + '_' + chain;
 
-          // chain functions together
-          ic.deferredSymmetry = $.Deferred(function() {
-              thisClass.downloadMmcifSymmetryBase(mmcifid, type);
-          }); // end of me.deferred = $.Deferred(function() {
+                    if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
+                    let resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
 
-          return ic.deferredSymmetry.promise();
-        }
-
-        downloadMmcifSymmetryBase(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
-
-           let url, dataType;
-    /*
-           if(me.utilsCls.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
-               url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
-           }
-           else {
-               url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
-           }
-    */
-
-           url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
-
-           dataType = "text";
-
-           ic.bCid = undefined;
-
-           $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                  // notebook has a problem in posting data to mmcifparser.cgi
-                  if(me.cfg.notebook) {
-                    let lines = data.split('\n');
-                    let bOrganism = false, bStartOrganism = false;
-                    let bMatrix = false, bStartMatrix = false, matrixLineCnt = 0, matrixStr = '', comLine = '';
-                    let bResidues = false, bStartResidues = false, resStr = '';
-
-                    let prevLine = '';
-                    for(let i in lines) {
-                        let line = lines[i];
-
-                        //EMDB  EMD-3906
-                        if(line.substr(0, 10) == 'EMDB  EMD-') {
-                            ic.emd = line.substr(6).trim();
-                        }
-                        else if(line.substr(0, 27) == '_entity_src_nat.common_name') {
-                            ic.organism = line.substr(27).trim();
-                            if(ic.organism) bOrganism = true;
-                            bStartOrganism = true;
-                        }
-                        else if(bStartOrganism && !bOrganism && prevLine.substr(0, 23) == '_entity_src_nat.details') {
-                            //1 1 sample 1 99  Human 'Homo sapiens' 9606 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
-                            let itemArray = line.split(/\s+/);
-                            ic.organism =(itemArray.length > 5) ? itemArray[5] : '';
-                            bOrganism = true;
-                        }
-                        else if(prevLine.substr(0, 29) == '_pdbx_struct_oper_list.vector' && line.split(/\s+/).length > 2) {
-                            //1 'identity operation'         1_555 x,y,z     1.0000000000  0.0000000000  0.0000000000 0.0000000000 0.0000000000  1.0000000000
-                            //0.0000000000 0.0000000000 0.0000000000 0.0000000000 1.0000000000 0.0000000000
-
-                            bStartMatrix = true;
-                            ++matrixLineCnt;
-
-                            let pos1 = line.indexOf(' ');
-                            let pos2 = line.indexOf("' ");
-                            comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
-
-                            matrixStr += '[';
-                        }
-                        else if(bStartMatrix && line.trim() == '#') {
-                            // remove the last ','
-                            if(matrixStr != '[') matrixStr = matrixStr.substr(0, matrixStr.length - 1);
-
-                            matrixStr += ']';
-                            bMatrix = true;
-                            bStartMatrix = false;
-                        }
-                        else if(bStartMatrix && !bMatrix) {
-                            ++matrixLineCnt;
-
-                            if(matrixLineCnt % 2 == 0) {
-                                comLine += line;
-                                let itemArray = comLine.split(/\s+/);
-
-                                if(itemArray[0] != 'X0' && itemArray[0] != 'P' && itemArray.length > 14) {
-                                    let m11 = itemArray[3], m12 = itemArray[4], m13 = itemArray[5], m14 = itemArray[6];
-                                    let m21 = itemArray[7], m22 = itemArray[8], m23 = itemArray[9], m24 = itemArray[10];
-                                    let m31 = itemArray[11], m32 = itemArray[12], m33 = itemArray[13], m34 = itemArray[14];
-
-                                    matrixStr += "[" + m11 + "," + m21 + "," + m31 + ", 0, " + m12 + "," + m22 + "," + m32 + ", 0, "
-                                      + m13 + "," + m23 + "," + m33 + ", 0, " + m14 + "," + m24 + "," + m34 + ", 1" + "],";
-                                }
-
-                                comLine = '';
-                            }
-                            else {
-                                let pos1 = line.indexOf(' ');
-                                let pos2 = line.indexOf("' ");
-                                comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
-                            }
-                        }
-                        else if(bStartResidues && line.trim() == '#') {
-                            // remove the last ','
-                            if(resStr != '[') resStr = resStr.substr(0, resStr.length - 1);
-
-                            resStr += ']';
-                            bResidues = true;
-                            bStartResidues = false;
-                        }
-                        else if(prevLine.trim() == '_pdbx_poly_seq_scheic.hetero' ||(bStartResidues && !bResidues)) {
-                            if(prevLine.trim() == '_pdbx_poly_seq_scheic.hetero') {
-                                bStartResidues = true;
-                                resStr += '[';
-                            }
-
-                            //A 1 1   ASP 1   1   ?   ?   ?   A . n
-                            let itemArray = line.split(/\s+/);
-                            let resn = itemArray[3];
-                            let chain = itemArray[9];
-                            let resi = itemArray[5];
-
-                            let authResi = itemArray[6];
-
-                            if(authResi == "?") {
-                              resStr += "{\"resn\": \"" + resn + "\", \"chain\": \"" + chain + "\", \"resi\": " + resi + "},";
-                            }
-                        }
-
-                        if(bOrganism && bMatrix && bResidues) {
-                            break;
-                        }
-
-                        prevLine = line;
+                    if(chain != prevMissingChain) {
+                        maxMissingResi = 0;
                     }
 
-                    if(ic.bAssemblyUseAsu) thisClass.loadMmcifSymmetry(JSON.parse(matrixStr));
+                    // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
+                    if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
+                        ic.chainMissingResidueArray[chainNum].push(resObject);
 
-                    if(resStr == "") resStr = "[]";
-                    let missingseq = JSON.parse(resStr);
-                    if(type === 'mmtfid' && missingseq !== undefined) {
-                        // adjust missing residues
-                        let maxMissingResi = 0, prevMissingChain = '';
-                        //let chainMissingResidueArray = {}
-                        for(let i = 0, il = missingseq.length; i < il; ++i) {
-
-                            let resn = missingseq[i].resn;
-                            let chain = missingseq[i].chain;
-                            let resi = missingseq[i].resi;
-
-                            let chainNum = mmcifid + '_' + chain;
-
-                            if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
-                            let resObject = {};
-                            resObject.resi = resi;
-                            resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
-
-                            if(chain != prevMissingChain) {
-                                maxMissingResi = 0;
-                            }
-
-                            // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
-                            if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && parseInt(resi) > maxMissingResi)) ) {
-                                ic.chainMissingResidueArray[chainNum].push(resObject);
-
-                                maxMissingResi = resi;
-                                prevMissingChain = chain;
-                            }
-                        }
-
-                        ic.loadPDBCls.adjustSeq(ic.chainMissingResidueArray);
+                        maxMissingResi = resi;
+                        prevMissingChain = chain;
                     }
-
-                    if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
-                }
-                else { // if(!me.cfg.notebook) {
-                   url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-
-                   $.ajax({
-                      url: url,
-                      type: 'POST',
-                      data : {'mmcifheader': data},
-                      dataType: 'json',
-                      cache: true,
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      success: function(data) {
-                          if(data.emd !== undefined) ic.emd = data.emd;
-                          if(data.organism !== undefined) ic.organism = data.organism;
-
-                          if(ic.bAssemblyUseAsu) thisClass.loadMmcifSymmetry(data.assembly);
-
-                          if(type === 'mmtfid' && data.missingseq !== undefined) {
-                                // adjust missing residues
-                                let maxMissingResi = 0, prevMissingChain = '';
-                                //let chainMissingResidueArray = {}
-                                for(let i = 0, il = data.missingseq.length; i < il; ++i) {
-
-                                    let resn = data.missingseq[i].resn;
-                                    let chain = data.missingseq[i].chain;
-                                    let resi = data.missingseq[i].resi;
-
-                                    let chainNum = mmcifid + '_' + chain;
-
-                                    if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
-                                    let resObject = {};
-                                    resObject.resi = resi;
-                                    resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
-
-                                    if(chain != prevMissingChain) {
-                                        maxMissingResi = 0;
-                                    }
-
-                                    // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
-                                    if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
-                                        ic.chainMissingResidueArray[chainNum].push(resObject);
-
-                                        maxMissingResi = resi;
-                                        prevMissingChain = chain;
-                                    }
-                                }
-
-                                ic.loadPDBCls.adjustSeq(ic.chainMissingResidueArray);
-                          }
-
-                          if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-
-                        if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
-
-                        alert("The mmCIF data of " + mmcifid + " can not be parsed...");
-
-                        return;
-                      }
-                    });
-                } // if(!me.cfg.notebook
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
                 }
 
-                if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
+                ic.loadPDBCls.adjustSeq(ic.chainMissingResidueArray);
+            }
 
-                alert("The structure " + mmcifid + " was not found...");
-
-                return;
-              }
-            })
-            .fail(function() {
-                alert("The structure " + mmcifid + " was not found...");
-                return;
-            });
+            ///// if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
         }
 
         //Atom "data" from mmCIF file was parsed to set up parameters for the 3D viewer by calling the function
         //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-        loadMmcifData(data, mmcifid) { let ic = this.icn3d; ic.icn3dui;
+        async loadMmcifData(data, mmcifid) { let ic = this.icn3d; ic.icn3dui;
             if(!mmcifid) mmcifid = data.mmcif;
             if(!mmcifid) mmcifid = 'stru';
 
@@ -47184,69 +46650,12 @@ var icn3d = (function (exports) {
                   $("#" + ic.pre + "emmapWrapper3").hide();
                 }
 
-                //ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid');
-                ic.deferredOpm = $.Deferred(function() {
-                      //ic.mmcifParserCls.loadMmcifOpmData(data, mmcifid);
-                      ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif');
-                });
-
-                return ic.deferredOpm.promise();
+                await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif');
             }
             else {
                 //alert('invalid atoms data.');
                 return false;
             }
-        }
-
-        loadMmcifSymmetry(assembly) { let ic = this.icn3d, me = ic.icn3dui;
-            // load assembly info
-            //var assembly = data.assembly;
-            //var pmatrix = data.pmatrix;
-
-            for(let i = 0, il = assembly.length; i < il; ++i) {
-              let mat4 = new THREE.Matrix4();
-              mat4.fromArray(assembly[i]);
-
-              ic.biomtMatrices[i] = mat4;
-            }
-
-            ic.asuCnt = ic.biomtMatrices.length;
-
-            // show bioassembly 
-            if(me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.asuCnt > ic.maxatomcnt) {
-                ic.bAssembly = true;
-            }
-        }
-
-        loadMmcifOpmDataPart2(data, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
-            if(Object.keys(ic.structures).length == 1) {
-                $("#" + ic.pre + "alternateWrapper").hide();
-            }
-
-            // load assembly info
-            let assembly =(data.assembly !== undefined) ? data.assembly : [];
-            for(let i = 0, il = assembly.length; i < il; ++i) {
-              if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-
-              for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
-                ic.biomtMatrices[i].elements[j] = assembly[i][j];
-              }
-            }
-
-            if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-                $("#" + ic.pre + "assemblyWrapper").show();
-
-                ic.asuCnt = ic.biomtMatrices.length;
-            }
-
-            ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-
-            ic.ParserUtilsCls.renderStructure();
-
-            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -47257,6 +46666,241 @@ var icn3d = (function (exports) {
     class MmdbParser {
         constructor(icn3d) {
             this.icn3d = icn3d;
+        }
+
+        //Ajax call was used to get the atom data from the NCBI "mmdbid". This function was deferred so that
+        //it can be chained together with other deferred functions for sequential execution. If the structure
+        //is too large, a 3D dgm will show up. You can select your interested chains to see the details.
+
+        //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
+        //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
+        async downloadMmdb(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+            let data;
+            
+            try {
+                data = await this.loadMmdbPrms(mmdbid, bGi);
+
+                if(!data || data.error) {
+                    this.getNoData(mmdbid, bGi);
+                    return;
+                }    
+            }
+            catch(err) {
+                this.getNoData(mmdbid, bGi);
+                return;
+            }
+            
+            if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+                // use mmtfid
+                let pdbid = data.pdbId;
+                ic.mmtfParserCls.downloadMmtf(pdbid);
+
+                return;
+            }
+
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
+
+            if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
+                await this.parseMmdbData(data);
+            }
+            else {
+                let data2;
+            
+                try {
+                    data2 = await this.loadMmdbPrms(mmdbid, bGi, true);
+                }
+                catch(err) {
+                    this.getNoData(mmdbid, bGi);
+                    return;
+                }
+
+                await this.parseMmdbData(data2);
+            }
+        }
+
+        //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
+        //NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A).
+        //This function was deferred so that it can be chained together with other deferred functions for
+        //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
+        //If there is no structures available for the blast_rep_id, a warning message will be shown.
+        async downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d, me = ic.icn3dui;
+            //ic.bCid = undefined;
+
+            let idArray = sequence_structure_ids.split(',');
+            me.cfg.query_id = idArray[0];
+            me.cfg.blast_rep_id = idArray[1];
+
+            let mmdbid = me.cfg.blast_rep_id.split('_')[0];
+
+            await this.downloadMmdb(mmdbid);
+        }
+
+        async downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
+            let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+     
+            //ic.bCid = undefined;
+
+            let data = await me.getAjaxPromise(url, 'jsonp', false, 'The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+
+            if(!data || !data.uniprot) {
+                alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+                return;
+            }
+
+            me.cfg.afid = data.uniprot;
+
+            let bAf = true;
+
+            await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+            
+            await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        }
+
+        getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+            if(bGi) {
+                alert("This gi " + mmdbid + " has no corresponding 3D structure...");
+            }
+            else {
+                alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
+            }
+        }
+
+        async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
+            let hAtoms;
+            let pdbid =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+
+            this.parseMmdbDataPart1(data, type);
+
+            if(type === undefined) { // default mmdbid input
+                if(data.opm !== undefined && data.opm.rot !== undefined) {
+                    ic.bOpm = true;
+                    ic.opmParserCls.setOpmData(data);
+                }
+
+                hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
+            }
+            else { // multiple mmdbids, typically for alignment
+                if(chainid) pdbid = chainid.substr(0, chainid.indexOf('_'));
+
+                hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
+            }
+
+            // set 3d domains
+            let structure = data.pdbId;
+
+            if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
+
+            // let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
+
+            for(let molid in data.domains) {
+                let chain = data.domains[molid].chain;
+                let chainid = structure + '_' + chain;
+                let domainArray = data.domains[molid].domains;
+
+                for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
+                    let domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
+                    ic.tddomains[domainName] = {};
+
+                    let subdomainArray = domainArray[index].intervals;
+
+                    // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
+                    let domainFromHash = {}, domainToHash = {};
+
+                    //var fromArray = [], toArray = [];
+                    //var resCnt = 0
+                    for(let i = 0, il = subdomainArray.length; i < il; ++i) {
+                        let domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                        let domainTo = Math.round(subdomainArray[i][1]) - 1;
+
+                        if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
+                            continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
+                        }
+                        else {
+                            domainFromHash[domainFrom] = 1;
+                            domainToHash[domainTo] = 1;
+                        }
+
+                        //fromArray.push(domainFrom + ic.baseResi[chnid]);
+                        //toArray.push(domainTo + ic.baseResi[chnid]);
+                        //resCnt += domainTo - domainFrom + 1;
+
+                        for(let j = domainFrom; j <= domainTo; ++j) {
+                            let resid;
+                            let residNCBI = chainid + '_' +(j+1).toString();
+
+                            // if(bNCBI && ic.ncbi2resid[residNCBI]) {
+                                resid = ic.ncbi2resid[residNCBI];
+                            // }
+                            // else {
+                            //     resid = chainid + '_' +(j+1 + ic.chainid2offset[chainid]).toString();
+                            // }
+
+                            if(resid) ic.tddomains[domainName][resid] = 1;
+                        }
+                    }
+                } // for each domainArray
+            } // for each molid
+
+            // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
+            ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
+            if(type !== undefined) {
+                ic.bAssemblyUseAsu = false;
+            }
+            else {
+                await ic.mmcifParserCls.downloadMmcifSymmetry(pdbid);
+            }
+
+            if(ic.bAssemblyUseAsu) { 
+                $("#" + ic.pre + "assemblyWrapper").show();
+                //ic.bAssembly = true;
+            }
+
+            if(ic.emd !== undefined) {
+              $("#" + ic.pre + "mapWrapper1").hide();
+              $("#" + ic.pre + "mapWrapper2").hide();
+              $("#" + ic.pre + "mapWrapper3").hide();
+            }
+            else {
+              $("#" + ic.pre + "emmapWrapper1").hide();
+              $("#" + ic.pre + "emmapWrapper2").hide();
+              $("#" + ic.pre + "emmapWrapper3").hide();
+            }
+
+            ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+            // use the original color from cgi output
+            if(me.cfg.blast_rep_id !== undefined) {
+              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            }
+            else {
+              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
+            }
+
+            if(type === undefined) {
+                await ic.ParserUtilsCls.renderStructure();
+                if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
+                ic.html2ddgm = '';
+                if(me.cfg.show2d) {
+                    me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+                    if(ic.bFullUi) {
+                        //if(type === undefined) {
+                            ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
+                        //}
+                        //else {
+                        //    ic.ParserUtilsCls.set2DDiagramsForAlign(ic.inputid2.toUpperCase(), ic.inputid.toUpperCase());
+                            //ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
+                        //}
+                    }
+                }
+            }
+
+            if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
+                if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
+            }
+
+            //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+
+            return hAtoms;
         }
 
         parseMmdbDataPart1(data, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -47335,365 +46979,33 @@ var icn3d = (function (exports) {
             //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
         }
 
-        parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d; ic.icn3dui;
-            if(type === undefined) {
-                //ic.deferredOpm = $.Deferred(function() {
-                      let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        loadMmdbPrms(mmdbid, bGi, bCalpha) { let ic = this.icn3d, me = ic.icn3dui;
 
-                      this.loadMmdbOpmData(data, id, type);
-                //});
+            let url;
 
-                //return ic.deferredOpm.promise();
-
-                return;
-            }
-            else {        
-                this.parseMmdbDataPart1(data, type);
-
-                let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-                if(chainid) id = chainid.substr(0, chainid.indexOf('_'));
-
-                let hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
-
-                this.loadMmdbOpmDataPart2(data, id, type);
-
-                return hAtoms;
-            }
-        }
-
-        //Ajax call was used to get the atom data from the NCBI "mmdbid". This function was deferred so that
-        //it can be chained together with other deferred functions for sequential execution. If the structure
-        //is too large, a 3D dgm will show up. You can select your interested chains to see the details.
-
-        //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
-        //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-        downloadMmdb(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
-
-           let url;
-
-           // b: b-factor, s: water, ft: pdbsite
-           //&ft=1
-           if(bGi) {
-               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&gi=" + mmdbid;
-           }
-           else {
-               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
-            }
-
-           // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
-           if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
-
-           ic.bCid = undefined;
-
-           if(me.cfg.inpara !== undefined) {
-             url += me.cfg.inpara;
-           }
-
-           if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
-
-           $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                if(!data || data.error) {
-                    thisClass.getNoData(mmdbid, bGi);
-                    return;
-                }
-
-                if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
-                    // use mmtfid
-                    let pdbid = data.pdbId;
-                    ic.mmtfParserCls.downloadMmtf(pdbid);
-
-                    return;
-                }
-
-                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
-
-                if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
-                    thisClass.parseMmdbData(data);
-                }
-                else {
-                    data = null;
-
-                    $.ajax({
-                      url: url + '&complexity=2', // alpha carbons
-                      dataType: 'jsonp',
-                      cache: true,
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      beforeSend: function() {
-                          ic.ParserUtilsCls.showLoading();
-                      },
-                      complete: function() {
-                          //ic.ParserUtilsCls.hideLoading();
-                      },
-                      success: function(data2) {
-                          thisClass.parseMmdbData(data2);
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-
-                        thisClass.getNoData(mmdbid, bGi);
-
-                        return;
-                      } // success
-                    }); // ajax
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-
-                thisClass.getNoData(mmdbid, bGi);
-
-                return;
-              } // success
-            }); // ajax
-        }
-
-        getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+            // b: b-factor, s: water, ft: pdbsite
+            //&ft=1
             if(bGi) {
-                alert("This gi " + mmdbid + " has no corresponding 3D structure...");
+                url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&gi=" + mmdbid;
             }
             else {
-                alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
-            }
-        }
-
-        downloadMmdbPart2(type) { let ic = this.icn3d, me = ic.icn3dui;
-            if(ic.bAssemblyUseAsu) { 
-                $("#" + ic.pre + "assemblyWrapper").show();
-                //ic.bAssembly = true;
+                url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
             }
 
-            if(ic.emd !== undefined) {
-              $("#" + ic.pre + "mapWrapper1").hide();
-              $("#" + ic.pre + "mapWrapper2").hide();
-              $("#" + ic.pre + "mapWrapper3").hide();
-            }
-            else {
-              $("#" + ic.pre + "emmapWrapper1").hide();
-              $("#" + ic.pre + "emmapWrapper2").hide();
-              $("#" + ic.pre + "emmapWrapper3").hide();
+            // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
+            if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
+
+            //ic.bCid = undefined;
+
+            if(me.cfg.inpara !== undefined) {
+                url += me.cfg.inpara;
             }
 
-            ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-            // use the original color from cgi output
-            if(me.cfg.blast_rep_id !== undefined) {
-              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-            }
-            else {
-              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
-            }
+            if(bCalpha) url += '&complexity=2';
 
-            if(type === undefined) {
-                ic.ParserUtilsCls.renderStructure();
-                if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+            if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
-                ic.html2ddgm = '';
-                if(me.cfg.show2d) {
-                    me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-                    if(ic.bFullUi) {
-                        //if(type === undefined) {
-                            ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
-                        //}
-                        //else {
-                        //    ic.ParserUtilsCls.set2DDiagramsForAlign(ic.inputid2.toUpperCase(), ic.inputid.toUpperCase());
-                            //ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
-                        //}
-                    }
-                }
-            }
-
-            if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
-                if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
-            }
-
-            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-        }
-
-        //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
-        //it can be chained together with other deferred functions for sequential execution. Note that
-        //only one structure corresponding to the gi will be shown. If there is no structures available
-        //for the gi, a warning message will be shown.
-        downloadGi(gi) { let ic = this.icn3d; ic.icn3dui;
-            ic.bCid = undefined;
-            let bGi = true;
-            this.downloadMmdb(gi, bGi);
-        }
-
-        //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
-        //NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A).
-        //This function was deferred so that it can be chained together with other deferred functions for
-        //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
-        //If there is no structures available for the blast_rep_id, a warning message will be shown.
-        downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d, me = ic.icn3dui;
-            ic.bCid = undefined;
-
-            let idArray = sequence_structure_ids.split(',');
-            me.cfg.query_id = idArray[0];
-            me.cfg.blast_rep_id = idArray[1];
-
-            let mmdbid = me.cfg.blast_rep_id.split('_')[0];
-
-            this.downloadMmdb(mmdbid);
-        }
-
-        loadMmdbOpmData(data, pdbid, type) { let ic = this.icn3d; ic.icn3dui;
-          if(data.opm !== undefined && data.opm.rot !== undefined) {
-              ic.bOpm = true;
-
-        //      ic.selectedPdbid = pdbid;
-
-              ic.opmParserCls.setOpmData(data);
-
-              this.parseMmdbDataPart1(data, type);
-              ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-
-              this.loadMmdbOpmDataPart2(data, pdbid, type);
-          }
-          else {
-              this.parseMmdbDataPart1(data, type);
-              ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-              this.loadMmdbOpmDataPart2(data, pdbid, type);
-          }
-        }
-
-        loadMmdbOpmDataPart2(data, pdbid, type) { let ic = this.icn3d, me = ic.icn3dui;
-            let thisClass = this;
-
-            // set 3d domains
-            let structure = data.pdbId;
-
-            if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
-
-            let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
-
-            for(let molid in data.domains) {
-                let chain = data.domains[molid].chain;
-                let chainid = structure + '_' + chain;
-                let domainArray = data.domains[molid].domains;
-
-                for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
-                    let domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
-                    ic.tddomains[domainName] = {};
-
-                    let subdomainArray = domainArray[index].intervals;
-
-                    // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-                    let domainFromHash = {}, domainToHash = {};
-
-                    //var fromArray = [], toArray = [];
-                    //var resCnt = 0
-                    for(let i = 0, il = subdomainArray.length; i < il; ++i) {
-                        let domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
-                        let domainTo = Math.round(subdomainArray[i][1]) - 1;
-
-                        if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
-                            continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
-                        }
-                        else {
-                            domainFromHash[domainFrom] = 1;
-                            domainToHash[domainTo] = 1;
-                        }
-
-                        //fromArray.push(domainFrom + ic.baseResi[chnid]);
-                        //toArray.push(domainTo + ic.baseResi[chnid]);
-                        //resCnt += domainTo - domainFrom + 1;
-
-                        for(let j = domainFrom; j <= domainTo; ++j) {
-                            let resid;
-                            let residNCBI = chainid + '_' +(j+1).toString();
-
-                            if(bNCBI && ic.residNCBI2resid[residNCBI]) {
-                                resid = ic.residNCBI2resid[residNCBI];
-                            }
-                            else {
-                                resid = chainid + '_' +(j+1 + ic.chainid2offset[chainid]).toString();
-                            }
-
-                            if(resid) ic.tddomains[domainName][resid] = 1;
-                        }
-                    }
-                } // for each domainArray
-            } // for each molid
-
-            // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
-            ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
-            if(type !== undefined) {
-                ic.bAssemblyUseAsu = false;
-
-                this.downloadMmdbPart2(type);
-            }
-            else {
-                $.when(ic.mmcifParserCls.downloadMmcifSymmetry(pdbid)).then(function() {
-                    thisClass.downloadMmdbPart2(type);
-                });
-            }
-        }
-
-        downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
-           // get gis
-           let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
-
-           ic.bCid = undefined;
-
-           $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  //ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                if(!data || !data.uniprot) {
-                    alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
-                    return;
-                }
-
-                me.cfg.afid = data.uniprot;
-
-                let bAf = true;
-                $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-                    ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-                });
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
-                return;
-              }
-            });
+            return me.getAjaxPromise(url, 'jsonp', true);
         }
     }
 
@@ -47714,12 +47026,12 @@ var icn3d = (function (exports) {
         //The JavaScript Methods at http://mmtf.rcsb.org/ was used to load and parse the data.
         downloadMmtf(mmtfid) { let ic = this.icn3d; ic.icn3dui;
             ic.ParserUtilsCls.setYourNote(mmtfid.toUpperCase() + '(MMTF) in iCn3D');
-            ic.bCid = undefined;
+            //ic.bCid = undefined;
 
             MMTF.fetchReduced(
                 mmtfid,
                 // onLoad callback
-                function( mmtfData ){
+                async function( mmtfData ){
                     if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
                         let bFull = false;
                         if(Object.keys(mmtfData).length == 0) {
@@ -47727,11 +47039,7 @@ var icn3d = (function (exports) {
                             return;
                         }
 
-                        ic.deferredOpm = $.Deferred(function() {
-                            ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
-                        });
-
-                        return ic.deferredOpm.promise();
+                        await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
                     }
                     else {
                         mmtfData = null;
@@ -47739,17 +47047,19 @@ var icn3d = (function (exports) {
                         MMTF.fetch(
                             mmtfid,
                             // onLoad callback
-                            function( mmtfData2 ){
+                            async function( mmtfData2 ){
                                 let bFull = true;
                                 if(Object.keys(mmtfData2).length == 0) {
                                     alert('This PDB structure is not found at RCSB...');
                                     return;
                                 }
-                                ic.deferredOpm = $.Deferred(function() {
-                                    ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                                });
+                                // ic.deferredOpm = $.Deferred(function() {
+                                //     ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
+                                // });
 
-                                return ic.deferredOpm.promise();
+                                // return ic.deferredOpm.promise();
+
+                                await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
                             },
                             // onError callback
                             function( error ){
@@ -47767,7 +47077,7 @@ var icn3d = (function (exports) {
             );
         }
 
-        parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
             mmtfData.numAtoms;
 
             ic.init();
@@ -48098,6 +47408,8 @@ var icn3d = (function (exports) {
             // traverse
             MMTF.traverse( mmtfData, callbackDict );
 
+            ic.loadPDBCls.setResidMapping();
+
             // set up disulfide bonds
             let sgLength = SGAtomSerialArray.length;
             for(let i = 0, il = sgLength; i < il; ++i) {
@@ -48148,13 +47460,13 @@ var icn3d = (function (exports) {
             ic.setStyleCls.setAtomStyleByOptions(ic.opts);
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-            ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
 
             ic.saveFileCls.showTitle();
 
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+            //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -48167,7 +47479,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        loadMol2Data(data) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadMol2Data(data) { let ic = this.icn3d, me = ic.icn3dui;
             let bResult = this.loadMol2AtomData(data);
 
             if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -48181,11 +47493,11 @@ var icn3d = (function (exports) {
               ic.setStyleCls.setAtomStyleByOptions(ic.opts);
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-              ic.ParserUtilsCls.renderStructure();
+              await ic.ParserUtilsCls.renderStructure();
 
               if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-              //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+              //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
             }
         }
 
@@ -48383,91 +47695,40 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        downloadOpm(opmid) { let ic = this.icn3d; ic.icn3dui;
-           let url, dataType;
+        async downloadOpm(opmid) { let ic = this.icn3d, me = ic.icn3dui;
+            ic.ParserUtilsCls.setYourNote(opmid.toUpperCase() + '(OPM) in iCn3D');
+     
+            //ic.bCid = undefined;
+            // no rotation
+            ic.bStopRotate = true;
 
-           url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
+            let url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
+            let data = await me.getAjaxPromise(url, 'text', true, 'This is probably not a transmembrane protein. It has no data in Orientations of Proteins in Membranes(OPM) database.');
 
-           ic.ParserUtilsCls.setYourNote(opmid.toUpperCase() + '(OPM) in iCn3D');
+            ic.bOpm = true;
+            await ic.pdbParserCls.loadPdbData(data, opmid, ic.bOpm);
 
-           dataType = "text";
+            $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
+            $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
 
-           ic.bCid = undefined;
-
-           // no rotation
-           ic.bStopRotate = true;
-
-           $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                  ic.bOpm = true;
-                  ic.pdbParserCls.loadPdbData(data, opmid, ic.bOpm);
-
-                  $("#" + ic.pre + "selectplane_z1").val(ic.halfBilayerSize);
-                  $("#" + ic.pre + "selectplane_z2").val(-ic.halfBilayerSize);
-
-                  $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
-                  $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                alert("This is probably not a transmembrane protein. It has no data in Orientations of Proteins in Membranes(OPM) database.");
-                return;
-              }
-           });
+            $("#" + ic.pre + "extra_mem_z").val(ic.halfBilayerSize);
+            $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
         }
 
-        loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
-            let thisClass = this;
-            let url, dataType;
 
-            if(!pdbid) pdbid = 'stru';
-
-            url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
-            dataType = "jsonp";
-
-            $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(opmdata) {
-                  thisClass.setOpmData(opmdata); // set ic.bOpm
-
-                  thisClass.parseAtomData(data, pdbid, bFull, type, pdbid2);
-
-                  //if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-
-                thisClass.parseAtomData(data, pdbid, bFull, type, pdbid2);
-
-                //if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                return;
-              }
-            });
+        async loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+            try {
+                 if(!pdbid) pdbid = 'stru';
+                let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+        
+                let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
+        
+                this.setOpmData(opmdata); // set ic.bOpm
+                await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            }
+            catch(err) {
+                await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            }
         }
 
         setOpmData(data) { let ic = this.icn3d; ic.icn3dui;
@@ -48492,36 +47753,62 @@ var icn3d = (function (exports) {
             }
         }
 
-        parseAtomData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d; ic.icn3dui;
-              if(type === 'mmtf') {
-                  ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
+        async parseAtomData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+            if(type === 'mmtf') {
+                await ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
 
-                  if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-              }
-              else if(type === 'mmcif') {
-                  ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-                  ic.mmcifParserCls.loadMmcifOpmDataPart2(data, pdbid);
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            }
+            else if(type === 'mmcif') {
+                ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
 
-                  if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-              }
-              else if(type === 'pdb') {
-                  ic.pdbParserCls.loadPdbData(data, pdbid);
-              }
-              else if(type === 'align') {
-                  if(ic.bOpm) {
-                      ic.alignParserCls.downloadAlignmentPart2(pdbid);
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                  }
-                  else {
-                      if(pdbid2 !== undefined) {
-                          this.loadOpmData(data, pdbid2, bFull, type);
-                      }
-                      else {
-                          ic.alignParserCls.downloadAlignmentPart2(pdbid);
-                          if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                      }
-                  }
-              }
+                if(Object.keys(ic.structures).length == 1) {
+                    $("#" + ic.pre + "alternateWrapper").hide();
+                }
+        
+                // load assembly info
+                let assembly =(data.assembly !== undefined) ? data.assembly : [];
+                for(let i = 0, il = assembly.length; i < il; ++i) {
+                    if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+        
+                    for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
+                    ic.biomtMatrices[i].elements[j] = assembly[i][j];
+                    }
+                }
+        
+                if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
+                    $("#" + ic.pre + "assemblyWrapper").show();
+        
+                    ic.asuCnt = ic.biomtMatrices.length;
+                }
+        
+                ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+                ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        
+                await ic.ParserUtilsCls.renderStructure();
+        
+                if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            }
+            else if(type === 'pdb') {
+                await ic.pdbParserCls.loadPdbData(data, pdbid);
+            }
+            else if(type === 'align') {
+                if(ic.bOpm) {
+                    await ic.alignParserCls.downloadAlignmentPart2(pdbid);
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                }
+                else {
+                    if(pdbid2 !== undefined) {
+                        await this.loadOpmData(data, pdbid2, bFull, type);
+                    }
+                    else {
+                        await ic.alignParserCls.downloadAlignmentPart2(pdbid);
+                        /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                    }
+                }
+            }
         }
     }
 
@@ -48537,9 +47824,8 @@ var icn3d = (function (exports) {
         //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
         //it can be chained together with other deferred functions for sequential execution. A wrapper
         //was added to support both http and https.
-        downloadPdb(pdbid, bAf) { let ic = this.icn3d, me = ic.icn3dui;
-          ic.deferredOpm = $.Deferred(function() {
-            let url, dataType;
+        async downloadPdb(pdbid, bAf) { let ic = this.icn3d, me = ic.icn3dui;
+            let url;
 
             if(bAf) {
                 url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
@@ -48555,135 +47841,77 @@ var icn3d = (function (exports) {
                 ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
             }
 
-            dataType = "text";
+            //ic.bCid = undefined;
 
-            ic.bCid = undefined;
+            let data = await me.getAjaxPromise(url, 'text', true, 'The ID ' + pdbid + ' can not be found in the server ' + url + '...');
 
-            $.ajax({
-                url: url,
-                dataType: dataType,
-                cache: true,
-                tryCount : 0,
-                retryLimit : 0, //1
-                beforeSend: function() {
-                    ic.ParserUtilsCls.showLoading();
-                },
-                complete: function() {
-                    //ic.ParserUtilsCls.hideLoading();
-                },
-                success: function(data) {
-                    //ic.deferredOpm = $.Deferred(function() {
-                        if(bAf) {
-                            // add UniProt ID into the header
-                            let header = 'HEADER                                                        ' + pdbid + '\n';
-                            data = header + data;          
-                            ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
-                        }
-                        else {
-                            ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
-                        }
-                    //});
-
-                    //return ic.deferredOpm.promise();
-                },
-                error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-
-                    alert('The ID ' + pdbid + ' can not be found in the server ' + url + '...');
-                    return;
-                }
-            });
-          });
-
-          return ic.deferredOpm.promise();
+            if(bAf) {
+                // add UniProt ID into the header
+                let header = 'HEADER                                                        ' + pdbid + '\n';
+                data = header + data;          
+                await ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
+            }
+            else {
+                await ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+            }
         }
 
         //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
         //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
         //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
-        downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
+        async downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
+            let pos = url.lastIndexOf('/');
+            if(pos != -1) {
+                let posDot = url.lastIndexOf('.');
+                ic.filename = url.substr(pos + 1, posDot - pos - 1);
+            }
+            else {
+                let posDot = url.lastIndexOf('.');
+                ic.filename = url.substr(0, posDot);
+            }
 
-           let pos = url.lastIndexOf('/');
-           if(pos != -1) {
-               let posDot = url.lastIndexOf('.');
-               ic.filename = url.substr(pos + 1, posDot - pos - 1);
-           }
-           else {
-               let posDot = url.lastIndexOf('.');
-               ic.filename = url.substr(0, posDot);
-           }
+            //ic.bCid = undefined;
 
-           let dataType = "text";
+            let data = await me.getAjaxPromise(url, 'text', true);
 
-           ic.bCid = undefined;
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+            ic.InputfileType = type;
 
-           //var url = '//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?dataurl=' + encodeURIComponent(url);
-
-           $.ajax({
-              url: url,
-              dataType: dataType,
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-                ic.InputfileType = type;
-
-                if(type === 'pdb') {
-                    thisClass.loadPdbData(data);
-                    ic.loadScriptCls.loadScript(command, undefined, true);
-                }
-                else if(type === 'mmcif') {
-                    ic.mmcifParserCls.parseMmcifData(data, undefined, command);
-                }
-                else if(type === 'mol2') {
-                    ic.mol2ParserCls.loadMol2Data(data);
-                }
-                else if(type === 'sdf') {
-                    ic.sdfParserCls.loadSdfData(data);
-                }
-                else if(type === 'xyz') {
-                    ic.xyzParserCls.loadXyzData(data);
-                }
-                else if(type === 'mmcif') {
-                    ic.mmcifParserCls.loadMmcifData(data);
-                }
-                else if(type === 'icn3dpng') {
-                    me.htmlCls.setHtmlCls.loadPng(data, command);
-                }
-                else if(type === 'pae') {
-                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
-                    let bFull = true;
-                    ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
-           });
+            if(type === 'pdb') {
+                await thisClass.loadPdbData(data);
+                await ic.loadScriptCls.loadScript(command, undefined, true);
+            }
+            else if(type === 'mmcif') {
+                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+                let dataObj = {'mmciffile': data};
+                let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+                await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+            }
+            else if(type === 'mol2') {
+                await ic.mol2ParserCls.loadMol2Data(data);
+            }
+            else if(type === 'sdf') {
+                await ic.sdfParserCls.loadSdfData(data);
+            }
+            else if(type === 'xyz') {
+                await ic.xyzParserCls.loadXyzData(data);
+            }
+            else if(type === 'mmcif') {
+                await ic.mmcifParserCls.loadMmcifData(data);
+            }
+            else if(type === 'icn3dpng') {
+                await me.htmlCls.setHtmlCls.loadPng(data, command);
+            }
+            else if(type === 'pae') {
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
+                let bFull = true;
+                ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
+            }
         }
 
         //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
         //was resolved after the parsing so that other javascript code can be executed.
-        loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
             if(!bAppend && (type === undefined || type === 'target')) {
                 // if a command contains "load...", the commands should not be cleared with init()
                 let bKeepCmd = (ic.bCommandLoad) ? true : false;
@@ -48727,26 +47955,29 @@ var icn3d = (function (exports) {
                 this.applyCommandDssp(bAppend);
             }
             else {
-                this.loadPdbDataRender(bAppend);
+                await this.loadPdbDataRender(bAppend);
 
-                ic.ParserUtilsCls.checkMemProteinAndRotate();
+                await ic.ParserUtilsCls.checkMemProteinAndRotate();
 
-                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
             }
 
             return hAtoms;
         }
 
-        applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
-            ic.deferredSecondary = $.Deferred(function() {
-                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
-                ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
-            }); // end of me.deferred = $.Deferred(function() {
+        async applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+            // ic.deferredSecondary = $.Deferred(function() {
+            //     let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+            //     ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
+            // }); // end of me.deferred = $.Deferred(function() {
 
-            return ic.deferredSecondary.promise();
+            // return ic.deferredSecondary.promise();
+
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+            await ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
         }
 
-        loadPdbDataRender(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadPdbDataRender(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
             //ic.pmid = ic.pmid;
 
             if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -48761,7 +47992,7 @@ var icn3d = (function (exports) {
     //        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
             ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
-            ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
 
             ic.saveFileCls.showTitle();
 
@@ -48772,7 +48003,7 @@ var icn3d = (function (exports) {
                 ic.definedSetsCls.setModeAndDisplay('all');
             }
 
-        //    if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //    if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -48787,7 +48018,7 @@ var icn3d = (function (exports) {
 
         //Ajax call was used to get the atom data from the PubChem "cid". This function was
         //deferred so that it can be chained together with other deferred functions for sequential execution.
-        downloadCid(cid) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadCid(cid) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.ParserUtilsCls.setYourNote('PubChem CID ' + cid + ' in iCn3D');
@@ -48796,83 +48027,33 @@ var icn3d = (function (exports) {
 
             // get parent CID
             let urlParent = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/cids/JSONP?cids_type=parent";
-            $.ajax({
-                url: urlParent,
-                dataType: 'jsonp',
-                cache: true,
-                tryCount : 0,
-                retryLimit : 0, //1
-                beforeSend: function() {
-                    ic.ParserUtilsCls.showLoading();
-                },
-                complete: function() {
-                    //ic.ParserUtilsCls.hideLoading();
-                },
-                success: function(dataParent) {
-                    let cidParent = dataParent.IdentifierList.CID[0];
+            let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parant CID...");
 
-                    let uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cidParent + "/record/SDF/?record_type=3d&response_type=display";
+            let cidParent = dataParent.IdentifierList.CID[0];
 
-                    $.ajax({
-                        url: uri,
-                        dataType: 'text',
-                        cache: true,
-                        tryCount : 0,
-                        retryLimit : 0, //1
-                        beforeSend: function() {
-                            ic.ParserUtilsCls.showLoading();
-                        },
-                        complete: function() {
-                            //ic.ParserUtilsCls.hideLoading();
-                        },
-                        success: function(data) {
-                            let bResult = thisClass.loadSdfAtomData(data, cid);
+            let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cidParent + "/record/SDF/?record_type=3d&response_type=display";
+            let data = await me.getAjaxPromise(url, 'text', true, "This CID may not have 3D structure...");
 
-                //            ic.opts['pk'] = 'atom';
-                //            ic.opts['chemicals'] = 'ball and stick';
+            let bResult = thisClass.loadSdfAtomData(data, cid);
 
-                            if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
-                                $("#" + ic.pre + "alternateWrapper").hide();
-                            }
+            if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+                $("#" + ic.pre + "alternateWrapper").hide();
+            }
 
-                            if(!bResult) {
-                            alert('The SDF of CID ' + cid + ' has the wrong format...');
-                            }
-                            else {
-                            ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-                            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            if(!bResult) {
+                alert('The SDF of CID ' + cid + ' has the wrong format...');
+            }
+            else {
+                ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+                ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-                            ic.ParserUtilsCls.renderStructure();
+                await ic.ParserUtilsCls.renderStructure();
 
-                            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-                            //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-                            }
-                        },
-                        error : function(xhr, textStatus, errorThrown ) {
-                            this.tryCount++;
-                            if(this.tryCount <= this.retryLimit) {
-                                //try again
-                                $.ajax(this);
-                                return;
-                            }
-                            return;
-                        }
-                    })
-                    .fail(function() {
-                        alert( "This CID may not have 3D structure..." );
-                    });
-                },
-                error : function(xhr, textStatus, errorThrown ) {
-                    alert( "Can not retrieve the parant CID..." );
-                }
-            })
-            .fail(function() {
-                alert( "Can not retrieve the parant CID..." );
-            });
+                if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+            }
         }
 
-        loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
             let bResult = this.loadSdfAtomData(data);
 
             if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -48886,11 +48067,11 @@ var icn3d = (function (exports) {
               ic.setStyleCls.setAtomStyleByOptions(ic.opts);
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-              ic.ParserUtilsCls.renderStructure();
+              await ic.ParserUtilsCls.renderStructure();
 
               if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-              //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+              //if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
             }
         }
 
@@ -49067,7 +48248,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        loadXyzData(data) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadXyzData(data) { let ic = this.icn3d, me = ic.icn3dui;
             let bResult = this.loadXyzAtomData(data);
 
             if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -49081,11 +48262,11 @@ var icn3d = (function (exports) {
               ic.setStyleCls.setAtomStyleByOptions(ic.opts);
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-              ic.ParserUtilsCls.renderStructure();
+              await ic.ParserUtilsCls.renderStructure();
 
               if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-              //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+              //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
             }
         }
 
@@ -49292,7 +48473,7 @@ var icn3d = (function (exports) {
             ic.hlUpdateCls.updateHlAll();
         }
 
-        parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { let ic = this.icn3d, me = ic.icn3dui;
 
           let toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
 
@@ -49355,7 +48536,7 @@ var icn3d = (function (exports) {
 
             me.cfg.aligntool = 'tmalign';
 
-            ic.realignParserCls.realignOnStructAlign();
+            await ic.realignParserCls.realignOnStructAlign();
             // if(nameArray.length > 0) {
             //     me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
             // }
@@ -49370,11 +48551,11 @@ var icn3d = (function (exports) {
 
             ic.transformCls.zoominSelection();
 
-            ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
+            await ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, ic.hAtoms);
           }
         }
 
-        parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
           //var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
           let toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
@@ -49395,7 +48576,7 @@ var icn3d = (function (exports) {
           //var data2 = v2[0];
           for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
         //  for(let index = 1, indexl = dataArray.length; index < indexl; ++index) {
-              let data = dataArray[index][0];
+              let data = dataArray[index].value;//[0];
               if(!data) continue;
 
               let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
@@ -49481,21 +48662,21 @@ var icn3d = (function (exports) {
               }
               else {
                   if(fromStruct === undefined && !me.cfg.command) {
-                     alert('Please do not align residues in the same structure');
+                    if(ic.bRender) alert('Please do not align residues in the same structure');
                   }
                   else if(seq1 && seq2) {
                     if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
-                        alert('These sequences are too short for alignment');
+                        if(ic.bRender) alert('These sequences are too short for alignment');
                     }
                     else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
-                        alert('These sequences can not be aligned to each other');
+                        if(ic.bRender) alert('These sequences can not be aligned to each other');
                     }
                   }
               }
 
               // update all residue color
 
-              //if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
+              ///// if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
           }
 
           if(bRealign) {
@@ -49533,8 +48714,8 @@ var icn3d = (function (exports) {
                 ic.transformCls.setRotation(axis, angle);
             }
                    
-            if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-            if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
+            /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            /// if(ic.deferredRealign !== undefined) ic.deferredRealign.resolve();
           }
           else {
             // align seq
@@ -49542,11 +48723,11 @@ var icn3d = (function (exports) {
             
             ic.transformCls.zoominSelection();
 
-            ic.chainalignParserCls.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
+            await ic.chainalignParserCls.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
           }
         }
 
-        realignOnSeqAlign(pdbidTemplate) { let ic = this.icn3d; ic.icn3dui;
+        async realignOnSeqAlign(pdbidTemplate) { let ic = this.icn3d; ic.icn3dui;
             let chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
 
             let chainidArrayTmp = Object.keys(chainidHash);
@@ -49570,10 +48751,10 @@ var icn3d = (function (exports) {
             let bRealign = true;
             ic.qt_start_end = []; // reset the alignment
 
-            this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
+            await this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
         }
 
-        realignOnStructAlign() { let ic = this.icn3d, me = ic.icn3dui;
+        async realignOnStructAlign() { let ic = this.icn3d, me = ic.icn3dui;
             // each 3D domain should have at least 3 secondary structures
             let minSseCnt = 3;
             let struct2domain = {};
@@ -49619,13 +48800,8 @@ var icn3d = (function (exports) {
                                 let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
                                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                             
-                                alignAjax = $.ajax({
-                                    url: urlalign,
-                                    type: 'POST',
-                                    data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
-                                    dataType: 'json',
-                                    cache: true
-                                });
+                                let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                                alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                             }
                             else {
                                 let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
@@ -49634,13 +48810,8 @@ var icn3d = (function (exports) {
                                 // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
                                 // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
         
-                                alignAjax = $.ajax({
-                                    url: urltmalign,
-                                    type: 'POST',
-                                    data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                                    dataType: 'json',
-                                    cache: true
-                                });                            
+                                let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                                alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
                             }
 
                             ajaxArray.push(alignAjax);
@@ -49650,19 +48821,18 @@ var icn3d = (function (exports) {
                 }
             }
 
-            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-            $.when.apply(undefined, ajaxArray).then(function() {
-                let dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
                 ic.qt_start_end = []; // reset the alignment
-                ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);               
-            })
-            .fail(function() {
-                alert("These structures can NOT be aligned to each other...");
-            });            
+                await ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);  
+            }
+            catch(err) {
+                if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+            }                   
         }
 
-        realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
+        async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             //bRealign: realign based on seq alignment
@@ -49672,7 +48842,7 @@ var icn3d = (function (exports) {
             let struct2CoorHash = {};
             let struct2resid = {};
 
-            let mmdbid_t, chainid_t, base_t, base;
+            let mmdbid_t, chainid_t;
             let ajaxArray = [];
             let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
@@ -49716,11 +48886,9 @@ var icn3d = (function (exports) {
                 }
      
                 if(bPredefined) {
-                    base = parseInt(ic.chainsSeq[chainid][0].resi);
+                    //base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-                    if(i == 0) { // master
-                        base_t = base;
-                    }
+                    if(i == 0) ;
                     else {
                         let hAtoms = {};
 
@@ -49733,7 +48901,7 @@ var icn3d = (function (exports) {
 
                         // master
                         resiArray = predefinedResPair[0].split(",");        
-                        result = thisClass.getSeqCoorResid(resiArray, chainid_t, base_t);
+                        result = thisClass.getSeqCoorResid(resiArray, chainid_t);
 
                         hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
@@ -49747,7 +48915,7 @@ var icn3d = (function (exports) {
 
                         // slave
                         resiArray = predefinedResPair[1].split(",");
-                        result = thisClass.getSeqCoorResid(resiArray, chainid, base); 
+                        result = thisClass.getSeqCoorResid(resiArray, chainid); 
                         hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
                         if(!struct2SeqHash[chainidpair][mmdbid]) struct2SeqHash[chainidpair][mmdbid] = '';
@@ -49773,12 +48941,13 @@ var icn3d = (function (exports) {
                 }
                 else {           
                     if(i == 0) { // master
-                        base = parseInt(ic.chainsSeq[chainid][0].resi);
+                        //base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                         resiArray = [];
                         if(bRealign) {
                             //resiArray = [resRange];
                             let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+
                             for(var resid in residHash) {
                                 let resi = resid.substr(resid.lastIndexOf('_') + 1);
 
@@ -49789,10 +48958,11 @@ var icn3d = (function (exports) {
                         else if(me.cfg.resnum) {
                             resiArray = me.cfg.resnum.split(",");
                         }
-
+                        
                         //if(!bPredefined) {
-                            result = thisClass.getSeqCoorResid(resiArray, chainid, base);         
+                            result = thisClass.getSeqCoorResid(resiArray, chainid);   
                             struct2SeqHash[chainid] += result.seq;
+
                             struct2CoorHash[chainid] = struct2CoorHash[chainid].concat(result.coor);
                             struct2resid[chainid] = struct2resid[chainid].concat(result.resid);
                         //}
@@ -49832,14 +49002,9 @@ var icn3d = (function (exports) {
 
                         let seq1 = struct2SeqHash[chainid_t];
                         let seq2 = struct2SeqHash[chainid];
-
-                        let queryAjax = $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data : {'targets': seq1, 'queries': seq2},
-                            dataType: 'json',
-                            cache: true
-                        });
+                        
+                        let dataObj = {'targets': seq1, 'queries': seq2};
+                        let queryAjax = me.getAjaxPostPromise(url, dataObj);
 
                         ajaxArray.push(queryAjax);
                     }  
@@ -49847,32 +49012,31 @@ var icn3d = (function (exports) {
             } // for
 
             if(bPredefined) {
-                thisClass.parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+                await thisClass.parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
             }
             else {
-                //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-                //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-                $.when.apply(undefined, ajaxArray).then(function() {
-                    let dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
-                    thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                let allPromise = Promise.allSettled(ajaxArray);
+                try {
+                    let dataArray = await allPromise;
+                    //thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                    await thisClass.parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
 
-                    //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-                    if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                    if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                })
-                .fail(function() {
+                    ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                    /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                }
+                catch(err) {
                     alert("The realignment did not work...");
-                    //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-                    if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                    if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                    ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                    /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
 
                     return;
-                   //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
-                });
+                }              
             }
         }
 
-        getSeqCoorResid(resiArray, chainid, base) { let ic = this.icn3d, me = ic.icn3dui;
+        getSeqCoorResid(resiArray, chainid) { let ic = this.icn3d, me = ic.icn3dui;
             let seq = '', coorArray = [], residArray = [];
             let hAtoms = {};
 
@@ -49887,10 +49051,10 @@ var icn3d = (function (exports) {
                         //let seqIndex = k - base;
                         let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
-                        if(ic.bNCBI) {
-                            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                            if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                        }
+                        // if(ic.bNCBI) {
+                        //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                        //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                        // }
 
                         // don't align solvent or chemicals
                         if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
@@ -49903,17 +49067,19 @@ var icn3d = (function (exports) {
                     }            
                 }
                 else { // one residue
-                    let k = parseInt(resiArray[j]);
+                    //let k = parseInt(resiArray[j]);
+                    let k = resiArray[j];
+
                     // from VAST neighbor page, use NCBI residue number
                     //if(me.cfg.usepdbnum === false) k += base - 1;
 
                     //let seqIndex = k - base;
                     let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
-                    if(ic.bNCBI) {
-                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                        if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                    }
+                    // if(ic.bNCBI) {
+                    //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                    //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                    // }
 
                     if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
@@ -50004,8 +49170,6 @@ var icn3d = (function (exports) {
 
                 oReq.onreadystatechange = function() {
                     if (this.readyState == 4) {
-                       //ic.hideLoading();
-
                        if(this.status == 200) {
                            let arrayBuffer = oReq.response;
 
@@ -50032,7 +49196,7 @@ var icn3d = (function (exports) {
                            }
                         }
 
-                        if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
+                        /// if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
                     }
                     else {
                         ic.ParserUtilsCls.showLoading();
@@ -50996,7 +50160,7 @@ var icn3d = (function (exports) {
                       let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                       if(ic.bAfMem) {
                         //if(window.dialog) window.dialog.dialog( "close" );
-                        html += "<span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
+                        html += me.utilsCls.getMemDesc();
                       }
                       $("#" + ic.pre + "dl_rmsd").html(html);
                       if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
@@ -51086,10 +50250,13 @@ var icn3d = (function (exports) {
 
         getMissingResidues(seqArray, type, chainid) { let ic = this.icn3d, me = ic.icn3dui;
             ic.chainsSeq[chainid] = [];
+
+            // find the offset of MMDB sequence
+            let offset = 0;
             if(type === 'mmdbid' || type === 'align') {
                 for(let i = 0, il = seqArray.length; i < il; ++i) {
                     if(seqArray[i][0] != 0) {
-                        seqArray[i][0] - (i + 1);
+                        offset = seqArray[i][0] - (i + 1);
                         break;
                     }
                 }
@@ -51109,7 +50276,6 @@ var icn3d = (function (exports) {
                     resiPos = 0;
                 }
                 else if(type === 'align') {
-                    //seqName = seqArray[i][2];
                     seqName = seqArray[i][1];
                     resiPos = 0;
                 }
@@ -51125,8 +50291,8 @@ var icn3d = (function (exports) {
                     resObject.resi = i + 1;
                 }
                 else {
-                    let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                    //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; //?? problem with PDB PS0D
+                    //let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                    
                     if(type === 'mmdbid' || type === 'align') {
                         resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
                     }
@@ -51134,6 +50300,8 @@ var icn3d = (function (exports) {
                         resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
                     }
                 }
+
+                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
 
                 resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
 
@@ -51145,57 +50313,44 @@ var icn3d = (function (exports) {
 
         //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
         //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
-        set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d, me = ic.icn3dui;
-           me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        async set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+            me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-    ///       mmdbid1 = mmdbid1.substr(0, 4);
-    ///       mmdbid2 = mmdbid2.substr(0, 4);
+        ///       mmdbid1 = mmdbid1.substr(0, 4);
+        ///       mmdbid2 = mmdbid2.substr(0, 4);
 
-           let url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-           let url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+            let url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+            let url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
-           if(me.cfg.inpara !== undefined) {
-              url1 += me.cfg.inpara;
-              url2 += me.cfg.inpara;
-           }
+            if(me.cfg.inpara !== undefined) {
+                url1 += me.cfg.inpara;
+                url2 += me.cfg.inpara;
+            }
 
-           let request1 = $.ajax({
-                url: url1,
-                dataType: 'jsonp',
-                cache: true
-           });
+            let prms1 = me.getAjaxPromise(url1, 'jsonp');
+            let prms2 = me.getAjaxPromise(url2, 'jsonp');
 
-           let request2 = request1.then(function( data ) {
-                ic.interactionData1 = data;
+            let allPromise = Promise.allSettled([prms1, prms2]);
+            let dataArray = await allPromise;
+            
+            ic.interactionData1 = dataArray[0].value;
+            ic.html2ddgm = '';
+            ic.diagram2dCls.draw2Ddgm(ic.interactionData1, mmdbid1, 0);
+            if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-                ic.html2ddgm = '';
 
-                ic.diagram2dCls.draw2Ddgm(data, mmdbid1, 0);
-                if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            ic.interactionData2 = dataArray[1].value;
+            ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
-                return $.ajax({
-                  url: url2,
-                  dataType: 'jsonp',
-                  cache: true
-                });
-           });
+            ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
+            $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
 
-           request2.done(function( data ) {
-                ic.interactionData2 = data;
+            ic.b2DShown = true;
 
-                ic.diagram2dCls.draw2Ddgm(data, mmdbid2, 1);
-
-                ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
-                $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
-
-                ic.b2DShown = true;
-                //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-
-                if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
-           });
+            /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
         }
 
-        set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
@@ -51209,24 +50364,19 @@ var icn3d = (function (exports) {
 
                if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
 
-               let twodAjax = $.ajax({
-                    url: url,
-                    dataType: 'jsonp',
-                    cache: true
-               });
+               let twodAjax = me.getAjaxPromise(url, 'jsonp');
 
                ajaxArray.push(twodAjax);
             }
 
-            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-            $.when.apply(undefined, ajaxArray).then(function() {
-              let dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
-              thisClass.parse2DDiagramsData(dataArray, chainidArray);
-            })
-            .fail(function() {
-              //thisClass.parse2DDiagramsData(arguments, chainidArray);
-            });
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+                thisClass.parse2DDiagramsData(dataArray, chainidArray);
+            }
+            catch(err) {
+                
+            }          
         }
 
         parse2DDiagramsData(dataArray, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -51237,7 +50387,7 @@ var icn3d = (function (exports) {
             // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
             //var data2 = v2[0];
             for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-                let data = dataArray[index][0];
+                let data = dataArray[index].value;//[0];
                 let mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
                 ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);
@@ -51249,7 +50399,7 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
             if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-            if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
+            /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
         }
 
         download2Ddgm(mmdbid, structureIndex) {        this.set2DDiagrams(mmdbid);
@@ -51531,7 +50681,7 @@ var icn3d = (function (exports) {
         }
 
         //Update the dropdown menu and show the structure by calling the function "draw()".
-        renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
+        async renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
           if(ic.bInitial) {
               //$.extend(ic.opts, ic.opts);
               if(ic.bOpm &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
@@ -51571,6 +50721,13 @@ var icn3d = (function (exports) {
               ic.drawCls.draw();
           }
           
+          // set defined sets before loadScript
+          if(ic.bInitial) {
+            if(me.cfg.showsets) {
+                 ic.definedSetsCls.showSets();
+            }
+          }
+
     //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
               if(Object.keys(ic.structures).length == 1) {
@@ -51578,13 +50735,8 @@ var icn3d = (function (exports) {
                   me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
               }
               // final step resolved ic.deferred
-              //if(me.cfg.mmdbafid === undefined && me.cfg.afid === undefined) ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-              ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+              await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
               //ic.loadScriptCls.loadScript(me.cfg.command);
-          }
-          else {
-              if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-              if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
           }
           //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
           if(Object.keys(ic.structures).length >= 2) {
@@ -51595,12 +50747,13 @@ var icn3d = (function (exports) {
               $("#" + ic.pre + "mn2_alternateWrap").hide();
               //$("#" + ic.pre + "mn2_realignWrap").hide();
           }
+     
           // display the structure right away. load the mns and sequences later
-          setTimeout(function(){
+          setTimeout(async function(){
               if(ic.bInitial) {
-                  if(me.cfg.showsets) {
-                       ic.definedSetsCls.showSets();
-                  }
+                //   if(me.cfg.showsets) {
+                //        ic.definedSetsCls.showSets();
+                //   }
                   if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                       // expand the toolbar
                       let id = ic.pre + 'selection';
@@ -51619,7 +50772,7 @@ var icn3d = (function (exports) {
                   if(me.cfg.showanno) {
                        let cmd = "view annotations";
                        me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
-                       ic.showAnnoCls.showAnnotations(); 
+                       await ic.showAnnoCls.showAnnotations(); 
                   }
                   if(me.cfg.closepopup) {
                       ic.resizeCanvasCls.closeDialogs();
@@ -51658,11 +50811,11 @@ var icn3d = (function (exports) {
             return maxD;
         }
 
-        checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
+        async checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
             if(!ic.bCheckMemProtein) {
                 let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
-                ic.ParserUtilsCls.checkMemProtein(afid);
+                await ic.ParserUtilsCls.checkMemProtein(afid);
                 ic.bCheckMemProtein = true;
             }
 
@@ -51675,92 +50828,112 @@ var icn3d = (function (exports) {
             }
         }
 
-        checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
+        async checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
           //ic.deferredAfMem = $.Deferred(function() {
-            let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+            try {
+                let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+                let data = await me.getAjaxPromise(url, 'jsonp');
 
-            $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              success: function(data) {
                 if(data && data.pdbid) {
                   let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
                  
                   if (me.cfg.afmem == 'off') {
                     // do nothing
-                    if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                   }
-                  else if (me.cfg.afmem == 'on' || confirm(question)) {           
-                    let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
-                    $.ajax({
-                      url: url2,
-                      dataType: 'text',
-                      cache: true,
-                      success: function(afMemdata) {
-                          ic.bAfMem = true;
-                          $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
+                  else if (me.cfg.afmem == 'on' || confirm(question)) {         
+                    try {  
+                        let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
+                        let afMemdata = await me.getAjaxPromise(url2, 'text');
 
-                          // append the PDB
-                          let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));
-                          let bOpm = true, bAppend = true;
-                          ic.pdbParserCls.loadPdbData(afMemdata, pdbid, bOpm, bAppend);
+                        ic.bAfMem = true;
+                        $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
 
-                          {
-                              if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                              if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
-                          }
+                        // append the PDB
+                        let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));
+                        let bOpm = true, bAppend = true;
+                        await ic.pdbParserCls.loadPdbData(afMemdata, pdbid, bOpm, bAppend);
 
-                          // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
-                          let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
-                                                        //the second range is the range of the helix
-                          let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
-                          ic.afmem_start_end = range.split('-');
+                        if(bAppend) {
+                            if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                            if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                        }
 
-                          ic.hAtoms = {};
-                          ic.dAtoms = {};
+                        // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                        let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
+                                                    //the second range is the range of the helix
+                        let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
+                        ic.afmem_start_end = range.split('-');
 
-                          // get the AlphaFold structure
-                          for(let i in ic.atoms) {
-                            if(ic.atoms[i].structure != pdbid) {
-                                ic.hAtoms[i] = 1;
-                            }
-                            ic.dAtoms[i] = 1;
-                          }
+                        ic.hAtoms = {};
+                        ic.dAtoms = {};
 
-                          // get the transmembrane from the model of Membranome
-                          for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
-                            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
-                          }
+                        // get the AlphaFold structure
+                        for(let i in ic.atoms) {
+                        if(ic.atoms[i].structure != pdbid) {
+                            ic.hAtoms[i] = 1;
+                        }
+                        ic.dAtoms[i] = 1;
+                        }
 
-                          ic.realignParserCls.realignOnSeqAlign(pdbid);
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
+                        // get the transmembrane from the model of Membranome
+                        for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                        }
+
+                        await ic.realignParserCls.realignOnSeqAlign(pdbid);
+                    }
+                    catch(err) {
                           console.log("Error in retrieving matched PDB from Membranome...");
-                          //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-                          if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                          if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                          ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                          /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                          /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                           return;
-                      }
-                    });
+                    }
                   }
                 }
                 else {
-                    if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                    if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                    /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                    /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                 }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
+            }
+            catch(err) {
                   console.log("Error in finding matched PDB in Membranome...");
-                  //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-                  if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                  if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                  ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                  /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                  /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                   return;
-              }
-            });
+            }
           //});
 
           //return ic.deferredAfMem.promise();
+        }
+
+        getResi(chainid, resiPos) { let ic = this.icn3d; ic.icn3dui;
+            // let resi;
+
+            // if(bRealign) {
+            //     resi = resiPos;
+            // }
+            // else {
+            //     if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
+            //         resi = '';
+            //     }
+            //     else {
+            //         resi = ic.chainsSeq[chainid][resiPos].resi;
+            //     }
+            // }
+            let resid = ic.ncbi2resid[chainid + '_' + (resiPos+1).toString()];
+            let resi = (resid) ? resid.substr(resid.lastIndexOf('_') + 1) : '';
+
+            return resi;
+        }
+
+        getResiNCBI(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
+            let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
+            let resiNCBI = (residNCBI) ? parseInt(residNCBI.substr(residNCBI.lastIndexOf('_') + 1)) : 0;
+
+            return resiNCBI;
         }
     }
 
@@ -52051,7 +51224,7 @@ var icn3d = (function (exports) {
                         else {
                             // make MMDB residue number consistent with PDB residue number
                             atm.resi = atm.resi_ori; // corrected for residue insertion code
-                            if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+                            //if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
                         }
                     }
 
@@ -52061,8 +51234,9 @@ var icn3d = (function (exports) {
                     if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
 
                     // remember NCBI residue number
-                    atm.resiNCBI = atm.ids.r;
-                    ic.residNCBI2resid[chainNum + '_' + atm.resiNCBI] = chainNum + '_' + atm.resi;
+                    // atm.resiNCBI = atm.ids.r;
+                    // ic.ncbi2resid[chainNum + '_' + atm.resiNCBI] = chainNum + '_' + atm.resi;
+                    // ic.resid2ncbi[chainNum + '_' + atm.resi] = chainNum + '_' + atm.resiNCBI;
                 }
                 
                 if(chainNum !== prevChainNum) {
@@ -52369,6 +51543,9 @@ var icn3d = (function (exports) {
                 }
             }
 
+            // set ResidMapping after ic.chainsSeq is assigned in the above paragraph
+            ic.loadPDBCls.setResidMapping();
+
             // update bonds info
             if(type !== 'mmcifid') {
             //for(let i in ic.atoms) {
@@ -52583,9 +51760,9 @@ var icn3d = (function (exports) {
                   let bStart = false;
                   for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
                       // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                      //var resi = alignData.sequence[j][1];
-                      let offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
-                      let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                      //let offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
+                      //let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                      let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
                       let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                       resn =(resn === ' ' || resn === '') ? 'X' : resn;
                       //resn = resn.toUpperCase();
@@ -52639,10 +51816,9 @@ var icn3d = (function (exports) {
                   //for(let j = 0, jl = alignData.sseq.length; j < jl; ++j) {
                   for(let j = start; j <= end; ++j) {
                       // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                      //var resi = alignData.sequence[j][1];
-                      //var resi = alignData.sequence[j][0];
-                      let offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
-                      let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                      //let offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
+                      //let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                      let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid2, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
                       let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                       //resn = resn.toUpperCase();
 
@@ -52784,6 +51960,7 @@ var icn3d = (function (exports) {
         }
 
         getPosFromResi(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
+    /*        
             let pos = undefined; //parseInt(resi);
 
             for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
@@ -52791,6 +51968,13 @@ var icn3d = (function (exports) {
                     pos = i;
                     break;
                 }
+            }
+    */
+            let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
+            let pos = undefined;
+            if(residNCBI) {
+                let resiNCBI = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
+                pos = resiNCBI - 1;
             }
 
             return pos;
@@ -53148,7 +52332,7 @@ var icn3d = (function (exports) {
                     // }
                     for(let j = start1; j <= end1; ++j) {
                         let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
-                        let resi = this.getResi(chainidArray[0], resiPos, bRealign);
+                        let resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
                         resi2range_t[resi] = 1;
                         if(j < start_t) start_t = j;
                         if(j > end_t) end_t = j;
@@ -53172,7 +52356,7 @@ var icn3d = (function (exports) {
                 if(i == 0) {
                     start = resi;
                 }
-                else if(i > 0 && parseInt(resi) != parseInt(prevResi) + 1 && parseInt(resi) != parseInt(prevResi)) { // new start
+                else if(i > 0 && ic.resid2ncbi[resi] != ic.resid2ncbi[prevResi] + 1 && ic.resid2ncbi[resi] != ic.resid2ncbi[prevResi]) { // new start
                     end = prevResi;
                     for(let j = 0, jl = resiArray.length; j < jl; ++j) {
                         resi2range_t[resiArray[j]] = {resiStart: start, resiEnd: end, prevResiEnd: prevEnd};
@@ -53311,45 +52495,27 @@ var icn3d = (function (exports) {
             return resObject;
         }
 
-        getResi(chainid, resiPos, bRealign) { let ic = this.icn3d; ic.icn3dui;
-            let resi;
-
-            if(bRealign) {
-                resi = resiPos;
-            }
-            else {
-                if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
-                    resi = '';
-                }
-                else {
-                    resi = ic.chainsSeq[chainid][resiPos].resi;
-                }
-            }
-
-            return resi;
-        }
-
-        getResn(chainid, resiPos, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+        getResn(chainid, resiPos) { let ic = this.icn3d; ic.icn3dui;
             let resn;
       
-            if(bRealign) {
-                let resid = chainid + '_' + resiPos;
+            // if(bRealign) {
+            //     let resid = chainid + '_' + resiPos;
 
-                if(ic.residues[resid] === undefined) {
-                    resn = '';
-                }
-                else {
-                    resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
-                }
-            }
-            else {
+            //     if(ic.residues[resid] === undefined) {
+            //         resn = '';
+            //     }
+            //     else {
+            //         resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
+            //     }
+            // }
+            // else {
                 if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
                     resn = '';
                 }
                 else {
                     resn = ic.chainsSeq[chainid][resiPos].name;
                 }
-            }
+            // }
 
             return resn;
         }
@@ -53400,8 +52566,8 @@ var icn3d = (function (exports) {
         insertNotAlignRes(chainid, start, len, bRealign) { let ic = this.icn3d; ic.icn3dui;
             // insert non-aligned residues in query seq
             for(let j = 0, jl = len; j < jl; ++j) {
-                let resi2 = this.getResi(chainid, start + j, bRealign);
-                let resn2 = this.getResn(chainid, start + j, bRealign);
+                let resi2 = ic.ParserUtilsCls.getResi(chainid, start + j);
+                let resn2 = this.getResn(chainid, start + j);
                 let resn1 = '-';
                 let bAlign = false;
                 let resObject = this.getResObject(chainid, false, bAlign, resi2, resn2, resn1);
@@ -53410,8 +52576,8 @@ var icn3d = (function (exports) {
         }
 
         getTemplatePosFromOriPos(chainid1, start, end, bRealign) { let ic = this.icn3d; ic.icn3dui;
-            let startResi = this.getResi(chainid1, start, bRealign);
-            let endResi = this.getResi(chainid1, end, bRealign);
+            let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
+            let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
                 
             let result1 = this.getResiPosInTemplate(chainid1, startResi);
             let result2 = this.getResiPosInTemplate(chainid1, endResi);
@@ -53500,10 +52666,7 @@ var icn3d = (function (exports) {
                 }
 
                 // 1. before the mapped residues
-                let resiStart1 = this.getResi(chainid1, start1, bRealign);
-                //let resiEnd1 = this.getResi(chainid1, end1, bRealign);
-                //let prevResiEnd1 = this.getResi(chainid1, prevIndex1, bRealign);
-                //let resiStart_t = this.getResi(chainid1, start_t, bRealign);
+                let resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
 
                 //let range = resi2range_t[resiStart1];
       
@@ -53554,9 +52717,9 @@ var icn3d = (function (exports) {
                         ic.alnChainsSeq[chainid2].push(gapResObject2);
                     }
                     else {                   
-                        let resi2 = this.getResi(chainid2, start2 + k, bRealign);
-                        let resn2 = this.getResn(chainid2, start2 + k, bRealign);
-                        let resn1 = this.getResn(chainid1, start1 + k, bRealign);
+                        let resi2 = ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+                        let resn2 = this.getResn(chainid2, start2 + k);
+                        let resn1 = this.getResn(chainid1, start1 + k);
                         let bAlign = true;
                         let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1);
                         ic.alnChainsSeq[chainid2].push(resObject);
@@ -53878,7 +53041,7 @@ var icn3d = (function (exports) {
                 let line = lines[i];
                 let record = line.substr(0, 6);
 
-                if (record === 'HEADER' && !bHeader) {              
+                if (record === 'HEADER' && !bHeader && !pdbid) {              
                     // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                     ///id = line.substr(62, 4).trim();
@@ -53896,8 +53059,8 @@ var icn3d = (function (exports) {
 
                     structure = id;
 
-                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                    if(id == 'stru') {
+                    if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -54019,8 +53182,8 @@ var icn3d = (function (exports) {
 
                     structure = id;
                     
-                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                    if(id == 'stru') {
+                    if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -54043,8 +53206,8 @@ var icn3d = (function (exports) {
                 } else if (record === 'ATOM  ' || record === 'HETATM') {
                     structure = id;
                     
-                    //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                    if(id == 'stru') {
+                    if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                    //if(id == 'stru') {
                             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -54524,6 +53687,21 @@ var icn3d = (function (exports) {
                 //ic.chainsAn[chainNum][0] = C2;
                 //ic.chainsAn[chainNum][1] = C3;
             }
+
+            this.setResidMapping();
+        }
+
+        setResidMapping() { let ic = this.icn3d; ic.icn3dui;
+            // set ic.ncbi2resid and ic.resid2ncbi
+            for(let chainid in ic.chainsSeq) {
+                for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                    // NCBI residue number starts from 1 and increases continuously
+                    let residNCBI = chainid + '_' + (j+1).toString();
+                    let resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+                    ic.ncbi2resid[residNCBI] = resid;
+                    ic.resid2ncbi[resid] = residNCBI;
+                }
+            }
         }
 
         setSsbond() { let ic = this.icn3d; ic.icn3dui;
@@ -54664,7 +53842,7 @@ var icn3d = (function (exports) {
 
         //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
         // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
-        vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d; ic.icn3dui;
+        async vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d; ic.icn3dui;
             let thisClass = this;
 
             // 1. pairwise alignment
@@ -54725,21 +53903,23 @@ var icn3d = (function (exports) {
                 }
             }
 
-            $.when.apply(undefined, ajaxArray).then(function() {
-                let dataArray = (structArray.length == 1) ? [arguments] : Array.from(arguments);
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+
                 // 2. cluster pairs
                 thisClass.clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype);
 
                 // 3. superpose the top selection
 
                 ic.ParserUtilsCls.hideLoading();
-                ic.pdbParserCls.loadPdbDataRender(true);
+                await ic.pdbParserCls.loadPdbDataRender(true);
 
-                if(ic.deferredRealignByVastplus !== undefined) ic.deferredRealignByVastplus.resolve();
-            })
-            .fail(function() {
+                /// if(ic.deferredRealignByVastplus !== undefined) ic.deferredRealignByVastplus.resolve();
+            }
+            catch(err) {
                 alert("There are some problems in aligning the chains...");
-            });
+            }          
         }
 
         setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -54751,18 +53931,13 @@ var icn3d = (function (exports) {
             let pdb_target = ic.saveFileCls.getAtomPDB(sel_t, undefined, undefined, undefined, undefined, struct1);
             let pdb_query = ic.saveFileCls.getAtomPDB(sel_q, undefined, undefined, undefined, undefined, struct2);
 
-            let alignAjax = $.ajax({
-                url: urltmalign,
-                type: 'POST',
-                data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-                dataType: 'json',
-                cache: true
-            });
+            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+            let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
 
             return alignAjax;
         }
 
-        realignOnVastplus() { let ic = this.icn3d, me = ic.icn3dui;
+        async realignOnVastplus() { let ic = this.icn3d, me = ic.icn3dui;
             let structHash = [];
             for(let struct in ic.structures) {
                 let chainidArray = ic.structures[struct];
@@ -54775,7 +53950,7 @@ var icn3d = (function (exports) {
             }
 
             let bRealign = true, atype = 2; // VAST+ based on TM-align
-            ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
+            await ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
         }
 
         getResisFromSegs(segArray) { let ic = this.icn3d; ic.icn3dui;
@@ -54799,7 +53974,7 @@ var icn3d = (function (exports) {
 
             let queryDataArray = [];
             for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
-                let queryData = dataArray[index][0];
+                let queryData = dataArray[index].value; //[0];
 
                 queryDataArray.push(queryData);
     /*
@@ -54842,7 +54017,7 @@ var icn3d = (function (exports) {
             }
 
             if(!bAligned) {
-                alert("These structures can not be aligned...");
+                if(ic.bRender) alert("These structures can not be aligned...");
                 return;
             }
 
@@ -54922,12 +54097,12 @@ var icn3d = (function (exports) {
                     let resiArray_t = resiArrays.resiArray_t;
                     let resiArray_q = resiArrays.resiArray_q;
 
-                    let base = parseInt(ic.chainsSeq[chainid_t][0].resi);
-                    let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t, base);
+                    //let base = parseInt(ic.chainsSeq[chainid_t][0].resi);
+                    let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t);
                     coor_t = coor_t.concat(result_t.coor);
 
-                    base = parseInt(ic.chainsSeq[chainid_q][0].resi);
-                    let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q, base);
+                    //base = parseInt(ic.chainsSeq[chainid_q][0].resi);
+                    let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q);
                     coor_q = coor_q.concat(result_q.coor);
 
                     // align seq 
@@ -55002,7 +54177,7 @@ var icn3d = (function (exports) {
             }
 
             if(!bAligned) {
-                alert("These structures can not be aligned...");
+                if(ic.bRender) alert("These structures can not be aligned...");
                 return;
             }
         }
@@ -55437,7 +54612,7 @@ var icn3d = (function (exports) {
         }
 
         //Execute a command. If the command is to load a structure, use the Method "applyCommandLoad".
-        applyCommand(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
+        async applyCommand(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
           ic.bAddCommands = false;
 
           let commandTransformation = commandStr.split('|||');
@@ -55450,16 +54625,16 @@ var icn3d = (function (exports) {
 
           //var file_pref =(ic.inputid) ? ic.inputid : "custom";
           if(command == 'share link') {
-            ic.shareLinkCls.shareLink();
+            await ic.shareLinkCls.shareLink();
           }
           else if(command == 'export state file') ;
           else if(command.indexOf('export canvas') == 0) {
-            setTimeout(function(){
+            setTimeout(async function(){
                    //ic.saveFileCls.saveFile(file_pref + '_icn3d_loadable.png', 'png');
                    let scaleStr = command.substr(13).trim();
                    ic.scaleFactor = (scaleStr === '') ? 1 : parseInt(scaleStr);
                    let bPngOnly = (scaleStr === '') ? false : true;
-                   ic.shareLinkCls.shareLink(true, bPngOnly);
+                   await ic.shareLinkCls.shareLink(true, bPngOnly);
                 }, 500);
           }
           else if(command == 'export interactions') {
@@ -55684,8 +54859,8 @@ var icn3d = (function (exports) {
               ic.annotationCls.setAnnoTabInteraction();
           }
           else if(command == 'set annotation ptm') {
-            ic.annotationCls.setAnnoTabPTM();
-        }
+            await ic.annotationCls.setAnnoTabPTM();
+          }
           else if(command == 'set annotation cdd') {
               ic.annotationCls.setAnnoTabCdd();
           }
@@ -55699,7 +54874,7 @@ var icn3d = (function (exports) {
               ic.annotationCls.setAnnoTabCrosslink();
           }
           else if(command == 'set annotation transmembrane') {
-              ic.annotationCls.setAnnoTabTransmem();
+              await ic.annotationCls.setAnnoTabTransmem();
           }
           else if(command == 'highlight level up') {
               ic.resid2specCls.switchHighlightLevelUp();
@@ -55874,10 +55049,10 @@ var icn3d = (function (exports) {
             ic.showInterCls.showClbonds();
           }
           else if(command == 'back') {
-             ic.resizeCanvasCls.back();
+            await ic.resizeCanvasCls.back();
           }
           else if(command == 'forward') {
-             ic.resizeCanvasCls.forward();
+            await ic.resizeCanvasCls.forward();
           }
           else if(command == 'clear all') {
              ic.selectionCls.selectAll();
@@ -55929,7 +55104,7 @@ var icn3d = (function (exports) {
             let chainidArray = chainids_resdef.substr(0, pos).split(',');
             me.cfg.resdef = chainids_resdef.substr(pos + 1).replace(/:/gi, ';'); // should be 1,5,10-50 | 1,5,10-50; 2,6,11-51 | 1,5,10-50
 
-            ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, true, true);
+            await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, true, true);
          }
           else if(command == 'area') {
              ic.analysisCls.calculateArea();
@@ -56000,7 +55175,7 @@ var icn3d = (function (exports) {
             if(commandOri.indexOf('select sets') == 0) pos = 12; // 'select sets '
 
             let strSets = select.substr(pos);
-
+            
             let commandname = strSets;
 
             if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
@@ -56253,7 +55428,7 @@ var icn3d = (function (exports) {
                   ic.targetGapHash[parseInt(pos_from_to[0])] = {"from": parseInt(pos_from_to[1]), "to": parseInt(pos_from_to[2])};
               }
 
-              ic.annotationCls.resetAnnoAll();
+              await ic.annotationCls.resetAnnoAll();
           }
           else if(commandOri.indexOf('add track') == 0) {
               //"add track | chainid " + chainid + " | title " + title + " | text " + text
@@ -56424,7 +55599,7 @@ var icn3d = (function (exports) {
                         type = 'scatterplot';
                     }
 
-                    ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
+                    await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
                 }
             }
           }
@@ -56448,9 +55623,6 @@ var icn3d = (function (exports) {
                 }
             }
           }
-          else if(commandOri.indexOf('export pqr') == 0) {
-               me.htmlCls.setHtmlCls.exportPqr();
-          }
           else if(command.indexOf('graph label') == 0) {
             let pos = command.lastIndexOf(' ');
             let className = command.substr(pos + 1);
@@ -56468,12 +55640,6 @@ var icn3d = (function (exports) {
 
             $("#" + me.svgid_ct + " text").removeClass();
             $("#" + me.svgid_ct + " text").addClass(className);
-          }
-          else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
-            let pos = command.lastIndexOf(' ');
-            let type = command.substr(pos + 1);
-
-            ic.cartoon2dCls.draw2Dcartoon(type);
           }
           else if(command.indexOf('line graph scale') == 0) {
             let pos = command.lastIndexOf(' ');
@@ -56559,10 +55725,10 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + "crossstrucinter").val(ic.crossstrucinter);
           }
           else if(command == 'replay on') {
-            ic.resizeCanvasCls.replayon();
+            await ic.resizeCanvasCls.replayon();
           }
           else if(command == 'replay off') {
-            ic.resizeCanvasCls.replayoff();
+            await ic.resizeCanvasCls.replayoff();
           }
 
         // start with, single word =============
@@ -56573,7 +55739,7 @@ var icn3d = (function (exports) {
                 let contactdist = parseFloat(strArray[1].split(' ')[1]);
                 let contacttype = strArray[2].split(' ')[1];
 
-                ic.contactMapCls.contactMap(contactdist, contacttype);
+                await ic.contactMapCls.contactMap(contactdist, contacttype);
             }
           }
           else if(command.indexOf('pickatom') == 0) {
@@ -56672,7 +55838,7 @@ var icn3d = (function (exports) {
 
             let selectionType = secondPart.substr(0, secondPart.indexOf(' '));
             let style = secondPart.substr(secondPart.indexOf(' ') + 1);
-
+            
             ic.setOptionCls.setStyle(selectionType, style);
           }
           else if(command.indexOf('window') == 0) {
@@ -56732,7 +55898,7 @@ var icn3d = (function (exports) {
             ic.chainidArray = commandOri.substr(commandOri.indexOf(' ') + 1).split(',');
 
             let bRealign = true, bPredefined = true;
-            ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+            await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
 
             // reset annotations
             // $("#" + ic.pre + "dl_annotations").html("");
@@ -56742,12 +55908,12 @@ var icn3d = (function (exports) {
             // }
           }
           else if(command.indexOf('ig refnum off') == 0) {
-            ic.refnumCls.hideIgRefNum();
+            await ic.refnumCls.hideIgRefNum();
           }
           else if(command.indexOf('custom refnum') == 0) {
             let paraArray = commandOri.split(' | ');
             let dataStr = paraArray[1].replace(/\\n/g, '\n');
-            ic.refnumCls.parseCustomRefFile(dataStr);
+            await ic.refnumCls.parseCustomRefFile(dataStr);
           }
 
         // special, select ==========
@@ -56795,7 +55961,7 @@ var icn3d = (function (exports) {
         //    if(paraArray.length < 3) commanddesc = commandname;
             commanddesc = commandname;
 
-            ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+            await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
           }
           else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 
               || command.indexOf('select %') !== -1 || command.indexOf('select @') !== -1) {
@@ -56813,10 +55979,10 @@ var icn3d = (function (exports) {
             }
 
             if(select.indexOf(' or ') !== -1) { // "select " command without " | name"
-                ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+                await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
             }
             else { // only single query from selectByCommand()
-                ic.selByCommCls.selectBySpec(select, commandname, commanddesc);
+                await ic.selByCommCls.selectBySpec(select, commandname, commanddesc);
             }
           }
 
@@ -56863,8 +56029,8 @@ var icn3d = (function (exports) {
             }
         }
 
-        getThresholdNameArrays(commandOri) { let ic = this.icn3d; ic.icn3dui;
-            ic.clickMenuCls.SetChainsAdvancedMenu();
+        getThresholdNameArrays(commandOri) { let ic = this.icn3d, me = ic.icn3dui;
+            me.htmlCls.clickMenuCls.SetChainsAdvancedMenu();
 
             let paraArray = commandOri.split(' | ');
 
@@ -57627,28 +56793,28 @@ var icn3d = (function (exports) {
            }
         }
 
-        commandSelect(postfix) { let ic = this.icn3d, me = ic.icn3dui;
+        async commandSelect(postfix) { let ic = this.icn3d, me = ic.icn3dui;
                let select = $("#" + ic.pre + "command" + postfix).val();
 
                let commandname = $("#" + ic.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
 
                if(select) {
-                   ic.selByCommCls.selectByCommand(select, commandname, commandname);
+                   await ic.selByCommCls.selectByCommand(select, commandname, commandname);
                    me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
                }
         }
 
         clickCommand_apply() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
-            me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", function(e) { thisClass.icn3d;
+            me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", async function(e) { thisClass.icn3d;
                e.preventDefault();
 
-               thisClass.commandSelect('');
+               await thisClass.commandSelect('');
             });
 
-            me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", function(e) { thisClass.icn3d;
+            me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", async function(e) { thisClass.icn3d;
                e.preventDefault();
-               thisClass.commandSelect('2');
+               await thisClass.commandSelect('2');
             });
 
         }
@@ -57665,6 +56831,18 @@ var icn3d = (function (exports) {
                     continue;
                 }
                 else {
+                    // make it backward compatible for names of defined sets containing atom serial by replacing the serial with 'auto' 
+                    // start from iCn3D 3.21.0 on Jan 2023============
+                    let nameArray = ['hbonds_', 'saltbridge_', 'halogen_', 'pi-cation_', 'pi-stacking_'];
+                    for(let j = 0, jl = nameArray.length; j < jl; ++j) {
+                        const re = new RegExp('^' + nameArray[j] + '\\d+$'); // use '\\'
+
+                        if(idArray[i].match(re)) {
+                            idArray[i] = nameArray[j] + 'auto';
+                        }
+                    }
+                    // end============
+
                     if(prevLabel === 'or') {
                         orArray.push(idArray[i]);
                     }
@@ -57818,7 +56996,7 @@ var icn3d = (function (exports) {
         }
 
         //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
-        loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d; ic.icn3dui;
+        async loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d; ic.icn3dui;
           if(!dataStr) return;
           
           // allow the "loading structure..." message to be shown while loading script
@@ -57862,15 +57040,15 @@ var icn3d = (function (exports) {
           ic.CURRENTNUMBER = 0;
 
           if(ic.bReplay) {
-              this.replayFirstStep(ic.CURRENTNUMBER);
+              await this.replayFirstStep(ic.CURRENTNUMBER);
           }
           else {
-              this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
+              await this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
           }
         }
 
         //Execute a list of commands. "steps" is the total number of commands.
-        execCommands(start, end, steps, bStrict) { let ic = this.icn3d; ic.icn3dui;
+        async execCommands(start, end, steps, bStrict) { let ic = this.icn3d; ic.icn3dui;
             ic.bRender = false;
 
             // fresh start
@@ -57878,62 +57056,57 @@ var icn3d = (function (exports) {
 
             //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
 
-            this.execCommandsBase(start, end, steps);
+            await this.execCommandsBase(start, end, steps);
         }
 
-        execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
+        async execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
           let thisClass = this;
           let i;
 
-          for(i=start; i <= end; ++i) {
+          for(i=start; i <= end; ++i) {      
               let bFinalStep =(i === steps - 1) ? true : false;
 
               if(!ic.commands[i].trim()) continue;
               if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
 
-              if(ic.commands[i].indexOf('load') !== -1) {
+              let strArray = ic.commands[i].split("|||");
+              let command = strArray[0].trim();
+              
+              if(command.indexOf('load') !== -1) {
                   if(end === 0 && start === end) {
-                      if(ic.bNotLoadStructure) {
+                        if(ic.bNotLoadStructure) {
                             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
                             // end of all commands
                             if(1 === ic.commands.length) ic.bAddCommands = true;
-                            if(bFinalStep) this.renderFinalStep(steps);                  }
-                      else {
-                          $.when(thisClass.applyCommandLoad(ic.commands[i])).then(function() {
+                            if(bFinalStep) this.renderFinalStep(steps);                  
+                        }
+                        else {
+                            await thisClass.applyCommandLoad(ic.commands[i]);
 
                             // end of all commands
                             if(1 === ic.commands.length) ic.bAddCommands = true;
                             if(bFinalStep) thisClass.renderFinalStep(steps);
-                          });
                       }
                       return;
                   }
                   else {
-                      if(ic.bNotLoadStructure) {
-                          ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                        if(ic.bNotLoadStructure) {
+                            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
-                          // undo/redo requires render the first step
-                          if(ic.backForward) this.renderFinalStep(1);
+                            // undo/redo requires render the first step
+                            if(ic.backForward) this.renderFinalStep(1);
+                        }
+                        else {
+                            await thisClass.applyCommandLoad(ic.commands[i]);
 
-                          this.execCommandsBase(i + 1, end, steps);
-                      }
-                      else {
-                          $.when(thisClass.applyCommandLoad(ic.commands[i])).then(function() {
-                              // undo/redo requires render the first step
-                              if(ic.backForward) thisClass.renderFinalStep(1);
-
-                              thisClass.execCommandsBase(i + 1, end, steps);
-                          });
-                      }
-
-                      return;
+                            // undo/redo requires render the first step
+                            if(ic.backForward) thisClass.renderFinalStep(1);
+                        }
                   }
               }
-              else if(ic.commands[i].trim().indexOf('set map') == 0 && ic.commands[i].trim().indexOf('set map wireframe') == -1) {
+              else if(command.indexOf('set map') == 0 && command.indexOf('set map wireframe') == -1) {
                   //set map 2fofc sigma 1.5
-                  let strArray = ic.commands[i].split("|||");
-
                   let urlArray = strArray[0].trim().split(' | ');
 
                   let str = urlArray[0].substr(8);
@@ -57941,377 +57114,101 @@ var icn3d = (function (exports) {
 
                   if(paraArray.length == 3 && paraArray[1] == 'sigma') {
                     paraArray[2];
-                    let type = paraArray[0];
+                    paraArray[0];
 
-                    if((type == '2fofc' &&(ic.bAjax2fofc === undefined || !ic.bAjax2fofc))
-                      ||(type == 'fofc' &&(ic.bAjaxfofc === undefined || !ic.bAjaxfofc)) ) {
-                        $.when(thisClass.applyCommandMap(strArray[0].trim())).then(function() {
-                            thisClass.execCommandsBase(i + 1, end, steps);
-                        });
-                    }
-                    else {
-                        thisClass.applyCommandMap(strArray[0].trim());
-                        this.execCommandsBase(i + 1, end, steps);
-                    }
-
-                    return;
+                    await thisClass.applyCommandMap(strArray[0].trim());
                   }
               }
-              else if(ic.commands[i].trim().indexOf('set emmap') == 0 && ic.commands[i].trim().indexOf('set emmap wireframe') == -1) {
+              else if(command.indexOf('set emmap') == 0 && command.indexOf('set emmap wireframe') == -1) {
                   //set emmap percentage 70
-                  let strArray = ic.commands[i].split("|||");
-
                   let str = strArray[0].trim().substr(10);
                   let paraArray = str.split(" ");
 
                   if(paraArray.length == 2 && paraArray[0] == 'percentage') {
                     paraArray[1];
 
-                    if(ic.bAjaxEm === undefined || !ic.bAjaxEm) {
-                        $.when(thisClass.applyCommandEmmap(strArray[0].trim())).then(function() {
-                            thisClass.execCommandsBase(i + 1, end, steps);
-                        });
-                    }
-                    else {
-                        thisClass.applyCommandEmmap(strArray[0].trim());
-                        this.execCommandsBase(i + 1, end, steps);
-                    }
-
-                    return;
+                    await thisClass.applyCommandEmmap(strArray[0].trim());
                   }
               }
-              else if(ic.commands[i].trim().indexOf('set phi') == 0) {
-                  let strArray = ic.commands[i].split("|||");
-
-                  $.when(ic.delphiCls.applyCommandPhi(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-
-                  return;
+              else if(command.indexOf('set phi') == 0) {
+                  await ic.delphiCls.applyCommandPhi(strArray[0].trim());
               }
-              else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
-                  let strArray = ic.commands[i].split("|||");
-
-                  $.when(ic.delphiCls.applyCommandDelphi(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-
-                  return;
+              else if(command.indexOf('set delphi') == 0) {
+                  await ic.delphiCls.applyCommandDelphi(strArray[0].trim());
               }
-              else if(ic.commands[i].trim().indexOf('view annotations') == 0
-                //|| ic.commands[i].trim().indexOf('set annotation cdd') == 0
-                //|| ic.commands[i].trim().indexOf('set annotation site') == 0
-                ) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-                  if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxCddSite === undefined || !ic.bAjaxCddSite) ) {
-                      $.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
+              else if(command.indexOf('view annotations') == 0) { // the command may have "|||{"factor"...
+                  if(Object.keys(ic.proteins).length > 0) {
+                    await thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim());
                   }
-                  else {
-                      if(Object.keys(ic.proteins).length > 0) {
-                          thisClass.applyCommandAnnotationsAndCddSiteBase(strArray[0].trim());
-                      }
-
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
               }
-              else if(ic.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-
-                  if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar) ) {
-                      $.when(thisClass.applyCommandClinvar(strArray[0].trim())).then(function() {
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
+              else if(command.indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
+                  if(Object.keys(ic.proteins).length > 0) {
+                    await thisClass.applyCommandClinvar(strArray[0].trim());
                   }
-                  else {
-                      if(Object.keys(ic.proteins).length > 0) {
-                          thisClass.applyCommandClinvar(strArray[0].trim());
-                      }
-
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
               }
-              else if(ic.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-
-                  if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp) ) {
-                      $.when(thisClass.applyCommandSnp(strArray[0].trim())).then(function() {
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
+              else if(command.indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
+                  if(Object.keys(ic.proteins).length > 0 ) {
+                    await thisClass.applyCommandSnp(strArray[0].trim());
                   }
-                  else {
-                      if(Object.keys(ic.proteins).length > 0) {
-                          thisClass.applyCommandSnp(strArray[0].trim());
-                      }
-
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
               }
-              else if(ic.commands[i].trim().indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
-                let strArray = ic.commands[i].split("|||");
-
-                if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxPTM === undefined || !ic.bAjaxPTM) ) {
-                    $.when(thisClass.applyCommandPTM(strArray[0].trim())).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
+              else if(command.indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
+                if(Object.keys(ic.proteins).length > 0) {
+                    await thisClass.applyCommandPTM(strArray[0].trim());
                 }
-                else {
-                    if(Object.keys(ic.proteins).length > 0) {
-                        thisClass.applyCommandPTM(strArray[0].trim());
-                    }
-
-                    this.execCommandsBase(i + 1, end, steps);
+              }
+              else if(command.indexOf('ig refnum on') == 0 ) { 
+                await ic.refnumCls.showIgRefNum();
+              }
+              else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
+                  if(Object.keys(ic.proteins).length > 0) {
+                      thisClass.applyCommand3ddomain(strArray[0].trim());   
+                  }
+              }
+              else if(command.indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
+                if(Object.keys(ic.proteins).length > 0) {
+                    await thisClass.applyCommandClinvar(strArray[0].trim());
+                    await thisClass.applyCommandSnp(strArray[0].trim());
+                    thisClass.applyCommand3ddomain(strArray[0].trim());
                 }
 
-                return;
+                await ic.annotationCls.setAnnoTabAll();
               }
-              else if(ic.commands[i].trim().indexOf('ig refnum on') == 0 ) { 
-                let strArray = ic.commands[i].split("|||");
+              else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
+                  await thisClass.applyCommandViewinteraction(strArray[0].trim());
 
-                if(Object.keys(ic.resid2refnum).length == 0) {
-                    $.when(thisClass.applyCommandRefnum(strArray[0].trim())).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    thisClass.applyCommandRefnumBase(strArray[0].trim());
-
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-
-                return;
               }
-              else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-
-                  if(Object.keys(ic.proteins).length > 0 && ic.mmdb_data === undefined &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain)) {
-                      //$.when(thisClass.applyCommand3ddomain(strArray[0].trim())).then(function() {
-                        thisClass.applyCommand3ddomain(strArray[0].trim());    
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                      //});
-                  }
-                  else {
-                      if(Object.keys(ic.proteins).length > 0) {
-                          thisClass.applyCommand3ddomain(strArray[0].trim());
-                      }
-
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
-              }
-              else if(ic.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-                  //$.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
-                  //  .then(thisClass.applyCommandSnpClinvar(strArray[0].trim()))
-
-                  if( Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                    &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)
-                    &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
-                      $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                        .then(thisClass.applyCommandSnp(strArray[0].trim()))
-                        //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                        .then(function() {
-                          thisClass.applyCommand3ddomain(strArray[0].trim());
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                    &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)) {
-                      $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                        .then(thisClass.applyCommandSnp(strArray[0].trim()))
-                        .then(function() {
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                    &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)) {
-                      $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                        //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                        .then(function() {
-                          thisClass.applyCommand3ddomain(strArray[0].trim());
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)
-                    &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)) {
-                      //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                      $.when(thisClass.applyCommandSnp(strArray[0].trim()))
-                        .then(function() {
-                            thisClass.applyCommand3ddomain(strArray[0].trim());
-                            ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar) ) {
-                      $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                        .then(function() {
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp) ) {
-                      $.when(thisClass.applyCommandSnp(strArray[0].trim()))
-                        .then(function() {
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
-                      //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                      // .then(function() {
-                          thisClass.applyCommand3ddomain(strArray[0].trim());
-
-                          ic.annotationCls.setAnnoTabAll();
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      //});
-                  }
-                  else {
-                      if(Object.keys(ic.proteins).length > 0) {
-                          if(ic.bAjaxClinvar) {
-                              thisClass.applyCommandClinvarBase(strArray[0].trim());
-                          }
-
-                          if(ic.bAjaxSnp) {
-                              thisClass.applyCommandSnpBase(strArray[0].trim());
-                          }
-
-                          if(ic.bAjax3ddomain || ic.mmdb_data !== undefined) {
-                              thisClass.applyCommand3ddomainBase(strArray[0].trim());
-                          }
-                      }
-
-                      ic.annotationCls.setAnnoTabAll();
-
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
-              }
-              else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
-                  let strArray = ic.commands[i].split("|||");
-
-                  if(ic.b2DShown === undefined || !ic.b2DShown) {
-                      $.when(thisClass.applyCommandViewinteraction(strArray[0].trim())).then(function() {
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-                  else {
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-
-                  return;
-              }
-              else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
+              else if(command.indexOf('symmetry') == 0) {
                 ic.bAxisOnly = false;
-
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
 
                 let title = command.substr(command.indexOf(' ') + 1);
                 ic.symmetrytitle =(title === 'none') ? undefined : title;
 
                 if(title !== 'none') {
-                    if(ic.symmetryHash === undefined) {
-                        $.when(thisClass.applyCommandSymmetry(command)).then(function() {
-                           //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                           ic.drawCls.draw();
-                           thisClass.execCommandsBase(i + 1, end, steps);
-                        });
-                    }
-                    else {
-                        ic.drawCls.draw();
-                        this.execCommandsBase(i + 1, end, steps);
-                    }
-                }
-                else {
-                    ic.drawCls.draw();
-                    this.execCommandsBase(i + 1, end, steps);
+                    await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
                 }
 
-                return;
+                ic.drawCls.draw();
               }
-              else if(ic.commands[i].trim().indexOf('symd symmetry') == 0) {
+              else if(command.indexOf('symd symmetry') == 0) {
                 ic.bAxisOnly = false;
 
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
+                await ic.symdCls.applyCommandSymd(command);
 
-                //var title = command.substr(command.lastIndexOf(' ') + 1);
-                //ic.symdtitle =(title === 'none') ? undefined : title;
-
-                //if(title !== 'none') {
-        //            if(ic.symdHash === undefined) {
-                        $.when(ic.symdCls.applyCommandSymd(command)).then(function() {
-                           //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                           ic.drawCls.draw();
-                           thisClass.execCommandsBase(i + 1, end, steps);
-                        });
-        //            }
-        //            else {
-        //                ic.drawCls.draw();
-        //                this.execCommandsBase(i + 1, end, steps);
-        //            }
-                //}
-                //else {
-                //    ic.drawCls.draw();
-                //    this.execCommandsBase(i + 1, end, steps);
-                //}
-
-                return;
+                ic.drawCls.draw();
               }
-              else if(ic.commands[i].trim().indexOf('scap') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
-                $.when(ic.scapCls.applyCommandScap(command)).then(function() {
-                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                   //ic.drawCls.draw();
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+              else if(command.indexOf('scap') == 0) {
+                await ic.scapCls.applyCommandScap(command);
               }
-              else if(ic.commands[i].trim().indexOf('realign on seq align') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
+              else if(command.indexOf('realign on seq align') == 0) {
                 let paraArray = command.split(' | ');
                 if(paraArray.length == 2) {
                     let nameArray = paraArray[1].split(',');
                     ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                 }
 
-                $.when(thisClass.applyCommandRealign(command)).then(function() {
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+                await thisClass.applyCommandRealign(command);
               }
-              else if(ic.commands[i].trim().indexOf('realign on structure align') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
+              else if(command.indexOf('realign on structure align') == 0) {
                 let paraArray = command.split(' | ');
                 if(paraArray.length == 2) {
                     let nameArray = paraArray[1].split(',');
@@ -58320,95 +57217,46 @@ var icn3d = (function (exports) {
 
                 me.cfg.aligntool = 'vast';
 
-                $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+                await thisClass.applyCommandRealignByStruct(command);
               }
-              else if(ic.commands[i].trim().indexOf('realign on tmalign') == 0) {
+              else if(command.indexOf('realign on tmalign') == 0) {
                 thisClass.getHAtoms(ic.commands[i]);
 
                 me.cfg.aligntool = 'tmalign';
 
-                $.when(thisClass.applyCommandRealignByStruct(ic.commands[i])).then(function() {
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+                await thisClass.applyCommandRealignByStruct(ic.commands[i]);
               }
-              else if(ic.commands[i].trim().indexOf('realign on vastplus') == 0) {
+              else if(command.indexOf('realign on vastplus') == 0) {
                 thisClass.getHAtoms(ic.commands[i]);
 
-                $.when(thisClass.applyCommandRealignByVastplus(ic.commands[i])).then(function() {
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+                await ic.vastplusCls.realignOnVastplus();
               }
-              else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
-                if(ic.bD3 === undefined) {
-                    $.when(thisClass.applyCommandGraphinteraction(command)).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    this.applyCommandGraphinteraction(command);
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-
-                return;
+              else if(command.indexOf('graph interaction pairs') == 0) {
+                await thisClass.applyCommandGraphinteraction(command);
               }
-              else if(ic.commands[i].trim().indexOf('cartoon 2d domain') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
-                if(!ic.chainid2pssmid) {
-                    $.when(thisClass.applyCommandCartoon2d(command)).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    this.applyCommandCartoon2d(command);
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-
-                return;
+              else if(command.indexOf('cartoon 2d domain') == 0) {
+                await thisClass.applyCommandCartoon2d(command);
               }
-              else if(ic.commands[i].trim().indexOf('set half pae map') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
-                $.when(thisClass.applyCommandAfmap(command)).then(function() {
-                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                   //ic.drawCls.draw();
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+              else if(command.indexOf('set half pae map') == 0) {
+                await thisClass.applyCommandAfmap(command);
               }
-              else if(ic.commands[i].trim().indexOf('set full pae map') == 0) {
-                let strArray = ic.commands[i].split("|||");
-                let command = strArray[0].trim();
-
-                $.when(thisClass.applyCommandAfmap(command, true)).then(function() {
-                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                   //ic.drawCls.draw();
-                   thisClass.execCommandsBase(i + 1, end, steps);
-                });
-
-                return;
+              else if(command.indexOf('set full pae map') == 0) {
+                await thisClass.applyCommandAfmap(command, true);
+              }
+              else if(command.indexOf('export pqr') == 0) {
+                await me.htmlCls.setHtmlCls.exportPqr();
+              }
+              else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
+                let pos = command.lastIndexOf(' ');
+                let type = command.substr(pos + 1);
+        
+                await ic.cartoon2dCls.draw2Dcartoon(type);
               }
               else {
-                  ic.applyCommandCls.applyCommand(ic.commands[i]);
+                await ic.applyCommandCls.applyCommand(ic.commands[i]);
               }
           }
-
+          
           //if(i === steps - 1) {
           if(i === steps || bFinalStep) {
               this.renderFinalStep(i);
@@ -58417,7 +57265,7 @@ var icn3d = (function (exports) {
 
         pressCommandtext() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
-            $("#" + ic.pre + "logtext").keypress(function(e) { let ic = thisClass.icn3d;
+            $("#" + ic.pre + "logtext").keypress(async function(e) { let ic = thisClass.icn3d;
                ic.bAddLogs = false; // turn off log
                let code =(e.keyCode ? e.keyCode : e.which);
                if(code == 13) { //Enter keycode
@@ -58444,7 +57292,7 @@ var icn3d = (function (exports) {
                         if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
                         ic.STATENUMBER = ic.commands.length;
                         if(lastCommand.indexOf('load') !== -1) {
-                            thisClass.applyCommandLoad(lastCommand);
+                            await thisClass.applyCommandLoad(lastCommand);
                         }
                         else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
                             thisClass.applyCommandMap(lastCommand);
@@ -58453,64 +57301,55 @@ var icn3d = (function (exports) {
                             thisClass.applyCommandEmmap(lastCommand);
                         }
                         else if(lastCommand.indexOf('set phi') !== -1) {
-                            ic.delphiCls.applyCommandPhi(lastCommand);
+                            await ic.delphiCls.applyCommandPhi(lastCommand);
                         }
                         else if(lastCommand.indexOf('set delphi') !== -1) {
-                            ic.delphiCls.applyCommandDelphi(lastCommand);
+                            await ic.delphiCls.applyCommandDelphi(lastCommand);
                         }
                         else if(lastCommand.indexOf('view annotations') == 0
                           //|| lastCommand.indexOf('set annotation cdd') == 0
                           //|| lastCommand.indexOf('set annotation site') == 0
                           ) {
-                            thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
+                            await thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
                         }
                         else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
-                            thisClass.applyCommandClinvar(lastCommand);
+                            await thisClass.applyCommandClinvar(lastCommand);
                         }
                         else if(lastCommand.indexOf('set annotation snp') == 0) {
-                            thisClass.applyCommandSnp(lastCommand);
+                            await thisClass.applyCommandSnp(lastCommand);
                         }
                         else if(lastCommand.indexOf('set annotation ptm') == 0) {
-                            thisClass.applyCommandPTM(lastCommand);
+                            await thisClass.applyCommandPTM(lastCommand);
                         }
                         else if(lastCommand.indexOf('ig refnum on') == 0) {
-                            thisClass.applyCommandRefnum(lastCommand);
+                            await ic.refnumCls.showIgRefNum();
                         }
                         else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                             thisClass.applyCommand3ddomain(lastCommand);
                         }
                         else if(lastCommand.indexOf('set annotation all') == 0) {
-                            $.when(thisClass.applyCommandClinvar(lastCommand))
-                                .then(thisClass.applyCommandSnp(lastCommand))
-                                //.then(thisClass.applyCommand3ddomain(lastCommand));
-                                .then(function() {
-                                    thisClass.applyCommand3ddomain(lastCommand);
-                                    ic.annotationCls.setAnnoTabAll();
-                                });
+                            await thisClass.applyCommandClinvar(lastCommand);
+                            await thisClass.applyCommandSnp(lastCommand);
+                            thisClass.applyCommand3ddomain(lastCommand);
+                            await ic.annotationCls.setAnnoTabAll();
                         }
                         else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
-                            thisClass.applyCommandViewinteraction(lastCommand);
+                            await thisClass.applyCommandViewinteraction(lastCommand);
                         }
                         else if(lastCommand.indexOf('symmetry') == 0) {
                             let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
                             ic.symmetrytitle =(title === 'none') ? undefined : title;
                             if(title !== 'none') {
                                 if(ic.symmetryHash === undefined) {
-                                    thisClass.applyCommandSymmetry(lastCommand);
+                                    await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
                                 }
                             }
                         }
                         else if(lastCommand.indexOf('symd symmetry') == 0) {
-                            //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                            //ic.symdtitle =(title === 'none') ? undefined : title;
-                            //if(title !== 'none') {
-                                //if(ic.symdHash === undefined) {
-                                    ic.symdCls.applyCommandSymd(lastCommand);
-                                //}
-                            //}
+                            await ic.symdCls.applyCommandSymd(lastCommand);
                         }
                         else if(lastCommand.indexOf('scap ') == 0) {
-                            ic.scapCls.applyCommandScap(lastCommand);
+                            await ic.scapCls.applyCommandScap(lastCommand);
                         }
                         else if(lastCommand.indexOf('realign on seq align') == 0) {
                             let paraArray = lastCommand.split(' | ');
@@ -58518,7 +57357,7 @@ var icn3d = (function (exports) {
                                 let nameArray = paraArray[1].split(',');
                                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                             }
-                            thisClass.applyCommandRealign(lastCommand);
+                            await thisClass.applyCommandRealign(lastCommand);
                         }
                         else if(lastCommand.indexOf('realign on structure align') == 0) {
                             let paraArray = lastCommand.split(' | ');
@@ -58529,7 +57368,7 @@ var icn3d = (function (exports) {
 
                             me.cfg.aligntool = 'vast';
 
-                            thisClass.applyCommandRealignByStruct(lastCommand);
+                            await thisClass.applyCommandRealignByStruct(lastCommand);
                         }
                         else if(lastCommand.indexOf('realign on tmalign') == 0) {
                             let paraArray = lastCommand.split(' | ');
@@ -58540,7 +57379,7 @@ var icn3d = (function (exports) {
                             
                             me.cfg.aligntool = 'tmalign';
 
-                            thisClass.applyCommandRealignByStruct(lastCommand);
+                            await thisClass.applyCommandRealignByStruct(lastCommand);
                         }
                         else if(lastCommand.indexOf('realign on vastplus') == 0) {
                             let paraArray = lastCommand.split(' | ');
@@ -58549,13 +57388,13 @@ var icn3d = (function (exports) {
                                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                             }
                             
-                            thisClass.applyCommandRealignByVastplus(lastCommand);
+                            await ic.vastplusCls.realignOnVastplus();
                         }
                         else if(lastCommand.indexOf('graph interaction pairs') == 0) {
-                            thisClass.applyCommandGraphinteraction(lastCommand);
+                            await thisClass.applyCommandGraphinteraction(lastCommand);
                         }
                         else {
-                            ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                            await ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
                         }
                         //ic.selectionCls.saveSelectionIfSelected();
                         //ic.drawCls.draw();
@@ -58573,14 +57412,14 @@ var icn3d = (function (exports) {
 
         //Execute the command to load a structure. This step is different from the rest steps since
         //it has to finish before the rest steps start.
-        applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
+        async applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
 
           //ic.bCommandLoad = true;
 
           if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
 
           // chain functions together
-          ic.deferred2 = $.Deferred(function() {
+    ///      ic.deferred2 = $.Deferred(function() {
           ic.bAddCommands = false;
           let commandTransformation = commandStr.split('|||');
 
@@ -58604,83 +57443,79 @@ var icn3d = (function (exports) {
             ic.inputid = id;
             if(command.indexOf('load mmtf') !== -1) {
               me.cfg.mmtfid = id;
-              ic.mmtfParserCls.downloadMmtf(id);
+              await ic.mmtfParserCls.downloadMmtf(id);
             }
             else if(command.indexOf('load pdb') !== -1) {
               me.cfg.pdbid = id;
 
-              ic.pdbParserCls.downloadPdb(id);
+              await ic.pdbParserCls.downloadPdb(id);
             }
             else if(command.indexOf('load af') !== -1) {
               me.cfg.afid = id;  
-              ic.pdbParserCls.downloadPdb(id, true);
+              await ic.pdbParserCls.downloadPdb(id, true);
             }
             else if(command.indexOf('load opm') !== -1) {
               me.cfg.opmid = id;
-              ic.opmParserCls.downloadOpm(id);
+              await ic.opmParserCls.downloadOpm(id);
             }
             else if(command.indexOf('load mmcif') !== -1) {
               me.cfg.mmcifid = id;
-              ic.mmcifParserCls.downloadMmcif(id);
+              await ic.mmcifParserCls.downloadMmcif(id);
             }
             else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
               me.cfg.mmdbid = id;
               me.cfg.bu = 1;
 
-              ic.mmdbParserCls.downloadMmdb(id);
+              await ic.mmdbParserCls.downloadMmdb(id);
             }
             else if(command.indexOf('load mmdb0') !== -1) {
                 me.cfg.mmdbid = id;
                 me.cfg.bu = 0;
       
-                ic.mmdbParserCls.downloadMmdb(id);
+                await ic.mmdbParserCls.downloadMmdb(id);
             }
             else if(command.indexOf('load mmdbaf1') !== -1) {
                 me.cfg.mmdbafid = id;
                 me.cfg.bu = 1;
       
-                ic.chainalignParserCls.downloadMmdbAf(id);
+                await ic.chainalignParserCls.downloadMmdbAf(id);
             }
             else if(command.indexOf('load mmdbaf0') !== -1) {
                 me.cfg.mmdbafid = id;
                 me.cfg.bu = 0;
 
-                ic.chainalignParserCls.downloadMmdbAf(id);
-            }
-            else if(command.indexOf('load gi') !== -1) {
-              me.cfg.gi = id;
-              ic.mmdbParserCls.downloadGi(id);
+                await ic.chainalignParserCls.downloadMmdbAf(id);
             }
             else if(command.indexOf('load refseq') !== -1) {
                 me.cfg.refseqid = id;
-                ic.mmdbParserCls.downloadRefseq(id);
+                await ic.mmdbParserCls.downloadRefseq(id);
             }
             else if(command.indexOf('load seq_struct_ids ') !== -1) {
               ic.bSmithwm = false;
               ic.bLocalSmithwm = false;
-              ic.mmdbParserCls.downloadBlast_rep_id(id);
+              await ic.mmdbParserCls.downloadBlast_rep_id(id);
             }
             else if(command.indexOf('load seq_struct_ids_smithwm ') !== -1) {
                 ic.bSmithwm = true;
-                ic.mmdbParserCls.downloadBlast_rep_id(id);
+                await ic.mmdbParserCls.downloadBlast_rep_id(id);
             }
             else if(command.indexOf('load seq_struct_ids_local_smithwm ') !== -1) {
                 ic.bLocalSmithwm = true;
-                ic.mmdbParserCls.downloadBlast_rep_id(id);
+                await ic.mmdbParserCls.downloadBlast_rep_id(id);
             }
             else if(command.indexOf('load cid') !== -1) {
               me.cfg.cid = id;
-              ic.sdfParserCls.downloadCid(id);
+              await ic.sdfParserCls.downloadCid(id);
             }
             else if(command.indexOf('load alignment') !== -1) {
               me.cfg.align = id;
 
               if(me.cfg.inpara.indexOf('atype=2') == -1) {
-                ic.alignParserCls.downloadAlignment(me.cfg.align);
+                await ic.alignParserCls.downloadAlignment(me.cfg.align);
               }
               else {
                 let vastplusAtype = 2; // Tm-align
-                ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+                await ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
               }
             }
             else if(command.indexOf('load chainalignment') !== -1) {
@@ -58697,7 +57532,7 @@ var icn3d = (function (exports) {
               }
 
               me.cfg.chainalign = id;
-              ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
+              await ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
             }
             else if(command.indexOf('load url') !== -1) {
                 let typeStr = load_parameters[1]; // type pdb
@@ -58709,22 +57544,21 @@ var icn3d = (function (exports) {
                 }
 
                 me.cfg.url = id;
-                ic.pdbParserCls.downloadUrl(id, type);
+                await ic.pdbParserCls.downloadUrl(id, type);
             }
           }
 
           ic.bAddCommands = true;
-          }); // end of me.deferred = $.Deferred(function() {
+    ///      }); // end of me.deferred = $.Deferred(function() {
 
-          return ic.deferred2.promise();
+    ///      return ic.deferred2.promise();
         }
 
         //Apply the command to show electron density map.
         applyCommandMap(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
 
           // chain functions together
-          ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
+        //   ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
               //"set map 2fofc sigma 1.5"
               // or "set map 2fofc sigma 1.5 | [url]"
               let urlArray = command.split(" | ");
@@ -58743,17 +57577,16 @@ var icn3d = (function (exports) {
                       ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
                   }
               }
-          }); // end of me.deferred = $.Deferred(function() {
+        //   }); // end of me.deferred = $.Deferred(function() {
 
-          return ic.deferredMap.promise();
+        //   return ic.deferredMap.promise();
         }
 
         //Apply the command to show EM density map.
         applyCommandEmmap(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
 
           // chain functions together
-          ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
+        //   ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
               let str = command.substr(10);
               let paraArray = str.split(" ");
 
@@ -58763,278 +57596,109 @@ var icn3d = (function (exports) {
 
                   ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
               }
-          }); // end of me.deferred = $.Deferred(function() {
+        //   }); // end of me.deferred = $.Deferred(function() {
 
-          return ic.deferredEmmap.promise();
+        //   return ic.deferredEmmap.promise();
         }
 
-        applyCommandSymmetryBase(command) { let ic = this.icn3d; ic.icn3dui;
-            ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
+        async applyCommandRealign(command) { let ic = this.icn3d; ic.icn3dui;
+            await ic.realignParserCls.realignOnSeqAlign();
         }
 
-        applyCommandSymmetry(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredSymmetry = $.Deferred(function() {
-             thisClass.applyCommandSymmetryBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredSymmetry.promise();
+        async applyCommandRealignByStruct(command) { let ic = this.icn3d; ic.icn3dui;
+          ic.drawCls.draw();
+          await ic.realignParserCls.realignOnStructAlign();
         }
 
-        applyCommandRealignBase(command) { let ic = this.icn3d; ic.icn3dui;
-            //ic.drawCls.draw();
-            ic.realignParserCls.realignOnSeqAlign();
-        }
-
-        applyCommandRealign(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredRealign = new $.Deferred(function() {
-             thisClass.applyCommandRealignBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredRealign.promise();
-        }
-
-        applyCommandRealignByStructBase(command) { let ic = this.icn3d; ic.icn3dui;
-            ic.drawCls.draw();
-            ic.realignParserCls.realignOnStructAlign();
-        }
-
-        applyCommandRealignByStruct(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredRealignByStruct = new $.Deferred(function() {
-             thisClass.applyCommandRealignByStructBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredRealignByStruct.promise();
-        }
-
-        applyCommandRealignByVastplusBase(command) { let ic = this.icn3d; ic.icn3dui;
-            //ic.drawCls.draw();
-            ic.vastplusCls.realignOnVastplus();
-        }
-
-        applyCommandRealignByVastplus(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredRealignByVastplus = new $.Deferred(function() {
-             thisClass.applyCommandRealignByVastplusBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredRealignByVastplus.promise();
-        }
-
-        applyCommandAfmapBase(command, bFull) { let ic = this.icn3d; ic.icn3dui;
-            let afid = command.substr(command.lastIndexOf(' ') + 1);
+        async applyCommandAfmap(command, bFull) { let ic = this.icn3d; ic.icn3dui;
+          let afid = command.substr(command.lastIndexOf(' ') + 1);
          
-            ic.contactMapCls.afErrorMap(afid, bFull);
+          await ic.contactMapCls.afErrorMap(afid, bFull);
         }
 
-        applyCommandAfmap(command, bFull) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
+        async applyCommandGraphinteraction(command) { let ic = this.icn3d; ic.icn3dui;
+          let paraArray = command.split(' | ');
+          if(paraArray.length >= 3) {
+              let setNameArray = paraArray[1].split(' ');
+              let nameArray2 = setNameArray[0].split(',');
+              let nameArray = setNameArray[1].split(',');
 
-          // chain functions together
-          ic.deferredAfmap = new $.Deferred(function() {
-             thisClass.applyCommandAfmapBase(command, bFull);
-          }); // end of me.deferred = $.Deferred(function() {
+              let bHbond = paraArray[2].indexOf('hbonds') !== -1;
+              let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+              let bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
-          return ic.deferredAfmap.promise();
-        }
+              let bHalogen = paraArray[2].indexOf('halogen') !== -1;
+              let bPication = paraArray[2].indexOf('pi-cation') !== -1;
+              let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
 
-        applyCommandGraphinteractionBase(command) { let ic = this.icn3d; ic.icn3dui;
-            let paraArray = command.split(' | ');
-            if(paraArray.length >= 3) {
-                let setNameArray = paraArray[1].split(' ');
-                let nameArray2 = setNameArray[0].split(',');
-                let nameArray = setNameArray[1].split(',');
+              let bHbondCalc;
+              if(paraArray.length >= 4) {
+                  bHbondCalc =(paraArray[3] == 'true') ? true : false;
+              }
 
-                let bHbond = paraArray[2].indexOf('hbonds') !== -1;
-                let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-                let bInteraction = paraArray[2].indexOf('interactions') !== -1;
+              ic.applyCommandCls.setStrengthPara(paraArray);
 
-                let bHalogen = paraArray[2].indexOf('halogen') !== -1;
-                let bPication = paraArray[2].indexOf('pi-cation') !== -1;
-                let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
-
-                let bHbondCalc;
-                if(paraArray.length >= 4) {
-                    bHbondCalc =(paraArray[3] == 'true') ? true : false;
-                }
-
-                ic.applyCommandCls.setStrengthPara(paraArray);
-
-                ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, 'graph',
-                    bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
-            }
-        }
-
-        applyCommandGraphinteraction(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredGraphinteraction = $.Deferred(function() {
-             thisClass.applyCommandGraphinteractionBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredGraphinteraction.promise();
-        }
-
-        applyCommandCartoon2dBase(command) { let ic = this.icn3d; ic.icn3dui;
-            let type = command.substr(command.lastIndexOf(' ') + 1);
-            ic.cartoon2dCls.draw2Dcartoon(type);
-        }
-
-        applyCommandCartoon2d(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredCartoon2d = $.Deferred(function() {
-             thisClass.applyCommandCartoon2dBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredCartoon2d.promise();
-        }
-
-        applyCommandAnnotationsAndCddSiteBase(command) { let ic = this.icn3d; ic.icn3dui;
-          // chain functions together
-          if(command == "view annotations") {
-              //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
-                  ic.showAnnoCls.showAnnotations();
-              //}
+              await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, 'graph',
+                  bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
           }
+        }
+
+        async applyCommandCartoon2d(command) { let ic = this.icn3d; ic.icn3dui;
+            let type = command.substr(command.lastIndexOf(' ') + 1);
+            await ic.cartoon2dCls.draw2Dcartoon(type);
         }
 
         //The annotation window calls many Ajax calls. Thus the command "view interactions"
         //(in Share Link or loading state file) is handled specially to wait for the Ajax calls
         //to finish before executing the next command.
-        applyCommandAnnotationsAndCddSite(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredAnnoCddSite = $.Deferred(function() {
-              thisClass.applyCommandAnnotationsAndCddSiteBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredAnnoCddSite.promise();
+        async applyCommandAnnotationsAndCddSite(command) { let ic = this.icn3d; ic.icn3dui;
+            if(command == "view annotations") {
+                //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
+                    await ic.showAnnoCls.showAnnotations();
+                //}
+            }
         }
 
-        applyCommandClinvarBase(command) { let ic = this.icn3d; ic.icn3dui;
-          // chain functions together
-          let pos = command.lastIndexOf(' '); // set annotation clinvar
-          command.substr(pos + 1);
-
-          ic.annotationCls.setAnnoTabClinvar();
+        async applyCommandClinvar(command) { let ic = this.icn3d; ic.icn3dui;
+            // chain functions together
+            let pos = command.lastIndexOf(' '); // set annotation clinvar
+            command.substr(pos + 1);
+            
+            await ic.annotationCls.setAnnoTabClinvar();
         }
 
-        applyCommandSnpBase(command) { let ic = this.icn3d; ic.icn3dui;
-          // chain functions together
-          let pos = command.lastIndexOf(' '); // set annotation clinvar
-          command.substr(pos + 1);
-
-          ic.annotationCls.setAnnoTabSnp();
+        async applyCommandSnp(command) { let ic = this.icn3d; ic.icn3dui;
+            // chain functions together
+            let pos = command.lastIndexOf(' '); // set annotation clinvar
+            command.substr(pos + 1);
+            
+            await ic.annotationCls.setAnnoTabSnp();
         }
 
-        applyCommandClinvar(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredClinvar = $.Deferred(function() {
-              thisClass.applyCommandClinvarBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredClinvar.promise();
-        }
-
-        applyCommandSnp(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredSnp = $.Deferred(function() {
-              thisClass.applyCommandSnpBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredSnp.promise();
-        }
-
-        applyCommandPTMBase(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandPTM(command) { let ic = this.icn3d; ic.icn3dui;
             // chain functions together
             let pos = command.lastIndexOf(' '); // set annotation clinvar
             command.substr(pos + 1);
       
-            ic.annotationCls.setAnnoTabPTM();
-        }
-
-        applyCommandPTM(command) { let ic = this.icn3d; ic.icn3dui;
-            let thisClass = this;
-      
-            // chain functions together
-            ic.deferredPTM = $.Deferred(function() {
-                thisClass.applyCommandPTMBase(command);
-            }); // end of me.deferred = $.Deferred(function() {
-      
-            return ic.deferredPTM.promise();
-        }
-
-        applyCommandRefnumBase(command) { let ic = this.icn3d; ic.icn3dui;
-            // chain functions together
-            ic.refnumCls.showIgRefNum();
-        }
-
-        applyCommandRefnum(command) { let ic = this.icn3d; ic.icn3dui;
-            let thisClass = this;
-      
-            // chain functions together
-            ic.deferredRefnum = $.Deferred(function() {
-                thisClass.applyCommandRefnumBase(command);
-            }); // end of me.deferred = $.Deferred(function() {
-      
-            return ic.deferredRefnum.promise();
-        }
-
-        applyCommand3ddomainBase(command) { let ic = this.icn3d; ic.icn3dui;
-          // chain functions together
-          let pos = command.lastIndexOf(' ');
-          let type = command.substr(pos + 1);
-
-          if(type == '3ddomain' || type == 'all') {
-              ic.annotationCls.setAnnoTab3ddomain();
-          }
+            await ic.annotationCls.setAnnoTabPTM();
         }
 
         applyCommand3ddomain(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          //ic.deferred3ddomain = $.Deferred(function() {
-              thisClass.applyCommand3ddomainBase(command);
-          //}); // end of me.deferred = $.Deferred(function() {
-
-          //return ic.deferred3ddomain.promise();
+            // chain functions together
+            let pos = command.lastIndexOf(' ');
+            let type = command.substr(pos + 1);
+        
+            if(type == '3ddomain' || type == 'all') {
+                ic.annotationCls.setAnnoTab3ddomain();
+            }
         }
 
-        applyCommandViewinteractionBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-          // chain functions together
-             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-                 let structureArray = Object.keys(ic.structures);
-                 ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
-             }
-        }
-
-        applyCommandViewinteraction(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-          // chain functions together
-          ic.deferredViewinteraction = $.Deferred(function() {
-             thisClass.applyCommandViewinteractionBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredViewinteraction.promise();
+        async applyCommandViewinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
+            // chain functions together
+            if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+                let structureArray = Object.keys(ic.structures);
+                await ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
+            }
         }
 
         //When reading a list of commands, apply transformation at the last step.
@@ -59132,18 +57796,18 @@ var icn3d = (function (exports) {
             // an extra render to remove artifacts in transparent surface
             if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 
-            if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-            if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
+            /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+            /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
         }
 
-        replayFirstStep(currentNumber) { let ic = this.icn3d, me = ic.icn3dui;
+        async replayFirstStep(currentNumber) { let ic = this.icn3d, me = ic.icn3dui;
               // fresh start
               ic.reinitAfterLoad();
               //ic.selectionCls.resetAll();
 
               //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
 
-              this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
+              await this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
 
               let cmdStrOri = ic.commands[currentNumber];
               //var pos = ic.commands[currentNumber].indexOf(' | ');
@@ -59191,7 +57855,7 @@ var icn3d = (function (exports) {
         }
 
         //Set a custom selection with the "command", its name "commandname" and its description "commanddesc".
-        selectByCommand(select, commandname, commanddesc) { let ic = this.icn3d, me = ic.icn3dui;
+        async selectByCommand(select, commandname, commanddesc) { let ic = this.icn3d, me = ic.icn3dui;
                if(select.indexOf('saved atoms') === 0) {
                     let pos = 12; // 'saved atoms '
                     let strSets = select.substr(pos);
@@ -59214,18 +57878,18 @@ var icn3d = (function (exports) {
                        ic.hAtoms = {};
 
                        if(command.substr(0, pos).toLowerCase() === 'and') { // intersection
-                               ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
+                          await ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
 
-                               allHighlightAtoms = me.hashUtilsCls.intHash(allHighlightAtoms, ic.hAtoms);
+                          allHighlightAtoms = me.hashUtilsCls.intHash(allHighlightAtoms, ic.hAtoms);
                        }
                        else if(command.substr(0, pos).toLowerCase() === 'not') { // negation
-                               ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
+                          await ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
 
-                               allHighlightAtoms = me.hashUtilsCls.exclHash(allHighlightAtoms, ic.hAtoms);
+                          allHighlightAtoms = me.hashUtilsCls.exclHash(allHighlightAtoms, ic.hAtoms);
                        }
                        else { // union
-                               ic.applyCommandCls.applyCommand('select ' + command);
-                               allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
+                          await ic.applyCommandCls.applyCommand('select ' + command);
+                          allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
                        }
                    }
 
@@ -59956,6 +58620,12 @@ var icn3d = (function (exports) {
             }
         }
 
+        saveSelInCommand() { let ic = this.icn3d, me = ic.icn3dui;
+            ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+
+            me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)), true);
+        }
+
         saveEachResiInSel() { let ic = this.icn3d; ic.icn3dui;
             ic.selectionCls.saveSelectionPrep();
             
@@ -60012,7 +58682,7 @@ var icn3d = (function (exports) {
             ic.hlUpdateCls.removeHlMenus();
         }
 
-        loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
           let nameCommandArray = dataStr.trim().split('\n');
 
           for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
@@ -60028,7 +58698,7 @@ var icn3d = (function (exports) {
 
               let pos = command.indexOf(' '); // select ...
 
-              ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
+              await ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
 
               me.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
           }
@@ -60269,9 +58939,11 @@ var icn3d = (function (exports) {
                      }
                      else if(prevChain === chain) {
                          // some residue number could be "35A"
-                         let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                         //let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                         let tmpPrevResi = ic.ParserUtilsCls.getResiNCBI(prevChain, prevResi);
                          //if(resi != parseInt(prevResi) + 1) {
-                         if(resi != tmpPrevResi + 1) {
+                         //if(resi != tmpPrevResi + 1) {
+                         if(ic.ParserUtilsCls.getResiNCBI(chain, resi) != tmpPrevResi + 1) {
                              if(prevResi === startResi) {
                                  if(bMultipleStructures) {
                                      spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
@@ -60411,7 +59083,7 @@ var icn3d = (function (exports) {
                 ic.hAtoms = {};
                 for(let i in atoms) {
                     let atom = ic.atoms[i];
-                    if(atom.b >= from && atom.b <= to) {
+                    if(atom.b >= parseInt(from) && atom.b <= parseInt(to)) {
                         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[atom.structure + '_' + atom.chain + '_' + atom.resi]);
                     }
                 }
@@ -60793,14 +59465,12 @@ var icn3d = (function (exports) {
 
             oReq.responseType = "text";
 
-            oReq.onreadystatechange = function() {
+            oReq.onreadystatechange = async function() {
                 if(this.readyState == 4) {
-                   //ic.ParserUtilsCls.hideLoading();
-
                    if(this.status == 200) {
                        let data = oReq.response;
 
-                       thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
+                       await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
                     }
                     else {
                         alert("The PQR file is unavailable...");
@@ -60863,64 +59533,62 @@ var icn3d = (function (exports) {
            return pdbstr;
         }
 
-        CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
+        async CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d; ic.icn3dui;
+            let phidata = await this.CalcPhiPrms(gsize, salt, contour, bSurface, data);
 
-           ic.loadPhiFrom = 'delphi';
+            this.loadPhiData(phidata, contour, bSurface);
+        
+            ic.bAjaxPhi = true;
 
-           let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
-           let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
-           let dataObj = {};
+            if(bSurface) {
+                ic.setOptionCls.setOption('phisurface', 'phi');
+            }
+            else {
+                ic.setOptionCls.setOption('phimap', 'phi');
+            }
 
-           if(data) {
-               dataObj = {'pqr2phi': data, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
-           }
-           else {
-               let pdbstr = this.getPdbStr();
+            /// if(ic.deferredDelphi !== undefined) ic.deferredDelphi.resolve();
+            /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
+        }
 
-               dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
-           }
+        CalcPhiPrms(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
+            ic.loadPhiFrom = 'delphi';
+     
+            let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
+            let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+            let dataObj = {};
+     
+            if(data) {
+                dataObj = {'pqr2phi': data, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
+            }
+            else {
+                let pdbstr = this.getPdbStr();
+     
+                dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
+            }
 
-           // see full_ui.js for ajaxTransport
-           $.ajax({
-              url: url,
-              type: 'POST',
-              data : dataObj,
-              dataType: 'binary',
-              responseType: 'arraybuffer',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1,
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                   thisClass.loadPhiData(data, contour, bSurface);
-
-                   ic.bAjaxPhi = true;
-
-                   if(bSurface) {
-                     ic.setOptionCls.setOption('phisurface', 'phi');
-                   }
-                   else {
-                     ic.setOptionCls.setOption('phimap', 'phi');
-                   }
-
-                   if(ic.deferredDelphi !== undefined) ic.deferredDelphi.resolve();
-                   if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
+            return new Promise(function(resolve, reject) {
+                // see full_ui.js for ajaxTransport
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data : dataObj,
+                    dataType: 'binary',
+                    responseType: 'arraybuffer',
+                    cache: true,
+                    beforeSend: function() {
+                        ic.ParserUtilsCls.showLoading();
+                    },
+                    complete: function() {
+                        ic.ParserUtilsCls.hideLoading();
+                    },
+                    success: function(phidata) {
+                        resolve(phidata);
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                        return;
+                    }
+                });
             });
         }
 
@@ -60954,8 +59622,6 @@ var icn3d = (function (exports) {
 
                 oReq.onreadystatechange = function() {
                     if(this.readyState == 4) {
-                       //ic.ParserUtilsCls.hideLoading();
-
                        if(this.status == 200) {
                            let data = oReq.response;
 
@@ -60979,7 +59645,7 @@ var icn3d = (function (exports) {
                             alert("The potential file is unavailable...");
                         }
 
-                        if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
+                        /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
                     }
                     else {
                         ic.ParserUtilsCls.showLoading();
@@ -61118,10 +59784,10 @@ var icn3d = (function (exports) {
             ic.mapData.matrixPhi = matrix;
         }
 
-        applyCommandPhi(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandPhi(command) { let ic = this.icn3d; ic.icn3dui;
           let thisClass = this;
           // chain functions together
-          ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
+        //   ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
               //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
               //       + ' | gsize ' + gsize + ' | salt ' + salt
               //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
@@ -61161,21 +59827,21 @@ var icn3d = (function (exports) {
               let bSurface =(type == 'pqrurl2' || type == 'phiurl2' || type == 'cubeurl2') ? true : false;
 
               if(type == 'pqrurl' || type == 'pqrurl2') {
-                  thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+                  await thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
               }
               else {
                   thisClass.PhiParser(url, type, contour, bSurface);
               }
-          }); // end of me.deferred = $.Deferred(function() {
+        //   }); // end of me.deferred = $.Deferred(function() {
 
-          return ic.deferredPhi.promise();
+        //   return ic.deferredPhi.promise();
         }
 
-        applyCommandDelphi(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandDelphi(command) { let ic = this.icn3d; ic.icn3dui;
           let thisClass = this;
 
           // chain functions together
-          ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
+        //   ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
                //me.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
                //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
 
@@ -61213,20 +59879,20 @@ var icn3d = (function (exports) {
 
               let bSurface =(type == 'surface') ? true : false;
 
-              thisClass.CalcPhi(gsize, salt, contour, bSurface);
-          }); // end of me.deferred = $.Deferred(function() {
+              await thisClass.CalcPhi(gsize, salt, contour, bSurface);
+        //   }); // end of me.deferred = $.Deferred(function() {
 
-          return ic.deferredDelphi.promise();
+        //   return ic.deferredDelphi.promise();
         }
 
-        loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
            let gsize = $("#" + ic.pre + "delphigsize").val();
            let salt = $("#" + ic.pre + "delphisalt").val();
            let contour =(type == 'delphi2') ? $("#" + ic.pre + "delphicontour2").val() : $("#" + ic.pre + "delphicontour").val();
 
            let bSurface =(type == 'delphi2') ? true: false;
 
-           this.CalcPhi(gsize, salt, contour, bSurface);
+           await this.CalcPhi(gsize, salt, contour, bSurface);
 
            let displayType =(type == 'delphi2') ? 'surface' : 'map';
 
@@ -61263,7 +59929,7 @@ var icn3d = (function (exports) {
            else {
              me.utilsCls.checkFileAPI();
              let reader = new FileReader();
-             reader.onload = function(e) { let ic = thisClass.icn3d;
+             reader.onload = async function(e) { let ic = thisClass.icn3d;
                let data = e.target.result; // or = reader.result;
 
                let gsize = 0, salt = 0;
@@ -61272,7 +59938,7 @@ var icn3d = (function (exports) {
 
                  gsize = $("#" + ic.pre + type + "gsize").val();
                  salt = $("#" + ic.pre + type + "salt").val();
-                 thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
+                 await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
                }
                else if(type == 'phi' || type == 'phi2') {
                  let bSurface =(type == 'phi2') ? true: false;
@@ -61310,7 +59976,7 @@ var icn3d = (function (exports) {
              }
            }
         }
-        loadPhiFileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
+        async loadPhiFileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
            let url;
            if(type == 'pqrurl' || type == 'phiurl' || type == 'cubeurl') {
                url = $("#" + ic.pre + type + "file").val();
@@ -61337,7 +60003,7 @@ var icn3d = (function (exports) {
                if(type == 'pqrurl' || type == 'pqrurl2') {
                    gsize = $("#" + ic.pre + type + "gsize").val();
                    salt = $("#" + ic.pre + type + "salt").val();
-                   this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+                   await this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
                }
                else {
                    this.PhiParser(url, type, contour, bSurface);
@@ -61365,7 +60031,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        applyDssp(bCalphaOnly, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+        async applyDssp(bCalphaOnly, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
           let thisClass = this;
 
           let calphaonly =(bCalphaOnly) ? '1' : '0';
@@ -61380,7 +60046,6 @@ var icn3d = (function (exports) {
             
           for(let i = 0, il = struArray.length; i < il; ++i) {
                let pdbStr = '';
-    ///           pdbStr += ic.saveFileCls.getPDBHeader(i);
 
                let atomHash = {};
                let chainidArray = ic.structures[struArray[i]];
@@ -61391,43 +60056,37 @@ var icn3d = (function (exports) {
 
                pdbStr += ic.saveFileCls.getAtomPDB(atomHash, undefined, true);
 
-               let dssp = $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data: {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': pdbStr},
-                  //dataType: 'jsonp',
-                  dataType: 'json',
-                  cache: true
-               });
+               let dataObj = {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': pdbStr};
+               let dssp = me.getAjaxPostPromise(url, dataObj);
 
                ajaxArray.push(dssp);
           }
 
-          //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-          //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-          $.when.apply(undefined, ajaxArray).then(function() {
-                let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
-                thisClass.parseDsspData(dataArray, struArray, bAppend);
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+                await thisClass.parseDsspData(dataArray, struArray, bAppend);
                 
-                ic.ParserUtilsCls.checkMemProteinAndRotate();
-          })
-          .fail(function() {
-              console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
+                await ic.ParserUtilsCls.checkMemProteinAndRotate();
+            }
+            catch(err) {
+                console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
 
-              ic.pdbParserCls.loadPdbDataRender(bAppend);
+                await ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-              if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
-          });
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
+            }
         }
 
-        parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d; ic.icn3dui;
+        async parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d; ic.icn3dui;
             //var dataArray =(struArray.length == 1) ? [data] : data;
 
             // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
             //var data2 = v2[0];
             for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                let ssHash = dataArray[index][0];
+                //let ssHash = dataArray[index][0];
+                let ssHash = dataArray[index].value;
 
                 if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
                   for(let chainNum in ic.chainsSeq) {
@@ -61533,10 +60192,10 @@ var icn3d = (function (exports) {
                 }
             }
 
-            ic.pdbParserCls.loadPdbDataRender(bAppend);
+            await ic.pdbParserCls.loadPdbDataRender(bAppend);
 
-            //if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-            if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
+            ///// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+            /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
         }
     }
 
@@ -61549,16 +60208,16 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        hideIgRefNum() { let ic = this.icn3d; ic.icn3dui;
+        async hideIgRefNum() { let ic = this.icn3d; ic.icn3dui;
             ic.bShowRefnum = false;
 
             ic.hAtoms = {};
             ic.bResetAnno = true;
-            ic.showAnnoCls.showAnnotations();
+            await ic.showAnnoCls.showAnnotations();
             ic.hlUpdateCls.updateHlAll();
         }
      
-        showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+        async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             if(Object.keys(ic.resid2refnum).length > 0) {
@@ -61566,14 +60225,14 @@ var icn3d = (function (exports) {
 
                 // open sequence view
                 ic.hAtomsRefnum = {};
-                ic.showAnnoCls.showAnnotations();
+                await ic.showAnnoCls.showAnnotations();
                 ic.annotationCls.setAnnoViewAndDisplay('detailed view');
             }
             else {
                 ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
 
                 if(ic.pdbDataArray) {
-                    thisClass.parseRefPdbData(ic.pdbDataArray);
+                    await thisClass.parseRefPdbData(ic.pdbDataArray);
                 }
                 else {
 
@@ -61582,30 +60241,25 @@ var icn3d = (function (exports) {
                         //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
                         let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
 
-                        let pdbAjax = $.ajax({
-                            url: urlpdb,
-                            type: 'GET',
-                            dataType: "text",
-                            cache: true
-                        });
+                        let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
 
                         pdbAjaxArray.push(pdbAjax);
                     }
 
-                    $.when.apply(undefined, pdbAjaxArray).then(function() {
-                        ic.pdbDataArray = (pdbAjaxArray.length == 1) ? [arguments] : Array.from(arguments);
-
-                        thisClass.parseRefPdbData(ic.pdbDataArray);
-                    })
-                    .fail(function() {
+                    let allPromise = Promise.allSettled(pdbAjaxArray);
+                    try {
+                        ic.pdbDataArray = await allPromise;
+                        await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    }
+                    catch(err) {
                         alert("Error in retrieveing reference PDB data...");
                         return;
-                    });
+                    }                
                 }
             }
         }
 
-        parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             let struArray = Object.keys(ic.structures);
@@ -61613,7 +60267,7 @@ var icn3d = (function (exports) {
             let ajaxArray = [];
             let domainidpairArray = [];
 
-            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+            me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
             ic.resid2domainid = {};
 
@@ -61663,18 +60317,13 @@ var icn3d = (function (exports) {
                         let domainid = chainid + '-' + k;
                         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                             let struct2 = "stru" + index;
-                            let pdb_query = dataArray[index][0];
+                            let pdb_query = dataArray[index].value; //[0];
 
                             let header = 'HEADER                                                        ' + struct2 + '\n';
                             pdb_query = header + pdb_query;
 
-                            let alignAjax = $.ajax({
-                                url: urltmalign,
-                                type: 'POST',
-                                data: {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]},
-                                dataType: 'json',
-                                cache: true
-                            });
+                            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                            let alignAjax = me.getAjaxPostPromise(url, dataObj);
 
                             ajaxArray.push(alignAjax);
                             
@@ -61684,21 +60333,20 @@ var icn3d = (function (exports) {
                 }
            }
 
-           //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-           //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-           $.when.apply(undefined, ajaxArray).then(function() {
-               let dataArray =(ajaxArray.length == 1) ? [arguments] : Array.from(arguments);
-               thisClass.parseAlignData(dataArray, domainidpairArray);
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
+                await thisClass.parseAlignData(dataArray, domainidpairArray);
 
-               if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
-           })
-           .fail(function() {
-               console.log("Error in aligning with TM-align...");
-               return;
-           });    
+                /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
+            }
+            catch(err) {
+                console.log("Error in aligning with TM-align...");
+                return;
+            }         
         }
 
-        parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d; ic.icn3dui;
+        async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d; ic.icn3dui;
             let thisClass = this;
 
             let tmscoreThreshold = 0.4; //0.5;
@@ -61708,7 +60356,7 @@ var icn3d = (function (exports) {
             ic.chainid2index = {};
             ic.domainid2ig2kabat = {};
             for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
-                let queryData = dataArray[i][0];
+                let queryData = dataArray[i].value; //[0];
                 if(queryData.length == 0) continue;
                 if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
 
@@ -61802,7 +60450,7 @@ var icn3d = (function (exports) {
 
                 // open sequence view
                 ic.hAtomsRefnum = {};
-                ic.showAnnoCls.showAnnotations();
+                await ic.showAnnoCls.showAnnotations();
                 ic.annotationCls.setAnnoViewAndDisplay('detailed view');
             }
             else {
@@ -61826,7 +60474,7 @@ var icn3d = (function (exports) {
             else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
         }
 
-        parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
+        async parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
             ic.bShowCustomRefnum = true;
 
             //refnum,11,12,,21,22
@@ -61888,7 +60536,7 @@ var icn3d = (function (exports) {
             }
 
             // open sequence view
-            ic.showAnnoCls.showAnnotations();
+            await ic.showAnnoCls.showAnnotations();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
      }
@@ -61902,29 +60550,18 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        applyCommandScapBase(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandScap(command) { let ic = this.icn3d; ic.icn3dui;
             let snp = command.substr(command.lastIndexOf(' ') + 1);
 
             if(command.indexOf('scap 3d') == 0) {
-                this.retrieveScap(snp);
+              await this.retrieveScap(snp);
             }
             else if(command.indexOf('scap interaction') == 0) {
-                this.retrieveScap(snp, true);
+              await this.retrieveScap(snp, true);
             }
             else if(command.indexOf('scap pdb') == 0) {
-                this.retrieveScap(snp, undefined, true);
+              await this.retrieveScap(snp, undefined, true);
             }
-        }
-
-        applyCommandScap(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredScap = $.Deferred(function() {
-             thisClass.applyCommandScapBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredScap.promise();
         }
 
         adjust2DWidth(id) { let ic = this.icn3d, me = ic.icn3dui;
@@ -61941,7 +60578,7 @@ var icn3d = (function (exports) {
              $("#" + id).dialog( "option", "position", position );
         }
 
-        retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;
+        async retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
@@ -61993,203 +60630,174 @@ var icn3d = (function (exports) {
             let pdbid = Object.keys(ic.structures)[0]; //Object.keys(ic.structures).toString();
             let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'v': '2'};
 
-            $.ajax({
-              url: url,
-              type: 'POST',
-              data : dataObj,
-              dataType: "text",
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                  let pos = data.indexOf('\n');
-                  let energy = data.substr(0, pos);
-                  let pdbData = data.substr(pos + 1);
-        console.log("free energy: " + energy + " kcal/mol");
+            let data;
+             
+            try {
+              data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, undefined, 'text');
 
-                  let bAddition = true;
-                  let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              let pos = data.indexOf('\n');
+              let energy = data.substr(0, pos);
+              let pdbData = data.substr(pos + 1);
+    console.log("free energy: " + energy + " kcal/mol");
 
-                  // the wild type is the reference
-                  for(let serial in hAtom1) {
-                      let atom = ic.atoms[serial];
-                      let chainid = atom.structure + '_' + atom.chain;
-                      let resid = chainid + '_' + atom.resi;
+              let bAddition = true;
+              let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-                      if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                      }
-                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+              // the wild type is the reference
+              for(let serial in hAtom1) {
+                  let atom = ic.atoms[serial];
+                  let chainid = atom.structure + '_' + atom.chain;
+                  let resid = chainid + '_' + atom.resi;
+
+                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
                   }
+                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+              }
 
-                  //ic.hAtoms = {};
-                  //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
-                  //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              //ic.hAtoms = {};
+              //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
+              //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-                  // get the mutant pdb
-                  let lines = pdbData.split('\n');
-                  let allChainResiHash = {};
-                  for (let i in lines) {
-                      let line = lines[i];
-                      let record = line.substr(0, 6);
-                      
-                      if (record === 'ATOM  ' || record === 'HETATM') {
-                          let chain = line.substr(20, 2).trim();
-                          if(chain === '') chain = 'A';
-          
-                          let resi = line.substr(22, 5).trim();
-                          let chainResi = chain + '_' + resi;
-                          
-                          if(chainResi2pdb.hasOwnProperty(chainResi)) {
-                              chainResi2pdb[chainResi] += line + '\n';
-                          }  
-
-                          allChainResiHash[chainResi] = 1;
-                      }
-                  }
-
-                  // get the full mutatnt PDB
-                  let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
-                  ic.hAtoms = {};
-                  let bMutation = true;
-                  ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
-                  //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              // get the mutant pdb
+              let lines = pdbData.split('\n');
+              let allChainResiHash = {};
+              for (let i in lines) {
+                  let line = lines[i];
+                  let record = line.substr(0, 6);
                   
-                  ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+                  if (record === 'ATOM  ' || record === 'HETATM') {
+                      let chain = line.substr(20, 2).trim();
+                      if(chain === '') chain = 'A';
+      
+                      let resi = line.substr(22, 5).trim();
+                      let chainResi = chain + '_' + resi;
+                      
+                      if(chainResi2pdb.hasOwnProperty(chainResi)) {
+                          chainResi2pdb[chainResi] += line + '\n';
+                      }  
+
+                      allChainResiHash[chainResi] = 1;
+                  }
+              }
+
+              // get the full mutatnt PDB
+              let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+              ic.hAtoms = {};
+              let bMutation = true;
+              ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
+              //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              
+              ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+              ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+              // get the mutant residues in the sphere
+              let hAtom2 = {};
+              for(let serial in ic.hAtoms) {
+                let atom = ic.atoms[serial];
+                let chainResi = atom.chain + '_' + atom.resi;
+                if(allChainResiHash.hasOwnProperty(chainResi)) {
+                  hAtom2[serial] = 1;
+                }
+              }
+
+              ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
+              //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
+              ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+              //ic.dAtoms = ic.hAtoms;
+
+              ic.transformCls.zoominSelection();
+              ic.setOptionCls.setStyle('proteins', 'stick');
+
+              //ic.opts['color'] = 'chain';
+              //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+              for(let serial in hAtom2) {
+              //for(let serial in allAtoms2) {
+                  let atom = ic.atoms[serial];
+
+                  if(!atom.het) {
+                      // use the same color as the wild type
+                      let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+                      let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+                      ic.atoms[serial].color = atomWT.color;
+                      ic.atomPrevColors[serial] = atomWT.color;
+                  }
+
+                  let chainid = atom.structure + '_' + atom.chain;
+                  let resid = chainid + '_' + atom.resi;
+                  let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
+                  }
+                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                  // use the wild type as reference
+
+                  if(snpResidArray.indexOf(residWT) != -1) {
+                      let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
+                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
+                  }
+              }
+
+              if(bPdb) {
+                  //let pdbStr = '';
+                  //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
+
+                  let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                  ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
+
+                  ic.drawCls.draw();
+              }
+              else {
+                  //var select = '.' + idArray[1] + ':' + idArray[2];
+                  //var name = 'snp_' + idArray[1] + '_' + idArray[2];
+                  let select = selectSpec;
+
+                  let name = 'snp_' + snpStr;
+                  await ic.selByCommCls.selectByCommand(select, name, name);
+                  ic.opts['color'] = 'atom';
                   ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
-                  // get the mutant residues in the sphere
-                  let hAtom2 = {};
-                  for(let serial in ic.hAtoms) {
-                    let atom = ic.atoms[serial];
-                    let chainResi = atom.chain + '_' + atom.resi;
-                    if(allChainResiHash.hasOwnProperty(chainResi)) {
-                      hAtom2[serial] = 1;
-                    }
+                  ic.viewInterPairsCls.clearInteractions();
+
+                  if(bInteraction) {
+                    //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
+
+                    let type = 'linegraph';
+                    await ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
+                    //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+
+                    thisClass.adjust2DWidth('dl_linegraph');
                   }
 
-                  ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
-                  //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
-                  ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                  //ic.dAtoms = ic.hAtoms;
+                  ic.hAtoms = ic.dAtoms;
+                  //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
 
-                  ic.transformCls.zoominSelection();
-                  ic.setOptionCls.setStyle('proteins', 'stick');
+                  ic.drawCls.draw();
 
-                  //ic.opts['color'] = 'chain';
-                  //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-                  for(let serial in hAtom2) {
-                  //for(let serial in allAtoms2) {
-                      let atom = ic.atoms[serial];
+                  if(!me.alertAlt) {
+                    me.alertAlt = true;
 
-                      if(!atom.het) {
-                          // use the same color as the wild type
-                          let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
-
-                          let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-
-                          ic.atoms[serial].color = atomWT.color;
-                          ic.atomPrevColors[serial] = atomWT.color;
-                      }
-
-                      let chainid = atom.structure + '_' + atom.chain;
-                      let resid = chainid + '_' + atom.resi;
-                      let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
-
-                      if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                      }
-                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
-                      // use the wild type as reference
-
-                      if(snpResidArray.indexOf(residWT) != -1) {
-                          let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
-                          ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
-                      }
+                    //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                    alert('Please press the letter "a" to alternate between wild type and mutant.');
                   }
+              }
 
-                  // ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtoms2);
-                  // ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-                  // //ic.dAtoms = ic.hAtoms;
-
-                  // ic.transformCls.zoominSelection();
-                  // ic.setOptionCls.setStyle('proteins', 'stick');
-
-                  if(bPdb) {
-                     //let pdbStr = '';
-                     //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
-
-                     let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                     ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
-
-                     ic.drawCls.draw();
-                  }
-                  else {
-                      //var select = '.' + idArray[1] + ':' + idArray[2];
-                      //var name = 'snp_' + idArray[1] + '_' + idArray[2];
-                      let select = selectSpec;
-
-                      let name = 'snp_' + snpStr;
-                      ic.selByCommCls.selectByCommand(select, name, name);
-                      ic.opts['color'] = 'atom';
-                      ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
-
-                      ic.viewInterPairsCls.clearInteractions();
-
-                      if(bInteraction) {
-                        //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
-
-                        let type = 'linegraph';
-                        ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
-                        //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
-
-                        thisClass.adjust2DWidth('dl_linegraph');
-                      }
-
-                      ic.hAtoms = ic.dAtoms;
-                      //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
-
-                      ic.drawCls.draw();
-
-                      if(!ic.alertAlt) {
-                        ic.alertAlt = true;
-
-                        //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
-                        alert('Please press the letter "a" to alternate between wild type and mutant.');
-                      }
-                  }
-
-                  $("#" + ic.pre + "mn2_alternateWrap").show();
-                  // expand the toolbar
-                  let id = ic.pre + 'selection';
-                  $("#" + id).show();
-                  //$("#" + id + "_expand").hide();
-                  //$("#" + id + "_shrink").show();
-
-                  if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-                }
+              $("#" + ic.pre + "mn2_alternateWrap").show();
+              // expand the toolbar
+              let id = ic.pre + 'selection';
+              $("#" + id).show();
+            }
+            catch(err) {
                 alert("There are some problems in predicting the side chain of the mutant...");
 
                 ic.ParserUtilsCls.hideLoading();
 
-                if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
+                /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
                 return;
-              }
-            });
-        }
+            }    }
     }
 
     /**
@@ -62201,285 +60809,256 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        applyCommandSymdBase(command) { let ic = this.icn3d; ic.icn3dui;
-            this.retrieveSymd();
+        async applyCommandSymd(command) { let ic = this.icn3d; ic.icn3dui;
+            await this.retrieveSymd();
         }
 
-        applyCommandSymd(command) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-          // chain functions together
-          ic.deferredSymd = $.Deferred(function() {
-             thisClass.applyCommandSymdBase(command);
-          }); // end of me.deferred = $.Deferred(function() {
+        async retrieveSymd() { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
 
-          return ic.deferredSymd.promise();
-        }
+            //var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+            let url = me.htmlCls.baseUrl + "symd/symd.cgi";
 
-        retrieveSymd() { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass = this;
+            let atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 
-           //var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-           let url = me.htmlCls.baseUrl + "symd/symd.cgi";
+            // just output C-alpha atoms
+            // the number of residues matters
+            //   atomHash = me.hashUtilsCls.intHash(atomHash, ic.calphas);
+            // just output proteins
+            atomHash = me.hashUtilsCls.intHash(atomHash, ic.proteins);
 
-           let atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+            let atomCnt = Object.keys(atomHash).length;
 
-           // just output C-alpha atoms
-           // the number of residues matters
-        //   atomHash = me.hashUtilsCls.intHash(atomHash, ic.calphas);
-           // just output proteins
-           atomHash = me.hashUtilsCls.intHash(atomHash, ic.proteins);
+            let residHash = {};
+            for(let serial in atomHash) {
+                let atom = ic.atoms[serial];
+                let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                residHash[resid] = 1;
+            }
 
-           let atomCnt = Object.keys(atomHash).length;
-
-           let residHash = {};
-           for(let serial in atomHash) {
-               let atom = ic.atoms[serial];
-               let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-               residHash[resid] = 1;
-           }
-
-           // the cgi took too long for structures with more than 10000 atoms
-           if(atomCnt > 10000) {
-               alert("The maximum number of allowed atoms is 10,000. Please try it again with smaller sets...");
-               return;
-           }
-
-           let pdbstr = '';
-    ///       pdbstr += ic.saveFileCls.getPDBHeader();
-           pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
-
-           let dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()};
-
-           $.ajax({
-              url: url,
-              type: 'POST',
-              data : dataObj,
-              dataType: "json",
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  //ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                  let symmetryArray = data.rcsb_struct_symmetry;
-
-                  let title = 'none';
-
-                  if(symmetryArray !== undefined) {
-                      if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-                          ic.rmsd_supr.rot;
-                          ic.rmsd_supr.trans1;
-                          ic.rmsd_supr.trans2;
-                      }
-
-                      //ic.symdHash = {}
-                      if(ic.symdArray === undefined) ic.symdArray = [];
-                      let order;
-                      for(let i = 0, il = symmetryArray.length; i < il; ++i) {
-                          if(symmetryArray[i].symbol == 'C1') continue;
-                          title = symmetryArray[i].symbol + " ";
-                          if(symmetryArray[i].kind == "Pseudo Symmetry") {
-                              title = symmetryArray[i].symbol + ' (pseudo)';
-                          }
-                          else if(symmetryArray[i].kind == "Global Symmetry") {
-                              title = symmetryArray[i].symbol + ' (global)';
-                          }
-                          else if(symmetryArray[i].kind == "Local Symmetry") {
-                              title = symmetryArray[i].symbol + ' (local)';
-                          }
-
-                          let rotation_axes = symmetryArray[i].rotation_axes;
-                          let axesArray = [];
-                          for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
-                              let tmpArray = [];
-                              let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
-                              let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
-
-                              order = rotation_axes[j].order;
-
-                              // apply matrix for each atom
-                              //if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-                              //    start = ic.surfaceCls.transformMemPro(start, rot, centerFrom, centerTo);
-                              //    end = ic.surfaceCls.transformMemPro(end, rot, centerFrom, centerTo);
-                              //}
-
-                              tmpArray.push(start);
-                              tmpArray.push(end);
-
-                              // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
-                              let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
-                              let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
-                              tmpArray.push(colorAxis);
-                              tmpArray.push(colorPolygon);
-
-                              tmpArray.push(rotation_axes[j].order);
-
-                              // selected chain
-                              tmpArray.push('selection');
-
-                              axesArray.push(tmpArray);
-                          }
-                          let symdHash = {};
-                          symdHash[title] = axesArray;
-                          ic.symdArray.push(symdHash);
-                      }
-
-                      if(ic.symdArray.length == 0) {
-                          $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                          me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
-                      }
-                      else {
-                          let ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
-                          let nres = data.nres;
-                          let shift = data.shift;
-                          let rmsd = data.rmsd;
-
-                          let oriResidArray = Object.keys(residHash);
-                          let residArrayHash1 = {}, residArrayHash2 = {};
-                          let residArray1 = [], residArray2 = [];
-                          let index1 = 0, index2 = 0;
-                          let chainCntHash = {};
-                          for(let i = 0, il = ori_permSeq[0].length; i < il; ++i) {
-                              let resn1 = ori_permSeq[0][i];
-                              let resn2 = ori_permSeq[1][i];
-
-                              if(resn1 != '-') {
-                                  if(resn1 == resn1.toUpperCase()) { // aligned
-                                     residArrayHash1[oriResidArray[index1]] = 1;
-
-                                     let idArray1 = me.utilsCls.getIdArray(oriResidArray[index1]);
-                                     residArray1.push(resn1 + ' $' + idArray1[0] + '.' + idArray1[1] + ':' + idArray1[2]);
-
-                                     let chainid = idArray1[0] + '_' + idArray1[1];
-                                     if(!chainCntHash.hasOwnProperty(chainid)) {
-                                         chainCntHash[chainid] = [];
-                                     }
-
-                                     chainCntHash[chainid].push(residArray1.length - 1); // the position in the array
-                                  }
-                                  ++index1;
-                              }
-
-                              if(resn2 != '-') {
-                                  if(resn2 == resn2.toUpperCase()) { // aligned
-                                     let oriIndex =(index2 + shift + nres) % nres;
-                                     residArrayHash2[oriResidArray[oriIndex]] = 1;
-
-                                     let idArray2 = me.utilsCls.getIdArray(oriResidArray[oriIndex]);
-                                     residArray2.push(resn2 + ' $' + idArray2[0] + '.' + idArray2[1] + ':' + idArray2[2]);
-                                  }
-                                  ++index2;
-                              }
-                          }
-
-                          let residArrayHashFinal1 = {}, residArrayHashFinal2 = {};
-                          let residArrayFinal1 = [], residArrayFinal2 = [];
-
-                          let bOnechain = false;
-                          if(Object.keys(chainCntHash).length == 1) {
-                              bOnechain = true;
-                              let nResUnit = parseInt(residArray1.length / order + 0.5);
-                              let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
-                              for(let i = 0; i < nResUnit; ++i) {
-                                if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[i])) { // do not appear in both original and permuted
-                                  residArrayFinal1.push(residArray1[i]);
-                                  residArrayFinal2.push(residArray2[i]);
-                                  residArrayHashFinal1[residArrayFromHash1[i]] = 1;
-                                  residArrayHashFinal2[residArrayFromHash2[i]] = 1;
-                                }
-                              }
-                          }
-                          else {
-                              let selChainid, selCnt = 0;
-                              for(let chainid in chainCntHash) {
-                                  if(chainCntHash[chainid].length > selCnt) {
-                                      selCnt = chainCntHash[chainid].length;
-                                      selChainid = chainid;
-                                  }
-                              }
-
-                              let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
-                              for(let i = 0, il = chainCntHash[selChainid].length; i < il; ++i) {
-                                let pos = chainCntHash[selChainid][i];
-                                if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[pos])) { // do not appear in both original and permuted
-                                  residArrayFinal1.push(residArray1[pos]);
-                                  residArrayFinal2.push(residArray2[pos]);
-                                  residArrayHashFinal1[residArrayFromHash1[pos]] = 1;
-                                  residArrayHashFinal2[residArrayFromHash2[pos]] = 1;
-                                }
-                              }
-                          }
-
-                          let html = '<br>';
-                          html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The RMSD is " + rmsd + " angstrom. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br>";
-
-                          $("#" + ic.pre + "symd_info").html(html);
-
-                          thisClass.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
-
-                          let bShowHighlight = false;
-                          let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
-
-                          html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
-
-                          $("#" + ic.pre + "dl_sequence2").html(html);
-                          $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-                          me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
-
-                          let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
-
-                          let name = 'symOri' + numDef;
-                          ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
-                          ic.selectionCls.updateSelectionNameDesc();
-                          me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
-
-                          name = 'symPerm' + numDef;
-                          ic.selectionCls.selectResidueList(residArrayHashFinal2, name, name);
-                          ic.selectionCls.updateSelectionNameDesc();
-                          me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
-
-                          name = 'symBoth' + numDef;
-                          residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
-                          ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
-                          ic.selectionCls.updateSelectionNameDesc();
-                          me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
-
-                          //ic.hlUpdateCls.toggleHighlight();
-                      }
-                  }
-                  else {
-                      $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                      me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
-                  }
-
-                   //var title = $("#" + ic.pre + "selectSymd" ).val();
-                   ic.symdtitle =(title === 'none') ? undefined : title;
-                   ic.drawCls.draw();
-
-                  if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
-
-                me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
-
-                ic.ParserUtilsCls.hideLoading();
-
-                if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
+            // the cgi took too long for structures with more than 10000 atoms
+            if(atomCnt > 10000) {
+                alert("The maximum number of allowed atoms is 10,000. Please try it again with smaller sets...");
                 return;
-              }
-           });
+            }
+
+            let pdbstr = '';
+            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
+
+            let dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()};
+            let data;
+            try {
+                data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                let symmetryArray = data.rcsb_struct_symmetry;
+                let rot, centerFrom, centerTo;
+
+                let title = 'none';
+
+                if(symmetryArray !== undefined) {
+                    if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                        rot = ic.rmsd_supr.rot;
+                        centerFrom = ic.rmsd_supr.trans1;
+                        centerTo = ic.rmsd_supr.trans2;
+                    }
+
+                    //ic.symdHash = {}
+                    if(ic.symdArray === undefined) ic.symdArray = [];
+                    let order;
+                    for(let i = 0, il = symmetryArray.length; i < il; ++i) {
+                        if(symmetryArray[i].symbol == 'C1') continue;
+                        title = symmetryArray[i].symbol + " ";
+                        if(symmetryArray[i].kind == "Pseudo Symmetry") {
+                            title = symmetryArray[i].symbol + ' (pseudo)';
+                        }
+                        else if(symmetryArray[i].kind == "Global Symmetry") {
+                            title = symmetryArray[i].symbol + ' (global)';
+                        }
+                        else if(symmetryArray[i].kind == "Local Symmetry") {
+                            title = symmetryArray[i].symbol + ' (local)';
+                        }
+
+                        let rotation_axes = symmetryArray[i].rotation_axes;
+                        let axesArray = [];
+                        for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                            let tmpArray = [];
+                            let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                            let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+
+                            order = rotation_axes[j].order;
+
+                            // apply matrix for each atom
+                            //if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                            //    start = ic.surfaceCls.transformMemPro(start, rot, centerFrom, centerTo);
+                            //    end = ic.surfaceCls.transformMemPro(end, rot, centerFrom, centerTo);
+                            //}
+
+                            tmpArray.push(start);
+                            tmpArray.push(end);
+
+                            // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+                            let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                            let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
+                            tmpArray.push(colorAxis);
+                            tmpArray.push(colorPolygon);
+
+                            tmpArray.push(rotation_axes[j].order);
+
+                            // selected chain
+                            tmpArray.push('selection');
+
+                            axesArray.push(tmpArray);
+                        }
+                        let symdHash = {};
+                        symdHash[title] = axesArray;
+                        ic.symdArray.push(symdHash);
+                    }
+
+                    if(ic.symdArray.length == 0) {
+                        $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
+                        me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                    }
+                    else {
+                        let ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
+                        let nres = data.nres;
+                        let shift = data.shift;
+                        let rmsd = data.rmsd;
+
+                        let oriResidArray = Object.keys(residHash);
+                        let residArrayHash1 = {}, residArrayHash2 = {};
+                        let residArray1 = [], residArray2 = [];
+                        let index1 = 0, index2 = 0;
+                        let chainCntHash = {};
+                        for(let i = 0, il = ori_permSeq[0].length; i < il; ++i) {
+                            let resn1 = ori_permSeq[0][i];
+                            let resn2 = ori_permSeq[1][i];
+
+                            if(resn1 != '-') {
+                                if(resn1 == resn1.toUpperCase()) { // aligned
+                                    residArrayHash1[oriResidArray[index1]] = 1;
+
+                                    let idArray1 = me.utilsCls.getIdArray(oriResidArray[index1]);
+                                    residArray1.push(resn1 + ' $' + idArray1[0] + '.' + idArray1[1] + ':' + idArray1[2]);
+
+                                    let chainid = idArray1[0] + '_' + idArray1[1];
+                                    if(!chainCntHash.hasOwnProperty(chainid)) {
+                                        chainCntHash[chainid] = [];
+                                    }
+
+                                    chainCntHash[chainid].push(residArray1.length - 1); // the position in the array
+                                }
+                                ++index1;
+                            }
+
+                            if(resn2 != '-') {
+                                if(resn2 == resn2.toUpperCase()) { // aligned
+                                    let oriIndex =(index2 + shift + nres) % nres;
+                                    residArrayHash2[oriResidArray[oriIndex]] = 1;
+
+                                    let idArray2 = me.utilsCls.getIdArray(oriResidArray[oriIndex]);
+                                    residArray2.push(resn2 + ' $' + idArray2[0] + '.' + idArray2[1] + ':' + idArray2[2]);
+                                }
+                                ++index2;
+                            }
+                        }
+
+                        let residArrayHashFinal1 = {}, residArrayHashFinal2 = {};
+                        let residArrayFinal1 = [], residArrayFinal2 = [];
+
+                        let bOnechain = false;
+                        if(Object.keys(chainCntHash).length == 1) {
+                            bOnechain = true;
+                            let nResUnit = parseInt(residArray1.length / order + 0.5);
+                            let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                            for(let i = 0; i < nResUnit; ++i) {
+                            if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[i])) { // do not appear in both original and permuted
+                                residArrayFinal1.push(residArray1[i]);
+                                residArrayFinal2.push(residArray2[i]);
+                                residArrayHashFinal1[residArrayFromHash1[i]] = 1;
+                                residArrayHashFinal2[residArrayFromHash2[i]] = 1;
+                            }
+                            }
+                        }
+                        else {
+                            let selChainid, selCnt = 0;
+                            for(let chainid in chainCntHash) {
+                                if(chainCntHash[chainid].length > selCnt) {
+                                    selCnt = chainCntHash[chainid].length;
+                                    selChainid = chainid;
+                                }
+                            }
+
+                            let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                            for(let i = 0, il = chainCntHash[selChainid].length; i < il; ++i) {
+                            let pos = chainCntHash[selChainid][i];
+                            if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[pos])) { // do not appear in both original and permuted
+                                residArrayFinal1.push(residArray1[pos]);
+                                residArrayFinal2.push(residArray2[pos]);
+                                residArrayHashFinal1[residArrayFromHash1[pos]] = 1;
+                                residArrayHashFinal2[residArrayFromHash2[pos]] = 1;
+                            }
+                            }
+                        }
+
+                        let html = '<br>';
+                        html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The RMSD is " + rmsd + " angstrom. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br>";
+
+                        $("#" + ic.pre + "symd_info").html(html);
+
+                        thisClass.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
+
+                        let bShowHighlight = false;
+                        let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
+
+                        html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
+
+                        $("#" + ic.pre + "dl_sequence2").html(html);
+                        $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+                        me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
+
+                        let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
+
+                        let name = 'symOri' + numDef;
+                        ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
+                        ic.selectionCls.updateSelectionNameDesc();
+                        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+
+                        name = 'symPerm' + numDef;
+                        ic.selectionCls.selectResidueList(residArrayHashFinal2, name, name);
+                        ic.selectionCls.updateSelectionNameDesc();
+                        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
+
+                        name = 'symBoth' + numDef;
+                        residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
+                        ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
+                        ic.selectionCls.updateSelectionNameDesc();
+                        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+
+                        //ic.hlUpdateCls.toggleHighlight();
+                    }
+                }
+                else {
+                    $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
+                    me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                }
+
+                //var title = $("#" + ic.pre + "selectSymd" ).val();
+                ic.symdtitle =(title === 'none') ? undefined : title;
+                ic.drawCls.draw();
+
+                /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
+            }
+            catch(err) {
+            $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
+
+            me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+
+            ic.ParserUtilsCls.hideLoading();
+
+            /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
+            return;
+            }
         }
 
         getResObj(resn_resid) { let ic = this.icn3d; ic.icn3dui;
@@ -62614,112 +61193,101 @@ var icn3d = (function (exports) {
         */
         }
 
-        retrieveSymmetry(pdbid) { let ic = this.icn3d, me = ic.icn3dui;
-           let thisClass =this;
-
-           let url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-
-           $.ajax({
-              url: url,
-              dataType: "json",
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                  let symmetryArray = data.rcsb_struct_symmetry;
-                  let rot, centerFrom, centerTo;
-
-                  if(symmetryArray !== undefined) {
-                      if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-                          rot = ic.rmsd_supr.rot;
-                          centerFrom = ic.rmsd_supr.trans1;
-                          centerTo = ic.rmsd_supr.trans2;
-                      }
-
-                      ic.symmetryHash = {};
-                      for(let i = 0, il = symmetryArray.length; i < il; ++i) {
-                          if(symmetryArray[i].symbol == 'C1') continue;
-                          let title = 'no title';
-                          if(symmetryArray[i].kind == "Pseudo Symmetry") {
-                              title = symmetryArray[i].symbol + ' (pseudo)';
-                          }
-                          else if(symmetryArray[i].kind == "Global Symmetry") {
-                              title = symmetryArray[i].symbol + ' (global)';
-                          }
-                          else if(symmetryArray[i].kind == "Local Symmetry") {
-                              title = symmetryArray[i].symbol + ' (local)';
-                          }
-
-                          let rotation_axes = symmetryArray[i].rotation_axes;
-                          let axesArray = [];
-                          for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
-                              let tmpArray = [];
-                              let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
-                              let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
-
-                              // apply matrix for each atom
-                              if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-                                  start = ic.surfaceCls.transformMemPro(start, rot, centerFrom, centerTo);
-                                  end = ic.surfaceCls.transformMemPro(end, rot, centerFrom, centerTo);
-                              }
-
-                              tmpArray.push(start);
-                              tmpArray.push(end);
-
-                              // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
-                              let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
-                              let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
-                              tmpArray.push(colorAxis);
-                              tmpArray.push(colorPolygon);
-
-                              tmpArray.push(rotation_axes[j].order);
-
-                              // selected chain
-                              tmpArray.push(symmetryArray[i].clusters[0].members[0].asym_id);
-
-                              axesArray.push(tmpArray);
-                          }
-
-                          ic.symmetryHash[title] = axesArray;
-                      }
-
-                      if(Object.keys(ic.symmetryHash).length == 0) {
-                          $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
-                      }
-                      else {
-                          let html = "<option value='none'>None</option>", index = 0;
-                          for(let title in ic.symmetryHash) {
-                              let selected =(index == 0) ? 'selected' : '';
-                              html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
-                              ++index;
-                          }
-
-                          $("#" + ic.pre + "selectSymmetry").html(html);
-                      }
-                  }
-                  else {
-                      $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
-                  }
-
-                  me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
-
-                  if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
+        async retrieveSymmetry(pdbid) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass =this;
+            
+            let data;
+            let url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+            try {
+                data = await me.getAjaxPromise(url, 'json', false);
+            }
+            catch(err) {
                 $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
 
                 me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
 
-                if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
+                /// if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
                 return;
-              }
-           });
+            }
+
+            let symmetryArray = data.rcsb_struct_symmetry;
+            let rot, centerFrom, centerTo;
+
+            if(symmetryArray !== undefined) {
+                if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                    rot = ic.rmsd_supr.rot;
+                    centerFrom = ic.rmsd_supr.trans1;
+                    centerTo = ic.rmsd_supr.trans2;
+                }
+
+                ic.symmetryHash = {};
+                for(let i = 0, il = symmetryArray.length; i < il; ++i) {
+                    if(symmetryArray[i].symbol == 'C1') continue;
+                    let title = 'no title';
+                    if(symmetryArray[i].kind == "Pseudo Symmetry") {
+                        title = symmetryArray[i].symbol + ' (pseudo)';
+                    }
+                    else if(symmetryArray[i].kind == "Global Symmetry") {
+                        title = symmetryArray[i].symbol + ' (global)';
+                    }
+                    else if(symmetryArray[i].kind == "Local Symmetry") {
+                        title = symmetryArray[i].symbol + ' (local)';
+                    }
+
+                    let rotation_axes = symmetryArray[i].rotation_axes;
+                    let axesArray = [];
+                    for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                        let tmpArray = [];
+                        let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                        let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+
+                        // apply matrix for each atom
+                        if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                            start = ic.surfaceCls.transformMemPro(start, rot, centerFrom, centerTo);
+                            end = ic.surfaceCls.transformMemPro(end, rot, centerFrom, centerTo);
+                        }
+
+                        tmpArray.push(start);
+                        tmpArray.push(end);
+
+                        // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+                        let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                        let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
+                        tmpArray.push(colorAxis);
+                        tmpArray.push(colorPolygon);
+
+                        tmpArray.push(rotation_axes[j].order);
+
+                        // selected chain
+                        tmpArray.push(symmetryArray[i].clusters[0].members[0].asym_id);
+
+                        axesArray.push(tmpArray);
+                    }
+
+                    ic.symmetryHash[title] = axesArray;
+                }
+
+                if(Object.keys(ic.symmetryHash).length == 0) {
+                    $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+                }
+                else {
+                    let html = "<option value='none'>None</option>", index = 0;
+                    for(let title in ic.symmetryHash) {
+                        let selected =(index == 0) ? 'selected' : '';
+                        html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
+                        ++index;
+                    }
+
+                    $("#" + ic.pre + "selectSymmetry").html(html);
+                }
+            }
+            else {
+                $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+            }
+
+            me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
+
+            /// if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
         }
 
         getPolygonColor(symbol) { let ic = this.icn3d, me = ic.icn3dui;
@@ -64374,13 +62942,10 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        draw2Dcartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
-            me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
-            this.draw2Dcartoon_base(type);
-        }
-
-        draw2Dcartoon_base(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
+        async draw2Dcartoon(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
+
+            me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
 
             ic.cartoon2dType = type;
 
@@ -64391,21 +62956,27 @@ var icn3d = (function (exports) {
                 $("#" + me.svgid_ct).html(html);
             }
             else {
+    /*            
                 if(type == 'domain' && !ic.chainid2pssmid) {
-                    $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
-                       ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-                       //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-                       let html = thisClass.getCartoonSvg(type, ic.graphStr);
-                       $("#" + me.svgid_ct).html(html);
-                       thisClass.setEventsForCartoon2d();
+                    //$.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
+                        await thisClass.getNodesLinksForSetCartoon(type);
 
-                       me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+                        ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+                        //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                        let html = thisClass.getCartoonSvg(type, ic.graphStr);
+                        $("#" + me.svgid_ct).html(html);
+                        thisClass.setEventsForCartoon2d();
 
-                       if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
-                    });
+                        me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+
+                        /// if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
+                    //});
                 }
                 else {
-                    this.getNodesLinksForSetCartoonBase(type);
+    */               
+                    //await this.getNodesLinksForSetCartoonBase(type);
+                    await this.getNodesLinksForSetCartoon(type);
+
                     ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
 
                     //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
@@ -64415,7 +62986,7 @@ var icn3d = (function (exports) {
                     thisClass.setEventsForCartoon2d();
 
                     me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
-                }
+    //            }
             }
         }
 
@@ -64740,16 +63311,9 @@ var icn3d = (function (exports) {
            return resStr;
         }
 
-        getNodesLinksForSetCartoon(type) { let ic = this.icn3d; ic.icn3dui;
-          let thisClass = this;
-
-          // chain functions together
-          ic.deferredCartoonData = $.Deferred(function() {
-              thisClass.getNodesLinksForSetCartoonBase(type);
-          });
-
-          return ic.deferredCartoonData.promise();
-        }
+        // async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+        //   await this.getNodesLinksForSetCartoonBase(type);
+        // }
 
         projectTo2d(v3) { let ic = this.icn3d, me = ic.icn3dui;
             let v2 = v3.project( ic.cam );
@@ -64769,7 +63333,8 @@ var icn3d = (function (exports) {
             return realV3;
         }
 
-        getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
+        //async getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
+        async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
            let thisClass = this;
 
            let nodeArray = [], linkArray = [];
@@ -64861,18 +63426,27 @@ var icn3d = (function (exports) {
                ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
            }
            else if(type == 'domain') {
+    /*
                if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
-                    $.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
-                       thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-                       if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
-                       return;
-                    });
+                    //$.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
+                        await ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations');
+                        thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
+                        /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+                        //return;
+                    //});
                }
                else {
                    thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-                   if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
-                   return;
+                   /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+                   //return;
                }
+    */
+
+                if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
+                    await ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations');
+                }
+
+                thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
            }
            else if(type == 'secondary') {
                ic.resi2resirange = {};
@@ -64995,7 +63569,7 @@ var icn3d = (function (exports) {
                ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
            }
 
-           if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+           /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
         }
 
         getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -65051,8 +63625,8 @@ var icn3d = (function (exports) {
 
                    ic.hAtoms = {};
                    for(let j = 0, jl = fromArray.length; j < jl; ++j) {
-                       let resiStart = fromArray[j] + 1;
-                       let resiEnd = toArray[j] + 1;
+                       let resiStart = parseInt(fromArray[j]) + 1;
+                       let resiEnd = parseInt(toArray[j]) + 1;
 
                        for(let k = resiStart; k <= resiEnd; ++k) {
                            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[chainid + '_' + k]);
@@ -65157,28 +63731,28 @@ var icn3d = (function (exports) {
         click2Dcartoon() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            me.myEventCls.onIds("#" + me.pre + "2dctn_chain", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "2dctn_chain", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                thisClass.initCartoonSvg();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.cartoon2dCls.draw2Dcartoon('chain');
+               await ic.cartoon2dCls.draw2Dcartoon('chain');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "2dctn_domain", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "2dctn_domain", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                thisClass.initCartoonSvg();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.cartoon2dCls.draw2Dcartoon('domain');
+               await ic.cartoon2dCls.draw2Dcartoon('domain');
             });
 
-            me.myEventCls.onIds("#" + me.pre + "2dctn_secondary", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "2dctn_secondary", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                thisClass.initCartoonSvg();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.cartoon2dCls.draw2Dcartoon('secondary');
+               await ic.cartoon2dCls.draw2Dcartoon('secondary');
             });
 
             $(document).on("click", "#" + ic.pre + "dl_2dctn .icn3d-ctnode", function(e) { let ic = thisClass.icn3d;
@@ -65381,7 +63955,7 @@ var icn3d = (function (exports) {
         }
 
         //Go back one step. Basically the commands are sequentially executed, but with one less step.
-        back() {var ic = this.icn3d; ic.icn3dui;
+        async back() {var ic = this.icn3d; ic.icn3dui;
           ic.backForward = true;
           ic.STATENUMBER--;
           // do not add to the array ic.commands
@@ -65392,7 +63966,7 @@ var icn3d = (function (exports) {
             ic.STATENUMBER = 1;
           }
           else {
-            ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
+            await ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
           }
           ic.setStyleCls.adjustIcon();
           ic.bAddCommands = true;
@@ -65400,7 +63974,7 @@ var icn3d = (function (exports) {
         }
 
         //Go forward one step. Basically the commands are sequentially executed, but with one more step.
-        forward() {var ic = this.icn3d; ic.icn3dui;
+        async forward() {var ic = this.icn3d; ic.icn3dui;
           ic.backForward = true;
           ic.STATENUMBER++;
           // do not add to the array ic.commands
@@ -65411,30 +63985,30 @@ var icn3d = (function (exports) {
             ic.STATENUMBER = ic.commands.length;
           }
           else {
-            ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
+            await ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
           }
           ic.setStyleCls.adjustIcon();
           ic.bAddCommands = true;
           ic.bAddLogs = true;
         }
 
-        replayon() {var ic = this.icn3d; ic.icn3dui;
+        async replayon() {var ic = this.icn3d; ic.icn3dui;
           ic.CURRENTNUMBER = 0;
           ic.bReplay = 1;
           $("#" + ic.pre + "replay").show();
 
           if(ic.commands.length > 0) {
-              ic.loadScriptCls.replayFirstStep(ic.CURRENTNUMBER);
+              await ic.loadScriptCls.replayFirstStep(ic.CURRENTNUMBER);
 
               //ic.resizeCanvasCls.closeDialogs();
           }
         }
-        replayoff() {var ic = this.icn3d; ic.icn3dui;
+        async replayoff() {var ic = this.icn3d; ic.icn3dui;
             ic.bReplay = 0;
             $("#" + ic.pre + "replay").hide();
             // replay all steps
             ++ic.CURRENTNUMBER;
-            ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
+            await ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
         }
 
         closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
@@ -65447,7 +64021,7 @@ var icn3d = (function (exports) {
                 let item = itemArray[i];
                 if(!me.cfg.notebook) {
                     if($('#' + ic.pre + item).hasClass('ui-dialog-content') && $('#' + ic.pre + item).dialog( 'isOpen' )) {
-                        $('#' + ic.pre + item).dialog( 'close' );
+                        $('#' + ic.pre + item).dialog( 'close' ).remove();
                     }
                 }
                 else {
@@ -66091,7 +64665,7 @@ var icn3d = (function (exports) {
                     if(atom.ssend) {
                         if(atom.ss == 'helix') {
                             bHelixEnd = true;
-                            let helixLen = parseInt(atom.resi) - parseInt(prevResi);
+                            let helixLen = ic.resid2ncbi[atom.resi] - ic.resid2ncbi[prevResi];
                             let helixType = 1;
                             if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                                 + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
@@ -66577,93 +65151,102 @@ var icn3d = (function (exports) {
 
         //Generate a URL to capture the current state and open it in a new window. Basically the state
         //file (the comand history) is concatenated in the URL to show the current state.
-        shareLink(bPngHtml, bPngOnly) {var ic = this.icn3d, me = ic.icn3dui;
-               let url = this.shareLinkUrl();
-               let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-               if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
-               //var inputid =(ic.inputid) ? ic.inputid : "custom";
-               let inputid = Object.keys(ic.structures).join('_');
-               if(inputid == 'stru') {
-                   if(ic.filename) {
-                       inputid = ic.filename;
-                   }
-                   else if(ic.inputid) {
-                       inputid = ic.inputid;
-                   }
-               }
+        async shareLink(bPngHtml, bPngOnly) { let ic = this.icn3d, me = ic.icn3dui;
+            let url = this.shareLinkUrl();
+            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+            //var inputid =(ic.inputid) ? ic.inputid : "custom";
+            let inputid = Object.keys(ic.structures).join('_');
+            if(inputid == 'stru') {
+                if(ic.filename) {
+                    inputid = ic.filename;
+                }
+                else if(ic.inputid) {
+                    inputid = ic.inputid;
+                }
+            }
 
-               if(!bPngHtml) {
-                   if(ic.bInputfile && !ic.bInputUrlfile) {
-                       alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
-                       return;
-                   }
-                   if(bTooLong) {
-                       alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
-                       return;
-                   }
-                   me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
-               }
-               else {
-                   if(bPngOnly || ic.bInputfile || bTooLong) {
-                       ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
-                       return;
-                   }
-               }
-               //https://firebase.google.com/docs/dynamic-links/rest
-               //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
-               let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
-               $.ajax({
-                  url: fdlUrl,
-                  type: 'POST',
-                  //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + url, "suffix": {"option": "SHORT"}},
-                  //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
-                  data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
-                  dataType: 'json',
-                  success: function(data) {
-                    let shorturl = 'Problem in getting shortened URL';
-                    if(data.shortLink !== undefined) {
-                        shorturl = data.shortLink;
-                        if(bPngHtml) { // save png and corresponding html
-                            let strArray = shorturl.split("/");
-                            let shortName = strArray[strArray.length - 1];
-                            ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
-                            let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                            text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
-                            text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
-                            text += '<!--Start of your comments==================-->\n';
-                            let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
-                            text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
-                            text += '<!--End of your comments====================-->\n';
-                            text += '</a>';
-                            text += '</div>\n\n';
-                            ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
-                        }
-                    }
-                    if(bPngHtml && data.shortLink === undefined) {
-                        ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
-                    }
-                    //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
-                    let urlArray = shorturl.split('page.link/');
-                    //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
-                    // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
-                    // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
-                    if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
-                    $("#" + ic.pre + "ori_url").val(url);
-                    $("#" + ic.pre + "short_url").val(shorturl);
-                    $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                    if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    let shorturl = 'Problem in getting shortened URL';
-                    $("#" + ic.pre + "ori_url").val(url);
-                    $("#" + ic.pre + "short_url").val(shorturl);
-                    $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                    if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
-                  }
-               });
+            if(!bPngHtml) {
+                if(ic.bInputfile && !ic.bInputUrlfile) {
+                    alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+                    return;
+                }
+                if(bTooLong) {
+                    alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
+                    return;
+                }
+                me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
+            }
+            else {
+                if(bPngOnly || ic.bInputfile || bTooLong) {
+                    ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+                    return;
+                }
+            }
+
+            let data = await this.getShareLinkPrms(url, bPngHtml);
+
+            let shorturl = 'Problem in getting shortened URL';
+            if(data.shortLink !== undefined) {
+                shorturl = data.shortLink;
+                if(bPngHtml) { // save png and corresponding html
+                    let strArray = shorturl.split("/");
+                    let shortName = strArray[strArray.length - 1];
+                    ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
+                    let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
+                    text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
+                    text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
+                    text += '<!--Start of your comments==================-->\n';
+                    let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
+                    text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
+                    text += '<!--End of your comments====================-->\n';
+                    text += '</a>';
+                    text += '</div>\n\n';
+                    ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
+                }
+            }
+            if(bPngHtml && data.shortLink === undefined) {
+                ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+            }
+            //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
+            let urlArray = shorturl.split('page.link/');
+            //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
+            // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+            // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
+            if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+            $("#" + ic.pre + "ori_url").val(url);
+            $("#" + ic.pre + "short_url").val(shorturl);
+            $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+            if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
         }
 
-        shareLinkUrl(bAllCommands) {var ic = this.icn3d, me = ic.icn3dui;
+        getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
+            //https://firebase.google.com/docs/dynamic-links/rest
+            //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
+            let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                    url: fdlUrl,
+                    type: 'POST',
+                    //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + url, "suffix": {"option": "SHORT"}},
+                    //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
+                    data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
+                    dataType: 'json',
+                    success: function(data) {
+                        resolve(data);
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                        let shorturl = 'Problem in getting shortened URL';
+                        $("#" + ic.pre + "ori_url").val(url);
+                        $("#" + ic.pre + "short_url").val(shorturl);
+                        $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+                        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                    }
+                });
+            });
+        }
+
+        shareLinkUrl(bAllCommands) { let ic = this.icn3d, me = ic.icn3dui;
                let url = me.htmlCls.baseUrl + "icn3d/full.html?";
                if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
@@ -66865,7 +65448,7 @@ var icn3d = (function (exports) {
                return url;
         }
 
-        getPngText() {var ic = this.icn3d; ic.icn3dui;
+        getPngText() { let ic = this.icn3d; ic.icn3dui;
             let url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
             let bAllCommands = true;
 
@@ -67185,7 +65768,7 @@ var icn3d = (function (exports) {
                         residueid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
                         if(ic.secondaries[residueid] == 'c' || ic.secondaries[residueid] == 'E' || ic.secondaries[residueid] == 'H') {
                             // add every third residue
-                            if(coilCnt % 3 == 0 || ic.chainsSeq[chainid][j].resi != parseInt(prevResi) + 1) {
+                            if(coilCnt % 3 == 0 || ic.resid2ncbi[ic.chainsSeq[chainid][j].resi] != ic.resid2ncbi[prevResi] + 1) {
                                 if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
                             }
 
@@ -67224,7 +65807,9 @@ var icn3d = (function (exports) {
                         bProtein = true;
 
                         // remove the previous, current and the next residues, chemicals, and ions from "sphere"
-                        let resi = parseInt(residueid.substr(residueid.lastIndexOf('_') + 1));
+                        //let resi = parseInt(residueid.substr(residueid.lastIndexOf('_') + 1));
+                        let chainid = residueid.substr(0, residueid.lastIndexOf('_'));
+                        let resi = ic.ParserUtilsCls.getResiNCBI(chainid, residueid.substr(residueid.lastIndexOf('_') + 1));
 
                         let simSphere = {};
                         for(let serial in sphere) {
@@ -67232,9 +65817,11 @@ var icn3d = (function (exports) {
 
                             let atom = ic.atoms[serial];
                             if(isNaN(atom.resi)) continue;
-                            if((ss == 'c' &&(atom.resi > resi + 1 || atom.resi < resi - 1) )
-                              ||(ss == 'E' &&(atom.resi > resi + 2 || atom.resi < resi - 2) )
-                              ||(ss == 'H' &&(atom.resi > resi + 4 || atom.resi < resi - 4) )
+                            let atomResi = ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi);
+
+                            if((ss == 'c' &&(atomResi > resi + 1 || atomResi < resi - 1) )
+                              ||(ss == 'E' &&(atomResi > resi + 2 || atomResi < resi - 2) )
+                              ||(ss == 'H' &&(atomResi > resi + 4 || atomResi < resi - 4) )
                               ) {
                                 simSphere[serial] = 1;
                             }
@@ -68328,6 +66915,8 @@ var icn3d = (function (exports) {
                   */
                   me.htmlCls.clickMenuCls.setLogCmd('pickatom ' + atom.serial, true);
 
+                  ic.selectionCls.saveSelInCommand();
+
                   // update the interaction flag
                   ic.bSphereCalc = false;
                   //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
@@ -69320,7 +67909,8 @@ var icn3d = (function (exports) {
         this.currSelectedSets = []; // for selecting multiple sets in sequence & annotations
         this.selectedResidues = {};
 
-        this.residNCBI2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
+        this.ncbi2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
+        this.resid2ncbi = {}; // convert from PDB residue ID (structure_chain_resi) to NCBI residue ID (structure_chain_resi) 
 
         this.shapeCmdHash = {}; // remember the spheres/cubes for sets
 
@@ -69614,7 +68204,7 @@ var icn3d = (function (exports) {
         this.bMembrane = 1;
         this.bCmdWindow = 0;
 
-        this.chainid2offset = {};
+        //this.chainid2offset = {};
 
         this.chainMissingResidueArray = {};
         this.nTotalGap = 0;
@@ -69702,7 +68292,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.20.0';
+        this.REVISION = '3.21.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -69745,9 +68335,9 @@ var icn3d = (function (exports) {
     }
 
     // show3DStructure is the main function to show 3D structure
-    iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
+    iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
       let thisClass = this;
-      me.deferred = $.Deferred(function() {
+    //   me.deferred = $.Deferred(function() {
         if(me.cfg.menuicon) {
             me.htmlCls.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
             me.htmlCls.licenseStr = '<i class="icn3d-license" title="requires license">&nbsp;</i>';
@@ -69856,7 +68446,7 @@ var icn3d = (function (exports) {
             // reload only if viewing the same structure
             if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
               || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
-                ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
+                await ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
                 return;
             }
         }
@@ -69874,7 +68464,7 @@ var icn3d = (function (exports) {
             ic.InputfileType = 'pdb';
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
             
-            ic.pdbParserCls.loadPdbData(pdbStr);
+            await ic.pdbParserCls.loadPdbData(pdbStr);
 
             if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
                 let structureArray = Object.keys(ic.structures);
@@ -69888,7 +68478,7 @@ var icn3d = (function (exports) {
                     chainidArray = ic.chainalignParserCls.addPostfixForChainids(chainidArray);
                     
                     let bRealign = true, bPredefined = true;
-                    ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+                    await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
                 }
             }
             else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
@@ -69923,11 +68513,11 @@ var icn3d = (function (exports) {
                 me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
                 // load multiple PDBs
-                ic.bNCBI = true;
+                // ic.bNCBI = true;
                 ic.bMmdbafid = true;
                 
                 let bQuery = true;
-                ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+                await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
             }
         }
         else if(me.cfg.url !== undefined) {
@@ -69942,19 +68532,19 @@ var icn3d = (function (exports) {
 
             ic.loadCmd = 'load url ' + url + ' | type ' + type;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
+            await ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
         }
         else if(me.cfg.mmtfid !== undefined) {
            ic.inputid = me.cfg.mmtfid;
            ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
+           await ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
         }
         else if(me.cfg.pdbid !== undefined) {
            ic.inputid = me.cfg.pdbid;
            ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
+           await ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
         }
         else if(me.cfg.afid !== undefined) {
            ic.inputid = me.cfg.afid;
@@ -69963,156 +68553,117 @@ var icn3d = (function (exports) {
            let bAf = true;
 
            //ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
-           $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-            ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-           });
+           await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+           await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
         }
         else if(me.cfg.opmid !== undefined) {
            ic.inputid = me.cfg.opmid;
            ic.loadCmd = 'load opm ' + me.cfg.opmid;
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.opmParserCls.downloadOpm(me.cfg.opmid);
+           await ic.opmParserCls.downloadOpm(me.cfg.opmid);
         }
         else if(me.cfg.mmdbid !== undefined) {
            ic.inputid = me.cfg.mmdbid;
-           ic.bNCBI = true;
+           // ic.bNCBI = true;
            ic.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
-        }
-        else if(me.cfg.gi !== undefined) {
-           ic.bNCBI = true;
-           ic.loadCmd = 'load gi ' + me.cfg.gi;
-           me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.mmdbParserCls.downloadGi(me.cfg.gi);
+           await ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
         }
         else if(me.cfg.refseqid !== undefined) {
             ic.inputid = me.cfg.refseqid;
             
-            ic.bNCBI = true;
+            // ic.bNCBI = true;
             ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
-         }
-        //  else if(me.cfg.proteinname !== undefined) {
-        //     ic.bNCBI = true;
-        //     ic.loadCmd = 'load proteinname ' + me.cfg.gi;
-        //     me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        //     ic.mmdbParserCls.downloadProteinname(me.cfg.proteinname);
-        //  }
+            await ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
+        }
         else if(me.cfg.blast_rep_id !== undefined) {
-           ic.bNCBI = true;
+           // ic.bNCBI = true;
 
            // custom seqeunce has query_id such as "Query_78989" in BLAST
            if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
-               ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+                // make it backward compatible for  figure 2 in iCn3D paper: https://academic.oup.com/bioinformatics/article/36/1/131/5520951
+                if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
+                    me.cfg.command = 'view annotations; set annotation cdd; set annotation site; set view detailed view; select chain 1TSR_A; show selection';
+                }
 
-               if(me.cfg.alg == 'smithwm') {
-                ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-                ic.bSmithwm = true;
-               }
-               else if(me.cfg.alg == 'local_smithwm') {
-                ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-                ic.bLocalSmithwm = true;
-               }
-               else {
-                ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-                ic.bSmithwm = false;
-                ic.bLocalSmithwm = false;
-               }
-               
-               me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-               ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+                ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+
+                if(me.cfg.alg == 'smithwm') {
+                    ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                    ic.bSmithwm = true;
+                }
+                else if(me.cfg.alg == 'local_smithwm') {
+                    ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                    ic.bLocalSmithwm = true;
+                }
+                else {
+                    ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                    ic.bSmithwm = false;
+                    ic.bLocalSmithwm = false;
+                }
+                
+                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+                await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
            }
            else if(me.cfg.rid !== undefined) {
-               let url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
-               $.ajax({
-                  url: url,
-                  dataType: 'json',
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                    for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                      if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
-                      let hitArray = data.BlastOutput2[q].report.results.search.hits;
-                      let qseq = undefined;
-                      for(let i = 0, il = hitArray.length; i < il; ++i) {
-                        let hit = hitArray[i];
-                        let bFound = false;
-                        for(let j = 0, jl = hit.description.length; j < jl; ++j) {
-                          let acc = hit.description[j].accession;
-                          if(acc == me.cfg.blast_rep_id) {
-                            bFound = true;
-                            break;
-                          }
+                let url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
+                let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
+
+                for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
+                    if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
+                    let hitArray = data.BlastOutput2[q].report.results.search.hits;
+                    let qseq = undefined;
+                    for(let i = 0, il = hitArray.length; i < il; ++i) {
+                    let hit = hitArray[i];
+                    let bFound = false;
+                    for(let j = 0, jl = hit.description.length; j < jl; ++j) {
+                        let acc = hit.description[j].accession;
+                        if(acc == me.cfg.blast_rep_id) {
+                        bFound = true;
+                        break;
                         }
-                        if(bFound) {
-                          qseq = hit.hsps[0].qseq;
-                          //remove gap '-'
-                          qseq = qseq.replace(/-/g, '');
-                          break;
-                        }
-                      }
-                      if(qseq !== undefined) me.cfg.query_id = qseq;
-                      ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
-                      ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-                      me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-                      ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
-                      break;
                     }
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
+                    if(bFound) {
+                        qseq = hit.hsps[0].qseq;
+                        //remove gap '-'
+                        qseq = qseq.replace(/-/g, '');
+                        break;
                     }
-                    else {
-                        alert('The RID ' + me.cfg.rid + ' may have expired...');
                     }
-                    return;
-                  }
-               });
+                    if(qseq !== undefined) me.cfg.query_id = qseq;
+                    ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+                    ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                    me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+                    await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+                    break;
+                }
            }
            else {
                alert('BLAST "RID" is a required parameter...');
            }
         }
         else if(me.cfg.cid !== undefined) {
-           ic.inputid = me.cfg.cid;
+            ic.inputid = me.cfg.cid;
 
-           let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
-           $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
-           });
+            let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
+
+            let data = await me.getAjaxPromise(url, 'jsonp', false);
+
+            if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
+
             ic.loadCmd = 'load cid ' + me.cfg.cid;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.sdfParserCls.downloadCid(me.cfg.cid);
+            await ic.sdfParserCls.downloadCid(me.cfg.cid);
         }
         else if(me.cfg.mmcifid !== undefined) {
             ic.inputid = me.cfg.mmcifid;
             ic.loadCmd = 'load mmcif ' + me.cfg.mmcifid;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
+            await ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
         }
         else if(me.cfg.align !== undefined) {
-            ic.bNCBI = true;
+            // ic.bNCBI = true;
 
             let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
             if(alignArray.length === 6) {
@@ -70125,24 +68676,24 @@ var icn3d = (function (exports) {
             ic.loadCmd = 'load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
             if(me.cfg.inpara.indexOf('atype=2') == -1) {
-                ic.alignParserCls.downloadAlignment(me.cfg.align);
+                await ic.alignParserCls.downloadAlignment(me.cfg.align);
             }
             else {
                 let vastplusAtype = 2; // Tm-align
-                ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+                await ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
             }
         }
         else if(me.cfg.chainalign !== undefined) {
-            ic.bNCBI = true;
+            // ic.bNCBI = true;
 
             ic.bChainAlign = true;
             ic.inputid = me.cfg.chainalign;
             ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
+            await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
         }
         else if(me.cfg.mmdbafid !== undefined) {
-            ic.bNCBI = true;
+            // ic.bNCBI = true;
 
             // remove space
             me.cfg.mmdbafid = me.cfg.mmdbafid.replace(/\s+/g, '');
@@ -70157,22 +68708,20 @@ var icn3d = (function (exports) {
             }
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-            //ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
-            $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {          
-                ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-            });
+            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);        
+            await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
             if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
-            ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+            await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
         }
         else {
             //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
             //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
             me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
         }
-      });
-      return me.deferred.promise();
+    //   });
+    //   return me.deferred.promise();
     };
 
     iCn3DUI.prototype.setIcn3d = function() { let me = this;
@@ -70196,6 +68745,60 @@ var icn3d = (function (exports) {
         me.icn3d.controlCls.setControl(); // rotation, translation, zoom, etc
 
         me.setDialogAjax();
+    };
+
+    iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete) { let me = this;
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) ic.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
+        });
+    };
+
+    iCn3DUI.prototype.getAjaxPostPromise = function(url, data, beforeSend, alertMess, logMess, complete, dataType) { let me = this;
+        dataType = (dataType) ? dataType : 'json';
+
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data : data,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) ic.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
+        });
     };
 
     iCn3DUI.prototype.setDialogAjax = function() { let me = this;

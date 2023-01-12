@@ -76,7 +76,7 @@ class LoadPDB {
             let line = lines[i];
             let record = line.substr(0, 6);
 
-            if (record === 'HEADER' && !bHeader) {              
+            if (record === 'HEADER' && !bHeader && !pdbid) {              
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 ///id = line.substr(62, 4).trim();
@@ -94,8 +94,8 @@ class LoadPDB {
 
                 structure = id;
 
-                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                if(id == 'stru') {
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -222,8 +222,8 @@ class LoadPDB {
 
                 structure = id;
                 
-                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                if(id == 'stru') {
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -246,8 +246,8 @@ class LoadPDB {
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
                 
-                //if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                if(id == 'stru') {
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                //if(id == 'stru') {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -736,6 +736,21 @@ class LoadPDB {
             ic.chainsSeq[chainNum] = C;
             //ic.chainsAn[chainNum][0] = C2;
             //ic.chainsAn[chainNum][1] = C3;
+        }
+
+        this.setResidMapping();
+    }
+
+    setResidMapping() { let ic = this.icn3d, me = ic.icn3dui;
+        // set ic.ncbi2resid and ic.resid2ncbi
+        for(let chainid in ic.chainsSeq) {
+            for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                // NCBI residue number starts from 1 and increases continuously
+                let residNCBI = chainid + '_' + (j+1).toString();
+                let resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+                ic.ncbi2resid[residNCBI] = resid;
+                ic.resid2ncbi[resid] = residNCBI;
+            }
         }
     }
 

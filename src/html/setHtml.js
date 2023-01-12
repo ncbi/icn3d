@@ -581,7 +581,7 @@ class SetHtml {
         return html;
     }
 
-    exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
+    async exportPqr(bPdb) { let me = this.icn3dui, ic = me.icn3d;
        let chainHash = {}, ionHash = {};
        let atomHash = {};
 
@@ -608,84 +608,61 @@ class SetHtml {
           ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
        }
        else {
-           let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
-           if(bCalphaOnly) {
-               alert("The potential will not be shown because the side chains are missing in the structure...");
-               return;
-           }
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+            if(bCalphaOnly) {
+                alert("The potential will not be shown because the side chains are missing in the structure...");
+                return;
+            }
 
-           let pdbstr = '';
+            let pdbstr = '';
 
-           pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
-           pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
+            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
-           let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+            let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
 
-           let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+            let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
 
-           $.ajax({
-              url: url,
-              type: 'POST',
-              data : {'pdb2pqr': pdbstr, 'pdbid': pdbid},
-              dataType: 'text',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1,
-              beforeSend: function() {
-                  ic.ParserUtilsCls.showLoading();
-              },
-              complete: function() {
-                  ic.ParserUtilsCls.hideLoading();
-              },
-              success: function(data) {
-                  let pqrStr = data;
+            let dataObj = {'pdb2pqr': pdbstr, 'pdbid': pdbid};
+            let data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, true, 'text');
 
-                  if(bPdb) {
-                    let lineArray = pqrStr.split('\n');
+            let pqrStr = data;
 
-                    let pdbStr = '';
-                    for(let i = 0, il = lineArray.length; i < il; ++i) {
-                        let line = lineArray[i];
-                        if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
-                            let atomName = line.substr(12, 4).trim();
-                            let elem;
-                            if(line.substr(0, 6) == 'ATOM  ') {
-                                elem = atomName.substr(0, 1);
-                            }
-                            else {
-                                let twochar = atomName.substr(0, 2);
-                                if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
-                                    elem = twochar;
-                                }
-                                else {
-                                    elem = atomName.substr(0, 1);
-                                }
-                            }
+            if(bPdb) {
+            let lineArray = pqrStr.split('\n');
 
-                            pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
+            let pdbStr = '';
+            for(let i = 0, il = lineArray.length; i < il; ++i) {
+                let line = lineArray[i];
+                if(line.substr(0, 6) == 'ATOM  ' || line.substr(0, 6) == 'HETATM') {
+                    let atomName = line.substr(12, 4).trim();
+                    let elem;
+                    if(line.substr(0, 6) == 'ATOM  ') {
+                        elem = atomName.substr(0, 1);
+                    }
+                    else {
+                        let twochar = atomName.substr(0, 2);
+                        if(me.parasCls.vdwRadii.hasOwnProperty(twochar)) {
+                            elem = twochar;
                         }
                         else {
-                            pdbStr += line + '\n';
+                            elem = atomName.substr(0, 1);
                         }
                     }
 
-                    pqrStr = pdbStr;
-                  }
-
-                  let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                  ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
+                    pdbStr += line.substr(0, 54) + '                      ' + elem.padStart(2, ' ') + '\n';
                 }
-                return;
-              }
-           });
-       }
+                else {
+                    pdbStr += line + '\n';
+                }
+            }
+
+            pqrStr = pdbStr;
+            }
+
+            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
+        }
     }
 
     clickReload_pngimage() { let me = this.icn3dui, ic = me.icn3d;
@@ -712,16 +689,16 @@ class SetHtml {
            else {
              thisClass.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                let imageStr = e.target.result; // or = reader.result;
-               thisClass.loadPng(imageStr);
+               await thisClass.loadPng(imageStr);
              }
              reader.readAsText(file);
            }
         });
     }
 
-    loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
+    async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
        let matchedStr = 'Share Link: ';
        let pos = imageStr.indexOf(matchedStr);
        let matchedStrState = "Start of state file======\n";
@@ -759,29 +736,28 @@ class SetHtml {
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
                 if(type === 'pdb') {
-                    $.when( ic.pdbParserCls.loadPdbData(data))
-                     .then(function() {
-                         ic.commands = [];
-                         ic.optsHistory = [];
-                         ic.loadScriptCls.loadScript(statefile, true);
-                     });
+                    await ic.pdbParserCls.loadPdbData(data);
+
+                    ic.commands = [];
+                    ic.optsHistory = [];
+                    await ic.loadScriptCls.loadScript(statefile, true);
                 }
                 else {
                     if(type === 'mol2') {
-                        ic.mol2ParserCls.loadMol2Data(data);
+                        await ic.mol2ParserCls.loadMol2Data(data);
                     }
                     else if(type === 'sdf') {
-                        ic.sdfParserCls.loadSdfData(data);
+                        await ic.sdfParserCls.loadSdfData(data);
                     }
                     else if(type === 'xyz') {
-                        ic.xyzParserCls.loadXyzData(data);
+                        await ic.xyzParserCls.loadXyzData(data);
                     }
                     else if(type === 'mmcif') {
-                        ic.mmcifParserCls.loadMmcifData(data);
+                        await ic.mmcifParserCls.loadMmcifData(data);
                     }
                    ic.commands = [];
                    ic.optsHistory = [];
-                   ic.loadScriptCls.loadScript(statefile, true);
+                   await ic.loadScriptCls.loadScript(statefile, true);
                }
            }
            else { // url length > 4000
@@ -794,7 +770,7 @@ class SetHtml {
 
                ic.commands = [];
                ic.optsHistory = [];
-               ic.loadScriptCls.loadScript(statefile, true);
+               await  ic.loadScriptCls.loadScript(statefile, true);
            }
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
        }

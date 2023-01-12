@@ -7,6 +7,245 @@ class MmdbParser {
         this.icn3d = icn3d;
     }
 
+    //Ajax call was used to get the atom data from the NCBI "mmdbid". This function was deferred so that
+    //it can be chained together with other deferred functions for sequential execution. If the structure
+    //is too large, a 3D dgm will show up. You can select your interested chains to see the details.
+
+    //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
+    //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
+    async downloadMmdb(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+        let data;
+        
+        try {
+            data = await this.loadMmdbPrms(mmdbid, bGi);
+
+            if(!data || data.error) {
+                this.getNoData(mmdbid, bGi);
+                return;
+            }    
+        }
+        catch(err) {
+            this.getNoData(mmdbid, bGi);
+            return;
+        }
+        
+        if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+            // use mmtfid
+            let pdbid = data.pdbId;
+            ic.mmtfParserCls.downloadMmtf(pdbid);
+
+            return;
+        }
+
+        let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
+
+        if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
+            await this.parseMmdbData(data);
+        }
+        else {
+            let data2;
+        
+            try {
+                data2 = await this.loadMmdbPrms(mmdbid, bGi, true);
+            }
+            catch(err) {
+                this.getNoData(mmdbid, bGi);
+                return;
+            }
+
+            await this.parseMmdbData(data2);
+        }
+    }
+
+    //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
+    //NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A).
+    //This function was deferred so that it can be chained together with other deferred functions for
+    //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
+    //If there is no structures available for the blast_rep_id, a warning message will be shown.
+    async downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d, me = ic.icn3dui;
+        //ic.bCid = undefined;
+
+        let idArray = sequence_structure_ids.split(',');
+        me.cfg.query_id = idArray[0];
+        me.cfg.blast_rep_id = idArray[1];
+
+        let mmdbid = me.cfg.blast_rep_id.split('_')[0];
+
+        await this.downloadMmdb(mmdbid);
+    }
+
+    async downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+ 
+        //ic.bCid = undefined;
+
+        let data = await me.getAjaxPromise(url, 'jsonp', false, 'The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+
+        if(!data || !data.uniprot) {
+            alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+            return;
+        }
+
+        me.cfg.afid = data.uniprot;
+
+        let bAf = true;
+
+        await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+        
+        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+    }
+
+    getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bGi) {
+            alert("This gi " + mmdbid + " has no corresponding 3D structure...");
+        }
+        else {
+            alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
+        }
+    }
+
+    async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
+        let hAtoms;
+        let pdbid =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+
+        this.parseMmdbDataPart1(data, type);
+
+        if(type === undefined) { // default mmdbid input
+            if(data.opm !== undefined && data.opm.rot !== undefined) {
+                ic.bOpm = true;
+                ic.opmParserCls.setOpmData(data);
+            }
+
+            hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
+        }
+        else { // multiple mmdbids, typically for alignment
+            if(chainid) pdbid = chainid.substr(0, chainid.indexOf('_'));
+
+            hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
+        }
+
+        // set 3d domains
+        let structure = data.pdbId;
+
+        if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
+
+        // let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
+
+        for(let molid in data.domains) {
+            let chain = data.domains[molid].chain;
+            let chainid = structure + '_' + chain;
+            let domainArray = data.domains[molid].domains;
+
+            for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
+                let domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
+                ic.tddomains[domainName] = {}
+
+                let subdomainArray = domainArray[index].intervals;
+
+                // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
+                let domainFromHash = {}, domainToHash = {}
+
+                //var fromArray = [], toArray = [];
+                //var resCnt = 0
+                for(let i = 0, il = subdomainArray.length; i < il; ++i) {
+                    let domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                    let domainTo = Math.round(subdomainArray[i][1]) - 1;
+
+                    if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
+                        continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
+                    }
+                    else {
+                        domainFromHash[domainFrom] = 1;
+                        domainToHash[domainTo] = 1;
+                    }
+
+                    //fromArray.push(domainFrom + ic.baseResi[chnid]);
+                    //toArray.push(domainTo + ic.baseResi[chnid]);
+                    //resCnt += domainTo - domainFrom + 1;
+
+                    for(let j = domainFrom; j <= domainTo; ++j) {
+                        let resid;
+                        let residNCBI = chainid + '_' +(j+1).toString();
+
+                        // if(bNCBI && ic.ncbi2resid[residNCBI]) {
+                            resid = ic.ncbi2resid[residNCBI];
+                        // }
+                        // else {
+                        //     resid = chainid + '_' +(j+1 + ic.chainid2offset[chainid]).toString();
+                        // }
+
+                        if(resid) ic.tddomains[domainName][resid] = 1;
+                    }
+                }
+            } // for each domainArray
+        } // for each molid
+
+        // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
+        ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
+        if(type !== undefined) {
+            ic.bAssemblyUseAsu = false;
+        }
+        else {
+            await ic.mmcifParserCls.downloadMmcifSymmetry(pdbid);
+        }
+
+        if(ic.bAssemblyUseAsu) { 
+            $("#" + ic.pre + "assemblyWrapper").show();
+            //ic.bAssembly = true;
+        }
+        else {
+            //$("#" + ic.pre + "assemblyWrapper").hide();
+            //ic.bAssembly = false;
+        }
+
+        if(ic.emd !== undefined) {
+          $("#" + ic.pre + "mapWrapper1").hide();
+          $("#" + ic.pre + "mapWrapper2").hide();
+          $("#" + ic.pre + "mapWrapper3").hide();
+        }
+        else {
+          $("#" + ic.pre + "emmapWrapper1").hide();
+          $("#" + ic.pre + "emmapWrapper2").hide();
+          $("#" + ic.pre + "emmapWrapper3").hide();
+        }
+
+        ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+        // use the original color from cgi output
+        if(me.cfg.blast_rep_id !== undefined) {
+          ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        }
+        else {
+          ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
+        }
+
+        if(type === undefined) {
+            await ic.ParserUtilsCls.renderStructure();
+            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
+            ic.html2ddgm = '';
+            if(me.cfg.show2d) {
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+                if(ic.bFullUi) {
+                    //if(type === undefined) {
+                        ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
+                    //}
+                    //else {
+                    //    ic.ParserUtilsCls.set2DDiagramsForAlign(ic.inputid2.toUpperCase(), ic.inputid.toUpperCase());
+                        //ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
+                    //}
+                }
+            }
+        }
+
+        if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
+            if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
+        }
+
+        //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+
+        return hAtoms;
+    }
+
     parseMmdbDataPart1(data, type) { let ic = this.icn3d, me = ic.icn3dui;
         // if type is defined, always process target before query
         if(data.atoms === undefined && data.molid2rescount === undefined) {
@@ -95,369 +334,34 @@ class MmdbParser {
         //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
     }
 
-    parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
-        if(type === undefined) {
-            //ic.deferredOpm = $.Deferred(function() {
-                  let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-
-                  this.loadMmdbOpmData(data, id, type);
-            //});
-
-            //return ic.deferredOpm.promise();
-
-            return;
-        }
-        else {        
-            this.parseMmdbDataPart1(data, type);
-
-            let id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-            if(chainid) id = chainid.substr(0, chainid.indexOf('_'));
-
-            let hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
-
-            this.loadMmdbOpmDataPart2(data, id, type);
-
-            return hAtoms;
-        }
-    }
-
-    //Ajax call was used to get the atom data from the NCBI "mmdbid". This function was deferred so that
-    //it can be chained together with other deferred functions for sequential execution. If the structure
-    //is too large, a 3D dgm will show up. You can select your interested chains to see the details.
-
-    //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
-    //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-    downloadMmdb(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
-
-       let url;
-
-       // b: b-factor, s: water, ft: pdbsite
-       //&ft=1
-       if(bGi) {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&gi=" + mmdbid;
-       }
-       else {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
-        }
-
-       // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
-       if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
-
-       ic.bCid = undefined;
-
-       if(me.cfg.inpara !== undefined) {
-         url += me.cfg.inpara;
-       }
-
-       if(ic.chainids2resids === undefined) ic.chainids2resids = {} // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
-
-       $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-            if(!data || data.error) {
-                thisClass.getNoData(mmdbid, bGi);
-                return;
-            }
-
-            if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
-                // use mmtfid
-                let pdbid = data.pdbId;
-                ic.mmtfParserCls.downloadMmtf(pdbid);
-
-                return;
-            }
-
-            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
-
-            if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
-                thisClass.parseMmdbData(data);
-            }
-            else {
-                data = null;
-
-                $.ajax({
-                  url: url + '&complexity=2', // alpha carbons
-                  dataType: 'jsonp',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  beforeSend: function() {
-                      ic.ParserUtilsCls.showLoading();
-                  },
-                  complete: function() {
-                      //ic.ParserUtilsCls.hideLoading();
-                  },
-                  success: function(data2) {
-                      thisClass.parseMmdbData(data2);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-
-                    thisClass.getNoData(mmdbid, bGi);
-
-                    return;
-                  } // success
-                }); // ajax
-            }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-
-            thisClass.getNoData(mmdbid, bGi);
-
-            return;
-          } // success
-        }); // ajax
-    }
-
-    getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
-        if(bGi) {
-            alert("This gi " + mmdbid + " has no corresponding 3D structure...");
-        }
-        else {
-            alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
-        }
-    }
-
-    downloadMmdbPart2(type) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bAssemblyUseAsu) { 
-            $("#" + ic.pre + "assemblyWrapper").show();
-            //ic.bAssembly = true;
-        }
-        else {
-            //$("#" + ic.pre + "assemblyWrapper").hide();
-            //ic.bAssembly = false;
-        }
-
-        if(ic.emd !== undefined) {
-          $("#" + ic.pre + "mapWrapper1").hide();
-          $("#" + ic.pre + "mapWrapper2").hide();
-          $("#" + ic.pre + "mapWrapper3").hide();
-        }
-        else {
-          $("#" + ic.pre + "emmapWrapper1").hide();
-          $("#" + ic.pre + "emmapWrapper2").hide();
-          $("#" + ic.pre + "emmapWrapper3").hide();
-        }
-
-        ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-        // use the original color from cgi output
-        if(me.cfg.blast_rep_id !== undefined) {
-          ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-        }
-        else {
-          ic.setColorCls.setColorByOptions(ic.opts, ic.atoms, true);
-        }
-
-        if(type === undefined) {
-            ic.ParserUtilsCls.renderStructure();
-            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-            ic.html2ddgm = '';
-            if(me.cfg.show2d) {
-                me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-                if(ic.bFullUi) {
-                    //if(type === undefined) {
-                        ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
-                    //}
-                    //else {
-                    //    ic.ParserUtilsCls.set2DDiagramsForAlign(ic.inputid2.toUpperCase(), ic.inputid.toUpperCase());
-                        //ic.ParserUtilsCls.set2DDiagramsForChainalign(chainidArray);
-                    //}
-                }
-            }
-        }
-
-        if((me.cfg.align === undefined || me.cfg.chainalign === undefined || me.cfg.mmdbafid === undefined) && Object.keys(ic.structures).length == 1) {
-            if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
-        }
-
-        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-    }
-
-    //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
-    //it can be chained together with other deferred functions for sequential execution. Note that
-    //only one structure corresponding to the gi will be shown. If there is no structures available
-    //for the gi, a warning message will be shown.
-    downloadGi(gi) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.bCid = undefined;
-        let bGi = true;
-        this.downloadMmdb(gi, bGi);
-    }
-
-    //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
-    //NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A).
-    //This function was deferred so that it can be chained together with other deferred functions for
-    //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
-    //If there is no structures available for the blast_rep_id, a warning message will be shown.
-    downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.bCid = undefined;
-
-        let idArray = sequence_structure_ids.split(',');
-        me.cfg.query_id = idArray[0];
-        me.cfg.blast_rep_id = idArray[1];
-
-        let mmdbid = me.cfg.blast_rep_id.split('_')[0];
-
-        this.downloadMmdb(mmdbid);
-    }
-
-    loadMmdbOpmData(data, pdbid, type) { let ic = this.icn3d, me = ic.icn3dui;
-      if(data.opm !== undefined && data.opm.rot !== undefined) {
-          ic.bOpm = true;
-
-    //      ic.selectedPdbid = pdbid;
-
-          ic.opmParserCls.setOpmData(data);
-
-          this.parseMmdbDataPart1(data, type);
-          ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-
-          this.loadMmdbOpmDataPart2(data, pdbid, type);
-      }
-      else {
-          this.parseMmdbDataPart1(data, type);
-          ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-          this.loadMmdbOpmDataPart2(data, pdbid, type);
-      }
-    }
-
-    loadMmdbOpmDataPart2(data, pdbid, type) { let ic = this.icn3d, me = ic.icn3dui;
+    loadMmdbPrms(mmdbid, bGi, bCalpha) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        // set 3d domains
-        let structure = data.pdbId;
+        let url;
 
-        if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
-
-        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.mmdbafid || me.cfg.blast_rep_id);
-
-        for(let molid in data.domains) {
-            let chain = data.domains[molid].chain;
-            let chainid = structure + '_' + chain;
-            let domainArray = data.domains[molid].domains;
-
-            for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
-                let domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
-                ic.tddomains[domainName] = {}
-
-                let subdomainArray = domainArray[index].intervals;
-
-                // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-                let domainFromHash = {}, domainToHash = {}
-
-                //var fromArray = [], toArray = [];
-                //var resCnt = 0
-                for(let i = 0, il = subdomainArray.length; i < il; ++i) {
-                    let domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
-                    let domainTo = Math.round(subdomainArray[i][1]) - 1;
-
-                    if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
-                        continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
-                    }
-                    else {
-                        domainFromHash[domainFrom] = 1;
-                        domainToHash[domainTo] = 1;
-                    }
-
-                    //fromArray.push(domainFrom + ic.baseResi[chnid]);
-                    //toArray.push(domainTo + ic.baseResi[chnid]);
-                    //resCnt += domainTo - domainFrom + 1;
-
-                    for(let j = domainFrom; j <= domainTo; ++j) {
-                        let resid;
-                        let residNCBI = chainid + '_' +(j+1).toString();
-
-                        if(bNCBI && ic.residNCBI2resid[residNCBI]) {
-                            resid = ic.residNCBI2resid[residNCBI];
-                        }
-                        else {
-                            resid = chainid + '_' +(j+1 + ic.chainid2offset[chainid]).toString();
-                        }
-
-                        if(resid) ic.tddomains[domainName][resid] = 1;
-                    }
-                }
-            } // for each domainArray
-        } // for each molid
-
-        // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
-        ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
-        if(type !== undefined) {
-            ic.bAssemblyUseAsu = false;
-
-            this.downloadMmdbPart2(type);
+        // b: b-factor, s: water, ft: pdbsite
+        //&ft=1
+        if(bGi) {
+            url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&gi=" + mmdbid;
         }
         else {
-            $.when(ic.mmcifParserCls.downloadMmcifSymmetry(pdbid)).then(function() {
-                thisClass.downloadMmdbPart2(type);
-            });
+            url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
         }
-    }
 
-    downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
-       // get gis
-       let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
+        if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
 
-       ic.bCid = undefined;
+        //ic.bCid = undefined;
 
-       $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              //ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-            if(!data || !data.uniprot) {
-                alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
-                return;
-            }
+        if(me.cfg.inpara !== undefined) {
+            url += me.cfg.inpara;
+        }
 
-            me.cfg.afid = data.uniprot;
+        if(bCalpha) url += '&complexity=2';
 
-            let bAf = true;
-            $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-                ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-            });
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
-            return;
-          }
-        });
+        if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
+
+        return me.getAjaxPromise(url, 'jsonp', true);
     }
 }
 

@@ -7,57 +7,46 @@ class AnnoSnpClinVar {
         this.icn3d = icn3d;
     }
 
-    showSnp(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-        this.showSnpClinvar(chnid, chnidBase, true);
+    async showSnp(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        await this.showSnpClinvar(chnid, chnidBase, true);
     }
-    showClinvar(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-        this.showSnpClinvar(chnid, chnidBase, false);
+    async showClinvar(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        await this.showSnpClinvar(chnid, chnidBase, false);
     }
 
     //Show the annotations of SNPs and ClinVar.
-    showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
+    async showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
-       // get gi from acc
-       //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-       let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
-       $.ajax({
-          url: url2,
-          dataType: 'jsonp', //'text',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          success: function(data2) {
+        // get gi from acc
+        //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
+        let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+        try {
+            let data2 = await me.getAjaxPromise(url2, 'jsonp');
+
             //ic.chainid2repgi = JSON.parse(data2);
             //var gi = ic.chainid2repgi[chnidBase];
             let snpgi = data2.snpgi;
             let gi = data2.gi;
             if(bSnpOnly) {
-                thisClass.showSnpPart2(chnid, chnidBase, snpgi);
+                await thisClass.showSnpPart2(chnid, chnidBase, snpgi);
             }
             else {
                 let specialGiArray = [6137708,1942289,224510717,2624886,253723219,2554905,75765331,3660278,312207882,319443632,342350956,1827805,109157826,1065265,40889086,6730307,163931185,494469,163931091,60594093,55669745,18655489,17942684,6980537,166235465,6435586,4139398,4389047,364506122,78101667,262118402,20664221,2624640,158430173,494395,28948777,34810587,13399647,3660342,261278854,342350965,384482350,378792570,15988303,213424334,4558333,2098365,10835631,3318817,374074330,332639529,122919696,4389286,319443573,2781341,67464020,194709238,210061039,364506106,28949044,40889076,161172338,17943181,4557976,62738484,365813173,6137343,350610552,17942703,576308,223674070,15826518,1310997,93279697,4139395,255311799,157837067,361132363,357380836,146387678,383280379,1127268,299856826,13786789,1311054,46015217,3402130,381353319,30750059,218766885,340707375,27065817,355333104,2624634,62738384,241913553,304446010];
                 let giUsed = snpgi;
                 if(specialGiArray.includes(gi)) giUsed = gi;
-                thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
+                await thisClass.showClinvarPart2(chnid, chnidBase, giUsed);
             }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
+        }
+        catch(err) {
             if(bSnpOnly) {
                 thisClass.processNoSnp(chnid);
             }
-            else {
+            else {             
                 thisClass.processNoClinvar(chnid);
             }
             return;
-          }
-       });
+        }
     }
 
     navClinVar(chnid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -139,6 +128,7 @@ class AnnoSnpClinVar {
             }
             if(bVirus) break;
         }
+           
         if(bStartEndRes) {
             let title1 = 'ClinVar', title2 = 'SNP', title2b = 'SNP', warning = "", warning2 = "";
             if(!bVirus && ic.organism !== undefined && ic.organism !== 'human' && ic.organism !== 'homo sapiens') {
@@ -160,7 +150,7 @@ class AnnoSnpClinVar {
         else {
             html += '<div class="icn3d-seqTitle"></div>';
         }
-
+        
         let pre = altName;
         let snpCnt = 0, clinvarCnt = 0;
         let snpTypeHash = {}, currSnpTypeHash = {}
@@ -178,7 +168,7 @@ class AnnoSnpClinVar {
                             diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + '); ';
                         //}
                     }
-
+                    
                     if(diseaseTitle != '') {
                         snpTypeHash[i] = 'icn3d-clinvar';
                         if(j == line - 2) { // just check the current line, "line = 2" means the first SNP
@@ -188,6 +178,7 @@ class AnnoSnpClinVar {
                             }
                         }
                     }
+                    
                     allDiseaseTitle += diseaseTitle + ' | ';
                 }
                 if(allDiseaseTitle.indexOf('Pathogenic') != -1) {
@@ -199,6 +190,7 @@ class AnnoSnpClinVar {
                 }
             }
         }
+        
         if(snpCnt == 0 && !bClinvar) {
             $("#" + ic.pre + 'dt_clinvar_' + chnid).html('');
             $("#" + ic.pre + 'ov_clinvar_' + chnid).html('');
@@ -226,7 +218,7 @@ class AnnoSnpClinVar {
             return html + '<br>';
         }
         html += '<span class="icn3d-seqLine">';
-
+        
         let diseaseStr = '';
         let prevEmptyWidth = 0;
         let prevLineWidth = 0;
@@ -240,7 +232,8 @@ class AnnoSnpClinVar {
                     if(cFull.length > 1) {
                         c = cFull[0] + '..';
                     }
-                    let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                    // let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                    let pos = ic.ParserUtilsCls.getResi(chnid, i - 1);
                     let snpTitle = pos + c + '>';
                     let allDiseaseTitle = '';
                     for(let j = 0, jl = resi2snp[i].length; j < jl; ++j) {
@@ -294,7 +287,8 @@ class AnnoSnpClinVar {
                     if(cFull.length > 1) {
                       c = cFull[0] + '..';
                     }
-                    let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                    // let pos =(i >= ic.matchedPos[chnid] && i-1 - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i-1 - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i-1;
+                    let pos = ic.ParserUtilsCls.getResi(chnid, i - 1);
                     let snpStr = "", snpTitle = "<div class='snptip'>"
                     //var snpType = '';
                     let jl = resi2snp[i].length;
@@ -396,7 +390,7 @@ class AnnoSnpClinVar {
                         //if(jl > shownResCnt && line == 3) snpStr += '..';
                         if(jl > shownResCnt && line == 2) snpStr += '..';
                     }
-                    else { // if(bClinvar)
+                    else { // if(bClinvar)       
                         shownResCnt = 1;
                         let diseaseCnt = 0;
                         for(let j = start; j < jl && j < end; ++j) {
@@ -413,6 +407,7 @@ class AnnoSnpClinVar {
                             let sigArray = resi2sig[i][j].split('; ');
                             let diseaseTitle = '';
                             let index = 0;
+                            
                             for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
                                 // relax the restriction to show all clinvar
                                 //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
@@ -426,6 +421,7 @@ class AnnoSnpClinVar {
                                     ++index;
                                 //}
                             }
+
                             if(diseaseTitle != '') {
                                 if(diseaseCnt < shownResCnt) snpStr += resi2snp[i][j];
                                 snpTitle += pos + c + '>' + resi2snp[i][j];
@@ -450,7 +446,7 @@ class AnnoSnpClinVar {
                         if(diseaseCnt > shownResCnt && line == 2) snpStr += '..';
                     } // else { // if(bClinvar)
                     snpTitle += '</div>';
-                    if(bClinvar) {
+                    if(bClinvar) {                
                         if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
                             if(line == 1) {
                                 html += '<span>&dArr;</span>'; // or down triangle &#9660;
@@ -488,6 +484,7 @@ class AnnoSnpClinVar {
               }
             } // if(bOverview) {
         } // for
+        
         //var end = bStartEndRes ? ic.chainsSeq[chnid][ic.giSeq[chnid].length - 1 - ic.matchedPos[chnid] ].resi : '';
         if(line == 1) {
             html += '<span class="icn3d-residueNum" title="residue count">&nbsp;' + cnt + ' Residues</span>';
@@ -500,7 +497,7 @@ class AnnoSnpClinVar {
 
         return html;
     }
-    processSnpClinvar(data, chnid, chnidBase, bSnpOnly, bVirus) { let ic = this.icn3d, me = ic.icn3dui;
+    processSnpClinvar(data, chnid, chnidBase, bSnpOnly, bVirus) { let ic = this.icn3d, me = ic.icn3dui;    
         let html = '<div id="' + ic.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
         let html2 = html;
         let html3 = html;
@@ -527,6 +524,7 @@ class AnnoSnpClinVar {
                 if(!ic.resid2clinvar[chnid]) ic.resid2clinvar[chnid] = [];
             }
         }
+
         for(let i = 0, il = lineArray.length; i < il; ++i) {
          //bSnpOnly: false
          //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
@@ -563,8 +561,11 @@ class AnnoSnpClinVar {
           let clinSig = bSnpOnly ? '' : fieldArray[7];     // Clinical significance, When more than 2+ diseases, they are separated by "; "
           // "*" means terminating codon, "-" means deleted codon
           //if(currRes !== '-' && currRes !== '*' && snpRes !== '-' && snpRes !== '*') {
-                posHash[resi + ic.baseResi[chnid]] = 1;
-                if(disease != '') posClinHash[resi + ic.baseResi[chnid]] = 1;
+                let realResi = ic.ParserUtilsCls.getResi(chnid, resi - 1);
+                // posHash[resi + ic.baseResi[chnid]] = 1;
+                // if(disease != '') posClinHash[resi + ic.baseResi[chnid]] = 1;
+                posHash[realResi] = 1;
+                if(disease != '') posClinHash[realResi] = 1;
                 resi2index[resi] = i + 1;
                 if(resi2snp[resi] === undefined) {
                     resi2snp[resi] = [];
@@ -595,6 +596,7 @@ class AnnoSnpClinVar {
           //}
          }
         }
+          
         let posarray = Object.keys(posHash);
         let posClinArray = Object.keys(posClinHash);
         if(bSnpOnly) {
@@ -613,7 +615,7 @@ class AnnoSnpClinVar {
             $("#" + ic.pre + 'ov_snp_' + chnid).html(html2);
             $("#" + ic.pre + 'tt_snp_' + chnid).html(html3);
         }
-        else {
+        else {           
         //if(!bSnpOnly && ic.bClinvarCnt) {
             let bClinvar = true;
             htmlClinvar += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
@@ -625,24 +627,26 @@ class AnnoSnpClinVar {
             htmlClinvar2 += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
             htmlClinvar += '</div>';
             htmlClinvar2 += '</div>';
-            htmlClinvar3 += '</div>';          
+            htmlClinvar3 += '</div>';    
+                          
             $("#" + ic.pre + 'dt_clinvar_' + chnid).html(htmlClinvar);
             $("#" + ic.pre + 'ov_clinvar_' + chnid).html(htmlClinvar2);
             $("#" + ic.pre + 'tt_clinvar_' + chnid).html(htmlClinvar3);
             this.navClinVar(chnid, chnidBase);
         }
+                   
         // add here after the ajax call
         ic.showAnnoCls.enableHlSeq();
         if(bSnpOnly) {
             ic.bAjaxSnp = true;
-            if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+            /// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
         }
         else {
             ic.bAjaxClinvar = true;
-            if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+            /// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
         }
     }
-    showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
+    async showClinvarPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
         //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
@@ -650,106 +654,54 @@ class AnnoSnpClinVar {
         if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
             url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
         }
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          success: function(indata) {
+
+        try {
+            let indata = await me.getAjaxPromise(url, 'jsonp');
+
             if(indata && indata.data && indata.data.length > 0) {
                 let bSnpOnly = false;
-                let data = indata;             
+                let data = indata;         
+                
                 thisClass.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
             }
-            else {
+            else {               
                 thisClass.processNoClinvar(chnid);
             }
-            //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
+        }
+        catch(err) {            
             thisClass.processNoClinvar(chnid);
-            //if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+            ///// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
             return;
-          }
-        });
+        }
     }
 
-    showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
+    async showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        if(gi !== undefined) {
-      /*      
-            let url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&connect=MSSNPSUBMISSION1&gi=" + gi;
+        if(gi !== undefined) {          
+            let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+            if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+                url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+            }
 
-            $.ajax({
-              url: url3,
-              dataType: 'text',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data3) {
-                if(data3) {
+            try {
+                let data4 = await me.getAjaxPromise(url4, 'jsonp');
+
+                if(data4 && data4.data && data4.data.length > 0) {
                     let bSnpOnly = true;
-                    thisClass.processSnpClinvar(data3, chnid, chnidBase, bSnpOnly);
-                } //if(data3 != "") {
+                    let bVirus = true;
+                    
+                    thisClass.processSnpClinvar(data4, chnid, chnidBase, bSnpOnly, bVirus);
+                } //if(data4 != "") {
                 else {
-       */             
-                    let url4 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
-                    if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
-                        url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
-                    }
-                    $.ajax({
-                      url: url4,
-                      dataType: 'jsonp', //'text',
-                      cache: true,
-                      tryCount : 0,
-                      retryLimit : 0, //1
-                      success: function(data4) {
-                        if(data4 && data4.data && data4.data.length > 0) {
-                            let bSnpOnly = true;
-                            let bVirus = true;
-                            thisClass.processSnpClinvar(data4, chnid, chnidBase, bSnpOnly, bVirus);
-                        } //if(data4 != "") {
-                        else {
-                            thisClass.processNoSnp(chnid);
-                        }
-                        //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-                      },
-                      error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-                        thisClass.processNoSnp(chnid);
-                        //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-                        return;
-                      }
-                    });
-         /*           
+                    thisClass.processNoSnp(chnid);
                 }
-                //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                this.processNoSnp(chnid);
-                //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+                ///// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+            }
+            catch(err) {
+                thisClass.processNoSnp(chnid);
+                ///// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
                 return;
-              }
-            });
-        */    
+            }
         }
         else {
             this.processNoSnp(chnid);
@@ -762,7 +714,7 @@ class AnnoSnpClinVar {
             $("#" + ic.pre + 'ov_clinvar_' + chnid).html('');
             ic.showAnnoCls.enableHlSeq();
             ic.bAjaxClinvar = true;
-            if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
+            /// if(ic.deferredClinvar !== undefined) ic.deferredClinvar.resolve();
     }
     processNoSnp(chnid) { let ic = this.icn3d, me = ic.icn3dui;
             console.log( "No SNP data were found for the protein " + chnid + "..." );
@@ -770,7 +722,7 @@ class AnnoSnpClinVar {
             $("#" + ic.pre + 'ov_snp_' + chnid).html('');
             ic.showAnnoCls.enableHlSeq();
             ic.bAjaxSnp = true;
-            if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
+            /// if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
     }
 
 }

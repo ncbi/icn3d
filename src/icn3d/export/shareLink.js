@@ -9,93 +9,102 @@ class ShareLink {
 
     //Generate a URL to capture the current state and open it in a new window. Basically the state
     //file (the comand history) is concatenated in the URL to show the current state.
-    shareLink(bPngHtml, bPngOnly) {var ic = this.icn3d, me = ic.icn3dui;
-           let url = this.shareLinkUrl();
-           let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-           if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
-           //var inputid =(ic.inputid) ? ic.inputid : "custom";
-           let inputid = Object.keys(ic.structures).join('_');
-           if(inputid == 'stru') {
-               if(ic.filename) {
-                   inputid = ic.filename;
-               }
-               else if(ic.inputid) {
-                   inputid = ic.inputid;
-               }
-           }
+    async shareLink(bPngHtml, bPngOnly) { let ic = this.icn3d, me = ic.icn3dui;
+        let url = this.shareLinkUrl();
+        let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+        if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+        //var inputid =(ic.inputid) ? ic.inputid : "custom";
+        let inputid = Object.keys(ic.structures).join('_');
+        if(inputid == 'stru') {
+            if(ic.filename) {
+                inputid = ic.filename;
+            }
+            else if(ic.inputid) {
+                inputid = ic.inputid;
+            }
+        }
 
-           if(!bPngHtml) {
-               if(ic.bInputfile && !ic.bInputUrlfile) {
-                   alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
-                   return;
-               }
-               if(bTooLong) {
-                   alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
-                   return;
-               }
-               me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
-           }
-           else {
-               if(bPngOnly || ic.bInputfile || bTooLong) {
-                   ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
-                   return;
-               }
-           }
-           //https://firebase.google.com/docs/dynamic-links/rest
-           //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
-           let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
-           $.ajax({
-              url: fdlUrl,
-              type: 'POST',
-              //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + url, "suffix": {"option": "SHORT"}},
-              //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
-              data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
-              dataType: 'json',
-              success: function(data) {
-                let shorturl = 'Problem in getting shortened URL';
-                if(data.shortLink !== undefined) {
-                    shorturl = data.shortLink;
-                    if(bPngHtml) { // save png and corresponding html
-                        let strArray = shorturl.split("/");
-                        let shortName = strArray[strArray.length - 1];
-                        ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
-                        let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                        text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
-                        text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
-                        text += '<!--Start of your comments==================-->\n';
-                        let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
-                        text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
-                        text += '<!--End of your comments====================-->\n';
-                        text += '</a>';
-                        text += '</div>\n\n';
-                        ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
-                    }
-                }
-                if(bPngHtml && data.shortLink === undefined) {
-                    ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
-                }
-                //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
-                let urlArray = shorturl.split('page.link/');
-                //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
-                // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
-                // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
-                if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
-                $("#" + ic.pre + "ori_url").val(url);
-                $("#" + ic.pre + "short_url").val(shorturl);
-                $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                let shorturl = 'Problem in getting shortened URL';
-                $("#" + ic.pre + "ori_url").val(url);
-                $("#" + ic.pre + "short_url").val(shorturl);
-                $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
-              }
-           });
+        if(!bPngHtml) {
+            if(ic.bInputfile && !ic.bInputUrlfile) {
+                alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+                return;
+            }
+            if(bTooLong) {
+                alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
+                return;
+            }
+            me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
+        }
+        else {
+            if(bPngOnly || ic.bInputfile || bTooLong) {
+                ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+                return;
+            }
+        }
+
+        let data = await this.getShareLinkPrms(url, bPngHtml);
+
+        let shorturl = 'Problem in getting shortened URL';
+        if(data.shortLink !== undefined) {
+            shorturl = data.shortLink;
+            if(bPngHtml) { // save png and corresponding html
+                let strArray = shorturl.split("/");
+                let shortName = strArray[strArray.length - 1];
+                ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
+                let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
+                text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
+                text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
+                text += '<!--Start of your comments==================-->\n';
+                let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
+                text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
+                text += '<!--End of your comments====================-->\n';
+                text += '</a>';
+                text += '</div>\n\n';
+                ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
+            }
+        }
+        if(bPngHtml && data.shortLink === undefined) {
+            ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+        }
+        //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
+        let urlArray = shorturl.split('page.link/');
+        //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
+        // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+        // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
+        if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+        $("#" + ic.pre + "ori_url").val(url);
+        $("#" + ic.pre + "short_url").val(shorturl);
+        $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
     }
 
-    shareLinkUrl(bAllCommands) {var ic = this.icn3d, me = ic.icn3dui;
+    getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
+        //https://firebase.google.com/docs/dynamic-links/rest
+        //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
+        let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: fdlUrl,
+                type: 'POST',
+                //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + url, "suffix": {"option": "SHORT"}},
+                //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
+                data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
+                dataType: 'json',
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    let shorturl = 'Problem in getting shortened URL';
+                    $("#" + ic.pre + "ori_url").val(url);
+                    $("#" + ic.pre + "short_url").val(shorturl);
+                    $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+                    if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                }
+            });
+        });
+    }
+
+    shareLinkUrl(bAllCommands) { let ic = this.icn3d, me = ic.icn3dui;
            let url = me.htmlCls.baseUrl + "icn3d/full.html?";
            if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
@@ -104,7 +113,7 @@ class ShareLink {
                url = urlArray[0] + '?' + ic.inputurl + '&';
            }
 
-           let paraHash = {}
+           let paraHash = {};
            for(let key in ic.cfg) {
                let value = ic.cfg[key];
                //if(key === 'inpara' || ic.key === 'command' || value === undefined) continue;
@@ -302,7 +311,7 @@ class ShareLink {
            return url;
     }
 
-    getPngText() {var ic = this.icn3d, me = ic.icn3dui;
+    getPngText() { let ic = this.icn3d, me = ic.icn3dui;
         let url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
         let bAllCommands = true;
 

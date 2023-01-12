@@ -41,7 +41,7 @@ https.get(urlMmdb, function(res1) {
         response1.push(chunk);
     });
 
-    res1.on('end', function(){
+    res1.on('end', async function(){
       let dataStr1 = response1.join('');
       let dataJson = JSON.parse(dataStr1);
 
@@ -49,7 +49,7 @@ https.get(urlMmdb, function(res1) {
       let ic = me.icn3d;
 
       ic.bRender = false;
-      ic.mmdbParserCls.parseMmdbData(dataJson);
+      await ic.mmdbParserCls.parseMmdbData(dataJson);
 
       // select chains
       ic.hAtoms = {};

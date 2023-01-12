@@ -38,7 +38,7 @@ class Events {
         return alignment_final;
     }
 
-    searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        let select = $("#" + me.pre + "search_seq").val();
        if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
        && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
@@ -46,7 +46,7 @@ class Events {
        }
        let commandname = select.replace(/\s+/g, '_');
        let commanddesc = commandname;
-       ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+       await ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
        thisClass.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
@@ -55,7 +55,7 @@ class Events {
         let commandName = (bAppend) ? 'append': 'load';
         
         let reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
             //++ic.loadedFileCnt;
 
             let dataStr = e.target.result; // or = reader.result;
@@ -84,7 +84,7 @@ class Events {
                     ic.hAtoms = {};
                     ic.dAtoms = {};
                 }
-                ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+                await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
             }
             else {
                 thisClass.readFile(bAppend, files, index + 1, dataStrAll);
@@ -96,7 +96,7 @@ class Events {
         }
     }
 
-    loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
 
        //me = ic.setIcn3dui(this.id);
@@ -127,7 +127,7 @@ class Events {
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
                 //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
-                if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+                if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
             }
        }
     }
@@ -149,7 +149,7 @@ class Events {
             alert("At least two chains are required for alignment...");
             return;
         }
-        ic.clickMenuCls.SetChainsAdvancedMenu();
+        me.htmlCls.clickMenuCls.SetChainsAdvancedMenu();
         let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
         if($("#" + me.pre + id).length) {
             $("#" + me.pre + id).html(definedAtomsHtml);
@@ -226,16 +226,16 @@ class Events {
         me.htmlCls.clickMenuCls.clickMenu6();
 
         // back and forward arrows
-        me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.setLogCmd("back", false);
-           ic.resizeCanvasCls.back();
+           await ic.resizeCanvasCls.back();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "forward", "#" + me.pre + "mn6_forward"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "forward", "#" + me.pre + "mn6_forward"], "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.setLogCmd("forward", false);
-           ic.resizeCanvasCls.forward();
+           await ic.resizeCanvasCls.forward();
         });
 
         me.myEventCls.onIds(["#" + me.pre + "fullscreen", "#" + me.pre + "mn6_fullscreen"], "click", function(e) { let ic = me.icn3d; // from expand icon for mobilemenu
@@ -342,7 +342,7 @@ class Events {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "applyRealign", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let nameArray = $("#" + me.pre + "atomsCustomRealign").val();
@@ -350,7 +350,7 @@ class Events {
                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
            }
 
-           ic.realignParserCls.realignOnSeqAlign();
+           await ic.realignParserCls.realignOnSeqAlign();
 
            if(nameArray.length > 0) {
                thisClass.setLogCmd("realign on seq align | " + nameArray, true);
@@ -360,7 +360,7 @@ class Events {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
@@ -370,7 +370,7 @@ class Events {
  
             me.cfg.aligntool = 'vast';
  
-            ic.realignParserCls.realignOnStructAlign();
+            await ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {
                 thisClass.setLogCmd("realign on structure align | " + nameArray, true);
             }
@@ -379,7 +379,7 @@ class Events {
             }
          });
 
-         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", function(e) { let ic = me.icn3d;
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
@@ -389,7 +389,7 @@ class Events {
 
             me.cfg.aligntool = 'tmalign';
  
-            ic.realignParserCls.realignOnStructAlign();
+            await ic.realignParserCls.realignOnStructAlign();
             if(nameArray.length > 0) {
                 thisClass.setLogCmd("realign on tmalign | " + nameArray, true);
             }
@@ -398,7 +398,7 @@ class Events {
             }
          });
 
-         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", function(e) { let ic = me.icn3d;
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct2").val();
@@ -408,7 +408,7 @@ class Events {
 
             //me.cfg.aligntool = 'tmalign';
 
-            ic.vastplusCls.realignOnVastplus();
+            await ic.vastplusCls.realignOnVastplus();
 
             if(nameArray.length > 0) {
                 thisClass.setLogCmd("realign on vastplus | " + nameArray, true);
@@ -491,9 +491,9 @@ class Events {
             thisClass.setLogCmd("set view detailed view", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "show_annotations", "click", function(e) { let ic = me.icn3d;
-             ic.showAnnoCls.showAnnotations();
-             thisClass.setLogCmd("view annotations", true);
+        me.myEventCls.onIds("#" + me.pre + "show_annotations", "click", async function(e) { let ic = me.icn3d;
+            await ic.showAnnoCls.showAnnotations();
+            thisClass.setLogCmd("view annotations", true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "showallchains", "click", function(e) { let ic = me.icn3d;
@@ -505,21 +505,21 @@ class Events {
              me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", async function(e) { let ic = me.icn3d;
              me.htmlCls.dialogCls.openDlg('dl_2ddgm', '2D Diagram');
-             ic.viewInterPairsCls.retrieveInteractionData();
+             await ic.viewInterPairsCls.retrieveInteractionData();
              thisClass.setLogCmd("view interactions", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", async function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
-           thisClass.searchSeq();
+           await thisClass.searchSeq();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", async function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
-               thisClass.searchSeq();
+               await thisClass.searchSeq();
            }
         });
 
@@ -596,23 +596,23 @@ class Events {
            window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
             thisClass.setLogCmd("set half pae map " + afid, true);
             
-            ic.contactMapCls.afErrorMap(afid);
+            await ic.contactMapCls.afErrorMap(afid);
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
             thisClass.setLogCmd("set full pae map " + afid, true);
             
-            ic.contactMapCls.afErrorMap(afid, true);
+            await ic.contactMapCls.afErrorMap(afid, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
@@ -732,7 +732,7 @@ class Events {
             window.open(hostUrl + '?chainalign=' + alignment_final + '&resnum=&resdef=' + predefinedres + '&showalignseq=1&bu=0', urlTarget);
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", function(e) { let ic = me.icn3d;
+         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym4", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
@@ -749,7 +749,7 @@ class Events {
 
             let bRealign = true, bPredefined = true;
             let chainidArray = alignment_final.split(',');
-            ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+            await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
  
             thisClass.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
          });
@@ -766,7 +766,7 @@ class Events {
             window.open(hostUrl + '?chainalign=' + alignment_final + '&aligntool=tmalign&resnum=&resdef=&showalignseq=1&bu=0', urlTarget);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let mutationids = $("#" + me.pre + "mutationids").val();
@@ -788,7 +788,7 @@ class Events {
            if(pdbsource == 'currentpage') {
                 let snp = mutationids;
 
-                ic.scapCls.retrieveScap(snp);
+                await ic.scapCls.retrieveScap(snp);
                 thisClass.setLogCmd('scap 3d ' + snp, true);
                 thisClass.setLogCmd("select displayed set", true);
            }
@@ -800,7 +800,7 @@ class Events {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let mutationids = $("#" + me.pre + "mutationids").val();
@@ -823,7 +823,7 @@ class Events {
                 let snp = mutationids;
 
                 let bPdb = true;
-                ic.scapCls.retrieveScap(snp, undefined, bPdb);
+                await ic.scapCls.retrieveScap(snp, undefined, bPdb);
                 thisClass.setLogCmd('scap pdb ' + snp, true);
            }
            else {
@@ -834,7 +834,7 @@ class Events {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let mutationids = $("#" + me.pre + "mutationids").val();
@@ -857,7 +857,7 @@ class Events {
                 let snp = mutationids;
 
                 let bInteraction = true;
-                ic.scapCls.retrieveScap(snp, bInteraction);
+                await ic.scapCls.retrieveScap(snp, bInteraction);
                 thisClass.setLogCmd('scap interaction ' + snp, true);
 
                 let idArray = snp.split('_'); //stru_chain_resi_snp
@@ -1104,14 +1104,14 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                ic.bStatefile = true;
 
                let dataStr = e.target.result; // or = reader.result;
                thisClass.setLogCmd('load state file ' + $("#" + me.pre + "state").val(), false);
                ic.commands = [];
                ic.optsHistory = [];
-               ic.loadScriptCls.loadScript(dataStr, true);
+               await ic.loadScriptCls.loadScript(dataStr, true);
              }
              reader.readAsText(file);
            }
@@ -1127,9 +1127,9 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                let dataStr = e.target.result; // or = reader.result;
-               ic.selectionCls.loadSelection(dataStr);
+               await ic.selectionCls.loadSelection(dataStr);
                thisClass.setLogCmd('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
              }
              reader.readAsText(file);
@@ -1147,10 +1147,10 @@ class Events {
            ic.dsn6ParserCls.loadDsn6File('fofc');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadDelphiFile('delphi');
+           await ic.delphiCls.loadDelphiFile('delphi');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_pqrfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -1167,29 +1167,29 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.delphiCls.loadPhiFile('cube');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('pqrurl');
+           await ic.delphiCls.loadPhiFileUrl('pqrurl');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('phiurl');
+           await ic.delphiCls.loadPhiFileUrl('phiurl');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('cubeurl');
+           await ic.delphiCls.loadPhiFileUrl('cubeurl');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_delphifile2", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_delphifile2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            me.htmlCls.setHtmlCls.updateSurfPara('delphi');
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
-           ic.delphiCls.loadDelphiFile('delphi2');
+           await ic.delphiCls.loadDelphiFile('delphi2');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_pqrfile2", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -1212,26 +1212,26 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.delphiCls.loadPhiFile('cube2');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile2", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_pqrurlfile2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('pqrurl2');
+           await ic.delphiCls.loadPhiFileUrl('pqrurl2');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile2", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_phiurlfile2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('phiurl2');
+           await ic.delphiCls.loadPhiFileUrl('phiurl2');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile2", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_cubeurlfile2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            me.htmlCls.setHtmlCls.updateSurfPara('phiurl');
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.delphiCls.loadPhiFileUrl('cubeurl2');
+           await ic.delphiCls.loadPhiFileUrl('cubeurl2');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurl2fofc", "click", function(e) { let ic = me.icn3d;
@@ -1245,18 +1245,18 @@ class Events {
            ic.dsn6ParserCls.loadDsn6FileUrl('fofc');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
 
            let bAppend = false;
-           thisClass.loadPdbFile(bAppend);
+           await thisClass.loadPdbFile(bAppend);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
 
            ic.bAppend = true;
-           thisClass.loadPdbFile(ic.bAppend);
+           await thisClass.loadPdbFile(ic.bAppend);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
@@ -1277,7 +1277,7 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                let dataStr = e.target.result; // or = reader.result;
                thisClass.setLogCmd('load mol2 file ' + $("#" + me.pre + "mol2file").val(), false);
                ic.molTitle = "";
@@ -1287,7 +1287,7 @@ class Events {
                ic.bInputfile = true;
                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'mol2';
-               ic.mol2ParserCls.loadMol2Data(dataStr);
+               await ic.mol2ParserCls.loadMol2Data(dataStr);
              }
              reader.readAsText(file);
            }
@@ -1311,7 +1311,7 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                let dataStr = e.target.result; // or = reader.result;
                thisClass.setLogCmd('load sdf file ' + $("#" + me.pre + "sdffile").val(), false);
                ic.molTitle = "";
@@ -1321,7 +1321,7 @@ class Events {
                ic.bInputfile = true;
                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'sdf';
-               ic.sdfParserCls.loadSdfData(dataStr);
+               await ic.sdfParserCls.loadSdfData(dataStr);
              }
              reader.readAsText(file);
            }
@@ -1345,7 +1345,7 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
+             reader.onload = async function(e) {
                let dataStr = e.target.result; // or = reader.result;
                thisClass.setLogCmd('load xyz file ' + $("#" + me.pre + "xyzfile").val(), false);
                ic.molTitle = "";
@@ -1355,7 +1355,7 @@ class Events {
                ic.bInputfile = true;
                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'xyz';
-               ic.xyzParserCls.loadXyzData(dataStr);
+               await ic.xyzParserCls.loadXyzData(dataStr);
              }
              reader.readAsText(file);
            }
@@ -1419,7 +1419,7 @@ class Events {
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1437,7 +1437,7 @@ class Events {
            ic.init();
            ic.bInputfile = true;
            ic.bInputUrlfile = true;
-           ic.pdbParserCls.downloadUrl(url, type);
+           await ic.pdbParserCls.downloadUrl(url, type);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmciffile", "click", function(e) { let ic = me.icn3d;
@@ -1458,44 +1458,22 @@ class Events {
            else {
              me.htmlCls.setHtmlCls.fileSupport();
              let reader = new FileReader();
-             reader.onload = function(e) {
-               let dataStr = e.target.result; // or = reader.result;
-               thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
-               ic.molTitle = "";
+             reader.onload = async function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
+                ic.molTitle = "";
                 let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                ic.bCid = undefined;
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : {'mmciffile': dataStr},
-                  dataType: 'json',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  beforeSend: function() {
-                      ic.ParserUtilsCls.showLoading();
-                  },
-                  complete: function() {
-                      //ic.ParserUtilsCls.hideLoading();
-                  },
-                  success: function(data) {
-                      //ic.initUI();
-                      ic.init();
-                      ic.bInputfile = true;
-                      ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-                      ic.InputfileType = 'mmcif';
-                      ic.mmcifParserCls.loadMmcifData(data);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    return;
-                  }
-                });
+                //ic.bCid = undefined;
+
+                let dataObj = {'mmciffile': dataStr};
+                let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                //ic.initUI();
+                ic.init();
+                ic.bInputfile = true;
+                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                ic.InputfileType = 'mmcif';
+                await ic.mmcifParserCls.loadMmcifData(data); //await 
              }
              reader.readAsText(file);
            }
@@ -1580,25 +1558,25 @@ class Events {
            ic.crossstrucinter = parseInt($("#" + me.pre + "crossstrucinter").val());
            thisClass.setLogCmd("cross structure interaction " + ic.crossstrucinter, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "applyhbonds", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "applyhbonds", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('3d');
+           await ic.showInterCls.showInteractions('3d');
         });
-        me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let contactdist = parseFloat($("#" + ic.pre + "contactdist").val());
            let contacttype = $("#" + ic.pre + "contacttype").val();
 
-           ic.contactMapCls.contactMap(contactdist, contacttype);
+           await ic.contactMapCls.contactMap(contactdist, contacttype);
            thisClass.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('view');
+           await ic.showInterCls.showInteractions('view');
         });
         me.myEventCls.onIds("#" + me.pre + "areaWindow", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -1608,10 +1586,10 @@ class Events {
            ic.analysisCls.calcBuriedSurface(nameArray2, nameArray);
            thisClass.setLogCmd("calc buried surface | " + nameArray2 + " " + nameArray, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "sortSet1", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "sortSet1", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('save1');
+           await ic.showInterCls.showInteractions('save1');
         });
         $(document).on("click", "." + me.pre + "showintercntonly", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
@@ -1623,25 +1601,25 @@ class Events {
             $(".icn3d-border").show();
             thisClass.setLogCmd("table inter details", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "sortSet2", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "sortSet2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('save2');
+           await ic.showInterCls.showInteractions('save2');
         });
-        me.myEventCls.onIds("#" + me.pre + "hbondGraph", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "hbondGraph", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('graph');
+           await ic.showInterCls.showInteractions('graph');
         });
-        me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('linegraph');
+           await ic.showInterCls.showInteractions('linegraph');
         });
-        me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           ic.showInterCls.showInteractions('scatterplot');
+           await ic.showInterCls.showInteractions('scatterplot');
         });
         // select residues
         $(document).on("click", "#" + me.svgid + " circle.selected", function(e) { let ic = me.icn3d;
@@ -1798,10 +1776,10 @@ class Events {
             
             ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
          });
-         me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
+         me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             
-            ic.contactMapCls.afErrorMap(afid, true);
+            await ic.contactMapCls.afErrorMap(afid, true);
          });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
@@ -2219,7 +2197,7 @@ class Events {
             thisClass.setLogCmd("clear selection", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "replay", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "replay", "click", async function(e) { let ic = me.icn3d;
              e.stopImmediatePropagation();
              ic.CURRENTNUMBER++;
              let currentNumber =(me.cfg.replay) ? ic.STATENUMBER : ic.STATENUMBER - 1;
@@ -2229,7 +2207,7 @@ class Events {
                   $("#" + me.pre + "replay").hide();
              }
              else if(ic.commands.length > 0 && ic.commands[ic.CURRENTNUMBER]) {
-                  ic.loadScriptCls.execCommandsBase(ic.CURRENTNUMBER, ic.CURRENTNUMBER, ic.STATENUMBER);
+                  await ic.loadScriptCls.execCommandsBase(ic.CURRENTNUMBER, ic.CURRENTNUMBER, ic.STATENUMBER);
                   let pos = ic.commands[ic.CURRENTNUMBER].indexOf('|||');
                   let cmdStrOri =(pos != -1) ? ic.commands[ic.CURRENTNUMBER].substr(0, pos) : ic.commands[ic.CURRENTNUMBER];
                   let maxLen = 30;
@@ -2371,7 +2349,7 @@ class Events {
               ic.hlUpdateCls.updateHlAll();
         });
         // highlight a set of residues
-        $(document).on("click", "." + me.pre + "selset", function(e) { let ic = me.icn3d;
+        $(document).on("click", "." + me.pre + "selset", async function(e) { let ic = me.icn3d;
               e.stopImmediatePropagation();
               ic.bSelOneRes = false;
               let elems = $( "." + me.pre + "seloneres" );
@@ -2379,7 +2357,7 @@ class Events {
                   elems[i].checked = false;
               }
               let cmd = $(this).attr('cmd');
-              ic.selByCommCls.selectByCommand(cmd, '', '');
+              await ic.selByCommCls.selectByCommand(cmd, '', '');
               ic.hlObjectsCls.removeHlObjects();  // render() is called
               ic.hlObjectsCls.addHlObjects();  // render() is called
               thisClass.setLogCmd(cmd, true);
@@ -2524,23 +2502,23 @@ class Events {
            thisClass.setLogCmd("set theme black", true);
         });
 
-        $(document).on("click", "." + me.pre + "snpin3d", function(e) { let ic = me.icn3d;
+        $(document).on("click", "." + me.pre + "snpin3d", async function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
 
             let snp = $(this).attr('snp');
 
-            ic.scapCls.retrieveScap(snp);
+            await ic.scapCls.retrieveScap(snp);
             thisClass.setLogCmd('scap 3d ' + snp, true);
             thisClass.setLogCmd("select displayed set", true);
         });
 
-        $(document).on("click", "." + me.pre + "snpinter", function(e) { let ic = me.icn3d;
+        $(document).on("click", "." + me.pre + "snpinter", async function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
 
             let snp = $(this).attr('snp');
 
             let bInteraction = true;
-            ic.scapCls.retrieveScap(snp, bInteraction);
+            await ic.scapCls.retrieveScap(snp, bInteraction);
             thisClass.setLogCmd('scap interaction ' + snp, true);
 
             let idArray = snp.split('_'); //stru_chain_resi_snp
@@ -2552,13 +2530,13 @@ class Events {
             thisClass.setLogCmd("select displayed set", true);
         });
 
-        $(document).on("click", "." + me.pre + "snppdb", function(e) { let ic = me.icn3d;
+        $(document).on("click", "." + me.pre + "snppdb", async function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
 
             let snp = $(this).attr('snp');
 
             let bPdb = true;
-            ic.scapCls.retrieveScap(snp, undefined, bPdb);
+            await ic.scapCls.retrieveScap(snp, undefined, bPdb);
             thisClass.setLogCmd('scap pdb ' + snp, true);
         });
 

@@ -472,7 +472,8 @@ class iCn3D {
     this.currSelectedSets = []; // for selecting multiple sets in sequence & annotations
     this.selectedResidues = {};
 
-    this.residNCBI2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
+    this.ncbi2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
+    this.resid2ncbi = {}; // convert from PDB residue ID (structure_chain_resi) to NCBI residue ID (structure_chain_resi) 
 
     this.shapeCmdHash = {}; // remember the spheres/cubes for sets
 
@@ -767,7 +768,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.bMembrane = 1;
     this.bCmdWindow = 0;
 
-    this.chainid2offset = {};
+    //this.chainid2offset = {};
 
     this.chainMissingResidueArray = {};
     this.nTotalGap = 0;

@@ -7,7 +7,7 @@ class ContactMap {
         this.icn3d = icn3d;
     }
 
-    contactMap(contactDist, type) { let ic = this.icn3d, me = ic.icn3dui;
+    async contactMap(contactDist, type) { let ic = this.icn3d, me = ic.icn3dui;
        let nameArray = ['selected'];
        let nameArray2 = ['selected'];
        if(nameArray2.length == 0) {
@@ -23,43 +23,21 @@ class ContactMap {
            let bPistacking = false;
 
            let interact
-           let result = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+           let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
                 bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist);
        }
     }
 
-    afErrorMap(afid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+    async afErrorMap(afid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
-
-        let url, dataType;
     
-        //url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
-        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
+        let url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_" + ic.AFUniprotVersion + ".json";
 
-        dataType = "json";
-    
-        $.ajax({
-            url: url,
-            dataType: dataType,
-            cache: true,
-            tryCount : 0,
-            retryLimit : 0, //1
-            success: function(data) {
-                thisClass.processAfErrorMap(data, bFull);
-            },
-            error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                alert("There are some problems in loading the PAE file...");
-                return;
-            }
-        });      
+        let data = await me.getAjaxPromise(url, 'json', false, 'There are some problems in loading the PAE file...');
+
+        thisClass.processAfErrorMap(data, bFull);
     }
 
     processAfErrorMap(dataJson, bFull) { let ic = this.icn3d, me = ic.icn3dui;
@@ -164,7 +142,7 @@ class ContactMap {
         let bAfMap = true;
         this.drawContactMap(lineGraphStr, bAfMap, max);    
         
-        if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
+        /// if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
     }
 
     drawContactMap(lineGraphStr, bAfMap, max) { let ic = this.icn3d, me = ic.icn3dui;

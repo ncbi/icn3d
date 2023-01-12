@@ -45,7 +45,7 @@ function getLigandInteractio(url, pdbid, ligName) {
             response1.push(chunk);
         });
 
-        res1.on('end', function(){
+        res1.on('end', async function(){
           let dataStr1 = response1.join('');
           let dataJson = JSON.parse(dataStr1);
 
@@ -53,7 +53,7 @@ function getLigandInteractio(url, pdbid, ligName) {
           let ic = me.icn3d;
 
           ic.bRender = false;
-          ic.mmdbParserCls.parseMmdbData(dataJson);
+          await ic.mmdbParserCls.parseMmdbData(dataJson);
 
           // find the interacting residues
           let atomHash = {};

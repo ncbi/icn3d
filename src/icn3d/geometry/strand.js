@@ -63,7 +63,7 @@ class Strand {
         let calphaIdArray = []; // used to store one of the final positions drawn in 3D
         let colors = [];
         let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
-        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
+        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevAtomSelected = null, prevResi = null, calphaid = null, prevCalphaid = null;
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
         let atom, tubeAtoms = {};
 
@@ -87,8 +87,12 @@ class Strand {
 
         let caArray = []; // record all C-alpha atoms to predict the helix
 
+        let maxDist = 6.0;
+
         for (let i in atomsAdjust) {
           atom = atomsAdjust[i];
+          let chainid = atom.structure + '_' + atom.chain;
+
           let atomOxygen = undefined;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             // "CA" has to appear before "O"
@@ -116,11 +120,12 @@ class Strand {
                     currentO = atom.coord;
                 }
                 // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
-                let bSameChain = true;
-//                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
-                if (currentChain !== atom.chain) {
-                    bSameChain = false;
-                }
+               
+                // let bSameChain = true;
+                // if (currentChain !== atom.chain) {
+                // //if (currentChain !== atom.chain) {
+                //     bSameChain = false;
+                // }
 
                 if(atom.ssend && atom.ss === 'sheet') {
                     bSheetSegment = true;
@@ -208,8 +213,21 @@ class Strand {
                     ++drawnResidueCount;
                 }
 
-                let maxDist = 6.0;
-                let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                //let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+
+                let prevCoor = (prevAtomSelected) ? prevAtomSelected.coord : undefined;
+                
+                let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoor && Math.abs(currentCA.x - prevCoor.x) > maxDist) || (prevCoor && Math.abs(currentCA.y - prevCoor.y) > maxDist) || (prevCoor && Math.abs(currentCA.z - prevCoor.z) > maxDist);
+
+                // check whether the atoms are continuous
+                // atomsAdjusted has all atoms in the secondary structure
+                // atoms has all selected atoms
+                // let bBrokenSs = false;
+                // if(prevAtomSelected && prevAtomid == prevAtomSelected.serial && !atoms.hasOwnProperty(atom.serial)) {
+                //     bBrokenSs = true;                  
+                // }
+
+
                 // The following code didn't work to select one residue
                 // let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
@@ -220,9 +238,10 @@ class Strand {
                 //     bHelixSegment = true;
                 // }
 
-                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+                //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0) {
                     let atomName = 'CA';
-
+                
                     let prevone = [], nexttwo = [];
 
                     if(isNaN(ic.atoms[prevAtomid].resi)) {
@@ -248,7 +267,8 @@ class Strand {
                         }
                     }
 
-                    if(!bBrokenSs) { // include the current residue
+                    // include the current residue
+                    if(!bBrokenSs) { 
                         // assign the current joint residue to the previous segment
                         if(bHighlight === 1 || bHighlight === 2) {
                             colors.push(ic.hColor);
@@ -363,8 +383,8 @@ class Strand {
                 } // end if (atom.ssbegin || atom.ssend)
 
                 // end of a chain
-//                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
-                if ((currentChain !== atom.chain) && pnts[0].length > 0) {
+                if ((currentChain !== atom.chain || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) && pnts[0].length > 0) {
+                //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                     let atomName = 'CA';
 
@@ -422,6 +442,7 @@ class Strand {
                 ss = atom.ss;
                 ssend = atom.ssend;
                 prevAtomid = atom.serial;
+                if(atoms.hasOwnProperty(atom.serial)) prevAtomSelected = atom;
                 prevResi = atom.resi;
 
                 prevCalphaid = calphaid;
@@ -456,9 +477,9 @@ class Strand {
           if(prevChain === undefined) firstAtom = atoms[serial];
 
           if( (currChain !== prevChain && prevChain !== undefined)
-           || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) || index === length - 1) {
+           || (currResi !== prevResi && ic.resid2ncbi[currResi] !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) || index === length - 1) {
             if( (currChain !== prevChain && prevChain !== undefined)
-              || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) ) {
+              || (currResi !== prevResi && currResi !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) ) {
                 lastAtom = prevAtom;
             }
             else if(index === length - 1) {

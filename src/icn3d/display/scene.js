@@ -352,11 +352,13 @@ class Scene {
 */                            
         }
 
-        $("#" + me.pre + "VRButton").remove();
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+        if(!me.bNode) {
+            $("#" + me.pre + "VRButton").remove();
+            $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
 
-        $("#" + me.pre + "ARButton").remove();
-        $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+            $("#" + me.pre + "ARButton").remove();
+            $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+        }
     }
 
     getControllers() { let ic = this.icn3d, me = ic.icn3dui;

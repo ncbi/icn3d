@@ -10,9 +10,8 @@ class PdbParser {
     //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
-    downloadPdb(pdbid, bAf) { let ic = this.icn3d, me = ic.icn3dui;
-      ic.deferredOpm = $.Deferred(function() {
-        let url, dataType;
+    async downloadPdb(pdbid, bAf) { let ic = this.icn3d, me = ic.icn3dui;
+        let url;
 
         if(bAf) {
             url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
@@ -28,135 +27,77 @@ class PdbParser {
             ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
         }
 
-        dataType = "text";
+        //ic.bCid = undefined;
 
-        ic.bCid = undefined;
+        let data = await me.getAjaxPromise(url, 'text', true, 'The ID ' + pdbid + ' can not be found in the server ' + url + '...');
 
-        $.ajax({
-            url: url,
-            dataType: dataType,
-            cache: true,
-            tryCount : 0,
-            retryLimit : 0, //1
-            beforeSend: function() {
-                ic.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                //ic.ParserUtilsCls.hideLoading();
-            },
-            success: function(data) {
-                //ic.deferredOpm = $.Deferred(function() {
-                    if(bAf) {
-                        // add UniProt ID into the header
-                        let header = 'HEADER                                                        ' + pdbid + '\n';
-                        data = header + data;          
-                        ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
-                    }
-                    else {
-                        ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
-                    }
-                //});
-
-                //return ic.deferredOpm.promise();
-            },
-            error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-
-                alert('The ID ' + pdbid + ' can not be found in the server ' + url + '...');
-                return;
-            }
-        });
-      });
-
-      return ic.deferredOpm.promise();
+        if(bAf) {
+            // add UniProt ID into the header
+            let header = 'HEADER                                                        ' + pdbid + '\n';
+            data = header + data;          
+            await ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
+        }
+        else {
+            await ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+        }
     }
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
     //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
-    downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
+    async downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
+        let pos = url.lastIndexOf('/');
+        if(pos != -1) {
+            let posDot = url.lastIndexOf('.');
+            ic.filename = url.substr(pos + 1, posDot - pos - 1);
+        }
+        else {
+            let posDot = url.lastIndexOf('.');
+            ic.filename = url.substr(0, posDot);
+        }
 
-       let pos = url.lastIndexOf('/');
-       if(pos != -1) {
-           let posDot = url.lastIndexOf('.');
-           ic.filename = url.substr(pos + 1, posDot - pos - 1);
-       }
-       else {
-           let posDot = url.lastIndexOf('.');
-           ic.filename = url.substr(0, posDot);
-       }
+        //ic.bCid = undefined;
 
-       let dataType = "text";
+        let data = await me.getAjaxPromise(url, 'text', true);
 
-       ic.bCid = undefined;
+        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+        ic.InputfileType = type;
 
-       //var url = '//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?dataurl=' + encodeURIComponent(url);
-
-       $.ajax({
-          url: url,
-          dataType: dataType,
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-            ic.InputfileType = type;
-
-            if(type === 'pdb') {
-                thisClass.loadPdbData(data);
-                ic.loadScriptCls.loadScript(command, undefined, true);
-            }
-            else if(type === 'mmcif') {
-                ic.mmcifParserCls.parseMmcifData(data, undefined, command);
-            }
-            else if(type === 'mol2') {
-                ic.mol2ParserCls.loadMol2Data(data);
-            }
-            else if(type === 'sdf') {
-                ic.sdfParserCls.loadSdfData(data);
-            }
-            else if(type === 'xyz') {
-                ic.xyzParserCls.loadXyzData(data);
-            }
-            else if(type === 'mmcif') {
-                ic.mmcifParserCls.loadMmcifData(data);
-            }
-            else if(type === 'icn3dpng') {
-                me.htmlCls.setHtmlCls.loadPng(data, command);
-            }
-            else if(type === 'pae') {
-                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
-                let bFull = true;
-                ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
-            }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            return;
-          }
-       });
+        if(type === 'pdb') {
+            await thisClass.loadPdbData(data);
+            await ic.loadScriptCls.loadScript(command, undefined, true);
+        }
+        else if(type === 'mmcif') {
+            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            let dataObj = {'mmciffile': data};
+            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+            await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+        }
+        else if(type === 'mol2') {
+            await ic.mol2ParserCls.loadMol2Data(data);
+        }
+        else if(type === 'sdf') {
+            await ic.sdfParserCls.loadSdfData(data);
+        }
+        else if(type === 'xyz') {
+            await ic.xyzParserCls.loadXyzData(data);
+        }
+        else if(type === 'mmcif') {
+            await ic.mmcifParserCls.loadMmcifData(data);
+        }
+        else if(type === 'icn3dpng') {
+            await me.htmlCls.setHtmlCls.loadPng(data, command);
+        }
+        else if(type === 'pae') {
+            me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
+            let bFull = true;
+            ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
+        }
     }
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bAppend && (type === undefined || type === 'target')) {
             // if a command contains "load...", the commands should not be cleared with init()
             let bKeepCmd = (ic.bCommandLoad) ? true : false;
@@ -203,26 +144,29 @@ class PdbParser {
             this.applyCommandDssp(bAppend);
         }
         else {
-            this.loadPdbDataRender(bAppend);
+            await this.loadPdbDataRender(bAppend);
 
-            ic.ParserUtilsCls.checkMemProteinAndRotate();
+            await ic.ParserUtilsCls.checkMemProteinAndRotate();
 
-            if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
 
         return hAtoms;
     }
 
-    applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.deferredSecondary = $.Deferred(function() {
-            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
-            ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
-        }); // end of me.deferred = $.Deferred(function() {
+    async applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+        // ic.deferredSecondary = $.Deferred(function() {
+        //     let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+        //     ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
+        // }); // end of me.deferred = $.Deferred(function() {
 
-        return ic.deferredSecondary.promise();
+        // return ic.deferredSecondary.promise();
+
+        let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+        await ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
     }
 
-    loadPdbDataRender(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPdbDataRender(bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.pmid = ic.pmid;
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -237,7 +181,7 @@ class PdbParser {
 //        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
-        ic.ParserUtilsCls.renderStructure();
+        await ic.ParserUtilsCls.renderStructure();
 
         ic.saveFileCls.showTitle();
 
@@ -248,7 +192,7 @@ class PdbParser {
             ic.definedSetsCls.setModeAndDisplay('all');
         }
 
-    //    if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+    //    if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 

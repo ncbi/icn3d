@@ -111,7 +111,7 @@ class ResizeCanvas {
     }
 
     //Go back one step. Basically the commands are sequentially executed, but with one less step.
-    back() {var ic = this.icn3d, me = ic.icn3dui;
+    async back() {var ic = this.icn3d, me = ic.icn3dui;
       ic.backForward = true;
       ic.STATENUMBER--;
       // do not add to the array ic.commands
@@ -122,7 +122,7 @@ class ResizeCanvas {
         ic.STATENUMBER = 1;
       }
       else {
-        ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
+        await ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
       }
       ic.setStyleCls.adjustIcon();
       ic.bAddCommands = true;
@@ -130,7 +130,7 @@ class ResizeCanvas {
     }
 
     //Go forward one step. Basically the commands are sequentially executed, but with one more step.
-    forward() {var ic = this.icn3d, me = ic.icn3dui;
+    async forward() {var ic = this.icn3d, me = ic.icn3dui;
       ic.backForward = true;
       ic.STATENUMBER++;
       // do not add to the array ic.commands
@@ -141,30 +141,30 @@ class ResizeCanvas {
         ic.STATENUMBER = ic.commands.length;
       }
       else {
-        ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
+        await ic.loadScriptCls.execCommands(0, ic.STATENUMBER-1, ic.STATENUMBER, true);
       }
       ic.setStyleCls.adjustIcon();
       ic.bAddCommands = true;
       ic.bAddLogs = true;
     }
 
-    replayon() {var ic = this.icn3d, me = ic.icn3dui;
+    async replayon() {var ic = this.icn3d, me = ic.icn3dui;
       ic.CURRENTNUMBER = 0;
       ic.bReplay = 1;
       $("#" + ic.pre + "replay").show();
 
       if(ic.commands.length > 0) {
-          ic.loadScriptCls.replayFirstStep(ic.CURRENTNUMBER);
+          await ic.loadScriptCls.replayFirstStep(ic.CURRENTNUMBER);
 
           //ic.resizeCanvasCls.closeDialogs();
       }
     }
-    replayoff() {var ic = this.icn3d, me = ic.icn3dui;
+    async replayoff() {var ic = this.icn3d, me = ic.icn3dui;
         ic.bReplay = 0;
         $("#" + ic.pre + "replay").hide();
         // replay all steps
         ++ic.CURRENTNUMBER;
-        ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
+        await ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
     }
 
     closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
@@ -177,7 +177,7 @@ class ResizeCanvas {
             let item = itemArray[i];
             if(!me.cfg.notebook) {
                 if($('#' + ic.pre + item).hasClass('ui-dialog-content') && $('#' + ic.pre + item).dialog( 'isOpen' )) {
-                    $('#' + ic.pre + item).dialog( 'close' );
+                    $('#' + ic.pre + item).dialog( 'close' ).remove();
                 }
             }
             else {

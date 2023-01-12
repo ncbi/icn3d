@@ -458,6 +458,9 @@ class SetColor {
                     else {
                         let b = atom.b;
 
+                        // PDB
+                        b = (atom.structure.length < 6) ? 100 - b : b;
+
                         if(b >= 90) {
                             atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
                         }
@@ -492,6 +495,9 @@ class SetColor {
                     else {
                         let b = atom.b;
                         if(b > 100) b = 100;
+
+                        // AlphaFold
+                        b = (atom.structure.length > 5) ? 100 - b : b;
 
                         let s1 = (ic.middB - b) * ic.spanBinv1;
                         let s2 = (b - ic.middB) * ic.spanBinv2;
@@ -531,7 +537,10 @@ class SetColor {
                         atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
                     }
                     else {
-                        let percentile = ic.bfactorArray.indexOf(atom.b) / totalCnt;
+                        // AlphaFold
+                        let b = (atom.structure > 5) ? 100 - atom.b : atom.b;
+
+                        let percentile = ic.bfactorArray.indexOf(b) / totalCnt;
 
                         atom.color = percentile < 0.5 ? me.parasCls.thr().setRGB(percentile * 2, percentile * 2, 1) : me.parasCls.thr().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
                     }

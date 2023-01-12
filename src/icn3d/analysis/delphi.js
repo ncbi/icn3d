@@ -15,14 +15,12 @@ class Delphi {
 
         oReq.responseType = "text";
 
-        oReq.onreadystatechange = function() {
+        oReq.onreadystatechange = async function() {
             if(this.readyState == 4) {
-               //ic.ParserUtilsCls.hideLoading();
-
                if(this.status == 200) {
                    let data = oReq.response;
 
-                   thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
+                   await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
                 }
                 else {
                     alert("The PQR file is unavailable...");
@@ -85,64 +83,62 @@ class Delphi {
        return pdbstr;
     }
 
-    CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
-       let thisClass = this;
+    async CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
+        let phidata = await this.CalcPhiPrms(gsize, salt, contour, bSurface, data);
 
-       ic.loadPhiFrom = 'delphi';
+        this.loadPhiData(phidata, contour, bSurface);
+    
+        ic.bAjaxPhi = true;
 
-       let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
-       let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
-       let dataObj = {}
+        if(bSurface) {
+            ic.setOptionCls.setOption('phisurface', 'phi');
+        }
+        else {
+            ic.setOptionCls.setOption('phimap', 'phi');
+        }
 
-       if(data) {
-           dataObj = {'pqr2phi': data, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid}
-       }
-       else {
-           let pdbstr = this.getPdbStr();
+        /// if(ic.deferredDelphi !== undefined) ic.deferredDelphi.resolve();
+        /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
+    }
 
-           dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid}
-       }
+    CalcPhiPrms(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.loadPhiFrom = 'delphi';
+ 
+        let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
+        let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+        let dataObj = {}
+ 
+        if(data) {
+            dataObj = {'pqr2phi': data, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid}
+        }
+        else {
+            let pdbstr = this.getPdbStr();
+ 
+            dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid}
+        }
 
-       // see full_ui.js for ajaxTransport
-       $.ajax({
-          url: url,
-          type: 'POST',
-          data : dataObj,
-          dataType: 'binary',
-          responseType: 'arraybuffer',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1,
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-               thisClass.loadPhiData(data, contour, bSurface);
-
-               ic.bAjaxPhi = true;
-
-               if(bSurface) {
-                 ic.setOptionCls.setOption('phisurface', 'phi');
-               }
-               else {
-                 ic.setOptionCls.setOption('phimap', 'phi');
-               }
-
-               if(ic.deferredDelphi !== undefined) ic.deferredDelphi.resolve();
-               if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            return;
-          }
+        return new Promise(function(resolve, reject) {
+            // see full_ui.js for ajaxTransport
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data : dataObj,
+                dataType: 'binary',
+                responseType: 'arraybuffer',
+                cache: true,
+                beforeSend: function() {
+                    ic.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    ic.ParserUtilsCls.hideLoading();
+                },
+                success: function(phidata) {
+                    resolve(phidata);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    return;
+                }
+            });
         });
     }
 
@@ -176,8 +172,6 @@ class Delphi {
 
             oReq.onreadystatechange = function() {
                 if(this.readyState == 4) {
-                   //ic.ParserUtilsCls.hideLoading();
-
                    if(this.status == 200) {
                        let data = oReq.response;
 
@@ -201,7 +195,7 @@ class Delphi {
                         alert("The potential file is unavailable...");
                     }
 
-                    if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
+                    /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
                 }
                 else {
                     ic.ParserUtilsCls.showLoading();
@@ -340,10 +334,10 @@ class Delphi {
         ic.mapData.matrixPhi = matrix;
     }
 
-    applyCommandPhi(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandPhi(command) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
       // chain functions together
-      ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
+    //   ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
           //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
           //       + ' | gsize ' + gsize + ' | salt ' + salt
           //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
@@ -383,21 +377,21 @@ class Delphi {
           let bSurface =(type == 'pqrurl2' || type == 'phiurl2' || type == 'cubeurl2') ? true : false;
 
           if(type == 'pqrurl' || type == 'pqrurl2') {
-              thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+              await thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
           }
           else {
               thisClass.PhiParser(url, type, contour, bSurface);
           }
-      }); // end of me.deferred = $.Deferred(function() {
+    //   }); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferredPhi.promise();
+    //   return ic.deferredPhi.promise();
     }
 
-    applyCommandDelphi(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandDelphi(command) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       // chain functions together
-      ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
+    //   ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
            //me.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
            //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
 
@@ -435,20 +429,20 @@ class Delphi {
 
           let bSurface =(type == 'surface') ? true : false;
 
-          thisClass.CalcPhi(gsize, salt, contour, bSurface);
-      }); // end of me.deferred = $.Deferred(function() {
+          await thisClass.CalcPhi(gsize, salt, contour, bSurface);
+    //   }); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferredDelphi.promise();
+    //   return ic.deferredDelphi.promise();
     }
 
-    loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
        let gsize = $("#" + ic.pre + "delphigsize").val();
        let salt = $("#" + ic.pre + "delphisalt").val();
        let contour =(type == 'delphi2') ? $("#" + ic.pre + "delphicontour2").val() : $("#" + ic.pre + "delphicontour").val();
 
        let bSurface =(type == 'delphi2') ? true: false;
 
-       this.CalcPhi(gsize, salt, contour, bSurface);
+       await this.CalcPhi(gsize, salt, contour, bSurface);
 
        let displayType =(type == 'delphi2') ? 'surface' : 'map';
 
@@ -485,7 +479,7 @@ class Delphi {
        else {
          me.utilsCls.checkFileAPI();
          let reader = new FileReader();
-         reader.onload = function(e) { let ic = thisClass.icn3d;
+         reader.onload = async function(e) { let ic = thisClass.icn3d;
            let data = e.target.result; // or = reader.result;
 
            let gsize = 0, salt = 0;
@@ -494,7 +488,7 @@ class Delphi {
 
              gsize = $("#" + ic.pre + type + "gsize").val();
              salt = $("#" + ic.pre + type + "salt").val();
-             thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
+             await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
            }
            else if(type == 'phi' || type == 'phi2') {
              let bSurface =(type == 'phi2') ? true: false;
@@ -532,7 +526,7 @@ class Delphi {
          }
        }
     }
-    loadPhiFileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPhiFileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
        let url;
        if(type == 'pqrurl' || type == 'phiurl' || type == 'cubeurl') {
            url = $("#" + ic.pre + type + "file").val();
@@ -559,7 +553,7 @@ class Delphi {
            if(type == 'pqrurl' || type == 'pqrurl2') {
                gsize = $("#" + ic.pre + type + "gsize").val();
                salt = $("#" + ic.pre + type + "salt").val();
-               this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+               await this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
            }
            else {
                this.PhiParser(url, type, contour, bSurface);

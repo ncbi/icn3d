@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.21.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.0.zip) was release on January 11, 2023. Mapped PDB residue numbers with NCBI residue numbers; replaced jQuery promise with JavaScript Promise, await, and async.
+
 [icn3d-3.20.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.20.1.zip) was release on December 19, 2022. Removed unnecessary import and cleaned some codes.
 
 [icn3d-3.20.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.20.0.zip) was release on December 12, 2022. Enabled users to show AlphaFold structures with NCBI RefSeq IDs as input.

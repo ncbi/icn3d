@@ -8,7 +8,7 @@ class AnnoCddSite {
     }
 
     //Show the annotations of CDD domains and binding sites.
-    showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
+    async showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         ic.chainid2pssmid = {};
@@ -17,78 +17,60 @@ class AnnoCddSite {
         let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
         // live search
-        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;     
+        let url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + chnidBaseArray;     
         // precalculated
-        //let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+        //let url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // live search for AlphaFold structures
         //if(me.cfg.afid) {
 
         // use precalculated CDD annotation if
         if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
             || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
-            $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                thisClass.parseCddData([data], chnidArray);
-                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
+                let data = {};
+                try {
+                    data.value = await me.getAjaxPromise(url, 'jsonp');
+                 
+                    thisClass.parseCddData([data], chnidArray);
+                    /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+                }
+                catch(err) {
+                    thisClass.getNoCdd(chnidBaseArray);
+                    /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
                     return;
                 }
-
-                thisClass.getNoCdd(chnidBaseArray);
-                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-
-                return;
-              }
-            });
         }
         else {
-          let ajaxArray = [];
+            let ajaxArray = [];
 
-          for(let i = 0, il = chnidArray.length; i < il; ++i) {
-               //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
-               let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
+            for(let i = 0, il = chnidArray.length; i < il; ++i) {
+                //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+                let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
 
-               // remove water molecules
-               seq = seq.replace(/O/g, '');
+                // remove water molecules
+                seq = seq.replace(/O/g, '');
 
-               //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
-               // live searchE
-               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;             
-               // precalculated
-               //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+                //url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+                // live searchE
+                url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&frclive&live=lcl&queries=" + seq;             
+                // precalculated
+                //url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
 
-               let cdd = $.ajax({
-                  url: url,
-                  dataType: 'jsonp',
-                  cache: true
-               });
+                let cdd = me.getAjaxPromise(url, 'jsonp');
 
-               ajaxArray.push(cdd);
-          }
+                ajaxArray.push(cdd);
+            }
 
-          //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-          //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-          $.when.apply(undefined, ajaxArray).then(function() {
-              let dataArray =(chnidArray.length == 1) ? [arguments] : Array.from(arguments);
-              thisClass.parseCddData(dataArray, chnidArray, true);
-              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-          })
-          .fail(function() {
-              thisClass.getNoCdd(chnidBaseArray);
-              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+            let allPromise = Promise.allSettled(ajaxArray);
+            try {
+                let dataArray = await allPromise;
 
-              return;
-          });
+                thisClass.parseCddData(dataArray, chnidArray, true);
+                /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+            }
+            catch(err) {
+                
+            }            
         }
     }
 
@@ -101,8 +83,10 @@ class AnnoCddSite {
             if(!ic.resid2cdd) ic.resid2cdd = {};
             if(!ic.resid2site) ic.resid2site = {};
         }
+
         for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+            //let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+            let data = dataArray[i].value;
 
             for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
                 let cddData = data.data[chainI];
@@ -156,13 +140,13 @@ class AnnoCddSite {
                     for(let i = 0, il = siteArray[index].locs.length; i < il; ++i) {
                         resPosArray = siteArray[index].locs[i].coords;
                         for(let j = 0, jl = resPosArray.length; j < jl; ++j) {
-                            //adjustedResPosArray.push(Math.round(resPosArray[j]) + ic.baseResi[chnid]);
-                            if(ic.bNCBI) {
-                                adjustedResPosArray.push(Math.round(resPosArray[j]));
-                            }
-                            else {
-                                adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                            }
+                            // if(ic.bNCBI) {
+                            //     adjustedResPosArray.push(Math.round(resPosArray[j]));
+                            // }
+                            // else {
+                            //     adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                            // }
+                            adjustedResPosArray.push(ic.ParserUtilsCls.getResi(chnid, Math.round(resPosArray[j])) );
                         }
                     }
 
@@ -189,36 +173,36 @@ class AnnoCddSite {
                     let prevLineWidth = 0;
                     let widthPerRes = 1;
                     for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
-                      html += ic.showSeqCls.insertGap(chnid, i, '-');
-                      if(resPosArray.indexOf(i) != -1) {
-                          let cFull = ic.giSeq[chnid][i];
-                          let c = cFull;
-                          if(cFull.length > 1) {
-                              c = cFull[0] + '..';
-                          }
-                          //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                          let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                        html += ic.showSeqCls.insertGap(chnid, i, '-');
+                        if(resPosArray.indexOf(i) != -1) {
+                            let cFull = ic.giSeq[chnid][i];
+                            let c = cFull;
+                            if(cFull.length > 1) {
+                                c = cFull[0] + '..';
+                            }
+                            //let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                            let pos = ic.ParserUtilsCls.getResi(chnid, i);
+                            
+                            html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                            if(me.bNode) {
+                                let obj = {};
+                                obj[chnid + '_' + pos] = 'site: ' + siteArray[index].title;
+                                ic.resid2site[chnid].push(obj);
+                            }
 
-                        html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
-                        if(me.bNode) {
-                            let obj = {};
-                            obj[chnid + '_' + pos] = 'site: ' + siteArray[index].title;
-                            ic.resid2site[chnid].push(obj);
+                            html2 += ic.showSeqCls.insertGapOverview(chnid, i);
+                            let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                            //if(emptyWidth < 0) emptyWidth = 0;
+                            if(emptyWidth >= 0) {
+                                html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+                                html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
+                                prevEmptyWidth += emptyWidth;
+                                prevLineWidth += widthPerRes;
+                            }
                         }
-
-                        html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                        let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
-                        //if(emptyWidth < 0) emptyWidth = 0;
-                        if(emptyWidth >= 0) {
-                        html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                        html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
-                        prevEmptyWidth += emptyWidth;
-                        prevLineWidth += widthPerRes;
+                        else {
+                            html += '<span>-</span>'; //'<span>-</span>';
                         }
-                      }
-                      else {
-                        html += '<span>-</span>'; //'<span>-</span>';
-                      }
                     }
                     htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
                     htmlTmp += '</span>';
@@ -316,16 +300,19 @@ class AnnoCddSite {
                 for(let s = 0, sl = segArray.length; s < sl; ++s) {
                     let domainFrom = Math.round(segArray[s].from);
                     let domainTo = Math.round(segArray[s].to);
-                    //fromArray.push(domainFrom + ic.baseResi[chnid]);
-                    //toArray.push(domainTo + ic.baseResi[chnid]);
-                    if(ic.bNCBI) {
-                        fromArray.push(domainFrom);
-                        toArray.push(domainTo);
-                    }
-                    else {
-                        fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                        toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                    }
+                    
+                    // if(ic.bNCBI) {
+                    //     fromArray.push(domainFrom);
+                    //     toArray.push(domainTo);
+                    // }
+                    // else {
+                    //     fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                    //     toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                    // }
+
+                    fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
+                    toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+
                     for(let i = domainFrom; i <= domainTo; ++i) {
                         resiHash[i] = 1;
                     }
@@ -341,9 +328,12 @@ class AnnoCddSite {
 
                 let bCoordinates = false;
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
-                    let from = fromArray[i], to = toArray[i];
+                    let from = parseInt(fromArray[i]), to = parseInt(toArray[i]);
+                                       
                     for(let j = from; j <= to; ++j) {
+                        
                         let resid = chnid + "_" + j;
+                        
                         if(ic.residues.hasOwnProperty(resid)) {
                             bCoordinates = true;
                             break;
@@ -370,14 +360,15 @@ class AnnoCddSite {
                 let pre = type + index.toString();
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
+
                   if(resiHash.hasOwnProperty(i)) {
                       let cFull = ic.giSeq[chnid][i];
                       let c = cFull;
                       if(cFull.length > 1) {
                           c = cFull[0] + '..';
                       }
-                      //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                      let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                      // let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                      let pos = ic.ParserUtilsCls.getResi(chnid, i);
                       html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                       if(me.bNode) {
                         let obj = {};
@@ -408,7 +399,7 @@ class AnnoCddSite {
                     let fromArray2 = [], toArray2 = [];
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         fromArray2.push(fromArray[i]);
-                        for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                        for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                             if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                                 toArray2.push(j - 1);
                                 fromArray2.push(j);
@@ -438,9 +429,9 @@ class AnnoCddSite {
           pssmid2name: pssmid2name, pssmid2fromArray: pssmid2fromArray, pssmid2toArray: pssmid2toArray}
     }
 
-    getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
-        return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
-    }
+    // getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
+    //     return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
+    // }
 
     showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
@@ -457,7 +448,8 @@ class AnnoCddSite {
         let resPosArray = [];
         for(let i = 0, il = residueArray.length; i < il; ++i) {
             let resid = residueArray[i];
-            let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+            //let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+            let resi = resid.substr(residueArray[i].lastIndexOf('_') + 1);
             resPosArray.push( resi );
         }
         let resCnt = resPosArray.length;
@@ -474,15 +466,21 @@ class AnnoCddSite {
         let widthPerRes = 1;
         for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
           html += ic.showSeqCls.insertGap(chnid, i, '-');
-          if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+          let resi = ic.ParserUtilsCls.getResi(chnid, i);
+          //if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+          if(resPosArray.indexOf(resi) != -1) {
               let cFull = ic.giSeq[chnid][i];
               let c = cFull;
               if(cFull.length > 1) {
                   c = cFull[0] + '..';
               }
-              let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-              let resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
-              let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
+            //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+            //   let resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
+            //   let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
+              let pos = resi;
+              let resid = chnid + '_' + resi;
+              let title = cFull + resi;
+              
               if(type == 'ssbond') {
                   title = 'Residue ' + resid + ' has disulfide bond with';
                   let sstitle = '';

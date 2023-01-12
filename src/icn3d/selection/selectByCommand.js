@@ -8,7 +8,7 @@ class SelectByCommand {
     }
 
     //Set a custom selection with the "command", its name "commandname" and its description "commanddesc".
-    selectByCommand(select, commandname, commanddesc) { let ic = this.icn3d, me = ic.icn3dui;
+    async selectByCommand(select, commandname, commanddesc) { let ic = this.icn3d, me = ic.icn3dui;
            if(select.indexOf('saved atoms') === 0) {
                 let pos = 12; // 'saved atoms '
                 let strSets = select.substr(pos);
@@ -31,18 +31,18 @@ class SelectByCommand {
                    ic.hAtoms = {}
 
                    if(command.substr(0, pos).toLowerCase() === 'and') { // intersection
-                           ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
+                      await ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
 
-                           allHighlightAtoms = me.hashUtilsCls.intHash(allHighlightAtoms, ic.hAtoms);
+                      allHighlightAtoms = me.hashUtilsCls.intHash(allHighlightAtoms, ic.hAtoms);
                    }
                    else if(command.substr(0, pos).toLowerCase() === 'not') { // negation
-                           ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
+                      await ic.applyCommandCls.applyCommand('select ' + command.substr(pos + 1));
 
-                           allHighlightAtoms = me.hashUtilsCls.exclHash(allHighlightAtoms, ic.hAtoms);
+                      allHighlightAtoms = me.hashUtilsCls.exclHash(allHighlightAtoms, ic.hAtoms);
                    }
                    else { // union
-                           ic.applyCommandCls.applyCommand('select ' + command);
-                           allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
+                      await ic.applyCommandCls.applyCommand('select ' + command);
+                      allHighlightAtoms = me.hashUtilsCls.unionHash(allHighlightAtoms, ic.hAtoms);
                    }
                }
 

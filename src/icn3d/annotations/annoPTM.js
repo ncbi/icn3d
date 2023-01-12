@@ -8,7 +8,7 @@ class AnnoPTM {
     }
 
     //Show the annotations of CDD domains and binding sites.
-    showPTM(chnid, chnidBase, type, begin, end) { let ic = this.icn3d, me = ic.icn3dui;
+    async showPTM(chnid, chnidBase, type, begin, end) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         // UniProt ID
@@ -21,30 +21,19 @@ class AnnoPTM {
         }
         // UniProt ID
         else if( structure.length > 5 ) {
-            let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
-            $.ajax({
-              url: url,
-              dataType: 'json',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                thisClass.parsePTM(data, chnid, type);
-                if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
+            let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure; 
+            let data;
+            try {
+                data = await me.getAjaxPromise(url, 'json');
 
+                thisClass.parsePTM(data, chnid, type);
+                /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+            }
+            catch {
                 thisClass.getNoPTM(chnid, type);
 
                 return;
-              }
-            });
+            }
         }
         else { // PDB
             // get PDB to UniProt mapping
@@ -53,11 +42,10 @@ class AnnoPTM {
             let structLower = structure.substr(0, 4).toLowerCase();
             let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
 
-            $.ajax({
-              url: urlMap,
-              dataType: 'json',
-              cache: true,
-              success: function(dataMap) {
+            let dataMap;
+            try {
+                dataMap = await me.getAjaxPromise(urlMap, 'json');
+
                 let UniProtID = '';
                 if(!ic.UPResi2ResiPosPerChain) ic.UPResi2ResiPosPerChain = {};
                 ic.UPResi2ResiPosPerChain[chnid] = {};
@@ -92,40 +80,38 @@ class AnnoPTM {
                     }
                 }
 
+                if(!ic.annoPtmData) ic.annoPtmData = {};
+
                 if(UniProtID == '') {
                     thisClass.getNoPTM(chnid, type);
                 }
                 else {
-                    let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
-                    $.ajax({
-                        url: url,
-                        dataType: 'json',
-                        cache: true,
-                        tryCount : 0,
-                        retryLimit : 0, //1
-                        success: function(data) {
+                    // call just once for one UniProt ID
+                    if(ic.annoPtmData.hasOwnProperty(UniProtID)) {
+                        thisClass.parsePTM(ic.annoPtmData[UniProtID], chnid, type);
+                    }
+                    else {
+                        
+                        let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
+                        let data;
+                        try {
+                            data = await me.getAjaxPromise(url, 'json');
+                            ic.annoPtmData[UniProtID] = data;
+
                             thisClass.parsePTM(data, chnid, type);
-                            if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-                        },
-                        error : function(xhr, textStatus, errorThrown ) {
-                            this.tryCount++;
-                            if(this.tryCount <= this.retryLimit) {
-                                //try again
-                                $.ajax(this);
-                                return;
-                            }
-
+                            /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+                        }
+                        catch(err) {
                             thisClass.getNoPTM(chnid, type);
-
                             return;
                         }
-                    });
+                    }
                 }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
+            }
+            catch(err) {
                 thisClass.getNoPTM(chnid, type);
-              }
-            });
+                return;
+            }
         }
     }
 
@@ -247,8 +233,9 @@ class AnnoPTM {
                     if(cFull.length > 1) {
                         c = cFull[0] + '..';
                     }
-                    let pos = ic.annoCddSiteCls.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
-
+                    // let pos = ic.annoCddSiteCls.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                    let pos = ic.ParserUtilsCls.getResi(chnid, i);
+                    
                     html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                     if(me.bNode) {
                         let obj = {};
@@ -300,7 +287,7 @@ class AnnoPTM {
         // add here after the ajax call
         ic.showAnnoCls.enableHlSeq();
         ic.bAjaxPTM = true;
-        if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
+        /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
     }
 }
 
