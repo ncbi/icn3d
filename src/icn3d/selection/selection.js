@@ -363,6 +363,12 @@ class Selection {
         }
     }
 
+    saveSelInCommand() { let ic = this.icn3d, me = ic.icn3dui;
+        ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+
+        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)), true);
+    }
+
     saveEachResiInSel() { let ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
         
@@ -419,7 +425,7 @@ class Selection {
         ic.hlUpdateCls.removeHlMenus();
     }
 
-    loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
       let nameCommandArray = dataStr.trim().split('\n');
 
       for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
@@ -435,7 +441,7 @@ class Selection {
 
           let pos = command.indexOf(' '); // select ...
 
-          ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
+          await ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
 
           me.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
       }

@@ -295,7 +295,7 @@ class LoadAtomData {
                     else {
                         // make MMDB residue number consistent with PDB residue number
                         atm.resi = atm.resi_ori; // corrected for residue insertion code
-                        if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+                        //if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
                     }
                 }
 
@@ -305,8 +305,9 @@ class LoadAtomData {
                 if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
 
                 // remember NCBI residue number
-                atm.resiNCBI = atm.ids.r;
-                ic.residNCBI2resid[chainNum + '_' + atm.resiNCBI] = chainNum + '_' + atm.resi;
+                // atm.resiNCBI = atm.ids.r;
+                // ic.ncbi2resid[chainNum + '_' + atm.resiNCBI] = chainNum + '_' + atm.resi;
+                // ic.resid2ncbi[chainNum + '_' + atm.resi] = chainNum + '_' + atm.resiNCBI;
             }
             else {
                 if(!bSetResi) {
@@ -623,6 +624,9 @@ class LoadAtomData {
                 }
             }
         }
+
+        // set ResidMapping after ic.chainsSeq is assigned in the above paragraph
+        ic.loadPDBCls.setResidMapping();
 
         // update bonds info
         if(type !== 'mmcifid') {

@@ -7,13 +7,10 @@ class Cartoon2d {
         this.icn3d = icn3d;
     }
 
-    draw2Dcartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
-        me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
-        this.draw2Dcartoon_base(type);
-    }
-
-    draw2Dcartoon_base(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
+    async draw2Dcartoon(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
+
+        me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
 
         ic.cartoon2dType = type;
 
@@ -24,21 +21,27 @@ class Cartoon2d {
             $("#" + me.svgid_ct).html(html);
         }
         else {
+/*            
             if(type == 'domain' && !ic.chainid2pssmid) {
-                $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
-                   ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-                   //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-                   let html = thisClass.getCartoonSvg(type, ic.graphStr);
-                   $("#" + me.svgid_ct).html(html);
-                   thisClass.setEventsForCartoon2d();
+                //$.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
+                    await thisClass.getNodesLinksForSetCartoon(type);
 
-                   me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+                    ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+                    //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                    let html = thisClass.getCartoonSvg(type, ic.graphStr);
+                    $("#" + me.svgid_ct).html(html);
+                    thisClass.setEventsForCartoon2d();
 
-                   if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
-                });
+                    me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+
+                    /// if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
+                //});
             }
             else {
-                this.getNodesLinksForSetCartoonBase(type);
+*/               
+                //await this.getNodesLinksForSetCartoonBase(type);
+                await this.getNodesLinksForSetCartoon(type);
+
                 ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
 
                 //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
@@ -48,7 +51,7 @@ class Cartoon2d {
                 thisClass.setEventsForCartoon2d();
 
                 me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
-            }
+//            }
         }
     }
 
@@ -389,16 +392,9 @@ class Cartoon2d {
        return resStr;
     }
 
-    getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredCartoonData = $.Deferred(function() {
-          thisClass.getNodesLinksForSetCartoonBase(type);
-      });
-
-      return ic.deferredCartoonData.promise();
-    }
+    // async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+    //   await this.getNodesLinksForSetCartoonBase(type);
+    // }
 
     projectTo2d(v3) { let ic = this.icn3d, me = ic.icn3dui;
         let v2 = v3.project( ic.cam );
@@ -418,7 +414,8 @@ class Cartoon2d {
         return realV3;
     }
 
-    getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
+    //async getNodesLinksForSetCartoonBase(type) { let ic = this.icn3d, me = ic.icn3dui;
+    async getNodesLinksForSetCartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let nodeArray = [], linkArray = [];
@@ -512,18 +509,27 @@ class Cartoon2d {
            ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
        }
        else if(type == 'domain') {
+/*
            if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
-                $.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
-                   thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-                   if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
-                   return;
-                });
+                //$.when(ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations')).then(function() {
+                    await ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations');
+                    thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
+                    /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+                    //return;
+                //});
            }
            else {
                thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
-               if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
-               return;
+               /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+               //return;
            }
+*/
+
+            if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
+                await ic.loadScriptCls.applyCommandAnnotationsAndCddSite('view annotations');
+            }
+
+            thisClass.getNodesLinksForDomains(ic.chainid2pssmid);
        }
        else if(type == 'secondary') {
            ic.resi2resirange = {};
@@ -646,7 +652,7 @@ class Cartoon2d {
            ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
        }
 
-       if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
+       /// if(ic.deferredCartoonData !== undefined) ic.deferredCartoonData.resolve();
     }
 
     getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -712,8 +718,8 @@ class Cartoon2d {
 
                ic.hAtoms = {};
                for(let j = 0, jl = fromArray.length; j < jl; ++j) {
-                   let resiStart = fromArray[j] + 1;
-                   let resiEnd = toArray[j] + 1;
+                   let resiStart = parseInt(fromArray[j]) + 1;
+                   let resiEnd = parseInt(toArray[j]) + 1;
 
                    for(let k = resiStart; k <= resiEnd; ++k) {
                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[chainid + '_' + k]);
@@ -805,8 +811,8 @@ class Cartoon2d {
         let chainidTmp = (idArray.length >= 2) ? structure + '_' + idArray[1] : Object.keys(ic.chains)[0];
 
         for(let i = 0, il = fromArray.length; i < il; ++i) {
-            let from = parseInt(fromArray[i]) + 1
-            let to = parseInt(toArray[i]) + 1
+            let from = parseInt(fromArray[i]) + 1;
+            let to = parseInt(toArray[i]) + 1;
             for(let j = from; j <= to; ++j) {
                 let resid = chainidTmp + '_' + j;
                 atomSet = me.hashUtilsCls.unionHash(atomSet, ic.residues[resid]);
@@ -820,28 +826,28 @@ class Cartoon2d {
     click2Dcartoon() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        me.myEventCls.onIds("#" + me.pre + "2dctn_chain", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2dctn_chain", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.initCartoonSvg();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.cartoon2dCls.draw2Dcartoon('chain');
+           await ic.cartoon2dCls.draw2Dcartoon('chain');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "2dctn_domain", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2dctn_domain", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.initCartoonSvg();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.cartoon2dCls.draw2Dcartoon('domain');
+           await ic.cartoon2dCls.draw2Dcartoon('domain');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "2dctn_secondary", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "2dctn_secondary", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.initCartoonSvg();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.cartoon2dCls.draw2Dcartoon('secondary');
+           await ic.cartoon2dCls.draw2Dcartoon('secondary');
         });
 
         $(document).on("click", "#" + ic.pre + "dl_2dctn .icn3d-ctnode", function(e) { let ic = thisClass.icn3d;

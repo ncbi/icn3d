@@ -64,6 +64,8 @@ class Picking {
               */
               me.htmlCls.clickMenuCls.setLogCmd('pickatom ' + atom.serial, true);
 
+              ic.selectionCls.saveSelInCommand();
+
               // update the interaction flag
               ic.bSphereCalc = false;
               //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);

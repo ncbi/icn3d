@@ -18,21 +18,20 @@
   <div id="div0"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
- 
-  <link rel="stylesheet" href="icn3d_3.20.1.css">
+  <link rel="stylesheet" href="icn3d_3.21.0.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.20.1.min.js"></script>
-  
+  <script src="icn3d_3.21.0.min.js"></script>
+
   <script type="text/javascript">
 
-    $( document ).ready(function() {
+    $( document ).ready(async function() {
       if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
           // iCn3D version 2.24.7 doesn't work with three_0.128.0.min.js
           //$.getScript('icn3d_full_ui_2.24.7.min.js', function() {
           //  var version = 2;
-          //  launchIcn3d(version);
+          //  await launchIcn3d(version);
           //});
 
           var fixedUrl = document.URL.replace('full.html', 'full_2.24.7.html');
@@ -41,41 +40,42 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.20.1.min.js', function() {
+          //$.getScript('icn3d_3.21.0.min.js', function() {
             var version = 3;
-            launchIcn3d(version);
+            await launchIcn3d(version); //await 
           //});
       }
-      function launchIcn3d(version) {
+
+      async function launchIcn3d(version) {
           var cfg = getConfig();
           cfg.version = version;
 
           if(cfg.mmtfid !== undefined) {
-              setupViewer('mmtfid', cfg.mmtfid, cfg);
+              await setupViewer('mmtfid', cfg.mmtfid, cfg);
           }
           else if(cfg.pdbid !== undefined) {
-              setupViewer('pdbid', cfg.pdbid, cfg);
+              await setupViewer('pdbid', cfg.pdbid, cfg);
           }
           else if(cfg.afid !== undefined) {
-              setupViewer('afid', cfg.afid, cfg);
+              await setupViewer('afid', cfg.afid, cfg);
           }
           else if(cfg.opmid !== undefined) {
-              setupViewer('opmid', cfg.opmid, cfg);
+              await setupViewer('opmid', cfg.opmid, cfg);
           }
           else if(cfg.cid !== undefined) {
-              setupViewer('cid', cfg.cid, cfg);
+              await setupViewer('cid', cfg.cid, cfg);
           }
           else if(cfg.mmcifid !== undefined) {
-              setupViewer('mmcifid', cfg.mmcifid, cfg);
+              await setupViewer('mmcifid', cfg.mmcifid, cfg);
           }
           else if(cfg.mmdbid !== undefined) {
-              setupViewer('mmdbid', cfg.mmdbid, cfg);
+              await setupViewer('mmdbid', cfg.mmdbid, cfg);
           }
           else if(cfg.gi !== undefined) {
-              setupViewer('gi', cfg.gi, cfg);
+              await setupViewer('gi', cfg.gi, cfg);
           }
           else if(cfg.uniprotid !== undefined) {
-              setupViewer('uniprotid', cfg.uniprotid, cfg);
+              await setupViewer('uniprotid', cfg.uniprotid, cfg);
           }
           else if(cfg.blast_rep_id !== undefined) {
               if( (cfg.from === 'blast' || cfg.from === 'icn3d') && cfg.command == '') {
@@ -83,12 +83,12 @@
                   + cfg.blast_rep_id + ';+show+selection';
               }
 
-              setupViewer('blast_rep_id', cfg.blast_rep_id, cfg);
+              await setupViewer('blast_rep_id', cfg.blast_rep_id, cfg);
           }
           else if(cfg.urlname !== undefined) {
               var urlname = decodeURIComponent(cfg.urlname);
 
-              setupViewer('url', cfg.urltype + '|' + urlname, cfg);
+              await setupViewer('url', cfg.urltype + '|' + urlname, cfg);
           }
           // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
           else if(cfg.align !== undefined) {
@@ -101,21 +101,21 @@
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
 
-              icn3dui.show3DStructure();
+              await icn3dui.show3DStructure();
           }
           else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
               cfg.divid = 'div0';
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
 
-              icn3dui.show3DStructure();
+              await icn3dui.show3DStructure();
           }
           else {
-              setupViewer('', '', cfg);
+              await setupViewer('', '', cfg);
           }
       }
 
-      function setupViewer(idName, idValue, cfg) {
+      async function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.toString().replace(/\s/g, '').split(',');
@@ -136,9 +136,8 @@
 
           var icn3dui = new icn3d.iCn3DUI(cfg);
 
-          $.when(icn3dui.show3DStructure()).then(function() {
-               //icn3dui.setOption('color', 'spectrum');
-          });
+          await icn3dui.show3DStructure();
+          //icn3dui.setOption('color', 'spectrum');
 
           if(idName === '') $("#div" + i + "_wait").hide();
         }

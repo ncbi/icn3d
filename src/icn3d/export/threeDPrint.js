@@ -268,7 +268,7 @@ class ThreeDPrint {
                     residueid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
                     if(ic.secondaries[residueid] == 'c' || ic.secondaries[residueid] == 'E' || ic.secondaries[residueid] == 'H') {
                         // add every third residue
-                        if(coilCnt % 3 == 0 || ic.chainsSeq[chainid][j].resi != parseInt(prevResi) + 1) {
+                        if(coilCnt % 3 == 0 || ic.resid2ncbi[ic.chainsSeq[chainid][j].resi] != ic.resid2ncbi[prevResi] + 1) {
                             if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
                         }
 
@@ -307,7 +307,9 @@ class ThreeDPrint {
                     bProtein = true;
 
                     // remove the previous, current and the next residues, chemicals, and ions from "sphere"
-                    let resi = parseInt(residueid.substr(residueid.lastIndexOf('_') + 1));
+                    //let resi = parseInt(residueid.substr(residueid.lastIndexOf('_') + 1));
+                    let chainid = residueid.substr(0, residueid.lastIndexOf('_'));
+                    let resi = ic.ParserUtilsCls.getResiNCBI(chainid, residueid.substr(residueid.lastIndexOf('_') + 1));
 
                     let simSphere = {}
                     for(let serial in sphere) {
@@ -315,9 +317,11 @@ class ThreeDPrint {
 
                         let atom = ic.atoms[serial];
                         if(isNaN(atom.resi)) continue;
-                        if((ss == 'c' &&(atom.resi > resi + 1 || atom.resi < resi - 1) )
-                          ||(ss == 'E' &&(atom.resi > resi + 2 || atom.resi < resi - 2) )
-                          ||(ss == 'H' &&(atom.resi > resi + 4 || atom.resi < resi - 4) )
+                        let atomResi = ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi);
+
+                        if((ss == 'c' &&(atomResi > resi + 1 || atomResi < resi - 1) )
+                          ||(ss == 'E' &&(atomResi > resi + 2 || atomResi < resi - 2) )
+                          ||(ss == 'H' &&(atomResi > resi + 4 || atomResi < resi - 4) )
                           ) {
                             simSphere[serial] = 1;
                         }

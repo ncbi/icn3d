@@ -45,8 +45,6 @@ class DensityCifParser {
 
             oReq.onreadystatechange = function() {
                 if (this.readyState == 4) {
-                   //ic.hideLoading();
-
                    if(this.status == 200) {
                        let arrayBuffer = oReq.response;
 
@@ -73,7 +71,7 @@ class DensityCifParser {
                        }
                     }
 
-                    if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
+                    /// if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
                 }
                 else {
                     ic.ParserUtilsCls.showLoading();

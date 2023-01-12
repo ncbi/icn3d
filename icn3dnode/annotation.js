@@ -40,9 +40,10 @@ if(myArgs.length != 2) {
 
 let inputid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
 let annoType = myArgs[1];
+let AFUniprotVersion = 'v4';
 
 let url = (inputid.length == 4) ? "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=" + inputid
-    : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_v3.pdb";
+    : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_" + AFUniprotVersion + ".pdb";
 
 https.get(url, function(res1) {
     let response1 = [];
@@ -50,7 +51,7 @@ https.get(url, function(res1) {
         response1.push(chunk);
     });
 
-    res1.on('end', function(){
+    res1.on('end', async function(){
         let dataStr = response1.join('');
         
         me.setIcn3d();
@@ -60,11 +61,11 @@ https.get(url, function(res1) {
         if(isNaN(inputid) && inputid.length > 5) {
             let header = 'HEADER                                                        ' + inputid + '\n';
             dataStr = header + dataStr;
-            ic.opmParserCls.parseAtomData(dataStr, inputid, undefined, 'pdb', undefined);
+            await ic.opmParserCls.parseAtomData(dataStr, inputid, undefined, 'pdb', undefined);
         }
         else {
             let dataJson = JSON.parse(dataStr);
-            ic.mmdbParserCls.parseMmdbData(dataJson);
+            await ic.mmdbParserCls.parseMmdbData(dataJson);
         }
 
         let result = ic.showAnnoCls.showAnnotations_part1();
@@ -81,14 +82,14 @@ https.get(url, function(res1) {
                 response1.push(chunk);
             });
 
-            res1.on('end', function(){
+            res1.on('end', async function(){
                 let dataStr = response1.join('');
                 let dataJson = JSON.parse(dataStr);
 
                 ic.chainid_seq = dataJson;
-                ic.showAnnoCls.processSeqData(ic.chainid_seq);
+                await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
-                ic.showAnnoCls.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                await ic.showAnnoCls.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
 
                 // output annotations
                 if(annoType == 5 || annoType == 6 || annoType == 7 || annoType == 8) {

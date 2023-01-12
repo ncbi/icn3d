@@ -47,7 +47,7 @@ class AnnoDomain {
                     let subdomains = result.subdomains;
                     //let substruct = result.substruct;
                     //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
-            
+
                     for(let i = 0, il = subdomains.length; i < il; ++i) {
                         // domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
                         let domain = {};
@@ -144,14 +144,14 @@ class AnnoDomain {
                 }
 
                 // use the NCBI residue number, and convert to PDB residue number during selection
-                if(ic.bNCBI || bCalcDirect) {
+                // if(ic.bNCBI || bCalcDirect) {
                     fromArray.push(domainFrom);
                     toArray.push(domainTo);
-                }
-                else {
-                    fromArray.push(domainFrom + ic.baseResi[chnid]);
-                    toArray.push(domainTo + ic.baseResi[chnid]);
-                }
+                // }
+                // else {
+                //     fromArray.push(domainFrom + ic.baseResi[chnid]);
+                //     toArray.push(domainTo + ic.baseResi[chnid]);
+                // }
 
                 resCnt += domainTo - domainFrom + 1;
                 for(let j = domainFrom; j <= domainTo; ++j) {
@@ -166,8 +166,8 @@ class AnnoDomain {
                 if(!ic.resid2domain) ic.resid2domain = {};
                 if(!ic.resid2domain[chnid]) ic.resid2domain[chnid] = [];
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
-                    let from = fromArray[i];
-                    let to = toArray[i];
+                    let from = parseInt(fromArray[i]);
+                    let to = parseInt(toArray[i]);
                     for(let j = from; j <= to; ++j) {
                         // 0-based
                         let obj = {};
@@ -187,16 +187,17 @@ class AnnoDomain {
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
               //if(i >= domainFrom && i <= domainTo) {
+              let resi = ic.ParserUtilsCls.getResi(chnid, i);
               if(resiHash.hasOwnProperty(i+1)) {
-                let cFull = ic.giSeq[chnid][i];
+                  let cFull = ic.giSeq[chnid][i];
                   let c = cFull;
                   if(cFull.length > 1) {
                       c = cFull[0] + '..';
                   }
-//                let pos =(ic.baseResi[chnid] + i+1).toString();
-//                let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-                  let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+                  
+                //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                  let pos = resi;
+                  html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
               }
               else {
                 html += '<span>-</span>'; //'<span>-</span>';
@@ -216,7 +217,7 @@ class AnnoDomain {
                 let fromArray2 = [], toArray2 = [];
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     fromArray2.push(fromArray[i]);
-                    for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                    for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                         if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                             toArray2.push(j - 1);
                             fromArray2.push(j);

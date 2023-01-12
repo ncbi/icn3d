@@ -9,7 +9,7 @@ class SdfParser {
 
     //Ajax call was used to get the atom data from the PubChem "cid". This function was
     //deferred so that it can be chained together with other deferred functions for sequential execution.
-    downloadCid(cid) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadCid(cid) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         ic.ParserUtilsCls.setYourNote('PubChem CID ' + cid + ' in iCn3D');
@@ -18,83 +18,33 @@ class SdfParser {
 
         // get parent CID
         let urlParent = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/cids/JSONP?cids_type=parent";
-        $.ajax({
-            url: urlParent,
-            dataType: 'jsonp',
-            cache: true,
-            tryCount : 0,
-            retryLimit : 0, //1
-            beforeSend: function() {
-                ic.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                //ic.ParserUtilsCls.hideLoading();
-            },
-            success: function(dataParent) {
-                let cidParent = dataParent.IdentifierList.CID[0];
+        let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parant CID...");
 
-                let uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cidParent + "/record/SDF/?record_type=3d&response_type=display";
+        let cidParent = dataParent.IdentifierList.CID[0];
 
-                $.ajax({
-                    url: uri,
-                    dataType: 'text',
-                    cache: true,
-                    tryCount : 0,
-                    retryLimit : 0, //1
-                    beforeSend: function() {
-                        ic.ParserUtilsCls.showLoading();
-                    },
-                    complete: function() {
-                        //ic.ParserUtilsCls.hideLoading();
-                    },
-                    success: function(data) {
-                        let bResult = thisClass.loadSdfAtomData(data, cid);
+        let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cidParent + "/record/SDF/?record_type=3d&response_type=display";
+        let data = await me.getAjaxPromise(url, 'text', true, "This CID may not have 3D structure...");
 
-            //            ic.opts['pk'] = 'atom';
-            //            ic.opts['chemicals'] = 'ball and stick';
+        let bResult = thisClass.loadSdfAtomData(data, cid);
 
-                        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
-                            $("#" + ic.pre + "alternateWrapper").hide();
-                        }
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+            $("#" + ic.pre + "alternateWrapper").hide();
+        }
 
-                        if(!bResult) {
-                        alert('The SDF of CID ' + cid + ' has the wrong format...');
-                        }
-                        else {
-                        ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-                        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        if(!bResult) {
+            alert('The SDF of CID ' + cid + ' has the wrong format...');
+        }
+        else {
+            ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-                        ic.ParserUtilsCls.renderStructure();
+            await ic.ParserUtilsCls.renderStructure();
 
-                        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-                        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-                        }
-                    },
-                    error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-                        return;
-                    }
-                })
-                .fail(function() {
-                    alert( "This CID may not have 3D structure..." );
-                });
-            },
-            error : function(xhr, textStatus, errorThrown ) {
-                alert( "Can not retrieve the parant CID..." );
-            }
-        })
-        .fail(function() {
-            alert( "Can not retrieve the parant CID..." );
-        });
+            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+        }
     }
 
-    loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
         let bResult = this.loadSdfAtomData(data);
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -108,11 +58,11 @@ class SdfParser {
           ic.setStyleCls.setAtomStyleByOptions(ic.opts);
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-          ic.ParserUtilsCls.renderStructure();
+          await ic.ParserUtilsCls.renderStructure();
 
           if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 

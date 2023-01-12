@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.20.0';
+    this.REVISION = '3.21.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -206,9 +206,9 @@ class iCn3DUI {
 }
 
 // show3DStructure is the main function to show 3D structure
-iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
+iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
   let thisClass = this;
-  me.deferred = $.Deferred(function() {
+//   me.deferred = $.Deferred(function() {
     if(me.cfg.menuicon) {
         me.htmlCls.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
         me.htmlCls.licenseStr = '<i class="icn3d-license" title="requires license">&nbsp;</i>';
@@ -317,7 +317,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         // reload only if viewing the same structure
         if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
           || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
-            ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
+            await ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
             return;
         }
     }
@@ -335,7 +335,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         ic.InputfileType = 'pdb';
         ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
         
-        ic.pdbParserCls.loadPdbData(pdbStr);
+        await ic.pdbParserCls.loadPdbData(pdbStr);
 
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
             let structureArray = Object.keys(ic.structures);
@@ -349,7 +349,7 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
                 chainidArray = ic.chainalignParserCls.addPostfixForChainids(chainidArray);
                 
                 let bRealign = true, bPredefined = true;
-                ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+                await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
         }
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
@@ -384,11 +384,11 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
             // load multiple PDBs
-            ic.bNCBI = true;
+            // ic.bNCBI = true;
             ic.bMmdbafid = true;
             
             let bQuery = true;
-            ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
         }
     }
     else if(me.cfg.url !== undefined) {
@@ -403,19 +403,19 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
 
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
+        await ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
     }
     else if(me.cfg.mmtfid !== undefined) {
        ic.inputid = me.cfg.mmtfid;
        ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
+       await ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
     }
     else if(me.cfg.pdbid !== undefined) {
        ic.inputid = me.cfg.pdbid;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
+       await ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
     }
     else if(me.cfg.afid !== undefined) {
        ic.inputid = me.cfg.afid;
@@ -424,156 +424,117 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
        let bAf = true;
 
        //ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
-       $.when(ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf)).then(function() {
-        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-       });
+       await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
+       await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else if(me.cfg.opmid !== undefined) {
        ic.inputid = me.cfg.opmid;
        ic.loadCmd = 'load opm ' + me.cfg.opmid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.opmParserCls.downloadOpm(me.cfg.opmid);
+       await ic.opmParserCls.downloadOpm(me.cfg.opmid);
     }
     else if(me.cfg.mmdbid !== undefined) {
        ic.inputid = me.cfg.mmdbid;
-       ic.bNCBI = true;
+       // ic.bNCBI = true;
        ic.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
-    }
-    else if(me.cfg.gi !== undefined) {
-       ic.bNCBI = true;
-       ic.loadCmd = 'load gi ' + me.cfg.gi;
-       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       ic.mmdbParserCls.downloadGi(me.cfg.gi);
+       await ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
     }
     else if(me.cfg.refseqid !== undefined) {
         ic.inputid = me.cfg.refseqid;
         
-        ic.bNCBI = true;
+        // ic.bNCBI = true;
         ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
-     }
-    //  else if(me.cfg.proteinname !== undefined) {
-    //     ic.bNCBI = true;
-    //     ic.loadCmd = 'load proteinname ' + me.cfg.gi;
-    //     me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-    //     ic.mmdbParserCls.downloadProteinname(me.cfg.proteinname);
-    //  }
+        await ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
+    }
     else if(me.cfg.blast_rep_id !== undefined) {
-       ic.bNCBI = true;
+       // ic.bNCBI = true;
 
        // custom seqeunce has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
-           ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+            // make it backward compatible for  figure 2 in iCn3D paper: https://academic.oup.com/bioinformatics/article/36/1/131/5520951
+            if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
+                me.cfg.command = 'view annotations; set annotation cdd; set annotation site; set view detailed view; select chain 1TSR_A; show selection';
+            }
 
-           if(me.cfg.alg == 'smithwm') {
-            ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-            ic.bSmithwm = true;
-           }
-           else if(me.cfg.alg == 'local_smithwm') {
-            ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-            ic.bLocalSmithwm = true;
-           }
-           else {
-            ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-            ic.bSmithwm = false;
-            ic.bLocalSmithwm = false;
-           }
-           
-           me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-           ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+            ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+
+            if(me.cfg.alg == 'smithwm') {
+                ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                ic.bSmithwm = true;
+            }
+            else if(me.cfg.alg == 'local_smithwm') {
+                ic.loadCmd = 'load seq_struct_ids_local_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                ic.bLocalSmithwm = true;
+            }
+            else {
+                ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                ic.bSmithwm = false;
+                ic.bLocalSmithwm = false;
+            }
+            
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+            await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
        }
        else if(me.cfg.rid !== undefined) {
-           let url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
-           $.ajax({
-              url: url,
-              dataType: 'json',
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                  if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
-                  let hitArray = data.BlastOutput2[q].report.results.search.hits;
-                  let qseq = undefined;
-                  for(let i = 0, il = hitArray.length; i < il; ++i) {
-                    let hit = hitArray[i];
-                    let bFound = false;
-                    for(let j = 0, jl = hit.description.length; j < jl; ++j) {
-                      let acc = hit.description[j].accession;
-                      if(acc == me.cfg.blast_rep_id) {
-                        bFound = true;
-                        break;
-                      }
+            let url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
+            let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
+
+            for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
+                if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
+                let hitArray = data.BlastOutput2[q].report.results.search.hits;
+                let qseq = undefined;
+                for(let i = 0, il = hitArray.length; i < il; ++i) {
+                let hit = hitArray[i];
+                let bFound = false;
+                for(let j = 0, jl = hit.description.length; j < jl; ++j) {
+                    let acc = hit.description[j].accession;
+                    if(acc == me.cfg.blast_rep_id) {
+                    bFound = true;
+                    break;
                     }
-                    if(bFound) {
-                      qseq = hit.hsps[0].qseq;
-                      //remove gap '-'
-                      qseq = qseq.replace(/-/g, '');
-                      break;
-                    }
-                  }
-                  if(qseq !== undefined) me.cfg.query_id = qseq;
-                  ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
-                  ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-                  me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-                  ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
-                  break;
                 }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
+                if(bFound) {
+                    qseq = hit.hsps[0].qseq;
+                    //remove gap '-'
+                    qseq = qseq.replace(/-/g, '');
+                    break;
                 }
-                else {
-                    alert('The RID ' + me.cfg.rid + ' may have expired...');
                 }
-                return;
-              }
-           });
+                if(qseq !== undefined) me.cfg.query_id = qseq;
+                ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+                ic.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+                await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+                break;
+            }
        }
        else {
            alert('BLAST "RID" is a required parameter...');
        }
     }
     else if(me.cfg.cid !== undefined) {
-       ic.inputid = me.cfg.cid;
+        ic.inputid = me.cfg.cid;
 
-       let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
-       $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          tryCount : 0,
-          retryLimit : 0, //1
-          success: function(data) {
-              if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            return;
-          }
-       });
+        let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
+
+        let data = await me.getAjaxPromise(url, 'jsonp', false);
+
+        if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
+
         ic.loadCmd = 'load cid ' + me.cfg.cid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.sdfParserCls.downloadCid(me.cfg.cid);
+        await ic.sdfParserCls.downloadCid(me.cfg.cid);
     }
     else if(me.cfg.mmcifid !== undefined) {
         ic.inputid = me.cfg.mmcifid;
         ic.loadCmd = 'load mmcif ' + me.cfg.mmcifid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
+        await ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
     }
     else if(me.cfg.align !== undefined) {
-        ic.bNCBI = true;
+        // ic.bNCBI = true;
 
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
         if(alignArray.length === 6) {
@@ -586,24 +547,24 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         ic.loadCmd = 'load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         if(me.cfg.inpara.indexOf('atype=2') == -1) {
-            ic.alignParserCls.downloadAlignment(me.cfg.align);
+            await ic.alignParserCls.downloadAlignment(me.cfg.align);
         }
         else {
             let vastplusAtype = 2; // Tm-align
-            ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
         }
     }
     else if(me.cfg.chainalign !== undefined) {
-        ic.bNCBI = true;
+        // ic.bNCBI = true;
 
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
+        await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
     }
     else if(me.cfg.mmdbafid !== undefined) {
-        ic.bNCBI = true;
+        // ic.bNCBI = true;
 
         // remove space
         me.cfg.mmdbafid = me.cfg.mmdbafid.replace(/\s+/g, '');
@@ -618,22 +579,20 @@ iCn3DUI.prototype.show3DStructure = function(pdbStr) { let me = this;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-        //ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
-        $.when(ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid)).then(function() {          
-            ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-        });
+        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);        
+        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
-        ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else {
         //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
         //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
     }
-  });
-  return me.deferred.promise();
+//   });
+//   return me.deferred.promise();
 };
 
 iCn3DUI.prototype.setIcn3d = function() { let me = this;
@@ -657,6 +616,60 @@ iCn3DUI.prototype.setIcn3d = function() { let me = this;
     me.icn3d.controlCls.setControl(); // rotation, translation, zoom, etc
 
     me.setDialogAjax();
+};
+
+iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete) { let me = this;
+    return new Promise(function(resolve, reject) {
+        $.ajax({
+            url: url,
+            dataType: dataType,
+            cache: true,
+            beforeSend: function() {
+                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+            },
+            complete: function() {
+                if(complete) ic.ParserUtilsCls.hideLoading();
+            },
+            success: function(data) {
+                resolve(data);
+            },
+            error : function() {
+                if(alertMess) alert(alertMess);
+                if(logMess) console.log(logMess);
+                
+                reject('error');
+            }
+        });
+    });
+};
+
+iCn3DUI.prototype.getAjaxPostPromise = function(url, data, beforeSend, alertMess, logMess, complete, dataType) { let me = this;
+    dataType = (dataType) ? dataType : 'json';
+
+    return new Promise(function(resolve, reject) {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data : data,
+            dataType: dataType,
+            cache: true,
+            beforeSend: function() {
+                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+            },
+            complete: function() {
+                if(complete) ic.ParserUtilsCls.hideLoading();
+            },
+            success: function(data) {
+                resolve(data);
+            },
+            error : function() {
+                if(alertMess) alert(alertMess);
+                if(logMess) console.log(logMess);
+                
+                reject('error');
+            }
+        });
+    });
 };
 
 iCn3DUI.prototype.setDialogAjax = function() { let me = this;

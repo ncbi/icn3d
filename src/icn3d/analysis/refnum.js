@@ -7,16 +7,16 @@
         this.icn3d = icn3d;
     }
 
-    hideIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+    async hideIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
         ic.bShowRefnum = false;
 
         ic.hAtoms = {};
         ic.bResetAnno = true;
-        ic.showAnnoCls.showAnnotations();
+        await ic.showAnnoCls.showAnnotations();
         ic.hlUpdateCls.updateHlAll();
     }
  
-    showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+    async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         if(Object.keys(ic.resid2refnum).length > 0) {
@@ -24,14 +24,14 @@
 
             // open sequence view
             ic.hAtomsRefnum = {};
-            ic.showAnnoCls.showAnnotations();
+            await ic.showAnnoCls.showAnnotations();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else {
             ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
 
             if(ic.pdbDataArray) {
-                thisClass.parseRefPdbData(ic.pdbDataArray);
+                await thisClass.parseRefPdbData(ic.pdbDataArray);
             }
             else {
 
@@ -40,30 +40,25 @@
                     //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
                     let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
 
-                    let pdbAjax = $.ajax({
-                        url: urlpdb,
-                        type: 'GET',
-                        dataType: "text",
-                        cache: true
-                    });
+                    let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
 
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                $.when.apply(undefined, pdbAjaxArray).then(function() {
-                    ic.pdbDataArray = (pdbAjaxArray.length == 1) ? [arguments] : Array.from(arguments);
-
-                    thisClass.parseRefPdbData(ic.pdbDataArray);
-                })
-                .fail(function() {
+                let allPromise = Promise.allSettled(pdbAjaxArray);
+                try {
+                    ic.pdbDataArray = await allPromise;
+                    await thisClass.parseRefPdbData(ic.pdbDataArray);
+                }
+                catch(err) {
                     alert("Error in retrieveing reference PDB data...");
                     return;
-                });
+                }                
             }
         }
     }
 
-    parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let struArray = Object.keys(ic.structures);
@@ -121,18 +116,13 @@
                     let domainid = chainid + '-' + k;
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                         let struct2 = "stru" + index;
-                        let pdb_query = dataArray[index][0];
+                        let pdb_query = dataArray[index].value; //[0];
 
                         let header = 'HEADER                                                        ' + struct2 + '\n';
                         pdb_query = header + pdb_query;
 
-                        let alignAjax = $.ajax({
-                            url: urltmalign,
-                            type: 'POST',
-                            data: {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]},
-                            dataType: 'json',
-                            cache: true
-                        });
+                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                        let alignAjax = me.getAjaxPostPromise(url, dataObj);
 
                         ajaxArray.push(alignAjax);
                         
@@ -142,21 +132,20 @@
             }
        }
 
-       //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-       $.when.apply(undefined, ajaxArray).then(function() {
-           let dataArray =(ajaxArray.length == 1) ? [arguments] : Array.from(arguments);
-           thisClass.parseAlignData(dataArray, domainidpairArray);
+        let allPromise = Promise.allSettled(ajaxArray);
+        try {
+            let dataArray = await allPromise;
+            await thisClass.parseAlignData(dataArray, domainidpairArray);
 
-           if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
-       })
-       .fail(function() {
-           console.log("Error in aligning with TM-align...");
-           return;
-       });    
+            /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
+        }
+        catch(err) {
+            console.log("Error in aligning with TM-align...");
+            return;
+        }         
     }
 
-    parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let tmscoreThreshold = 0.4; //0.5;
@@ -166,7 +155,7 @@
         ic.chainid2index = {};
         ic.domainid2ig2kabat = {};
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
-            let queryData = dataArray[i][0];
+            let queryData = dataArray[i].value; //[0];
             if(queryData.length == 0) continue;
             if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
 
@@ -260,7 +249,7 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
 
             // open sequence view
             ic.hAtomsRefnum = {};
-            ic.showAnnoCls.showAnnotations();
+            await ic.showAnnoCls.showAnnotations();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else {
@@ -284,7 +273,7 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
         else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
     }
 
-    parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bShowCustomRefnum = true;
 
         //refnum,11,12,,21,22
@@ -346,7 +335,7 @@ console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.
         }
 
         // open sequence view
-        ic.showAnnoCls.showAnnotations();
+        await ic.showAnnoCls.showAnnotations();
         ic.annotationCls.setAnnoViewAndDisplay('detailed view');
     }
  }

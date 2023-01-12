@@ -7,7 +7,7 @@ class ViewInterPairs {
         this.icn3d = icn3d;
     }
 
-    viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
+    async viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
       bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { let ic = this.icn3d, me = ic.icn3dui;
        let bondCnt;
 
@@ -336,33 +336,16 @@ class ViewInterPairs {
            }
 
            if(ic.bD3 === undefined) {
-               //var url = "https://d3js.org/d3.v4.min.js";
-               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
-               $.ajax({
-                  url: url,
-                  dataType: "script",
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                       ic.bD3 = true;
+                //var url = "https://d3js.org/d3.v4.min.js";
+                var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                let data = await me.getAjaxPromise(url, 'script');
 
-                       $("#" + me.svgid).empty();
-                       me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-                       ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
-                       if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
-                    return;
-                  }
-               });
+                ic.bD3 = true;
+
+                $("#" + me.svgid).empty();
+                me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+                /// if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
            }
            else {
                $("#" + me.svgid).empty();
@@ -372,16 +355,6 @@ class ViewInterPairs {
        }
        return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
     }
-
-/*
-    removeForce() { let ic = this.icn3d, me = ic.icn3dui;
-       setTimeout(function(){
-           me.htmlCls.force = 0;
-           me.htmlCls.clickMenuCls.setLogCmd("graph force " + me.htmlCls.force, true);
-           ic.getGraphCls.handleForce();
-       }, 300);
-    }
-*/
 
     clearInteractions() { let ic = this.icn3d, me = ic.icn3dui;
         ic.lines['hbond'] = [];
@@ -409,17 +382,17 @@ class ViewInterPairs {
        ic.resids2interAll = {}
     }
 
-    retrieveInteractionData() { let ic = this.icn3d, me = ic.icn3dui;
+    async retrieveInteractionData() { let ic = this.icn3d, me = ic.icn3dui;
          if(!ic.b2DShown) {
              if(me.cfg.align !== undefined) {
                  let structureArray = Object.keys(ic.structures);
 
                  if(me.cfg.atype == 2) {
                     let bDiagramOnly = true;
-                    ic.alignParserCls.downloadAlignment(structureArray[0] + ',' + structureArray[1], bDiagramOnly);
+                    await ic.alignParserCls.downloadAlignment(structureArray[0] + ',' + structureArray[1], bDiagramOnly);
                  }
                  
-                 ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
+                 await ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
              }
              else if(me.cfg.chainalign !== undefined) {
                  let structureArray = Object.keys(ic.structures);
@@ -430,7 +403,7 @@ class ViewInterPairs {
                  //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
                  //}
 
-                 ic.ParserUtilsCls.set2DDiagramsForChainalign(ic.chainidArray);
+                 await ic.ParserUtilsCls.set2DDiagramsForChainalign(ic.chainidArray);
              }
              else {
                  ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());

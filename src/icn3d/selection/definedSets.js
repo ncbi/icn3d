@@ -505,28 +505,28 @@ class DefinedSets {
        }
     }
 
-    commandSelect(postfix) { let ic = this.icn3d, me = ic.icn3dui;
+    async commandSelect(postfix) { let ic = this.icn3d, me = ic.icn3dui;
            let select = $("#" + ic.pre + "command" + postfix).val();
 
            let commandname = $("#" + ic.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
 
            if(select) {
-               ic.selByCommCls.selectByCommand(select, commandname, commandname);
+               await ic.selByCommCls.selectByCommand(select, commandname, commandname);
                me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
            }
     }
 
     clickCommand_apply() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", function(e) { let ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "command_apply", "click", async function(e) { let ic = thisClass.icn3d;
            e.preventDefault();
 
-           thisClass.commandSelect('');
+           await thisClass.commandSelect('');
         });
 
-        me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", function(e) { let ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "command_apply2", "click", async function(e) { let ic = thisClass.icn3d;
            e.preventDefault();
-           thisClass.commandSelect('2');
+           await thisClass.commandSelect('2');
         });
 
     }
@@ -543,6 +543,18 @@ class DefinedSets {
                 continue;
             }
             else {
+                // make it backward compatible for names of defined sets containing atom serial by replacing the serial with 'auto' 
+                // start from iCn3D 3.21.0 on Jan 2023============
+                let nameArray = ['hbonds_', 'saltbridge_', 'halogen_', 'pi-cation_', 'pi-stacking_'];
+                for(let j = 0, jl = nameArray.length; j < jl; ++j) {
+                    const re = new RegExp('^' + nameArray[j] + '\\d+$'); // use '\\'
+
+                    if(idArray[i].match(re)) {
+                        idArray[i] = nameArray[j] + 'auto';
+                    }
+                }
+                // end============
+
                 if(prevLabel === 'or') {
                     orArray.push(idArray[i]);
                 }

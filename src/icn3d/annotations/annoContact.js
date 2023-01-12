@@ -9,16 +9,18 @@ class AnnoContact {
 
     //Show the residues interacting with the chain.
     showInteraction(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-        if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
-            // 2d interaction didn't finish loading data yet
-            setTimeout(function(){
-              thisClass.showInteraction_base(chnid, chnidBase);
-            }, 1000);
-        }
-        else {
-            this.showInteraction_base(chnid, chnidBase);
-        }
+        // let thisClass = this;
+        // if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
+        //     // 2d interaction didn't finish loading data yet
+        //     setTimeout(function(){
+        //       thisClass.showInteraction_base(chnid, chnidBase);
+        //     }, 1000);
+        // }
+        // else {
+        //     this.showInteraction_base(chnid, chnidBase);
+        // }
+
+        this.showInteraction_base(chnid, chnidBase);
     }
     showInteraction_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) {
@@ -87,14 +89,16 @@ class AnnoContact {
         let index = 0;
         for(let chainname in ic.chainname2residues[chnid]) {
             let residueArray = ic.chainname2residues[chnid][chainname];
+            if(!residueArray) continue; // same chain
+
             let title = "Interact ." + chainname;
             if(title.length > 17) title = title.substr(0, 17) + '...';
             let fulltitle = "Interact ." + chainname;
             let resPosArray = [];
             for(let i = 0, il = residueArray.length; i < il; ++i) {
                 let resid = residueArray[i];
-//                let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
-                let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                //let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                let resi = resid.substr(residueArray[i].lastIndexOf('_') + 1);
 
 //                resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
 
@@ -120,19 +124,21 @@ class AnnoContact {
             let prevEmptyWidth = 0;
             let prevLineWidth = 0;
             let widthPerRes = 1;
+
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
-              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              let resi = ic.ParserUtilsCls.getResi(chnid, i);           
+            //   if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              if(resPosArray.indexOf(resi) != -1) {
 //              if(resPosArray.indexOf(i+1) != -1) {
                   let cFull = ic.giSeq[chnid][i];
                   let c = cFull;
                   if(cFull.length > 1) {
                       c = cFull[0] + '..';
                   }
-
-    //            let pos =(ic.baseResi[chnid] + i+1).toString();
-    //            let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
-                  let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                  
+                //   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+                  let pos = resi;
                   html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
                   if(me.bNode) {
                       let obj = {};

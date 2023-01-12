@@ -8,7 +8,7 @@ class LoadScript {
     }
 
     //Run commands one after another. The commands can be semicolon ';' or new line '\n' separated.
-    loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadScript(dataStr, bStatefile, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
       if(!dataStr) return;
       
       // allow the "loading structure..." message to be shown while loading script
@@ -52,15 +52,15 @@ class LoadScript {
       ic.CURRENTNUMBER = 0;
 
       if(ic.bReplay) {
-          this.replayFirstStep(ic.CURRENTNUMBER);
+          await this.replayFirstStep(ic.CURRENTNUMBER);
       }
       else {
-          this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
+          await this.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
       }
     }
 
     //Execute a list of commands. "steps" is the total number of commands.
-    execCommands(start, end, steps, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
+    async execCommands(start, end, steps, bStrict) { let ic = this.icn3d, me = ic.icn3dui;
         ic.bRender = false;
 
         // fresh start
@@ -68,62 +68,57 @@ class LoadScript {
 
         //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
 
-        this.execCommandsBase(start, end, steps);
+        await this.execCommandsBase(start, end, steps);
     }
 
-    execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
+    async execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
       let i;
 
-      for(i=start; i <= end; ++i) {
+      for(i=start; i <= end; ++i) {      
           let bFinalStep =(i === steps - 1) ? true : false;
 
           if(!ic.commands[i].trim()) continue;
           if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
 
-          if(ic.commands[i].indexOf('load') !== -1) {
+          let strArray = ic.commands[i].split("|||");
+          let command = strArray[0].trim();
+          
+          if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
-                  if(ic.bNotLoadStructure) {
+                    if(ic.bNotLoadStructure) {
                         ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
                         // end of all commands
                         if(1 === ic.commands.length) ic.bAddCommands = true;
-                        if(bFinalStep) this.renderFinalStep(steps);                  }
-                  else {
-                      $.when(thisClass.applyCommandLoad(ic.commands[i])).then(function() {
+                        if(bFinalStep) this.renderFinalStep(steps);                  
+                    }
+                    else {
+                        await thisClass.applyCommandLoad(ic.commands[i]);
 
                         // end of all commands
                         if(1 === ic.commands.length) ic.bAddCommands = true;
                         if(bFinalStep) thisClass.renderFinalStep(steps);
-                      });
                   }
                   return;
               }
               else {
-                  if(ic.bNotLoadStructure) {
-                      ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+                    if(ic.bNotLoadStructure) {
+                        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
-                      // undo/redo requires render the first step
-                      if(ic.backForward) this.renderFinalStep(1);
+                        // undo/redo requires render the first step
+                        if(ic.backForward) this.renderFinalStep(1);
+                    }
+                    else {
+                        await thisClass.applyCommandLoad(ic.commands[i]);
 
-                      this.execCommandsBase(i + 1, end, steps);
-                  }
-                  else {
-                      $.when(thisClass.applyCommandLoad(ic.commands[i])).then(function() {
-                          // undo/redo requires render the first step
-                          if(ic.backForward) thisClass.renderFinalStep(1);
-
-                          thisClass.execCommandsBase(i + 1, end, steps);
-                      });
-                  }
-
-                  return;
+                        // undo/redo requires render the first step
+                        if(ic.backForward) thisClass.renderFinalStep(1);
+                    }
               }
           }
-          else if(ic.commands[i].trim().indexOf('set map') == 0 && ic.commands[i].trim().indexOf('set map wireframe') == -1) {
+          else if(command.indexOf('set map') == 0 && command.indexOf('set map wireframe') == -1) {
               //set map 2fofc sigma 1.5
-              let strArray = ic.commands[i].split("|||");
-
               let urlArray = strArray[0].trim().split(' | ');
 
               let str = urlArray[0].substr(8);
@@ -133,375 +128,99 @@ class LoadScript {
                 let sigma = paraArray[2];
                 let type = paraArray[0];
 
-                if((type == '2fofc' &&(ic.bAjax2fofc === undefined || !ic.bAjax2fofc))
-                  ||(type == 'fofc' &&(ic.bAjaxfofc === undefined || !ic.bAjaxfofc)) ) {
-                    $.when(thisClass.applyCommandMap(strArray[0].trim())).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    thisClass.applyCommandMap(strArray[0].trim());
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-
-                return;
+                await thisClass.applyCommandMap(strArray[0].trim());
               }
           }
-          else if(ic.commands[i].trim().indexOf('set emmap') == 0 && ic.commands[i].trim().indexOf('set emmap wireframe') == -1) {
+          else if(command.indexOf('set emmap') == 0 && command.indexOf('set emmap wireframe') == -1) {
               //set emmap percentage 70
-              let strArray = ic.commands[i].split("|||");
-
               let str = strArray[0].trim().substr(10);
               let paraArray = str.split(" ");
 
               if(paraArray.length == 2 && paraArray[0] == 'percentage') {
                 let percentage = paraArray[1];
 
-                if(ic.bAjaxEm === undefined || !ic.bAjaxEm) {
-                    $.when(thisClass.applyCommandEmmap(strArray[0].trim())).then(function() {
-                        thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    thisClass.applyCommandEmmap(strArray[0].trim());
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-
-                return;
+                await thisClass.applyCommandEmmap(strArray[0].trim());
               }
           }
-          else if(ic.commands[i].trim().indexOf('set phi') == 0) {
-              let strArray = ic.commands[i].split("|||");
-
-              $.when(ic.delphiCls.applyCommandPhi(strArray[0].trim())).then(function() {
-                  thisClass.execCommandsBase(i + 1, end, steps);
-              });
-
-              return;
+          else if(command.indexOf('set phi') == 0) {
+              await ic.delphiCls.applyCommandPhi(strArray[0].trim());
           }
-          else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
-              let strArray = ic.commands[i].split("|||");
-
-              $.when(ic.delphiCls.applyCommandDelphi(strArray[0].trim())).then(function() {
-                  thisClass.execCommandsBase(i + 1, end, steps);
-              });
-
-              return;
+          else if(command.indexOf('set delphi') == 0) {
+              await ic.delphiCls.applyCommandDelphi(strArray[0].trim());
           }
-          else if(ic.commands[i].trim().indexOf('view annotations') == 0
-            //|| ic.commands[i].trim().indexOf('set annotation cdd') == 0
-            //|| ic.commands[i].trim().indexOf('set annotation site') == 0
-            ) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-              if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxCddSite === undefined || !ic.bAjaxCddSite) ) {
-                  $.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
+          else if(command.indexOf('view annotations') == 0) { // the command may have "|||{"factor"...
+              if(Object.keys(ic.proteins).length > 0) {
+                await thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim());
               }
-              else {
-                  if(Object.keys(ic.proteins).length > 0) {
-                      thisClass.applyCommandAnnotationsAndCddSiteBase(strArray[0].trim());
-                  }
-
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
           }
-          else if(ic.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-
-              if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar) ) {
-                  $.when(thisClass.applyCommandClinvar(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
+          else if(command.indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
+              if(Object.keys(ic.proteins).length > 0) {
+                await thisClass.applyCommandClinvar(strArray[0].trim());
               }
-              else {
-                  if(Object.keys(ic.proteins).length > 0) {
-                      thisClass.applyCommandClinvar(strArray[0].trim());
-                  }
-
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
           }
-          else if(ic.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-
-              if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp) ) {
-                  $.when(thisClass.applyCommandSnp(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
+          else if(command.indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
+              if(Object.keys(ic.proteins).length > 0 ) {
+                await thisClass.applyCommandSnp(strArray[0].trim());
               }
-              else {
-                  if(Object.keys(ic.proteins).length > 0) {
-                      thisClass.applyCommandSnp(strArray[0].trim());
-                  }
-
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
           }
-          else if(ic.commands[i].trim().indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
-            let strArray = ic.commands[i].split("|||");
-
-            if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxPTM === undefined || !ic.bAjaxPTM) ) {
-                $.when(thisClass.applyCommandPTM(strArray[0].trim())).then(function() {
-                    thisClass.execCommandsBase(i + 1, end, steps);
-                });
+          else if(command.indexOf('set annotation ptm') == 0 ) { // the command may have "|||{"factor"...
+            if(Object.keys(ic.proteins).length > 0) {
+                await thisClass.applyCommandPTM(strArray[0].trim());
             }
-            else {
-                if(Object.keys(ic.proteins).length > 0) {
-                    thisClass.applyCommandPTM(strArray[0].trim());
-                }
-
-                this.execCommandsBase(i + 1, end, steps);
+          }
+          else if(command.indexOf('ig refnum on') == 0 ) { 
+            await ic.refnumCls.showIgRefNum();
+          }
+          else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
+              if(Object.keys(ic.proteins).length > 0) {
+                  thisClass.applyCommand3ddomain(strArray[0].trim());   
+              }
+          }
+          else if(command.indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
+            if(Object.keys(ic.proteins).length > 0) {
+                await thisClass.applyCommandClinvar(strArray[0].trim());
+                await thisClass.applyCommandSnp(strArray[0].trim());
+                thisClass.applyCommand3ddomain(strArray[0].trim());
             }
 
-            return;
+            await ic.annotationCls.setAnnoTabAll();
           }
-          else if(ic.commands[i].trim().indexOf('ig refnum on') == 0 ) { 
-            let strArray = ic.commands[i].split("|||");
+          else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
+              await thisClass.applyCommandViewinteraction(strArray[0].trim());
 
-            if(Object.keys(ic.resid2refnum).length == 0) {
-                $.when(thisClass.applyCommandRefnum(strArray[0].trim())).then(function() {
-                    thisClass.execCommandsBase(i + 1, end, steps);
-                });
-            }
-            else {
-                thisClass.applyCommandRefnumBase(strArray[0].trim());
-
-                this.execCommandsBase(i + 1, end, steps);
-            }
-
-            return;
           }
-          else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-
-              if(Object.keys(ic.proteins).length > 0 && ic.mmdb_data === undefined &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain)) {
-                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim())).then(function() {
-                    thisClass.applyCommand3ddomain(strArray[0].trim());    
-                    thisClass.execCommandsBase(i + 1, end, steps);
-                  //});
-              }
-              else {
-                  if(Object.keys(ic.proteins).length > 0) {
-                      thisClass.applyCommand3ddomain(strArray[0].trim());
-                  }
-
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
-          }
-          else if(ic.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-              //$.when(thisClass.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
-              //  .then(thisClass.applyCommandSnpClinvar(strArray[0].trim()))
-
-              if( Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)
-                &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
-                  $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                    .then(thisClass.applyCommandSnp(strArray[0].trim()))
-                    //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                    .then(function() {
-                      thisClass.applyCommand3ddomain(strArray[0].trim());
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)) {
-                  $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                    .then(thisClass.applyCommandSnp(strArray[0].trim()))
-                    .then(function() {
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
-                &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)) {
-                  $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                    //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                    .then(function() {
-                      thisClass.applyCommand3ddomain(strArray[0].trim());
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)
-                &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)) {
-                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                  $.when(thisClass.applyCommandSnp(strArray[0].trim()))
-                    .then(function() {
-                        thisClass.applyCommand3ddomain(strArray[0].trim());
-                        ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar) ) {
-                  $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                    .then(function() {
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp) ) {
-                  $.when(thisClass.applyCommandSnp(strArray[0].trim()))
-                    .then(function() {
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
-                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                  // .then(function() {
-                      thisClass.applyCommand3ddomain(strArray[0].trim());
-
-                      ic.annotationCls.setAnnoTabAll();
-
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  //});
-              }
-              else {
-                  if(Object.keys(ic.proteins).length > 0) {
-                      if(ic.bAjaxClinvar) {
-                          thisClass.applyCommandClinvarBase(strArray[0].trim());
-                      }
-
-                      if(ic.bAjaxSnp) {
-                          thisClass.applyCommandSnpBase(strArray[0].trim());
-                      }
-
-                      if(ic.bAjax3ddomain || ic.mmdb_data !== undefined) {
-                          thisClass.applyCommand3ddomainBase(strArray[0].trim());
-                      }
-                  }
-
-                  ic.annotationCls.setAnnoTabAll();
-
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
-          }
-          else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
-              let strArray = ic.commands[i].split("|||");
-
-              if(ic.b2DShown === undefined || !ic.b2DShown) {
-                  $.when(thisClass.applyCommandViewinteraction(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
-              }
-              else {
-                  this.execCommandsBase(i + 1, end, steps);
-              }
-
-              return;
-          }
-          else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
+          else if(command.indexOf('symmetry') == 0) {
             ic.bAxisOnly = false;
-
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
 
             let title = command.substr(command.indexOf(' ') + 1);
             ic.symmetrytitle =(title === 'none') ? undefined : title;
 
             if(title !== 'none') {
-                if(ic.symmetryHash === undefined) {
-                    $.when(thisClass.applyCommandSymmetry(command)).then(function() {
-                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                       ic.drawCls.draw();
-                       thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-                }
-                else {
-                    ic.drawCls.draw();
-                    this.execCommandsBase(i + 1, end, steps);
-                }
-            }
-            else {
-                ic.drawCls.draw();
-                this.execCommandsBase(i + 1, end, steps);
+                await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
             }
 
-            return;
+            ic.drawCls.draw();
           }
-          else if(ic.commands[i].trim().indexOf('symd symmetry') == 0) {
+          else if(command.indexOf('symd symmetry') == 0) {
             ic.bAxisOnly = false;
 
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
+            await ic.symdCls.applyCommandSymd(command);
 
-            //var title = command.substr(command.lastIndexOf(' ') + 1);
-            //ic.symdtitle =(title === 'none') ? undefined : title;
-
-            //if(title !== 'none') {
-    //            if(ic.symdHash === undefined) {
-                    $.when(ic.symdCls.applyCommandSymd(command)).then(function() {
-                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-                       ic.drawCls.draw();
-                       thisClass.execCommandsBase(i + 1, end, steps);
-                    });
-    //            }
-    //            else {
-    //                ic.drawCls.draw();
-    //                this.execCommandsBase(i + 1, end, steps);
-    //            }
-            //}
-            //else {
-            //    ic.drawCls.draw();
-            //    this.execCommandsBase(i + 1, end, steps);
-            //}
-
-            return;
+            ic.drawCls.draw();
           }
-          else if(ic.commands[i].trim().indexOf('scap') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
-            $.when(ic.scapCls.applyCommandScap(command)).then(function() {
-               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-               //ic.drawCls.draw();
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+          else if(command.indexOf('scap') == 0) {
+            await ic.scapCls.applyCommandScap(command);
           }
-          else if(ic.commands[i].trim().indexOf('realign on seq align') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
+          else if(command.indexOf('realign on seq align') == 0) {
             let paraArray = command.split(' | ');
             if(paraArray.length == 2) {
                 let nameArray = paraArray[1].split(',');
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
 
-            $.when(thisClass.applyCommandRealign(command)).then(function() {
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+            await thisClass.applyCommandRealign(command);
           }
-          else if(ic.commands[i].trim().indexOf('realign on structure align') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
+          else if(command.indexOf('realign on structure align') == 0) {
             let paraArray = command.split(' | ');
             if(paraArray.length == 2) {
                 let nameArray = paraArray[1].split(',');
@@ -510,95 +229,46 @@ class LoadScript {
 
             me.cfg.aligntool = 'vast';
 
-            $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+            await thisClass.applyCommandRealignByStruct(command);
           }
-          else if(ic.commands[i].trim().indexOf('realign on tmalign') == 0) {
+          else if(command.indexOf('realign on tmalign') == 0) {
             thisClass.getHAtoms(ic.commands[i]);
 
             me.cfg.aligntool = 'tmalign';
 
-            $.when(thisClass.applyCommandRealignByStruct(ic.commands[i])).then(function() {
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+            await thisClass.applyCommandRealignByStruct(ic.commands[i]);
           }
-          else if(ic.commands[i].trim().indexOf('realign on vastplus') == 0) {
+          else if(command.indexOf('realign on vastplus') == 0) {
             thisClass.getHAtoms(ic.commands[i]);
 
-            $.when(thisClass.applyCommandRealignByVastplus(ic.commands[i])).then(function() {
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+            await ic.vastplusCls.realignOnVastplus();
           }
-          else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
-            if(ic.bD3 === undefined) {
-                $.when(thisClass.applyCommandGraphinteraction(command)).then(function() {
-                    thisClass.execCommandsBase(i + 1, end, steps);
-                });
-            }
-            else {
-                this.applyCommandGraphinteraction(command);
-                this.execCommandsBase(i + 1, end, steps);
-            }
-
-            return;
+          else if(command.indexOf('graph interaction pairs') == 0) {
+            await thisClass.applyCommandGraphinteraction(command);
           }
-          else if(ic.commands[i].trim().indexOf('cartoon 2d domain') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
-            if(!ic.chainid2pssmid) {
-                $.when(thisClass.applyCommandCartoon2d(command)).then(function() {
-                    thisClass.execCommandsBase(i + 1, end, steps);
-                });
-            }
-            else {
-                this.applyCommandCartoon2d(command);
-                this.execCommandsBase(i + 1, end, steps);
-            }
-
-            return;
+          else if(command.indexOf('cartoon 2d domain') == 0) {
+            await thisClass.applyCommandCartoon2d(command);
           }
-          else if(ic.commands[i].trim().indexOf('set half pae map') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
-            $.when(thisClass.applyCommandAfmap(command)).then(function() {
-               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-               //ic.drawCls.draw();
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+          else if(command.indexOf('set half pae map') == 0) {
+            await thisClass.applyCommandAfmap(command);
           }
-          else if(ic.commands[i].trim().indexOf('set full pae map') == 0) {
-            let strArray = ic.commands[i].split("|||");
-            let command = strArray[0].trim();
-
-            $.when(thisClass.applyCommandAfmap(command, true)).then(function() {
-               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
-
-               //ic.drawCls.draw();
-               thisClass.execCommandsBase(i + 1, end, steps);
-            });
-
-            return;
+          else if(command.indexOf('set full pae map') == 0) {
+            await thisClass.applyCommandAfmap(command, true);
+          }
+          else if(command.indexOf('export pqr') == 0) {
+            await me.htmlCls.setHtmlCls.exportPqr();
+          }
+          else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
+            let pos = command.lastIndexOf(' ');
+            let type = command.substr(pos + 1);
+    
+            await ic.cartoon2dCls.draw2Dcartoon(type);
           }
           else {
-              ic.applyCommandCls.applyCommand(ic.commands[i]);
+            await ic.applyCommandCls.applyCommand(ic.commands[i]);
           }
       }
-
+      
       //if(i === steps - 1) {
       if(i === steps || bFinalStep) {
           this.renderFinalStep(i);
@@ -607,7 +277,7 @@ class LoadScript {
 
     pressCommandtext() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        $("#" + ic.pre + "logtext").keypress(function(e) { let ic = thisClass.icn3d;
+        $("#" + ic.pre + "logtext").keypress(async function(e) { let ic = thisClass.icn3d;
            ic.bAddLogs = false; // turn off log
            let code =(e.keyCode ? e.keyCode : e.which);
            if(code == 13) { //Enter keycode
@@ -634,7 +304,7 @@ class LoadScript {
                     if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
                     ic.STATENUMBER = ic.commands.length;
                     if(lastCommand.indexOf('load') !== -1) {
-                        thisClass.applyCommandLoad(lastCommand);
+                        await thisClass.applyCommandLoad(lastCommand);
                     }
                     else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
                         thisClass.applyCommandMap(lastCommand);
@@ -643,64 +313,55 @@ class LoadScript {
                         thisClass.applyCommandEmmap(lastCommand);
                     }
                     else if(lastCommand.indexOf('set phi') !== -1) {
-                        ic.delphiCls.applyCommandPhi(lastCommand);
+                        await ic.delphiCls.applyCommandPhi(lastCommand);
                     }
                     else if(lastCommand.indexOf('set delphi') !== -1) {
-                        ic.delphiCls.applyCommandDelphi(lastCommand);
+                        await ic.delphiCls.applyCommandDelphi(lastCommand);
                     }
                     else if(lastCommand.indexOf('view annotations') == 0
                       //|| lastCommand.indexOf('set annotation cdd') == 0
                       //|| lastCommand.indexOf('set annotation site') == 0
                       ) {
-                        thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
+                        await thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
                     }
                     else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
-                        thisClass.applyCommandClinvar(lastCommand);
+                        await thisClass.applyCommandClinvar(lastCommand);
                     }
                     else if(lastCommand.indexOf('set annotation snp') == 0) {
-                        thisClass.applyCommandSnp(lastCommand);
+                        await thisClass.applyCommandSnp(lastCommand);
                     }
                     else if(lastCommand.indexOf('set annotation ptm') == 0) {
-                        thisClass.applyCommandPTM(lastCommand);
+                        await thisClass.applyCommandPTM(lastCommand);
                     }
                     else if(lastCommand.indexOf('ig refnum on') == 0) {
-                        thisClass.applyCommandRefnum(lastCommand);
+                        await ic.refnumCls.showIgRefNum();
                     }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
                     }
                     else if(lastCommand.indexOf('set annotation all') == 0) {
-                        $.when(thisClass.applyCommandClinvar(lastCommand))
-                            .then(thisClass.applyCommandSnp(lastCommand))
-                            //.then(thisClass.applyCommand3ddomain(lastCommand));
-                            .then(function() {
-                                thisClass.applyCommand3ddomain(lastCommand);
-                                ic.annotationCls.setAnnoTabAll();
-                            });
+                        await thisClass.applyCommandClinvar(lastCommand);
+                        await thisClass.applyCommandSnp(lastCommand);
+                        thisClass.applyCommand3ddomain(lastCommand);
+                        await ic.annotationCls.setAnnoTabAll();
                     }
                     else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
-                        thisClass.applyCommandViewinteraction(lastCommand);
+                        await thisClass.applyCommandViewinteraction(lastCommand);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
                         let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
                         ic.symmetrytitle =(title === 'none') ? undefined : title;
                         if(title !== 'none') {
                             if(ic.symmetryHash === undefined) {
-                                thisClass.applyCommandSymmetry(lastCommand);
+                                await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
                             }
                         }
                     }
                     else if(lastCommand.indexOf('symd symmetry') == 0) {
-                        //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                        //ic.symdtitle =(title === 'none') ? undefined : title;
-                        //if(title !== 'none') {
-                            //if(ic.symdHash === undefined) {
-                                ic.symdCls.applyCommandSymd(lastCommand);
-                            //}
-                        //}
+                        await ic.symdCls.applyCommandSymd(lastCommand);
                     }
                     else if(lastCommand.indexOf('scap ') == 0) {
-                        ic.scapCls.applyCommandScap(lastCommand);
+                        await ic.scapCls.applyCommandScap(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on seq align') == 0) {
                         let paraArray = lastCommand.split(' | ');
@@ -708,7 +369,7 @@ class LoadScript {
                             let nameArray = paraArray[1].split(',');
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
-                        thisClass.applyCommandRealign(lastCommand);
+                        await thisClass.applyCommandRealign(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on structure align') == 0) {
                         let paraArray = lastCommand.split(' | ');
@@ -719,7 +380,7 @@ class LoadScript {
 
                         me.cfg.aligntool = 'vast';
 
-                        thisClass.applyCommandRealignByStruct(lastCommand);
+                        await thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on tmalign') == 0) {
                         let paraArray = lastCommand.split(' | ');
@@ -730,7 +391,7 @@ class LoadScript {
                         
                         me.cfg.aligntool = 'tmalign';
 
-                        thisClass.applyCommandRealignByStruct(lastCommand);
+                        await thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('realign on vastplus') == 0) {
                         let paraArray = lastCommand.split(' | ');
@@ -739,13 +400,13 @@ class LoadScript {
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         
-                        thisClass.applyCommandRealignByVastplus(lastCommand);
+                        await ic.vastplusCls.realignOnVastplus();
                     }
                     else if(lastCommand.indexOf('graph interaction pairs') == 0) {
-                        thisClass.applyCommandGraphinteraction(lastCommand);
+                        await thisClass.applyCommandGraphinteraction(lastCommand);
                     }
                     else {
-                        ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                        await ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
                     }
                     //ic.selectionCls.saveSelectionIfSelected();
                     //ic.drawCls.draw();
@@ -763,7 +424,7 @@ class LoadScript {
 
     //Execute the command to load a structure. This step is different from the rest steps since
     //it has to finish before the rest steps start.
-    applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       //ic.bCommandLoad = true;
@@ -771,7 +432,7 @@ class LoadScript {
       if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
 
       // chain functions together
-      ic.deferred2 = $.Deferred(function() {
+///      ic.deferred2 = $.Deferred(function() {
       ic.bAddCommands = false;
       let commandTransformation = commandStr.split('|||');
 
@@ -795,83 +456,79 @@ class LoadScript {
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
-          ic.mmtfParserCls.downloadMmtf(id);
+          await ic.mmtfParserCls.downloadMmtf(id);
         }
         else if(command.indexOf('load pdb') !== -1) {
           me.cfg.pdbid = id;
 
-          ic.pdbParserCls.downloadPdb(id);
+          await ic.pdbParserCls.downloadPdb(id);
         }
         else if(command.indexOf('load af') !== -1) {
           me.cfg.afid = id;  
-          ic.pdbParserCls.downloadPdb(id, true);
+          await ic.pdbParserCls.downloadPdb(id, true);
         }
         else if(command.indexOf('load opm') !== -1) {
           me.cfg.opmid = id;
-          ic.opmParserCls.downloadOpm(id);
+          await ic.opmParserCls.downloadOpm(id);
         }
         else if(command.indexOf('load mmcif') !== -1) {
           me.cfg.mmcifid = id;
-          ic.mmcifParserCls.downloadMmcif(id);
+          await ic.mmcifParserCls.downloadMmcif(id);
         }
         else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
           me.cfg.mmdbid = id;
           me.cfg.bu = 1;
 
-          ic.mmdbParserCls.downloadMmdb(id);
+          await ic.mmdbParserCls.downloadMmdb(id);
         }
         else if(command.indexOf('load mmdb0') !== -1) {
             me.cfg.mmdbid = id;
             me.cfg.bu = 0;
   
-            ic.mmdbParserCls.downloadMmdb(id);
+            await ic.mmdbParserCls.downloadMmdb(id);
         }
         else if(command.indexOf('load mmdbaf1') !== -1) {
             me.cfg.mmdbafid = id;
             me.cfg.bu = 1;
   
-            ic.chainalignParserCls.downloadMmdbAf(id);
+            await ic.chainalignParserCls.downloadMmdbAf(id);
         }
         else if(command.indexOf('load mmdbaf0') !== -1) {
             me.cfg.mmdbafid = id;
             me.cfg.bu = 0;
 
-            ic.chainalignParserCls.downloadMmdbAf(id);
-        }
-        else if(command.indexOf('load gi') !== -1) {
-          me.cfg.gi = id;
-          ic.mmdbParserCls.downloadGi(id);
+            await ic.chainalignParserCls.downloadMmdbAf(id);
         }
         else if(command.indexOf('load refseq') !== -1) {
             me.cfg.refseqid = id;
-            ic.mmdbParserCls.downloadRefseq(id);
+            await ic.mmdbParserCls.downloadRefseq(id);
         }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
           ic.bLocalSmithwm = false;
-          ic.mmdbParserCls.downloadBlast_rep_id(id);
+          await ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load seq_struct_ids_smithwm ') !== -1) {
             ic.bSmithwm = true;
-            ic.mmdbParserCls.downloadBlast_rep_id(id);
+            await ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load seq_struct_ids_local_smithwm ') !== -1) {
             ic.bLocalSmithwm = true;
-            ic.mmdbParserCls.downloadBlast_rep_id(id);
+            await ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load cid') !== -1) {
           me.cfg.cid = id;
-          ic.sdfParserCls.downloadCid(id);
+          await ic.sdfParserCls.downloadCid(id);
         }
         else if(command.indexOf('load alignment') !== -1) {
           me.cfg.align = id;
 
           if(me.cfg.inpara.indexOf('atype=2') == -1) {
-            ic.alignParserCls.downloadAlignment(me.cfg.align);
+            await ic.alignParserCls.downloadAlignment(me.cfg.align);
           }
           else {
             let vastplusAtype = 2; // Tm-align
-            ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
+            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.align, undefined, vastplusAtype);
           }
         }
         else if(command.indexOf('load chainalignment') !== -1) {
@@ -888,7 +545,7 @@ class LoadScript {
           }
 
           me.cfg.chainalign = id;
-          ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
+          await ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
         }
         else if(command.indexOf('load url') !== -1) {
             let typeStr = load_parameters[1]; // type pdb
@@ -900,14 +557,14 @@ class LoadScript {
             }
 
             me.cfg.url = id;
-            ic.pdbParserCls.downloadUrl(id, type);
+            await ic.pdbParserCls.downloadUrl(id, type);
         }
       }
 
       ic.bAddCommands = true;
-      }); // end of me.deferred = $.Deferred(function() {
+///      }); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferred2.promise();
+///      return ic.deferred2.promise();
     }
 
     //Apply the command to show electron density map.
@@ -915,7 +572,7 @@ class LoadScript {
       let thisClass = this;
 
       // chain functions together
-      ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
+    //   ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
           //"set map 2fofc sigma 1.5"
           // or "set map 2fofc sigma 1.5 | [url]"
           let urlArray = command.split(" | ");
@@ -934,9 +591,9 @@ class LoadScript {
                   ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
               }
           }
-      }); // end of me.deferred = $.Deferred(function() {
+    //   }); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferredMap.promise();
+    //   return ic.deferredMap.promise();
     }
 
     //Apply the command to show EM density map.
@@ -944,7 +601,7 @@ class LoadScript {
       let thisClass = this;
 
       // chain functions together
-      ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
+    //   ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
           let str = command.substr(10);
           let paraArray = str.split(" ");
 
@@ -954,278 +611,109 @@ class LoadScript {
 
               ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
           }
-      }); // end of me.deferred = $.Deferred(function() {
+    //   }); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferredEmmap.promise();
+    //   return ic.deferredEmmap.promise();
     }
 
-    applyCommandSymmetryBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0])
+    async applyCommandRealign(command) { let ic = this.icn3d, me = ic.icn3dui;
+        await ic.realignParserCls.realignOnSeqAlign();
     }
 
-    applyCommandSymmetry(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredSymmetry = $.Deferred(function() {
-         thisClass.applyCommandSymmetryBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredSymmetry.promise();
+    async applyCommandRealignByStruct(command) { let ic = this.icn3d, me = ic.icn3dui;
+      ic.drawCls.draw();
+      await ic.realignParserCls.realignOnStructAlign();
     }
 
-    applyCommandRealignBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        //ic.drawCls.draw();
-        ic.realignParserCls.realignOnSeqAlign();
-    }
-
-    applyCommandRealign(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredRealign = new $.Deferred(function() {
-         thisClass.applyCommandRealignBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredRealign.promise();
-    }
-
-    applyCommandRealignByStructBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.drawCls.draw();
-        ic.realignParserCls.realignOnStructAlign();
-    }
-
-    applyCommandRealignByStruct(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredRealignByStruct = new $.Deferred(function() {
-         thisClass.applyCommandRealignByStructBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredRealignByStruct.promise();
-    }
-
-    applyCommandRealignByVastplusBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        //ic.drawCls.draw();
-        ic.vastplusCls.realignOnVastplus();
-    }
-
-    applyCommandRealignByVastplus(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredRealignByVastplus = new $.Deferred(function() {
-         thisClass.applyCommandRealignByVastplusBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredRealignByVastplus.promise();
-    }
-
-    applyCommandAfmapBase(command, bFull) { let ic = this.icn3d, me = ic.icn3dui;
-        let afid = command.substr(command.lastIndexOf(' ') + 1);
+    async applyCommandAfmap(command, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+      let afid = command.substr(command.lastIndexOf(' ') + 1);
      
-        ic.contactMapCls.afErrorMap(afid, bFull);
+      await ic.contactMapCls.afErrorMap(afid, bFull);
     }
 
-    applyCommandAfmap(command, bFull) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
+    async applyCommandGraphinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let paraArray = command.split(' | ');
+      if(paraArray.length >= 3) {
+          let setNameArray = paraArray[1].split(' ');
+          let nameArray2 = setNameArray[0].split(',');
+          let nameArray = setNameArray[1].split(',');
 
-      // chain functions together
-      ic.deferredAfmap = new $.Deferred(function() {
-         thisClass.applyCommandAfmapBase(command, bFull);
-      }); // end of me.deferred = $.Deferred(function() {
+          let bHbond = paraArray[2].indexOf('hbonds') !== -1;
+          let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+          let bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
-      return ic.deferredAfmap.promise();
-    }
+          let bHalogen = paraArray[2].indexOf('halogen') !== -1;
+          let bPication = paraArray[2].indexOf('pi-cation') !== -1;
+          let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
 
-    applyCommandGraphinteractionBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        let paraArray = command.split(' | ');
-        if(paraArray.length >= 3) {
-            let setNameArray = paraArray[1].split(' ');
-            let nameArray2 = setNameArray[0].split(',');
-            let nameArray = setNameArray[1].split(',');
+          let bHbondCalc;
+          if(paraArray.length >= 4) {
+              bHbondCalc =(paraArray[3] == 'true') ? true : false;
+          }
 
-            let bHbond = paraArray[2].indexOf('hbonds') !== -1;
-            let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-            let bInteraction = paraArray[2].indexOf('interactions') !== -1;
+          ic.applyCommandCls.setStrengthPara(paraArray);
 
-            let bHalogen = paraArray[2].indexOf('halogen') !== -1;
-            let bPication = paraArray[2].indexOf('pi-cation') !== -1;
-            let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
-
-            let bHbondCalc;
-            if(paraArray.length >= 4) {
-                bHbondCalc =(paraArray[3] == 'true') ? true : false;
-            }
-
-            ic.applyCommandCls.setStrengthPara(paraArray);
-
-            ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, 'graph',
-                bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
-        }
-    }
-
-    applyCommandGraphinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredGraphinteraction = $.Deferred(function() {
-         thisClass.applyCommandGraphinteractionBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredGraphinteraction.promise();
-    }
-
-    applyCommandCartoon2dBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        let type = command.substr(command.lastIndexOf(' ') + 1);
-        ic.cartoon2dCls.draw2Dcartoon(type);
-    }
-
-    applyCommandCartoon2d(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredCartoon2d = $.Deferred(function() {
-         thisClass.applyCommandCartoon2dBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredCartoon2d.promise();
-    }
-
-    applyCommandAnnotationsAndCddSiteBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-      // chain functions together
-      if(command == "view annotations") {
-          //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
-              ic.showAnnoCls.showAnnotations();
-          //}
+          await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, 'graph',
+              bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
       }
+    }
+
+    async applyCommandCartoon2d(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let type = command.substr(command.lastIndexOf(' ') + 1);
+        await ic.cartoon2dCls.draw2Dcartoon(type);
     }
 
     //The annotation window calls many Ajax calls. Thus the command "view interactions"
     //(in Share Link or loading state file) is handled specially to wait for the Ajax calls
     //to finish before executing the next command.
-    applyCommandAnnotationsAndCddSite(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredAnnoCddSite = $.Deferred(function() {
-          thisClass.applyCommandAnnotationsAndCddSiteBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredAnnoCddSite.promise();
+    async applyCommandAnnotationsAndCddSite(command) { let ic = this.icn3d, me = ic.icn3dui;
+        if(command == "view annotations") {
+            //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
+                await ic.showAnnoCls.showAnnotations();
+            //}
+        }
     }
 
-    applyCommandClinvarBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-      // chain functions together
-      let pos = command.lastIndexOf(' '); // set annotation clinvar
-      let type = command.substr(pos + 1);
-
-      ic.annotationCls.setAnnoTabClinvar();
+    async applyCommandClinvar(command) { let ic = this.icn3d, me = ic.icn3dui;
+        // chain functions together
+        let pos = command.lastIndexOf(' '); // set annotation clinvar
+        let type = command.substr(pos + 1);
+        
+        await ic.annotationCls.setAnnoTabClinvar();
     }
 
-    applyCommandSnpBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-      // chain functions together
-      let pos = command.lastIndexOf(' '); // set annotation clinvar
-      let type = command.substr(pos + 1);
-
-      ic.annotationCls.setAnnoTabSnp();
+    async applyCommandSnp(command) { let ic = this.icn3d, me = ic.icn3dui;
+        // chain functions together
+        let pos = command.lastIndexOf(' '); // set annotation clinvar
+        let type = command.substr(pos + 1);
+        
+        await ic.annotationCls.setAnnoTabSnp();
     }
 
-    applyCommandClinvar(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredClinvar = $.Deferred(function() {
-          thisClass.applyCommandClinvarBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredClinvar.promise();
-    }
-
-    applyCommandSnp(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredSnp = $.Deferred(function() {
-          thisClass.applyCommandSnpBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredSnp.promise();
-    }
-
-    applyCommandPTMBase(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandPTM(command) { let ic = this.icn3d, me = ic.icn3dui;
         // chain functions together
         let pos = command.lastIndexOf(' '); // set annotation clinvar
         let type = command.substr(pos + 1);
   
-        ic.annotationCls.setAnnoTabPTM();
-    }
-
-    applyCommandPTM(command) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-  
-        // chain functions together
-        ic.deferredPTM = $.Deferred(function() {
-            thisClass.applyCommandPTMBase(command);
-        }); // end of me.deferred = $.Deferred(function() {
-  
-        return ic.deferredPTM.promise();
-    }
-
-    applyCommandRefnumBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-        // chain functions together
-        ic.refnumCls.showIgRefNum();
-    }
-
-    applyCommandRefnum(command) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-  
-        // chain functions together
-        ic.deferredRefnum = $.Deferred(function() {
-            thisClass.applyCommandRefnumBase(command);
-        }); // end of me.deferred = $.Deferred(function() {
-  
-        return ic.deferredRefnum.promise();
-    }
-
-    applyCommand3ddomainBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-      // chain functions together
-      let pos = command.lastIndexOf(' ');
-      let type = command.substr(pos + 1);
-
-      if(type == '3ddomain' || type == 'all') {
-          ic.annotationCls.setAnnoTab3ddomain();
-      }
+        await ic.annotationCls.setAnnoTabPTM();
     }
 
     applyCommand3ddomain(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      //ic.deferred3ddomain = $.Deferred(function() {
-          thisClass.applyCommand3ddomainBase(command);
-      //}); // end of me.deferred = $.Deferred(function() {
-
-      //return ic.deferred3ddomain.promise();
+        // chain functions together
+        let pos = command.lastIndexOf(' ');
+        let type = command.substr(pos + 1);
+    
+        if(type == '3ddomain' || type == 'all') {
+            ic.annotationCls.setAnnoTab3ddomain();
+        }
     }
 
-    applyCommandViewinteractionBase(command) { let ic = this.icn3d, me = ic.icn3dui;
-      // chain functions together
-         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-             let structureArray = Object.keys(ic.structures);
-             ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
-         }
-    }
-
-    applyCommandViewinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-      // chain functions together
-      ic.deferredViewinteraction = $.Deferred(function() {
-         thisClass.applyCommandViewinteractionBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredViewinteraction.promise();
+    async applyCommandViewinteraction(command) { let ic = this.icn3d, me = ic.icn3dui;
+        // chain functions together
+        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+            let structureArray = Object.keys(ic.structures);
+            await ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
+        }
     }
 
     //When reading a list of commands, apply transformation at the last step.
@@ -1323,18 +811,18 @@ class LoadScript {
         // an extra render to remove artifacts in transparent surface
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 
-        if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-        if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
+        /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
     }
 
-    replayFirstStep(currentNumber) { let ic = this.icn3d, me = ic.icn3dui;
+    async replayFirstStep(currentNumber) { let ic = this.icn3d, me = ic.icn3dui;
           // fresh start
           ic.reinitAfterLoad();
           //ic.selectionCls.resetAll();
 
           //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
 
-          this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
+          await this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
 
           let cmdStrOri = ic.commands[currentNumber];
           //var pos = ic.commands[currentNumber].indexOf(' | ');

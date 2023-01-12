@@ -31,7 +31,7 @@ class ParserUtils {
                   let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                   if(ic.bAfMem) {
                     //if(window.dialog) window.dialog.dialog( "close" );
-                    html += "<span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br>";
+                    html += me.utilsCls.getMemDesc();
                   }
                   $("#" + ic.pre + "dl_rmsd").html(html);
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
@@ -147,7 +147,6 @@ class ParserUtils {
                 resiPos = 0;
             }
             else if(type === 'align') {
-                //seqName = seqArray[i][2];
                 seqName = seqArray[i][1];
                 resiPos = 0;
             }
@@ -163,8 +162,8 @@ class ParserUtils {
                 resObject.resi = i + 1;
             }
             else {
-                let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; //?? problem with PDB PS0D
+                //let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                
                 if(type === 'mmdbid' || type === 'align') {
                     resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
                 }
@@ -172,6 +171,8 @@ class ParserUtils {
                     resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
                 }
             }
+
+            //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
 
             resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
 
@@ -183,57 +184,44 @@ class ParserUtils {
 
     //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
     //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
-    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d, me = ic.icn3dui;
-       me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+    async set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-///       mmdbid1 = mmdbid1.substr(0, 4);
-///       mmdbid2 = mmdbid2.substr(0, 4);
+    ///       mmdbid1 = mmdbid1.substr(0, 4);
+    ///       mmdbid2 = mmdbid2.substr(0, 4);
 
-       let url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-       let url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+        let url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+        let url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
-       if(me.cfg.inpara !== undefined) {
-          url1 += me.cfg.inpara;
-          url2 += me.cfg.inpara;
-       }
+        if(me.cfg.inpara !== undefined) {
+            url1 += me.cfg.inpara;
+            url2 += me.cfg.inpara;
+        }
 
-       let request1 = $.ajax({
-            url: url1,
-            dataType: 'jsonp',
-            cache: true
-       });
+        let prms1 = me.getAjaxPromise(url1, 'jsonp');
+        let prms2 = me.getAjaxPromise(url2, 'jsonp');
 
-       let request2 = request1.then(function( data ) {
-            ic.interactionData1 = data;
+        let allPromise = Promise.allSettled([prms1, prms2]);
+        let dataArray = await allPromise;
+        
+        ic.interactionData1 = dataArray[0].value;
+        ic.html2ddgm = '';
+        ic.diagram2dCls.draw2Ddgm(ic.interactionData1, mmdbid1, 0);
+        if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-            ic.html2ddgm = '';
 
-            ic.diagram2dCls.draw2Ddgm(data, mmdbid1, 0);
-            if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        ic.interactionData2 = dataArray[1].value;
+        ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
-            return $.ajax({
-              url: url2,
-              dataType: 'jsonp',
-              cache: true
-            });
-       });
+        ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
+        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
 
-       request2.done(function( data ) {
-            ic.interactionData2 = data;
+        ic.b2DShown = true;
 
-            ic.diagram2dCls.draw2Ddgm(data, mmdbid2, 1);
-
-            ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
-            $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
-
-            ic.b2DShown = true;
-            //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-
-            if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
-       });
+        /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
 
-    set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+    async set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
@@ -247,24 +235,19 @@ class ParserUtils {
 
            if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
 
-           let twodAjax = $.ajax({
-                url: url,
-                dataType: 'jsonp',
-                cache: true
-           });
+           let twodAjax = me.getAjaxPromise(url, 'jsonp');
 
            ajaxArray.push(twodAjax);
         }
 
-        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-        $.when.apply(undefined, ajaxArray).then(function() {
-          let dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parse2DDiagramsData(dataArray, chainidArray);
-        })
-        .fail(function() {
-          //thisClass.parse2DDiagramsData(arguments, chainidArray);
-        });
+        let allPromise = Promise.allSettled(ajaxArray);
+        try {
+            let dataArray = await allPromise;
+            thisClass.parse2DDiagramsData(dataArray, chainidArray);
+        }
+        catch(err) {
+            
+        }          
     }
 
     parse2DDiagramsData(dataArray, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -275,7 +258,7 @@ class ParserUtils {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-            let data = dataArray[index][0];
+            let data = dataArray[index].value;//[0];
             let mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);
@@ -287,7 +270,7 @@ class ParserUtils {
         $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
         if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-        if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
+        /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
 
     download2Ddgm(mmdbid, structureIndex) { let  me = this; "use strict";
@@ -573,7 +556,7 @@ class ParserUtils {
     }
 
     //Update the dropdown menu and show the structure by calling the function "draw()".
-    renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
+    async renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
           if(ic.bOpm &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
@@ -613,6 +596,13 @@ class ParserUtils {
           ic.drawCls.draw();
       }
       
+      // set defined sets before loadScript
+      if(ic.bInitial) {
+        if(me.cfg.showsets) {
+             ic.definedSetsCls.showSets();
+        }
+      }
+
 //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
       if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
@@ -620,13 +610,12 @@ class ParserUtils {
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          //if(me.cfg.mmdbafid === undefined && me.cfg.afid === undefined) ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-          ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+          await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
           //ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
-          if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-          if(me.deferredMmdbaf !== undefined) me.deferredMmdbaf.resolve();
+          /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
       }
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
@@ -637,12 +626,13 @@ class ParserUtils {
           $("#" + ic.pre + "mn2_alternateWrap").hide();
           //$("#" + ic.pre + "mn2_realignWrap").hide();
       }
+ 
       // display the structure right away. load the mns and sequences later
-      setTimeout(function(){
+      setTimeout(async function(){
           if(ic.bInitial) {
-              if(me.cfg.showsets) {
-                   ic.definedSetsCls.showSets();
-              }
+            //   if(me.cfg.showsets) {
+            //        ic.definedSetsCls.showSets();
+            //   }
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
                   let id = ic.pre + 'selection';
@@ -661,7 +651,7 @@ class ParserUtils {
               if(me.cfg.showanno) {
                    let cmd = "view annotations";
                    me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
-                   ic.showAnnoCls.showAnnotations(); 
+                   await ic.showAnnoCls.showAnnotations(); 
               }
               if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
@@ -700,11 +690,11 @@ class ParserUtils {
         return maxD;
     }
 
-    checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
+    async checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
         if(!ic.bCheckMemProtein) {
             let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
-            ic.ParserUtilsCls.checkMemProtein(afid);
+            await ic.ParserUtilsCls.checkMemProtein(afid);
             ic.bCheckMemProtein = true;
         }
 
@@ -717,92 +707,112 @@ class ParserUtils {
         }
     }
 
-    checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
+    async checkMemProtein(afid) { let ic = this.icn3d, me = ic.icn3dui;
       //ic.deferredAfMem = $.Deferred(function() {
-        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+        try {
+            let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?afid2mem=" + afid;
+            let data = await me.getAjaxPromise(url, 'jsonp');
 
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          success: function(data) {
             if(data && data.pdbid) {
               let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
              
               if (me.cfg.afmem == 'off') {
                 // do nothing
-                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               }
-              else if (me.cfg.afmem == 'on' || confirm(question)) {           
-                let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
-                $.ajax({
-                  url: url2,
-                  dataType: 'text',
-                  cache: true,
-                  success: function(afMemdata) {
-                      ic.bAfMem = true;
-                      $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
+              else if (me.cfg.afmem == 'on' || confirm(question)) {         
+                try {  
+                    let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
+                    let afMemdata = await me.getAjaxPromise(url2, 'text');
 
-                      // append the PDB
-                      let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));
-                      let bOpm = true, bAppend = true;
-                      ic.pdbParserCls.loadPdbData(afMemdata, pdbid, bOpm, bAppend);
+                    ic.bAfMem = true;
+                    $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
 
-                      if(bAppend) {
-                          if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                          if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
-                      }
+                    // append the PDB
+                    let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));
+                    let bOpm = true, bAppend = true;
+                    await ic.pdbParserCls.loadPdbData(afMemdata, pdbid, bOpm, bAppend);
 
-                      // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
-                      let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
-                                                    //the second range is the range of the helix
-                      let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
-                      ic.afmem_start_end = range.split('-');
+                    if(bAppend) {
+                        if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                        if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                    }
 
-                      ic.hAtoms = {};
-                      ic.dAtoms = {};
+                    // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                    let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
+                                                //the second range is the range of the helix
+                    let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
+                    ic.afmem_start_end = range.split('-');
 
-                      // get the AlphaFold structure
-                      for(let i in ic.atoms) {
-                        if(ic.atoms[i].structure != pdbid) {
-                            ic.hAtoms[i] = 1;
-                        }
-                        ic.dAtoms[i] = 1;
-                      }
+                    ic.hAtoms = {};
+                    ic.dAtoms = {};
 
-                      // get the transmembrane from the model of Membranome
-                      for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
-                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
-                      }
+                    // get the AlphaFold structure
+                    for(let i in ic.atoms) {
+                    if(ic.atoms[i].structure != pdbid) {
+                        ic.hAtoms[i] = 1;
+                    }
+                    ic.dAtoms[i] = 1;
+                    }
 
-                      ic.realignParserCls.realignOnSeqAlign(pdbid);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
+                    // get the transmembrane from the model of Membranome
+                    for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
+                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                    }
+
+                    await ic.realignParserCls.realignOnSeqAlign(pdbid);
+                }
+                catch(err) {
                       console.log("Error in retrieving matched PDB from Membranome...");
-                      //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-                      if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                      if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                      ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+                      /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                      /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                       return;
-                  }
-                });
+                }
               }
             }
             else {
-                if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-                if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+                /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
             }
-          },
-          error : function(xhr, textStatus, errorThrown ) {
+        }
+        catch(err) {
               console.log("Error in finding matched PDB in Membranome...");
-              //if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
-              if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-              if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+              ///// if(ic.deferredAfMem !== undefined) ic.deferredAfMem.resolve();
+              /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+              /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               return;
-          }
-        });
+        }
       //});
 
       //return ic.deferredAfMem.promise();
+    }
+
+    getResi(chainid, resiPos) { let ic = this.icn3d, me = ic.icn3dui;
+        // let resi;
+
+        // if(bRealign) {
+        //     resi = resiPos;
+        // }
+        // else {
+        //     if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
+        //         resi = '';
+        //     }
+        //     else {
+        //         resi = ic.chainsSeq[chainid][resiPos].resi;
+        //     }
+        // }
+        let resid = ic.ncbi2resid[chainid + '_' + (resiPos+1).toString()];
+        let resi = (resid) ? resid.substr(resid.lastIndexOf('_') + 1) : '';
+
+        return resi;
+    }
+
+    getResiNCBI(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
+        let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
+        let resiNCBI = (residNCBI) ? parseInt(residNCBI.substr(residNCBI.lastIndexOf('_') + 1)) : 0;
+
+        return resiNCBI;
     }
 }
 

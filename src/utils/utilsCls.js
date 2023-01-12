@@ -457,6 +457,10 @@ class UtilsCls {
 
       return sum;
     }
+
+    getMemDesc() {
+      return "<div style='width:150px'><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br></div>";
+    }
 }
 
 export {UtilsCls}

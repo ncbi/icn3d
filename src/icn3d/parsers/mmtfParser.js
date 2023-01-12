@@ -15,12 +15,12 @@ class MmtfParser {
     //The JavaScript Methods at http://mmtf.rcsb.org/ was used to load and parse the data.
     downloadMmtf(mmtfid) { let ic = this.icn3d, me = ic.icn3dui;
         ic.ParserUtilsCls.setYourNote(mmtfid.toUpperCase() + '(MMTF) in iCn3D');
-        ic.bCid = undefined;
+        //ic.bCid = undefined;
 
         MMTF.fetchReduced(
             mmtfid,
             // onLoad callback
-            function( mmtfData ){
+            async function( mmtfData ){
                 if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
                     let bFull = false;
                     if(Object.keys(mmtfData).length == 0) {
@@ -28,11 +28,7 @@ class MmtfParser {
                         return;
                     }
 
-                    ic.deferredOpm = $.Deferred(function() {
-                        ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
-                    });
-
-                    return ic.deferredOpm.promise();
+                    await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
                 }
                 else {
                     mmtfData = null;
@@ -40,17 +36,19 @@ class MmtfParser {
                     MMTF.fetch(
                         mmtfid,
                         // onLoad callback
-                        function( mmtfData2 ){
+                        async function( mmtfData2 ){
                             let bFull = true;
                             if(Object.keys(mmtfData2).length == 0) {
                                 alert('This PDB structure is not found at RCSB...');
                                 return;
                             }
-                            ic.deferredOpm = $.Deferred(function() {
-                                ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                            });
+                            // ic.deferredOpm = $.Deferred(function() {
+                            //     ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
+                            // });
 
-                            return ic.deferredOpm.promise();
+                            // return ic.deferredOpm.promise();
+
+                            await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
                         },
                         // onError callback
                         function( error ){
@@ -68,7 +66,7 @@ class MmtfParser {
         );
     }
 
-    parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         let cnt = mmtfData.numAtoms;
 
         ic.init();
@@ -407,6 +405,8 @@ class MmtfParser {
         // traverse
         MMTF.traverse( mmtfData, callbackDict );
 
+        ic.loadPDBCls.setResidMapping();
+
         // set up disulfide bonds
         let sgLength = SGAtomSerialArray.length;
         for(let i = 0, il = sgLength; i < il; ++i) {
@@ -457,13 +457,13 @@ class MmtfParser {
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-        ic.ParserUtilsCls.renderStructure();
+        await ic.ParserUtilsCls.renderStructure();
 
         ic.saveFileCls.showTitle();
 
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 

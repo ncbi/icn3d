@@ -7,7 +7,7 @@ class XyzParser {
         this.icn3d = icn3d;
     }
 
-    loadXyzData(data) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadXyzData(data) { let ic = this.icn3d, me = ic.icn3dui;
         let bResult = this.loadXyzAtomData(data);
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -21,11 +21,11 @@ class XyzParser {
           ic.setStyleCls.setAtomStyleByOptions(ic.opts);
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
-          ic.ParserUtilsCls.renderStructure();
+          await ic.ParserUtilsCls.renderStructure();
 
           if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 

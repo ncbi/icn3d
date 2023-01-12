@@ -20,11 +20,11 @@ class ShowAnno {
 
         if(ic.bResetAnno) {
             //reset Anno when loading another structure
-            ic.giSeq = {}
-            ic.currClin = {}
-            ic.resi2disease_nonempty = {}
-            ic.baseResi = {}
-            ic.matchedPos = {}
+            ic.giSeq = {};
+            ic.currClin = {};
+            ic.resi2disease_nonempty = {};
+            ic.baseResi = {};
+            ic.matchedPos = {};
 
             $("#" + me.pre + "dl_annotations").empty();
             //ic.annotationCls.setAnnoViewAndDisplay('overview');
@@ -52,13 +52,7 @@ class ShowAnno {
                 dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
             }
             ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
-            ic.maxAnnoLength = 1;
-            for(let chainid in ic.chainsSeq) {
-                if(ic.chainsSeq[chainid].length > ic.maxAnnoLength) {
-                    ic.maxAnnoLength = ic.chainsSeq[chainid].length;
-                }
-            }
-
+            
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 let pos = Math.round(chainArray[i].indexOf('_'));
                 //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
@@ -117,12 +111,20 @@ class ShowAnno {
                     } // for(let r = 0
                 } // if(me.cfg.mmdbid
             } // for(let i = 0
+
+            ic.maxAnnoLength = 1;
+            for(let chainid in ic.chainsSeq) {
+                // use protein or nucleotide as the max length
+                if(ic.chainsSeq[chainid].length > ic.maxAnnoLength && (ic.protein_chainid.hasOwnProperty(chainid) || nucleotide_chainid.hasOwnProperty(chainid)) ) {
+                    ic.maxAnnoLength = ic.chainsSeq[chainid].length;
+                }
+            }
         }
 
         return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
     }
 
-    showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
+    async showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let result = this.showAnnotations_part1();
@@ -134,58 +136,39 @@ class ShowAnno {
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
-                   if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
-                       let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
-                       $.when(ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
-                           thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                       });
-                   }
-                   else {
-                       this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                   }
+                    if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
+                        let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+
+                        await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
+                    }
+                    
+                    await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                }
             }
             else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
-               let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
-               let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
-               if(me.cfg.query_from_to !== undefined ) {
-                   // convert from 1-based to 0-based
-                   let query_from_to_array = me.cfg.query_from_to.split(':');
-                   for(let i = 0, il = query_from_to_array.length; i < il; ++i) {
-                       query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
-                   }
-                   dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
-               }
-               if(me.cfg.target_from_to !== undefined) {
-                   // convert from 1-based to 0-based
-                   let target_from_to_array = me.cfg.target_from_to.split(':');
-                   for(let i = 0, il = target_from_to_array.length; i < il; ++i) {
-                       target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
-                   }
-                   dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
-               }
-               $.ajax({
-                  url: url,
-                  type: 'POST',
-                  data : dataObj,
-                  dataType: 'json',
-                  //dataType: 'json',
-                  tryCount : 0,
-                  retryLimit : 0, //1
-                  success: function(data) {
-                    ic.seqStructAlignData = data;
-                    thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
+                let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
+                let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
+                if(me.cfg.query_from_to !== undefined ) {
+                    // convert from 1-based to 0-based
+                    let query_from_to_array = me.cfg.query_from_to.split(':');
+                    for(let i = 0, il = query_from_to_array.length; i < il; ++i) {
+                        query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
                     }
-                    return;
-                  }
-                });
+                    dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
+                }
+                if(me.cfg.target_from_to !== undefined) {
+                    // convert from 1-based to 0-based
+                    let target_from_to_array = me.cfg.target_from_to.split(':');
+                    for(let i = 0, il = target_from_to_array.length; i < il; ++i) {
+                        target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
+                    }
+                    dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
+                }
+
+                let data = await me.getAjaxPostPromise(url, dataObj);
+
+                ic.seqStructAlignData = data;
+                await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
             } // align seq to structure
             else if(me.cfg.blast_rep_id !== undefined && (ic.bSmithwm || ic.bLocalSmithwm)) { // align sequence to structure
                 //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
@@ -205,53 +188,33 @@ class ShowAnno {
                 // show the sequence and 3D structure
                 //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
                 let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
+                let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
 
-                $.ajax({
-                    url: url,
-                    dataType: 'jsonp', //'text',
-                    cache: true,
-                    tryCount : 0,
-                    retryLimit : 0, //1
-                    success: function(chainid_seq) {
-                        let index = 0;
-                        for(let acc in chainid_seq) {
-                            if(index == 0) {
-                                target = chainid_seq[acc];
-                            }
-                            else if(!query) {
-                                query = chainid_seq[acc];
-                            }
-
-                            ++index;
-                        }
-
-                        let match_score = 1, mismatch = -1, gap = -1, extension = -1;
-
-                        let bLocal = (ic.bLocalSmithwm) ? true : false;
-                        ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
-
-                        thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                    },
-                    error : function(xhr, textStatus, errorThrown ) {
-                        this.tryCount++;
-                        if(this.tryCount <= this.retryLimit) {
-                            //try again
-                            $.ajax(this);
-                            return;
-                        }
-
-                        alert("Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
-
-                        return;
+                let index = 0;
+                for(let acc in chainid_seq) {
+                    if(index == 0) {
+                        target = chainid_seq[acc];
                     }
-                });
+                    else if(!query) {
+                        query = chainid_seq[acc];
+                    }
+
+                    ++index;
+                }
+
+                let match_score = 1, mismatch = -1, gap = -1, extension = -1;
+
+                let bLocal = (ic.bLocalSmithwm) ? true : false;
+                ic.seqStructAlignDataLocalSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension, bLocal);
+
+                await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
              } // align seq to structure
         }
         ic.bAnnoShown = true;
     }
 
-    showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
-        if(!me.bNode) this.getAnnotationData();
+    async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!me.bNode) await this.getAnnotationData();
 
         let i = 0;
         for(let chain in nucleotide_chainid) {
@@ -280,15 +243,17 @@ class ShowAnno {
 
         if(!me.bNode) {
             this.enableHlSeq();
-
-            setTimeout(function(){
             ic.annotationCls.hideAllAnno();
+
+            // setTimeout(function(){
+            //     ic.annotationCls.clickCdd();
+            // }, 0);
+
             ic.annotationCls.clickCdd();
-            }, 0);
         }
     }
 
-    getAnnotationData() { let ic = this.icn3d, me = ic.icn3dui;
+    async getAnnotationData() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
         let index = 0;
@@ -333,26 +298,16 @@ class ShowAnno {
         let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
         if(ic.chainid_seq !== undefined) {     
-            this.processSeqData(ic.chainid_seq);
+            await this.processSeqData(ic.chainid_seq);
         }
         else {       
-            $.ajax({
-              url: url,
-              dataType: 'jsonp', //'text',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 0, //1,
-              success: function(data) {
+            try {
+                let data = await me.getAjaxPromise(url, 'jsonp');
+
                 ic.chainid_seq = data;
-                thisClass.processSeqData(ic.chainid_seq);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
+                await thisClass.processSeqData(ic.chainid_seq);
+            }
+            catch(err) {
                 thisClass.enableHlSeq();
                 if(!me.bNode) console.log( "No data were found for the protein " + chnidBaseArray + "..." );
                 for(let chnid in ic.protein_chainid) {
@@ -361,10 +316,9 @@ class ShowAnno {
                     ic.showSeqCls.showSeq(chnid, chnidBase);
                 }
                 // get CDD/Binding sites
-                ic.annoCddSiteCls.showCddSiteAll();
+                await ic.annoCddSiteCls.showCddSiteAll();
                 return;
-              }
-            });
+            }
         }
     }
 
@@ -456,11 +410,12 @@ class ShowAnno {
         $("#" + ic.pre + 'ov_giseq_' + name).html(html2);
     }
 
-    processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
+    async processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
         for(let chnid in ic.protein_chainid) {
             let chnidBase = ic.protein_chainid[chnid];
             //if(chainid_seq.hasOwnProperty(chnid)) {
             //    let allSeq = chainid_seq[chnid];
+
             if(chainid_seq.hasOwnProperty(chnidBase)) {
                 let allSeq = chainid_seq[chnidBase];
                 ic.giSeq[chnid] = allSeq;
@@ -480,9 +435,10 @@ class ShowAnno {
                 }
             }
             else {
-                if(!me.bNode) console.log( "No data were found for the protein " + chnid + "..." );
+                if(!me.bNode) console.log( "No data were found for the chain " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
+            
             if(me.cfg.blast_rep_id != chnid) {
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
@@ -499,7 +455,7 @@ class ShowAnno {
               let text = "cannot be aligned";
               ic.queryStart = '';
               ic.queryEnd = '';
-              alert('The sequence can NOT be aligned to the structure');
+              if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
@@ -608,7 +564,7 @@ class ShowAnno {
                   // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                   let nGap = 0;
                   ic.alnChainsSeq[chnid] = [];
-                  let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
+                  //let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
                   for(let i = 0, il = targetSeq.length; i < il; ++i) {
                       //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
                       if(ic.targetGapHash.hasOwnProperty(i)) {
@@ -618,7 +574,8 @@ class ShowAnno {
                       }
                       compText += ic.showSeqCls.insertGap(chnid, i, '-', true);
                       if(ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
-                      let pos =(ic.bUsePdbNum) ? i+1 + offset : i+1;
+                      //let pos =(ic.bUsePdbNum) ? i+1 + offset : i+1;
+                      let pos =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chnid, i) : i+1;
                       if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
                           text += querySeq[target2queryHash[i]];
                           let colorHexStr = this.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
@@ -650,7 +607,7 @@ class ShowAnno {
               }
               else {
                   text += "cannot be aligned";
-                  alert('The sequence can NOT be aligned to the structure');
+                  if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               }
               let compTitle = (ic.seqStructAlignData !== undefined) ? 'BLAST, E: ' + evalue : 'Score: ' + evalue;
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
@@ -673,7 +630,7 @@ class ShowAnno {
         if(!me.bNode) {
             this.enableHlSeq();
             // get CDD/Binding sites
-            ic.annoCddSiteCls.showCddSiteAll();
+            await ic.annoCddSiteCls.showCddSiteAll();
         }
     }
 

@@ -364,7 +364,7 @@ class SaveFile {
                 if(atom.ssend) {
                     if(atom.ss == 'helix') {
                         bHelixEnd = true;
-                        let helixLen = parseInt(atom.resi) - parseInt(prevResi);
+                        let helixLen = ic.resid2ncbi[atom.resi] - ic.resid2ncbi[prevResi];
                         let helixType = 1;
                         if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';

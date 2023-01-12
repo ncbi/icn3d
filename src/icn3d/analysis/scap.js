@@ -7,29 +7,18 @@ class Scap {
         this.icn3d = icn3d;
     }
 
-    applyCommandScapBase(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandScap(command) { let ic = this.icn3d, me = ic.icn3dui;
         let snp = command.substr(command.lastIndexOf(' ') + 1);
 
         if(command.indexOf('scap 3d') == 0) {
-            this.retrieveScap(snp);
+          await this.retrieveScap(snp);
         }
         else if(command.indexOf('scap interaction') == 0) {
-            this.retrieveScap(snp, true);
+          await this.retrieveScap(snp, true);
         }
         else if(command.indexOf('scap pdb') == 0) {
-            this.retrieveScap(snp, undefined, true);
+          await this.retrieveScap(snp, undefined, true);
         }
-    }
-
-    applyCommandScap(command) { let ic = this.icn3d, me = ic.icn3dui;
-      let thisClass = this;
-
-      // chain functions together
-      ic.deferredScap = $.Deferred(function() {
-         thisClass.applyCommandScapBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
-
-      return ic.deferredScap.promise();
     }
 
     adjust2DWidth(id) { let ic = this.icn3d, me = ic.icn3dui;
@@ -46,7 +35,7 @@ class Scap {
          $("#" + id).dialog( "option", "position", position );
     }
 
-    retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;
+    async retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
@@ -98,202 +87,174 @@ class Scap {
         let pdbid = Object.keys(ic.structures)[0]; //Object.keys(ic.structures).toString();
         let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'v': '2'}
 
-        $.ajax({
-          url: url,
-          type: 'POST',
-          data : dataObj,
-          dataType: "text",
-          cache: true,
-          tryCount : 0,
-          retryLimit : 0, //1
-          beforeSend: function() {
-              ic.ParserUtilsCls.showLoading();
-          },
-          complete: function() {
-              //ic.ParserUtilsCls.hideLoading();
-          },
-          success: function(data) {
-              let pos = data.indexOf('\n');
-              let energy = data.substr(0, pos);
-              let pdbData = data.substr(pos + 1);
-    console.log("free energy: " + energy + " kcal/mol");
+        let data;
+         
+        try {
+          data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, undefined, 'text');
 
-              let bAddition = true;
-              let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+          let pos = data.indexOf('\n');
+          let energy = data.substr(0, pos);
+          let pdbData = data.substr(pos + 1);
+console.log("free energy: " + energy + " kcal/mol");
 
-              // the wild type is the reference
-              for(let serial in hAtom1) {
-                  let atom = ic.atoms[serial];
-                  let chainid = atom.structure + '_' + atom.chain;
-                  let resid = chainid + '_' + atom.resi;
+          let bAddition = true;
+          let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                    ic.chainsMapping[chainid] = {};
-                  }
-                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+          // the wild type is the reference
+          for(let serial in hAtom1) {
+              let atom = ic.atoms[serial];
+              let chainid = atom.structure + '_' + atom.chain;
+              let resid = chainid + '_' + atom.resi;
+
+              if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                ic.chainsMapping[chainid] = {};
               }
+              ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+          }
 
-              //ic.hAtoms = {};
-              //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
-              //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+          //ic.hAtoms = {};
+          //ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
+          //let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-              // get the mutant pdb
-              let lines = pdbData.split('\n');
-              let allChainResiHash = {};
-              for (let i in lines) {
-                  let line = lines[i];
-                  let record = line.substr(0, 6);
-                  
-                  if (record === 'ATOM  ' || record === 'HETATM') {
-                      let chain = line.substr(20, 2).trim();
-                      if(chain === '') chain = 'A';
-      
-                      let resi = line.substr(22, 5).trim();
-                      let chainResi = chain + '_' + resi;
-                      
-                      if(chainResi2pdb.hasOwnProperty(chainResi)) {
-                          chainResi2pdb[chainResi] += line + '\n';
-                      }  
-
-                      allChainResiHash[chainResi] = 1;
-                  }
-              }
-
-              // get the full mutatnt PDB
-              let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
-              ic.hAtoms = {};
-              let bMutation = true;
-              ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
-              //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+          // get the mutant pdb
+          let lines = pdbData.split('\n');
+          let allChainResiHash = {};
+          for (let i in lines) {
+              let line = lines[i];
+              let record = line.substr(0, 6);
               
-              ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+              if (record === 'ATOM  ' || record === 'HETATM') {
+                  let chain = line.substr(20, 2).trim();
+                  if(chain === '') chain = 'A';
+  
+                  let resi = line.substr(22, 5).trim();
+                  let chainResi = chain + '_' + resi;
+                  
+                  if(chainResi2pdb.hasOwnProperty(chainResi)) {
+                      chainResi2pdb[chainResi] += line + '\n';
+                  }  
+
+                  allChainResiHash[chainResi] = 1;
+              }
+          }
+
+          // get the full mutatnt PDB
+          let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+          ic.hAtoms = {};
+          let bMutation = true;
+          ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
+          //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+          
+          ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+          ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+          // get the mutant residues in the sphere
+          let hAtom2 = {};
+          for(let serial in ic.hAtoms) {
+            let atom = ic.atoms[serial];
+            let chainResi = atom.chain + '_' + atom.resi;
+            if(allChainResiHash.hasOwnProperty(chainResi)) {
+              hAtom2[serial] = 1;
+            }
+          }
+
+          ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
+          //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
+          ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+          //ic.dAtoms = ic.hAtoms;
+
+          ic.transformCls.zoominSelection();
+          ic.setOptionCls.setStyle('proteins', 'stick');
+
+          //ic.opts['color'] = 'chain';
+          //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+          for(let serial in hAtom2) {
+          //for(let serial in allAtoms2) {
+              let atom = ic.atoms[serial];
+
+              if(!atom.het) {
+                  // use the same color as the wild type
+                  let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+                  let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+                  ic.atoms[serial].color = atomWT.color;
+                  ic.atomPrevColors[serial] = atomWT.color;
+              }
+
+              let chainid = atom.structure + '_' + atom.chain;
+              let resid = chainid + '_' + atom.resi;
+              let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+              if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                ic.chainsMapping[chainid] = {};
+              }
+              ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+              // use the wild type as reference
+
+              if(snpResidArray.indexOf(residWT) != -1) {
+                  let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
+                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
+              }
+          }
+
+          if(bPdb) {
+              //let pdbStr = '';
+              //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
+
+              let file_pref =(ic.inputid) ? ic.inputid : "custom";
+              ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
+
+              ic.drawCls.draw();
+          }
+          else {
+              //var select = '.' + idArray[1] + ':' + idArray[2];
+              //var name = 'snp_' + idArray[1] + '_' + idArray[2];
+              let select = selectSpec;
+
+              let name = 'snp_' + snpStr;
+              await ic.selByCommCls.selectByCommand(select, name, name);
+              ic.opts['color'] = 'atom';
               ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
-              // get the mutant residues in the sphere
-              let hAtom2 = {};
-              for(let serial in ic.hAtoms) {
-                let atom = ic.atoms[serial];
-                let chainResi = atom.chain + '_' + atom.resi;
-                if(allChainResiHash.hasOwnProperty(chainResi)) {
-                  hAtom2[serial] = 1;
-                }
+              ic.viewInterPairsCls.clearInteractions();
+
+              if(bInteraction) {
+                //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
+
+                let type = 'linegraph';
+                await ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
+                //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+
+                thisClass.adjust2DWidth('dl_linegraph');
               }
 
-              ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtom2);
-              //ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, allAtoms2);
-              ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-              //ic.dAtoms = ic.hAtoms;
+              ic.hAtoms = ic.dAtoms;
+              //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
 
-              ic.transformCls.zoominSelection();
-              ic.setOptionCls.setStyle('proteins', 'stick');
+              ic.drawCls.draw();
 
-              //ic.opts['color'] = 'chain';
-              //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-              for(let serial in hAtom2) {
-              //for(let serial in allAtoms2) {
-                  let atom = ic.atoms[serial];
+              if(!me.alertAlt) {
+                me.alertAlt = true;
 
-                  if(!atom.het) {
-                      // use the same color as the wild type
-                      let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
-
-                      let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-
-                      ic.atoms[serial].color = atomWT.color;
-                      ic.atomPrevColors[serial] = atomWT.color;
-                  }
-
-                  let chainid = atom.structure + '_' + atom.chain;
-                  let resid = chainid + '_' + atom.resi;
-                  let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
-
-                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                    ic.chainsMapping[chainid] = {};
-                  }
-                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
-                  // use the wild type as reference
-
-                  if(snpResidArray.indexOf(residWT) != -1) {
-                      let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
-                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
-                  }
+                //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                alert('Please press the letter "a" to alternate between wild type and mutant.');
               }
+          }
 
-              // ic.hAtoms = me.hashUtilsCls.unionHash(hAtom1, hAtoms2);
-              // ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-              // //ic.dAtoms = ic.hAtoms;
-
-              // ic.transformCls.zoominSelection();
-              // ic.setOptionCls.setStyle('proteins', 'stick');
-
-              if(bPdb) {
-                 //let pdbStr = '';
-                 //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
-
-                 let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                 ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
-
-                 ic.drawCls.draw();
-              }
-              else {
-                  //var select = '.' + idArray[1] + ':' + idArray[2];
-                  //var name = 'snp_' + idArray[1] + '_' + idArray[2];
-                  let select = selectSpec;
-
-                  let name = 'snp_' + snpStr;
-                  ic.selByCommCls.selectByCommand(select, name, name);
-                  ic.opts['color'] = 'atom';
-                  ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
-
-                  ic.viewInterPairsCls.clearInteractions();
-
-                  if(bInteraction) {
-                    //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
-
-                    let type = 'linegraph';
-                    ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
-                    //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
-
-                    thisClass.adjust2DWidth('dl_linegraph');
-                  }
-
-                  ic.hAtoms = ic.dAtoms;
-                  //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
-
-                  ic.drawCls.draw();
-
-                  if(!ic.alertAlt) {
-                    ic.alertAlt = true;
-
-                    //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
-                    alert('Please press the letter "a" to alternate between wild type and mutant.');
-                  }
-              }
-
-              $("#" + ic.pre + "mn2_alternateWrap").show();
-              // expand the toolbar
-              let id = ic.pre + 'selection';
-              $("#" + id).show();
-              //$("#" + id + "_expand").hide();
-              //$("#" + id + "_shrink").show();
-
-              if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
-            return;
-            }
+          $("#" + ic.pre + "mn2_alternateWrap").show();
+          // expand the toolbar
+          let id = ic.pre + 'selection';
+          $("#" + id).show();
+        }
+        catch(err) {
             alert("There are some problems in predicting the side chain of the mutant...");
 
             ic.ParserUtilsCls.hideLoading();
 
-            if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
+            /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
             return;
-          }
-        });
+        };
     }
 }
 

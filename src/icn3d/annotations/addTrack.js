@@ -10,7 +10,7 @@ class AddTrack {
     clickAddTrackButton() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         // ncbi gi/accession
-        me.myEventCls.onIds("#" + ic.pre + "addtrack_button1", "click", function(e) { let ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "addtrack_button1", "click", async function(e) { let ic = thisClass.icn3d;
            e.stopImmediatePropagation();
 
            //e.preventDefault();
@@ -23,33 +23,16 @@ class AddTrack {
            let title =(isNaN(gi)) ? 'Acc ' + gi : 'gi ' + gi;
 
            //var text = $("#" + ic.pre + "track_text").val();
-           let url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
+           let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=track';
 
-           $.ajax({
-              url: url,
-              type: 'POST',
-              data : {'targets': chainid, 'queries': gi},
-              dataType: 'json',
-              //dataType: 'json',
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                  thisClass.alignSequenceToStructure(chainid, data, title);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
-            });
+           let dataObj = {'targets': chainid, 'queries': gi};
+           let data = await me.getAjaxPostPromise(url, dataObj);
+
+           thisClass.alignSequenceToStructure(chainid, data, title);
         });
 
         // FASTA
-        me.myEventCls.onIds("#" + ic.pre + "addtrack_button2", "click", function(e) { let ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "addtrack_button2", "click", async function(e) { let ic = thisClass.icn3d;
            e.stopImmediatePropagation();
            //e.preventDefault();
            dialog.dialog( "close" );
@@ -73,32 +56,15 @@ class AddTrack {
            }
 
            //var text = $("#" + ic.pre + "track_text").val();
-           let url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
-           $.ajax({
-              url: url,
-              type: 'POST',
-              data : {'targets': targets, 'queries': fasta},
-              dataType: 'json',
-              //dataType: 'json',
-              tryCount : 0,
-              retryLimit : 0, //1
-              success: function(data) {
-                  thisClass.alignSequenceToStructure(chainid, data, title);
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
-            });
+           let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=track';
+           let dataObj = {'targets': targets, 'queries': fasta};
+           let data = await me.getAjaxPostPromise(url, dataObj);
+
+           thisClass.alignSequenceToStructure(chainid, data, title);
         });
 
         // FASTA Alignment
-        me.myEventCls.onIds("#" + ic.pre + "addtrack_button2b", "click", function(e) { let ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "addtrack_button2b", "click", async function(e) { let ic = thisClass.icn3d;
            e.stopImmediatePropagation();
            //e.preventDefault();
            dialog.dialog( "close" );
@@ -129,7 +95,8 @@ class AddTrack {
 
            let startposGiSeq = undefined;
            for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
-               let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+               //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+               let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
                if(pos != startpos) {
                    continue;
@@ -175,7 +142,7 @@ class AddTrack {
               }
            }
 
-           ic.annotationCls.resetAnnoAll();
+           await ic.annotationCls.resetAnnoAll();
 
            let targetGapHashStr = '';
            let cntTmp = 0;
@@ -418,7 +385,8 @@ class AddTrack {
                   c = cFull[0]; // one letter for each residue
               }
 
-              let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+              //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
+              let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
               if( residueHash.hasOwnProperty(chainid + '_' + pos) ) {
                   let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[chainid + '_' + pos]);
@@ -617,7 +585,7 @@ class AddTrack {
             for(let i = 0, il = fromArray.length; i < il; ++i) {
                 fromArray2.push(fromArray[i]);
 
-                for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                     if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                         toArray2.push(j - 1);
                         fromArray2.push(j);
@@ -706,7 +674,8 @@ class AddTrack {
                   let colorHexStr = ic.showAnnoCls.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
                   cssColorArray.push("#" + colorHexStr);
 
-                  let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
+                //   let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
+                  let resi =  ic.ParserUtilsCls.getResi(chainid, i);
                   for(let serial in ic.residues[chainid + '_' + resi]) {
                       let color = me.parasCls.thr("#" + colorHexStr);
                       ic.atoms[serial].color = color;
@@ -753,8 +722,6 @@ class AddTrack {
         // clear selection
         ic.hAtoms = {}
 
-        //for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
-          //var currResi =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
         for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
           let currResi = ic.chainsSeq[chainid][i].resi;
 

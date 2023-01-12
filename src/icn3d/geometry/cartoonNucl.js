@@ -37,9 +37,13 @@ class CartoonNucl {
           let atom = atomlist[i];
           if (atom === undefined) continue;
 
+          let chainid = atom.structure + '_' + atom.chain;
+          let currentChainid = atom.structure + '_' + currentChain;
+
           if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
              if (atom.name === 'O3\'' || atom.name === 'O3*') { // to connect 3' end. FIXME: better way to do?
-                if (currentChain !== atom.chain || parseInt(currentResi) + 1 !== parseInt(atom.resi)) {
+                if (currentChain !== atom.chain 
+                  || ic.ParserUtilsCls.getResiNCBI(currentChainid, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) {
     //            if (currentChain !== atom.chain) {
                    if (currentO3 && prevOO) {
                       for (j = 0; j < num; j++) {

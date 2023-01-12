@@ -63,9 +63,11 @@ class Resid2spec {
                  }
                  else if(prevChain === chain) {
                      // some residue number could be "35A"
-                     let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                     //let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                     let tmpPrevResi = ic.ParserUtilsCls.getResiNCBI(prevChain, prevResi);
                      //if(resi != parseInt(prevResi) + 1) {
-                     if(resi != tmpPrevResi + 1) {
+                     //if(resi != tmpPrevResi + 1) {
+                     if(ic.ParserUtilsCls.getResiNCBI(chain, resi) != tmpPrevResi + 1) {
                          if(prevResi === startResi) {
                              if(bMultipleStructures) {
                                  spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
@@ -205,7 +207,7 @@ class Resid2spec {
             ic.hAtoms = {}
             for(let i in atoms) {
                 let atom = ic.atoms[i];
-                if(atom.b >= from && atom.b <= to) {
+                if(atom.b >= parseInt(from) && atom.b <= parseInt(to)) {
                     ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[atom.structure + '_' + atom.chain + '_' + atom.resi]);
                 }
             }

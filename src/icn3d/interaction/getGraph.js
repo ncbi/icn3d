@@ -298,12 +298,13 @@ class GetGraph {
                // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
                let residLabel = '1_1_' + resid;
                //if(cnt > 0) nodeStr += ', ';
+               let colorStr = (atom.color) ? atom.color.getHexString().toUpperCase() : '000';
                nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
-                   + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
-               if(cnt > 0 && prevChain == atom.chain &&(parseInt(atom.resi) == parseInt(prevResi) + 1 || atom.resi == prevResi) ) {
+                   + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + colorStr + '"}');
+               if(cnt > 0 && prevChain == atom.chain &&(ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi] + 1 || ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi]) ) {
                    //if(linkCnt > 0) linkStr += ', ';
                    linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
-                       + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+                       + '", "v": ' + thickness + ', "c": "' + colorStr + '"}');
                    if(atom.ssbegin) thickness = me.htmlCls.ssValue;
                    if(atom.ssend) thickness = me.htmlCls.coilValue;
                    ++linkCnt;

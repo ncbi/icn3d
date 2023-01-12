@@ -72,7 +72,7 @@ pre span {color: red;}
 
 <script type="text/javascript">
    
-    $( document ).ready(function() {
+    $( document ).ready(async function() {
       $("accordion").show();
 /*
       var cfg = {
@@ -89,7 +89,7 @@ pre span {color: red;}
       };
 
       var icn3dui = new icn3d.iCn3DUI(cfg);
-      icn3dui.show3DStructure();
+      await icn3dui.show3DStructure();
 */      
 
         // mn display
@@ -942,11 +942,6 @@ To find icn3d commands and functions, you can first generate a custom view in iC
             <td valign='top'><span class="indent">mmCIF ID:</span></td>
             <td valign='top'>load mmcif [1GPK]</td>
             <td valign='top'>ic.mmcifParserCls.downloadMmcif</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">NCBI gi:</span></td>
-            <td valign='top'>load gi [827343227]</td>
-            <td valign='top'>ic.mmdbParserCls.downloadGi</td>
         </tr>
         <tr>
             <td valign='top'><span class="indent">PubChem CID:</span></td>
@@ -2559,7 +2554,7 @@ To find icn3d commands and functions, you can first generate a custom view in iC
 
     <li><a name="HowToUseStep3"></a><b>Initialize the widget with desired parameters:</b></li>
     <pre>  &lt;script type="text/javascript"&gt;
-    $( document ).ready(function() {
+    $( document ).ready(async function() {
           var cfg = {
               divid: 'icn3dwrap',
               width: '100%',
@@ -2575,9 +2570,8 @@ To find icn3d commands and functions, you can first generate a custom view in iC
           var icn3dui = new <span>icn3d.</span>iCn3DUI(cfg);
 
           //communicate with the 3D viewer with chained functions
-          $.when(icn3dui.show3DStructure()).then(function() {
-               //icn3dui.setOption('color', 'cyan');
-          });
+          await icn3dui.show3DStructure();
+          //icn3dui.setOption('color', 'cyan');
     });
   &lt;/script&gt;</pre>
 </ol>
@@ -2690,11 +2684,11 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>diagram2dCls (analysis)</td><td>draw2Ddgm, set2DdgmNote, highlightNode, removeLineGraphSelection, removeScatterplotSelection, click2Ddgm, selectInteraction, selectInteractionAtoms, draw2DProtein, draw2DNucleotide, draw2DChemical</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cartoon2dCls (analysis)</td><td>draw2Dcartoon, click2Dcartoon</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsspCls (analysis)</td><td>applyDssp, parseDsspData</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>scapCls (analysis)</td><td>applyCommandScapBase, applyCommandScap, adjust2DWidth, retrieveScap</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>symdCls (analysis)</td><td>applyCommandSymdBase, applyCommandSymd, retrieveSymd, getResObj, setSeqAlignForSymmetry, retrieveSymmetry, getPolygonColor, getAxisColor</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>scapCls (analysis)</td><td>applyCommandScap, adjust2DWidth, retrieveScap</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>symdCls (analysis)</td><td>applyCommandSymd, retrieveSymd, getResObj, setSeqAlignForSymmetry, retrieveSymmetry, getPolygonColor, getAxisColor</td></tr>
 
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>addTrackCls (annotations)</td><td>clickAddTrackButton, showNewTrack, alignSequenceToStructure, defineSecondary, simplifyText, checkGiSeq, getFullText, setCustomFile</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCddSiteCls (annotations)</td><td>showCddSiteAll, setDomainFeature, getAdjustedResi, showAnnoType, setToolTip</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCddSiteCls (annotations)</td><td>showCddSiteAll, setDomainFeature, showAnnoType, setToolTip</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoContactCls (annotations)</td><td>showInteraction, showInteraction_base</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoPTMCls (annotations)</td><td>showPTM</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCrossLinkCls (annotations)</td><td>showCrosslink, showCrosslink_base</td></tr>
@@ -2765,8 +2759,8 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsn6ParserCls (parsers)</td><td>dsn6Parser, dsn6ParserBase, loadDsn6Data, getMatrix, loadDsn6File, loadDsn6FileUrl</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadAtomDataCls (parsers)</td><td>loadAtomDataIn</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadPDBCls (parsers)</td><td>loadPDB, adjustSeq, setSsbond, getChainCalpha</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td><td>downloadMmcif, downloadMmcifSymmetry, downloadMmcifSymmetryBase, loadMmcifData, loadMmcifSymmetry, loadMmcifOpmDataPart2</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td><td>parseMmdbDataPart1, parseMmdbData, downloadMmdb, downloadMmdbPart2, downloadGi, downloadBlast_rep_id, loadMmdbOpmData, loadMmdbOpmDataPart2</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td><td>downloadMmcif, downloadMmcifSymmetry, loadMmcifData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td><td>parseMmdbData, downloadMmdb, downloadBlast_rep_id, loadMmdbOpmData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td><td>downloadMmtf, parseMmtfData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td><td>loadMol2Data, loadMol2AtomData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td><td>downloadOpm, loadOpmData, setOpmData, parseAtomData</td></tr>
@@ -2784,7 +2778,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCommandCls (selection)</td><td>applyCommand, setStrengthPara, getThresholdNameArrays, setQueryresi2score, getMenuFromCmd</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>definedSetsCls (selection)</td><td>setProtNuclLigInMenu, setPredefinedInMenu, setAtomMenu, setChainsInMenu, setTransmemInMenu, showSets, clickCustomAtoms, deleteSelectedSets, changeCustomAtoms, setHAtomsFromSets, updateAdvancedCommands, combineSets, commandSelect, clickCommand_apply, selectCombinedSets, clickModeswitch, setModeAndDisplay, setMode, getAtomsFromOneSet, getAtomsFromSets, getAtomsFromNameArray</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>firstAtomObjCls (selection)</td><td>getFirstAtomObj, getFirstCalphaAtomObj, getFirstAtomObjByName, getLastAtomObj, getResiduesFromAtoms, getResiduesFromCalphaAtoms, getChainsFromAtoms, getAtomFromResi, getAtomCoordFromResi</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadScriptCls (selection)</td><td>loadScript, execCommands, execCommandsBase, pressCommandtext, applyCommandLoad, applyCommandMap, applyCommandEmmap, applyCommandSymmetryBase, applyCommandSymmetry, applyCommandRealignBase, applyCommandRealign, applyCommandGraphinteractionBase, applyCommandGraphinteraction, applyCommandAnnotationsAndCddSiteBase, applyCommandAnnotationsAndCddSite, applyCommandClinvarBase, applyCommandSnpBase, applyCommandClinvar, applyCommandSnp, applyCommand3ddomainBase, applyCommand3ddomain, applyCommandViewinteractionBase, applyCommandViewinteraction, renderFinalStep, replayFirstStep</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadScriptCls (selection)</td><td>loadScript, execCommands, execCommandsBase, pressCommandtext, applyCommandLoad, applyCommandMap, applyCommandEmmap, applyCommandRealign, applyCommandGraphinteractionBase, applyCommandGraphinteraction, applyCommandAnnotationsAndCddSite, applyCommandClinvarBase, applyCommandSnpBase, applyCommandClinvar, applyCommandSnp, applyCommand3ddomainBase, applyCommand3ddomain, applyCommandViewinteractionBase, applyCommandViewinteraction, renderFinalStep, replayFirstStep</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resid2specCls (selection)</td><td>residueids2spec, atoms2spec, atoms2residues, selectProperty, selectComplement, switchHighlightLevel, switchHighlightLevelUp, switchHighlightLevelDown</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectByCommandCls (selection)</td><td>selectByCommand, selectBySpec</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectionCls (selection)</td><td>selectAll, selectAll_base, selectAChain, selectResidueList, selectMainChains, selectSideChains, selectMainSideChains, clickShow_selected, clickHide_selected, getGraphDataForDisplayed, updateSelectionNameDesc, addCustomSelection, showSelection, hideSelection, saveSelection, removeSelection, resetAll, loadSelection, oneStructurePerWindow, showAll, saveSelectionIfSelected, saveSelectionPrep, selectOneResid, toggleSelection, toggleMembrane, adjustMembrane, selectBtwPlanes</td></tr>
@@ -2810,8 +2804,8 @@ To contribute new classes to iCn3D, you can follow the example of <a href="https
 <li>Script type should be "module": &lt;script type="module"&gt; </li>
 <li>Import iCn3D module: "import * as icn3d from './icn3d.module.js';"</li>
 <li>Import your custom class (e.g., "LoadStateFile"): "import {LoadStateFile} from './loadStateFile.js';"</li>
-<li>Remove "$( document ).ready(function() {" and the coresponding "//});" since module will always be run after the document is ready.</li>
-<li>Call your class inside the function "$.when(icn3dui.show3DStructure()).then(function() {". You first define the class instance "loadStateFileCls" and pass the iCn3D instance "icn3dui.icn3d". Then call the functions of your class.<br>
+<li>Remove "$( document ).ready(async function() {" and the coresponding "//});" since module will always be run after the document is ready.</li>
+<li>Call your class after the function "await icn3dui.show3DStructure()". You first define the class instance "loadStateFileCls" and pass the iCn3D instance "icn3dui.icn3d". Then call the functions of your class.<br>
 <pre>
     var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
     loadStateFileCls.loadStateFile('color spectrum');

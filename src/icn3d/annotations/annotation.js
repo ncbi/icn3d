@@ -8,11 +8,8 @@ class Annotation {
     }
 
     hideAllAnno() { let ic = this.icn3d, me = ic.icn3dui;
-            this.hideAllAnnoBase();
-            $("[id^=" + ic.pre + "custom]").hide();
-    }
-    hideAllAnnoBase() { let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoSeqBase(false);
+        $("[id^=" + ic.pre + "custom]").hide();
     }
     setAnnoSeqBase(bShow) {  let ic = this.icn3d, me = ic.icn3dui;
         //let itemArray = ['site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
@@ -35,23 +32,23 @@ class Annotation {
             if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
         }
     }
-    setAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
+    async setAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoTabBase(true);
         this.setAnnoSeqBase(true);
-        this.updateClinvar();
-        this.updateSnp();
+        await this.updateClinvar();
+        await this.updateSnp();
         this.updateDomain();
-        this.updatePTM();
+        await this.updatePTM();
         this.updateSsbond();
         this.updateCrosslink();
-        this.updateTransmem();
+        await this.updateTransmem();
         this.updateInteraction();
     }
     hideAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoTabBase(false);
         this.hideAllAnno();
     }
-    resetAnnoAll() {  let ic = this.icn3d, me = ic.icn3dui;
+    async resetAnnoAll() {  let ic = this.icn3d, me = ic.icn3dui;
        // reset annotations
        //$("#" + ic.pre + "dl_annotations").html("");
        //ic.bAnnoShown = false;
@@ -60,7 +57,7 @@ class Annotation {
        $("[id^=" + ic.pre + "dt_]").html("");
        $("[id^=" + ic.pre + "tt_]").html("");
        $("[id^=" + ic.pre + "ov_]").html("");
-       ic.showAnnoCls.processSeqData(ic.chainid_seq);
+       await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
        //if($("#" + ic.pre + "dt_giseq_" + chainid).css("display") != 'block') {
        //    this.setAnnoViewAndDisplay('overview');
@@ -68,22 +65,22 @@ class Annotation {
        //else {
            this.setAnnoViewAndDisplay('detailed view');
        //}
-       this.resetAnnoTabAll();
+       await this.resetAnnoTabAll();
     }
 
-    resetAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
+    async resetAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         if($("#" + ic.pre + "anno_binding").length && $("#" + ic.pre + "anno_binding")[0].checked) {
             $("[id^=" + ic.pre + "site]").show();
         }
         if($("#" + ic.pre + "anno_snp").length && $("#" + ic.pre + "anno_snp")[0].checked) {
             $("[id^=" + ic.pre + "snp]").show();
             ic.bSnpShown = false;
-            this.updateSnp();
+            await this.updateSnp();
         }
         if($("#" + ic.pre + "anno_clinvar").length && $("#" + ic.pre + "anno_clinvar")[0].checked) {
             $("[id^=" + ic.pre + "clinvar]").show();
             ic.bClinvarShown = false;
-            this.updateClinvar();
+            await this.updateClinvar();
         }
         if($("#" + ic.pre + "anno_cdd").length && $("#" + ic.pre + "anno_cdd")[0].checked) {
             $("[id^=" + ic.pre + "cdd]").show();
@@ -101,7 +98,7 @@ class Annotation {
         if($("#" + ic.pre + "anno_ptm").length && $("#" + ic.pre + "anno_ptm")[0].checked) {
             $("[id^=" + ic.pre + "ptm]").show();
             ic.bPTMShown = false;
-            this.updatePTM();
+            await this.updatePTM();
         }
         if($("#" + ic.pre + "anno_custom").length && $("#" + ic.pre + "anno_custom")[0].checked) {
             $("[id^=" + ic.pre + "custom]").show();
@@ -119,7 +116,7 @@ class Annotation {
         if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
             $("[id^=" + ic.pre + "transmem]").show();
             ic.bTranememShown = false;
-            this.updateTransmem();
+            await this.updateTransmem();
         }
     }
     setAnnoTabCustom() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -130,19 +127,19 @@ class Annotation {
         $("[id^=" + ic.pre + "custom]").hide();
         if($("#" + ic.pre + "anno_custom").length) $("#" + ic.pre + "anno_custom")[0].checked = false;
     }
-    setAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
+    async setAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "clinvar]").show();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = true;
-        this.updateClinvar();
+        await this.updateClinvar();
     }
     hideAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "clinvar]").hide();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = false;
     }
-    setAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
+    async setAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "snp]").show();
         if($("#" + ic.pre + "anno_snp").length) $("#" + ic.pre + "anno_snp")[0].checked = true;
-        this.updateSnp();
+        await this.updateSnp();
     }
     hideAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "snp]").hide();
@@ -184,10 +181,10 @@ class Annotation {
         $("[id^=" + ic.pre + "interaction]").hide();
         if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
     }
-    setAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
+    async setAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ptm]").show();
         if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = true;
-        this.updatePTM();
+        await this.updatePTM();
     }
     hideAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ptm]").hide();
@@ -211,10 +208,10 @@ class Annotation {
         $("[id^=" + ic.pre + "crosslink]").hide();
         if($("#" + ic.pre + "anno_crosslink").length) $("#" + ic.pre + "anno_crosslink")[0].checked = false;
     }
-    setAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
+    async setAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "transmem]").show();
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = true;
-        this.updateTransmem();
+        await this.updateTransmem();
     }
     hideAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "transmem]").hide();
@@ -227,10 +224,10 @@ class Annotation {
         $("#" + ic.pre + "dl_addtrack_tabs").tabs();
         $("#" + ic.pre + "dl_anno_view_tabs").tabs();
         //$("#" + ic.pre + "anno_all", "click", function(e) {
-        me.myEventCls.onIds("#" + ic.pre + "anno_all", "click", function(e) {
+        me.myEventCls.onIds("#" + ic.pre + "anno_all", "click", async function(e) {
 
         if($("#" + ic.pre + "anno_all")[0].checked) {
-            thisClass.setAnnoTabAll();
+            await thisClass.setAnnoTabAll();
             me.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
         }
         else{
@@ -252,9 +249,9 @@ class Annotation {
         });
 
         //$("#" + ic.pre + "anno_snp", "click", function(e) {
-        me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", function(e) {
+        me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", async function(e) {
         if($("#" + ic.pre + "anno_snp")[0].checked) {
-            thisClass.setAnnoTabSnp();
+            await thisClass.setAnnoTabSnp();
             me.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
         }
         else{
@@ -264,9 +261,9 @@ class Annotation {
         });
 
         //$("#" + ic.pre + "anno_clinvar", "click", function(e) {
-        me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", function(e) {
+        me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", async function(e) {
         if($("#" + ic.pre + "anno_clinvar")[0].checked) {
-            thisClass.setAnnoTabClinvar();
+            await thisClass.setAnnoTabClinvar();
             me.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
         }
         else{
@@ -304,9 +301,9 @@ class Annotation {
         }
         });
 
-        me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", function(e) {
+        me.myEventCls.onIds("#" + ic.pre + "anno_ptm", "click", async function(e) {
             if($("#" + ic.pre + "anno_ptm")[0].checked) {
-                thisClass.setAnnoTabPTM();
+                await thisClass.setAnnoTabPTM();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation ptm", true);
             }
             else{
@@ -352,9 +349,9 @@ class Annotation {
         });
 
         //$("#" + ic.pre + "anno_transmem", "click", function(e) {
-        me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", function(e) {
+        me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", async function(e) {
         if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
-            thisClass.setAnnoTabTransmem();
+            await thisClass.setAnnoTabTransmem();
             me.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
         }
         else{
@@ -448,20 +445,20 @@ class Annotation {
     // the following will be called only when the annotation is selected: showSnpClinvar, showDomain, showInteraction
     // showSnpClinvar and showDomain will loop through ic.protein_chainid
     // showInteraction will loop through ic.interactChainbase
-    updateClinvar() { let ic = this.icn3d, me = ic.icn3dui;
+    async updateClinvar() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bClinvarShown === undefined || !ic.bClinvarShown) {
             for(let chainid in ic.protein_chainid) {
                 let chainidBase = ic.protein_chainid[chainid];
-                ic.annoSnpClinVarCls.showClinvar(chainid, chainidBase);
+                await ic.annoSnpClinVarCls.showClinvar(chainid, chainidBase);
             }
         }
         ic.bClinvarShown = true;
     }
-    updateSnp() { let ic = this.icn3d, me = ic.icn3dui;
+    async updateSnp() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bSnpShown === undefined || !ic.bSnpShown) {
             for(let chainid in ic.protein_chainid) {
                 let chainidBase = ic.protein_chainid[chainid];
-                ic.annoSnpClinVarCls.showSnp(chainid, chainidBase);
+                await ic.annoSnpClinVarCls.showSnp(chainid, chainidBase);
             }
         }
         ic.bSnpShown = true;
@@ -481,11 +478,11 @@ class Annotation {
         }
         ic.bInteractionShown = true;
     }
-    updatePTM() { let ic = this.icn3d, me = ic.icn3dui;
+    async updatePTM() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bPTMShown === undefined || !ic.bPTMShown) {
             for(let chainid in ic.PTMChainbase) {
                 let chainidBase = ic.PTMChainbase[chainid];
-                ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
+                await ic.annoPTMCls.showPTM(chainid, chainidBase, 'ptm');
             }
         }
         ic.bPTMShown = true;
@@ -508,7 +505,8 @@ class Annotation {
         }
         ic.bCrosslinkShown = true;
     }
-    updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
+
+    async updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bTranememShown === undefined || !ic.bTranememShown) {
             for(let chainid in ic.protein_chainid) {
                 let chainidBase = ic.protein_chainid[chainid];
@@ -518,10 +516,10 @@ class Annotation {
                 else if(ic.bAfMem && ic.afmem_start_end) {
                     let begin = ic.afmem_start_end[0];
                     let end = ic.afmem_start_end[1];
-                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
+                    await ic.annoPTMCls.showPTM(chainid, chainidBase, 'afmem', begin, end);
                 }
                 else {
-                    ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
+                    await ic.annoPTMCls.showPTM(chainid, chainidBase, 'transmem');
                 }
             }
         }

@@ -41,8 +41,6 @@ class Dsn6Parser {
 
             oReq.onreadystatechange = function() {
                 if(this.readyState == 4) {
-                   //ic.ParserUtilsCls.hideLoading();
-
                    if(this.status == 200) {
                        let arrayBuffer = oReq.response;
                        thisClass.loadDsn6Data(arrayBuffer, type, sigma);
@@ -60,7 +58,7 @@ class Dsn6Parser {
                         alert("RCSB server has no corresponding eletron density map for this structure.");
                     }
 
-                    if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
+                    /// if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
                 }
                 else {
                     ic.ParserUtilsCls.showLoading();

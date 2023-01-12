@@ -9,7 +9,7 @@ class Vastplus {
 
     //Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
     // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
-    vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+    async vastplusAlign(structArray, vastplusAtype, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         // 1. pairwise alignment
@@ -70,21 +70,23 @@ class Vastplus {
             }
         }
 
-        $.when.apply(undefined, ajaxArray).then(function() {
-            let dataArray = (structArray.length == 1) ? [arguments] : Array.from(arguments);
+        let allPromise = Promise.allSettled(ajaxArray);
+        try {
+            let dataArray = await allPromise;
+
             // 2. cluster pairs
             thisClass.clusterAlignment(dataArray, chainidpairArray, node2chainindex, vastplusAtype);
 
             // 3. superpose the top selection
 
             ic.ParserUtilsCls.hideLoading();
-            ic.pdbParserCls.loadPdbDataRender(true);
+            await ic.pdbParserCls.loadPdbDataRender(true);
 
-            if(ic.deferredRealignByVastplus !== undefined) ic.deferredRealignByVastplus.resolve();
-        })
-        .fail(function() {
+            /// if(ic.deferredRealignByVastplus !== undefined) ic.deferredRealignByVastplus.resolve();
+        }
+        catch(err) {
             alert("There are some problems in aligning the chains...");
-        });
+        }          
     }
 
     setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -96,18 +98,13 @@ class Vastplus {
         let pdb_target = ic.saveFileCls.getAtomPDB(sel_t, undefined, undefined, undefined, undefined, struct1);
         let pdb_query = ic.saveFileCls.getAtomPDB(sel_q, undefined, undefined, undefined, undefined, struct2);
 
-        let alignAjax = $.ajax({
-            url: urltmalign,
-            type: 'POST',
-            data: {'pdb_query': pdb_query, 'pdb_target': pdb_target},
-            dataType: 'json',
-            cache: true
-        });
+        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
 
         return alignAjax;
     }
 
-    realignOnVastplus() { let ic = this.icn3d, me = ic.icn3dui;
+    async realignOnVastplus() { let ic = this.icn3d, me = ic.icn3dui;
         let structHash = [];
         for(let struct in ic.structures) {
             let chainidArray = ic.structures[struct];
@@ -120,7 +117,7 @@ class Vastplus {
         }
 
         let bRealign = true, atype = 2; // VAST+ based on TM-align
-        ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
+        await ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
     }
 
     getResisFromSegs(segArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -145,7 +142,7 @@ class Vastplus {
 
         let queryDataArray = [];
         for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
-            let queryData = dataArray[index][0];
+            let queryData = dataArray[index].value; //[0];
 
             queryDataArray.push(queryData);
 /*
@@ -188,7 +185,7 @@ class Vastplus {
         }
 
         if(!bAligned) {
-            alert("These structures can not be aligned...");
+            if(ic.bRender) alert("These structures can not be aligned...");
             return;
         }
 
@@ -268,12 +265,12 @@ class Vastplus {
                 let resiArray_t = resiArrays.resiArray_t;
                 let resiArray_q = resiArrays.resiArray_q;
 
-                let base = parseInt(ic.chainsSeq[chainid_t][0].resi);
-                let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t, base);
+                //let base = parseInt(ic.chainsSeq[chainid_t][0].resi);
+                let result_t = ic.realignParserCls.getSeqCoorResid(resiArray_t, chainid_t);
                 coor_t = coor_t.concat(result_t.coor);
 
-                base = parseInt(ic.chainsSeq[chainid_q][0].resi);
-                let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q, base);
+                //base = parseInt(ic.chainsSeq[chainid_q][0].resi);
+                let result_q = ic.realignParserCls.getSeqCoorResid(resiArray_q, chainid_q);
                 coor_q = coor_q.concat(result_q.coor);
 
                 // align seq 
@@ -348,7 +345,7 @@ class Vastplus {
         }
 
         if(!bAligned) {
-            alert("These structures can not be aligned...");
+            if(ic.bRender) alert("These structures can not be aligned...");
             return;
         }
     }

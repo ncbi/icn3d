@@ -7,7 +7,7 @@ class ShowInter {
         this.icn3d = icn3d;
     }
 
-    showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
+    async showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
        let nameArray = $("#" + ic.pre + "atomsCustomHbond").val();
        let nameArray2 = $("#" + ic.pre + "atomsCustomHbond2").val();
        if(nameArray2.length == 0) {
@@ -29,7 +29,7 @@ class ShowInter {
            let thresholdPistacking = $("#" + ic.pre + "pistackingthreshold").val();
            let thresholdStr = 'threshold ' + thresholdHbond + ' ' + thresholdSaltbridge + ' ' + thresholdContact
             + ' ' + thresholdHalogen + ' ' + thresholdPication + ' ' + thresholdPistacking;
-           let result = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, ic.bHbondCalc, type,
+           let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, ic.bHbondCalc, type,
                 bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
            let interactionTypes = result.interactionTypes;
 
@@ -117,7 +117,9 @@ class ShowInter {
                     //ic.atoms[i].style2 = 'lines';
                 }
             }
-            let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+
+            //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+            let commandname = hbonds_saltbridge + '_auto';
             ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
             let nameArray = [commandname];
             ic.selectionCls.saveSelectionIfSelected();
@@ -238,7 +240,8 @@ class ShowInter {
                     //ic.atoms[i].style2 = 'lines';
                 }
             }
-            let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+            //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+            let commandname = hbonds_saltbridge + '_auto';
             ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
             let nameArray = [commandname];
             ic.selectionCls.saveSelectionIfSelected();
@@ -283,7 +286,8 @@ class ShowInter {
                     //ic.atoms[i].style2 = 'lines';
                 }
             }
-            let commandname = interactionType + '_' + firstAtom.serial;
+            //let commandname = interactionType + '_' + firstAtom.serial;
+            let commandname = interactionType + '_auto';
             ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
             let nameArray = [commandname];
             ic.selectionCls.saveSelectionIfSelected();

@@ -42,9 +42,9 @@ class SetSeqAlign {
               let bStart = false;
               for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  //var resi = alignData.sequence[j][1];
-                  let offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
-                  let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  //let offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
+                  //let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
                   let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   resn =(resn === ' ' || resn === '') ? 'X' : resn;
                   //resn = resn.toUpperCase();
@@ -98,10 +98,9 @@ class SetSeqAlign {
               //for(let j = 0, jl = alignData.sseq.length; j < jl; ++j) {
               for(let j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  //var resi = alignData.sequence[j][1];
-                  //var resi = alignData.sequence[j][0];
-                  let offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
-                  let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  //let offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
+                  //let resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid2, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
                   let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   //resn = resn.toUpperCase();
 
@@ -243,6 +242,7 @@ class SetSeqAlign {
     }
 
     getPosFromResi(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
+/*        
         let pos = undefined; //parseInt(resi);
 
         for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
@@ -250,6 +250,13 @@ class SetSeqAlign {
                 pos = i;
                 break;
             }
+        }
+*/
+        let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
+        let pos = undefined;
+        if(residNCBI) {
+            let resiNCBI = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
+            pos = resiNCBI - 1;
         }
 
         return pos;
@@ -618,7 +625,7 @@ class SetSeqAlign {
                 // }
                 for(let j = start1; j <= end1; ++j) {
                     let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
-                    let resi = this.getResi(chainidArray[0], resiPos, bRealign);
+                    let resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
                     if(j > end_t) end_t = j;
@@ -642,7 +649,7 @@ class SetSeqAlign {
             if(i == 0) {
                 start = resi;
             }
-            else if(i > 0 && parseInt(resi) != parseInt(prevResi) + 1 && parseInt(resi) != parseInt(prevResi)) { // new start
+            else if(i > 0 && ic.resid2ncbi[resi] != ic.resid2ncbi[prevResi] + 1 && ic.resid2ncbi[resi] != ic.resid2ncbi[prevResi]) { // new start
                 end = prevResi;
                 for(let j = 0, jl = resiArray.length; j < jl; ++j) {
                     resi2range_t[resiArray[j]] = {resiStart: start, resiEnd: end, prevResiEnd: prevEnd};
@@ -781,45 +788,27 @@ class SetSeqAlign {
         return resObject;
     }
 
-    getResi(chainid, resiPos, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
-        let resi;
-
-        if(bRealign) {
-            resi = resiPos;
-        }
-        else {
-            if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
-                resi = '';
-            }
-            else {
-                resi = ic.chainsSeq[chainid][resiPos].resi;
-            }
-        }
-
-        return resi;
-    }
-
-    getResn(chainid, resiPos, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+    getResn(chainid, resiPos) { let ic = this.icn3d, me = ic.icn3dui;
         let resn;
   
-        if(bRealign) {
-            let resid = chainid + '_' + resiPos;
+        // if(bRealign) {
+        //     let resid = chainid + '_' + resiPos;
 
-            if(ic.residues[resid] === undefined) {
-                resn = '';
-            }
-            else {
-                resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
-            }
-        }
-        else {
+        //     if(ic.residues[resid] === undefined) {
+        //         resn = '';
+        //     }
+        //     else {
+        //         resn = me.utilsCls.residueName2Abbr(ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn.substr(0, 3));
+        //     }
+        // }
+        // else {
             if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][resiPos]) {
                 resn = '';
             }
             else {
                 resn = ic.chainsSeq[chainid][resiPos].name;
             }
-        }
+        // }
 
         return resn;
     }
@@ -870,8 +859,8 @@ class SetSeqAlign {
     insertNotAlignRes(chainid, start, len, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         // insert non-aligned residues in query seq
         for(let j = 0, jl = len; j < jl; ++j) {
-            let resi2 = this.getResi(chainid, start + j, bRealign);
-            let resn2 = this.getResn(chainid, start + j, bRealign);
+            let resi2 = ic.ParserUtilsCls.getResi(chainid, start + j);
+            let resn2 = this.getResn(chainid, start + j);
             let resn1 = '-';
             let bAlign = false;
             let resObject = this.getResObject(chainid, false, bAlign, resi2, resn2, resn1)
@@ -880,8 +869,8 @@ class SetSeqAlign {
     }
 
     getTemplatePosFromOriPos(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
-        let startResi = this.getResi(chainid1, start, bRealign);
-        let endResi = this.getResi(chainid1, end, bRealign);
+        let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
+        let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
             
         let result1 = this.getResiPosInTemplate(chainid1, startResi);
         let result2 = this.getResiPosInTemplate(chainid1, endResi);
@@ -976,10 +965,7 @@ class SetSeqAlign {
             }
 
             // 1. before the mapped residues
-            let resiStart1 = this.getResi(chainid1, start1, bRealign);
-            //let resiEnd1 = this.getResi(chainid1, end1, bRealign);
-            //let prevResiEnd1 = this.getResi(chainid1, prevIndex1, bRealign);
-            //let resiStart_t = this.getResi(chainid1, start_t, bRealign);
+            let resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
 
             //let range = resi2range_t[resiStart1];
   
@@ -1030,9 +1016,9 @@ class SetSeqAlign {
                     ic.alnChainsSeq[chainid2].push(gapResObject2);
                 }
                 else {                   
-                    let resi2 = this.getResi(chainid2, start2 + k, bRealign);
-                    let resn2 = this.getResn(chainid2, start2 + k, bRealign);
-                    let resn1 = this.getResn(chainid1, start1 + k, bRealign);
+                    let resi2 = ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+                    let resn2 = this.getResn(chainid2, start2 + k);
+                    let resn1 = this.getResn(chainid1, start1 + k);
                     let bAlign = true;
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1)
                     ic.alnChainsSeq[chainid2].push(resObject);

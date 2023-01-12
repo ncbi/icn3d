@@ -46,7 +46,7 @@ https.get(urlMmdb, function(res1) {
         response1.push(chunk);
     });
 
-    res1.on('end', function(){
+    res1.on('end', async function(){
       let dataStr1 = response1.join('');
       let dataJson = JSON.parse(dataStr1);
 
@@ -54,7 +54,7 @@ https.get(urlMmdb, function(res1) {
       let ic = me.icn3d;
 
       ic.bRender = false;
-      ic.mmdbParserCls.parseMmdbData(dataJson);
+      await ic.mmdbParserCls.parseMmdbData(dataJson);
 
       // find PDB in 10 angstrom around the SNP
       let chainid = pdbid + '_' + chain + '_' + resi;
@@ -93,7 +93,7 @@ https.get(urlMmdb, function(res1) {
         ic.selectionCls.addCustomSelection(residArray, command, command, 'select ' + command, true);
         let nameArray = [command];
 
-        let result = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+        let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
               true, true, true, true, true, true);
         let bondCntWild = result.bondCnt;
 
@@ -113,17 +113,19 @@ https.get(urlMmdb, function(res1) {
           const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
 
           axios.post('https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi', qs.stringify(dataObj), config)
-          .then(function(res) {
+          .then(async function(res) {
               //console.log(`Status: ${res.status}`);
               //console.log('Body: ', res.data);
               let mutantPDB = res.data.data.replace(/\\n/g, '\n');
 
-              showInteractionChange(ic, mutantPDB, pdbid, chain, resi);
+              await showInteractionChange(ic, mutantPDB, pdbid, chain, resi);
           })
-          .catch(function(err) {
-              //utils.dumpError(err);
-              console.log(err.stack);
-          });
+
+          // the following caused error as described at https://stackoverflow.com/questions/53940043/unhandledpromiserejectionwarning-this-error-originated-either-by-throwing-insid  
+        //   .catch(function(err) {
+        //       //utils.dumpError(err);
+        //       console.log(err.stack);
+        //   });
       }
     });
 }).on('error', function(e) {
@@ -161,7 +163,7 @@ function getPdbStr(ic, pdbid, chain, resi) {
     return pdbStr;
 }
 
-function showInteractionChange(ic, data, pdbid, chain, resi) {
+async function showInteractionChange(ic, data, pdbid, chain, resi) {
     let pos = data.indexOf('\n');
     let energy = data.substr(0, pos);
     let pdbData = data.substr(pos + 1);
@@ -199,7 +201,7 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
     ic.selectionCls.addCustomSelection(residArray, command, command, 'select ' + command, true);
     let nameArray = [command];
 
-    let result = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+    let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
               true, true, true, true, true, true);
     let bondCntWild = result.bondCnt;
 
@@ -219,7 +221,7 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
     ic.selectionCls.addCustomSelection(residArray, command, command, 'select ' + command, true);
     nameArray = [command];
 
-    let resultMutant = ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+    let resultMutant = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
               true, true, true, true, true, true);
     let bondCntMutant = resultMutant.bondCnt;
 

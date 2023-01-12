@@ -299,18 +299,21 @@ class HlSeq {
                                 to = parseInt(toArray[i]);
 
                                 for(let j = from; j <= to; ++j) {
-                                    if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                    // if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                    if( ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
-                                        if(structure.length > 5) {
-                                            residueid = residNCBI;
-                                        }
-                                        else if(ic.residNCBI2resid[residNCBI]) {
-                                            residueid = ic.residNCBI2resid[residNCBI];
-                                        }
-                                        else {
-                                            residueid = residNCBI;
-                                        }
+                                        // if(structure.length > 5) {
+                                        //     residueid = residNCBI;
+                                        // }
+                                        // else if(ic.ncbi2resid[residNCBI]) {
+                                        //     residueid = ic.ncbi2resid[residNCBI];
+                                        // }
+                                        // else {
+                                        //     residueid = residNCBI;
+                                        // }
+
+                                        residueid = ic.ncbi2resid[residNCBI];
                                     }
                                     else {
                                         residueid = chainid + '_' + (j+1).toString();
@@ -346,22 +349,24 @@ class HlSeq {
                             let structure = chainid.substr(0, chainid.indexOf('_'));
                             for(let i = 0, il = posArray.length; i < il; ++i) {
                                 if($(that).attr('site') !== undefined || $(that).attr('ptm') !== undefined) {
-                                    if(ic.bNCBI) {
+                                    // if(ic.bNCBI) {
                                         let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
-                                        if(structure.length > 5) {
-                                            residueid = residNCBI;
-                                        }
-                                        else if(ic.residNCBI2resid[residNCBI]) {
-                                            residueid = ic.residNCBI2resid[residNCBI];
-                                        }
-                                        else {
-                                            residueid = residNCBI;
-                                        }
-                                    }
-                                    else {
-                                        residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
-                                    }
+                                        // if(structure.length > 5) {
+                                        //     residueid = residNCBI;
+                                        // }
+                                        // else if(ic.ncbi2resid[residNCBI]) {
+                                        //     residueid = ic.ncbi2resid[residNCBI];
+                                        // }
+                                        // else {
+                                        //     residueid = residNCBI;
+                                        // }
+
+                                        residueid = ic.ncbi2resid[residNCBI];
+                                    // }
+                                    // else {
+                                    //     residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
+                                    // }
                                 }
                                 //else if($(that).attr('clinvar') !== undefined) {
                                 else {
