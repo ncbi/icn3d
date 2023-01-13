@@ -8,7 +8,7 @@ In your Node.js scripts, you can call iCn3D JavaScript functions in [icn3d npm p
 Installation
 ------------
 
-Install the following packages:
+Install the following packages (npm icn3d version should be 3.21.0 or above):
 
     npm install three
     npm install jquery
