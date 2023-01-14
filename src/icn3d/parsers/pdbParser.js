@@ -64,7 +64,7 @@ class PdbParser {
         ic.InputfileType = type;
 
         if(type === 'pdb') {
-            await thisClass.loadPdbData(data);
+            await this.loadPdbData(data);
             await ic.loadScriptCls.loadScript(command, undefined, true);
         }
         else if(type === 'mmcif') {
