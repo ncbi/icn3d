@@ -300,7 +300,7 @@ class AnnoCddSite {
                 for(let s = 0, sl = segArray.length; s < sl; ++s) {
                     let domainFrom = Math.round(segArray[s].from);
                     let domainTo = Math.round(segArray[s].to);
-                    
+
                     // if(ic.bNCBI) {
                     //     fromArray.push(domainFrom);
                     //     toArray.push(domainTo);

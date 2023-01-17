@@ -284,7 +284,7 @@ class HlSeq {
                         if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     }
                     else {
-                        let residueidHash = {}
+                        let residueidHash = {};
                         if($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
                             ic.hlUpdateCls.hlSummaryDomain3ddomain(that);
 
@@ -299,7 +299,7 @@ class HlSeq {
                                 to = parseInt(toArray[i]);
 
                                 for(let j = from; j <= to; ++j) {
-                                    // if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                    /*
                                     if( ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
@@ -313,6 +313,16 @@ class HlSeq {
                                         //     residueid = residNCBI;
                                         // }
 
+                                        residueid = ic.ncbi2resid[residNCBI];
+                                    }
+                                    */
+                                    
+                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined)) {
+                                        // real residue numbers are used for CDD and site/features
+                                        residueid = chainid + '_' + j;
+                                    }
+                                    else if( $(that).attr('3ddomain') !== undefined) {
+                                        let residNCBI = chainid + '_' + (j+1).toString();
                                         residueid = ic.ncbi2resid[residNCBI];
                                     }
                                     else {

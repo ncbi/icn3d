@@ -57,6 +57,16 @@ class MmdbParser {
         }
     }
 
+        //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
+    //it can be chained together with other deferred functions for sequential execution. Note that
+    //only one structure corresponding to the gi will be shown. If there is no structures available
+    //for the gi, a warning message will be shown.
+    async downloadGi(gi) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.bCid = undefined;
+        let bGi = true;
+        await this.downloadMmdb(gi, bGi);
+    }
+
     //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
     //NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A).
     //This function was deferred so that it can be chained together with other deferred functions for

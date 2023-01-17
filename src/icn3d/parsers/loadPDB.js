@@ -64,12 +64,11 @@ class LoadPDB {
         //let chainMissingResidueArray = {}
 
         let id = (pdbid) ? pdbid : 'stru';
+        let structure = id;
 
         let maxMissingResi = 0, prevMissingChain = '';
         let CSerial, prevCSerial, OSerial, prevOSerial;
-
-        let structure = "stru";
-
+        
         let bHeader = false;
 
         for (let i in lines) {
@@ -120,7 +119,7 @@ class LoadPDB {
 
                   if(j === startResi) helixStart.push(resid);
                   if(j === endResi) helixEnd.push(resid);
-                }               
+                }    
             } else if (record === 'SHEET ') {
                 //ic.bSecondaryStructure = true;
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
