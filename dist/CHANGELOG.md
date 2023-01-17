@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.21.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.1.zip) was release on January 17, 2023. Fixed a bug in selecting a conserved domain.
+
 [icn3d-3.21.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.0.zip) was release on January 11, 2023. Mapped PDB residue numbers with NCBI residue numbers; replaced jQuery promise with JavaScript Promise, await, and async.
 
 [icn3d-3.20.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.20.1.zip) was release on December 19, 2022. Removed unnecessary import and cleaned some codes.

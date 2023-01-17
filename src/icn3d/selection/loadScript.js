@@ -499,6 +499,10 @@ class LoadScript {
 
             await ic.chainalignParserCls.downloadMmdbAf(id);
         }
+        else if(command.indexOf('load gi') !== -1) {
+            me.cfg.gi = id;
+            await ic.mmdbParserCls.downloadGi(id);
+        }
         else if(command.indexOf('load refseq') !== -1) {
             me.cfg.refseqid = id;
             await ic.mmdbParserCls.downloadRefseq(id);

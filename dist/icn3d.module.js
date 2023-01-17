@@ -35039,7 +35039,7 @@ class AnnoCddSite {
                 for(let s = 0, sl = segArray.length; s < sl; ++s) {
                     let domainFrom = Math.round(segArray[s].from);
                     let domainTo = Math.round(segArray[s].to);
-                    
+
                     // if(ic.bNCBI) {
                     //     fromArray.push(domainFrom);
                     //     toArray.push(domainTo);
@@ -41309,7 +41309,7 @@ class HlSeq {
                                 to = parseInt(toArray[i]);
 
                                 for(let j = from; j <= to; ++j) {
-                                    // if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                    /*
                                     if( ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         // AlphaFold domains calculated on-the-fly have no conversion
@@ -41323,6 +41323,16 @@ class HlSeq {
                                         //     residueid = residNCBI;
                                         // }
 
+                                        residueid = ic.ncbi2resid[residNCBI];
+                                    }
+                                    */
+                                    
+                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined)) {
+                                        // real residue numbers are used for CDD and site/features
+                                        residueid = chainid + '_' + j;
+                                    }
+                                    else if( $(that).attr('3ddomain') !== undefined) {
+                                        let residNCBI = chainid + '_' + (j+1).toString();
                                         residueid = ic.ncbi2resid[residNCBI];
                                     }
                                     else {
@@ -46713,6 +46723,16 @@ class MmdbParser {
 
             await this.parseMmdbData(data2);
         }
+    }
+
+        //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
+    //it can be chained together with other deferred functions for sequential execution. Note that
+    //only one structure corresponding to the gi will be shown. If there is no structures available
+    //for the gi, a warning message will be shown.
+    async downloadGi(gi) { let ic = this.icn3d; ic.icn3dui;
+        ic.bCid = undefined;
+        let bGi = true;
+        await this.downloadMmdb(gi, bGi);
     }
 
     //Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated
@@ -53026,12 +53046,11 @@ class LoadPDB {
         //let chainMissingResidueArray = {}
 
         let id = (pdbid) ? pdbid : 'stru';
+        let structure = id;
 
         let prevMissingChain = '';
         let CSerial, prevCSerial, OSerial, prevOSerial;
-
-        let structure = "stru";
-
+        
         let bHeader = false;
 
         for (let i in lines) {
@@ -53082,7 +53101,7 @@ class LoadPDB {
 
                   if(j === startResi) helixStart.push(resid);
                   if(j === endResi) helixEnd.push(resid);
-                }               
+                }    
             } else if (record === 'SHEET ') {
                 //ic.bSecondaryStructure = true;
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
@@ -57482,6 +57501,10 @@ class LoadScript {
             me.cfg.bu = 0;
 
             await ic.chainalignParserCls.downloadMmdbAf(id);
+        }
+        else if(command.indexOf('load gi') !== -1) {
+            me.cfg.gi = id;
+            await ic.mmdbParserCls.downloadGi(id);
         }
         else if(command.indexOf('load refseq') !== -1) {
             me.cfg.refseqid = id;
@@ -68289,7 +68312,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.21.0';
+    this.REVISION = '3.21.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -68565,6 +68588,12 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        ic.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        await ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
+    }
+    else if(me.cfg.gi !== undefined) {
+        // ic.bNCBI = true;
+        ic.loadCmd = 'load gi ' + me.cfg.gi;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.mmdbParserCls.downloadGi(me.cfg.gi);
     }
     else if(me.cfg.refseqid !== undefined) {
         ic.inputid = me.cfg.refseqid;
