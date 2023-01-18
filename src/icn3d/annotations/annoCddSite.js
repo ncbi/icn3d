@@ -310,8 +310,11 @@ class AnnoCddSite {
                     //     toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
                     // }
 
-                    fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
-                    toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+                    // fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
+                    // toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+
+                    fromArray.push(domainFrom);
+                    toArray.push(domainTo);
 
                     for(let i = domainFrom; i <= domainTo; ++i) {
                         resiHash[i] = 1;

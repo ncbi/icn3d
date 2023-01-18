@@ -35052,8 +35052,11 @@ var icn3d = (function (exports) {
                         //     toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
                         // }
 
-                        fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
-                        toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+                        // fromArray.push(ic.ParserUtilsCls.getResi(chnid, domainFrom));
+                        // toArray.push(ic.ParserUtilsCls.getResi(chnid, domainTo));
+
+                        fromArray.push(domainFrom);
+                        toArray.push(domainTo);
 
                         for(let i = domainFrom; i <= domainTo; ++i) {
                             resiHash[i] = 1;
@@ -39763,7 +39766,8 @@ var icn3d = (function (exports) {
                 if(me.cfg.blast_rep_id === undefined) {
                    if(ic.bFullUi) {
                         if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
-                            let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+                            //let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+                            let id = Object.keys(ic.structures)[0];
 
                             await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
                         }
@@ -41330,11 +41334,7 @@ var icn3d = (function (exports) {
                                         }
                                         */
                                         
-                                        if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined)) {
-                                            // real residue numbers are used for CDD and site/features
-                                            residueid = chainid + '_' + j;
-                                        }
-                                        else if( $(that).attr('3ddomain') !== undefined) {
+                                        if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined) {
                                             let residNCBI = chainid + '_' + (j+1).toString();
                                             residueid = ic.ncbi2resid[residNCBI];
                                         }
@@ -41775,7 +41775,7 @@ var icn3d = (function (exports) {
            // update annotation windows and alignment sequences
            let chainHash = {};
            for(let i = 0, il = residueArray.length; i < il; ++i) {
-               let pickedResidue = residueArray[i];
+               let pickedResidue = residueArray[i].trim();
                //[id$= is expensive to search id ending with
                //var resElem = $("[id$=" + ic.pre + pickedResidue + "]");
                let resElem = $("[id=giseq_" + ic.pre + pickedResidue + "]");
@@ -53166,10 +53166,7 @@ var icn3d = (function (exports) {
                         //let chain = line.substr(19, 1);
                         let chain = line.substr(18, 2).trim();
                         //let resi = parseInt(line.substr(21, 5));
-                        let resi = line.substr(21, 5);
-
-                        //var structure = parseInt(line.substr(13, 1));
-                        //if(line.substr(13, 1) == ' ') structure = 1;
+                        let resi = line.substr(21, 5).trim();
 
                         //var chainNum = structure + '_' + chain;
                         let chainNum = id + '_' + chain;
@@ -53641,73 +53638,81 @@ var icn3d = (function (exports) {
             for(let chainNum in ic.chainsSeq) {
                 if(chainMissingResidueArray[chainNum] === undefined) continue;
 
-                //let A = ic.chainsSeq[chainNum];
-                //let B = chainMissingResidueArray[chainNum];
-
-                let A = chainMissingResidueArray[chainNum];
-                let B = ic.chainsSeq[chainNum];
-
-                let m = A.length;
-                let n = B.length;
-
-                let C = new Array(m + n);
-                //var C2 = new Array(m + n);
-                //var C3 = new Array(m + n);
-
-                // http://www.algolist.net/Algorithms/Merge/Sorted_arrays
-                // m - size of A
-                // n - size of B
-                // size of C array must be equal or greater than m + n
-                  let i, j, k;
-                  i = 0;
-                  j = 0;
-                  k = 0;
-                  while (i < m && j < n) {
-                        if (parseInt(A[i].resi) <= parseInt(B[j].resi)) {
-                              C[k] = A[i];
-                              //C2[k] = A2[i];
-                              //C3[k] = A3[i];
-                              i++;
-                        } else {
-                              C[k] = B[j];
-                              //if(B[j].resi % 10 === 0) {
-                              //    C2[k] = B[j].resi.toString();
-                              //}
-                              //else {
-                              //    C2[k] = '';
-                              //}
-                              //C3[k] = '-';
-                              j++;
-                        }
-                        k++;
-                  }
-                  if (i < m) {
-                        for (let p = i; p < m; p++) {
-                              C[k] = A[p];
-                              //C2[k] = A2[p];
-                              //C3[k] = A3[p];
-                              k++;
-                        }
-                  } else {
-                        for (let p = j; p < n; p++) {
-                              C[k] = B[p];
-                              //if(B[p].resi % 10 === 0) {
-                              //    C2[k] = B[p].resi.toString();
-                              //}
-                              //else {
-                              //    C2[k] = '';
-                              //}
-                              //C3[k] = '-';
-                              k++;
-                        }
-                  }
-
-                ic.chainsSeq[chainNum] = C;
-                //ic.chainsAn[chainNum][0] = C2;
-                //ic.chainsAn[chainNum][1] = C3;
+                ic.chainsSeq[chainNum] = this.mergeTwoSequences(chainMissingResidueArray[chainNum], ic.chainsSeq[chainNum]);     
             }
 
             this.setResidMapping();
+        }
+
+        mergeTwoSequences(A, B) {
+            let m = A.length; // missing residues
+            let n = B.length; // residues with coord
+
+            // inserted domain such as PRK150 in the R chain of PDB 6WW2
+            let lastResiA = parseInt(A[m - 1].resi);
+            let lastResiB = parseInt(B[n - 1].resi);
+            let lastResi = (lastResiA >= lastResiB) ? lastResiA : lastResiB;
+
+            let C = new Array(m + n);
+            // http://www.algolist.net/Algorithms/Merge/Sorted_arrays
+            // m - size of A
+            // n - size of B
+            // size of C array must be equal or greater than m + n
+              let i = 0, j = 0, k = 0;
+              let bInsertion = false;
+
+              while (i < m && j < n) {
+                    let aResi = parseInt(A[i].resi), bResi = parseInt(B[j].resi);
+                    if(aResi > lastResi && bResi > lastResi) bInsertion = true;
+
+                    if(aResi <= lastResi &&  bResi > lastResi) {
+                        if (aResi > bResi || bInsertion) {
+                            C[k] = B[j];
+                            j++;
+                        }
+                        else  {
+                            C[k] = A[i];
+                            i++;
+                        }
+                    }
+                    else if(aResi > lastResi &&  bResi <= lastResi) {
+                        if (aResi <= bResi || bInsertion) {
+                            C[k] = A[i];
+                            i++;
+                        }
+                        else  {
+                            C[k] = B[j];
+                            j++;
+                        }
+                    }
+                    else {
+                        if (aResi <= bResi) {
+                            C[k] = A[i];
+                            i++;
+                        }
+                        else {
+                            C[k] = B[j];
+                            j++;
+                        }
+                    }
+
+                    k++;
+              }
+
+              if (i < m) {
+                    for (let p = i; p < m; p++) {
+                          C[k] = A[p];
+                          k++;
+                    }
+              } 
+              else {
+                    for (let p = j; p < n; p++) {
+                          C[k] = B[p];
+                          k++;
+                    }
+              }
+
+              return C;
         }
 
         setResidMapping() { let ic = this.icn3d; ic.icn3dui;

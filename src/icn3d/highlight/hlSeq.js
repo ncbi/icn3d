@@ -317,11 +317,7 @@ class HlSeq {
                                     }
                                     */
                                     
-                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined)) {
-                                        // real residue numbers are used for CDD and site/features
-                                        residueid = chainid + '_' + j;
-                                    }
-                                    else if( $(that).attr('3ddomain') !== undefined) {
+                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         residueid = ic.ncbi2resid[residNCBI];
                                     }
