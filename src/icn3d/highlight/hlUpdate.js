@@ -263,7 +263,7 @@ class HlUpdate {
        // update annotation windows and alignment sequences
        let chainHash = {}
        for(let i = 0, il = residueArray.length; i < il; ++i) {
-           let pickedResidue = residueArray[i];
+           let pickedResidue = residueArray[i].trim();
            //[id$= is expensive to search id ending with
            //var resElem = $("[id$=" + ic.pre + pickedResidue + "]");
            let resElem = $("[id=giseq_" + ic.pre + pickedResidue + "]");

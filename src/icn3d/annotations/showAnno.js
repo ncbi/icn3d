@@ -137,7 +137,8 @@ class ShowAnno {
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                     if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
-                        let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+                        //let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+                        let id = Object.keys(ic.structures)[0];
 
                         await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
                     }
