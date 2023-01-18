@@ -53168,9 +53168,6 @@ var icn3d = (function (exports) {
                         //let resi = parseInt(line.substr(21, 5));
                         let resi = line.substr(21, 5).trim();
 
-                        //var structure = parseInt(line.substr(13, 1));
-                        //if(line.substr(13, 1) == ' ') structure = 1;
-
                         //var chainNum = structure + '_' + chain;
                         let chainNum = id + '_' + chain;
 
