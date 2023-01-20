@@ -709,7 +709,7 @@ class SetHtml {
        else if(pos != -1) {
            let url = imageStr.substr(pos + matchedStr.length);
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-           window.open(url);
+           window.open(url, '_self');
        }
        else if(posState != -1) {
            let matchedStrData = "Start of data file======\n";
