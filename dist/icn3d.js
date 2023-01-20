@@ -15906,7 +15906,7 @@ var icn3d = (function (exports) {
            else if(pos != -1) {
                let url = imageStr.substr(pos + matchedStr.length);
                me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-               window.open(url);
+               window.open(url, '_self');
            }
            else if(posState != -1) {
                let matchedStrData = "Start of data file======\n";
@@ -65096,10 +65096,18 @@ var icn3d = (function (exports) {
             //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
             let asymmetricStr = "";
 
+            let text = ic.inputid.toUpperCase();
+
             let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
+            if(ic.inputid.indexOf('http') != -1) {
+                idName = "Data from";
+                url = ic.inputid;
+                text = ic.inputid;
+            }
+
             if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
-            $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+            $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>" + asymmetricStr + ": " + title);
         }
 
         getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
@@ -68320,7 +68328,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.21.1';
+        this.REVISION = '3.21.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
