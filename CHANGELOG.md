@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.21.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.2.zip) was release on January 20, 2023. Added instructions (https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#saveview) to host iCn3D PNG Images at any web server, which can be accessed by iCn3D, e.g., https://structure.ncbi.nlm.nih.gov/icn3d/?type=icn3dpng&url=https://icn3d.org/png/20230119_06_3GVU-XCxR6fSTmXHxR3o1A.png.
+[icn3d-3.21.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.2.zip) was release on January 20, 2023. Added instructions (https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#saveview) to host iCn3D PNG Images at any web server, which can be accessed by iCn3D, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://icn3d.org/png/20230119_06_3GVU-XCxR6fSTmXHxR3o1A.png.
 
 [icn3d-3.21.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.1.zip) was release on January 17, 2023. Fixed a bug in selecting a conserved domain and a bug in the secondary structure display for pdbid input.
 
