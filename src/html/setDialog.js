@@ -224,10 +224,11 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_customref' class='" + dialogClass + "'>";
         html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
-        html += '<pre>refnum,11,12,,21,22<br>';
-        html += '1TUP_A,100,101,,,132<br>';
-        html += '1TUP_B,110,111,,141,142</pre>';
-        html += 'The first row defines the reference residue numbers. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 12, 21, 22) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The thrid row shows the real residue numbers for the chain "1TUP_B".<br><br>';
+        html += '<pre>refnum,11,12,,21,22,,10C,11C,20C<br>';
+        html += '1TUP_A,100,101,,,132,,,,<br>';
+        html += '1TUP_B,110,111,,141,142,,,,</pre>';
+        html += '1TUP_C,,,,,,,200,201,230</pre>';
+        html += 'The first row defines the reference residue numbers, which could be any strings. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 21, 10C, etc.) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The fourth row shows another set of reference numners for the chain "1TUP_C". It could be a chain from a different structure.<br><br>';
         html += 'To select all residues corresponding to the reference numbers, you can simplay replace ":" with "%" in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank">Specification</a>. For example, "%12"  selects the residue 101 in 1TUP_A and the residue 111 in 1TUP_B. ".A%12" has the chain "A" filter and selects the residue 101 in 1TUP_A.<br>';
         html += '</div><br>';
         html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstreffile' size=8> <br><br>";

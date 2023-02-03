@@ -2159,7 +2159,7 @@ class ClickMenu {
                 type: 'POST',
                 data: { 
                     q : pdbstr,
-                    database: ["afdb50", "afdb-swissprot", "gmgcl_id", "pdb100"],
+                    database: ["afdb50", "afdb-swissprot", "gmgcl_id", "pdb100", "afdb-proteome", "mgnify_esm30"],
                     mode: "3diaa"
                 },
                 dataType: 'text',

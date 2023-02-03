@@ -1487,6 +1487,10 @@ class SetMenu {
               html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
               html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true, undefined, 2);
             }
+            else {
+              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
+              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 2);
+            }
 
             //if(me.cfg.afid) html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
             //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
@@ -1560,6 +1564,15 @@ class SetMenu {
             html += this.getMenuSep();
 
             html += this.getLink('mn6_hbondsYes', 'Interactions', 1, 1);
+
+            html += this.getMenuText('mn1_window', 'Bring to Front', undefined, undefined, 1);
+            html += "<ul>";
+            html += this.getLink('mn1_window_table', 'Interaction Table', undefined, 2);
+            html += this.getLink('mn1_window_linegraph', '2D Interaction Network', undefined, 2);
+            html += this.getLink('mn1_window_scatterplot', '2D Interaction Map', undefined, 2);
+            html += this.getLink('mn1_window_graph', '2D Graph(Force-Directed)', undefined, 2);
+            html += "</ul>";
+            html += "</li>";
 
             html += this.getLink('mn6_contactmap', 'Contact Map', undefined, 1);
 

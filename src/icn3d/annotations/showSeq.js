@@ -497,7 +497,7 @@ class ShowSeq {
 
                     //if(ic.resid2refnum.hasOwnProperty(residueid)) {
                     let refnumLabel = ic.resid2refnum[residueid];
-                    if(refnumLabel) {
+                    if(refnumLabel) {                        
                         let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
                         let refnumStr;
                         if(bCustom) {

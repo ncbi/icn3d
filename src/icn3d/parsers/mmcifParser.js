@@ -29,11 +29,11 @@ class MmcifParser {
 
         //ic.bCid = undefined;
  
-        let data1 = await me.getAjaxPromise(url, 'text', false, 'The structure " + mmcifid + " was not found...');
+        let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
 
         url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         let dataObj = {'mmcifheader': data1};
-        let data = await me.getAjaxPostPromise(url, dataObj, false, 'The mmCIF data of " + mmcifid + " can not be parsed...');
+        let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
 
         if(data.emd !== undefined) ic.emd = data.emd;
         if(data.organism !== undefined) ic.organism = data.organism;
@@ -93,7 +93,7 @@ class MmcifParser {
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
     async loadMmcifData(data, mmcifid) { let ic = this.icn3d, me = ic.icn3dui;
         if(!mmcifid) mmcifid = data.mmcif;
-        if(!mmcifid) mmcifid = 'stru';
+        if(!mmcifid) mmcifid = ic.defaultPdbId;
 
         if(data.atoms !== undefined) {
             ic.init();

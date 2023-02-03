@@ -1244,21 +1244,23 @@ class ApplyCommand {
       else if(command.indexOf('window') == 0) {
         let secondPart = command.substr(command.indexOf(' ') + 1);
 
-        if(secondPart == "aligned sequences") {
+        setTimeout(function(){
+          if(secondPart == "aligned sequences") {
             me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
-        }
-        else if(secondPart == "interaction table") {
-            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
-        }
-        else if(secondPart == "interaction graph") {
-            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
-        }
-        else if(secondPart == "interaction scatterplot") {
-            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
-        }
-        else if(secondPart == "force-directed graph") {
-            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-        }
+          }
+          else if(secondPart == "interaction table") {
+              me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+          }
+          else if(secondPart == "interaction graph") {
+              me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+          }
+          else if(secondPart == "interaction scatterplot") {
+              me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+          }
+          else if(secondPart == "force-directed graph") {
+              me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+          }
+        }, 1000);
       }
       else if(command.indexOf('set theme') == 0) {
         let color = command.substr(command.lastIndexOf(' ') + 1);

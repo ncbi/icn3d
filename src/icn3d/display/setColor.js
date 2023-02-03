@@ -459,7 +459,7 @@ class SetColor {
                         let b = atom.b;
 
                         // PDB
-                        b = (atom.structure.length < 6) ? 100 - b : b;
+                        b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length < 6) ? 100 - b : b;
 
                         if(b >= 90) {
                             atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
@@ -497,7 +497,7 @@ class SetColor {
                         if(b > 100) b = 100;
 
                         // AlphaFold
-                        b = (atom.structure.length > 5) ? 100 - b : b;
+                        b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length > 5) ? 100 - b : b;
 
                         let s1 = (ic.middB - b) * ic.spanBinv1;
                         let s2 = (b - ic.middB) * ic.spanBinv2;
