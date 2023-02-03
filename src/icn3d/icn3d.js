@@ -272,6 +272,7 @@ class iCn3D {
     this.transparentRenderOrder = false; // false: regular transparency; true: expensive renderOrder for each face
 
     this.AFUniprotVersion = 'v4';
+    this.defaultPdbId = 'stru';
 
     if(!this.icn3dui.bNode) {
         if ( bWebGL2 && bVR) { 

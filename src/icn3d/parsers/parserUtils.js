@@ -477,7 +477,7 @@ class ParserUtils {
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
+      pdbid =(pdbid) ? pdbid.toUpperCase() : ic.defaultPdbId;
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {}

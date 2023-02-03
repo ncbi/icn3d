@@ -73,9 +73,10 @@
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
             let chainidArray = ic.structures[struct];
- 
+
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
+
                 if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)) continue;
                 if(ic.chainsSeq[chainid].length < 50) continue; // peptide
 
@@ -110,20 +111,19 @@
                         domainAtomsArray.push(domainAtoms);
                     }
                 }
-                
+            
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
+
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     let domainid = chainid + '-' + k;
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        let struct2 = "stru" + index;
+                        let struct2 = ic.defaultPdbId + index;
                         let pdb_query = dataArray[index].value; //[0];
-
                         let header = 'HEADER                                                        ' + struct2 + '\n';
                         pdb_query = header + pdb_query;
 
                         let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        let alignAjax = me.getAjaxPostPromise(url, dataObj);
-
+                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
                         ajaxArray.push(alignAjax);
                         
                         domainidpairArray.push(domainid + "," + index);
@@ -135,6 +135,7 @@
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
+
             await thisClass.parseAlignData(dataArray, domainidpairArray);
 
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
@@ -154,6 +155,7 @@
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
         ic.chainid2index = {};
         ic.domainid2ig2kabat = {};
+
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             let queryData = dataArray[i].value; //[0];
             if(queryData.length == 0) continue;

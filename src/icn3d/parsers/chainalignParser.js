@@ -458,7 +458,7 @@ class ChainalignParser {
             let chainid = chainidArray[i];
             let pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos); 
-            if(struct != 'stru') struct = struct.toUpperCase();
+            if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
 
             if(!struct2cnt.hasOwnProperty(struct)) {
                 struct2cnt[struct] = 1;

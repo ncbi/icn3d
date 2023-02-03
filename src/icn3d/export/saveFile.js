@@ -764,9 +764,6 @@ class SaveFile {
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
-        //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
-        let asymmetricStr = "";
-
         let text = ic.inputid.toUpperCase();
 
         let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
@@ -778,7 +775,12 @@ class SaveFile {
 
         if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
-        $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>" + asymmetricStr + ": " + title);
+        if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
+            $("#" + ic.pre + "title").html(title);
+        }
+        else {
+            $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>: " + title);
+        }
     }
 
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;

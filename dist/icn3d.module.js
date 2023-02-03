@@ -8679,7 +8679,7 @@ class ClickMenu {
                 type: 'POST',
                 data: { 
                     q : pdbstr,
-                    database: ["afdb50", "afdb-swissprot", "gmgcl_id", "pdb100"],
+                    database: ["afdb50", "afdb-swissprot", "gmgcl_id", "pdb100", "afdb-proteome", "mgnify_esm30"],
                     mode: "3diaa"
                 },
                 dataType: 'text',
@@ -10231,6 +10231,10 @@ class SetMenu {
               html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
               html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true, undefined, 2);
             }
+            else {
+              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
+              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 2);
+            }
 
             //if(me.cfg.afid) html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
             //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
@@ -10304,6 +10308,15 @@ class SetMenu {
             html += this.getMenuSep();
 
             html += this.getLink('mn6_hbondsYes', 'Interactions', 1, 1);
+
+            html += this.getMenuText('mn1_window', 'Bring to Front', undefined, undefined, 1);
+            html += "<ul>";
+            html += this.getLink('mn1_window_table', 'Interaction Table', undefined, 2);
+            html += this.getLink('mn1_window_linegraph', '2D Interaction Network', undefined, 2);
+            html += this.getLink('mn1_window_scatterplot', '2D Interaction Map', undefined, 2);
+            html += this.getLink('mn1_window_graph', '2D Graph(Force-Directed)', undefined, 2);
+            html += "</ul>";
+            html += "</li>";
 
             html += this.getLink('mn6_contactmap', 'Contact Map', undefined, 1);
 
@@ -11415,10 +11428,11 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_customref' class='" + dialogClass + "'>";
         html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
-        html += '<pre>refnum,11,12,,21,22<br>';
-        html += '1TUP_A,100,101,,,132<br>';
-        html += '1TUP_B,110,111,,141,142</pre>';
-        html += 'The first row defines the reference residue numbers. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 12, 21, 22) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The thrid row shows the real residue numbers for the chain "1TUP_B".<br><br>';
+        html += '<pre>refnum,11,12,,21,22,,10C,11C,20C<br>';
+        html += '1TUP_A,100,101,,,132,,,,<br>';
+        html += '1TUP_B,110,111,,141,142,,,,</pre>';
+        html += '1TUP_C,,,,,,,200,201,230</pre>';
+        html += 'The first row defines the reference residue numbers, which could be any strings. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 21, 10C, etc.) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The fourth row shows another set of reference numners for the chain "1TUP_C". It could be a chain from a different structure.<br><br>';
         html += 'To select all residues corresponding to the reference numbers, you can simplay replace ":" with "%" in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank">Specification</a>. For example, "%12"  selects the residue 101 in 1TUP_A and the residue 111 in 1TUP_B. ".A%12" has the chain "A" filter and selects the residue 101 in 1TUP_A.<br>';
         html += '</div><br>';
         html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstreffile' size=8> <br><br>";
@@ -33956,7 +33970,7 @@ class SetColor {
                         let b = atom.b;
 
                         // PDB
-                        b = (atom.structure.length < 6) ? 100 - b : b;
+                        b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length < 6) ? 100 - b : b;
 
                         if(b >= 90) {
                             atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
@@ -33994,7 +34008,7 @@ class SetColor {
                         if(b > 100) b = 100;
 
                         // AlphaFold
-                        b = (atom.structure.length > 5) ? 100 - b : b;
+                        b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length > 5) ? 100 - b : b;
 
                         let s1 = (ic.middB - b) * ic.spanBinv1;
                         let s2 = (b - ic.middB) * ic.spanBinv2;
@@ -40826,7 +40840,7 @@ class ShowSeq {
 
                     //if(ic.resid2refnum.hasOwnProperty(residueid)) {
                     let refnumLabel = ic.resid2refnum[residueid];
-                    if(refnumLabel) {
+                    if(refnumLabel) {                        
                         let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
                         let refnumStr;
                         if(bCustom) {
@@ -44892,7 +44906,7 @@ class ContactMap {
 
         let graphStr = '{\n';
 
-        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
+        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : ic.defaultPdbId;
         let len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         let factor = 1;
@@ -45777,7 +45791,7 @@ class ChainalignParser {
             let chainid = chainidArray[i];
             let pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos); 
-            if(struct != 'stru') struct = struct.toUpperCase();
+            if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
 
             if(!struct2cnt.hasOwnProperty(struct)) {
                 struct2cnt[struct] = 1;
@@ -46574,11 +46588,11 @@ class MmcifParser {
 
         //ic.bCid = undefined;
  
-        let data1 = await me.getAjaxPromise(url, 'text', false, 'The structure " + mmcifid + " was not found...');
+        let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
 
         url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         let dataObj = {'mmcifheader': data1};
-        let data = await me.getAjaxPostPromise(url, dataObj, false, 'The mmCIF data of " + mmcifid + " can not be parsed...');
+        let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
 
         if(data.emd !== undefined) ic.emd = data.emd;
         if(data.organism !== undefined) ic.organism = data.organism;
@@ -46638,7 +46652,7 @@ class MmcifParser {
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
     async loadMmcifData(data, mmcifid) { let ic = this.icn3d; ic.icn3dui;
         if(!mmcifid) mmcifid = data.mmcif;
-        if(!mmcifid) mmcifid = 'stru';
+        if(!mmcifid) mmcifid = ic.defaultPdbId;
 
         if(data.atoms !== undefined) {
             ic.init();
@@ -47735,7 +47749,7 @@ class OpmParser {
 
     async loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
         try {
-             if(!pdbid) pdbid = 'stru';
+             if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
     
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
@@ -50622,7 +50636,7 @@ class ParserUtils {
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid =(pdbid) ? pdbid.toUpperCase() : 'stru';
+      pdbid =(pdbid) ? pdbid.toUpperCase() : ic.defaultPdbId;
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {};
@@ -53045,7 +53059,7 @@ class LoadPDB {
 
         //let chainMissingResidueArray = {}
 
-        let id = (pdbid) ? pdbid : 'stru';
+        let id = (pdbid) ? pdbid : ic.defaultPdbId;
         let structure = id;
 
         let prevMissingChain = '';
@@ -53065,18 +53079,18 @@ class LoadPDB {
 
                 if(id == '') {
                     if(bAppend) {
-                        id = "stru";
+                        id = ic.defaultPdbId;
                     }
                     else {
-                        //if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = ic.defaultPdbId;
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : ic.defaultPdbId; //ic.filename.substr(0, 4);
                     }
                 }
 
                 structure = id;
 
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                //if(id == 'stru') {
+                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+                //if(id == ic.defaultPdbId) {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -53191,12 +53205,12 @@ class LoadPDB {
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
-                id = 'stru';
+                id = ic.defaultPdbId;
 
                 structure = id;
                 
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                //if(id == 'stru') {
+                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+                //if(id == ic.defaultPdbId) {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -53219,8 +53233,8 @@ class LoadPDB {
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
                 
-                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
-                //if(id == 'stru') {
+                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+                //if(id == ic.defaultPdbId) {
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -55865,21 +55879,23 @@ class ApplyCommand {
       else if(command.indexOf('window') == 0) {
         let secondPart = command.substr(command.indexOf(' ') + 1);
 
-        if(secondPart == "aligned sequences") {
+        setTimeout(function(){
+          if(secondPart == "aligned sequences") {
             me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
-        }
-        else if(secondPart == "interaction table") {
-            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
-        }
-        else if(secondPart == "interaction graph") {
-            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
-        }
-        else if(secondPart == "interaction scatterplot") {
-            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
-        }
-        else if(secondPart == "force-directed graph") {
-            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-        }
+          }
+          else if(secondPart == "interaction table") {
+              me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+          }
+          else if(secondPart == "interaction graph") {
+              me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+          }
+          else if(secondPart == "interaction scatterplot") {
+              me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+          }
+          else if(secondPart == "force-directed graph") {
+              me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+          }
+        }, 1000);
       }
       else if(command.indexOf('set theme') == 0) {
         let color = command.substr(command.lastIndexOf(' ') + 1);
@@ -60292,16 +60308,17 @@ class Dssp {
         let ajaxArray = [];
         let domainidpairArray = [];
 
-        me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
         ic.resid2domainid = {};
 
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
             let chainidArray = ic.structures[struct];
- 
+
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
+
                 if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)) continue;
                 if(ic.chainsSeq[chainid].length < 50) continue; // peptide
 
@@ -60336,20 +60353,19 @@ class Dssp {
                         domainAtomsArray.push(domainAtoms);
                     }
                 }
-                
+            
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
+
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     let domainid = chainid + '-' + k;
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        let struct2 = "stru" + index;
+                        let struct2 = ic.defaultPdbId + index;
                         let pdb_query = dataArray[index].value; //[0];
-
                         let header = 'HEADER                                                        ' + struct2 + '\n';
                         pdb_query = header + pdb_query;
 
                         let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        let alignAjax = me.getAjaxPostPromise(url, dataObj);
-
+                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
                         ajaxArray.push(alignAjax);
                         
                         domainidpairArray.push(domainid + "," + index);
@@ -60361,6 +60377,7 @@ class Dssp {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
+
             await thisClass.parseAlignData(dataArray, domainidpairArray);
 
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
@@ -60380,6 +60397,7 @@ class Dssp {
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
         ic.chainid2index = {};
         ic.domainid2ig2kabat = {};
+
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             let queryData = dataArray[i].value; //[0];
             if(queryData.length == 0) continue;
@@ -65090,9 +65108,6 @@ class SaveFile {
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
-        //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
-        let asymmetricStr = "";
-
         let text = ic.inputid.toUpperCase();
 
         let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
@@ -65104,7 +65119,12 @@ class SaveFile {
 
         if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
-        $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>" + asymmetricStr + ": " + title);
+        if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
+            $("#" + ic.pre + "title").html(title);
+        }
+        else {
+            $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>: " + title);
+        }
     }
 
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
@@ -65190,7 +65210,7 @@ class ShareLink {
         if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
         //var inputid =(ic.inputid) ? ic.inputid : "custom";
         let inputid = Object.keys(ic.structures).join('_');
-        if(inputid == 'stru') {
+        if(inputid == ic.defaultPdbId) {
             if(ic.filename) {
                 inputid = ic.filename;
             }
@@ -67742,6 +67762,7 @@ class iCn3D {
     this.transparentRenderOrder = false; // false: regular transparency; true: expensive renderOrder for each face
 
     this.AFUniprotVersion = 'v4';
+    this.defaultPdbId = 'stru';
 
     if(!this.icn3dui.bNode) {
         if ( bWebGL2 && bVR) { 
@@ -68325,7 +68346,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.21.2';
+    this.REVISION = '3.21.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

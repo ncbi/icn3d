@@ -30,7 +30,7 @@ class OpmParser {
 
     async loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
         try {
-             if(!pdbid) pdbid = 'stru';
+             if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
     
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
