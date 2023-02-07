@@ -19,7 +19,7 @@
     async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        if(Object.keys(ic.resid2refnum).length > 0) {
+        if(ic.resid2refnum  && Object.keys(ic.resid2refnum).length > 0) {
             ic.bShowRefnum = true;
 
             // open sequence view
@@ -111,7 +111,7 @@
                         domainAtomsArray.push(domainAtoms);
                     }
                 }
-            
+       
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
 
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
@@ -134,14 +134,14 @@
 
         let allPromise = Promise.allSettled(ajaxArray);
         try {
-            let dataArray = await allPromise;
-
-            await thisClass.parseAlignData(dataArray, domainidpairArray);
+            let dataArray2 = await allPromise;
+            
+            await thisClass.parseAlignData(dataArray2, domainidpairArray);
 
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
-            console.log("Error in aligning with TM-align...");
+            if(!me.bNode) console.log("Error in aligning with TM-align...");
             return;
         }         
     }
@@ -158,7 +158,9 @@
 
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             let queryData = dataArray[i].value; //[0];
+         
             if(queryData.length == 0) continue;
+
             if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
 
             let domainid_index = domainidpairArray[i].split(',');
@@ -170,6 +172,7 @@
             let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
             for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                 let seg = queryData[0].segs[i];
+
                 if(seg.q_start.indexOf('2050') != -1) {
                     bBstrand = true;
                 }
@@ -189,12 +192,13 @@
                 //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                 if(bBstrand && bCstrand && bEstrand && bFstrand) break;
             }
+
             //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
             if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
 
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                 domainid2score[domainid] = queryData[0].score;
-console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);                
+if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);                
                 ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
@@ -214,7 +218,7 @@ console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + 
         if(!ic.chainsMapping) ic.chainsMapping = {};
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
-console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.chainid2index[chainid]]);
+if(!me.bNode) console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.chainid2index[chainid]]);
 
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];

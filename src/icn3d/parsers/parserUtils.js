@@ -726,7 +726,7 @@ class ParserUtils {
                     let afMemdata = await me.getAjaxPromise(url2, 'text');
 
                     ic.bAfMem = true;
-                    $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
+                    if(!me.bNode) $("#" + me.pre + "togglememli").show(); // show the menu "View > Toggle Membrane"
 
                     // append the PDB
                     let pdbid = data.pdbid.substr(0, data.pdbid.indexOf('_'));

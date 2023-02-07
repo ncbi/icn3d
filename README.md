@@ -6,7 +6,7 @@
 
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>The complete package of iCn3D</b> including Three.js and jQuery is in the directory "dist" after you get the source code with the "Code" button. 
 * <b>View a 3D structure in iCn3D</b>: 
-    Open the link https://structure.ncbi.nlm.nih.gov/icn3d, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
+    Open the link [https://structure.ncbi.nlm.nih.gov/icn3d](https://structure.ncbi.nlm.nih.gov/icn3d), input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
     As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. 
 
