@@ -27,12 +27,7 @@
 * <b>Save your work</b>: 
     You can save "iCn3D PNG Image" in the menu "File > Save File". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.
 
-    The "iCn3D PNG Image" can also be stored in a web server with access control (CORS) set as allowing any origin (e.g., [https://zenodo.org](https://zenodo.org)). The PNG image can then be loaded into iCn3D via the URL, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png), where the URL of the PNG image is retrieved from the JSON blob at https://zenodo.org/api/records/7599970. If you own a web server, you can add the file ".htaccess" with the following content:
-    ```
-        <IfModule mod_headers.c>
-            Header set Access-Control-Allow-Origin 'https://www.ncbi.nlm.nih.gov'
-        </IfModule>
-    ```
+    The "iCn3D PNG Image" can also be stored in a web server (e.g., [https://figshare.com](https://figshare.com), [https://zenodo.org](https://zenodo.org)). The PNG image can then be loaded into iCn3D via the URL, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://ndownloader.figshare.com/files/39125801](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://ndownloader.figshare.com/files/39125801), or [https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png), where the URL of the PNG image is retrieved from the JSON blob at https://zenodo.org/api/records/7599970. 
     
     You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a [custom display](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA) was generated.
     
