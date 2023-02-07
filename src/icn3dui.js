@@ -634,7 +634,7 @@ iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess
                 if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
             },
             complete: function() {
-                if(complete) ic.ParserUtilsCls.hideLoading();
+                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
             },
             success: function(data) {
                 resolve(data);
@@ -663,7 +663,7 @@ iCn3DUI.prototype.getAjaxPostPromise = function(url, data, beforeSend, alertMess
                 if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
             },
             complete: function() {
-                if(complete) ic.ParserUtilsCls.hideLoading();
+                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
             },
             success: function(data) {
                 resolve(data);

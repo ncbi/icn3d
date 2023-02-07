@@ -109,7 +109,7 @@ class PdbParser {
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-          $("#" + ic.pre + "assemblyWrapper").show();
+          if(!me.bNode) $("#" + ic.pre + "assemblyWrapper").show();
 
           ic.asuCnt = ic.biomtMatrices.length;
         }
@@ -117,15 +117,17 @@ class PdbParser {
           //$("#" + ic.pre + "assemblyWrapper").hide();
         }
 
-        if(ic.emd !== undefined) {
-            $("#" + ic.pre + "mapWrapper1").hide();
-            $("#" + ic.pre + "mapWrapper2").hide();
-            $("#" + ic.pre + "mapWrapper3").hide();
-        }
-        else {
-            $("#" + ic.pre + "emmapWrapper1").hide();
-            $("#" + ic.pre + "emmapWrapper2").hide();
-            $("#" + ic.pre + "emmapWrapper3").hide();
+        if(!me.bNode) {
+            if(ic.emd !== undefined) {
+                $("#" + ic.pre + "mapWrapper1").hide();
+                $("#" + ic.pre + "mapWrapper2").hide();
+                $("#" + ic.pre + "mapWrapper3").hide();
+            }
+            else {
+                $("#" + ic.pre + "emmapWrapper1").hide();
+                $("#" + ic.pre + "emmapWrapper2").hide();
+                $("#" + ic.pre + "emmapWrapper3").hide();
+            }
         }
 
         // calculate secondary structures if not available
@@ -146,7 +148,7 @@ class PdbParser {
         else {
             await this.loadPdbDataRender(bAppend);
 
-            await ic.ParserUtilsCls.checkMemProteinAndRotate();
+            if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();
 
             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
