@@ -654,6 +654,13 @@ class Diagram2d {
 
             $(this).find('line.icn3d-hlline').attr('stroke', me.htmlCls.ORANGE);
 
+            let strokeWidth = 2;
+            $("[resid=" + resid1 + "]").find('circle').attr('stroke', me.htmlCls.ORANGE);
+            $("[resid=" + resid1 + "]").find('circle').attr('stroke-width', strokeWidth);
+
+            $("[resid=" + resid2 + "]").find('circle').attr('stroke', me.htmlCls.ORANGE);
+            $("[resid=" + resid2 + "]").find('circle').attr('stroke-width', strokeWidth);
+
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
 

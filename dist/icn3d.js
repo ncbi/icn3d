@@ -9313,7 +9313,7 @@ var icn3d = (function (exports) {
             html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
             html += this.getLink('mn1_afmapfile', 'AlphaFold PAE File', undefined, 2);
 
-            html += this.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 2);
+            html += this.getLink('mn1_urlfile', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 2);
             html += this.getMenuSep();
             html += this.getLink('mn1_pngimage', 'iCn3D PNG Image', 1, 2);
             html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
@@ -9325,7 +9325,7 @@ var icn3d = (function (exports) {
             html += this.getMenuText('mn1_dsn6wrap', 'Electron Density(DSN6)', undefined, undefined, 2);
             html += "<ul>";
             html += this.getLink('mn1_dsn6', 'Local File', undefined, 3);
-            html += this.getLink('mn1_dsn6url', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 3);
+            html += this.getLink('mn1_dsn6url', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 3);
             html += "</ul>";
 
             html += "</ul>";
@@ -56297,7 +56297,7 @@ var icn3d = (function (exports) {
             if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
             else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
             else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
-            else if(cmd.indexOf('set phi') == 0) return 'Analysis > Load Potential > URL(Same Host) Phi/Cube';
+            else if(cmd.indexOf('set phi') == 0) return 'Analysis > Load Potential > URL(CORS) Phi/Cube';
             else if(cmd.indexOf('set delphi') == 0) return 'Analysis > DelPhi Potential';
             else if(cmd.indexOf('setoption map') == 0) return 'Style > Remove Map';
             else if(cmd.indexOf('setoption emmap') == 0) return 'Style > Remove EM Map';
@@ -60598,7 +60598,7 @@ var icn3d = (function (exports) {
 
                 if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                     domainid2score[domainid] = queryData[0].score;
-    if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);                
+    if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);           
                     ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
                     domainid2segs[domainid] = queryData[0].segs;
                     ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
@@ -60618,7 +60618,7 @@ var icn3d = (function (exports) {
             if(!ic.chainsMapping) ic.chainsMapping = {};
             for(let chainid in chainid2segs) {
                 let segArray = chainid2segs[chainid];
-    if(!me.bNode) console.log("One of the reference PDBs for chain chainid: " + ic.refpdbArray[ic.chainid2index[chainid]]);
+    if(!me.bNode) console.log("One of the reference PDBs for chain " + chainid + ": " + ic.refpdbArray[ic.chainid2index[chainid]]);
 
                 for(let i = 0, il = segArray.length; i < il; ++i) {
                     let seg = segArray[i];
@@ -60626,10 +60626,15 @@ var icn3d = (function (exports) {
                     let postfix = '';
                     if(isNaN(seg.q_start)) postfix = seg.q_start.substr(seg.q_start.length - 1, 1);
 
-                    for(let j = 0; j <= parseInt(seg.t_end) - parseInt(seg.t_start); ++j) {
-                        let resid = chainid + '_' + (j + parseInt(seg.t_start)).toString();
-                        //let refnum = j + seg.q_start;
-                        let refnum = (j + qStartInt).toString() + postfix;
+                    // one item in "seq"
+                    // q_start and q_end are numbers, but saved in string
+                    // t_start and t_end are strings such as 100a
+                    //for(let j = 0; j <= parseInt(seg.t_end) - parseInt(seg.t_start); ++j) {
+                        // let resid = chainid + '_' + (j + parseInt(seg.t_start)).toString();
+                        // let refnum = (j + qStartInt).toString() + postfix;
+
+                        let resid = chainid + '_' + seg.t_start;
+                        let refnum = qStartInt.toString() + postfix;
 
                         let refnumLabel = thisClass.getLabelFromRefnum(refnum);
 
@@ -60646,7 +60651,7 @@ var icn3d = (function (exports) {
                             ic.chainsMapping[chainid] = {};
                         }
                         ic.chainsMapping[chainid][resid] = refnumLabel;
-                    }
+                    //}
                 }
             }
 
@@ -62906,6 +62911,13 @@ var icn3d = (function (exports) {
                 }
 
                 $(this).find('line.icn3d-hlline').attr('stroke', me.htmlCls.ORANGE);
+
+                let strokeWidth = 2;
+                $("[resid=" + resid1 + "]").find('circle').attr('stroke', me.htmlCls.ORANGE);
+                $("[resid=" + resid1 + "]").find('circle').attr('stroke-width', strokeWidth);
+
+                $("[resid=" + resid2 + "]").find('circle').attr('stroke', me.htmlCls.ORANGE);
+                $("[resid=" + resid2 + "]").find('circle').attr('stroke-width', strokeWidth);
 
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
