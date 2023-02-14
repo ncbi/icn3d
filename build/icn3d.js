@@ -6890,11 +6890,23 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd("export pqr", true);
             });
 
-            me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { me.icn3d; //e.preventDefault();
-                let bPdb = true;
-                await me.htmlCls.setHtmlCls.exportPqr(bPdb);
-                thisClass.setLogCmd("export pdbh", false);
-             });
+          //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+          //       let bPdb = true;
+          //       await me.htmlCls.setHtmlCls.exportPqr(bPdb);
+          //       thisClass.setLogCmd("export pdbh", false);
+          //    });
+
+            me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+             let bHydrogen = false;
+             await ic.scapCls.exportPdbProfix(bHydrogen);
+             thisClass.setLogCmd("export pdb missing atoms", true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            let bHydrogen = true;
+            await ic.scapCls.exportPdbProfix(bHydrogen);
+            thisClass.setLogCmd("export pdb hydrogen", true);
+           });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
                thisClass.setLogCmd("export stl file", false);
@@ -9402,7 +9414,8 @@ var icn3d = (function (exports) {
             html += this.getLink('mn1_exportCounts', 'Residue Counts', undefined, 2);
 
             html += this.getLink('mn1_exportPdbRes', 'PDB', 1, 2);
-            html += this.getLink('delphipdbh', 'PDB with Hydrogens', undefined, 2);
+            html += this.getLink('profixpdb', 'PDB with Missing Atoms', undefined, 2);
+            html += this.getLink('profixpdbh', 'PDB with Hydrogens', undefined, 2);
 
             if(me.cfg.cid === undefined) {
                 html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
@@ -11811,11 +11824,14 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
 
-            html += me.htmlCls.divNowrapStr + "1. Select sets in two chains below <br>or use your current selection:</div><br>";
+            html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets in two chains below <br>or use your current selection:</div><br>";
             html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
             html += "</select></div><br>";
 
-            html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+            html += "<div><b>2a</b>. <div style='display:inline-block; width:80px'>MSA:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+
+            html += "<div>or <b>2b</b>. <div style='display:inline-block; width:65px'>Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_realigntwostru' class='" + dialogClass + "'>";
@@ -12488,6 +12504,32 @@ var icn3d = (function (exports) {
            thisClass.setLogCmd('select ' + select + ' | name ' + commandname, true);
         }
 
+        async setRealign(alignType, bMsa) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+            if(nameArray.length > 0) {
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            me.cfg.aligntool = alignType;
+
+            if(bMsa) {
+                await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
+            }
+            else {
+                await ic.realignParserCls.realignOnStructAlign();
+            }
+
+            let alignStr = (alignType == 'vast') ? 'structure align' : 'tmalign';
+            alignStr += (bMsa) ? ' msa' : '';
+
+            if(nameArray.length > 0) {
+                thisClass.setLogCmd("realign on " + alignStr + " | " + nameArray, true);
+            }
+            else {
+                thisClass.setLogCmd("realign on " + alignStr, true);
+            }
+        }
+
         readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
             let file = files[index];
             let commandName = (bAppend) ? 'append': 'load';
@@ -12798,42 +12840,32 @@ var icn3d = (function (exports) {
                }
             });
 
-            me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", async function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", async function(e) { me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
-                let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
-                if(nameArray.length > 0) {
-                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-                }
-     
-                me.cfg.aligntool = 'vast';
-     
-                await ic.realignParserCls.realignOnStructAlign();
-                if(nameArray.length > 0) {
-                    thisClass.setLogCmd("realign on structure align | " + nameArray, true);
-                }
-                else {
-                    thisClass.setLogCmd("realign on structure align", true);
-                }
+
+                await thisClass.setRealign('vast', false);
              });
 
-             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", async function(e) { let ic = me.icn3d;
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", async function(e) { me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
-                let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
-                if(nameArray.length > 0) {
-                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-                }
 
-                me.cfg.aligntool = 'tmalign';
-     
-                await ic.realignParserCls.realignOnStructAlign();
-                if(nameArray.length > 0) {
-                    thisClass.setLogCmd("realign on tmalign | " + nameArray, true);
-                }
-                else {
-                    thisClass.setLogCmd("realign on tmalign", true);
-                }
+                await thisClass.setRealign('tmalign', false);
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStructMsa", "click", async function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+
+                await thisClass.setRealign('vast', true);
+             });
+
+             me.myEventCls.onIds("#" + me.pre + "applyRealignByStructMsa_tmalign", "click", async function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+
+                await thisClass.setRealign('tmalign', true);
              });
 
              me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", async function(e) { let ic = me.icn3d;
@@ -34918,7 +34950,7 @@ var icn3d = (function (exports) {
         
                         let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
 
-                        let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                        let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" site="site" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                         let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                         let htmlTmp = '<span class="icn3d-seqLine">';
                         html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -35090,8 +35122,9 @@ var icn3d = (function (exports) {
                         let from = parseInt(fromArray[i]), to = parseInt(toArray[i]);
                                            
                         for(let j = from; j <= to; ++j) {
-                            
-                            let resid = chnid + "_" + j;
+                            let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                            //let resid = chnid + "_" + j;
+                            let resid = chnid + "_" + resi;
                             
                             if(ic.residues.hasOwnProperty(resid)) {
                                 bCoordinates = true;
@@ -42018,7 +42051,9 @@ var icn3d = (function (exports) {
             nodeArray2 = nodeArrays.nodeArray2;
             ic.lineGraphStr = '{\n';
 
-            let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+            //let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+            let structureArray = Object.keys(ic.structures);
+
             //if(Object.keys(ic.structures).length > 1) {
             if(structureArray.length > 1) {
 
@@ -42786,6 +42821,7 @@ var icn3d = (function (exports) {
 
         updateGraphColor() { let ic = this.icn3d, me = ic.icn3dui;
           // change graph color
+
           if(ic.graphStr !== undefined) {
               let graphJson = JSON.parse(ic.graphStr);
               let resid2color = {};
@@ -45449,7 +45485,8 @@ var icn3d = (function (exports) {
             }
         }
 
-        async downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, 
+            indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
             //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
             // modify the previous trans and rotation matrix
@@ -45980,11 +46017,16 @@ var icn3d = (function (exports) {
                     if(ic.afChainIndexHash.hasOwnProperty(index)) {
                         ++missedChainCnt;
 
-                        // need to pass C-alpha coords and get transformation matrix from backend
-                        ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
-                        ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                        
 
-                        if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                        if(me.cfg.aligntool == 'tmalign') {
+                            ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                        }
+                        else {
+                            // need to pass C-alpha coords and get transformation matrix from backend
+                            ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                            ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                        }
 
                         ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
                         ic.qt_start_end[index-1] = undefined;
@@ -46041,10 +46083,14 @@ var icn3d = (function (exports) {
                     ic.q_rotation.push(align[0].q_rotation);
                     ic.qt_start_end.push(align[0].segs);
                     */
-                    ic.t_trans_add[index] = align[0].t_trans_add;
-                    ic.q_trans_sub[index] = align[0].q_trans_sub;
 
-                    if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index] = align[0].q_trans_add;
+                    if(me.cfg.aligntool == 'tmalign') {
+                        ic.q_trans_add[index] = align[0].q_trans_add;
+                    }
+                    else {
+                        ic.t_trans_add[index] = align[0].t_trans_add;
+                        ic.q_trans_sub[index] = align[0].q_trans_sub;
+                    }
 
                     ic.q_rotation[index] = align[0].q_rotation;
                     ic.qt_start_end[index] = align[0].segs;
@@ -48815,6 +48861,8 @@ var icn3d = (function (exports) {
             let ajaxArray = [], chainidPairArray = [];
             let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
             let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+            //let cnt = 0;
             let structArray = Object.keys(struct2domain);
             for(let s = 0, sl = structArray.length; s < sl; ++s) {
                 let struct1 = structArray[s];
@@ -48827,13 +48875,13 @@ var icn3d = (function (exports) {
 
                     for(let i = 0, il = chainidArray1.length; i < il; ++i) {
                         let chainid1 = chainidArray1[i];
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
                         for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                             let chainid2 = chainidArray2[j];
 
                             let alignAjax;
 
                             if(me.cfg.aligntool != 'tmalign') {
-                                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
                                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                             
                                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
@@ -48851,7 +48899,8 @@ var icn3d = (function (exports) {
                             }
 
                             ajaxArray.push(alignAjax);
-                            chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target
+                            chainidPairArray.push(chainid1 + ',' + chainid2); 
+                            //++cnt;
                         }
                     }
                 }
@@ -48866,6 +48915,87 @@ var icn3d = (function (exports) {
             catch(err) {
                 if(ic.bRender) alert("These structures can NOT be aligned to each other...");
             }                   
+        }
+
+        async realignOnStructAlignMsa(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
+            // each 3D domain should have at least 3 secondary structures
+            let minSseCnt = 3;
+            let chainid2domain = {};
+
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                let chainid = nameArray[i];
+                let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+                let sseCnt = 0;
+                for(let serial in atoms) {
+                    if(ic.atoms[serial].ssbegin) ++sseCnt;
+                    if(sseCnt == minSseCnt) {
+                        chainid2domain[chainid] = atoms;
+                        break;
+                    }
+                }
+            }
+
+            let ajaxArray = [], indexArray = [], struArray = [];
+            let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+            let chainid1 = nameArray[0];
+            let struct1 = chainid1.substr(0, chainid1.indexOf('_'));
+            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid1]);
+
+            for(let i = 1, il = nameArray.length; i < il; ++i) {
+                let chainid2 = nameArray[i];
+                let struct2 = chainid2.substr(0, chainid2.indexOf('_'));
+
+                let alignAjax;
+
+                if(me.cfg.aligntool != 'tmalign') {
+                    let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid2]);
+                
+                    let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                    alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                }
+                else {
+                    // let pdb_target = ic.saveFileCls.getAtomPDB(chainid2domain[chainid1], undefined, undefined, undefined, undefined, struct1);
+                    // let pdb_query = ic.saveFileCls.getAtomPDB(chainid2domain[chainid2], undefined, undefined, undefined, undefined, struct2);
+
+                    let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                    let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+
+                    let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                    alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
+                }
+
+                ajaxArray.push(alignAjax);
+                //chainidPairArray.push(chainid1 + ',' + chainid2); 
+
+                indexArray.push(i - 1);
+                struArray.push(struct2);
+
+                //++cnt;
+            }
+
+            let allPromise = Promise.allSettled(ajaxArray);
+            //try {
+                let dataArray = await allPromise;
+                //ic.qt_start_end = []; // reset the alignment
+                //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
+
+                // set trans and rotation matrix
+                ic.t_trans_add = [];
+                ic.q_trans_sub = [];
+
+                if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
+                ic.q_rotation = [];
+                ic.qt_start_end = [];
+
+                await ic.chainalignParserCls.downloadChainalignmentPart2b(undefined, nameArray, undefined, dataArray, 
+                    indexArray, struct1, struArray);
+            // }
+            // catch(err) {
+            //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+            // }                   
         }
 
         async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
@@ -54711,6 +54841,12 @@ var icn3d = (function (exports) {
           else if(command == 'export pdb') {
              me.htmlCls.setHtmlCls.exportPdb();
           }
+          else if(command == 'export pdb missing atoms') {
+            await ic.scapCls.exportPdbProfix(false);
+          }
+          else if(command == 'export pdb hydrogen') {
+            await ic.scapCls.exportPdbProfix(true);
+          }
           else if(command == 'export secondary structure') {
              me.htmlCls.setHtmlCls.exportSecondary();
           }
@@ -57101,6 +57237,17 @@ var icn3d = (function (exports) {
             await this.execCommandsBase(start, end, steps);
         }
 
+        getNameArray(command) { let ic = this.icn3d; ic.icn3dui;
+            let paraArray = command.split(' | ');
+            let nameArray = [];
+            if(paraArray.length == 2) {
+                nameArray = paraArray[1].split(',');
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            return nameArray;
+        }
+
         async execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
           let thisClass = this;
           let i;
@@ -57242,31 +57389,37 @@ var icn3d = (function (exports) {
                 await ic.scapCls.applyCommandScap(command);
               }
               else if(command.indexOf('realign on seq align') == 0) {
-                let paraArray = command.split(' | ');
-                if(paraArray.length == 2) {
-                    let nameArray = paraArray[1].split(',');
-                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-                }
+                this.getNameArray(command);
 
                 await thisClass.applyCommandRealign(command);
               }
-              else if(command.indexOf('realign on structure align') == 0) {
-                let paraArray = command.split(' | ');
-                if(paraArray.length == 2) {
-                    let nameArray = paraArray[1].split(',');
-                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-                }
+              else if(command.indexOf('realign on structure align msa') == 0) {
+                let nameArray = this.getNameArray(command);
 
                 me.cfg.aligntool = 'vast';
 
-                await thisClass.applyCommandRealignByStruct(command);
+                await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
               }
-              else if(command.indexOf('realign on tmalign') == 0) {
-                thisClass.getHAtoms(ic.commands[i]);
+              else if(command.indexOf('realign on structure align') == 0) {
+                this.getNameArray(command);
+
+                me.cfg.aligntool = 'vast';
+
+                await ic.realignParserCls.realignOnStructAlign();
+              }
+              else if(command.indexOf('realign on tmalign msa') == 0) {
+                let nameArray = this.getNameArray(command);
 
                 me.cfg.aligntool = 'tmalign';
 
-                await thisClass.applyCommandRealignByStruct(ic.commands[i]);
+                await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
+              }
+              else if(command.indexOf('realign on tmalign') == 0) {
+                this.getNameArray(command);
+
+                me.cfg.aligntool = 'tmalign';
+
+                await ic.realignParserCls.realignOnStructAlign();
               }
               else if(command.indexOf('realign on vastplus') == 0) {
                 thisClass.getHAtoms(ic.commands[i]);
@@ -60735,11 +60888,12 @@ var icn3d = (function (exports) {
 
               // get the full mutatnt PDB
               let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+
               ic.hAtoms = {};
               let bMutation = true;
               ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
               //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
-              
+
               ic.setStyleCls.setAtomStyleByOptions(ic.opts);
               ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
@@ -60849,7 +61003,33 @@ var icn3d = (function (exports) {
 
                 /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
                 return;
-            }    }
+            }
+        }
+
+        async exportPdbProfix(bHydrogen) { let ic = this.icn3d, me = ic.icn3dui;
+          let pdbStr = '';
+
+          let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+          pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+
+          let url = me.htmlCls.baseUrl + "scap/scap.cgi";
+          let hydrogenStr = (bHydrogen) ? '1' : '0';
+          let dataObj = {'pdb': pdbStr, 'profix': '1', 'hydrogen': hydrogenStr};
+
+          let data;
+           
+          try {
+            data = await me.getAjaxPostPromise(url, dataObj, undefined, undefined, undefined, undefined, 'text');
+          }
+          catch(err) {
+            alert("There are some problems in adding missing atoms or hydrogens...");
+            return;
+          }
+
+          let file_pref =(ic.inputid) ? ic.inputid : "custom";
+          let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
+          ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+       }
     }
 
     /**
@@ -64693,10 +64873,11 @@ var icn3d = (function (exports) {
             }
 
     //        if(!bNoSs) {
-                let prevResi, stru;
+                let prevResi, stru, chainid;
                 for(let i in calphaHash) {
                     let atom = ic.atoms[i];
                     stru = atom.structure;
+                    chainid = atom.structure + '_' + atom.chain;
 
                     if(atom.ssbegin) {
                         if(atom.ss == 'helix') {
@@ -64717,7 +64898,9 @@ var icn3d = (function (exports) {
                     if(atom.ssend) {
                         if(atom.ss == 'helix') {
                             bHelixEnd = true;
-                            let helixLen = ic.resid2ncbi[atom.resi] - ic.resid2ncbi[prevResi];
+                            let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
+                            let residStart = ic.resid2ncbi[chainid + '_' + prevResi];
+                            let helixLen = parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1));
                             let helixType = 1;
                             if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                                 + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
@@ -64798,7 +64981,7 @@ var icn3d = (function (exports) {
                 }
 
                 let chainResi = atom.chain + '_' + atom.resi;
-                if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
+                if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {    
                     if(!addedChainResiHash.hasOwnProperty(chainResi)) {
                         pdbStr += chainResi2pdb[chainResi];
                         addedChainResiHash[chainResi] = 1;
@@ -64963,7 +65146,7 @@ var icn3d = (function (exports) {
             }
 
             pdbStr += connStr;
-
+            
             if(bMulStruc) pdbStr += '\nENDMDL\n';
 
             return pdbStr;
@@ -68355,7 +68538,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.21.3';
+        this.REVISION = '3.22.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

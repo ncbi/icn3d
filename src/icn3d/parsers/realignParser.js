@@ -394,7 +394,7 @@ class RealignParser {
         let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
         let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-        let cnt = 0;
+        //let cnt = 0;
         let structArray = Object.keys(struct2domain);
         for(let s = 0, sl = structArray.length; s < sl; ++s) {
             let struct1 = structArray[s];
@@ -407,13 +407,13 @@ class RealignParser {
 
                 for(let i = 0, il = chainidArray1.length; i < il; ++i) {
                     let chainid1 = chainidArray1[i];
+                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
                     for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                         let chainid2 = chainidArray2[j];
 
                         let alignAjax;
 
                         if(me.cfg.aligntool != 'tmalign') {
-                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
                             let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                         
                             let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
@@ -431,8 +431,8 @@ class RealignParser {
                         }
 
                         ajaxArray.push(alignAjax);
-                        chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target
-                        ++cnt;
+                        chainidPairArray.push(chainid1 + ',' + chainid2); 
+                        //++cnt;
                     }
                 }
             }
@@ -447,6 +447,87 @@ class RealignParser {
         catch(err) {
             if(ic.bRender) alert("These structures can NOT be aligned to each other...");
         }                   
+    }
+
+    async realignOnStructAlignMsa(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
+        // each 3D domain should have at least 3 secondary structures
+        let minSseCnt = 3;
+        let chainid2domain = {};
+
+        for(let i = 0, il = nameArray.length; i < il; ++i) {
+            let chainid = nameArray[i];
+            let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+            let sseCnt = 0;
+            for(let serial in atoms) {
+                if(ic.atoms[serial].ssbegin) ++sseCnt;
+                if(sseCnt == minSseCnt) {
+                    chainid2domain[chainid] = atoms;
+                    break;
+                }
+            }
+        }
+
+        let ajaxArray = [], chainidPairArray = [], indexArray = [], struArray = [];
+        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+        let chainid1 = nameArray[0];
+        let struct1 = chainid1.substr(0, chainid1.indexOf('_'))
+        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid1]);
+
+        for(let i = 1, il = nameArray.length; i < il; ++i) {
+            let chainid2 = nameArray[i];
+            let struct2 = chainid2.substr(0, chainid2.indexOf('_'))
+
+            let alignAjax;
+
+            if(me.cfg.aligntool != 'tmalign') {
+                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid2]);
+            
+                let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+            }
+            else {
+                // let pdb_target = ic.saveFileCls.getAtomPDB(chainid2domain[chainid1], undefined, undefined, undefined, undefined, struct1);
+                // let pdb_query = ic.saveFileCls.getAtomPDB(chainid2domain[chainid2], undefined, undefined, undefined, undefined, struct2);
+
+                let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+
+                let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
+            }
+
+            ajaxArray.push(alignAjax);
+            //chainidPairArray.push(chainid1 + ',' + chainid2); 
+
+            indexArray.push(i - 1);
+            struArray.push(struct2);
+
+            //++cnt;
+        }
+
+        let allPromise = Promise.allSettled(ajaxArray);
+        //try {
+            let dataArray = await allPromise;
+            //ic.qt_start_end = []; // reset the alignment
+            //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
+
+            // set trans and rotation matrix
+            ic.t_trans_add = [];
+            ic.q_trans_sub = [];
+
+            if(me.cfg.aligntool == 'tmalign') ic.q_trans_add = [];
+
+            ic.q_rotation = [];
+            ic.qt_start_end = [];
+
+            await ic.chainalignParserCls.downloadChainalignmentPart2b(undefined, nameArray, undefined, dataArray, 
+                indexArray, struct1, struArray);
+        // }
+        // catch(err) {
+        //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+        // }                   
     }
 
     async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;

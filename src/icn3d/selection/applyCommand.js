@@ -71,6 +71,12 @@ class ApplyCommand {
       else if(command == 'export pdb') {
          me.htmlCls.setHtmlCls.exportPdb();
       }
+      else if(command == 'export pdb missing atoms') {
+        await ic.scapCls.exportPdbProfix(false);
+      }
+      else if(command == 'export pdb hydrogen') {
+        await ic.scapCls.exportPdbProfix(true);
+      }
       else if(command == 'export secondary structure') {
          me.htmlCls.setHtmlCls.exportSecondary();
       }

@@ -340,10 +340,11 @@ class SaveFile {
         }
 
 //        if(!bNoSs) {
-            let prevResi, stru;
+            let prevResi, stru, chainid;
             for(let i in calphaHash) {
                 let atom = ic.atoms[i];
                 stru = atom.structure;
+                chainid = atom.structure + '_' + atom.chain;
 
                 if(atom.ssbegin) {
                     if(atom.ss == 'helix') {
@@ -364,7 +365,9 @@ class SaveFile {
                 if(atom.ssend) {
                     if(atom.ss == 'helix') {
                         bHelixEnd = true;
-                        let helixLen = ic.resid2ncbi[atom.resi] - ic.resid2ncbi[prevResi];
+                        let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
+                        let residStart = ic.resid2ncbi[chainid + '_' + prevResi]
+                        let helixLen = parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1));
                         let helixType = 1;
                         if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
@@ -445,7 +448,7 @@ class SaveFile {
             }
 
             let chainResi = atom.chain + '_' + atom.resi;
-            if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {
+            if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {    
                 if(!addedChainResiHash.hasOwnProperty(chainResi)) {
                     pdbStr += chainResi2pdb[chainResi];
                     addedChainResiHash[chainResi] = 1;
@@ -610,7 +613,7 @@ class SaveFile {
         }
 
         pdbStr += connStr;
-
+        
         if(bMulStruc) pdbStr += '\nENDMDL\n';
 
         return pdbStr;

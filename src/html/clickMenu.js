@@ -364,11 +364,23 @@ class ClickMenu {
            thisClass.setLogCmd("export pqr", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipdbh", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-            let bPdb = true;
-            await me.htmlCls.setHtmlCls.exportPqr(bPdb);
-            thisClass.setLogCmd("export pdbh", false);
-         });
+      //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+      //       let bPdb = true;
+      //       await me.htmlCls.setHtmlCls.exportPqr(bPdb);
+      //       thisClass.setLogCmd("export pdbh", false);
+      //    });
+
+        me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+         let bHydrogen = false;
+         await ic.scapCls.exportPdbProfix(bHydrogen);
+         thisClass.setLogCmd("export pdb missing atoms", true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+        let bHydrogen = true;
+        await ic.scapCls.exportPdbProfix(bHydrogen);
+        thisClass.setLogCmd("export pdb hydrogen", true);
+       });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl file", false);

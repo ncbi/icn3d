@@ -33,7 +33,9 @@ class LineGraph {
         nodeArray2 = nodeArrays.nodeArray2;
         ic.lineGraphStr = '{\n';
 
-        let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+        //let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+        let structureArray = Object.keys(ic.structures);
+
         //if(Object.keys(ic.structures).length > 1) {
         if(structureArray.length > 1) {
 

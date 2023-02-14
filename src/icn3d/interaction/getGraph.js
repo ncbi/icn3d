@@ -218,6 +218,7 @@ class GetGraph {
 
     updateGraphColor() { let ic = this.icn3d, me = ic.icn3dui;
       // change graph color
+
       if(ic.graphStr !== undefined) {
           let graphJson = JSON.parse(ic.graphStr);
           let resid2color = {}

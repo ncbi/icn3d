@@ -109,7 +109,8 @@ class ChainalignParser {
         }
     }
 
-    async downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, 
+        indexArray, mmdbid_t, struArray) { let ic = this.icn3d, me = ic.icn3dui;
         //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
         // modify the previous trans and rotation matrix
@@ -645,11 +646,16 @@ class ChainalignParser {
                 if(ic.afChainIndexHash.hasOwnProperty(index)) {
                     ++missedChainCnt;
 
-                    // need to pass C-alpha coords and get transformation matrix from backend
-                    ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
-                    ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                    
 
-                    if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                    if(me.cfg.aligntool == 'tmalign') {
+                        ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                    }
+                    else {
+                        // need to pass C-alpha coords and get transformation matrix from backend
+                        ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                        ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                    }
 
                     ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
                     ic.qt_start_end[index-1] = undefined;
@@ -706,10 +712,14 @@ class ChainalignParser {
                 ic.q_rotation.push(align[0].q_rotation);
                 ic.qt_start_end.push(align[0].segs);
                 */
-                ic.t_trans_add[index] = align[0].t_trans_add;
-                ic.q_trans_sub[index] = align[0].q_trans_sub;
 
-                if(me.cfg.aligntool == 'tmalign') ic.q_trans_add[index] = align[0].q_trans_add;
+                if(me.cfg.aligntool == 'tmalign') {
+                    ic.q_trans_add[index] = align[0].q_trans_add;
+                }
+                else {
+                    ic.t_trans_add[index] = align[0].t_trans_add;
+                    ic.q_trans_sub[index] = align[0].q_trans_sub;
+                }
 
                 ic.q_rotation[index] = align[0].q_rotation;
                 ic.qt_start_end[index] = align[0].segs;
