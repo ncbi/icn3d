@@ -367,7 +367,7 @@ class SaveFile {
                         bHelixEnd = true;
                         let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
                         let residStart = ic.resid2ncbi[chainid + '_' + prevResi]
-                        let helixLen = parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1));
+                        let helixLen = (residEnd && residStart) ? parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1)) : 0;
                         let helixType = 1;
                         if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
