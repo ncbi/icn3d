@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.0.zip) was release on February 14, 2023. Enabled to export PDB files with misssing atoms or with hydrogen; added the option to show Multiple Sequence Alignment (MSA) when realigning multiple chains based on structure alignment.
+[icn3d-3.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.0.zip) was release on February 14, 2023. Enabled to export PDB files with missing atoms or with hydrogen; added the option to show Multiple Sequence Alignment (MSA) when realigning multiple chains based on structure alignment.
 
 [icn3d-3.21.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.3.zip) was release on February 3, 2023. Updated the description about custom reference numbers.
 
