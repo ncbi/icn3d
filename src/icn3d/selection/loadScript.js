@@ -71,6 +71,17 @@ class LoadScript {
         await this.execCommandsBase(start, end, steps);
     }
 
+    getNameArray(command) { let ic = this.icn3d, me = ic.icn3dui;
+        let paraArray = command.split(' | ');
+        let nameArray = [];
+        if(paraArray.length == 2) {
+            nameArray = paraArray[1].split(',');
+            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        }
+
+        return nameArray;
+    }
+
     async execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
       let i;
@@ -212,31 +223,37 @@ class LoadScript {
             await ic.scapCls.applyCommandScap(command);
           }
           else if(command.indexOf('realign on seq align') == 0) {
-            let paraArray = command.split(' | ');
-            if(paraArray.length == 2) {
-                let nameArray = paraArray[1].split(',');
-                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            }
+            let nameArray = this.getNameArray(command);
 
             await thisClass.applyCommandRealign(command);
           }
-          else if(command.indexOf('realign on structure align') == 0) {
-            let paraArray = command.split(' | ');
-            if(paraArray.length == 2) {
-                let nameArray = paraArray[1].split(',');
-                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            }
+          else if(command.indexOf('realign on structure align msa') == 0) {
+            let nameArray = this.getNameArray(command);
 
             me.cfg.aligntool = 'vast';
 
-            await thisClass.applyCommandRealignByStruct(command);
+            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
           }
-          else if(command.indexOf('realign on tmalign') == 0) {
-            thisClass.getHAtoms(ic.commands[i]);
+          else if(command.indexOf('realign on structure align') == 0) {
+            let nameArray = this.getNameArray(command);
+
+            me.cfg.aligntool = 'vast';
+
+            await ic.realignParserCls.realignOnStructAlign();
+          }
+          else if(command.indexOf('realign on tmalign msa') == 0) {
+            let nameArray = this.getNameArray(command);
 
             me.cfg.aligntool = 'tmalign';
 
-            await thisClass.applyCommandRealignByStruct(ic.commands[i]);
+            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
+          }
+          else if(command.indexOf('realign on tmalign') == 0) {
+            let nameArray = this.getNameArray(command);
+
+            me.cfg.aligntool = 'tmalign';
+
+            await ic.realignParserCls.realignOnStructAlign();
           }
           else if(command.indexOf('realign on vastplus') == 0) {
             thisClass.getHAtoms(ic.commands[i]);

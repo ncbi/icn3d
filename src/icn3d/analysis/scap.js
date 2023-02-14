@@ -140,11 +140,12 @@ console.log("free energy: " + energy + " kcal/mol");
 
           // get the full mutatnt PDB
           let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
+
           ic.hAtoms = {};
           let bMutation = true;
           ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
           //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
-          
+
           ic.setStyleCls.setAtomStyleByOptions(ic.opts);
           ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
@@ -254,8 +255,33 @@ console.log("free energy: " + energy + " kcal/mol");
 
             /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
             return;
-        };
+        }
     }
+
+    async exportPdbProfix(bHydrogen) { let ic = this.icn3d, me = ic.icn3dui;
+      let pdbStr = '';
+
+      let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+      pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+
+      let url = me.htmlCls.baseUrl + "scap/scap.cgi";
+      let hydrogenStr = (bHydrogen) ? '1' : '0';
+      let dataObj = {'pdb': pdbStr, 'profix': '1', 'hydrogen': hydrogenStr}
+
+      let data;
+       
+      try {
+        data = await me.getAjaxPostPromise(url, dataObj, undefined, undefined, undefined, undefined, 'text');
+      }
+      catch(err) {
+        alert("There are some problems in adding missing atoms or hydrogens...");
+        return;
+      }
+
+      let file_pref =(ic.inputid) ? ic.inputid : "custom";
+      let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
+      ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+   }
 }
 
 export {Scap}

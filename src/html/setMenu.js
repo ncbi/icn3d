@@ -653,7 +653,8 @@ class SetMenu {
         html += this.getLink('mn1_exportCounts', 'Residue Counts', undefined, 2);
 
         html += this.getLink('mn1_exportPdbRes', 'PDB', 1, 2);
-        html += this.getLink('delphipdbh', 'PDB with Hydrogens', undefined, 2);
+        html += this.getLink('profixpdb', 'PDB with Missing Atoms', undefined, 2);
+        html += this.getLink('profixpdbh', 'PDB with Hydrogens', undefined, 2);
 
         if(me.cfg.cid === undefined) {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);

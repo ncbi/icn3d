@@ -161,7 +161,7 @@ class AnnoCddSite {
     
                     let linkStr = (bCoordinates) ? 'icn3d-link icn3d-blue' : '';
 
-                    let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                    let htmlTmp2 = '<div class="icn3d-seqTitle ' + linkStr + '" site="site" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                     let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                     let htmlTmp = '<span class="icn3d-seqLine">';
                     html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -334,8 +334,9 @@ class AnnoCddSite {
                     let from = parseInt(fromArray[i]), to = parseInt(toArray[i]);
                                        
                     for(let j = from; j <= to; ++j) {
-                        
-                        let resid = chnid + "_" + j;
+                        let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                        //let resid = chnid + "_" + j;
+                        let resid = chnid + "_" + resi;
                         
                         if(ic.residues.hasOwnProperty(resid)) {
                             bCoordinates = true;

@@ -50,6 +50,32 @@ class Events {
        thisClass.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
+    async setRealign(alignType, bMsa) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+        if(nameArray.length > 0) {
+            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        }
+
+        me.cfg.aligntool = alignType;
+
+        if(bMsa) {
+            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
+        }
+        else {
+            await ic.realignParserCls.realignOnStructAlign();
+        }
+
+        let alignStr = (alignType == 'vast') ? 'structure align' : 'tmalign';
+        alignStr += (bMsa) ? ' msa' : '';
+
+        if(nameArray.length > 0) {
+            thisClass.setLogCmd("realign on " + alignStr + " | " + nameArray, true);
+        }
+        else {
+            thisClass.setLogCmd("realign on " + alignStr, true);
+        }
+    }
+
     readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
@@ -363,39 +389,29 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
-            if(nameArray.length > 0) {
-                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            }
- 
-            me.cfg.aligntool = 'vast';
- 
-            await ic.realignParserCls.realignOnStructAlign();
-            if(nameArray.length > 0) {
-                thisClass.setLogCmd("realign on structure align | " + nameArray, true);
-            }
-            else {
-                thisClass.setLogCmd("realign on structure align", true);
-            }
+
+            await thisClass.setRealign('vast', false);
          });
 
          me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_tmalign", "click", async function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
-            if(nameArray.length > 0) {
-                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-            }
 
-            me.cfg.aligntool = 'tmalign';
- 
-            await ic.realignParserCls.realignOnStructAlign();
-            if(nameArray.length > 0) {
-                thisClass.setLogCmd("realign on tmalign | " + nameArray, true);
-            }
-            else {
-                thisClass.setLogCmd("realign on tmalign", true);
-            }
+            await thisClass.setRealign('tmalign', false);
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStructMsa", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            await thisClass.setRealign('vast', true);
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "applyRealignByStructMsa_tmalign", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            await thisClass.setRealign('tmalign', true);
          });
 
          me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct_vastplus", "click", async function(e) { let ic = me.icn3d;
