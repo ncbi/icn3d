@@ -552,7 +552,7 @@ class SetMenu {
         html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
         html += this.getLink('mn1_afmapfile', 'AlphaFold PAE File', undefined, 2);
 
-        html += this.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_urlfile', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getMenuSep();
         html += this.getLink('mn1_pngimage', 'iCn3D PNG Image', 1, 2);
         html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
@@ -564,7 +564,7 @@ class SetMenu {
         html += this.getMenuText('mn1_dsn6wrap', 'Electron Density(DSN6)', undefined, undefined, 2);
         html += "<ul>";
         html += this.getLink('mn1_dsn6', 'Local File', undefined, 3);
-        html += this.getLink('mn1_dsn6url', 'URL(Same Host) ' + me.htmlCls.wifiStr, undefined, 3);
+        html += this.getLink('mn1_dsn6url', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
         html += "</ul>";

@@ -1527,7 +1527,7 @@ class ApplyCommand {
         if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
         else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
         else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
-        else if(cmd.indexOf('set phi') == 0) return 'Analysis > Load Potential > URL(Same Host) Phi/Cube';
+        else if(cmd.indexOf('set phi') == 0) return 'Analysis > Load Potential > URL(CORS) Phi/Cube';
         else if(cmd.indexOf('set delphi') == 0) return 'Analysis > DelPhi Potential';
         else if(cmd.indexOf('setoption map') == 0) return 'Style > Remove Map';
         else if(cmd.indexOf('setoption emmap') == 0) return 'Style > Remove EM Map';
