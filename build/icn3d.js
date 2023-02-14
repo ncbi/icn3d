@@ -60948,11 +60948,10 @@ var icn3d = (function (exports) {
               }
 
               if(bPdb) {
-                  //let pdbStr = '';
-                  //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                  // let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                  // ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
 
-                  let file_pref =(ic.inputid) ? ic.inputid : "custom";
-                  ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
+                  await thisClass.exportPdbProfix(false, pdbDataMutant, snpStr); 
 
                   ic.drawCls.draw();
               }
@@ -61006,11 +61005,16 @@ var icn3d = (function (exports) {
             }
         }
 
-        async exportPdbProfix(bHydrogen) { let ic = this.icn3d, me = ic.icn3dui;
-          let pdbStr = '';
+        async exportPdbProfix(bHydrogen, pdb, snpStr) { let ic = this.icn3d, me = ic.icn3dui;
+          let pdbStr;
 
-          let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-          pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+          if(pdb) {
+            pdbStr = pdb;
+          }
+          else {
+            let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+            pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+          }
 
           let url = me.htmlCls.baseUrl + "scap/scap.cgi";
           let hydrogenStr = (bHydrogen) ? '1' : '0';
@@ -61028,6 +61032,8 @@ var icn3d = (function (exports) {
 
           let file_pref =(ic.inputid) ? ic.inputid : "custom";
           let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
+          if(snpStr) postfix = snpStr;
+
           ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
        }
     }
@@ -64900,7 +64906,7 @@ var icn3d = (function (exports) {
                             bHelixEnd = true;
                             let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
                             let residStart = ic.resid2ncbi[chainid + '_' + prevResi];
-                            let helixLen = parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1));
+                            let helixLen = (residEnd && residStart) ? parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1)) : 0;
                             let helixType = 1;
                             if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                                 + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
