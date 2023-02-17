@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.0';
+    this.REVISION = '3.22.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -456,6 +456,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.blast_rep_id !== undefined) {
        // ic.bNCBI = true;
+       ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
 
        // custom seqeunce has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
@@ -463,8 +464,6 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
                 me.cfg.command = 'view annotations; set annotation cdd; set annotation site; set view detailed view; select chain 1TSR_A; show selection';
             }
-
-            ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
 
             if(me.cfg.alg == 'smithwm') {
                 ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;

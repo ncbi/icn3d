@@ -166,6 +166,17 @@ class ShowAnno {
                     dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
                 }
 
+                // get seqeunce
+                if(ic.blastAcxn) { 
+                    let chainid = me.cfg.afid + '_A';
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
+
+                    dataObj['targets'] = seq;
+                }
+
                 let data = await me.getAjaxPostPromise(url, dataObj);
 
                 ic.seqStructAlignData = data;
@@ -186,21 +197,23 @@ class ShowAnno {
                     idArray.push(me.cfg.query_id);
                 }
 
-                // show the sequence and 3D structure
-                //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-                let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
-                let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
+                // get seqeunce
+                if(ic.blastAcxn) { 
+                    let chainid = me.cfg.afid + '_A';
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
 
-                let index = 0;
-                for(let acc in chainid_seq) {
-                    if(index == 0) {
+                    target = seq;
+                }
+                else {
+                    let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
+                    let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
+
+                    for(let acc in chainid_seq) {
                         target = chainid_seq[acc];
                     }
-                    else if(!query) {
-                        query = chainid_seq[acc];
-                    }
-
-                    ++index;
                 }
 
                 let match_score = 1, mismatch = -1, gap = -1, extension = -1;
@@ -294,18 +307,45 @@ class ShowAnno {
         
         if(!me.bNode) ic.annoCddSiteCls.setToolTip();
 
-        // show the sequence and 3D structure
-        //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-        let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
-
         if(ic.chainid_seq !== undefined) {     
             await this.processSeqData(ic.chainid_seq);
         }
         else {       
             try {
-                let data = await me.getAjaxPromise(url, 'jsonp');
+                let pdbChainidArray = [], afChainidArray = [];
+                for(let i = 0, il = chnidBaseArray.length; i < il; ++i) {
+                    if(chnidBaseArray[i].length >= 6) {
+                        afChainidArray.push(chnidBaseArray[i]);
+                    }
+                    else {
+                        pdbChainidArray.push(chnidBaseArray[i]);
+                    }
+                }
 
-                ic.chainid_seq = data;
+                if(pdbChainidArray.length > 0) {
+                    let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + pdbChainidArray;
+                    ic.chainid_seq = await me.getAjaxPromise(url, 'jsonp');
+                }
+                else {
+                    ic.chainid_seq = {};
+                }
+
+                let data;
+
+                for(let i = 0, il = afChainidArray.length; i < il; ++i) {
+                    let chainid = afChainidArray[i];
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
+
+                    ic.chainid_seq[chainid] = seq;
+                }
+                
+                // let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+                // let data = await me.getAjaxPromise(url, 'jsonp');
+                // ic.chainid_seq = data;
+
                 await thisClass.processSeqData(ic.chainid_seq);
             }
             catch(err) {
@@ -439,8 +479,8 @@ class ShowAnno {
                 if(!me.bNode) console.log( "No data were found for the chain " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
-            
-            if(me.cfg.blast_rep_id != chnid) {
+                     
+            if(me.cfg.blast_rep_id != chnid) {               
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
             else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
@@ -454,13 +494,13 @@ class ShowAnno {
               let compTitle = undefined;
               let compText = undefined;
               let text = "cannot be aligned";
+
               ic.queryStart = '';
               ic.queryEnd = '';
               if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
-              //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
               let title;
               if(me.cfg.query_id.length > 14) {
                   title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -468,8 +508,7 @@ class ShowAnno {
               else {
                   title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
-
-              
+            
               let evalue, targetSeq, querySeq, segArray;
 
               if(ic.seqStructAlignData !== undefined) {
@@ -477,8 +516,11 @@ class ShowAnno {
                 let data = ic.seqStructAlignData;
                 if(data.data !== undefined) {
                     query = data.data[0].query;
-                    //target = data.data[0].targets[chnid.replace(/_/g, '')];
-                    target = data.data[0].targets[chnid];
+                    // if target is seqeunce, the key is not chnid
+                    //target = data.data[0].targets[chnid];
+                    let keys = Object.keys(data.data[0].targets);
+                    target = data.data[0].targets[keys[0]];
+
                     target =(target !== undefined && target.hsps.length > 0) ? target.hsps[0] : undefined;
                 }
 
@@ -486,8 +528,11 @@ class ShowAnno {
                     evalue = target.scores.e_value.toPrecision(2);
                     if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
                     let bitscore = target.scores.bit_score;
-                    //var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
-                    targetSeq = data.targets[chnid].seqdata;
+                    // if target is seqeunce, the key is not chnid
+                    // targetSeq = data.targets[chnid].seqdata;
+                    let keys = Object.keys(data.targets);
+                    targetSeq = data.targets[keys[0]].seqdata;
+
                     querySeq = query.seqdata;
                     segArray = target.segs;
                 }               
@@ -532,7 +577,7 @@ class ShowAnno {
               let text = '', compText = '';
               ic.queryStart = '';
               ic.queryEnd = '';
-              
+                          
               if(segArray !== undefined) {
                   let target2queryHash = {};
                   if(ic.targetGapHash === undefined) ic.targetGapHash = {}
@@ -606,7 +651,7 @@ class ShowAnno {
 
                   //title += ', E: ' + evalue;
               }
-              else {
+              else {                
                   text += "cannot be aligned";
                   if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               }

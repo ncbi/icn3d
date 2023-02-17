@@ -79,24 +79,39 @@ class MmdbParser {
         me.cfg.query_id = idArray[0];
         me.cfg.blast_rep_id = idArray[1];
 
-        let mmdbid = me.cfg.blast_rep_id.split('_')[0];
+        let mmdbid = me.cfg.blast_rep_id.split('_')[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
 
-        await this.downloadMmdb(mmdbid);
+        if(mmdbid.length == 4) { // pdb
+            await this.downloadMmdb(mmdbid);
+        }
+        else {
+            ic.blastAcxn = me.cfg.blast_rep_id.split('.')[0];
+            //await ic.pdbParserCls.downloadPdb(ic.blastAcxn, true);
+            await this.downloadRefseq(ic.blastAcxn);
+        }
     }
 
     async downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
         let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+
+        me.cfg.refseqid = refseqid;
  
         //ic.bCid = undefined;
 
         let data = await me.getAjaxPromise(url, 'jsonp', false, 'The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
 
-        if(!data || !data.uniprot) {
-            alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+        if(data && data.uniprot) {
+            me.cfg.afid = data.uniprot;
+        }
+        else {
+            alert('The accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID. It will be treated as a UniProt ID instead.');
+            
             return;
+
+            //me.cfg.afid = refseqid;
         }
 
-        me.cfg.afid = data.uniprot;
+        me.cfg.blast_rep_id = me.cfg.afid + '_A';
 
         let bAf = true;
 

@@ -400,7 +400,11 @@ class Dialog {
             if(id === me.pre + 'dl_addtrack') {
                 width='50%';
             }
-
+            else if(id === me.pre + 'dl_menupref') {
+                width = 600;
+                height = 500;
+            }
+            
             let position;
 
             if(id === me.pre + 'dl_definedsets') {

@@ -45,13 +45,30 @@
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                let allPromise = Promise.allSettled(pdbAjaxArray);
                 try {
-                    ic.pdbDataArray = await allPromise;
-                    await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // if(!me.bNode) {
+                        let allPromise = Promise.allSettled(pdbAjaxArray);
+                        ic.pdbDataArray = await allPromise;
+                        await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // }
+                    // else {
+                    //     ic.pdbDataArray = [];
+                    //     for(let i = 0, il = pdbAjaxArray.length; i < il; ++i) {
+                    //         try {
+                    //             let dataTmp = await pdbAjaxArray[i];
+                    //             ic.pdbDataArray.push({'value': dataTmp});
+                    //         }
+                    //         catch(err) {
+                    //             ic.pdbDataArray.push({'value': ''});
+                    //         }
+                    //     }
+
+                    //     await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // }
                 }
                 catch(err) {
-                    alert("Error in retrieveing reference PDB data...");
+                    if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+                    //alert("Error in retrieveing reference PDB data...");
                     return;
                 }                
             }
@@ -132,9 +149,23 @@
             }
        }
 
-        let allPromise = Promise.allSettled(ajaxArray);
         try {
-            let dataArray2 = await allPromise;
+            let dataArray2 = [];
+            // if(!me.bNode) {
+                let allPromise = Promise.allSettled(ajaxArray);
+                dataArray2 = await allPromise;
+            // }
+            // else {
+            //     for(let i = 0, il = ajaxArray.length; i < il; ++i) {
+            //         try {
+            //             let dataTmp = await ajaxArray[i];
+            //             dataArray2.push({'value': dataTmp});
+            //         }
+            //         catch(err) {
+            //             dataArray2.push({'value': []});
+            //         }
+            //     }
+            // }
             
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
 
@@ -142,6 +173,7 @@
         }
         catch(err) {
             if(!me.bNode) console.log("Error in aligning with TM-align...");
+            //console.log("Error in aligning with TM-align...");
             return;
         }         
     }

@@ -530,7 +530,7 @@ class SaveFile {
             line +=(resiInt.toString().length <= 4) ? resiInt.toString().padStart(4, ' ') : resiInt.toString().substr(0, 4);
             //line += ' '.padStart(4, ' ');
             // insert
-            let lastChar = resi.toString().substr(resi.toString().length - 1, 1);
+            let lastChar = atom.resi.toString().substr(atom.resi.toString().length - 1, 1);
             if(isNaN(lastChar)) {
                 line += lastChar;
             }
@@ -780,6 +780,10 @@ class SaveFile {
 
         if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);
+        }
+        else if(me.cfg.blast_rep_id) {
+            text = 'Query: ' + me.cfg.query_id + '; target: ' + me.cfg.blast_rep_id;
+            $("#" + ic.pre + "title").html(text + ", " + title);
         }
         else {
             $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>: " + title);

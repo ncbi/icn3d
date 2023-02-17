@@ -365,10 +365,10 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
-        html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
+        html += "Enter a Sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the Sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
         html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
         html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
-        html += "<b>Structure ID</b>(NCBI protein accession of a chain of a 3D structure): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
+        html += "<b>NCBI protein accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
         //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
         html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
             + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Global Smith-Waterman</button>"
@@ -989,11 +989,17 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_menupref' class='" + dialogClass + "'>";
         html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
-        html += "<div id='" + me.pre + "menulist' style='max-width:500px; max-height:300px; overflow:scroll'></div><br><br>";
+
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref' style='margin-left:30px'>Reset to Simple Menus</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all' style='margin-left:30px'>Reset to All Menus</button></span>";
-        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span><br><br>";
+
+        html += "<div id='" + me.pre + "menulist'></div><br><br>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref2'>Apply</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref2' style='margin-left:30px'>Reset to Simple Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all2' style='margin-left:30px'>Reset to All Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref2' style='margin-left:30px'>Save Preferences</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";

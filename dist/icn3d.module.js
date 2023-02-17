@@ -7052,7 +7052,7 @@ class ClickMenu {
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "apply_menupref", "click", function(e) { me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { me.icn3d; //e.preventDefault();
             var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
             me.htmlCls.shownMenus = {};
             for (var checkbox of checkboxes) {
@@ -7062,21 +7062,21 @@ class ClickMenu {
             thisClass.applyShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reset_menupref", "click", function(e) { me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reset_menupref_all", "click", function(e) { me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             let menuStr = '[';
 
             //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
@@ -9591,7 +9591,8 @@ class SetMenu {
         if(me.cfg.opmid !== undefined) {
             html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1);
         }
-        else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
+        //else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
+        else if(me.cfg.cid === undefined) {
             // hide by default
             html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1, true);
         }
@@ -11062,7 +11063,11 @@ class Dialog {
             if(id === me.pre + 'dl_addtrack') {
                 width='50%';
             }
-
+            else if(id === me.pre + 'dl_menupref') {
+                width = 600;
+                height = 500;
+            }
+            
             let position;
 
             if(id === me.pre + 'dl_definedsets') {
@@ -11582,10 +11587,10 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
-        html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
+        html += "Enter a Sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the Sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
         html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
         html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
-        html += "<b>Structure ID</b>(NCBI protein accession of a chain of a 3D structure): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
+        html += "<b>NCBI protein accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
         //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
         html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
             + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Global Smith-Waterman</button>"
@@ -12206,11 +12211,17 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_menupref' class='" + dialogClass + "'>";
         html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
-        html += "<div id='" + me.pre + "menulist' style='max-width:500px; max-height:300px; overflow:scroll'></div><br><br>";
+
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref' style='margin-left:30px'>Reset to Simple Menus</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all' style='margin-left:30px'>Reset to All Menus</button></span>";
-        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span><br><br>";
+
+        html += "<div id='" + me.pre + "menulist'></div><br><br>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref2'>Apply</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref2' style='margin-left:30px'>Reset to Simple Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all2' style='margin-left:30px'>Reset to All Menus</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref2' style='margin-left:30px'>Save Preferences</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";
@@ -39839,6 +39850,17 @@ class ShowAnno {
                     dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
                 }
 
+                // get seqeunce
+                if(ic.blastAcxn) { 
+                    let chainid = me.cfg.afid + '_A';
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
+
+                    dataObj['targets'] = seq;
+                }
+
                 let data = await me.getAjaxPostPromise(url, dataObj);
 
                 ic.seqStructAlignData = data;
@@ -39859,21 +39881,23 @@ class ShowAnno {
                     idArray.push(me.cfg.query_id);
                 }
 
-                // show the sequence and 3D structure
-                //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-                let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
-                let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
+                // get seqeunce
+                if(ic.blastAcxn) { 
+                    let chainid = me.cfg.afid + '_A';
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
 
-                let index = 0;
-                for(let acc in chainid_seq) {
-                    if(index == 0) {
+                    target = seq;
+                }
+                else {
+                    let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
+                    let chainid_seq = await me.getAjaxPromise(url, 'jsonp', false, "Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
+
+                    for(let acc in chainid_seq) {
                         target = chainid_seq[acc];
                     }
-                    else if(!query) {
-                        query = chainid_seq[acc];
-                    }
-
-                    ++index;
                 }
 
                 let match_score = 1, mismatch = -1, gap = -1, extension = -1;
@@ -39967,18 +39991,45 @@ class ShowAnno {
         
         if(!me.bNode) ic.annoCddSiteCls.setToolTip();
 
-        // show the sequence and 3D structure
-        //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-        let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
-
         if(ic.chainid_seq !== undefined) {     
             await this.processSeqData(ic.chainid_seq);
         }
         else {       
             try {
-                let data = await me.getAjaxPromise(url, 'jsonp');
+                let pdbChainidArray = [], afChainidArray = [];
+                for(let i = 0, il = chnidBaseArray.length; i < il; ++i) {
+                    if(chnidBaseArray[i].length >= 6) {
+                        afChainidArray.push(chnidBaseArray[i]);
+                    }
+                    else {
+                        pdbChainidArray.push(chnidBaseArray[i]);
+                    }
+                }
 
-                ic.chainid_seq = data;
+                if(pdbChainidArray.length > 0) {
+                    let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + pdbChainidArray;
+                    ic.chainid_seq = await me.getAjaxPromise(url, 'jsonp');
+                }
+                else {
+                    ic.chainid_seq = {};
+                }
+
+                let data;
+
+                for(let i = 0, il = afChainidArray.length; i < il; ++i) {
+                    let chainid = afChainidArray[i];
+                    let seq = '';
+                    for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                        seq += ic.chainsSeq[chainid][i].name;
+                    }
+
+                    ic.chainid_seq[chainid] = seq;
+                }
+                
+                // let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+                // let data = await me.getAjaxPromise(url, 'jsonp');
+                // ic.chainid_seq = data;
+
                 await thisClass.processSeqData(ic.chainid_seq);
             }
             catch(err) {
@@ -40112,8 +40163,8 @@ class ShowAnno {
                 if(!me.bNode) console.log( "No data were found for the chain " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
-            
-            if(me.cfg.blast_rep_id != chnid) {
+                     
+            if(me.cfg.blast_rep_id != chnid) {               
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
             else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
@@ -40127,13 +40178,13 @@ class ShowAnno {
               let compTitle = undefined;
               let compText = undefined;
               let text = "cannot be aligned";
+
               ic.queryStart = '';
               ic.queryEnd = '';
               if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
-              //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
               let title;
               if(me.cfg.query_id.length > 14) {
                   title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -40141,8 +40192,7 @@ class ShowAnno {
               else {
                   title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
-
-              
+            
               let evalue, targetSeq, querySeq, segArray;
 
               if(ic.seqStructAlignData !== undefined) {
@@ -40150,8 +40200,11 @@ class ShowAnno {
                 let data = ic.seqStructAlignData;
                 if(data.data !== undefined) {
                     query = data.data[0].query;
-                    //target = data.data[0].targets[chnid.replace(/_/g, '')];
-                    target = data.data[0].targets[chnid];
+                    // if target is seqeunce, the key is not chnid
+                    //target = data.data[0].targets[chnid];
+                    let keys = Object.keys(data.data[0].targets);
+                    target = data.data[0].targets[keys[0]];
+
                     target =(target !== undefined && target.hsps.length > 0) ? target.hsps[0] : undefined;
                 }
 
@@ -40159,8 +40212,11 @@ class ShowAnno {
                     evalue = target.scores.e_value.toPrecision(2);
                     if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
                     target.scores.bit_score;
-                    //var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
-                    targetSeq = data.targets[chnid].seqdata;
+                    // if target is seqeunce, the key is not chnid
+                    // targetSeq = data.targets[chnid].seqdata;
+                    let keys = Object.keys(data.targets);
+                    targetSeq = data.targets[keys[0]].seqdata;
+
                     querySeq = query.seqdata;
                     segArray = target.segs;
                 }               
@@ -40205,7 +40261,7 @@ class ShowAnno {
               let text = '', compText = '';
               ic.queryStart = '';
               ic.queryEnd = '';
-              
+                          
               if(segArray !== undefined) {
                   let target2queryHash = {};
                   if(ic.targetGapHash === undefined) ic.targetGapHash = {};
@@ -40279,7 +40335,7 @@ class ShowAnno {
 
                   //title += ', E: ' + evalue;
               }
-              else {
+              else {                
                   text += "cannot be aligned";
                   if(ic.bRender) alert('The sequence can NOT be aligned to the structure');
               }
@@ -46807,24 +46863,39 @@ class MmdbParser {
         me.cfg.query_id = idArray[0];
         me.cfg.blast_rep_id = idArray[1];
 
-        let mmdbid = me.cfg.blast_rep_id.split('_')[0];
+        let mmdbid = me.cfg.blast_rep_id.split('_')[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
 
-        await this.downloadMmdb(mmdbid);
+        if(mmdbid.length == 4) { // pdb
+            await this.downloadMmdb(mmdbid);
+        }
+        else {
+            ic.blastAcxn = me.cfg.blast_rep_id.split('.')[0];
+            //await ic.pdbParserCls.downloadPdb(ic.blastAcxn, true);
+            await this.downloadRefseq(ic.blastAcxn);
+        }
     }
 
     async downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
         let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+
+        me.cfg.refseqid = refseqid;
  
         //ic.bCid = undefined;
 
         let data = await me.getAjaxPromise(url, 'jsonp', false, 'The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
 
-        if(!data || !data.uniprot) {
-            alert('The protein accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID...');
+        if(data && data.uniprot) {
+            me.cfg.afid = data.uniprot;
+        }
+        else {
+            alert('The accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID. It will be treated as a UniProt ID instead.');
+            
             return;
+
+            //me.cfg.afid = refseqid;
         }
 
-        me.cfg.afid = data.uniprot;
+        me.cfg.blast_rep_id = me.cfg.afid + '_A';
 
         let bAf = true;
 
@@ -48063,6 +48134,7 @@ class PdbParser {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
+        //if(me.cfg.afid && !ic.bAfMem && !me.cfg.blast_rep_id) {
         if(me.cfg.afid && !ic.bAfMem) {
             ic.opts['color'] = 'confidence';
         }
@@ -60261,6 +60333,7 @@ class Dssp {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
+
             await thisClass.parseDsspData(dataArray, struArray, bAppend);
             
             await ic.ParserUtilsCls.checkMemProteinAndRotate();
@@ -60269,9 +60342,6 @@ class Dssp {
             console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
 
             await ic.pdbParserCls.loadPdbDataRender(bAppend);
-
-            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-            /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
         }
     }
 
@@ -60442,13 +60512,30 @@ class Dssp {
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                let allPromise = Promise.allSettled(pdbAjaxArray);
                 try {
-                    ic.pdbDataArray = await allPromise;
-                    await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // if(!me.bNode) {
+                        let allPromise = Promise.allSettled(pdbAjaxArray);
+                        ic.pdbDataArray = await allPromise;
+                        await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // }
+                    // else {
+                    //     ic.pdbDataArray = [];
+                    //     for(let i = 0, il = pdbAjaxArray.length; i < il; ++i) {
+                    //         try {
+                    //             let dataTmp = await pdbAjaxArray[i];
+                    //             ic.pdbDataArray.push({'value': dataTmp});
+                    //         }
+                    //         catch(err) {
+                    //             ic.pdbDataArray.push({'value': ''});
+                    //         }
+                    //     }
+
+                    //     await thisClass.parseRefPdbData(ic.pdbDataArray);
+                    // }
                 }
                 catch(err) {
-                    alert("Error in retrieveing reference PDB data...");
+                    if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+                    //alert("Error in retrieveing reference PDB data...");
                     return;
                 }                
             }
@@ -60529,9 +60616,23 @@ class Dssp {
             }
        }
 
-        let allPromise = Promise.allSettled(ajaxArray);
         try {
-            let dataArray2 = await allPromise;
+            let dataArray2 = [];
+            // if(!me.bNode) {
+                let allPromise = Promise.allSettled(ajaxArray);
+                dataArray2 = await allPromise;
+            // }
+            // else {
+            //     for(let i = 0, il = ajaxArray.length; i < il; ++i) {
+            //         try {
+            //             let dataTmp = await ajaxArray[i];
+            //             dataArray2.push({'value': dataTmp});
+            //         }
+            //         catch(err) {
+            //             dataArray2.push({'value': []});
+            //         }
+            //     }
+            // }
             
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
 
@@ -60539,6 +60640,7 @@ class Dssp {
         }
         catch(err) {
             if(!me.bNode) console.log("Error in aligning with TM-align...");
+            //console.log("Error in aligning with TM-align...");
             return;
         }         
     }
@@ -61032,11 +61134,16 @@ console.log("free energy: " + energy + " kcal/mol");
         return;
       }
 
-      let file_pref =(ic.inputid) ? ic.inputid : "custom";
-      let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
-      if(snpStr) postfix = snpStr;
+      if(!me.bNode) {
+        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
+        if(snpStr) postfix = snpStr;
 
-      ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+        ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+      }
+      else {
+        return data;
+      }
    }
 }
 
@@ -65078,7 +65185,7 @@ class SaveFile {
             line +=(resiInt.toString().length <= 4) ? resiInt.toString().padStart(4, ' ') : resiInt.toString().substr(0, 4);
             //line += ' '.padStart(4, ' ');
             // insert
-            let lastChar = resi.toString().substr(resi.toString().length - 1, 1);
+            let lastChar = atom.resi.toString().substr(atom.resi.toString().length - 1, 1);
             if(isNaN(lastChar)) {
                 line += lastChar;
             }
@@ -65328,6 +65435,10 @@ class SaveFile {
 
         if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);
+        }
+        else if(me.cfg.blast_rep_id) {
+            text = 'Query: ' + me.cfg.query_id + '; target: ' + me.cfg.blast_rep_id;
+            $("#" + ic.pre + "title").html(text + ", " + title);
         }
         else {
             $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + text + "</a>: " + title);
@@ -68553,7 +68664,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.0';
+    this.REVISION = '3.22.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -68846,6 +68957,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.blast_rep_id !== undefined) {
        // ic.bNCBI = true;
+       ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
 
        // custom seqeunce has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
@@ -68853,8 +68965,6 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
                 me.cfg.command = 'view annotations; set annotation cdd; set annotation site; set view detailed view; select chain 1TSR_A; show selection';
             }
-
-            ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
 
             if(me.cfg.alg == 'smithwm') {
                 ic.loadCmd = 'load seq_struct_ids_smithwm ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;

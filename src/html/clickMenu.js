@@ -529,7 +529,7 @@ class ClickMenu {
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "apply_menupref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
             me.htmlCls.shownMenus = {};
             for (var checkbox of checkboxes) {
@@ -539,21 +539,21 @@ class ClickMenu {
             thisClass.applyShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reset_menupref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reset_menupref_all", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "savepref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             let menuStr = '[';
 
             //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');

@@ -175,6 +175,7 @@ class PdbParser {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
+        //if(me.cfg.afid && !ic.bAfMem && !me.cfg.blast_rep_id) {
         if(me.cfg.afid && !ic.bAfMem) {
             ic.opts['color'] = 'confidence';
         }

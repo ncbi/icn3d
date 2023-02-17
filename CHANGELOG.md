@@ -1,9 +1,11 @@
 ## Change Log
+[icn3d-3.22.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.1.zip) was release on February 17, 2023. Enabled to align a sequence to a protein structure with similar sequence. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used. Added a Node.js script to add missing atoms to an exported PDB file.
+
 [icn3d-3.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.0.zip) was release on February 14, 2023. Enabled to export PDB files with missing atoms or with hydrogen; added the option to show Multiple Sequence Alignment (MSA) when realigning multiple chains based on structure alignment.
 
 [icn3d-3.21.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.3.zip) was release on February 3, 2023. Updated the description about custom reference numbers.
 
-[icn3d-3.21.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.2.zip) was release on January 20, 2023. Added instructions (https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#saveview) to host iCn3D PNG Images at any web server, which can be accessed by iCn3D, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://ndownloader.figshare.com/files/39125801, or https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png.
+[icn3d-3.21.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.2.zip) was release on January 20, 2023. Added instructions (https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#saveview) to host iCn3D PNG Images at any web server, which can be accessed by iCn3D, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801, or https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png.
 
 [icn3d-3.21.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.21.1.zip) was release on January 17, 2023. Fixed a bug in selecting a conserved domain and a bug in the secondary structure display for pdbid input.
 
