@@ -282,11 +282,16 @@ console.log("free energy: " + energy + " kcal/mol");
         return;
       }
 
-      let file_pref =(ic.inputid) ? ic.inputid : "custom";
-      let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
-      if(snpStr) postfix = snpStr;
+      if(!me.bNode) {
+        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
+        if(snpStr) postfix = snpStr;
 
-      ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+        ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
+      }
+      else {
+        return data;
+      }
    }
 }
 

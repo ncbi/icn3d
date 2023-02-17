@@ -833,7 +833,8 @@ class SetMenu {
         if(me.cfg.opmid !== undefined) {
             html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1)
         }
-        else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
+        //else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
+        else if(me.cfg.cid === undefined) {
             // hide by default
             html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1, true)
         }

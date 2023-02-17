@@ -41,6 +41,7 @@ class Dssp {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
+
             await thisClass.parseDsspData(dataArray, struArray, bAppend);
             
             await ic.ParserUtilsCls.checkMemProteinAndRotate();
@@ -49,9 +50,6 @@ class Dssp {
             console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
 
             await ic.pdbParserCls.loadPdbDataRender(bAppend);
-
-            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-            /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
         }
     }
 
