@@ -12,6 +12,7 @@ Install the following packages (npm icn3d version should be 3.21.0 or above):
 
     npm install three
     npm install jquery
+    npm install jsdom
     npm install icn3d
     
     npm install axios
