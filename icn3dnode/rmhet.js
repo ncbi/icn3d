@@ -41,10 +41,27 @@ async function removeHetAtoms() {
 
     const lineArray = data.split('\n');
 
+    let chain = '', firstChain = '', bFirstChain = true;
     for(let i = 0, il = lineArray.length; i < il; ++i) {
-      if(lineArray[i].indexOf('HETATM') != 0) {
-        console.log(lineArray[i]);
+      let line = lineArray[i];
+
+      if(line.indexOf('ATOM  ') == 0 || line.indexOf('HETATM') == 0) { // atom
+        chain = line.substr(20, 2);
       }
+
+      if(firstChain && chain && firstChain != chain) bFirstChain = false;
+
+      // it there are more than onechain, put the original chain name at the position of insertion char (position 27)
+      if(!bFirstChain && (line.indexOf('ATOM  ') == 0 || line.indexOf('HETATM') == 0)) { // atom
+        line = line.substr(0, 20) + firstChain + line.substr(22, 4) + chain.substr(1,1) + line.substr(27);
+      }
+
+      // only output the protein "ATOM" part of the first chain
+      if(line.indexOf('HETATM') != 0) {
+        console.log(line);
+      }
+
+      if(bFirstChain) firstChain = chain;
     }
   } catch (err) {
     console.log(err);

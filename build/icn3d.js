@@ -61120,7 +61120,7 @@ var icn3d = (function (exports) {
           }
           else {
             let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-            pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+            pdbStr = ic.saveFileCls.getAtomPDB(atoms);
           }
 
           let url = me.htmlCls.baseUrl + "scap/scap.cgi";
