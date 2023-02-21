@@ -265,7 +265,7 @@ console.log("free energy: " + energy + " kcal/mol");
       }
       else {
         let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-        pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+        pdbStr = ic.saveFileCls.getAtomPDB(atoms);
       }
 
       let url = me.htmlCls.baseUrl + "scap/scap.cgi";
