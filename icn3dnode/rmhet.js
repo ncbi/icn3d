@@ -42,11 +42,16 @@ async function removeHetAtoms() {
     const lineArray = data.split('\n');
 
     let chain = '', firstChain = '', bFirstChain = true;
+    let prevChain = '', prevLine = '';
     for(let i = 0, il = lineArray.length; i < il; ++i) {
       let line = lineArray[i];
 
       if(line.indexOf('ATOM  ') == 0 || line.indexOf('HETATM') == 0) { // atom
         chain = line.substr(20, 2);
+
+        if(prevChain && chain != prevChain && prevLine != 'TER') { // add a line "TER" to make scap/profix work
+          console.log("TER");
+        }
       }
 
       if(firstChain && chain && firstChain != chain) bFirstChain = false;
@@ -62,6 +67,9 @@ async function removeHetAtoms() {
       }
 
       if(bFirstChain) firstChain = chain;
+
+      prevChain = chain;
+      prevLine = line;
     }
   } catch (err) {
     console.log(err);

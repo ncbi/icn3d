@@ -65075,7 +65075,7 @@ class SaveFile {
         let struArray = Object.keys(ic.structures);
         let bMulStruc =(struArray.length > 1) ? true : false;
 
-        let molNum = 1, prevStru = '';
+        let molNum = 1, prevStru = '', prevChain = '';
         //pdbStr += '\n';
 
         let addedChainResiHash = {};
@@ -65100,6 +65100,15 @@ class SaveFile {
 
                 prevStru = atom.structure;
                 ++molNum;
+            }
+            else {
+                if(atom.chain != prevChain) {
+                    // add a line "TER" to work with scap/profix to add missing atoms
+                    if(prevChain) {
+                        pdbStr += 'TER\n';
+                    }
+                    prevChain = atom.chain;
+                }
             }
 
             let chainResi = atom.chain + '_' + atom.resi;
