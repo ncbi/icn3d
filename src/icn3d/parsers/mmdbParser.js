@@ -87,11 +87,11 @@ class MmdbParser {
         else {
             ic.blastAcxn = me.cfg.blast_rep_id.split('.')[0];
             //await ic.pdbParserCls.downloadPdb(ic.blastAcxn, true);
-            await this.downloadRefseq(ic.blastAcxn);
+            await this.downloadRefseq(ic.blastAcxn, true);
         }
     }
 
-    async downloadRefseq(refseqid) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadRefseq(refseqid, bBlast_rep_id) { let ic = this.icn3d, me = ic.icn3dui;
         let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
 
         me.cfg.refseqid = refseqid;
@@ -111,13 +111,12 @@ class MmdbParser {
             //me.cfg.afid = refseqid;
         }
 
-        me.cfg.blast_rep_id = me.cfg.afid + '_A';
+        if(bBlast_rep_id) me.cfg.blast_rep_id = me.cfg.afid + '_A';
 
         let bAf = true;
 
         await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
-        
-        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
 
     getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;

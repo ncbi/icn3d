@@ -398,11 +398,11 @@ class SetSeqAlign {
          
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2;
-            if(bRealign) { // real residue numbers are stored
-              start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
-              start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
-              end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
-              end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end); 
+            if(bRealign) { // real residue numbers are stored, could be "100a"
+                start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
+                start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
+                end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
+                end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end); 
             }
             else {
               start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
@@ -424,7 +424,7 @@ class SetSeqAlign {
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
                 end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
-                end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end);
+                end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end); 
               }
               else {
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
@@ -509,9 +509,11 @@ class SetSeqAlign {
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   let resi1, resi2, resn1, resn2;
-                  if(bRealign) {
-                    resi1 = j + start1;
-                    resi2 = j + start2;
+                  if(bRealign) { // tmalign: just one residue in this for loop
+                    // resi1 = j + start1;
+                    // resi2 = j + start2;
+                    resi1 = ic.qt_start_end[chainIndex][i].t_start;
+                    resi2 = ic.qt_start_end[chainIndex][i].q_start;
 
                     resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
                     resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();

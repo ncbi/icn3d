@@ -748,7 +748,7 @@ class SaveFile {
             }
             else if(me.cfg.chainalign !== undefined) {
                 let chainidArray = me.cfg.chainalign.split(',');
-                title = 'Dynamic Structure Alignment of Chain ' + chainidArray[0] + ' to Chain ' + chainidArray[1];
+                title = 'Dynamic Structure Alignment of Chains: ' + chainidArray;
 
                 $("#" + ic.pre + "title").html(title);
             }

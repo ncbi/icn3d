@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.22.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.2.zip) was release on February 23, 2023. Fixed a bug when the input is NCBI protein accession.
+
 [icn3d-3.22.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.1.zip) was release on February 17, 2023. Enabled to align a sequence to a protein structure with similar sequence. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used. Added a Node.js script to add missing atoms to an exported PDB file.
 
 [icn3d-3.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.0.zip) was release on February 14, 2023. Enabled to export PDB files with missing atoms or with hydrogen; added the option to show Multiple Sequence Alignment (MSA) when realigning multiple chains based on structure alignment.

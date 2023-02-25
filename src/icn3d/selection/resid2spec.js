@@ -40,6 +40,19 @@ class Resid2spec {
                  firstDashPos = prevChain.indexOf('_');
                  struturePart = prevChain.substr(0, firstDashPos);
                  chainPart = prevChain.substr(firstDashPos + 1);
+
+                 // create separate spec for resi such as 100a
+                 if(isNaN(resi)) {
+                    if(bMultipleStructures) {
+                        spec += '$' + struturePart + '.' + chainPart + ':' + resi + ' or ';
+                    }
+                    else {
+                        spec += '.' + chainPart + ':' + resi + ' or ';
+                    }
+
+                    continue;
+                 }
+
                  if(prevChain !== chain) {
                      if(j > 0) {
                          if(prevResi === startResi) {

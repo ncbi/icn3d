@@ -149,7 +149,6 @@ class RealignParser {
         }
 
         me.cfg.aligntool = 'tmalign';
-
         await ic.realignParserCls.realignOnStructAlign();
         // if(nameArray.length > 0) {
         //     me.htmlCls.clickMenuCls.setLogCmd("realign on tmalign | " + nameArray, true);
@@ -372,7 +371,6 @@ class RealignParser {
         // each 3D domain should have at least 3 secondary structures
         let minSseCnt = 3;
         let struct2domain = {};
-
         for(let struct in ic.structures) {
             struct2domain[struct] = {};
             let chainidArray = ic.structures[struct];
@@ -550,7 +548,7 @@ class RealignParser {
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split('; ');
+            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(': ');
             
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");

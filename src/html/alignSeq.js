@@ -91,7 +91,8 @@ class AlignSeq {
             for (let k = 0, kl = seqLength; k < kl; ++k) {
                 // resiId is empty if it's gap
                 let resiId = 'N/A', resIdFull = '', color = '#000';
-                if (ic.alnChainsSeq[i][k].resi !== '' && !isNaN(ic.alnChainsSeq[i][k].resi)) {
+                //if (ic.alnChainsSeq[i][k].resi !== '' && !isNaN(ic.alnChainsSeq[i][k].resi)) {
+                if (ic.alnChainsSeq[i][k].resi !== '') {
                     resiId = ic.alnChainsSeq[i][k].resi;
                     resIdFull = structure + "_" + chain + "_" + resiId;
                     color = ic.alnChainsSeq[i][k].color;

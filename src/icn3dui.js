@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.1';
+    this.REVISION = '3.22.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -425,7 +425,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
        //ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
        await ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
-       await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+       //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else if(me.cfg.opmid !== undefined) {
        ic.inputid = me.cfg.opmid;
@@ -584,8 +584,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);        
-        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
