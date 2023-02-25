@@ -65,6 +65,22 @@ Examples
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
 
+* <b>Output Secondary Structure in PDB or JSON</b>
+
+    In the command line, run the following:
+    
+        node secondarystructure.js [filename] [pdb or ss]
+    
+    [filename] is the name of your local PDB file, and [pdb or ss] is either "pdb" or "ss". "pdb" means to export the PDb file containing the secondary structure information. "ss" means to export the secondary structure information alone. 
+
+* <b>Add Missing Atoms in the PDB file</b>
+
+    In the command line, run the following:
+    
+        node addmissingatoms.js [filename]
+    
+    [filename] is the name of your local PDB file. The command will fill the missing atoms in the PDB file, but it will not fill the missing residues.
+
 * <b>Show Domain and Site Information for a Protein</b>
 
     In the command line, run the following:

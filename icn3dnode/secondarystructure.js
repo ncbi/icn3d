@@ -28,12 +28,13 @@ let fs = require('fs/promises');
 //let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
-if(myArgs.length != 1) {
-    console.log("Usage: node secondarystructure.js [filename]");
+if(myArgs.length != 2) {
+    console.log("Usage: node secondarystructure.js [filename] [pdb or ss]");
     return;
 }
 
 let filename = (myArgs[0].indexOf('/') == -1) ? './' + myArgs[0] : myArgs[0];
+let type = myArgs[1];
 
 async function outputSS() {
   try {
@@ -45,11 +46,14 @@ async function outputSS() {
 
     await ic.pdbParserCls.loadPdbData(data);
     
-    const pdb = me.htmlCls.setHtmlCls.exportPdb();
-    
-    const ss = me.htmlCls.setHtmlCls.exportSecondary();
-
-    console.log(ss);
+    if(type == 'pdb') {
+        const pdb = me.htmlCls.setHtmlCls.exportPdb();
+        console.log(pdb);
+    }
+    else {
+        const ss = me.htmlCls.setHtmlCls.exportSecondary();
+        console.log(ss);
+    }
   } catch (err) {
     console.log(err);
   }
