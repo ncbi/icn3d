@@ -67,7 +67,6 @@ class LoadScript {
         if(!bStrict) ic.reinitAfterLoad();
 
         //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
-
         await this.execCommandsBase(start, end, steps);
     }
 
@@ -86,7 +85,7 @@ class LoadScript {
       let thisClass = this;
       let i;
 
-      for(i=start; i <= end; ++i) {      
+      for(i=start; i <= end; ++i) {
           let bFinalStep =(i === steps - 1) ? true : false;
 
           if(!ic.commands[i].trim()) continue;
@@ -238,7 +237,6 @@ class LoadScript {
             let nameArray = this.getNameArray(command);
 
             me.cfg.aligntool = 'vast';
-
             await ic.realignParserCls.realignOnStructAlign();
           }
           else if(command.indexOf('realign on tmalign msa') == 0) {
@@ -842,7 +840,6 @@ class LoadScript {
           //ic.selectionCls.resetAll();
 
           //ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
-
           await this.execCommandsBase(currentNumber, currentNumber, ic.STATENUMBER);
 
           let cmdStrOri = ic.commands[currentNumber];

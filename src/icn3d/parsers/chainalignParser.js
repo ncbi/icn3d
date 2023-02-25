@@ -298,9 +298,9 @@ class ChainalignParser {
             //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
             //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
         }
-
+        
         // set up the view of sequence alignment for each pair
-        for(let mmdbidpair in mmdbidpairFinalHash) {           
+        for(let mmdbidpair in mmdbidpairFinalHash) {                 
             if(ic.q_rotation !== undefined) {
                 let chainidArrayTmp = mmdbidpairFinalHash[mmdbidpair].split(','); // chainid_chainid_index
                 // switch these two chains

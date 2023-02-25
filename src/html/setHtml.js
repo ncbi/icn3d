@@ -911,22 +911,30 @@ class SetHtml {
     }
 
     exportPdb() { let me = this.icn3dui, ic = me.icn3d;
-       let pdbStr = '';
-///       pdbStr += ic.saveFileCls.getPDBHeader();
-       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-       pdbStr += ic.saveFileCls.getAtomPDB(atoms);
+        let pdbStr = '';
+    ///       pdbStr += ic.saveFileCls.getPDBHeader();
+        let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+        pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
-       ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
+        if(!me.bNode) {
+            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
+        }
+        
+        return pdbStr;
     }
 
     exportSecondary() { let me = this.icn3dui, ic = me.icn3d;
-       let secondaryStr = '';
-       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-       secondaryStr += ic.saveFileCls.getSecondary(atoms);
+        let secondaryStr = '';
+        let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+        secondaryStr += ic.saveFileCls.getSecondary(atoms);
 
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
-       ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
+        if(!me.bNode) {
+            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
+        }
+        
+        return secondaryStr;
     }
 }
 

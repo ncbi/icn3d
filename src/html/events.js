@@ -58,13 +58,6 @@ class Events {
 
         me.cfg.aligntool = alignType;
 
-        if(bMsa) {
-            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
-        }
-        else {
-            await ic.realignParserCls.realignOnStructAlign();
-        }
-
         let alignStr = (alignType == 'vast') ? 'structure align' : 'tmalign';
         alignStr += (bMsa) ? ' msa' : '';
 
@@ -73,6 +66,13 @@ class Events {
         }
         else {
             thisClass.setLogCmd("realign on " + alignStr, true);
+        }
+
+        if(bMsa) {
+            await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
+        }
+        else {
+            await ic.realignParserCls.realignOnStructAlign();
         }
     }
 
@@ -2222,7 +2222,7 @@ class Events {
                   ic.bReplay = 0;
                   $("#" + me.pre + "replay").hide();
              }
-             else if(ic.commands.length > 0 && ic.commands[ic.CURRENTNUMBER]) {
+             else if(ic.commands.length > 0 && ic.commands[ic.CURRENTNUMBER]) {         
                   await ic.loadScriptCls.execCommandsBase(ic.CURRENTNUMBER, ic.CURRENTNUMBER, ic.STATENUMBER);
                   let pos = ic.commands[ic.CURRENTNUMBER].indexOf('|||');
                   let cmdStrOri =(pos != -1) ? ic.commands[ic.CURRENTNUMBER].substr(0, pos) : ic.commands[ic.CURRENTNUMBER];

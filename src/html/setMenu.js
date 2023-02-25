@@ -826,7 +826,8 @@ class SetMenu {
         html += this.getLink('mn2_show_selected', 'View Selection', 1, 1);
         html += this.getLink('mn2_hide_selected', 'Hide Selection', 1, 1);
         html += this.getLink('mn2_selectedcenter', 'Zoom in Selection', 1, 1);
-        html += this.getLink('mn6_center', 'Center Selection', undefined, 1);
+        //html += this.getLink('mn6_center', 'Center Selection', undefined, 1);
+        html += this.getLink('mn6_center', 'Center Selection', 1, 1);
         html += this.getLink('mn2_fullstru', 'View Full Structure');
         html += this.getLinkWrapper('mn2_alternate', 'Alternate(Key "a")', 'mn2_alternateWrap', undefined, 1)
 
@@ -1839,7 +1840,7 @@ class SetMenu {
         html += this.getMenuUrl('dev_addclass', me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass", "Add New Classes", undefined, 2);
         html += this.getMenuUrl('dev_modfunc', me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction", "Modify Functions", undefined, 2);
         html += this.getMenuUrl('dev_restful', me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi", "RESTful APIs", undefined, 2);
-        html += this.getMenuUrl('dev_contributor', me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors", "Codeathon Contributors", undefined, 2);
+        html += this.getMenuUrl('dev_contributor', me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors", "iCn3D Contributors", undefined, 2);
         html += "</ul>";
         html += "</li>";
 
