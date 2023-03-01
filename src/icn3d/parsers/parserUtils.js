@@ -603,20 +603,18 @@ class ParserUtils {
         }
       }
 
-//      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+      //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
       if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
-          if(Object.keys(ic.structures).length == 1) {
-              let id = Object.keys(ic.structures)[0];
-              me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
-          }
-          // final step resolved ic.deferred
-          await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-          //ic.loadScriptCls.loadScript(me.cfg.command);
+        this.processCommand();
+        // final step resolved ic.deferred
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        //ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
-          /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
-          /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
+        /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
       }
+
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
@@ -665,6 +663,13 @@ class ParserUtils {
       }, 0);
     }
 
+    processCommand() { let ic = this.icn3d, me = ic.icn3dui;
+        if(Object.keys(ic.structures).length == 1) {
+            let id = Object.keys(ic.structures)[0];
+            me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
+        }
+    }
+
     getMassCenter(psum, cnt) { let ic = this.icn3d, me = ic.icn3dui;
         return psum.multiplyScalar(1.0 / cnt);
     }
@@ -692,18 +697,20 @@ class ParserUtils {
 
     async checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
         if(!ic.bCheckMemProtein) {
+            ic.bCheckMemProtein = true;
+
             let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
             await ic.ParserUtilsCls.checkMemProtein(afid);
-            ic.bCheckMemProtein = true;
-        }
+        //}
 
-        // rotate for links from Membranome
-        if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
-            let axis = new THREE.Vector3(1,0,0);
-            let angle = -90 / 180.0 * Math.PI;
+            // rotate for links from Membranome
+            if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+                let axis = new THREE.Vector3(1,0,0);
+                let angle = -90 / 180.0 * Math.PI;
 
-            ic.transformCls.setRotation(axis, angle);
+                ic.transformCls.setRotation(axis, angle);
+            }
         }
     }
 
@@ -720,7 +727,7 @@ class ParserUtils {
                 // do nothing
                 /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               }
-              else if (me.cfg.afmem == 'on' || confirm(question)) {         
+              else if (me.cfg.afmem == 'on' || confirm(question)) {     
                 try {  
                     let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
                     let afMemdata = await me.getAjaxPromise(url2, 'text');
@@ -749,15 +756,15 @@ class ParserUtils {
 
                     // get the AlphaFold structure
                     for(let i in ic.atoms) {
-                    if(ic.atoms[i].structure != pdbid) {
-                        ic.hAtoms[i] = 1;
-                    }
-                    ic.dAtoms[i] = 1;
+                        if(ic.atoms[i].structure != pdbid) {
+                            ic.hAtoms[i] = 1;
+                        }
+                        ic.dAtoms[i] = 1;
                     }
 
                     // get the transmembrane from the model of Membranome
                     for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
-                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                     }
 
                     await ic.realignParserCls.realignOnSeqAlign(pdbid);

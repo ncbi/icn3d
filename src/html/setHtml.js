@@ -740,7 +740,7 @@ class SetHtml {
 
                     ic.commands = [];
                     ic.optsHistory = [];
-                    await ic.loadScriptCls.loadScript(statefile, true);
+                    //await ic.loadScriptCls.loadScript(statefile, true);
                 }
                 else {
                     if(type === 'mol2') {
@@ -757,7 +757,7 @@ class SetHtml {
                     }
                    ic.commands = [];
                    ic.optsHistory = [];
-                   await ic.loadScriptCls.loadScript(statefile, true);
+                   //await ic.loadScriptCls.loadScript(statefile, true);
                }
            }
            else { // url length > 4000
@@ -770,8 +770,11 @@ class SetHtml {
 
                ic.commands = [];
                ic.optsHistory = [];
-               await  ic.loadScriptCls.loadScript(statefile, true);
+               //await  ic.loadScriptCls.loadScript(statefile, true);
            }
+
+           await ic.loadScriptCls.loadScript(statefile, true);
+
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
        }
     }

@@ -15968,7 +15968,7 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
-           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+           (command) ? command.replace(/;/g, "\n") : '';
 
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
@@ -15984,16 +15984,14 @@ class SetHtml {
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               //statefile = decodeURIComponent(statefile);
-               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+               imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
 
                 if(type === 'pdb') {
                     await ic.pdbParserCls.loadPdbData(data);
 
                     ic.commands = [];
                     ic.optsHistory = [];
-                    await ic.loadScriptCls.loadScript(statefile, true);
+                    //await ic.loadScriptCls.loadScript(statefile, true);
                 }
                 else {
                     if(type === 'mol2') {
@@ -16010,21 +16008,22 @@ class SetHtml {
                     }
                    ic.commands = [];
                    ic.optsHistory = [];
-                   await ic.loadScriptCls.loadScript(statefile, true);
+                   //await ic.loadScriptCls.loadScript(statefile, true);
                }
            }
            else { // url length > 4000
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               //statefile = decodeURIComponent(statefile);
-               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+               imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
 
                ic.commands = [];
                ic.optsHistory = [];
-               await  ic.loadScriptCls.loadScript(statefile, true);
+               //await  ic.loadScriptCls.loadScript(statefile, true);
            }
+
+           await ic.loadScriptCls.loadScript(statefile, true);
+
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
        }
     }
@@ -16347,7 +16346,7 @@ import {
     LinearMipmapLinearFilter,
     LinearMipmapNearestFilter,
     Loader,
-    LoaderUtils,
+    THREE.LoaderUtils,
     Material,
     MathUtils,
     Matrix4,
@@ -16476,7 +16475,7 @@ class GLTFLoader extends THREE.Loader {
 
         } else {
 
-            resourcePath = LoaderUtils.extractUrlBase( url );
+            resourcePath = THREE.LoaderUtils.extractUrlBase( url );
 
         }
 
@@ -16502,7 +16501,7 @@ class GLTFLoader extends THREE.Loader {
 
         };
 
-        const loader = new FileLoader( this.manager );
+        const loader = new THREE.FileLoader( this.manager );
 
         loader.setPath( this.path );
         loader.setResponseType( 'arraybuffer' );
@@ -16598,7 +16597,7 @@ class GLTFLoader extends THREE.Loader {
 
         } else {
 
-            const magic = LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
+            const magic = THREE.LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
 
             if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
 
@@ -16617,7 +16616,7 @@ class GLTFLoader extends THREE.Loader {
 
             } else {
 
-                content = LoaderUtils.decodeText( new Uint8Array( data ) );
+                content = THREE.LoaderUtils.decodeText( new Uint8Array( data ) );
 
             }
 
@@ -17565,7 +17564,7 @@ class GLTFBinaryExtension {
         const headerView = new DataView( data, 0, BINARY_EXTENSION_HEADER_LENGTH );
 
         this.header = {
-            magic: LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
+            magic: THREE.LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
             version: headerView.getUint32( 4, true ),
             length: headerView.getUint32( 8, true )
         };
@@ -17595,7 +17594,7 @@ class GLTFBinaryExtension {
             if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
 
                 const contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
-                this.content = LoaderUtils.decodeText( contentArray );
+                this.content = THREE.LoaderUtils.decodeText( contentArray );
 
             } else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
 
@@ -18605,7 +18604,7 @@ class GLTFParser {
         this.textureLoader.setCrossOrigin( this.options.crossOrigin );
         this.textureLoader.setRequestHeader( this.options.requestHeader );
 
-        this.fileLoader = new FileLoader( this.options.manager );
+        this.fileLoader = new THREE.FileLoader( this.options.manager );
         this.fileLoader.setResponseType( 'arraybuffer' );
 
         if ( this.options.crossOrigin === 'use-credentials' ) {
@@ -18978,7 +18977,7 @@ class GLTFParser {
 
         return new Promise( function ( resolve, reject ) {
 
-            loader.load( LoaderUtils.resolveURL( bufferDef.uri, options.path ), resolve, undefined, function () {
+            loader.load( THREE.LoaderUtils.resolveURL( bufferDef.uri, options.path ), resolve, undefined, function () {
 
                 reject( new Error( 'THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".' ) );
 
@@ -19269,7 +19268,7 @@ class GLTFParser {
 
                 }
 
-                loader.load( LoaderUtils.resolveURL( sourceURI, options.path ), onLoad, undefined, reject );
+                loader.load( THREE.LoaderUtils.resolveURL( sourceURI, options.path ), onLoad, undefined, reject );
 
             } );
 
@@ -21620,6 +21619,924 @@ class ControllerGestures extends THREE.EventDispatcher{
     }
 }
 
+// from https://github.com/NikLever/Learn-WebXR/tree/master/libs, by Nik Lever
+
+/*An element is defined by 
+type: text | button | image | shape
+hover: hex
+active: hex
+position: x, y, left, right, top, bottom
+width: pixels, will inherit from body if missing
+height: pixels, will inherit from body if missing
+overflow: fit | scroll | hidden
+textAlign: center | left | right
+fontSize: pixels
+fontColor: hex
+fontFamily: string
+padding: pixels
+backgroundColor: hex
+borderRadius: pixels
+clipPath: svg path
+border: width color style
+*/
+class CanvasUI{
+	constructor(content, config){
+        const defaultconfig = {
+            panelSize: { width: 1, height: 1},
+            width: 512,
+            height: 512,
+            opacity: 0.7,
+            body:{
+                fontFamily:'Arial', 
+                fontSize:30, 
+                padding:20, 
+                backgroundColor: '#000', 
+                fontColor:'#fff', 
+                borderRadius: 6
+            }
+        };
+		this.config = (config===undefined) ? defaultconfig : config;
+        
+        if (this.config.width === undefined) this.config.width = 512;
+        if (this.config.height === undefined) this.config.height = 512;
+        if (this.config.body === undefined) this.config.body = {fontFamily:'Arial', size:30, padding:20, backgroundColor: '#000', fontColor:'#fff', borderRadius: 6};
+        
+        const body = this.config.body;
+        if (body.borderRadius === undefined) body.borderRadius = 6;
+        if (body.fontFamily === undefined) body.fontFamily = "Arial";
+        if (body.padding === undefined) body.padding = 20;
+        if (body.fontSize === undefined) body.fontSize = 30;
+        if (body.backgroundColor === undefined) body.backgroundColor = '#000';
+        if (body.fontColor === undefined) body.fontColor = '#fff';
+        
+        Object.entries( this.config ).forEach( ( [ name, value]) => {
+            if ( typeof(value) === 'object' && name !== 'panelSize' && !(value instanceof THREE.WebGLRenderer) && !(value instanceof THREE.Scene) ){
+                const pos = (value.position!==undefined) ? value.position : { x: 0, y: 0 };
+                
+                if (pos.left !== undefined && pos.x === undefined ) pos.x = pos.left;
+                if (pos.top !== undefined && pos.y === undefined ) pos.y = pos.top;
+
+                const width = (value.width!==undefined) ? value.width : this.config.width;
+                const height = (value.height!==undefined) ? value.height : this.config.height;
+
+                if (pos.right !== undefined && pos.x === undefined ) pos.x = this.config.width - pos.right - width;
+                if (pos.bottom !== undefined && pos.y === undefined ) pos.y = this.config.height - pos.bottom - height;
+                
+                if (pos.x === undefined) pos.x = 0;
+                if (pos.y === undefined) pos.y = 0;
+                
+                value.position = pos;
+                
+                if (value.type === undefined) value.type = 'text';
+            }
+        });
+        
+        
+        const canvas = this.createOffscreenCanvas(this.config.width, this.config.height);
+        this.context = canvas.getContext('2d');
+        this.context.save();
+        
+        const opacity = ( this.config.opacity !== undefined ) ? this.config.opacity : 0.7;
+		
+        const planeMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity });
+        this.panelSize = ( this.config.panelSize !== undefined) ? this.config.panelSize : { width:1, height:1 };
+		const planeGeometry = new THREE.PlaneGeometry(this.panelSize.width, this.panelSize.height);
+		
+		this.mesh = new THREE.Mesh(planeGeometry, planeMaterial);
+        
+        this.texture = new THREE.CanvasTexture(canvas);
+        this.mesh.material.map = this.texture;
+        
+        this.scene = this.config.scene;
+        
+        const inputs = Object.values( this.config ).filter( ( value )=>{
+            return  value.type === "input-text";
+        });
+        if ( inputs.length > 0 ){
+            this.keyboard = new CanvasKeyboard(this.panelSize.width, this.config.renderer );
+            const mesh = this.keyboard.mesh;
+            mesh.position.set( 0, -0.3, 0.2 );
+            this.mesh.add( this.keyboard.mesh );
+        }
+        
+        if (content === undefined){
+            this.content = { body: "" };
+            this.config.body.type = "text";
+        }else {
+            this.content = content;
+            const btns = Object.values(config).filter( (value) => { return value.type === "button" || value.overflow === "scroll" || value.type === "input-text" });
+            if (btns.length>0){
+                if ( config === undefined || config.renderer === undefined ){
+                    console.warn("CanvasUI: button, scroll or input-text in the config but no renderer");
+                }else {
+                    this.renderer = config.renderer;
+                    this.initControllers();
+                }
+            }
+        }
+        
+        this.selectedElements = [ undefined, undefined ];
+        this.selectPressed = [ false, false ];
+        this.scrollData = [ undefined, undefined ];
+        this.intersects = [ undefined, undefined ];
+        
+        this.needsUpdate = true;
+        
+        this.update();
+	}
+	
+    getIntersectY( index ){
+        const height = this.config.height || 512;
+        const intersect = this.intersects[index];
+        if (intersect === undefined ) return 0;
+        if ( intersect.uv === undefined ) return 0;
+        return (1 - intersect.uv.y) * height;
+    }
+    
+    initControllers(){
+        this.vec3 = new THREE.Vector3();
+        this.mat4 = new THREE.Matrix4();
+        this.raycaster = new THREE.Raycaster();
+        
+        const self = this;
+        
+        function onSelect( event ) {     
+            const index = (event.target === self.controller) ? 0 : 1;
+            const elm = self.selectedElements[index];
+            if ( elm !== undefined ){
+                if ( elm.type == "button"){
+                    self.select( index );
+                }else if ( elm.type == "input-text"){
+                    if ( self.keyboard ){
+                        if ( self.keyboard.visible ){
+                            self.keyboard.linkedUI = undefined;
+                            self.keyboard.linkedText = undefined;
+                            self.keyboard.linkedElement = undefined;
+                            self.keyboard.visible = false;
+                        }else {
+                            self.keyboard.linkedUI = self;
+                            let name;
+                            Object.entries( self.config ).forEach( ([prop, value]) => {
+                                if ( value == elm ) name = prop;
+                            });
+                            const y = (0.5-((elm.position.y + elm.height + self.config.body.padding )/self.config.height)) * self.panelSize.height;
+                            const h = Math.max( self.panelSize.width, self.panelSize.height )/2;
+                            self.keyboard.position.set( 0, -h/1.5 - y, 0.1 );
+                            self.keyboard.linkedText = self.content[ name ];
+                            self.keyboard.linkedName = name;
+                            self.keyboard.linkedElement = elm;
+                            self.keyboard.visible = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        function onSelectStart( event ){
+            const index = (event.target === self.controller) ? 0 : 1;
+            self.selectPressed[index] = true;
+            if ( self.selectedElements[index] !== undefined && self.selectedElements[index].overflow == "scroll"){
+                const elm = self.selectedElements[index];
+                self.scrollData[index] = { scrollY: elm.scrollY, rayY: self.getIntersectY(index) };
+            }
+        }
+        
+        function onSelectEnd( event ){
+            const index = (event.target === self.controller) ? 0 : 1;
+            self.selectPressed[index] = false;
+            if ( self.selectedElements[index] !== undefined && self.selectedElements[index].overflow == "scroll"){
+                self.scrollData[index] = undefined;
+            }
+        }
+        
+        this.controller = this.renderer.xr.getController( 0 );
+        this.controller.addEventListener( 'select', onSelect );
+        this.controller.addEventListener( 'selectstart', onSelectStart );
+        this.controller.addEventListener( 'selectend', onSelectEnd );
+        this.controller1 = this.renderer.xr.getController( 1 );
+        this.controller1.addEventListener( 'select', onSelect );
+        this.controller1.addEventListener( 'selectstart', onSelectStart );
+        this.controller1.addEventListener( 'selectend', onSelectEnd );
+          
+        if ( this.scene ){
+            const radius = 0.015;
+            const geometry = new THREE.IcosahedronBufferGeometry( radius );
+            const material = new THREE.MeshBasicMaterial( { color: 0x0000aa } );
+
+            const mesh1 = new THREE.Mesh( geometry, material );
+            mesh1.visible = false;
+            this.scene.add( mesh1 );
+            const mesh2 = new THREE.Mesh( geometry, material );
+            mesh2.visible = false;
+            this.scene.add( mesh2 );
+
+            this.intersectMesh = [ mesh1, mesh2 ];
+        }
+        
+    }
+    
+    setClip( elm ){
+        const context = this.context;
+        
+        context.restore();
+        context.save();
+        
+        if (elm.clipPath !== undefined){
+            const path = new Path2D( elm.clipPath );
+            context.clip( path );
+        }else {
+            const pos = (elm.position!==undefined) ? elm.position : { x:0, y: 0 };
+            const borderRadius = elm.borderRadius || 0;
+            const width = elm.width || this.config.width;
+            const height = elm.height || this.config.height;
+           
+            context.beginPath();
+            
+            if (borderRadius !== 0){
+                const angle = Math.PI/2;
+                //start top left
+                context.moveTo(pos.x + borderRadius, pos.y );
+                context.arc( pos.x + borderRadius, pos.y + borderRadius, borderRadius, angle, angle*2, true);
+                context.lineTo( pos.x, pos.y + height - borderRadius );
+                context.arc( pos.x + borderRadius, pos.y + height - borderRadius, borderRadius, 0, angle, true);
+                context.lineTo( pos.x + width - borderRadius, pos.y + height);
+                context.arc( pos.x + width - borderRadius, pos.y + height - borderRadius, borderRadius, angle*3, angle*4, true);
+                context.lineTo( pos.x + width, pos.y + borderRadius );
+                context.arc( pos.x + width - borderRadius, pos.y + borderRadius, borderRadius, angle*2, angle*3, true);
+                context.closePath();
+                context.clip();
+            }else {
+                context.rect( pos.x, pos.y, width, height );
+                context.clip();
+            }
+            
+            
+        }
+        
+    }
+
+    setPosition(x, y, z){
+        if (this.mesh === undefined) return;
+        this.mesh.position.set(x, y, z);
+    }
+
+    setRotation(x, y, z){
+        if (this.mesh === undefined) return;
+        this.mesh.rotation.set(x, y, z);
+    }
+
+    updateElement( name, content ){
+        let elm = this.content[name];
+        
+        if (elm===undefined){
+            console.warn( `CanvasGUI.updateElement: No ${name} found`);
+            return;
+        }
+        
+        if (typeof elm === 'object'){
+            elm.content = content;
+        }else {
+            elm = content;
+        }
+        
+        this.content[name] = elm;
+        
+        this.needsUpdate = true;
+    }
+    
+    get panel(){
+        return this.mesh;
+    }
+
+    getElementAtLocation( x, y ){
+        const self = this;
+        const elms = Object.entries( this.config ).filter( ([ name, elm ]) => {
+            if (typeof elm === 'object' && name !== 'panelSize' && name !== 'body' && !(elm instanceof THREE.WebGLRenderer) && !(elm instanceof THREE.Scene)){
+                const pos = elm.position;
+                const width = (elm.width !== undefined) ? elm.width : self.config.width;
+                const height = (elm.height !== undefined) ? elm.height : self.config.height;
+                return (x>=pos.x && x<(pos.x+width) && y>=pos.y && y<(pos.y + height));
+            }
+        });
+        const elm = (elms.length==0) ? null : this.config[elms[0][0]];
+        //console.log(`selected = ${elm}`);
+        return elm;
+    }
+
+    updateConfig( name, property, value ){  
+        let elm = this.config[name];
+        
+        if (elm===undefined){
+            console.warn( `CanvasUI.updateconfig: No ${name} found`);
+            return;
+        }
+        
+        elm[property] = value;
+        
+        this.needsUpdate = true;
+    }
+
+    hover( index = 0, uv ){
+        if (uv === undefined){
+            if (this.selectedElements[index] !== undefined){
+                this.selectedElements[index] = undefined;
+                this.needsUpdate = true;
+            }
+        }else {
+            const x = uv.x * (this.config.width || 512);
+            const y = (1 - uv.y) * (this.config.height || 512);
+            //console.log( `hover uv:${uv.x.toFixed(2)},${uv.y.toFixed(2)}>>texturePos:${x.toFixed(0)}, ${y.toFixed(0)}`);
+            const elm = this.getElementAtLocation( x, y );
+            if (elm===null){
+                if ( this.selectedElements[index] !== undefined ){
+                    this.selectedElements[index] = undefined;
+                    this.needsUpdate = true;
+                }
+            }else if( this.selectedElements[index] !== elm ){
+                this.selectedElements[index] = elm;
+                this.needsUpdate = true;
+            }
+        }
+         
+    }
+    
+    select( index = 0 ){
+        if (this.selectedElements[index] !== undefined){
+            const elm = this.selectedElements[index];
+            if (elm.onSelect) elm.onSelect();
+            if (elm.type === 'input-text'){
+                this.keyboard.mesh.visible = true;
+            }else {
+                this.selectedElements[index] = undefined;
+            }
+        }
+    }
+    
+    scroll( index ){
+        if ( this.selectedElements[index] === undefined ){
+            if (this.intersectMesh) this.intersectMesh[index].visible = false;
+            return;
+        } 
+        if ( this.selectedElements[index].overflow !== 'scroll') return;
+        const elm = this.selectedElements[index];
+        if ( this.selectPressed[index] ){ 
+            const scrollData = this.scrollData[index];
+            if (scrollData !== undefined){
+                if (this.intersectMesh){
+                    this.intersectMesh[index].visible = true;
+                    this.intersectMesh[index].position.copy( this.intersects[index].point );
+                }
+                const rayY = this.getIntersectY( index );
+                const offset = rayY - scrollData.rayY;
+                elm.scrollY = Math.min( Math.max( elm.minScrollY, scrollData.scrollY + offset), 0 );
+                this.needsUpdate = true;
+            }
+        }else {
+            if (this.intersectMesh) this.intersectMesh[index].visible = false;
+        }
+    }
+        
+    handleController( controller, index ){
+        this.mat4.identity().extractRotation( controller.matrixWorld );
+
+        this.raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+        this.raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( this.mat4 );
+
+        const intersects = this.raycaster.intersectObject( this.mesh );
+
+        if (intersects.length>0){
+            this.hover( index, intersects[0].uv );
+            this.intersects[index] = intersects[0];
+            this.scroll( index );
+        }else {
+            this.hover( index );
+            this.intersects[index] = undefined;
+            this.scroll( index );
+        }
+    }
+    
+	update(){    
+        if (this.mesh===undefined) return;
+            
+        if ( this.controller ) this.handleController( this.controller, 0 );
+        if ( this.controller1 ) this.handleController( this.controller1, 1 );
+
+        if ( this.keyboard && this.keyboard.visible ) this.keyboard.update();
+        
+        if ( !this.needsUpdate ) return;
+		
+		let context = this.context;
+		
+		context.clearRect(0, 0, this.config.width, this.config.height);
+        
+        const bgColor = ( this.config.body.backgroundColor ) ? this.config.body.backgroundColor : "#000";
+        ( this.config.body.fontFamily ) ? this.config.body.fontFamily : "Arial";
+        const fontColor = ( this.config.body.fontColor ) ? this.config.body.fontColor : "#fff";
+        ( this.config.body.fontSize ) ? this.config.body.fontSize : 30;
+        this.setClip(this.config.body);
+        context.fillStyle = bgColor;
+        context.fillRect( 0, 0, this.config.width, this.config.height);
+        
+        const self = this;
+        
+        Object.entries(this.content).forEach( ([name, content]) => {
+            const config = (self.config[name]!==undefined) ? self.config[name] : self.config.body;
+            const display = (config.display !== undefined) ? config.display : 'block';
+            
+            if (display !== 'none'){
+                const pos = (config.position!==undefined) ? config.position : { x: 0, y: 0 };                
+                const width = (config.width!==undefined) ? config.width : self.config.width;
+                const height = (config.height!==undefined) ? config.height : self.config.height;
+
+                if (config.type == "button" && !content.toLowerCase().startsWith("<path>")){
+                    if ( config.borderRadius === undefined) config.borderRadius = 6;
+                    if ( config.textAlign === undefined ) config.textAlign = "center";
+                }
+                
+                self.setClip( config );
+                
+                const svgPath = content.toLowerCase().startsWith("<path>");
+                const hover = ((self.selectedElements[0] !== undefined && this.selectedElements[0] === config)||(self.selectedElements[1] !== undefined && this.selectedElements[1] === config));
+                
+                if ( config.backgroundColor !== undefined){
+                    if (hover && config.type== "button" && config.hover !== undefined){
+                        context.fillStyle = config.hover;
+                    }else {
+                        context.fillStyle = config.backgroundColor;
+                    }
+                    context.fillRect( pos.x, pos.y, width, height );
+                }
+
+                if (config.type == "text" || config.type == "button" || config.type == "input-text"){
+                    let stroke = false;
+                    if (hover){
+                        if (!svgPath && config.type == "button"){
+                            context.fillStyle = (config.fontColor !== undefined) ? config.fontColor : fontColor;
+                        }else {
+                            context.fillStyle = (config.hover !== undefined) ? config.hover : ( config.fontColor !== undefined) ? config.fontColor : fontColor;
+                        }
+                        stroke = (config.hover === undefined);
+                    }else {
+                        context.fillStyle = (config.fontColor !== undefined) ? config.fontColor : fontColor;
+                    }
+                    
+                    if ( svgPath ){
+                        const code = content.toUpperCase().substring(6, content.length - 7);
+                        context.save();
+                        context.translate( pos.x, pos.y );
+                        const path = new Path2D(code);
+                        context.fill(path);
+                        context.restore();
+                    }else {
+                        self.wrapText( name, content );
+                    }
+
+                    if (stroke){
+                        context.beginPath();
+                        context.strokeStyle = "#fff";
+                        context.lineWidth = 2;
+                        context.rect( pos.x, pos.y, width, height);
+                        context.stroke();
+                    }
+                }else if (config.type == "img"){
+                    if (config.img === undefined){
+                        this.loadImage(content).then(img =>{
+                            console.log(`w: ${img.width} | h: ${img.height}`);
+                            config.img = img;
+                            self.needsUpdate = true;
+                            self.update();           
+                        }).catch(err => console.error(err));
+                    }else {
+                        const aspect = config.img.width/config.img.height;
+                        const h = width/aspect;
+                        context.drawImage( config.img, pos.x, pos.y, width, h );           
+                    }
+                }
+            }
+        });
+		
+        this.needsUpdate = false;
+		this.texture.needsUpdate = true;
+	}
+	
+    loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new THREE.Image();
+        img.addEventListener("load", () => resolve(img));
+        img.addEventListener("error", err => reject(err));
+        img.src = src;
+      });
+    }
+
+	createOffscreenCanvas(w, h) {
+		const canvas = document.createElement('canvas');
+		canvas.width = w;
+		canvas.height = h;
+		return canvas;
+	}
+	
+    fillRoundedRect( x, y, w, h, radius ){
+        const ctx = this.context;
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + w - radius, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+        ctx.lineTo(x + w, y + h - radius);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        ctx.lineTo(x + radius, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
+    }
+    
+    lookAt( pos ){
+        if ( this.mesh === undefined ) return;
+        if ( !(pos instanceof Vector3) ){
+            console.error( 'CanvasUI lookAt called parameter not a THREE.Vector3');
+            return;
+        }
+        this.mesh.lookAt( pos );
+    }
+    
+    get visible(){
+        if (this.mesh === undefined ) return false;
+        return this.mesh.visible;
+    }
+    
+    set visible(value){
+        if (this.mesh){
+            this.mesh.visible = value;
+        }
+    }
+    
+    get position(){
+        if (this.mesh === undefined) return undefined;
+        return this.mesh.position;
+    }
+    
+    set position(value){
+        if (this.mesh === undefined) return;
+        if (!(value instanceof Vector3) ){
+            console.error( 'CanvasUI trying to set the mesh position using a parameter that is not a THREE.Vector3');
+            return;
+        }
+        this.mesh.position.copy( value );
+    }
+    
+    get quaternion(){
+        if (this.mesh === undefined) return undefined;
+        return this.mesh.quaternion;
+    }
+    
+    set quaternion(value){
+        if (this.mesh === undefined) return;
+        if (!(value instanceof QUaternion) ){
+            console.error( 'CanvasUI trying to set the mesh quaternion using a parameter that is not a THREE.Quaternion');
+            return;
+        }
+        this.mesh.quaternion.copy( value );
+    }
+    
+	wrapText(name, txt){
+        //console.log( `wrapText: ${name}:${txt}`);
+		const words = txt.split(' ');
+        let line = '';
+		const lines = [];
+        const config = (this.config[name]!==undefined) ? this.config[name] : this.config.body;
+        const width = (config.width!==undefined) ? config.width : this.config.width;
+        const height = (config.height!==undefined) ? config.height : this.config.height;
+        const pos = (config.position!==undefined) ? config.position : { x:0, y:0 };
+        const padding = (config.padding!==undefined) ? config.padding : (this.config.body.padding!==undefined) ? this.config.body.padding : 10;
+        const paddingTop = (config.paddingTop!==undefined) ? config.paddingTop : padding;
+        const paddingLeft = (config.paddingLeft!==undefined) ? config.paddingLeft : padding;
+        const paddingBottom = (config.paddingBottom!==undefined) ? config.paddingBottom : padding;
+        const paddingRight = (config.paddingRight!==undefined) ? config.paddingRight : padding;
+        const rect = { x:pos.x+paddingLeft, y:pos.y+paddingTop, width: width - paddingLeft - paddingRight, height: height - paddingTop - paddingBottom };
+        const textAlign = (config.textAlign !== undefined) ? config.textAlign : (this.config.body.textAlign !== undefined) ? this.config.body.textAlign : "left";
+        const fontSize = (config.fontSize !== undefined ) ? config.fontSize : ( this.config.body.fontSize !== undefined) ? this.config.body.fontSize : 30;
+        const fontFamily = (config.fontFamily!==undefined) ? config.fontFamily : (this.config.body.fontFamily!==undefined) ? this.config.body.fontFamily : 'Arial';
+        const leading = (config.leading !== undefined) ? config.leading : (this.config.body.leading !== undefined) ? this.config.body.leading : 8;
+		const lineHeight = fontSize + leading;
+        
+        const context = this.context;
+        
+        context.textAlign = textAlign;
+        
+		context.font = `${fontSize}px '${fontFamily}'`;
+		
+        words.forEach( function(word){
+			let testLine = (words.length>1) ? `${line}${word} ` : word;
+        	let metrics = context.measureText(testLine);
+        	if (metrics.width > rect.width && word.length>1) {
+                if (line.length==0 && metrics.width > rect.width){
+                    //word too long
+                    while(metrics.width > rect.width){
+                        let count = 0;
+                        do{
+                            count++;
+                            testLine = word.substr(0, count);
+                            metrics = context.measureText(testLine);
+                        }while(metrics.width < rect.width && count < (word.length-1));
+                        count--;
+                        testLine = word.substr(0, count);
+                        lines.push( testLine );
+                        word = word.substr(count);
+                        if (count<=1) break;
+                        metrics = context.measureText(word);
+                    }
+                    if (word != "") lines.push(word);
+                }else {
+				    lines.push(line);
+				    line = `${word} `;
+                }
+			}else {
+				line = testLine;
+			}
+		});
+		
+		if (line != '') lines.push(line);
+        
+        const textHeight = lines.length * lineHeight;
+        let scrollY = 0;
+        
+        if (textHeight>rect.height && config.overflow === 'scroll'){
+            //Show a scroll bar
+            if ( config.scrollY === undefined ) config.scrollY = 0;
+            const fontColor = ( config.fontColor !== undefined ) ? config.fontColor : this.config.body.fontColor;
+            context.fillStyle = "#aaa";
+            this.fillRoundedRect( pos.x + width - 12, pos.y, 12, height, 6 );
+            context.fillStyle = "#666";
+            const scale = rect.height / textHeight;
+            const thumbHeight = scale * height;
+            const thumbY = -config.scrollY * scale;
+            this.fillRoundedRect( pos.x + width - 12, pos.y + thumbY, 12, thumbHeight, 6);
+            context.fillStyle = fontColor;
+            scrollY = config.scrollY;
+            config.minScrollY = rect.height - textHeight;
+        }
+		
+		let y = scrollY + rect.y + fontSize/2;
+		let x;
+        
+        switch( textAlign ){
+            case "center":
+                x = rect.x + rect.width/2;
+                break;
+            case "right":
+                x = rect.x + rect.width;
+                break;
+            default:
+                x = rect.x;
+                break;
+        }
+        
+		lines.forEach( (line) => {
+            if ((y + lineHeight) > 0) context.fillText(line, x, y);
+			y += lineHeight;
+		});
+	}
+}
+
+// from https://github.com/NikLever/Learn-WebXR/tree/master/libs, by Nik Lever
+
+class CanvasKeyboard{
+    constructor( width, renderer, lang = "EN" ){
+        const config = this.getConfig( lang );
+        config.panelSize = { width, height: width * 0.5 };
+        config.height = 256;
+        config.body = { backgroundColor: "#555" };
+        config.renderer = renderer;
+        const content = this.getContent( lang );
+        this.keyboard = new CanvasUI( content, config );
+        this.keyboard.mesh.visible = false;
+        this.shift = false;
+    }
+    
+    get mesh(){
+        return this.keyboard.mesh;
+    }
+    
+    getConfig( lang ){
+        //EN
+        //keys
+        //qwertyuiop - 10 square - btn0-btn9
+        //asdfghjkl@ - 10 square buttons - btn10-btn19
+        //^zxcvbnm< - 1.5 shift,7 square,1.5 backspace - btn20-btn28
+        //[?123],space.[Enter] - 2,1,4,1,2 - btn30-btn34
+        //keys shifted
+        //QWERTYUIOP - 10 square 
+        //ASDFGHJKL@ - 10 square buttons
+        //^ZXCVBNM< - 1.5 shift,7 square,1.5 backspace
+        //[?123],space.[Enter] - 2,1,4,1,2
+        //numbers
+        //1234567890 - 10 square
+        //@#%&*/-+() - 10 sq
+        //^?!"'\:;< - 1.5 shift,7 square,1.5 backspace
+        //[ABC],space.[Enter] - 2,1,4,1,2
+        //numbers shifted
+        //1234567890 - 10 square
+        //€£$^=|{}[] - 10 sq
+        //^<>_`~:;< - 1.5 shift,7 square,1.5 backspace
+        //[ABC],space.[Enter] - 2,1,4,1,2
+        const config = {};
+        let padding = 10;
+        const paddingTop = 20;
+        const width = ((512 - 2 * padding) / 10) - padding;
+        const height = (( 256 - 2 * padding) / 4) - padding;
+        const hover = "#333";
+        const backgroundColor = "#000";
+        //Top row
+        let y = padding;
+        let x = padding;
+        for (let i=0; i<10; i++){
+            const btn = { type: "button", position: { x, y }, width, height, padding, paddingTop, backgroundColor, borderRadius:6, hover, onSelect: this.onSelect.bind( this, i ) };
+            config[`btn${i}`] = btn;
+            x += (width + padding);
+        }
+        //2nd row
+        y += (height + padding);
+        x = padding;
+        for (let i=0; i<10; i++){
+            const btn = { type: "button", position: { x, y }, width, height, padding, paddingTop, backgroundColor, borderRadius:6, hover, onSelect: this.onSelect.bind( this, i + 10 ) };
+            config[`btn${i+10}`] = btn;
+            x += (width + padding);
+        }
+        //3rd row
+        y += (height + padding);
+        x = padding;
+        for (let i=0; i<9; i++){
+            const w = (i==0 || i==8) ? (width * 1.5 + padding * 0.5) : width;
+            const btn = { type: "button", position: { x, y }, width: w, height, padding, paddingTop, backgroundColor, borderRadius:6, hover, onSelect: this.onSelect.bind( this, i + 20 ) };
+            config[`btn${i+20}`] = btn;
+            x += ( w + padding );
+        }
+        //4rd row
+        y += (height + padding);
+        x = padding;
+        for (let i=0; i<5; i++){
+            const w = (i==0 || i==4) ? (width * 2 + padding) : (i==2) ? (width * 4 + 3 * padding) : width;
+            const btn = { type: "button", position: { x, y }, width: w, height, padding, paddingTop, backgroundColor, borderRadius:6, hover, onSelect: this.onSelect.bind( this, i + 30 ) };
+            if (i==0) btn.fontSize = 20;
+            config[`btn${i+30}`] = btn;
+            x += ( w + padding );
+        }
+        return config;
+    }
+    
+    getContent( lang, layoutIndex=0 ){
+        let content = {};
+        let keys;
+        
+        this.language = lang;
+        this.keyboardIndex = layoutIndex;
+        
+        switch(layoutIndex){
+            case 0:
+                //EN
+                //keys
+                //qwertyuiop - 10 square - btn0-btn9
+                //asdfghjkl@ - 10 square buttons - btn10-btn19
+                //^zxcvbnm< - 1.5 shift,7 square,1.5 backspace - btn20-btn28
+                //[?123],space.[Enter] - 1.5,1,4,1,1.5 - btn30-btn34
+                keys = [ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 
+                         'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '@',
+                         '⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '⇦', '',
+                         '?123', ',', '   ', '.', '↲'];
+                for(let i=0; i<keys.length; i++){
+                    const key = keys[i];
+                    if (key!=='') content[`btn${i}`] = key;
+                }
+                break;
+            case 1:
+                //keys shifted
+                //QWERTYUIOP - 10 square 
+                //ASDFGHJKL@ - 10 square buttons
+                //^ZXCVBNM< - 1.5 shift,7 square,1.5 backspace
+                //[?123],space.[Enter] - 1.5,1,4,1,1.5
+                keys = [ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 
+                         'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', '@',
+                         '⇧', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '⇦', '',
+                         '?123', ',', '   ', '.', '↲'];
+                for(let i=0; i<keys.length; i++){
+                    const key = keys[i];
+                    if (key!=='') content[`btn${i}`] = key;
+                }
+                break;
+            case 2:
+                //numbers
+                //1234567890 - 10 square
+                //@#%&*/-+() - 10 sq
+                //^?!"'\:;< - 1.5 shift,7 square,1.5 backspace
+                //[ABC],space.[Enter] - 1.5,1,4,1,1.5
+                keys = [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 
+                         '@', '#', '%', '&', '*', '/', '-', '+', '(', ')',
+                         '⇧', '?', '!', '"', '\'', '\\', ':', ';', '⇦', '',
+                         'abc', ',', '   ', '.', '↲'];
+                for(let i=0; i<keys.length; i++){
+                    const key = keys[i];
+                    if (key!=='') content[`btn${i}`] = key;
+                }
+                break;
+            case 3:
+                //numbers shifted
+                //1234567890 - 10 square
+                //€£$^=|{}[] - 10 sq
+                //^<>_`~:;< - 1.5 shift,7 square,1.5 backspace
+                //[ABC],space.[Enter] - 1.5,1,5,1,1.5
+                keys = [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 
+                         '€', '£', '$', '^', '=', '|', '{', '}', '[', '}',
+                         '⇧', '<', '>', '_', '`', '~', ':', ';', '⇦', '',
+                         'abc', ',', '   ', '.', '↲'];
+                for(let i=0; i<keys.length; i++){
+                    const key = keys[i];
+                    if (key!=='') content[`btn${i}`] = key;
+                }
+                break;
+        }
+        
+        return content;
+    }
+    
+    get position(){
+        return this.keyboard.mesh.position;    
+    }
+    
+    get visible(){
+        return this.keyboard.mesh.visible;
+    }
+    
+    set visible( value ){
+        this.keyboard.mesh.visible = value;    
+    }
+    
+    setKeyboard( index ){
+        this.keyboard.content = this.getContent( this.language, index );
+        this.keyboard.needsUpdate = true;
+    }
+    
+    onSelect( index ){
+        if ( !this.visible ) return
+        
+        //console.log( `CanvasKeyboard onSelect: key index ${index}`);
+        let change = false;
+        
+        switch(index){
+            case 34://Enter
+                this.visible = false;
+                if ( this.linkedElement.onEnter ) this.linkedElement.onEnter( this.linkedText );
+                break;
+            case 32://space
+                this.linkedText += ' ';
+                change = true;
+                break;
+            case 30://switch keyboard
+                this.shift = false;
+                if (this.keyboardIndex<2){
+                    this.setKeyboard( 2 );
+                }else {
+                    this.setKeyboard( 0 );
+                }
+                this.keyboard.needsUpdate = true;
+                break;
+            case 28://backspace
+                this.linkedText = this.linkedText.substring( 0, this.linkedText.length-1 );
+                change = true;
+                break;
+            case 20://shift
+                this.shift = !this.shift;
+                if (this.keyboardIndex==0){
+                    this.setKeyboard( 1 );
+                }else if (this.keyboardIndex==1){
+                    this.setKeyboard( 0 );
+                }else if (this.keyboardIndex==2){
+                    this.setKeyboard( 3 );
+                }else if (this.keyboardIndex==3){
+                    this.setKeyboard( 2 );
+                }
+                break;
+            default:
+                const txt = this.keyboard.content[`btn${index}`];
+                this.linkedText += txt;
+                change = true;
+                if (this.keyboardIndex==1) this.setKeyboard( 0 );
+                break;
+        }
+        
+        if ( change ){
+            this.linkedUI.updateElement( this.linkedName, this.linkedText );
+            if ( this.linkedElement.onChanged) this.linkedElement.onChanged( this.linkedText );
+        }
+    }
+    
+    update(){
+        if (this.keyboard){
+            this.keyboard.update();
+        }
+    }
+}
+
 /**
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
@@ -21824,6 +22741,47 @@ class Scene {
 
         if(ic.bVr) {
 /*            
+            ic.canvasUI = this.createUI();
+            // add canvasUI
+            ic.scene.add( ic.canvasUI.mesh );
+            //ic.cam.attach( ic.canvasUI.mesh );
+
+            //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
+            // "trigger":{"button":0},      "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+            // "squeeze":{"button":1},
+            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},
+            // "A button":{"button":4}
+            // "B button":{"button":5}
+            if ( ic.renderer.xr.isPresenting ){
+                const session = ic.renderer.xr.getSession();
+                const inputSources = session.inputSources;
+                 
+                const info = [];
+                
+                inputSources.forEach( inputSource => {
+                    const gp = inputSource.gamepad;
+                    const axes = gp.axes;
+                    const buttons = gp.buttons;
+                    const mapping = gp.mapping;
+                    const useStandard = (mapping == 'xr-standard');
+                    const gamepad = { axes, buttons, mapping };
+                    const handedness = inputSource.handedness;
+                    const profiles = inputSource.profiles;
+                    let type = "";
+                    profiles.forEach( profile => {
+                        if (profile.indexOf('touchpad')!=-1) type = 'touchpad';
+                        if (profile.indexOf('thumbstick')!=-1) type = 'thumbstick';
+                    });
+                    const targetRayMode = inputSource.targetRayMode;
+                    info.push({ gamepad, handedness, profiles, targetRayMode });
+                });
+                    
+                //console.log( JSON.stringify(info) );
+                ic.canvasUI.updateElement( "info", JSON.stringify(info) );
+                ic.canvasUI.update();
+            }
+*/
+
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
             ic.workingVector = new THREE.Vector3();
@@ -21833,7 +22791,7 @@ class Scene {
             let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
             ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
             ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
-*/
+
             // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
             ic.dolly = new THREE.Object3D();
@@ -21852,14 +22810,23 @@ class Scene {
             ic.getInputSources = true; // default
 
             function onSelectStart() {
-//                this.children[0].scale.z = 10;
+/*                
+                this.children[0].scale.z = 10;
+*/                
                 this.userData.selectPressed = true;
+
+                //ic.canvasUI.mesh.position.set( 0, 1.5, -1.2 );
+                //ic.cam.attach( ic.canvasUI.mesh );
             }
     
             function onSelectEnd() {
-//                this.children[0].scale.z = 0;
-//                ic.highlightVR.visible = false;
+/*                
+                this.children[0].scale.z = 0;
+*/                
+                ic.highlightVR.visible = false;
                 this.userData.selectPressed = false;
+
+                //ic.cam.remove( ic.canvasUI.mesh );
             }
 /*
             function buildController( data ) {
@@ -21885,7 +22852,7 @@ class Scene {
             ic.controllers.forEach( (controller) => {
                 controller.addEventListener( 'selectstart', onSelectStart );
                 controller.addEventListener( 'selectend', onSelectEnd );
-/*                
+/*              
                 controller.addEventListener( 'connected', function ( event ) {
                     const mesh = buildController(event.data);
                     mesh.scale.z = 0;
@@ -21898,7 +22865,7 @@ class Scene {
                     });
                     //self.controllerGrip = null;
                 } );
-*/                
+*/              
             });         
         }      
         else if(ic.bAr) {
@@ -21974,6 +22941,47 @@ class Scene {
         }
     }
 
+    createUI() { let ic = this.icn3d; ic.icn3dui;
+        function onRibbon(){
+            ic.setOptionCls.setStyle("proteins", "ribbon");
+
+            ic.canvasUI.updateElement( "info", "ribbon" );
+        }
+        function onSphere(){
+            ic.setOptionCls.setStyle("proteins", "sphere");
+
+            ic.canvasUI.updateElement( "info", "sphere" );
+        }
+
+        const config = {
+            panelSize: { width: 2, height: 0.5 },
+            height: 128,
+            info: { type: "text", overflow: "scroll", position:{ left: 6, top: 6 }, width: 500, height: 58, backgroundColor: "#aaa", fontColor: "#000" },
+            prev: { type: "button", position:{ top: 64, left: 0 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
+            stop: { type: "button", position:{ top: 64, left: 64 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
+            next: { type: "button", position:{ top: 64, left: 128 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onSphere },
+            continue: { type: "button", position:{ top: 70, right: 10 }, width: 200, height: 52, fontColor: "#fff", backgroundColor: "#1bf", hover: "#3df", onSelect: onSphere },
+            renderer: ic.renderer
+        };
+        const content = {
+            info: "",
+            prev: "<path>M 10 32 L 54 10 L 54 54 Z</path>",
+            stop: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            next: "<path>M 54 32 L 10 10 L 10 54 Z</path>",
+            continue: "Continue"
+        };
+
+        const ui = new CanvasUI( content, config );
+        
+        //ui.updateElement("body", "Hello World" );
+        //ui.update();
+        
+        //ui.mesh.position.set( 0, 1.5, -1.2 );
+        ui.mesh.position.set( 0, 1, -3 );
+
+        return ui;
+    }
+
     getControllers() { let ic = this.icn3d; ic.icn3dui;
         const controllerModelFactory = new XRControllerModelFactory();
 /*        
@@ -21991,8 +22999,9 @@ class Scene {
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
             ic.dolly.add( controller );
-
-//            controller.add( line.clone() );
+/*
+            controller.add( line.clone() );
+*/            
             controller.userData.selectPressed = false;
             ic.scene.add(controller);
             
@@ -31622,8 +32631,9 @@ class Draw {
 
     handleController( controller, dt, selectPressed) { let ic = this.icn3d; ic.icn3dui;
         // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
-        if ( selectPressed ){
-/*            
+        if ( selectPressed ){   
+/*             
+            controller.children[0].scale.z = 10;
             ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
             ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
@@ -31634,10 +32644,13 @@ class Draw {
             if (intersects.length>0){
                 intersects[0].object.add(ic.highlightVR);
                 ic.highlightVR.visible = true;
+
+                controller.children[0].scale.z = intersects[0].distance;
             }else{
                 ic.highlightVR.visible = false;
             }
-*/            
+*/
+           
             const speed = 5; //2;
             const quaternion = ic.dolly.quaternion.clone();
             //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
@@ -31666,7 +32679,7 @@ class Draw {
             ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
         }
 
-        ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+        if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
         if(ic.bVr) {
             let dt = 0.04; // ic.clock.getDelta();
@@ -31683,6 +32696,11 @@ class Draw {
                     //thisClass.handleController( controller, dt, pressed );
                 }
             }
+/*
+            if ( ic.renderer.xr.isPresenting ){    
+                ic.canvasUI.update();
+            }
+*/
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
@@ -46340,6 +47358,7 @@ class ChainalignParser {
         // parseMmdbData() didn't render structures for mmdbafid input
         if(structArray.length > 1) ic.opts['color'] = 'structure';
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        
         await ic.ParserUtilsCls.renderStructure();
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
@@ -46696,10 +47715,10 @@ class MmcifParser {
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
-        let url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
+        // https://files.rcsb.org/header/ i snot accessible in Node.js 
+        let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
- 
         let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
 
         url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
@@ -48036,7 +49055,7 @@ class PdbParser {
 
         if(type === 'pdb') {
             await this.loadPdbData(data);
-            await ic.loadScriptCls.loadScript(command, undefined, true);
+            //await ic.loadScriptCls.loadScript(command, undefined, true);
         }
         else if(type === 'mmcif') {
             let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
@@ -48110,10 +49129,11 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {
-            this.applyCommandDssp(bAppend);
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {    
+            await this.applyCommandDssp(bAppend);
         }
         else {
+            // could this line be removed?
             await this.loadPdbDataRender(bAppend);
 
             if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();
@@ -50970,16 +51990,14 @@ class ParserUtils {
         }
       }
 
-//      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+      //      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
       if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
-          if(Object.keys(ic.structures).length == 1) {
-              let id = Object.keys(ic.structures)[0];
-              me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
-          }
-          // final step resolved ic.deferred
-          await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
-          //ic.loadScriptCls.loadScript(me.cfg.command);
+        this.processCommand();
+        // final step resolved ic.deferred
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        //ic.loadScriptCls.loadScript(me.cfg.command);
       }
+
       //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
@@ -51028,6 +52046,13 @@ class ParserUtils {
       }, 0);
     }
 
+    processCommand() { let ic = this.icn3d, me = ic.icn3dui;
+        if(Object.keys(ic.structures).length == 1) {
+            let id = Object.keys(ic.structures)[0];
+            me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
+        }
+    }
+
     getMassCenter(psum, cnt) { let ic = this.icn3d; ic.icn3dui;
         return psum.multiplyScalar(1.0 / cnt);
     }
@@ -51055,18 +52080,20 @@ class ParserUtils {
 
     async checkMemProteinAndRotate() { let ic = this.icn3d, me = ic.icn3dui;
         if(!ic.bCheckMemProtein) {
+            ic.bCheckMemProtein = true;
+
             let afid = (me.cfg.afid) ? me.cfg.afid : me.cfg.mmdbafid;
 
             await ic.ParserUtilsCls.checkMemProtein(afid);
-            ic.bCheckMemProtein = true;
-        }
+        //}
 
-        // rotate for links from Membranome
-        if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
-            let axis = new THREE.Vector3(1,0,0);
-            let angle = -90 / 180.0 * Math.PI;
+            // rotate for links from Membranome
+            if(me.cfg.url && me.cfg.url.indexOf('membranome') != -1) {
+                let axis = new THREE.Vector3(1,0,0);
+                let angle = -90 / 180.0 * Math.PI;
 
-            ic.transformCls.setRotation(axis, angle);
+                ic.transformCls.setRotation(axis, angle);
+            }
         }
     }
 
@@ -51083,7 +52110,7 @@ class ParserUtils {
                 // do nothing
                 /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
               }
-              else if (me.cfg.afmem == 'on' || confirm(question)) {         
+              else if (me.cfg.afmem == 'on' || confirm(question)) {     
                 try {  
                     let url2 = "https://storage.googleapis.com/membranome-assets/pdb_files/proteins/" + data.pdbid + ".pdb";
                     let afMemdata = await me.getAjaxPromise(url2, 'text');
@@ -51112,15 +52139,15 @@ class ParserUtils {
 
                     // get the AlphaFold structure
                     for(let i in ic.atoms) {
-                    if(ic.atoms[i].structure != pdbid) {
-                        ic.hAtoms[i] = 1;
-                    }
-                    ic.dAtoms[i] = 1;
+                        if(ic.atoms[i].structure != pdbid) {
+                            ic.hAtoms[i] = 1;
+                        }
+                        ic.dAtoms[i] = 1;
                     }
 
                     // get the transmembrane from the model of Membranome
                     for(let i = parseInt(ic.afmem_start_end[0]); i <= parseInt(ic.afmem_start_end[1]); ++i) {
-                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[pdbid + '_A_' + i]);
                     }
 
                     await ic.realignParserCls.realignOnSeqAlign(pdbid);
@@ -60354,8 +61381,8 @@ class Dssp {
             let dataArray = await allPromise;
 
             await thisClass.parseDsspData(dataArray, struArray, bAppend);
-            
-            await ic.ParserUtilsCls.checkMemProteinAndRotate();
+
+            if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();
         }
         catch(err) {
             console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");
@@ -68692,7 +69719,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.2';
+    this.REVISION = '3.22.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -69118,13 +70145,17 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
-        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else {
         //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
         //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
+
+        return;
     }
+    
+    await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
 //   });
 //   return me.deferred.promise();
 };

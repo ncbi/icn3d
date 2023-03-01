@@ -43,8 +43,8 @@ class Dssp {
             let dataArray = await allPromise;
 
             await thisClass.parseDsspData(dataArray, struArray, bAppend);
-            
-            await ic.ParserUtilsCls.checkMemProteinAndRotate();
+
+            if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();
         }
         catch(err) {
             console.log("DSSP calculation had a problem with this structure " + struArray[0] + "...");

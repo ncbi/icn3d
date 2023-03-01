@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.2';
+    this.REVISION = '3.22.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -589,13 +589,17 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
         if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;
-        await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+        //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else {
         //alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
         //me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
+
+        return;
     }
+    
+    await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
 //   });
 //   return me.deferred.promise();
 };

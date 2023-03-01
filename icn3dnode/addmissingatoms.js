@@ -44,7 +44,7 @@ async function addMissingAtoms() {
     ic.bRender = false;
 
     //await ic.pdbParserCls.loadPdbData(data);
-    
+
     let bHydrogen = false;
     //const dataFixed = await ic.scapCls.exportPdbProfix(bHydrogen);
     const dataFixed = await ic.scapCls.exportPdbProfix(bHydrogen, data);

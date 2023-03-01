@@ -104,8 +104,9 @@ class Draw {
 
     handleController( controller, dt, selectPressed) { let ic = this.icn3d, me = ic.icn3dui;
         // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
-        if ( selectPressed ){
-/*            
+        if ( selectPressed ){   
+/*             
+            controller.children[0].scale.z = 10;
             ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
             ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
@@ -116,10 +117,13 @@ class Draw {
             if (intersects.length>0){
                 intersects[0].object.add(ic.highlightVR);
                 ic.highlightVR.visible = true;
+
+                controller.children[0].scale.z = intersects[0].distance;
             }else{
                 ic.highlightVR.visible = false;
             }
-*/            
+*/
+           
             const speed = 5; //2;
             const quaternion = ic.dolly.quaternion.clone();
             //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
@@ -148,7 +152,7 @@ class Draw {
             ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
         }
 
-        ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+        if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
         if(ic.bVr) {
             let dt = 0.04; // ic.clock.getDelta();
@@ -165,6 +169,11 @@ class Draw {
                     //thisClass.handleController( controller, dt, pressed );
                 }
             }
+/*
+            if ( ic.renderer.xr.isPresenting ){    
+                ic.canvasUI.update();
+            }
+*/
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
