@@ -45,7 +45,7 @@ async function outputSS() {
     ic.bRender = false;
 
     await ic.pdbParserCls.loadPdbData(data);
-    
+
     if(type == 'pdb') {
         const pdb = me.htmlCls.setHtmlCls.exportPdb();
         console.log(pdb);

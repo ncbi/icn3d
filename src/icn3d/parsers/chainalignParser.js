@@ -907,6 +907,7 @@ class ChainalignParser {
         // parseMmdbData() didn't render structures for mmdbafid input
         if(structArray.length > 1) ic.opts['color'] = 'structure';
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        
         await ic.ParserUtilsCls.renderStructure();
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 

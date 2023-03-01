@@ -65,7 +65,7 @@ class PdbParser {
 
         if(type === 'pdb') {
             await this.loadPdbData(data);
-            await ic.loadScriptCls.loadScript(command, undefined, true);
+            //await ic.loadScriptCls.loadScript(command, undefined, true);
         }
         else if(type === 'mmcif') {
             let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
@@ -142,10 +142,11 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {
-            this.applyCommandDssp(bAppend);
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {    
+            await this.applyCommandDssp(bAppend);
         }
         else {
+            // could this line be removed?
             await this.loadPdbDataRender(bAppend);
 
             if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();

@@ -113,16 +113,16 @@ https.get(urlMmdb, async function(res1) {
           .then(async function(res) {
                 //console.log(`Status: ${res.status}`);
                 //console.log('Body: ', res.data);
-                
+
                 let mutantPDB = res.data.data.replace(/\\n/g, '\n');
 
                 await showInteractionChange(ic, mutantPDB, pdbid, chain, resi);
           })
-        // the following caused error as described at https://stackoverflow.com/questions/53940043/unhandledpromiserejectionwarning-this-error-originated-either-by-throwing-insid  
+        // the following caused error as described at https://stackoverflow.com/questions/53940043/unhandledpromiserejectionwarning-this-error-originated-either-by-throwing-insid
         //   .catch(function(err) {
         //       //utils.dumpError(err);
         //       console.log(err.stack);
-        //   });         
+        //   });
       }
     });
 }).on('error', function(e) {

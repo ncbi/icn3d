@@ -26,7 +26,7 @@ import {
     LinearMipmapLinearFilter,
     LinearMipmapNearestFilter,
     Loader,
-    LoaderUtils,
+    THREE.LoaderUtils,
     Material,
     MathUtils,
     Matrix4,
@@ -155,7 +155,7 @@ class GLTFLoader extends THREE.Loader {
 
         } else {
 
-            resourcePath = LoaderUtils.extractUrlBase( url );
+            resourcePath = THREE.LoaderUtils.extractUrlBase( url );
 
         }
 
@@ -181,7 +181,7 @@ class GLTFLoader extends THREE.Loader {
 
         };
 
-        const loader = new FileLoader( this.manager );
+        const loader = new THREE.FileLoader( this.manager );
 
         loader.setPath( this.path );
         loader.setResponseType( 'arraybuffer' );
@@ -277,7 +277,7 @@ class GLTFLoader extends THREE.Loader {
 
         } else {
 
-            const magic = LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
+            const magic = THREE.LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
 
             if ( magic === BINARY_EXTENSION_HEADER_MAGIC ) {
 
@@ -296,7 +296,7 @@ class GLTFLoader extends THREE.Loader {
 
             } else {
 
-                content = LoaderUtils.decodeText( new Uint8Array( data ) );
+                content = THREE.LoaderUtils.decodeText( new Uint8Array( data ) );
 
             }
 
@@ -1244,7 +1244,7 @@ class GLTFBinaryExtension {
         const headerView = new DataView( data, 0, BINARY_EXTENSION_HEADER_LENGTH );
 
         this.header = {
-            magic: LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
+            magic: THREE.LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
             version: headerView.getUint32( 4, true ),
             length: headerView.getUint32( 8, true )
         };
@@ -1274,7 +1274,7 @@ class GLTFBinaryExtension {
             if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
 
                 const contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
-                this.content = LoaderUtils.decodeText( contentArray );
+                this.content = THREE.LoaderUtils.decodeText( contentArray );
 
             } else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
 
@@ -2284,7 +2284,7 @@ class GLTFParser {
         this.textureLoader.setCrossOrigin( this.options.crossOrigin );
         this.textureLoader.setRequestHeader( this.options.requestHeader );
 
-        this.fileLoader = new FileLoader( this.options.manager );
+        this.fileLoader = new THREE.FileLoader( this.options.manager );
         this.fileLoader.setResponseType( 'arraybuffer' );
 
         if ( this.options.crossOrigin === 'use-credentials' ) {
@@ -2657,7 +2657,7 @@ class GLTFParser {
 
         return new Promise( function ( resolve, reject ) {
 
-            loader.load( LoaderUtils.resolveURL( bufferDef.uri, options.path ), resolve, undefined, function () {
+            loader.load( THREE.LoaderUtils.resolveURL( bufferDef.uri, options.path ), resolve, undefined, function () {
 
                 reject( new Error( 'THREE.GLTFLoader: Failed to load buffer "' + bufferDef.uri + '".' ) );
 
@@ -2948,7 +2948,7 @@ class GLTFParser {
 
                 }
 
-                loader.load( LoaderUtils.resolveURL( sourceURI, options.path ), onLoad, undefined, reject );
+                loader.load( THREE.LoaderUtils.resolveURL( sourceURI, options.path ), onLoad, undefined, reject );
 
             } );
 

@@ -24,7 +24,7 @@ let qs = require('querystring');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 2) {
-    // annotation types: 
+    // annotation types:
     // 1: SNPs
     // 2: ClinVar
     // 3: Conserved Domains
@@ -53,7 +53,7 @@ https.get(url, function(res1) {
 
     res1.on('end', async function(){
         let dataStr = response1.join('');
-        
+
         me.setIcn3d();
         let ic = me.icn3d;
 
@@ -71,7 +71,7 @@ https.get(url, function(res1) {
         let result = ic.showAnnoCls.showAnnotations_part1();
         let nucleotide_chainid = result.nucleotide_chainid;
         let chemical_chainid = result.chemical_chainid;
-        let chemical_set = result.chemical_set;        
+        let chemical_set = result.chemical_set;
 
         let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
         let url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
@@ -141,12 +141,12 @@ https.get(url, function(res1) {
                             res1.on('data', function (chunk) {
                                 response1.push(chunk);
                             });
-                
+
                             res1.on('end', function(){
                                 let dataStr = response1.join('');
                                 let data4 = JSON.parse(dataStr);
                                 //console.log("dataJson: " + dataJson.length);
-                
+
                                 ic.annoCddSiteCls.parseCddData([data4], chnidArray);
                                 if(annoType == 3) {
                                     for(let chainid in ic.resid2cdd) {
@@ -177,19 +177,19 @@ https.get(url, function(res1) {
 
                             // UniProt ID
                             if( structure.length > 5 ) {
-                                let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;     
+                                let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + structure;
 
                                 https.get(url4, function(res1) {
                                     let response1 = [];
                                     res1.on('data', function (chunk) {
                                         response1.push(chunk);
                                     });
-                        
+
                                     res1.on('end', function(){
                                         let dataStr = response1.join('');
                                         let data4 = JSON.parse(dataStr);
                                         //console.log("dataJson: " + dataJson.length);
-                        
+
                                         if(annoType == 9) {
                                             ic.annoPTMCls.parsePTM(data4, chainid, 'ptm');
 
@@ -212,14 +212,14 @@ https.get(url, function(res1) {
                             else {
                                 // https://www.ebi.ac.uk/pdbe/api/doc/
                                 let structLower = structure.substr(0, 4).toLowerCase();
-                                let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;   
+                                let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
 
                                 https.get(urlMap, function(res1) {
                                     let response1 = [];
                                     res1.on('data', function (chunk) {
                                         response1.push(chunk);
                                     });
-                        
+
                                     res1.on('end', function(){
         let dataMapStr = response1.join('');
         let dataMap = JSON.parse(dataMapStr);
@@ -260,14 +260,14 @@ https.get(url, function(res1) {
         }
 
         if(UniProtID != '') {
-            let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
+            let url4 =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;
 
             https.get(url4, function(res1) {
                 let response1 = [];
                 res1.on('data', function (chunk) {
                     response1.push(chunk);
                 });
-    
+
                 res1.on('end', function(){
                     let dataStr = response1.join('');
                     let data4 = JSON.parse(dataStr);
@@ -311,12 +311,12 @@ https.get(url, function(res1) {
                                 res1.on('data', function (chunk) {
                                     response1.push(chunk);
                                 });
-                
+
                                 res1.on('end', function(){
                                     let dataStr = response1.join('');
                                     let data2 = JSON.parse(dataStr);
                                     //console.log("dataJson: " + dataJson.length);
-                    
+
                                     let snpgi = data2.snpgi;
                                     let gi = data2.gi;
                                     if(annoType == 1 && snpgi) {
@@ -336,7 +336,7 @@ https.get(url, function(res1) {
                 if(data4 && data4.data && data4.data.length > 0) {
                     let bSnpOnly = true;
                     let bVirus = true;
-                    
+
                     ic.annoSnpClinVarCls.processSnpClinvar(data4, chainid, chainid, bSnpOnly, bVirus);
                     console.log(chainid + '\t' + JSON.stringify(ic.resid2snp[chainid]));
                 }
@@ -364,7 +364,7 @@ https.get(url, function(res1) {
                 //console.log("dataJson: " + dataJson.length);
 
                 if(data4 && data4.data && data4.data.length > 0) {
-                    let bSnpOnly = false;         
+                    let bSnpOnly = false;
                     ic.annoSnpClinVarCls.processSnpClinvar(data4, chainid, chainid, bSnpOnly);
                     console.log(chainid + '\t' + JSON.stringify(ic.resid2clinvar[chainid]));
                 }

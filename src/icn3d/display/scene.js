@@ -5,10 +5,12 @@
 // // The following four files are for VR view:
 // import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
 // import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
-// import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
-// import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
+import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
+import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
 import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
 import {ControllerGestures} from "../../thirdparty/three/vr/ControllerGestures.js";
+import {CanvasKeyboard} from "../../thirdparty/three/vr/CanvasKeyboard.js";
+import {CanvasUI} from "../../thirdparty/three/vr/CanvasUI.js";
 
 class Scene {
     constructor(icn3d) {
@@ -211,6 +213,47 @@ class Scene {
 
         if(ic.bVr) {
 /*            
+            ic.canvasUI = this.createUI();
+            // add canvasUI
+            ic.scene.add( ic.canvasUI.mesh );
+            //ic.cam.attach( ic.canvasUI.mesh );
+
+            //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
+            // "trigger":{"button":0},      "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+            // "squeeze":{"button":1},
+            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},
+            // "A button":{"button":4}
+            // "B button":{"button":5}
+            if ( ic.renderer.xr.isPresenting ){
+                const session = ic.renderer.xr.getSession();
+                const inputSources = session.inputSources;
+                 
+                const info = [];
+                
+                inputSources.forEach( inputSource => {
+                    const gp = inputSource.gamepad;
+                    const axes = gp.axes;
+                    const buttons = gp.buttons;
+                    const mapping = gp.mapping;
+                    const useStandard = (mapping == 'xr-standard');
+                    const gamepad = { axes, buttons, mapping };
+                    const handedness = inputSource.handedness;
+                    const profiles = inputSource.profiles;
+                    let type = "";
+                    profiles.forEach( profile => {
+                        if (profile.indexOf('touchpad')!=-1) type = 'touchpad';
+                        if (profile.indexOf('thumbstick')!=-1) type = 'thumbstick';
+                    });
+                    const targetRayMode = inputSource.targetRayMode;
+                    info.push({ gamepad, handedness, profiles, targetRayMode });
+                });
+                    
+                //console.log( JSON.stringify(info) );
+                ic.canvasUI.updateElement( "info", JSON.stringify(info) );
+                ic.canvasUI.update();
+            }
+*/
+
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
             ic.workingVector = new THREE.Vector3();
@@ -220,7 +263,7 @@ class Scene {
             let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
             ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
             ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
-*/
+
             // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
             ic.dolly = new THREE.Object3D();
@@ -239,14 +282,23 @@ class Scene {
             ic.getInputSources = true; // default
 
             function onSelectStart() {
-//                this.children[0].scale.z = 10;
+/*                
+                this.children[0].scale.z = 10;
+*/                
                 this.userData.selectPressed = true;
+
+                //ic.canvasUI.mesh.position.set( 0, 1.5, -1.2 );
+                //ic.cam.attach( ic.canvasUI.mesh );
             }
     
             function onSelectEnd() {
-//                this.children[0].scale.z = 0;
-//                ic.highlightVR.visible = false;
+/*                
+                this.children[0].scale.z = 0;
+*/                
+                ic.highlightVR.visible = false;
                 this.userData.selectPressed = false;
+
+                //ic.cam.remove( ic.canvasUI.mesh );
             }
 /*
             function buildController( data ) {
@@ -272,7 +324,7 @@ class Scene {
             ic.controllers.forEach( (controller) => {
                 controller.addEventListener( 'selectstart', onSelectStart );
                 controller.addEventListener( 'selectend', onSelectEnd );
-/*                
+/*              
                 controller.addEventListener( 'connected', function ( event ) {
                     const mesh = buildController(event.data);
                     mesh.scale.z = 0;
@@ -285,7 +337,7 @@ class Scene {
                     });
                     //self.controllerGrip = null;
                 } );
-*/                
+*/              
             });         
         }      
         else if(ic.bAr) {
@@ -361,6 +413,47 @@ class Scene {
         }
     }
 
+    createUI() { let ic = this.icn3d, me = ic.icn3dui;
+        function onRibbon(){
+            ic.setOptionCls.setStyle("proteins", "ribbon");
+
+            ic.canvasUI.updateElement( "info", "ribbon" );
+        }
+        function onSphere(){
+            ic.setOptionCls.setStyle("proteins", "sphere");
+
+            ic.canvasUI.updateElement( "info", "sphere" );
+        }
+
+        const config = {
+            panelSize: { width: 2, height: 0.5 },
+            height: 128,
+            info: { type: "text", overflow: "scroll", position:{ left: 6, top: 6 }, width: 500, height: 58, backgroundColor: "#aaa", fontColor: "#000" },
+            prev: { type: "button", position:{ top: 64, left: 0 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
+            stop: { type: "button", position:{ top: 64, left: 64 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
+            next: { type: "button", position:{ top: 64, left: 128 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onSphere },
+            continue: { type: "button", position:{ top: 70, right: 10 }, width: 200, height: 52, fontColor: "#fff", backgroundColor: "#1bf", hover: "#3df", onSelect: onSphere },
+            renderer: ic.renderer
+        }
+        const content = {
+            info: "",
+            prev: "<path>M 10 32 L 54 10 L 54 54 Z</path>",
+            stop: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            next: "<path>M 54 32 L 10 10 L 10 54 Z</path>",
+            continue: "Continue"
+        }
+
+        const ui = new CanvasUI( content, config );
+        
+        //ui.updateElement("body", "Hello World" );
+        //ui.update();
+        
+        //ui.mesh.position.set( 0, 1.5, -1.2 );
+        ui.mesh.position.set( 0, 1, -3 );
+
+        return ui;
+    }
+
     getControllers() { let ic = this.icn3d, me = ic.icn3dui;
         const controllerModelFactory = new XRControllerModelFactory();
 /*        
@@ -378,8 +471,9 @@ class Scene {
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
             ic.dolly.add( controller );
-
-//            controller.add( line.clone() );
+/*
+            controller.add( line.clone() );
+*/            
             controller.userData.selectPressed = false;
             ic.scene.add(controller);
             

@@ -70,191 +70,188 @@ let pdbidsShort = pdbids;
 // get sequence
 let g_seqArray;
 
-let urlSeq = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + queries;
-https.get(urlSeq, function(resSeq) {
-  let responseSeq = [];
-  resSeq.on('data', function (chunk) {
-      responseSeq.push(chunk);
-  });
+// check every 10 sec
+let msWait = 10000;
 
-  resSeq.on('end', function(){
-      let dataStrSeq = responseSeq.join('');
-      //console.log("dataStrSeq: " + dataStrSeq);
+let bFinished = 0;
 
-      let strArray = dataStrSeq.split('\n');
-      strArray.shift();
-      let allSeq = strArray.join('');
-      g_seqArray = allSeq.split('');
-  });
-}).on('error', function(e) {
-  //utils.dumpError(e);
-  console.log(e.stack);
-});
+main();
 
-// smode=auto: retrieve pre-computed results from CDART
-//let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
-// smode=live: retrieve live search results from CDART
-let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+async function main() {
+    let urlSeq = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + queries;
 
-// get cdsid
-https.get(url, function(res1) {
-    let response1 = [];
-    res1.on('data', function (chunk) {
-        response1.push(chunk);
-    });
+    let dataStrSeq = await getAjaxPromise(urlSeq);
+    //console.log("dataStrSeq: " + dataStrSeq);
 
-    res1.on('end', function(){
-      let dataStr1 = response1.join('');
-      //console.log("dataStr1: " + dataStr1);
-      let lineArray1 = dataStr1.split('\n');
-      let cdsid = '';
-      for(let i = 0, il = lineArray1.length; i < il; ++i) {
-          if(lineArray1[i].substr(0, 6) == '#cdsid') {
-              cdsid = lineArray1[i].substr(6).trim()
-              //console.log("cdsid: " + cdsid);
-              break;
-          }
+    let strArray = dataStrSeq.split('\n');
+    strArray.shift();
+    let allSeq = strArray.join('');
+    g_seqArray = allSeq.split('');
+
+    await cdsearch(g_seqArray);
+}
+
+async function cdsearch(g_seqArray) {
+  // smode=auto: retrieve pre-computed results from CDART
+  //let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+  // smode=live: retrieve live search results from CDART
+  let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+
+  let dataStr1 = await getAjaxPromise(url);
+  //console.log("dataStr1: " + dataStr1);
+  let lineArray1 = dataStr1.split('\n');
+  let cdsid = '';
+  for(let i = 0, il = lineArray1.length; i < il; ++i) {
+      if(lineArray1[i].substr(0, 6) == '#cdsid') {
+          cdsid = lineArray1[i].substr(6).trim()
+          //console.log("cdsid: " + cdsid);
+          break;
       }
+  }
 
-      // wait for 5 secs to get data
-      setTimeout(function(){
-          let url2 = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?cdsid=' + cdsid + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+  setTimeout(function() {retrieveData(cdsid);}, msWait);
+}
 
-          https.get(url2, function(res2) {
-              let response2 = [];
-              res2.on('data', function (chunk) {
-                  response2.push(chunk);
-              });
+async function retrieveData(cdsid) {
+  await getStatus(cdsid);
 
-              res2.on('end', function(){
-                  let dataStr2 = response2.join('');
-                  //console.log("dataStr2: " + dataStr2);
+  if(bFinished) {
+      let url2 = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?cdsid=' + cdsid + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
 
-                  let lineArray2 = dataStr2.split('\n');
-                  //console.log('Accession\tPosition\tResidue\tDomain\tDomain_name\tsite\tsite_type\t3D_examples');
+      let dataStr2 = await getAjaxPromise(url2);
+      //console.log("dataStr2: " + dataStr2);
+      let lineArray2 = dataStr2.split('\n');
 
-                  let pssmidHash = {};
-                  for(let i = 0, il = lineArray2.length; i < il; ++i) {
-                      if(lineArray2[i].substr(0, 2) == 'Q#') {
-                          let fieldArray = lineArray2[i].split('\t');
-                          //let site_type = fieldArray[2];
-                          //let residueList = fieldArray[3];
-                          let pssmid = (tdata == 'feats') ? fieldArray[6] : fieldArray[2]; // feats or hits
-                          pssmidHash[pssmid] = 1;
-                      }
+      parseData(lineArray2);
+  }
+  else {
+      setTimeout(function() {retrieveData(cdsid);}, msWait);
+  }
+
+  return;
+}
+
+async function getStatus(cdsid) {
+  let url2 = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?cdsid=' + cdsid + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+
+  let dataStr2 = await getAjaxPromise(url2);
+  //console.log("dataStr2: " + dataStr2);
+
+  let lineArray2 = dataStr2.split('\n');
+
+  for(let i = 0, il = lineArray2.length; i < il; ++i) {
+    if(lineArray2[i].indexOf('status') != -1 && lineArray2[i].indexOf('success') != -1) { //#status 3 //#status success #status 0
+        bFinished = 1;
+        break;
+    }
+  }
+}
+
+async function parseData(lineArray2) {
+  console.log('Accession\tPosition\tResidue\tDomain\tDomain_name\tsite\tsite_type\t3D_examples');
+
+  let pssmidHash = {};
+  for(let i = 0, il = lineArray2.length; i < il; ++i) {
+      if(lineArray2[i].substr(0, 2) == 'Q#') {
+          let fieldArray = lineArray2[i].split('\t');
+          //let site_type = fieldArray[2];
+          //let residueList = fieldArray[3];
+          let pssmid = (tdata == 'feats') ? fieldArray[6] : fieldArray[2]; // feats or hits
+          pssmidHash[pssmid] = 1;
+      }
+  }
+
+  let pssmidArray = Object.keys(pssmidHash);
+
+  if(pssmidArray.length == 0) return;
+
+  let idlist = '';
+  // get cdd ID and domain name
+  let url3 = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=cdd&retmode=json&rettype=docsum&id=' + pssmidArray.join();
+
+
+  let dataStr3 = await getAjaxPromise(url3);
+  //console.log("dataStr3: " + dataStr3);
+
+  let cddData = JSON.parse(dataStr3).result;
+
+  let pssmid2idname = {};
+  for(let pssmid in cddData) {
+      let cddid = cddData[pssmid].accession;
+      let domainName = cddData[pssmid].title;
+
+      pssmid2idname[pssmid] = [cddid, domainName];
+  }
+
+  let bFirst = true;
+  for(let i = 0, il = lineArray2.length; i < il; ++i) {
+      if(lineArray2[i].substr(0, 2) == 'Q#') {
+          let fieldArray = lineArray2[i].split('\t');
+          let site_type = (tdata == 'feats') ? fieldArray[2] : fieldArray[1];
+          let residueList = (tdata == 'feats') ? fieldArray[3] : fieldArray[3] + '-' + fieldArray[4];
+          let pssmid = (tdata == 'feats') ? fieldArray[6] : fieldArray[2]; // feats or hits
+
+          let residueArrayOut = residueList.split(',');
+          for(let j = 0, jl = residueArrayOut.length; j < jl; ++j) {
+              let residue = residueArrayOut[j];
+
+              let resiArray = [];
+              if(residue.indexOf('-') != -1) {
+                  let start_end = residue.split('-');
+
+                  let start, end;
+                  // feats: E16-V24
+                  // hits: 16-24
+                  if(tdata == 'feats') {
+                      start = parseInt(start_end[0].substr(1));
+                      end = parseInt(start_end[1].substr(1));
+                  }
+                  else {
+                      start = parseInt(start_end[0]);
+                      end = parseInt(start_end[1]);
                   }
 
-                  let pssmidArray = Object.keys(pssmidHash);
+                  for(let k = start; k <= end; ++k) {
+                      resiArray.push(k);
+                  }
+              }
+              else {
+                  let resi = parseInt(residue.substr(1));
+                  resiArray.push(resi);
+              }
 
-                  if(pssmidArray.length == 0) return;
+              for(let k = 0, kl = resiArray.length; k < kl; ++k) {
+                  let resi = resiArray[k];
+                  let resn = g_seqArray[resi-1];
 
-                  let idlist = '';
-                  let url3 = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=cdd&retmode=json&rettype=docsum&id=' + pssmidArray.join();
+                  let pdbidsFinal = (bFirst) ? pdbids : pdbidsShort;
+                  bFirst = false;
+                  console.log(queries + '\t' + resi + '\t' + resn + '\t' + pssmid2idname[pssmid][0]
+                    + '\t' + pssmid2idname[pssmid][1] + '\t' + (j+1).toString() + '\t' + site_type + '\t' + pdbidsFinal);
+              }
+          }
+      }
+  } // end for
+}
 
-                  // get cdd ID and domain name
-                  https.get(url3, function(res3) {
-                      let response3 = [];
-                      res3.on('data', function (chunk) {
-                          response3.push(chunk);
-                      });
+function getAjaxPromise(url3) {
+    return new Promise(function(resolve, reject) {
+      // get cdd ID and domain name
+      https.get(url3, function(res3) {
+          let response3 = [];
+          res3.on('data', function (chunk) {
+              response3.push(chunk);
+          });
 
-                      res3.on('end', function(){
-                          let dataStr3 = response3.join('');
-                          //console.log("dataStr3: " + dataStr3);
+          res3.on('end', function(){
+              let dataStr3 = response3.join('');
 
-                          let cddData = JSON.parse(dataStr3).result;
-
-                          let pssmid2idname = {};
-                          for(let pssmid in cddData) {
-                              let cddid = cddData[pssmid].accession;
-                              let domainName = cddData[pssmid].title;
-
-                              pssmid2idname[pssmid] = [cddid, domainName];
-                          }
-
-                          let bFirst = true;
-                          for(let i = 0, il = lineArray2.length; i < il; ++i) {
-                              if(lineArray2[i].substr(0, 2) == 'Q#') {
-                                  let fieldArray = lineArray2[i].split('\t');
-                                  let site_type = (tdata == 'feats') ? fieldArray[2] : fieldArray[1];
-                                  let residueList = (tdata == 'feats') ? fieldArray[3] : fieldArray[3] + '-' + fieldArray[4];
-                                  let pssmid = (tdata == 'feats') ? fieldArray[6] : fieldArray[2]; // feats or hits
-
-                                  let residueArrayOut = residueList.split(',');
-                                  for(let j = 0, jl = residueArrayOut.length; j < jl; ++j) {
-                                      let residue = residueArrayOut[j];
-
-                                      let resiArray = [];
-                                      if(residue.indexOf('-') != -1) {
-                                          let start_end = residue.split('-');
-
-                                          let start, end;
-                                          // feats: E16-V24
-                                          // hits: 16-24
-                                          if(tdata == 'feats') {
-                                              start = parseInt(start_end[0].substr(1));
-                                              end = parseInt(start_end[1].substr(1));
-                                          }
-                                          else {
-                                              start = parseInt(start_end[0]);
-                                              end = parseInt(start_end[1]);
-                                          }
-
-                                          for(let k = start; k <= end; ++k) {
-                                              resiArray.push(k);
-                                          }
-                                      }
-                                      else {
-                                          let resi = parseInt(residue.substr(1));
-                                          resiArray.push(resi);
-                                      }
-
-                                      for(let k = 0, kl = resiArray.length; k < kl; ++k) {
-                                          let resi = resiArray[k];
-                                          let resn = g_seqArray[resi-1];
-
-                                          let pdbidsFinal = (bFirst) ? pdbids : pdbidsShort;
-                                          bFirst = false;
-                                          console.log(queries + '\t' + resi + '\t' + resn + '\t' + pssmid2idname[pssmid][0]
-                                            + '\t' + pssmid2idname[pssmid][1] + '\t' + (j+1).toString() + '\t' + site_type + '\t' + pdbidsFinal);
-                                      }
-                                  }
-                              }
-                          } // end for
-                      });
-                  }).on('error', function(e) {
-                      //utils.dumpError(e);
-                      console.log(err.stack);
-                  }); // end of 3rd https
-              });
-          }).on('error', function(e) {
-              //utils.dumpError(e);
-              console.log(err.stack);
-          }); // end of 2nd https
-      }, 30000);
+              resolve(dataStr3);
+          });
+      }).on('error', function(e) {
+          //utils.dumpError(e);
+          //console.log(err.stack);
+          reject(err.stack);
+      }); // end of 3rd https
     });
-}).on('error', function(e) {
-    //utils.dumpError(e);
-    console.log(err.stack);
-});
-
-/*
-let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi';
-let tdata = 'hits'; // or 'feats'
-let dataObj = {'queries': queries, tdata: tdata, cdsid: "", cddefl: "false", qdefl: "false", smode: "live", useid1: "true", maxhit: 250, filter: "true", db: "cdd", evalue: 0.01, dmode: "rep", clonly: "false"};
-
-//https://attacomsian.com/blog/node-http-post-request
-// 'https' didn't work for posting PDB data, use 'application/x-www-form-urlencoded'
-const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-
-axios.post(url, qs.stringify(dataObj), config)
-.then(function(res) {
-  //console.log(`Status: ${res.status}`);
-  //console.log('Body: ', res.data);
-})
-.catch(function(err) {
-  //console.error("scap.cgi error..." + err);
-  //utils.dumpError(err);
-  console.log(err.stack);
-});
-*/
+};
