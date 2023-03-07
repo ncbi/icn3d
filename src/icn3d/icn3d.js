@@ -684,8 +684,8 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 
     this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
-    this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2050', ...}
-    this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2050': ['1WIO_A_16', ...], ...}
+    this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2150', ...}
+    this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2150': ['1WIO_A_16', ...], ...}
     this.bShowRefnum = false;
     
     this.alnChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}

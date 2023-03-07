@@ -28,7 +28,8 @@
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else {
-            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
+            //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
+            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl', 'p42081_cd86', 'q7z7d3_vtc', '1bqu_x', '1cdh_x', '1hnf_x', '1hxm_dx', '1hxm_gx', '4jqi_x', '4zt1_x', '5esv_vhx', '5esv_vlx', '6jxr_ax', '6jxr_bx', '1dr9_x', '3pv7_x', '4f9l_x', '4iok_x', '4z18_x', '6x4g_cd275x', 'q9um44_x'];
 
             if(ic.pdbDataArray) {
                 await thisClass.parseRefPdbData(ic.pdbDataArray);
@@ -45,7 +46,7 @@
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                try {
+                // try {
                     // if(!me.bNode) {
                         let allPromise = Promise.allSettled(pdbAjaxArray);
                         ic.pdbDataArray = await allPromise;
@@ -65,12 +66,12 @@
 
                     //     await thisClass.parseRefPdbData(ic.pdbDataArray);
                     // }
-                }
-                catch(err) {
-                    if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-                    //alert("Error in retrieveing reference PDB data...");
-                    return;
-                }                
+                // }
+                // catch(err) {
+                //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+                //     //alert("Error in retrieveing reference PDB data...");
+                //     return;
+                // }             
             }
         }
     }
@@ -149,7 +150,7 @@
             }
        }
 
-        try {
+//        try {
             let dataArray2 = [];
             // if(!me.bNode) {
                 let allPromise = Promise.allSettled(ajaxArray);
@@ -168,14 +169,15 @@
             // }
             
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
-
+/*
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
             if(!me.bNode) console.log("Error in aligning with TM-align...");
             //console.log("Error in aligning with TM-align...");
             return;
-        }         
+        }    
+*/                    
     }
 
     async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -186,11 +188,18 @@
         // find the best alignment for each chain
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
         ic.chainid2index = {};
+        ic.domainid2index = {};
         ic.domainid2ig2kabat = {};
+        ic.domainid2ig2imgt = {};
 
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             let queryData = dataArray[i].value; //[0];
-         
+
+            if(!queryData) {
+                console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
+                continue;
+            }
+
             if(queryData.length == 0) continue;
 
             if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
@@ -199,27 +208,24 @@
             let domainid = domainid_index[0];
             let chainid = domainid.split('-')[0];
 
-            // Ig-like domains: B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
             // Ig domain may require G (7050). But we'll leave that out for now.
             let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
             for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                 let seg = queryData[0].segs[i];
 
-                if(seg.q_start.indexOf('2050') != -1) {
+                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
                     bBstrand = true;
                 }
-                else if(seg.q_start.indexOf('3050') != -1) {
+                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
                     bCstrand = true;
                 }
-                else if(seg.q_start.indexOf('5050') != -1) {
+                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
                     bEstrand = true;
                 }
-                else if(seg.q_start.indexOf('6050') != -1) {
+                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
                     bFstrand = true;
                 }
-                // else if(seg.q_start.indexOf('7050') != -1) {
-                //     bGstrand = true;
-                // }
 
                 //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                 if(bBstrand && bCstrand && bEstrand && bFstrand) break;
@@ -231,10 +237,19 @@
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                 domainid2score[domainid] = queryData[0].score;
 if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);           
-                ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
+                //ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
+                ic.domainid2index[domainid] = domainid_index[1];
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
             }
+        }
+
+        // combine domainid into chainid
+        for(let domainid in ic.domainid2index) {
+            let chainid = domainid.split('-')[0];
+            if(!ic.chainid2index.hasOwnProperty(chainid)) ic.chainid2index[chainid] = [];
+            ic.chainid2index[chainid].push(ic.domainid2index[domainid]);
         }
         
         // combine domainid into chainid
@@ -250,7 +265,13 @@ if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + 
         if(!ic.chainsMapping) ic.chainsMapping = {};
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
-if(!me.bNode) console.log("One of the reference PDBs for chain " + chainid + ": " + ic.refpdbArray[ic.chainid2index[chainid]]);
+if(!me.bNode) {
+    let chainList = '';
+    for(let i = 0, il = ic.chainid2index[chainid].length; i < il; ++i) {
+        chainList += ic.refpdbArray[ic.chainid2index[chainid][i]] + " ";
+    }
+    console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+}
 
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
@@ -303,17 +324,20 @@ if(!me.bNode) console.log("One of the reference PDBs for chain " + chainid + ": 
     getLabelFromRefnum(oriRefnum) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
-        if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
-        else if(refnum >= 1200 && refnum < 2000) return "A'" + oriRefnum;
+        if(refnum < 1000) return oriRefnum;
+        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
+        else if(refnum >= 1200 && refnum < 1900) return "A'" + oriRefnum;
+        else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum;
         else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
-        else if(refnum >= 3000 && refnum < 3200) return "C" + oriRefnum;
-        else if(refnum >= 3200 && refnum < 3700) return "C'" + oriRefnum;
-        else if(refnum >= 3700 && refnum < 4000) return "C''" + oriRefnum;
-        else if(refnum >= 4000 && refnum < 5000) return "D" + oriRefnum;
-        else if(refnum >= 5000 && refnum < 6000) return "E" + oriRefnum;
-        else if(refnum >= 6000 && refnum < 7000) return "F" + oriRefnum;
-        else if(refnum >= 7000 && refnum < 7200) return "G" + oriRefnum;
-        else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
+        else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
+        else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
+        else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
+        else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
+        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
+        else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum;
+        else if(refnum >= 9200 && refnum < 9900) return "G'" + oriRefnum;
+        else if(refnum >= 9900) return "G" + oriRefnum;
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;

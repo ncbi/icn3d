@@ -604,19 +604,19 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets in two chains below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets below or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 
-        html += "<div><b>2a</b>. <div style='display:inline-block; width:80px'>MSA:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2a</b>. <div style='display:inline-block; width:150px'>Align to Same Template:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:65px'>Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:135px'>Align to Diff. Templates:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_realigntwostru' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets in two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct2' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 

@@ -52,7 +52,22 @@ Examples
 
         7BWJ, 7BWJ_E, 483, V, SARS-CoV-2 receptor binding domain, 7BWJ_L, 31, G, antibody light chain
         ...        
-    
+
+* <b>Protein-Protein Interaction Details</b>
+
+    In the command line, run the following:
+
+        node interactiondetail.js 1KQ2 A B
+
+    This outputs the residues in the chain "A" of the PDB structure "1KQ2" interacting with the chain "B". The output looks like the following:
+
+        bondCnt: [
+        {
+        res1: '1KQ2_A_11_ALA',
+        res2: '1KQ2_B_54_LEU:contact_1 ',     
+
+    where "res1" is one of the residues in chain "A", "res2" is a list of interacting resiues in chain "B". Each residue has the format of [PDB]_[chain]_[residue number]_[residue name]:[interaction type]_[count of interaction].
+        
 * <b>Protein-Protein Interactions Due to Mutations</b>
 
     In the command line, run the following:
