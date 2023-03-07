@@ -506,7 +506,7 @@ class RealignParser {
         }
 
         let allPromise = Promise.allSettled(ajaxArray);
-        //try {
+        try {
             let dataArray = await allPromise;
             //ic.qt_start_end = []; // reset the alignment
             //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
@@ -522,10 +522,10 @@ class RealignParser {
 
             await ic.chainalignParserCls.downloadChainalignmentPart2b(undefined, nameArray, undefined, dataArray, 
                 indexArray, struct1, struArray);
-        // }
-        // catch(err) {
-        //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
-        // }                   
+        }
+        catch(err) {
+            if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+        }                   
     }
 
     async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;

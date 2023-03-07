@@ -353,6 +353,7 @@ class ViewInterPairs {
                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
        }
+
        return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
     }
 
@@ -430,50 +431,65 @@ class ViewInterPairs {
         let prevResidname1 = '', prevIds = '';
         let strHbond = '', strIonic = '', strContact = '', strHalegen = '', strPication = '', strPistacking = '';
         let cntHbond = 0, cntIonic = 0, cntContact = 0, cntHalegen = 0, cntPication = 0, cntPistacking = 0;
+        let residname1, residname2, residname2List = '';
         for(let i = 0, il = residsArray.length; i < il; ++i) {
             let resids = residsArray[i];
             let residname1_residname2 = resids.split(',');
-            let residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
-            let residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
+            residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
+            residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
+
             // stru_chain_resi_resn
             let ids = residname1.split('_');
             if(i > 0 && residname1 != prevResidname1) {
-                bondCnt.push({cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
+                bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
                 tmpText += this.getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
                   cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking);
                 strHbond = ''; strIonic = ''; strContact = ''; strHalegen = ''; strPication = ''; strPistacking = '';
                 cntHbond = 0; cntIonic = 0; cntContact = 0; cntHalegen = 0; cntPication = 0; cntPistacking = 0;
+                residname2List = '';
             }
             let labels2dist, result;
             labels2dist = ic.resids2inter[resids]['hbond'];
             result = this.getInteractionPairDetails(labels2dist, type, 'hbond');
             strHbond += result.html;
             cntHbond += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['ionic'];
             result = this.getInteractionPairDetails(labels2dist, type, 'ionic');
             strIonic += result.html;
             cntIonic += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['contact'];
             result = this.getContactPairDetails(labels2dist, type, 'contact');
             strContact += result.html;
             cntContact += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['halogen'];
             result = this.getInteractionPairDetails(labels2dist, type, 'halogen');
             strHalegen += result.html;
             cntHalegen += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['pi-cation'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation');
             strPication += result.html;
             cntPication += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['pi-stacking'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking');
             strPistacking += result.html;
             cntPistacking += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+
             prevResidname1 = residname1;
             prevIds = ids;
         }
-        bondCnt.push({cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
+        bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
         tmpText += this.getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
           cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking);

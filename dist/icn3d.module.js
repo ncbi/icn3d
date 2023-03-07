@@ -9788,7 +9788,7 @@ class SetMenu {
         }
         else {
             html += this.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', undefined, 1, 2);
-            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', true, 1, 2);
+            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'BalHydrogensl and Stick', true, 1, 2);
         }
         html += this.getRadio('mn3_lig', 'mn3_ligSchematic', 'Schematic', undefined, 1, 2);
         html += this.getRadio('mn3_lig', 'mn3_ligSphere', 'Sphere', undefined, 1, 2);
@@ -11827,19 +11827,19 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets in two chains below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets below or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 
-        html += "<div><b>2a</b>. <div style='display:inline-block; width:80px'>MSA:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2a</b>. <div style='display:inline-block; width:150px'>Align to Same Template:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:65px'>Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:135px'>Align to Diff. Templates:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_realigntwostru' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "1. Select sets in two structures below <br>or use your current selection:</div><br>";
+        html += me.htmlCls.divNowrapStr + "1. Select sets below or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct2' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 
@@ -12813,19 +12813,19 @@ class Events {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select chains to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealign');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets in two chains to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select chains to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realigntwostru", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realigntwostru', 'Please select two sets in two structures to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realigntwostru', 'Please select structures to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealignByStruct2');
         });
@@ -15968,8 +15968,9 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
-           (command) ? command.replace(/;/g, "\n") : '';
+           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
 
+           let statefile;
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
@@ -15984,7 +15985,9 @@ class SetHtml {
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
                 if(type === 'pdb') {
                     await ic.pdbParserCls.loadPdbData(data);
@@ -16015,7 +16018,9 @@ class SetHtml {
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
                ic.commands = [];
                ic.optsHistory = [];
@@ -41896,8 +41901,13 @@ class ShowSeq {
                 html += result.html;
                 html3 += result.html3;
 
-                let bKabat = true;
-                result = this.showRefNum(giSeq, chnid, bKabat);
+                let kabat_or_imgt = 1;
+                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+                html += result.html;
+                html3 += result.html3;
+
+                kabat_or_imgt = 2;
+                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
                 html += result.html;
                 html3 += result.html3;
             }
@@ -41924,24 +41934,73 @@ class ShowSeq {
         $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
     }
 
-    showRefNum(giSeq, chnid, bKabat, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
+    showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d; ic.icn3dui;
         let html = '', html3 = '';
+
+        let chainList = '';
+        for(let i = 0, il = ic.chainid2index[chnid].length; i < il; ++i) {
+            chainList += ic.refpdbArray[ic.chainid2index[chnid][i]] + " ";
+        }
+
+        let refStruTitle = (chainList) ? "based on " + chainList : "";
 
         let htmlTmp = '<div class="icn3d-dl_sequence">';
         htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
         if(bCustom) {
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Custom Reference Numbers">Custom Ref. No.</div>';
         }
-        else if(bKabat) {
-            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers">Kabat Ref. No.</div>';
+        else if(kabat_or_imgt == 1) {
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers ' + refStruTitle + '">Kabat Ref. No.</div>';
+        }
+        else if(kabat_or_imgt == 2) {
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IMGT Reference Numbers ' + refStruTitle + '">IMGT Ref. No.</div>';
         }
         else {
-            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IgStRAnD Reference Numbers">IgStRAnD Ref. No.</div>';
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IgStRAnD Reference Numbers ' + refStruTitle + '">IgStRAnD Ref. No.</div>';
         }
         htmlTmp += '<span class="icn3d-residueNum"></span>';
         html3 += htmlTmp + '<br>';
         html += htmlTmp + '<span class="icn3d-seqLine">';
+
+        //check if Kabat refnum available
+        let bKabatFound = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+
+            if(ic.domainid2ig2kabat[domainid] && Object.keys(ic.domainid2ig2kabat[domainid]).length > 0) {
+                bKabatFound = true;
+                break;
+            }
+        }
+        if(kabat_or_imgt == 1 && !bKabatFound) {
+            return {html: '', html3: ''};
+        }
+
+        //check if Kabat refnum available
+        let bImgtFound = false;
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+
+            if(ic.domainid2ig2imgt[domainid] && Object.keys(ic.domainid2ig2imgt[domainid]).length > 0) {
+                bImgtFound = true;
+                break;
+            }
+        }
+        if(kabat_or_imgt == 2 && !bImgtFound) {
+            return {html: '', html3: ''};
+        }
+
+        // auto-generate ref numbers for loops 
+        let bLoop = false, currStrand = '', prevStrand = '', currFirstDigit = '', currCnt =  1;
+        let refnumLabel, refnumStr_ori, refnumStr;
+
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            bLoop = false;
+
             html += this.insertGap(chnid, i, '-');
             // if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
                 // let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
@@ -41956,18 +42015,34 @@ class ShowSeq {
                     //let resi_ori = atom.resi_ori;
 
                     //if(ic.resid2refnum.hasOwnProperty(residueid)) {
-                    let refnumLabel = ic.resid2refnum[residueid];
+                    refnumLabel = ic.resid2refnum[residueid];
                     if(refnumLabel) {                        
-                        let refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1);
-                        let refnumStr;
+                        refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1); // C', C''
+                        currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                        currFirstDigit = refnumStr_ori.substr(0, 1);
+
+                        if(currStrand != prevStrand) { // reset currCnt
+                            currCnt = 1;
+                        }
                         if(bCustom) {
                             refnumStr = refnumLabel;
                         }
-                        else if(bKabat) {
+                        else if(kabat_or_imgt == 1) {
                             refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
+                        }
+                        else if(kabat_or_imgt == 2) {
+                            refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;                            
                         }
                         else {
                             refnumStr = refnumStr_ori;
+
+                            // #9##
+                            if(refnumStr.substr(1,1) == '9') { // loop region
+                                bLoop = true;
+                                refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                                refnumLabel = currStrand + refnumStr;
+                                ++currCnt;
+                            }
                         }
                     
                         if(bCustom) {
@@ -41985,13 +42060,13 @@ class ShowSeq {
                                 }
                             }
                         }
-                        else if(bKabat) {
+                        else if(kabat_or_imgt == 1 || kabat_or_imgt == 2) {
                             if(!refnumStr) {                               
                                 html += '<span></span>';
                             }
                             else {
                                 let refnum = parseInt(refnumStr).toString();
-                                let color = this.getRefnumColor(refnumStr_ori);
+                                let color = this.getRefnumColor(currStrand);
                                 let colorStr = 'style="color:' + color + '"';
 
                                 let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
@@ -42005,35 +42080,30 @@ class ShowSeq {
                             }
                         }
                         else {
-                            let refnum = parseInt(refnumStr).toString();
-                            let color = this.getRefnumColor(refnumStr_ori);
-                            let colorStr = 'style="color:' + color + '"';
-
-                            let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
-
-                            if(lastTwo == 50) {
-                                // highlight the anchor residues
-                                ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
-
-                                html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
-                            }
-                            else if(lastTwo % 2 == 0 && lastTwo != 52) {
-                                let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
-                                html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
-                            }
-                            else {
-                                html += '<span ' + colorStr + ' title="' + refnumLabel + '">&nbsp;</span>';
-                            }
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
                         }
                     }
                     else {
-                        html += '<span></span>';
+                        if(!bCustom && !kabat_or_imgt) {
+                            // no ref num
+                            bLoop = true;
+                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                            refnumLabel = currStrand + refnumStr;
+                            ++currCnt;
+
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                        }
+                        else {
+                            html += '<span></span>';
+                        }
                     }
                 }
             // }
             // else {
             //     html += '<span></span>';
             // }
+
+            prevStrand = currStrand;
         }
         html += '<span class="icn3d-residueNum"></span>';
         html += '</span>';
@@ -42045,43 +42115,69 @@ class ShowSeq {
         return {html: html, html3: html3}
     }
 
-    getRefnumColor(refnumStr) {  let ic = this.icn3d; ic.icn3dui;
-        let prefix = refnumStr.substr(0,2);
-        if(prefix == '10') {
+    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) {  let ic = this.icn3d, me = ic.icn3dui;
+        let refnum = parseInt(refnumStr).toString();
+        let color = this.getRefnumColor(currStrand);
+        let colorStr = 'style="color:' + color + '"';
+
+        let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
+        let lastThree = parseInt(refnum.substr(refnum.length - 3, 3));
+
+        let html = '';
+
+        if(refnumLabel == 'NaN') refnumLabel = '';
+
+        if(lastTwo == 50 && !bLoop) {
+            // highlight the anchor residues
+            ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
+
+            html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
+        }
+        else if(lastTwo % 2 == 0 && lastTwo != 52 && lastThree != 901) {
+            // e.g., 2152a
+            let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
+            html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
+        }
+        else {
+            html += '<span ' + colorStr + ' title="' + refnumLabel + '">&nbsp;</span>';
+        }
+
+        return html;
+    }
+
+    getRefnumColor(currStrand) {  let ic = this.icn3d; ic.icn3dui;
+        if(currStrand == "A") {
+            return '#777';
+        }
+        else if(currStrand == "B") {
             return '#000';
         }
-        else if(prefix == '12') {
-            return '#888';
+        else if(currStrand == "C") {
+            return '#777';
         }
-        else if(prefix == '20') {
+        else if(currStrand == "C'") {
             return '#000';
         }
-        else if(prefix == '30') {
-            return '#888';
+        else if(currStrand == "C''") {
+            return '#777';
         }
-        else if(prefix == '32') {
+        else if(currStrand == "D") {
             return '#000';
         }
-        else if(prefix == '37') {
-            return '#888';
+        else if(currStrand == "E") {
+            return '#777';
         }
-        else if(prefix == '40') {
+        else if(currStrand == "F") {
             return '#000';
         }
-        else if(prefix == '50') {
-            return '#888';
+        else if(currStrand == "G") {
+            return '#777';
         }
-        else if(prefix == '60') {
-            return '#000';
+        else if(currStrand.indexOf("'") != -1) { //A', G', etc
+	    return '#333';
         }
-        else if(prefix == '70') {
-            return '#888';
-        }
-        else if(prefix == '72') {
-            return '#000';
-        }
-        else if(prefix == '30') {
-            return '#BBB';
+        else { // A^, etc
+            return '#AAA';
         }
     }
 
@@ -43168,6 +43264,9 @@ class LineGraph {
                 struc2index[structureArray[i]] = i;
             }
 
+            // set linkArraySplitCommon and nameHashSplitCommon
+            // set linkArraySplitDiff and nameHashSplitDiff
+            let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let link = linkArray[i];
                 let nodeA = name2node[link.source];
@@ -43195,75 +43294,55 @@ class LineGraph {
                     let mapping1, mapping2;
 
                     if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
-                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
-                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
-                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+                        && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                          mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                          mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+  
+                          let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
-                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
-                        if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
+                          if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
                             linkedNodeCnt[mappingid] = 1;
-                        }
-                        else {
+                          }
+                          else {
                             ++linkedNodeCnt[mappingid];
-                        }
-                    }
-                } 
-            }
+                          }
 
-            // set linkArraySplitCommon and nameHashSplitCommon
-            // set linkArraySplitDiff and nameHashSplitDiff
-            let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
-            for(let i = 0, il = linkArray.length; i < il; ++i) {
-                let link = linkArray[i];
-                let nodeA = name2node[link.source];
-                let nodeB = name2node[link.target];
-
-                if(!nodeA || !nodeB || !nodeA.r || !nodeB.r) {
-                    continue;
-                }
-
-                let idArrayA = this.getIdArrayFromNode(nodeA);
-                let idArrayB = this.getIdArrayFromNode(nodeB);
-
-                let index = struc2index[idArrayA[2]];
-
-                if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
-                    let chainid1 = idArrayA[2] + '_' + idArrayA[3];
-                    let chainid2 = idArrayB[2] + '_' + idArrayB[3];
-                    let resid1 = chainid1 + '_' + idArrayA[4];
-                    let resid2 = chainid2 + '_' + idArrayB[4];
-
-                    let mapping1, mapping2;
-                    
-                    if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
-                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
-                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
-                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
-
-                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
-
-                        let linkCommon = me.hashUtilsCls.cloneHash(link);
-                        linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
-                        linkCommon.target += (ic.chainsMapping[chainid2][resid2]) ? separatorCommon + ic.chainsMapping[chainid2][resid2] : separatorCommon + postCommon;
-
-                        let linkDiff = me.hashUtilsCls.cloneHash(link);
-                        linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
-                        linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
-                    
-                        if(linkedNodeCnt[mappingid] == structureArray.length) {
-                            linkArraySplitCommon[index].push(linkCommon);
-                        }  
-                        else {
-                            linkArraySplitDiff[index].push(linkDiff);
-                        }
-
-                        // use the original node names and thus use the original link
-                        nameHashSplitCommon[index][link.source] = ic.chainsMapping[chainid1][resid1];
-                        nameHashSplitCommon[index][link.target] = ic.chainsMapping[chainid2][resid2];
- 
-                        nameHashSplitDiff[index][link.source] = ic.chainsMapping[chainid1][resid1];
-                        nameHashSplitDiff[index][link.target] = ic.chainsMapping[chainid2][resid2];
-                    }
+                          let linkCommon = me.hashUtilsCls.cloneHash(link);
+                          linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
+                          linkCommon.target += (ic.chainsMapping[chainid2][resid2]) ? separatorCommon + ic.chainsMapping[chainid2][resid2] : separatorCommon + postCommon;
+  
+                          let linkDiff = me.hashUtilsCls.cloneHash(link);
+                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
+                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                      
+                          if(linkedNodeCnt[mappingid] == structureArray.length) {
+                              linkArraySplitCommon[index].push(linkCommon);
+                          }  
+                          else {
+                              linkArraySplitDiff[index].push(linkDiff);
+                          }
+  
+                          // use the original node names and thus use the original link
+                          nameHashSplitCommon[index][link.source] = ic.chainsMapping[chainid1][resid1];
+                          nameHashSplitCommon[index][link.target] = ic.chainsMapping[chainid2][resid2];
+   
+                          nameHashSplitDiff[index][link.source] = ic.chainsMapping[chainid1][resid1];
+                          nameHashSplitDiff[index][link.target] = ic.chainsMapping[chainid2][resid2];
+                      }
+                      else { // unmapped residues are considered as different
+                          let linkDiff = me.hashUtilsCls.cloneHash(link);
+                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
+                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                      
+                          linkArraySplitDiff[index].push(linkDiff);
+                          
+                          // use the original node names and thus use the original link
+                          nameHashSplitCommon[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postCommon;
+                          nameHashSplitCommon[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postCommon;
+      
+                          nameHashSplitDiff[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postDiff;
+                          nameHashSplitDiff[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postDiff;
+                      }
                 } 
             }
 
@@ -44926,6 +45005,7 @@ class ViewInterPairs {
                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
        }
+
        return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
     }
 
@@ -45003,50 +45083,65 @@ class ViewInterPairs {
         let prevResidname1 = '', prevIds = '';
         let strHbond = '', strIonic = '', strContact = '', strHalegen = '', strPication = '', strPistacking = '';
         let cntHbond = 0, cntIonic = 0, cntContact = 0, cntHalegen = 0, cntPication = 0, cntPistacking = 0;
+        let residname1, residname2, residname2List = '';
         for(let i = 0, il = residsArray.length; i < il; ++i) {
             let resids = residsArray[i];
             let residname1_residname2 = resids.split(',');
-            let residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
-            (type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
+            residname1 =(type == 'save1') ? residname1_residname2[0] : residname1_residname2[1];
+            residname2 =(type == 'save1') ? residname1_residname2[1] : residname1_residname2[0];
+
             // stru_chain_resi_resn
             let ids = residname1.split('_');
             if(i > 0 && residname1 != prevResidname1) {
-                bondCnt.push({cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
+                bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
                 tmpText += this.getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
                   cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking);
                 strHbond = ''; strIonic = ''; strContact = ''; strHalegen = ''; strPication = ''; strPistacking = '';
                 cntHbond = 0; cntIonic = 0; cntContact = 0; cntHalegen = 0; cntPication = 0; cntPistacking = 0;
+                residname2List = '';
             }
             let labels2dist, result;
             labels2dist = ic.resids2inter[resids]['hbond'];
             result = this.getInteractionPairDetails(labels2dist, type, 'hbond');
             strHbond += result.html;
             cntHbond += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['ionic'];
             result = this.getInteractionPairDetails(labels2dist, type, 'ionic');
             strIonic += result.html;
             cntIonic += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['contact'];
             result = this.getContactPairDetails(labels2dist, type, 'contact');
             strContact += result.html;
             cntContact += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['halogen'];
             result = this.getInteractionPairDetails(labels2dist, type, 'halogen');
             strHalegen += result.html;
             cntHalegen += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['pi-cation'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation');
             strPication += result.html;
             cntPication += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
+
             labels2dist = ic.resids2inter[resids]['pi-stacking'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking');
             strPistacking += result.html;
             cntPistacking += result.cnt;
+            if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+
             prevResidname1 = residname1;
             prevIds = ids;
         }
-        bondCnt.push({cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
+        bondCnt.push({res1: prevResidname1, res2: residname2List, cntHbond: cntHbond, cntIonic: cntIonic, cntContact: cntContact, cntHalegen: cntHalegen, cntPication: cntPication, cntPistacking: cntPistacking});
 
         tmpText += this.getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
           cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking);
@@ -50072,7 +50167,7 @@ class RealignParser {
         }
 
         let allPromise = Promise.allSettled(ajaxArray);
-        //try {
+        try {
             let dataArray = await allPromise;
             //ic.qt_start_end = []; // reset the alignment
             //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
@@ -50088,10 +50183,10 @@ class RealignParser {
 
             await ic.chainalignParserCls.downloadChainalignmentPart2b(undefined, nameArray, undefined, dataArray, 
                 indexArray, struct1, struArray);
-        // }
-        // catch(err) {
-        //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
-        // }                   
+        }
+        catch(err) {
+            if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+        }                   
     }
 
     async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
@@ -53982,20 +54077,27 @@ class SetSeqAlign {
             pos2 = result.pos2;
 
             let k = 0;    
+            if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+            if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
             for(let j = pos1; j <= pos2; ++j) {
                 // inherit the gaps from the template
                 if(ic.alnChainsSeq[chainid1][j].resn == '-') {
                     ic.alnChainsSeq[chainid2].push(gapResObject2);
                 }
                 else {                   
+                    let resi1 = ic.ParserUtilsCls.getResi(chainid1, start1 + k);
                     let resi2 = ic.ParserUtilsCls.getResi(chainid2, start2 + k);
-                    let resn2 = this.getResn(chainid2, start2 + k);
                     let resn1 = this.getResn(chainid1, start1 + k);
+                    let resn2 = this.getResn(chainid2, start2 + k);
+                    
                     let bAlign = true;
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1);
                     ic.alnChainsSeq[chainid2].push(resObject);
                     // update color in the template
                     ic.alnChainsSeq[chainid1][j].color = resObject.color;
+
+                    ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
+                    ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;  
 
                     //if(ic.alnChains[chainid2] === undefined) ic.alnChains[chainid2] = {}
                     $.extend(ic.alnChains[chainid2], ic.residues[chainid2 + '_' + resi2] );
@@ -54007,7 +54109,7 @@ class SetSeqAlign {
             
             prevIndex1 = end1;
             prevIndex2 = end2;  
-        }  
+        } 
 
         // add gaps at the end
         result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
@@ -59968,6 +60070,9 @@ class Selection {
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
 
+        //reset side chains
+        ic.setOptionCls.setStyle('sidec', 'nothing');
+
         ic.reinitAfterLoad();
 
         ic.loadScriptCls.renderFinalStep(1);
@@ -61541,7 +61646,8 @@ class Dssp {
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else {
-            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
+            //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
+            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl', 'p42081_cd86', 'q7z7d3_vtc', '1bqu_x', '1cdh_x', '1hnf_x', '1hxm_dx', '1hxm_gx', '4jqi_x', '4zt1_x', '5esv_vhx', '5esv_vlx', '6jxr_ax', '6jxr_bx', '1dr9_x', '3pv7_x', '4f9l_x', '4iok_x', '4z18_x', '6x4g_cd275x', 'q9um44_x'];
 
             if(ic.pdbDataArray) {
                 await thisClass.parseRefPdbData(ic.pdbDataArray);
@@ -61558,7 +61664,7 @@ class Dssp {
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                try {
+                // try {
                     // if(!me.bNode) {
                         let allPromise = Promise.allSettled(pdbAjaxArray);
                         ic.pdbDataArray = await allPromise;
@@ -61578,12 +61684,12 @@ class Dssp {
 
                     //     await thisClass.parseRefPdbData(ic.pdbDataArray);
                     // }
-                }
-                catch(err) {
-                    if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-                    //alert("Error in retrieveing reference PDB data...");
-                    return;
-                }                
+                // }
+                // catch(err) {
+                //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+                //     //alert("Error in retrieveing reference PDB data...");
+                //     return;
+                // }             
             }
         }
     }
@@ -61662,7 +61768,7 @@ class Dssp {
             }
        }
 
-        try {
+//        try {
             let dataArray2 = [];
             // if(!me.bNode) {
                 let allPromise = Promise.allSettled(ajaxArray);
@@ -61681,14 +61787,15 @@ class Dssp {
             // }
             
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
-
+/*
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
             if(!me.bNode) console.log("Error in aligning with TM-align...");
             //console.log("Error in aligning with TM-align...");
             return;
-        }         
+        }    
+*/                    
     }
 
     async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -61699,40 +61806,44 @@ class Dssp {
         // find the best alignment for each chain
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
         ic.chainid2index = {};
+        ic.domainid2index = {};
         ic.domainid2ig2kabat = {};
+        ic.domainid2ig2imgt = {};
 
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             let queryData = dataArray[i].value; //[0];
-         
+
+            if(!queryData) {
+                console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
+                continue;
+            }
+
             if(queryData.length == 0) continue;
 
             if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < 50) continue;
 
             let domainid_index = domainidpairArray[i].split(',');
             let domainid = domainid_index[0];
-            let chainid = domainid.split('-')[0];
+            domainid.split('-')[0];
 
-            // Ig-like domains: B (2050, 2050a, 2050b), C (3050), E (5050), F (6050) strands
+            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
             // Ig domain may require G (7050). But we'll leave that out for now.
             let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
             for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                 let seg = queryData[0].segs[i];
 
-                if(seg.q_start.indexOf('2050') != -1) {
+                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
                     bBstrand = true;
                 }
-                else if(seg.q_start.indexOf('3050') != -1) {
+                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
                     bCstrand = true;
                 }
-                else if(seg.q_start.indexOf('5050') != -1) {
+                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
                     bEstrand = true;
                 }
-                else if(seg.q_start.indexOf('6050') != -1) {
+                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
                     bFstrand = true;
                 }
-                // else if(seg.q_start.indexOf('7050') != -1) {
-                //     bGstrand = true;
-                // }
 
                 //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                 if(bBstrand && bCstrand && bEstrand && bFstrand) break;
@@ -61744,10 +61855,19 @@ class Dssp {
             if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                 domainid2score[domainid] = queryData[0].score;
 if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);           
-                ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
+                //ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
+                ic.domainid2index[domainid] = domainid_index[1];
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
             }
+        }
+
+        // combine domainid into chainid
+        for(let domainid in ic.domainid2index) {
+            let chainid = domainid.split('-')[0];
+            if(!ic.chainid2index.hasOwnProperty(chainid)) ic.chainid2index[chainid] = [];
+            ic.chainid2index[chainid].push(ic.domainid2index[domainid]);
         }
         
         // combine domainid into chainid
@@ -61763,7 +61883,13 @@ if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + 
         if(!ic.chainsMapping) ic.chainsMapping = {};
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
-if(!me.bNode) console.log("One of the reference PDBs for chain " + chainid + ": " + ic.refpdbArray[ic.chainid2index[chainid]]);
+if(!me.bNode) {
+    let chainList = '';
+    for(let i = 0, il = ic.chainid2index[chainid].length; i < il; ++i) {
+        chainList += ic.refpdbArray[ic.chainid2index[chainid][i]] + " ";
+    }
+    console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+}
 
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
@@ -61816,17 +61942,20 @@ if(!me.bNode) console.log("One of the reference PDBs for chain " + chainid + ": 
     getLabelFromRefnum(oriRefnum) { let ic = this.icn3d; ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
-        if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
-        else if(refnum >= 1200 && refnum < 2000) return "A'" + oriRefnum;
+        if(refnum < 1000) return oriRefnum;
+        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
+        else if(refnum >= 1200 && refnum < 1900) return "A'" + oriRefnum;
+        else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum;
         else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
-        else if(refnum >= 3000 && refnum < 3200) return "C" + oriRefnum;
-        else if(refnum >= 3200 && refnum < 3700) return "C'" + oriRefnum;
-        else if(refnum >= 3700 && refnum < 4000) return "C''" + oriRefnum;
-        else if(refnum >= 4000 && refnum < 5000) return "D" + oriRefnum;
-        else if(refnum >= 5000 && refnum < 6000) return "E" + oriRefnum;
-        else if(refnum >= 6000 && refnum < 7000) return "F" + oriRefnum;
-        else if(refnum >= 7000 && refnum < 7200) return "G" + oriRefnum;
-        else if(refnum >= 7200 && refnum < 8000) return "G'" + oriRefnum;
+        else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
+        else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
+        else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
+        else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
+        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
+        else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum;
+        else if(refnum >= 9200 && refnum < 9900) return "G'" + oriRefnum;
+        else if(refnum >= 9900) return "G" + oriRefnum;
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
@@ -69546,8 +69675,8 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 
     this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
-    this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2050', ...}
-    this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2050': ['1WIO_A_16', ...], ...}
+    this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2150', ...}
+    this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2150': ['1WIO_A_16', ...], ...}
     this.bShowRefnum = false;
     
     this.alnChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
@@ -69719,7 +69848,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.3';
+    this.REVISION = '3.22.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

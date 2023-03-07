@@ -1032,7 +1032,7 @@ class SetMenu {
         }
         else {
             html += this.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', undefined, 1, 2);
-            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', true, 1, 2);
+            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'BalHydrogensl and Stick', true, 1, 2);
         }
         html += this.getRadio('mn3_lig', 'mn3_ligSchematic', 'Schematic', undefined, 1, 2);
         html += this.getRadio('mn3_lig', 'mn3_ligSphere', 'Sphere', undefined, 1, 2);

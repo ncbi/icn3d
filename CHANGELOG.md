@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.22.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.4.zip) was release on March 7, 2023. Fixed the menu "View > Reset > All" for side chains. Added a new Node.js script "interactiondetail.js" to show the interaction details between two chains. 
+
 [icn3d-3.22.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.3.zip) was release on March 1, 2023. Fixed Node.js scripts cdsearch.js, and also fixed some iCn3D code to make Node.j scripts work.
 
 [icn3d-3.22.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.2.zip) was release on February 23, 2023. Fixed a bug when the input is NCBI protein accession.

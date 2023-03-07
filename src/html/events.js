@@ -350,19 +350,19 @@ class Events {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonseqalign", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets in two chains to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select chains to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealign');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets in two chains to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select chains to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealignByStruct');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_realigntwostru", "click", function(e) { let ic = me.icn3d;
-            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realigntwostru', 'Please select two sets in two structures to realign');
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realigntwostru', 'Please select structures to realign');
 
             thisClass.setPredefinedMenu('atomsCustomRealignByStruct2');
         });

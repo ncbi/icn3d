@@ -1012,20 +1012,27 @@ class SetSeqAlign {
             pos2 = result.pos2;
 
             let k = 0;    
+            if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+            if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
             for(let j = pos1; j <= pos2; ++j) {
                 // inherit the gaps from the template
                 if(ic.alnChainsSeq[chainid1][j].resn == '-') {
                     ic.alnChainsSeq[chainid2].push(gapResObject2);
                 }
                 else {                   
+                    let resi1 = ic.ParserUtilsCls.getResi(chainid1, start1 + k);
                     let resi2 = ic.ParserUtilsCls.getResi(chainid2, start2 + k);
-                    let resn2 = this.getResn(chainid2, start2 + k);
                     let resn1 = this.getResn(chainid1, start1 + k);
+                    let resn2 = this.getResn(chainid2, start2 + k);
+                    
                     let bAlign = true;
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1)
                     ic.alnChainsSeq[chainid2].push(resObject);
                     // update color in the template
                     ic.alnChainsSeq[chainid1][j].color = resObject.color;
+
+                    ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
+                    ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;  
 
                     //if(ic.alnChains[chainid2] === undefined) ic.alnChains[chainid2] = {}
                     $.extend(ic.alnChains[chainid2], ic.residues[chainid2 + '_' + resi2] );
@@ -1037,7 +1044,7 @@ class SetSeqAlign {
             
             prevIndex1 = end1;
             prevIndex2 = end2;  
-        }  
+        } 
 
         // add gaps at the end
         result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);

@@ -410,6 +410,9 @@ class Selection {
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
 
+        //reset side chains
+        ic.setOptionCls.setStyle('sidec', 'nothing');
+
         ic.reinitAfterLoad();
 
         ic.loadScriptCls.renderFinalStep(1);

@@ -717,6 +717,7 @@ class SetHtml {
            ic.bInputfile =(posData == -1) ? false : true;
            let commandStr = (command) ? command.replace(/;/g, "\n") : '';
 
+           let statefile;
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
@@ -731,7 +732,7 @@ class SetHtml {
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
@@ -764,7 +765,7 @@ class SetHtml {
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
-               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
