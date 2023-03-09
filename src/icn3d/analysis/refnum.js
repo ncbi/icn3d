@@ -150,7 +150,7 @@
             }
        }
 
-//        try {
+        try {
             let dataArray2 = [];
             // if(!me.bNode) {
                 let allPromise = Promise.allSettled(ajaxArray);
@@ -169,15 +169,14 @@
             // }
             
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
-/*
+
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
             if(!me.bNode) console.log("Error in aligning with TM-align...");
             //console.log("Error in aligning with TM-align...");
             return;
-        }    
-*/                    
+        }                       
     }
 
     async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -324,10 +323,11 @@ if(!me.bNode) {
     getLabelFromRefnum(oriRefnum) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
-        if(refnum < 1000) return oriRefnum;
-        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
+        if(refnum < 100) return oriRefnum;
+        else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum; 
+        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum; // “A” strand or “A*” strand
         else if(refnum >= 1200 && refnum < 1900) return "A'" + oriRefnum;
-        else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum;
+        else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum; // “A” strand or “A'” strand
         else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
         else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
         else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
@@ -335,8 +335,8 @@ if(!me.bNode) {
         else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
         else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
         else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-        else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum;
-        else if(refnum >= 9200 && refnum < 9900) return "G'" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum; // 1st beta sheet, “G” strand or “G*” strand
+        else if(refnum >= 9200 && refnum < 9900) return "G*" + oriRefnum; // 2nd beta sheet,  “G” strand or “G*” strand
         else if(refnum >= 9900) return "G" + oriRefnum;
     }
 
