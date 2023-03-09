@@ -43267,9 +43267,6 @@ var icn3d = (function (exports) {
                     struc2index[structureArray[i]] = i;
                 }
 
-                // set linkArraySplitCommon and nameHashSplitCommon
-                // set linkArraySplitDiff and nameHashSplitDiff
-                let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
                 for(let i = 0, il = linkArray.length; i < il; ++i) {
                     let link = linkArray[i];
                     let nodeA = name2node[link.source];
@@ -43309,6 +43306,45 @@ var icn3d = (function (exports) {
                               else {
                                 ++linkedNodeCnt[mappingid];
                               }
+                          }
+                    } 
+                }
+
+                // set linkArraySplitCommon and nameHashSplitCommon
+                // set linkArraySplitDiff and nameHashSplitDiff
+                let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
+                for(let i = 0, il = linkArray.length; i < il; ++i) {
+                    let link = linkArray[i];
+                    let nodeA = name2node[link.source];
+                    let nodeB = name2node[link.target];
+
+                    if(!nodeA || !nodeB || !nodeA.r || !nodeB.r) {
+                        continue;
+                    }
+
+                    let idArrayA = this.getIdArrayFromNode(nodeA);
+                    let idArrayB = this.getIdArrayFromNode(nodeB);
+
+                    let index = struc2index[idArrayA[2]];
+
+                    if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
+                        linkArraySplit[index].push(link);
+                        nameHashSplit[index][link.source] = 1;
+                        nameHashSplit[index][link.target] = 1;
+
+                        let chainid1 = idArrayA[2] + '_' + idArrayA[3];
+                        let chainid2 = idArrayB[2] + '_' + idArrayB[3];
+                        let resid1 = chainid1 + '_' + idArrayA[4];
+                        let resid2 = chainid2 + '_' + idArrayB[4];
+
+                        let mapping1, mapping2;
+
+                        if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
+                            && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                              mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                              mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+      
+                              let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
                               let linkCommon = me.hashUtilsCls.cloneHash(link);
                               linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
@@ -61771,7 +61807,7 @@ var icn3d = (function (exports) {
                 }
            }
 
-    //        try {
+            try {
                 let dataArray2 = [];
                 // if(!me.bNode) {
                     let allPromise = Promise.allSettled(ajaxArray);
@@ -61790,15 +61826,14 @@ var icn3d = (function (exports) {
                 // }
                 
                 await thisClass.parseAlignData(dataArray2, domainidpairArray);
-    /*
+
                 /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
             }
             catch(err) {
                 if(!me.bNode) console.log("Error in aligning with TM-align...");
                 //console.log("Error in aligning with TM-align...");
                 return;
-            }    
-    */                    
+            }                       
         }
 
         async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -61945,10 +61980,11 @@ var icn3d = (function (exports) {
         getLabelFromRefnum(oriRefnum) { let ic = this.icn3d; ic.icn3dui;
             let refnum = parseInt(oriRefnum);
 
-            if(refnum < 1000) return oriRefnum;
-            else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
+            if(refnum < 100) return oriRefnum;
+            else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum; 
+            else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum; // “A” strand or “A*” strand
             else if(refnum >= 1200 && refnum < 1900) return "A'" + oriRefnum;
-            else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum;
+            else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum; // “A” strand or “A'” strand
             else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
             else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
             else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
@@ -61956,8 +61992,8 @@ var icn3d = (function (exports) {
             else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
             else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
             else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-            else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum;
-            else if(refnum >= 9200 && refnum < 9900) return "G'" + oriRefnum;
+            else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum; // 1st beta sheet, “G” strand or “G*” strand
+            else if(refnum >= 9200 && refnum < 9900) return "G*" + oriRefnum; // 2nd beta sheet,  “G” strand or “G*” strand
             else if(refnum >= 9900) return "G" + oriRefnum;
         }
 
