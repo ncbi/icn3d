@@ -1372,7 +1372,7 @@ class SetMenu {
         html += this.getRadClr('mn4_clr', 'uniclrBrown17', 'Corn Silk', 'FFF8DC', undefined, 1, 3);
         html += "</ul>";
 
-        html += "<li><span>White</span>";
+        //html += "<li><span>White</span>";
         html += this.getMenuText('uniclrWhitewrap', 'White', undefined, 1, 2);
         html += "<ul>";
         html += this.getRadClr('mn4_clr', 'uniclrWhite1', 'White', 'FFF', undefined, 1, 3);

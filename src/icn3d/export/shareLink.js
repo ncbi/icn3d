@@ -237,6 +237,7 @@ class ShareLink {
            let i = start + 1;
            let selectChainHash = {}
            let tmpUrl = '';
+
            for(let il = ic.commands.length; i < il; ++i) {
                let command_tf = ic.commands[i].split('|||');
                let command_tf2 = command_tf[0].split('&command=');
@@ -265,18 +266,12 @@ class ShareLink {
                    ++cntToggle;
                }
                else if(i === start + 1) {
-                   //tmpUrl += prevCommandStr;
-                   
-                   //if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
-                   if(prevCommandStr.substr(0, 4) !== 'load') {
+                //    if(prevCommandStr.substr(0, 4) !== 'load') {
                        tmpUrl += prevCommandStr;
-                   }
-
-                   //statefile += prevCommandStr + "\n";
+                //    }
                }
                else {
                    tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
-                   //statefile += prevCommandStr + "\n";
                }
 
                // keep all commands in statefile

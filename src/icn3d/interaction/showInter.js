@@ -93,6 +93,7 @@ class ShowInter {
         firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let commanddesc;

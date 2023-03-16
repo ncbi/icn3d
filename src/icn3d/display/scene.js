@@ -26,9 +26,17 @@ class Scene {
 
         ic.fogCls.setFog();
 
-        ic.cameraCls.setCamera();
+        // if(!ic.bVr && !ic.bAr) { // first time
+            ic.cameraCls.setCamera();
+        // }
 
-        this.setVrAr();
+        // if(!ic.bSetVrArButtons) { // call once
+            this.setVrArButtons();
+        // }
+
+        // if((ic.bVr || ic.bAr) && !ic.bSetVrAr) { // call once
+            this.setVrAr();
+        // }
 
         if(ic.bSkipChemicalbinding === undefined || !ic.bSkipChemicalbinding) {
             ic.applyOtherCls.applyChemicalbindingOptions();
@@ -66,8 +74,15 @@ class Scene {
 
         if(ic.scene !== undefined) {
             for(let i = ic.scene.children.length - 1; i >= 0; i--) {
-                 let obj = ic.scene.children[i];
-                 ic.scene.remove(obj);
+                let obj = ic.scene.children[i];
+                // if(ic.bVr) {
+                //     if(ic.dollyId && obj.id != ic.dollyId) {
+                //         ic.scene.remove(obj);
+                //     }
+                // }
+                // else {
+                    ic.scene.remove(obj);
+                // }
             }
         }
         else {
@@ -207,52 +222,21 @@ class Scene {
     setVrAr() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
+        ic.bSetVrAr = true;
+
         // https://github.com/NikLever/Learn-WebXR/tree/master/start
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
 
-        if(ic.bVr) {
-/*            
+        //if(ic.bVr && !ic.dolly) {       
+        if(ic.bVr) {      
             ic.canvasUI = this.createUI();
+            //ic.canvasUILog = this.createUILog();
             // add canvasUI
-            ic.scene.add( ic.canvasUI.mesh );
-            //ic.cam.attach( ic.canvasUI.mesh );
+            //ic.cam.add( ic.canvasUI.mesh );
+            //ic.cam.add( ic.canvasUILog.mesh );
 
-            //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
-            // "trigger":{"button":0},      "touchpad":{"button":2,"xAxis":0,"yAxis":1},
-            // "squeeze":{"button":1},
-            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},
-            // "A button":{"button":4}
-            // "B button":{"button":5}
-            if ( ic.renderer.xr.isPresenting ){
-                const session = ic.renderer.xr.getSession();
-                const inputSources = session.inputSources;
-                 
-                const info = [];
-                
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    const axes = gp.axes;
-                    const buttons = gp.buttons;
-                    const mapping = gp.mapping;
-                    const useStandard = (mapping == 'xr-standard');
-                    const gamepad = { axes, buttons, mapping };
-                    const handedness = inputSource.handedness;
-                    const profiles = inputSource.profiles;
-                    let type = "";
-                    profiles.forEach( profile => {
-                        if (profile.indexOf('touchpad')!=-1) type = 'touchpad';
-                        if (profile.indexOf('thumbstick')!=-1) type = 'thumbstick';
-                    });
-                    const targetRayMode = inputSource.targetRayMode;
-                    info.push({ gamepad, handedness, profiles, targetRayMode });
-                });
-                    
-                //console.log( JSON.stringify(info) );
-                ic.canvasUI.updateElement( "info", JSON.stringify(info) );
-                ic.canvasUI.update();
-            }
-*/
+            //ic.cam.remove( ic.canvasUI.mesh );
 
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
@@ -260,16 +244,19 @@ class Scene {
             ic.origin = new THREE.Vector3();
 
             let radius = 0.08;
-            let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
-            ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
-            ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
+            //let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
 
             // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
             ic.dolly = new THREE.Object3D();
+            
             ic.dolly.position.z = 5;
             ic.dolly.add(ic.cam);
             ic.scene.add(ic.dolly);
+
+            ic.dollyId = ic.dolly.id;
+
+            //ic.cameraVector = new THREE.Vector3(); // create once and reuse it!
 
             ic.dummyCam = new THREE.Object3D();
             ic.cam.add(ic.dummyCam);
@@ -279,57 +266,43 @@ class Scene {
             //controllers
             ic.controllers = this.getControllers();
 
-            ic.getInputSources = true; // default
-
-            function onSelectStart() {
-/*                
-                this.children[0].scale.z = 10;
-*/                
-                this.userData.selectPressed = true;
-
-                //ic.canvasUI.mesh.position.set( 0, 1.5, -1.2 );
-                //ic.cam.attach( ic.canvasUI.mesh );
-            }
-    
-            function onSelectEnd() {
-/*                
-                this.children[0].scale.z = 0;
-*/                
-                ic.highlightVR.visible = false;
-                this.userData.selectPressed = false;
-
-                //ic.cam.remove( ic.canvasUI.mesh );
-            }
-/*
-            function buildController( data ) {
-                let geometry, material;
-            
-                switch ( data.targetRayMode ) {
-                    case 'tracked-pointer':
-                        geometry = new THREE.BufferGeometry();
-                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
-                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
-            
-                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
-            
-                        return new THREE.Line( geometry, material );
-            
-                    case 'gaze':
-                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
-                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
-                        return new THREE.Mesh( geometry, material );
-                }
-            }
-*/
             ic.controllers.forEach( (controller) => {
-                controller.addEventListener( 'selectstart', onSelectStart );
-                controller.addEventListener( 'selectend', onSelectEnd );
-/*              
                 controller.addEventListener( 'connected', function ( event ) {
-                    const mesh = buildController(event.data);
-                    mesh.scale.z = 0;
-                    this.add( mesh );
+                    try {
+                        //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_6/app.js
+                        const info = {};
+
+                        const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
+                        const DEFAULT_PROFILE = 'generic-trigger';
+
+                        fetchProfile( event.data, DEFAULT_PROFILES_PATH, DEFAULT_PROFILE ).then( ( { profile, assetPath } ) => {
+                            //console.log( JSON.stringify(profile));
+                            //ic.canvasUILog.updateElement( "info", "profile " + JSON.stringify(profile) );
+
+                            info.name = profile.profileId;
+                            info.targetRayMode = event.data.targetRayMode;
+                
+                            Object.entries( profile.layouts ).forEach( ( [key, layout] ) => {
+                                const components = {};
+                                Object.values( layout.components ).forEach( ( component ) => {
+                                    components[component.rootNodeName] = component.gamepadIndices;
+                                });
+                                info[key] = components;
+                            });
+                
+                            //self.createButtonStates( info.right );
+                            
+                            //console.log( JSON.stringify(info) );
+                
+                            thisClass.updateControllers( info );
+                            //ic.canvasUILog.updateElement( "info", JSON.stringify(info).replace(/,/g, ', ') );
+                        } );
+                    }
+                    catch(err) {
+                        //ic.canvasUILog.updateElement("info", "ERROR: " + error);
+                    }
                 } );
+
                 controller.addEventListener( 'disconnected', function () {
                     this.remove( this.children[ 0 ] );
                     ic.controllers.forEach( (controllerTmp) => {
@@ -337,8 +310,8 @@ class Scene {
                     });
                     //self.controllerGrip = null;
                 } );
-*/              
-            });         
+             
+            });        
         }      
         else if(ic.bAr) {
             //Add gestures here
@@ -403,6 +376,11 @@ class Scene {
             });  
 */                            
         }
+    }
+
+    setVrArButtons() { let ic = this.icn3d, me = ic.icn3dui;
+        // call just once
+        ic.bSetVrArButtons = true;
 
         if(!me.bNode) {
             $("#" + me.pre + "VRButton").remove();
@@ -413,69 +391,305 @@ class Scene {
         }
     }
 
+    //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_6/app.js
+    updateControllers(info){ let ic = this.icn3d, me = ic.icn3dui;
+        this.addEventForController(info, 'right');
+        this.addEventForController(info, 'left');
+    }
+
+    addEventForController(info, left_right) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        const controller = (left_right == 'right') ? ic.renderer.xr.getController(0) : ic.renderer.xr.getController(1);
+        const controllerInfo = (left_right == 'right') ? info.right : info.left;
+
+        function onSelectStart() {
+            this.userData.selectPressed = true;
+        }
+
+        function onSelectEnd() {
+            this.userData.selectPressed = false;
+            this.userData.selected = undefined;
+        }
+
+        function onSqueezeStart( ){
+            this.userData.squeezePressed = true;
+
+            ic.cam.add( ic.canvasUI.mesh );
+        }
+
+        function onSqueezeEnd( ){
+            this.userData.squeezePressed = false;
+
+            ic.cam.remove( ic.canvasUI.mesh );
+        }
+
+        if (controllerInfo !== undefined){
+            // "trigger":{"button":0},
+            // "squeeze":{"button":1},
+            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+            //======= left => right =========
+            // "x_button":{"button":4},     "a_button":{"button":4}
+            // "y_button":{"button":5},     "b_button":{"button":5}
+            // "thumbrest":{"button":6}
+
+            let trigger = false, squeeze = false, thumbstick = false, touchpad = false;
+            //right: 
+            // let a_button = false, b_button = false, thumbrest = false;
+            //left: 
+            //let a_button = false, b_button = false, thumbrest = false;
+            
+            Object.keys( controllerInfo ).forEach( (key) => {
+                if (key.indexOf('trigger')!=-1) trigger = true;                   
+                if (key.indexOf('squeeze')!=-1) squeeze = true;     
+                if (key.indexOf('thumbstick')!=-1 || key.indexOf('touchpad')!=-1) {
+                    thumbstick = true; 
+                    ic.xAxisIndex = controllerInfo[key].xAxis;
+                    ic.yAxisIndex = controllerInfo[key].yAxis;
+                }
+                // if (key.indexOf('a_button')!=-1) a_button = true; 
+                // if (key.indexOf('b_button')!=-1) b_button = true; 
+                // if (key.indexOf('x_button')!=-1) a_button = true; 
+                // if (key.indexOf('y_button')!=-1) b_button = true; 
+                // if (key.indexOf('thumbrest')!=-1) thumbrest = true; 
+            });
+            
+            if (trigger){
+                controller.addEventListener( 'selectstart', onSelectStart );
+                controller.addEventListener( 'selectend', onSelectEnd );
+            }
+
+            if (squeeze){
+                controller.addEventListener( 'squeezestart', onSqueezeStart );
+                controller.addEventListener( 'squeezeend', onSqueezeEnd );
+            }
+        }
+    }
+
     createUI() { let ic = this.icn3d, me = ic.icn3dui;
-        function onRibbon(){
-            ic.setOptionCls.setStyle("proteins", "ribbon");
-
-            ic.canvasUI.updateElement( "info", "ribbon" );
-        }
-        function onSphere(){
-            ic.setOptionCls.setStyle("proteins", "sphere");
-
-            ic.canvasUI.updateElement( "info", "sphere" );
-        }
+        let maxSize = 512, margin = 6, btnWidth = 94, btnHeight = 50, btnWidth2 = 44;
+        let fontSize = 12, fontLarge = 14, fontColor = "#1c94c4", bkgdColor = "#ccc", hoverColor = "#fbcb09";
 
         const config = {
-            panelSize: { width: 2, height: 0.5 },
-            height: 128,
-            info: { type: "text", overflow: "scroll", position:{ left: 6, top: 6 }, width: 500, height: 58, backgroundColor: "#aaa", fontColor: "#000" },
-            prev: { type: "button", position:{ top: 64, left: 0 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
-            stop: { type: "button", position:{ top: 64, left: 64 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
-            next: { type: "button", position:{ top: 64, left: 128 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onSphere },
-            continue: { type: "button", position:{ top: 70, right: 10 }, width: 200, height: 52, fontColor: "#fff", backgroundColor: "#1bf", hover: "#3df", onSelect: onSphere },
+            panelSize: { width: 2, height: 1.2 },
+            height: 300,
+            select: { type: "button", position:{ top: margin, left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            residue: { type: "button", position:{ top: margin, left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 2;
+                //ic.opts['pk'] = 'residue';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            secondarySelect: { type: "button", position:{ top: margin, left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 3;
+                //ic.opts['pk'] = 'strand';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            chainSelect: { type: "button", position:{ top: margin, left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 5;
+                //ic.opts['pk'] = 'chain';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            style: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            ribbon: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "ribbon");
+                ic.setOptionCls.setStyle("nucleotides", "nucleotide cartoon");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            schematic: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "schematic");
+                ic.setOptionCls.setStyle("nucleotides", "schematic");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            stick: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "stick");
+                ic.setOptionCls.setStyle("nucleotides", "stick");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            sphere: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "sphere");
+                ic.setOptionCls.setStyle("nucleotides", "sphere");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            color: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            rainbow: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'rainbow for chains');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            atomColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'atom');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            secondaryColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'secondary structure green');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            AlphaFold: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'confidence');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            unicolor: { type: "button", position:{ top: margin + 3*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            red: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth}, width: btnWidth2, height: btnHeight, fontColor: 'red', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'red');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            green: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + (btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'green', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'green');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            blue: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 2*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'blue', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'blue');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            magenta: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 3*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'magenta', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'magenta');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            orange: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 4*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'orange', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'FFA500');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            cyan: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 5*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'cyan', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'cyan');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            gray: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 6*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'gray', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', '888888');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            white: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 7*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'white', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'white');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            analysis: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            interaction: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                 try {
+                    ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, '3d', 1, 1, 1, 1, 1, 1);
+                    ic.cam.remove( ic.canvasUI.mesh );
+                 }
+                 catch(err) {
+                    ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+                 }
+            } },
+            // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            //     ic.debugStr = '###ic.hAtoms: ' + Object.keys(ic.hAtoms).length  + ' ic.dAtoms: ' + Object.keys(ic.dAtoms).length;
+            //     let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
+            //     ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
+            //     ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
+            //     ic.cam.remove( ic.canvasUI.mesh );
+            // } },
+            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                for(let name in ic.labels) {
+                    //if(name === 'residue' || name === 'custom') {
+                        ic.labels[name] = [];
+                    //}
+                }
+        
+                ic.drawCls.draw();
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.selectionCls.resetAll();
+                
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+
+            renderer: ic.renderer
+        };
+
+        const content = {
+            select: "Select",
+            residue: "Residue",
+            secondarySelect: "SSE",
+            chainSelect: "Chain",
+
+            style: "Style",
+            ribbon: "Ribbon",
+            schematic: "Schem.",
+            stick: "Stick",
+            sphere: "Sphere",
+
+            color: "Color",
+            rainbow: "Rainbow",
+            atomColor: "Atom",
+            secondaryColor: "SSE",
+            AlphaFold: "AlphaFold",
+
+            unicolor: "UniColor",
+            red: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            green: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            blue: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            magenta: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            orange: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            cyan: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            gray: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            white: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+
+            analysis: "Analysis",
+            interaction: "Interact",
+            //delphi: "DelPhi",
+            removeLabel: "No Label",
+            reset: "Reset"
+        };
+
+        const ui = new CanvasUI( content, config );
+        
+        //ui.mesh.position.set( 0, 1.5, -1.2 );
+        //ui.mesh.position.set( 0, 2, -2 );
+        ui.mesh.position.set( 0, 0, -3 );
+
+        return ui;
+    }
+
+    createUILog() { let ic = this.icn3d, me = ic.icn3dui;
+        const config = {
+            panelSize: { width: 2, height: 2 },
+            height: 512,
+            info: { type: "text", overflow: "scroll", position:{ top: 6, left: 6 }, width: 506, height: 506, backgroundColor: "#aaa", fontColor: "#000" },
             renderer: ic.renderer
         }
         const content = {
-            info: "",
-            prev: "<path>M 10 32 L 54 10 L 54 54 Z</path>",
-            stop: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            next: "<path>M 54 32 L 10 10 L 10 54 Z</path>",
-            continue: "Continue"
+            info: ""
         }
 
         const ui = new CanvasUI( content, config );
         
-        //ui.updateElement("body", "Hello World" );
-        //ui.update();
-        
         //ui.mesh.position.set( 0, 1.5, -1.2 );
-        ui.mesh.position.set( 0, 1, -3 );
+        //ui.mesh.position.set( 0, 0, -1.2 );
+        ui.mesh.position.set( 0, -2, -3 );
 
         return ui;
     }
 
     getControllers() { let ic = this.icn3d, me = ic.icn3dui;
         const controllerModelFactory = new XRControllerModelFactory();
-/*        
+     
+        // The camera is right above the headset, lower the line a bit.
+        // Then the menu selection was off. So don't change it.
+        const yAdjust = 0; //-1;
         const geometry = new THREE.BufferGeometry().setFromPoints( [
-            new THREE.Vector3(0,0,0),
-            new THREE.Vector3(0,0,-1)
+            new THREE.Vector3(0, yAdjust, 0),
+            new THREE.Vector3(0, yAdjust,-1)
         ]);
         const line = new THREE.Line( geometry );
         line.name = 'line';
-        line.scale.z = 0;
-*/
+        line.scale.z = 50; //10; // extend the line 10 time
 
         const controllers = [];
         
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
             ic.dolly.add( controller );
-/*
+
             controller.add( line.clone() );
-*/            
+            
             controller.userData.selectPressed = false;
-            ic.scene.add(controller);
+//            ic.scene.add(controller);
+            ic.cam.add(controller);
             
             controllers.push( controller );
             

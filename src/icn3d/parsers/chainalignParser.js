@@ -808,17 +808,30 @@ class ChainalignParser {
     async downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
+        ic.structArray = (ic.structures) ? Object.keys(ic.structures) : [];
+
+        if(ic.structArray.length == 0) {
+            ic.init();
+        }
+        else {
+            ic.resetConfig();
+        
+            ic.bResetAnno = true;
+            ic.bResetSets = true;
+        }
+
         // ic.deferredMmdbaf = $.Deferred(function() {
-        ic.structArray = idlist.split(',');
+        let structArray = idlist.split(',');
+        ic.structArray = ic.structArray.concat(structArray);
 
         let ajaxArray = [];
 
-        for(let i = 0, il = ic.structArray.length; i < il; ++i) {
+        for(let i = 0, il = structArray.length; i < il; ++i) {
             let url_t, targetAjax;
-            let structure = ic.structArray[i];
+            let structure = structArray[i];
 
             if(isNaN(structure) && structure.length > 5) {
-                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + structure + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                 targetAjax = me.getAjaxPromise(url_t, 'text');
             }
@@ -840,7 +853,7 @@ class ChainalignParser {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
-            await thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
+            await thisClass.parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype);
             if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
         }
         catch(err) {
@@ -870,18 +883,20 @@ class ChainalignParser {
             }
         }
 
-        if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
+        //if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
         
         let hAtoms = {}, hAtomsTmp = {};
         let bLastQuery = false;
 
-        ic.opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
+        ic.opts['color'] = (ic.structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
 
             let targetOrQuery, bAppend;
-            if(i == 0 && !bQuery) {
+            //if(i == 0 && !bQuery) {
+            // check if structures were loaded before
+            if(i == 0 && !bQuery && ic.structArray.length == structArray.length) {
                 targetOrQuery = 'target';
                 bAppend = false; 
             }
@@ -905,7 +920,7 @@ class ChainalignParser {
         }
 
         // parseMmdbData() didn't render structures for mmdbafid input
-        if(structArray.length > 1) ic.opts['color'] = 'structure';
+        if(ic.structArray.length > 1) ic.opts['color'] = 'structure';
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         
         await ic.ParserUtilsCls.renderStructure();

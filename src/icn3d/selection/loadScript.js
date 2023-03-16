@@ -93,7 +93,7 @@ class LoadScript {
 
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
-          
+  
           if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
                     if(ic.bNotLoadStructure) {
@@ -105,7 +105,7 @@ class LoadScript {
                     }
                     else {
                         await thisClass.applyCommandLoad(ic.commands[i]);
-
+                        
                         // end of all commands
                         if(1 === ic.commands.length) ic.bAddCommands = true;
                         if(bFinalStep) thisClass.renderFinalStep(steps);
@@ -119,7 +119,7 @@ class LoadScript {
                         // undo/redo requires render the first step
                         if(ic.backForward) this.renderFinalStep(1);
                     }
-                    else {
+                    else {                    
                         await thisClass.applyCommandLoad(ic.commands[i]);
 
                         // undo/redo requires render the first step
@@ -442,9 +442,8 @@ class LoadScript {
     async applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
-      //ic.bCommandLoad = true;
-
-      if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
+      // allow multiple load
+      //if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
 
       // chain functions together
 ///      ic.deferred2 = $.Deferred(function() {

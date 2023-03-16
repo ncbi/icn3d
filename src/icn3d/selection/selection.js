@@ -410,6 +410,8 @@ class Selection {
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
 
+        ic.opts = me.hashUtilsCls.cloneHash(ic.optsOri);
+
         //reset side chains
         ic.setOptionCls.setStyle('sidec', 'nothing');
 

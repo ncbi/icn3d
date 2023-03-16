@@ -112,6 +112,7 @@ class LineGraph {
                 } 
             }
 
+            // do not combine with the above section since linkedNodeCnt was pre-populated above
             // set linkArraySplitCommon and nameHashSplitCommon
             // set linkArraySplitDiff and nameHashSplitDiff
             let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
@@ -149,12 +150,12 @@ class LineGraph {
                           let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
                           let linkCommon = me.hashUtilsCls.cloneHash(link);
-                          linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
-                          linkCommon.target += (ic.chainsMapping[chainid2][resid2]) ? separatorCommon + ic.chainsMapping[chainid2][resid2] : separatorCommon + postCommon;
+                          linkCommon.source += separatorCommon + ic.chainsMapping[chainid1][resid1];
+                          linkCommon.target += separatorCommon + ic.chainsMapping[chainid2][resid2];
   
                           let linkDiff = me.hashUtilsCls.cloneHash(link);
-                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
-                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                          linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
+                          linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
                           if(linkedNodeCnt[mappingid] == structureArray.length) {
                               linkArraySplitCommon[index].push(linkCommon);
@@ -172,17 +173,17 @@ class LineGraph {
                       }
                       else { // unmapped residues are considered as different
                           let linkDiff = me.hashUtilsCls.cloneHash(link);
-                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
-                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                          linkDiff.source += (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
+                          linkDiff.target += (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
                       
                           linkArraySplitDiff[index].push(linkDiff);
                           
                           // use the original node names and thus use the original link
-                          nameHashSplitCommon[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postCommon;
-                          nameHashSplitCommon[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postCommon;
+                          nameHashSplitCommon[index][link.source] = (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postCommon;
+                          nameHashSplitCommon[index][link.target] = (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postCommon;
       
-                          nameHashSplitDiff[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postDiff;
-                          nameHashSplitDiff[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postDiff;
+                          nameHashSplitDiff[index][link.source] = (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postDiff;
+                          nameHashSplitDiff[index][link.target] = (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postDiff;
                       }
                 } 
             }
