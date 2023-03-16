@@ -10128,7 +10128,7 @@ class SetMenu {
         html += this.getRadClr('mn4_clr', 'uniclrBrown17', 'Corn Silk', 'FFF8DC', undefined, 1, 3);
         html += "</ul>";
 
-        html += "<li><span>White</span>";
+        //html += "<li><span>White</span>";
         html += this.getMenuText('uniclrWhitewrap', 'White', undefined, 1, 2);
         html += "<ul>";
         html += this.getRadClr('mn4_clr', 'uniclrWhite1', 'White', 'FFF', undefined, 1, 3);
@@ -11575,9 +11575,10 @@ class SetDialog {
 
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
-        html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
-        html += me.htmlCls.buttonStr + "reload_mmdbaf'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/><br>";
+        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
+        html += "Append a list of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdbaf'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
+
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
         + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
         + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
@@ -11825,15 +11826,18 @@ class SetDialog {
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign by Sequence</button></div><br>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "' style='max-width:500px'>";
 
-        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets below or use your current selection:</div><br>";
+        //html += "<div><b>1</b>. There are two options to align chains. Option \"a\" is to select a list of chains below, and align all chains to the first chain. Option \"b\" is to select sets below or use your current selection, and align all chains pairwise.</div><br>";
+        html += "<div><b>1</b>. Select sets below or use your current selection.</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 
-        html += "<div><b>2a</b>. <div style='display:inline-block; width:150px'>Align to Same Template:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // some issues in aligning 4orz_C and 5esv_H due to insertion code
+        //html += "<div><b>2a</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:135px'>Align to Diff. Templates:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        //html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 
@@ -12532,6 +12536,20 @@ class Events {
         }
 
         if(bMsa) {
+            // choose the first chain for each structure
+            if(nameArray.length == 0) {
+                nameArray = [];
+                let structureHash = {};
+                
+                for(let chainid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                    if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+                        nameArray.push(chainid);
+                        structureHash[atom.structure] = 1;
+                    }
+                }
+            }
+
             await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
         }
         else {
@@ -12647,9 +12665,12 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
-    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
-        let flag = bBiounit ? '1' : '0';
+    async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
+        if(!me.cfg.notebook) dialog.dialog( "close" );
+        
+        let flag = bBiounit ? 1 : 0;
 
+        // remove space
         ids = ids.replace(/,/g, ' ').replace(/\s+/g, ',').trim();
 
         if(!ids) {
@@ -12657,7 +12678,9 @@ class Events {
             return;
         }
 
+        /*
         let idArray = ids.split(',');
+
         if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
             thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -12668,6 +12691,23 @@ class Events {
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
         }
+        */
+
+        // remove space
+        me.cfg.mmdbafid = ids;
+        me.cfg.bu = flag;
+
+        ic.bMmdbafid = true;
+        ic.inputid = me.cfg.mmdbafid;
+        if(me.cfg.bu == 1) {
+            ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+        }
+        else {
+            ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+        }
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+
+        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
     }
 
     //Hold all functions related to click events.
@@ -13409,7 +13449,6 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { me.icn3d;
             e.preventDefault();
             
-
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
 
@@ -13418,7 +13457,6 @@ class Events {
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { me.icn3d;
             e.preventDefault();
-            
 
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
@@ -22560,9 +22598,17 @@ class Scene {
 
         ic.fogCls.setFog();
 
-        ic.cameraCls.setCamera();
+        // if(!ic.bVr && !ic.bAr) { // first time
+            ic.cameraCls.setCamera();
+        // }
 
-        this.setVrAr();
+        // if(!ic.bSetVrArButtons) { // call once
+            this.setVrArButtons();
+        // }
+
+        // if((ic.bVr || ic.bAr) && !ic.bSetVrAr) { // call once
+            this.setVrAr();
+        // }
 
         if(ic.bSkipChemicalbinding === undefined || !ic.bSkipChemicalbinding) {
             ic.applyOtherCls.applyChemicalbindingOptions();
@@ -22600,8 +22646,15 @@ class Scene {
 
         if(ic.scene !== undefined) {
             for(let i = ic.scene.children.length - 1; i >= 0; i--) {
-                 let obj = ic.scene.children[i];
-                 ic.scene.remove(obj);
+                let obj = ic.scene.children[i];
+                // if(ic.bVr) {
+                //     if(ic.dollyId && obj.id != ic.dollyId) {
+                //         ic.scene.remove(obj);
+                //     }
+                // }
+                // else {
+                    ic.scene.remove(obj);
+                // }
             }
         }
         else {
@@ -22738,71 +22791,42 @@ class Scene {
         };       
     };
 
-    setVrAr() { let ic = this.icn3d, me = ic.icn3dui;
+    setVrAr() { let ic = this.icn3d; ic.icn3dui;
+        let thisClass = this;
+
+        ic.bSetVrAr = true;
 
         // https://github.com/NikLever/Learn-WebXR/tree/master/start
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
 
-        if(ic.bVr) {
-/*            
+        //if(ic.bVr && !ic.dolly) {       
+        if(ic.bVr) {      
             ic.canvasUI = this.createUI();
+            //ic.canvasUILog = this.createUILog();
             // add canvasUI
-            ic.scene.add( ic.canvasUI.mesh );
-            //ic.cam.attach( ic.canvasUI.mesh );
+            //ic.cam.add( ic.canvasUI.mesh );
+            //ic.cam.add( ic.canvasUILog.mesh );
 
-            //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
-            // "trigger":{"button":0},      "touchpad":{"button":2,"xAxis":0,"yAxis":1},
-            // "squeeze":{"button":1},
-            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},
-            // "A button":{"button":4}
-            // "B button":{"button":5}
-            if ( ic.renderer.xr.isPresenting ){
-                const session = ic.renderer.xr.getSession();
-                const inputSources = session.inputSources;
-                 
-                const info = [];
-                
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    const axes = gp.axes;
-                    const buttons = gp.buttons;
-                    const mapping = gp.mapping;
-                    const useStandard = (mapping == 'xr-standard');
-                    const gamepad = { axes, buttons, mapping };
-                    const handedness = inputSource.handedness;
-                    const profiles = inputSource.profiles;
-                    let type = "";
-                    profiles.forEach( profile => {
-                        if (profile.indexOf('touchpad')!=-1) type = 'touchpad';
-                        if (profile.indexOf('thumbstick')!=-1) type = 'thumbstick';
-                    });
-                    const targetRayMode = inputSource.targetRayMode;
-                    info.push({ gamepad, handedness, profiles, targetRayMode });
-                });
-                    
-                //console.log( JSON.stringify(info) );
-                ic.canvasUI.updateElement( "info", JSON.stringify(info) );
-                ic.canvasUI.update();
-            }
-*/
+            //ic.cam.remove( ic.canvasUI.mesh );
 
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
             ic.workingVector = new THREE.Vector3();
             ic.origin = new THREE.Vector3();
-
-            let radius = 0.08;
-            let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
-            ic.highlightVR = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.BackSide } ) );
-            ic.highlightVR.scale.set(1.2, 1.2, 1.2);        
+            //let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
 
             // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
             ic.dolly = new THREE.Object3D();
+            
             ic.dolly.position.z = 5;
             ic.dolly.add(ic.cam);
             ic.scene.add(ic.dolly);
+
+            ic.dollyId = ic.dolly.id;
+
+            //ic.cameraVector = new THREE.Vector3(); // create once and reuse it!
 
             ic.dummyCam = new THREE.Object3D();
             ic.cam.add(ic.dummyCam);
@@ -22812,66 +22836,51 @@ class Scene {
             //controllers
             ic.controllers = this.getControllers();
 
-            ic.getInputSources = true; // default
-
-            function onSelectStart() {
-/*                
-                this.children[0].scale.z = 10;
-*/                
-                this.userData.selectPressed = true;
-
-                //ic.canvasUI.mesh.position.set( 0, 1.5, -1.2 );
-                //ic.cam.attach( ic.canvasUI.mesh );
-            }
-    
-            function onSelectEnd() {
-/*                
-                this.children[0].scale.z = 0;
-*/                
-                ic.highlightVR.visible = false;
-                this.userData.selectPressed = false;
-
-                //ic.cam.remove( ic.canvasUI.mesh );
-            }
-/*
-            function buildController( data ) {
-                let geometry, material;
-            
-                switch ( data.targetRayMode ) {
-                    case 'tracked-pointer':
-                        geometry = new THREE.BufferGeometry();
-                        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( [ 0, 0, 0, 0, 0, - 1 ], 3 ) );
-                        geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( [ 0.5, 0.5, 0.5, 0, 0, 0 ], 3 ) );
-            
-                        material = new THREE.LineBasicMaterial( { vertexColors: true, blending: THREE.AdditiveBlending } );
-            
-                        return new THREE.Line( geometry, material );
-            
-                    case 'gaze':
-                        geometry = new THREE.RingGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
-                        material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
-                        return new THREE.Mesh( geometry, material );
-                }
-            }
-*/
             ic.controllers.forEach( (controller) => {
-                controller.addEventListener( 'selectstart', onSelectStart );
-                controller.addEventListener( 'selectend', onSelectEnd );
-/*              
                 controller.addEventListener( 'connected', function ( event ) {
-                    const mesh = buildController(event.data);
-                    mesh.scale.z = 0;
-                    this.add( mesh );
+                    try {
+                        //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_6/app.js
+                        const info = {};
+
+                        const DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
+                        const DEFAULT_PROFILE = 'generic-trigger';
+
+                        fetchProfile( event.data, DEFAULT_PROFILES_PATH, DEFAULT_PROFILE ).then( ( { profile, assetPath } ) => {
+                            //console.log( JSON.stringify(profile));
+                            //ic.canvasUILog.updateElement( "info", "profile " + JSON.stringify(profile) );
+
+                            info.name = profile.profileId;
+                            info.targetRayMode = event.data.targetRayMode;
+                
+                            Object.entries( profile.layouts ).forEach( ( [key, layout] ) => {
+                                const components = {};
+                                Object.values( layout.components ).forEach( ( component ) => {
+                                    components[component.rootNodeName] = component.gamepadIndices;
+                                });
+                                info[key] = components;
+                            });
+                
+                            //self.createButtonStates( info.right );
+                            
+                            //console.log( JSON.stringify(info) );
+                
+                            thisClass.updateControllers( info );
+                            //ic.canvasUILog.updateElement( "info", JSON.stringify(info).replace(/,/g, ', ') );
+                        } );
+                    }
+                    catch(err) {
+                        //ic.canvasUILog.updateElement("info", "ERROR: " + error);
+                    }
                 } );
+
                 controller.addEventListener( 'disconnected', function () {
                     this.remove( this.children[ 0 ] );
                     ic.controllers.forEach( (controllerTmp) => {
-                        controllerTmp = null;
                     });
                     //self.controllerGrip = null;
                 } );
-*/              
-            });         
+             
+            });        
         }      
         else if(ic.bAr) {
             //Add gestures here
@@ -22936,6 +22945,11 @@ class Scene {
             });  
 */                            
         }
+    }
+
+    setVrArButtons() { let ic = this.icn3d, me = ic.icn3dui;
+        // call just once
+        ic.bSetVrArButtons = true;
 
         if(!me.bNode) {
             $("#" + me.pre + "VRButton").remove();
@@ -22946,69 +22960,303 @@ class Scene {
         }
     }
 
+    //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_6/app.js
+    updateControllers(info){ let ic = this.icn3d; ic.icn3dui;
+        this.addEventForController(info, 'right');
+        this.addEventForController(info, 'left');
+    }
+
+    addEventForController(info, left_right) { let ic = this.icn3d; ic.icn3dui;
+
+        const controller = (left_right == 'right') ? ic.renderer.xr.getController(0) : ic.renderer.xr.getController(1);
+        const controllerInfo = (left_right == 'right') ? info.right : info.left;
+
+        function onSelectStart() {
+            this.userData.selectPressed = true;
+        }
+
+        function onSelectEnd() {
+            this.userData.selectPressed = false;
+            this.userData.selected = undefined;
+        }
+
+        function onSqueezeStart( ){
+            this.userData.squeezePressed = true;
+
+            ic.cam.add( ic.canvasUI.mesh );
+        }
+
+        function onSqueezeEnd( ){
+            this.userData.squeezePressed = false;
+
+            ic.cam.remove( ic.canvasUI.mesh );
+        }
+
+        if (controllerInfo !== undefined){
+            // "trigger":{"button":0},
+            // "squeeze":{"button":1},
+            // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+            //======= left => right =========
+            // "x_button":{"button":4},     "a_button":{"button":4}
+            // "y_button":{"button":5},     "b_button":{"button":5}
+            // "thumbrest":{"button":6}
+
+            let trigger = false, squeeze = false;
+            //right: 
+            // let a_button = false, b_button = false, thumbrest = false;
+            //left: 
+            //let a_button = false, b_button = false, thumbrest = false;
+            
+            Object.keys( controllerInfo ).forEach( (key) => {
+                if (key.indexOf('trigger')!=-1) trigger = true;                   
+                if (key.indexOf('squeeze')!=-1) squeeze = true;     
+                if (key.indexOf('thumbstick')!=-1 || key.indexOf('touchpad')!=-1) {
+                    ic.xAxisIndex = controllerInfo[key].xAxis;
+                    ic.yAxisIndex = controllerInfo[key].yAxis;
+                }
+                // if (key.indexOf('a_button')!=-1) a_button = true; 
+                // if (key.indexOf('b_button')!=-1) b_button = true; 
+                // if (key.indexOf('x_button')!=-1) a_button = true; 
+                // if (key.indexOf('y_button')!=-1) b_button = true; 
+                // if (key.indexOf('thumbrest')!=-1) thumbrest = true; 
+            });
+            
+            if (trigger){
+                controller.addEventListener( 'selectstart', onSelectStart );
+                controller.addEventListener( 'selectend', onSelectEnd );
+            }
+
+            if (squeeze){
+                controller.addEventListener( 'squeezestart', onSqueezeStart );
+                controller.addEventListener( 'squeezeend', onSqueezeEnd );
+            }
+        }
+    }
+
     createUI() { let ic = this.icn3d; ic.icn3dui;
-        function onRibbon(){
-            ic.setOptionCls.setStyle("proteins", "ribbon");
-
-            ic.canvasUI.updateElement( "info", "ribbon" );
-        }
-        function onSphere(){
-            ic.setOptionCls.setStyle("proteins", "sphere");
-
-            ic.canvasUI.updateElement( "info", "sphere" );
-        }
+        let margin = 6, btnWidth = 94, btnHeight = 50, btnWidth2 = 44;
+        let fontSize = 12, fontLarge = 14, fontColor = "#1c94c4", bkgdColor = "#ccc", hoverColor = "#fbcb09";
 
         const config = {
-            panelSize: { width: 2, height: 0.5 },
-            height: 128,
-            info: { type: "text", overflow: "scroll", position:{ left: 6, top: 6 }, width: 500, height: 58, backgroundColor: "#aaa", fontColor: "#000" },
-            prev: { type: "button", position:{ top: 64, left: 0 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
-            stop: { type: "button", position:{ top: 64, left: 64 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onRibbon },
-            next: { type: "button", position:{ top: 64, left: 128 }, width: 64, fontColor: "#bb0", hover: "#ff0", onSelect: onSphere },
-            continue: { type: "button", position:{ top: 70, right: 10 }, width: 200, height: 52, fontColor: "#fff", backgroundColor: "#1bf", hover: "#3df", onSelect: onSphere },
+            panelSize: { width: 2, height: 1.2 },
+            height: 300,
+            select: { type: "button", position:{ top: margin, left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            residue: { type: "button", position:{ top: margin, left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 2;
+                //ic.opts['pk'] = 'residue';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            secondarySelect: { type: "button", position:{ top: margin, left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 3;
+                //ic.opts['pk'] = 'strand';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            chainSelect: { type: "button", position:{ top: margin, left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 5;
+                //ic.opts['pk'] = 'chain';
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            style: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            ribbon: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "ribbon");
+                ic.setOptionCls.setStyle("nucleotides", "nucleotide cartoon");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            schematic: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "schematic");
+                ic.setOptionCls.setStyle("nucleotides", "schematic");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            stick: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "stick");
+                ic.setOptionCls.setStyle("nucleotides", "stick");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            sphere: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "sphere");
+                ic.setOptionCls.setStyle("nucleotides", "sphere");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            color: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            rainbow: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'rainbow for chains');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            atomColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'atom');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            secondaryColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'secondary structure green');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            AlphaFold: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'confidence');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            unicolor: { type: "button", position:{ top: margin + 3*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            red: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth}, width: btnWidth2, height: btnHeight, fontColor: 'red', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'red');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            green: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + (btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'green', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'green');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            blue: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 2*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'blue', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'blue');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            magenta: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 3*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'magenta', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'magenta');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            orange: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 4*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'orange', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'FFA500');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            cyan: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 5*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'cyan', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'cyan');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            gray: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 6*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'gray', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', '888888');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            white: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 7*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'white', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'white');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            analysis: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            interaction: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                 try {
+                    ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, '3d', 1, 1, 1, 1, 1, 1);
+                    ic.cam.remove( ic.canvasUI.mesh );
+                 }
+                 catch(err) {
+                    ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+                 }
+            } },
+            // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            //     ic.debugStr = '###ic.hAtoms: ' + Object.keys(ic.hAtoms).length  + ' ic.dAtoms: ' + Object.keys(ic.dAtoms).length;
+            //     let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
+            //     ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
+            //     ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
+            //     ic.cam.remove( ic.canvasUI.mesh );
+            // } },
+            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                for(let name in ic.labels) {
+                    //if(name === 'residue' || name === 'custom') {
+                        ic.labels[name] = [];
+                    //}
+                }
+        
+                ic.drawCls.draw();
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.selectionCls.resetAll();
+                
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+
             renderer: ic.renderer
         };
+
         const content = {
-            info: "",
-            prev: "<path>M 10 32 L 54 10 L 54 54 Z</path>",
-            stop: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            next: "<path>M 54 32 L 10 10 L 10 54 Z</path>",
-            continue: "Continue"
+            select: "Select",
+            residue: "Residue",
+            secondarySelect: "SSE",
+            chainSelect: "Chain",
+
+            style: "Style",
+            ribbon: "Ribbon",
+            schematic: "Schem.",
+            stick: "Stick",
+            sphere: "Sphere",
+
+            color: "Color",
+            rainbow: "Rainbow",
+            atomColor: "Atom",
+            secondaryColor: "SSE",
+            AlphaFold: "AlphaFold",
+
+            unicolor: "UniColor",
+            red: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            green: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            blue: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            magenta: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            orange: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            cyan: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            gray: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            white: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+
+            analysis: "Analysis",
+            interaction: "Interact",
+            //delphi: "DelPhi",
+            removeLabel: "No Label",
+            reset: "Reset"
         };
 
         const ui = new CanvasUI( content, config );
         
-        //ui.updateElement("body", "Hello World" );
-        //ui.update();
+        //ui.mesh.position.set( 0, 1.5, -1.2 );
+        //ui.mesh.position.set( 0, 2, -2 );
+        ui.mesh.position.set( 0, 0, -3 );
+
+        return ui;
+    }
+
+    createUILog() { let ic = this.icn3d; ic.icn3dui;
+        const config = {
+            panelSize: { width: 2, height: 2 },
+            height: 512,
+            info: { type: "text", overflow: "scroll", position:{ top: 6, left: 6 }, width: 506, height: 506, backgroundColor: "#aaa", fontColor: "#000" },
+            renderer: ic.renderer
+        };
+        const content = {
+            info: ""
+        };
+
+        const ui = new CanvasUI( content, config );
         
         //ui.mesh.position.set( 0, 1.5, -1.2 );
-        ui.mesh.position.set( 0, 1, -3 );
+        //ui.mesh.position.set( 0, 0, -1.2 );
+        ui.mesh.position.set( 0, -2, -3 );
 
         return ui;
     }
 
     getControllers() { let ic = this.icn3d; ic.icn3dui;
         const controllerModelFactory = new XRControllerModelFactory();
-/*        
+     
+        // The camera is right above the headset, lower the line a bit.
+        // Then the menu selection was off. So don't change it.
+        const yAdjust = 0; //-1;
         const geometry = new THREE.BufferGeometry().setFromPoints( [
-            new THREE.Vector3(0,0,0),
-            new THREE.Vector3(0,0,-1)
+            new THREE.Vector3(0, yAdjust, 0),
+            new THREE.Vector3(0, yAdjust,-1)
         ]);
         const line = new THREE.Line( geometry );
         line.name = 'line';
-        line.scale.z = 0;
-*/
+        line.scale.z = 50; //10; // extend the line 10 time
 
         const controllers = [];
         
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
             ic.dolly.add( controller );
-/*
+
             controller.add( line.clone() );
-*/            
+            
             controller.userData.selectPressed = false;
-            ic.scene.add(controller);
+//            ic.scene.add(controller);
+            ic.cam.add(controller);
             
             controllers.push( controller );
             
@@ -32534,7 +32782,7 @@ class Alternate {
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-class Draw {
+ class Draw {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
@@ -32634,37 +32882,103 @@ class Draw {
         }
     }
 
-    handleController( controller, dt, selectPressed) { let ic = this.icn3d; ic.icn3dui;
+    handleController( controller, dt, selectPressed, squeezePressed, xArray, yArray) { let ic = this.icn3d; ic.icn3dui;
+    try {
         // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
-        if ( selectPressed ){   
-/*             
-            controller.children[0].scale.z = 10;
-            ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
-            ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-            ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+        // thumbstick move
+        let yMax = 0;
+        if(yArray[0] != 0 && yArray[1] != 0) {
+            yMax = yArray[0]; // right
+        }
+        else if(yArray[0] != 0) {
+            yMax = yArray[0]; 
+        }
+        else if(yArray[1] != 0) {
+            yMax = yArray[1]; 
+        }
 
-            const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+        // selection only work when squeeze (menu) is not pressed
+        if(selectPressed && !squeezePressed) {
+            let dtAdjusted = yMax / 1000.0 * dt; 
 
-            if (intersects.length>0){
-                intersects[0].object.add(ic.highlightVR);
-                ic.highlightVR.visible = true;
-
-                controller.children[0].scale.z = intersects[0].distance;
-            }else{
-                ic.highlightVR.visible = false;
-            }
-*/
-           
             const speed = 5; //2;
             const quaternion = ic.dolly.quaternion.clone();
-            //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
             ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
-            ic.dolly.translateZ(-dt * speed);
+            ic.dolly.translateZ(dtAdjusted * speed);
             //ic.dolly.position.y = 0; // limit to a plane
             ic.dolly.quaternion.copy(quaternion); 
-                    
+
+            if(yMax == 0) {               
+                controller.children[0].scale.z = 10;
+                ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
+
+                ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+                ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+
+                const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+
+                if (intersects.length>0){
+                    controller.children[0].scale.z = intersects[0].distance; // stop on the object
+
+                    intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+
+                    let threshold = ic.rayThreshold; //0.5;
+                
+                    let atom = ic.rayCls.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+
+                    while(!atom && threshold < 10) {
+                        threshold = threshold + 0.5;
+                        atom = ic.rayCls.getAtomsFromPosition(intersects[ 0 ].point, threshold);
+                    }
+
+                    if(atom) {
+                        ic.pAtom = atom;
+                        //ic.pickingCls.showPicking(atom);
+
+                        this.showPickingVr(ic.pk, atom);
+
+                        //ic.canvasUILog.updateElement( "info", atom.structure + '_' + atom.chain + '_' + atom.resi);
+                    }      
+                } 
+            }
         }
+
+    }
+    catch(err) {
+        //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+    }  
+    }
+
+    showPickingVr(pk, atom) { let ic = this.icn3d; ic.icn3dui;
+        if(!pk) pk = 2; // residues
+
+        if(pk === 1) {
+          ic.hAtoms[atom.serial] = 1;
+        }
+        else if(pk === 2) {
+          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+          ic.hAtoms = ic.residues[residueid];
+        }
+        else if(pk === 3) {
+          ic.hAtoms = ic.pickingCls.selectStrandHelixFromAtom(atom);
+        }
+        else if(pk === 4) {
+          ic.hAtoms = ic.pickingCls.select3ddomainFromAtom(atom);
+        }
+        else if(pk === 5) {
+          let chainid = atom.structure + '_' + atom.chain;
+          ic.hAtoms = ic.chains[chainid];
+        }
+
+        if(pk === 2) {
+            ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
+        }
+        else if(pk === 1) {
+            ic.residueLabelsCls.addAtomLabels(atoms);
+        }
+
+        ic.setOptionCls.setStyle("proteins", atom.style);
     }
 
     //Render the scene and objects into pixels.
@@ -32690,22 +33004,20 @@ class Draw {
             let dt = 0.04; // ic.clock.getDelta();
 
             if (ic.controllers){
-                // let result = this.getThumbStickMove();
-                // let y = result.y * -1;
-                // let pressed = result.pressed;
+                let result = this.updateGamepadState();
 
                 for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                     let controller = ic.controllers[i];
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
-                    thisClass.handleController( controller, dt, controller.userData.selectPressed );
+                    thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
                     //thisClass.handleController( controller, dt, pressed );
                 }
             }
-/*
-            if ( ic.renderer.xr.isPresenting ){    
-                ic.canvasUI.update();
+
+            if ( ic.renderer.xr.isPresenting){    
+                if(ic.canvasUI) ic.canvasUI.update();
+                //if(ic.canvasUILog) ic.canvasUILog.update();
             }
-*/
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
@@ -32718,57 +33030,38 @@ class Draw {
         }
     }
 
-    getThumbStickMove() { let ic = this.icn3d; ic.icn3dui;
-        let y = 0;
-        let btnPressed = false;
-
+    updateGamepadState() { let ic = this.icn3d; ic.icn3dui;
+        let xAxisIndex = (ic.xAxisIndex) ? ic.xAxisIndex : 2;
+        let yAxisIndex = (ic.yAxisIndex) ? ic.yAxisIndex : 3;
+        //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
+        // "trigger":{"button":0},
+        // "squeeze":{"button":1},
+        // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+        //======= left => right =========
+        // "x_button":{"button":4},     "a_button":{"button":4}
+        // "y_button":{"button":5},     "b_button":{"button":5}
+        // "thumbrest":{"button":6}
         if ( ic.renderer.xr.isPresenting ){
             const session = ic.renderer.xr.getSession();
             const inputSources = session.inputSources;
-          
-            if ( ic.getInputSources ){    
-                //const info = [];
-                
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    gp.axes;
-                    gp.buttons;
-                    const mapping = gp.mapping;
-                    ic.useStandard = (mapping == 'xr-standard');
-                    inputSource.handedness;
-                    const profiles = inputSource.profiles;
-                    ic.gamepadType = "";
-                    profiles.forEach( profile => {
-                        if (profile.indexOf('touchpad')!=-1) ic.gamepadType = 'touchpad';
-                        if (profile.indexOf('thumbstick')!=-1) ic.gamepadType = 'thumbstick';
-                    });
-                    inputSource.targetRayMode;
-                    //info.push({ gamepad, handedness, profiles, targetRayMode });
-                });
-                 
-                ic.getInputSources = false;
-            }else if (ic.useStandard && ic.gamepadType != ""){
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    const thumbstick = (ic.gamepadType=='thumbstick');
-                    //{"trigger":{"button":0},"touchpad":{"button":2,"xAxis":0,"yAxis":1}},
-                    //"squeeze":{"button":1},"thumbstick":{"button":3,"xAxis":2,"yAxis":3},"button":{"button":6}}}
-                    const xaxisOffset = (thumbstick) ? 2 : 0;
-                    const btnIndex = (thumbstick) ? 3 : 2;
-                    btnPressed = gp.buttons[btnIndex].pressed;
-                    // if ( inputSource.handedness == 'right') {
-                    // } else if ( inputSource.handedness == 'left') {
-                    // }
 
-                    //https://beej.us/blog/data/javascript-gamepad/
-                    // x,y-axis values are between -1 and 1
-                    gp.axes[xaxisOffset];
-                    y = gp.axes[xaxisOffset + 1]; 
-                });
-            }
+            let xArray = [], yArray = [];
+            inputSources.forEach( inputSource => {
+                const gp = inputSource.gamepad;
+                const axes = gp.axes;
+
+                let x = parseInt(1000 * axes[xAxisIndex]); // -1000 => 1000
+                let y = parseInt(-1000 * axes[yAxisIndex]); // -1000 => 1000
+
+                xArray.push(x);
+                yArray.push(y);
+            });
+
+            return {xArray: xArray, yArray: yArray};
         }
-
-        return {'y': y, 'pressed': btnPressed};
+        else {
+            return {xArray: [0, 0], yArray: [0, 0]};
+        }
     }
 }
 
@@ -40585,14 +40878,16 @@ class Annotation {
     showAnnoAllChains() {   let ic = this.icn3d; ic.icn3dui;
         $("#" + ic.pre + "dl_annotations > .icn3d-annotation").show();
     }
-    setAnnoView(view) { let ic = this.icn3d; ic.icn3dui;
-        if(view === 'detailed view') {
-            ic.view = 'detailed view';
-            $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 1 );
-        }
-        else { // overview
-            ic.view = 'overview';
-            $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 0 );
+    setAnnoView(view) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!me.bNode) {
+            if(view === 'detailed view') {
+                ic.view = 'detailed view';
+                $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 1 );
+            }
+            else { // overview
+                ic.view = 'overview';
+                $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 0 );
+            }
         }
     }
     setAnnoDisplay(display, prefix) { let ic = this.icn3d; ic.icn3dui;
@@ -41480,7 +41775,7 @@ class ShowSeq {
         if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
             bNonMmdb = true;
             giSeq = [];
-            for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
+            for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
                 giSeq.push(ic.chainsSeq[chnid][i]);
             }
         }
@@ -41923,8 +42218,9 @@ class ShowSeq {
         if(ic.bShowRefnum) {
             ic.hAtoms = ic.hAtomsRefnum;
             
-            let name = 'refnum_anchors';
-            ic.selectionCls.saveSelection(name, name);
+            // commented out because it produced too many commands
+            // let name = 'refnum_anchors';
+            // ic.selectionCls.saveSelection(name, name);
             
             ic.hlUpdateCls.updateHlAll();
         }
@@ -41996,115 +42292,209 @@ class ShowSeq {
 
         // auto-generate ref numbers for loops 
         let bLoop = false, currStrand = '', prevStrand = '', currFirstDigit = '', currCnt =  1;
-        let refnumLabel, refnumStr_ori, refnumStr;
+        let refnumLabel, refnumStr_ori, refnumStr, postfix, refnum;
 
+        // set hash for the loops
+        let strand2len_start_stop = {};
+        let prevRefnumStr, prevPostfix;
+
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            if(ic.residues.hasOwnProperty(residueid)) {
+                refnumLabel = ic.resid2refnum[residueid];
+                if(refnumLabel) {                        
+                    refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                    currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                    currFirstDigit = refnumStr_ori.substr(0, 1);
+
+                    refnumStr = refnumStr_ori;
+                    refnum = parseInt(refnumStr);
+                    postfix = refnumStr.replace(refnum.toString(), '');
+
+                    if(!bCustom && !kabat_or_imgt) {
+                        if(currStrand != prevStrand) { // reset currCnt
+                            // end of a loop
+                            if(strand2len_start_stop[prevStrand + prevPostfix]) {
+                                strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
+                                strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
+                                strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
+                            }
+
+                            currCnt = 1;
+                        }
+
+                        // #9##
+                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            if(currCnt == 1) { // start of a loop
+                                strand2len_start_stop[currStrand + postfix] = {};
+                                strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
+                                strand2len_start_stop[currStrand + postfix].chainid = chnid;
+                            }
+                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                            refnumLabel = currStrand + refnumStr;
+                            ++currCnt;
+                        }
+                    }
+                }
+                else {
+                    if(prevStrand && !bCustom && !kabat_or_imgt) {
+                        // no ref num
+                        refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                        refnumLabel = currStrand + refnumStr;
+                        ++currCnt;
+                    }
+                }
+
+                prevRefnumStr = refnumStr;
+                prevPostfix = postfix;
+            }
+
+            prevStrand = currStrand;
+        }
+        if(strand2len_start_stop[prevStrand + prevPostfix]) {
+            strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
+            strand2len_start_stop[prevStrand + prevPostfix].end = prevRefnumStr;
+            //strand2len_start_stop[prevStrand].nextStrand = undefined;
+        }
+
+        let refnumLabelNoPostfix;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             bLoop = false;
 
             html += this.insertGap(chnid, i, '-');
-            // if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                // let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
-                let currResi = ic.ParserUtilsCls.getResi(chnid, i);
-                let residueid = chnid + '_' + currResi;
-                let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-                if(!ic.residues.hasOwnProperty(residueid)) {
-                    html += '<span></span>';
-                }
-                else {
-                    //let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
-                    //let resi_ori = atom.resi_ori;
 
-                    //if(ic.resid2refnum.hasOwnProperty(residueid)) {
-                    refnumLabel = ic.resid2refnum[residueid];
-                    if(refnumLabel) {                        
-                        refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1); // C', C''
-                        currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
-                        currFirstDigit = refnumStr_ori.substr(0, 1);
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+            if(!ic.residues.hasOwnProperty(residueid)) {
+                html += '<span></span>';
+            }
+            else {
+                refnumLabel = ic.resid2refnum[residueid];
+                if(refnumLabel) {                        
+                    refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                    currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                    currFirstDigit = refnumStr_ori.substr(0, 1);
 
-                        if(currStrand != prevStrand) { // reset currCnt
-                            currCnt = 1;
+                    refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
+
+                    if(currStrand != prevStrand) { // reset currCnt
+                        currCnt = 1;
+                    }
+
+                    if(bCustom) {
+                        refnumStr = refnumLabel;
+                    }
+                    else if(kabat_or_imgt == 1) {
+                        refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
+                    }
+                    else if(kabat_or_imgt == 2) {
+                        refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;                            
+                    }
+                    else {
+                        refnumStr = refnumStr_ori;
+                        refnum = parseInt(refnumStr);
+                        postfix = refnumStr.replace(refnum.toString(), '');
+
+                        // #9##
+                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            bLoop = true;
+
+                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
+                            
+                            refnumStr = result.refnumStr;
+                            refnumLabel = result.refnumLabel;
+                            refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                            ++currCnt;
                         }
-                        if(bCustom) {
-                            refnumStr = refnumLabel;
-                        }
-                        else if(kabat_or_imgt == 1) {
-                            refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
-                        }
-                        else if(kabat_or_imgt == 2) {
-                            refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;                            
+                    }
+                
+                    if(bCustom) {
+                        if(!refnumStr) {                               
+                            html += '<span></span>';
                         }
                         else {
-                            refnumStr = refnumStr_ori;
+                            let refnum = parseInt(refnumStr);
 
-                            // #9##
-                            if(refnumStr.substr(1,1) == '9') { // loop region
-                                bLoop = true;
-                                refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                                refnumLabel = currStrand + refnumStr;
-                                ++currCnt;
-                            }
-                        }
-                    
-                        if(bCustom) {
-                            if(!refnumStr) {                               
-                                html += '<span></span>';
+                            if(refnum % 2 == 0) {
+                                html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
                             }
                             else {
-                                let refnum = parseInt(refnumStr);
-
-                                if(refnum % 2 == 0) {
-                                    html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
-                                }
-                                else {
-                                    html += '<span title="' + refnumStr + '">&nbsp;</span>';
-                                }
+                                html += '<span title="' + refnumStr + '">&nbsp;</span>';
                             }
                         }
-                        else if(kabat_or_imgt == 1 || kabat_or_imgt == 2) {
-                            if(!refnumStr) {                               
-                                html += '<span></span>';
-                            }
-                            else {
-                                let refnum = parseInt(refnumStr).toString();
-                                let color = this.getRefnumColor(currStrand);
-                                let colorStr = 'style="color:' + color + '"';
-
-                                let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
-
-                                if(lastTwo % 2 == 0) {
-                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">' + refnumStr + '</span>';
-                                }
-                                else {
-                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">&nbsp;</span>';
-                                }
-                            }
+                    }
+                    else if(kabat_or_imgt == 1 || kabat_or_imgt == 2) {
+                        if(!refnumStr) {                               
+                            html += '<span></span>';
                         }
                         else {
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                            let refnum = parseInt(refnumStr).toString();
+                            let color = this.getRefnumColor(currStrand);
+                            let colorStr = 'style="color:' + color + '"';
+
+                            let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
+
+                            if(lastTwo % 2 == 0) {
+                                html += '<span ' + colorStr + ' title="' + refnumStr + '">' + refnumStr + '</span>';
+                            }
+                            else {
+                                html += '<span ' + colorStr + ' title="' + refnumStr + '">&nbsp;</span>';
+                            }
                         }
                     }
                     else {
-                        if(!bCustom && !kabat_or_imgt) {
-                            // no ref num
-                            bLoop = true;
-                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                            refnumLabel = currStrand + refnumStr;
-                            ++currCnt;
-
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
-                        }
-                        else {
-                            html += '<span></span>';
-                        }
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
                     }
                 }
-            // }
-            // else {
-            //     html += '<span></span>';
-            // }
+                else {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
+
+                    // skip non-protein residues
+                    if(ic.proteins.hasOwnProperty(atom.serial) && prevStrand && !bCustom && !kabat_or_imgt) {
+                        // no ref num
+                        bLoop = true;
+
+                        // use previous postfix
+                        let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
+                            
+                        refnumStr = result.refnumStr;
+                        refnumLabel = result.refnumLabel;
+                        refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+                  
+                        ++currCnt;
+
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                    }
+                    else {
+                        html += '<span></span>';
+                    }
+                }
+
+                // assign the adjusted reference numbers
+                ic.resid2refnum[residueid] = refnumLabel;
+
+                if(!ic.refnum2residArray.hasOwnProperty(refnumStr)) {
+                    ic.refnum2residArray[refnumStr] = [residueid];
+                }
+                else {
+                    ic.refnum2residArray[refnumStr].push(residueid);
+                }
+
+                if(!ic.chainsMapping.hasOwnProperty(chnid)) {
+                    ic.chainsMapping[chnid] = {};
+                }
+
+                // remove the postfix when comparing interactions
+                //ic.chainsMapping[chnid][residueid] = refnumLabel;
+                ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
+            }
 
             prevStrand = currStrand;
         }
+
         html += '<span class="icn3d-residueNum"></span>';
         html += '</span>';
         html += '<br>';
@@ -42115,7 +42505,46 @@ class ShowSeq {
         return {html: html, html3: html3}
     }
 
-    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) {  let ic = this.icn3d, me = ic.icn3dui;
+    getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d; ic.icn3dui;
+        let refnumStr, refnumLabel, refnumLabelNoPostfix;
+
+        if(strand2len_start_stop[currStrand + postfix]) {
+            let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
+            let end = parseInt(strand2len_start_stop[currStrand + postfix].end);
+            // e.g., 2150a
+            let postfixStart = strand2len_start_stop[currStrand + postfix].start.replace(start.toString(), '');
+            let postfixEnd = strand2len_start_stop[currStrand + postfix].end.replace(end.toString(), '');
+
+            let len = strand2len_start_stop[currStrand + postfix].len;
+            let halfLen = (strand2len_start_stop[currStrand + postfix].nextStrand) ? parseInt(len / 2.0 + 0.5) : len;
+
+            let refnum;
+            if(currCnt <= halfLen) {
+                refnum = start + currCnt;
+                refnumStr = refnum + postfixStart;
+                refnumLabel = currStrand + refnumStr;
+            }
+            else {
+                refnum = end - (len + 1 - currCnt);
+                refnumStr = refnum + postfixEnd;
+                refnumLabel = (strand2len_start_stop[currStrand + postfix].nextStrand !== undefined) ? strand2len_start_stop[currStrand + postfix].nextStrand + refnumStr : ' ' + refnumStr;
+            }
+
+            refnumLabelNoPostfix = currStrand + refnum;
+        }
+        else {
+            // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+            // refnumLabel = currStrand + refnumStr;
+
+            refnumStr = '';
+            refnumLabel = '';
+            refnumLabelNoPostfix = '';
+        }
+
+        return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix};
+    }
+
+    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
         let color = this.getRefnumColor(currStrand);
         let colorStr = 'style="color:' + color + '"';
@@ -42124,8 +42553,6 @@ class ShowSeq {
         let lastThree = parseInt(refnum.substr(refnum.length - 3, 3));
 
         let html = '';
-
-        if(refnumLabel == 'NaN') refnumLabel = '';
 
         if(lastTwo == 50 && !bLoop) {
             // highlight the anchor residues
@@ -42146,38 +42573,47 @@ class ShowSeq {
     }
 
     getRefnumColor(currStrand) {  let ic = this.icn3d; ic.icn3dui;
-        if(currStrand == "A") {
-            return '#777';
+        if(currStrand == "A^") { // deep sky blue
+            return '#00BFFF';
         }
-        else if(currStrand == "B") {
+        else if(currStrand == "A") { // blue
+            return '#0000FF';
+        }
+        else if(currStrand == "A*") { // sky blue
+            return '#87CEEB';
+        }
+        else if(currStrand == "A'") { // steel blue
+            return '#4682B4';
+        }
+        else if(currStrand == "B") { // cyan
+            return '#00FFFF';
+        }
+        else if(currStrand == "C") { // green
+            return '#00FF00';
+        }
+        else if(currStrand == "C'") { // yellow
+            return '#FFFF00';
+        }
+        else if(currStrand == "C''") { // orange
+            return '#FFA500';
+        }
+        else if(currStrand == "D") { // brown
+            return '#A52A2A';
+        }
+        else if(currStrand == "E") { // pink
+            return '#FFC0CB';
+        }
+        else if(currStrand == "F") { // magenta
+            return '#FF00FF';
+        }
+        else if(currStrand == "G") { // red
+            return '#FF0000';
+        }
+        else if(currStrand == "G*") { // salmon
+            return '#FA8072';
+        }
+        else {
             return '#000';
-        }
-        else if(currStrand == "C") {
-            return '#777';
-        }
-        else if(currStrand == "C'") {
-            return '#000';
-        }
-        else if(currStrand == "C''") {
-            return '#777';
-        }
-        else if(currStrand == "D") {
-            return '#000';
-        }
-        else if(currStrand == "E") {
-            return '#777';
-        }
-        else if(currStrand == "F") {
-            return '#000';
-        }
-        else if(currStrand == "G") {
-            return '#777';
-        }
-        else if(currStrand.indexOf("'") != -1) { //A', G', etc
-	    return '#333';
-        }
-        else { // A^, etc
-            return '#AAA';
         }
     }
 
@@ -43307,6 +43743,7 @@ class LineGraph {
                 } 
             }
 
+            // do not combine with the above section since linkedNodeCnt was pre-populated above
             // set linkArraySplitCommon and nameHashSplitCommon
             // set linkArraySplitDiff and nameHashSplitDiff
             let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
@@ -43344,12 +43781,12 @@ class LineGraph {
                           let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
                           let linkCommon = me.hashUtilsCls.cloneHash(link);
-                          linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
-                          linkCommon.target += (ic.chainsMapping[chainid2][resid2]) ? separatorCommon + ic.chainsMapping[chainid2][resid2] : separatorCommon + postCommon;
+                          linkCommon.source += separatorCommon + ic.chainsMapping[chainid1][resid1];
+                          linkCommon.target += separatorCommon + ic.chainsMapping[chainid2][resid2];
   
                           let linkDiff = me.hashUtilsCls.cloneHash(link);
-                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
-                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                          linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
+                          linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
                           if(linkedNodeCnt[mappingid] == structureArray.length) {
                               linkArraySplitCommon[index].push(linkCommon);
@@ -43367,17 +43804,17 @@ class LineGraph {
                       }
                       else { // unmapped residues are considered as different
                           let linkDiff = me.hashUtilsCls.cloneHash(link);
-                          linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
-                          linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                          linkDiff.source += (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
+                          linkDiff.target += (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
                       
                           linkArraySplitDiff[index].push(linkDiff);
                           
                           // use the original node names and thus use the original link
-                          nameHashSplitCommon[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postCommon;
-                          nameHashSplitCommon[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postCommon;
+                          nameHashSplitCommon[index][link.source] = (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postCommon;
+                          nameHashSplitCommon[index][link.target] = (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postCommon;
       
-                          nameHashSplitDiff[index][link.source] = (ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postDiff;
-                          nameHashSplitDiff[index][link.target] = (ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postDiff;
+                          nameHashSplitDiff[index][link.source] = (ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]) ? ic.chainsMapping[chainid1][resid1] : postDiff;
+                          nameHashSplitDiff[index][link.target] = (ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) ? ic.chainsMapping[chainid2][resid2] : postDiff;
                       }
                 } 
             }
@@ -44385,6 +44822,7 @@ class ShowInter {
         firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let commanddesc;
@@ -44783,6 +45221,7 @@ class ViewInterPairs {
            ic.resids2inter = {};
            ic.resids2interAll = {};
        }
+
        if(bSaltbridge) {
            let threshold = parseFloat($("#" + ic.pre + "saltbridgethreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsIonic;
@@ -47391,17 +47830,30 @@ class ChainalignParser {
     async downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
+        ic.structArray = (ic.structures) ? Object.keys(ic.structures) : [];
+
+        if(ic.structArray.length == 0) {
+            ic.init();
+        }
+        else {
+            ic.resetConfig();
+        
+            ic.bResetAnno = true;
+            ic.bResetSets = true;
+        }
+
         // ic.deferredMmdbaf = $.Deferred(function() {
-        ic.structArray = idlist.split(',');
+        let structArray = idlist.split(',');
+        ic.structArray = ic.structArray.concat(structArray);
 
         let ajaxArray = [];
 
-        for(let i = 0, il = ic.structArray.length; i < il; ++i) {
+        for(let i = 0, il = structArray.length; i < il; ++i) {
             let url_t, targetAjax;
-            let structure = ic.structArray[i];
+            let structure = structArray[i];
 
             if(isNaN(structure) && structure.length > 5) {
-                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.structArray[i] + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
+                url_t = "https://alphafold.ebi.ac.uk/files/AF-" + structure + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
 
                 targetAjax = me.getAjaxPromise(url_t, 'text');
             }
@@ -47423,7 +47875,7 @@ class ChainalignParser {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
-            await thisClass.parseMMdbAfData(dataArray, ic.structArray, bQuery, vastplusAtype);
+            await thisClass.parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype);
             if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
         }
         catch(err) {
@@ -47452,18 +47904,20 @@ class ChainalignParser {
             }
         }
 
-        if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
+        //if(!ic.bCommandLoad && !bQuery) ic.init(); // remove all previously loaded data
         
         let hAtoms = {}, hAtomsTmp = {};
         let bLastQuery = false;
 
-        ic.opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
+        ic.opts['color'] = (ic.structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
 
             let targetOrQuery, bAppend;
-            if(i == 0 && !bQuery) {
+            //if(i == 0 && !bQuery) {
+            // check if structures were loaded before
+            if(i == 0 && !bQuery && ic.structArray.length == structArray.length) {
                 targetOrQuery = 'target';
                 bAppend = false; 
             }
@@ -47487,7 +47941,7 @@ class ChainalignParser {
         }
 
         // parseMmdbData() didn't render structures for mmdbafid input
-        if(structArray.length > 1) ic.opts['color'] = 'structure';
+        if(ic.structArray.length > 1) ic.opts['color'] = 'structure';
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         
         await ic.ParserUtilsCls.renderStructure();
@@ -50205,8 +50659,6 @@ class RealignParser {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
-            //ic.qt_start_end = []; // reset the alignment
-            //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
 
             // set trans and rotation matrix
             ic.t_trans_add = [];
@@ -53713,7 +54165,7 @@ class SetSeqAlign {
         ic.alnChains = {};
         ic.alnChains[chainid1] = {};      
 
-        let resi2range_t = {}; // aaccumulative aligned residues in the template chain
+        let resi2range_t = {}; // accumulative aligned residues in the template chain
         // start and end of MSA
         let start_t = 9999, end_t = -1;
 
@@ -53733,8 +54185,16 @@ class SetSeqAlign {
                     end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
                 // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
-                    let resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+                    let resi;
+
+                    // if(me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
+                    //     resi = ic.qt_start_end[chainIndex][i].t_start;
+                    // }
+                    // else {
+                        let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+                    // }
+
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
                     if(j > end_t) end_t = j;
@@ -58502,7 +58962,7 @@ class LoadScript {
 
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
-          
+  
           if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
                     if(ic.bNotLoadStructure) {
@@ -58514,7 +58974,7 @@ class LoadScript {
                     }
                     else {
                         await thisClass.applyCommandLoad(ic.commands[i]);
-
+                        
                         // end of all commands
                         if(1 === ic.commands.length) ic.bAddCommands = true;
                         if(bFinalStep) thisClass.renderFinalStep(steps);
@@ -58528,7 +58988,7 @@ class LoadScript {
                         // undo/redo requires render the first step
                         if(ic.backForward) this.renderFinalStep(1);
                     }
-                    else {
+                    else {                    
                         await thisClass.applyCommandLoad(ic.commands[i]);
 
                         // undo/redo requires render the first step
@@ -58850,9 +59310,8 @@ class LoadScript {
     //it has to finish before the rest steps start.
     async applyCommandLoad(commandStr) { let ic = this.icn3d, me = ic.icn3dui;
 
-      //ic.bCommandLoad = true;
-
-      if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
+      // allow multiple load
+      //if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
 
       // chain functions together
 ///      ic.deferred2 = $.Deferred(function() {
@@ -60105,6 +60564,8 @@ class Selection {
     resetAll() { let ic = this.icn3d, me = ic.icn3dui;
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
+
+        ic.opts = me.hashUtilsCls.cloneHash(ic.optsOri);
 
         //reset side chains
         ic.setOptionCls.setStyle('sidec', 'nothing');
@@ -61683,7 +62144,8 @@ class Dssp {
         }
         else {
             //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
-            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl', 'p42081_cd86', 'q7z7d3_vtc', '1bqu_x', '1cdh_x', '1hnf_x', '1hxm_dx', '1hxm_gx', '4jqi_x', '4zt1_x', '5esv_vhx', '5esv_vlx', '6jxr_ax', '6jxr_bx', '1dr9_x', '3pv7_x', '4f9l_x', '4iok_x', '4z18_x', '6x4g_cd275x', 'q9um44_x'];
+            //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl', 'p42081_cd86', 'q7z7d3_vtc', '1bqu_x', '1cdh_x', '1hnf_x', '1hxm_dx', '1hxm_gx', '4jqi_x', '4zt1_x', '5esv_vhx', '5esv_vlx', '6jxr_ax', '6jxr_bx', '1dr9_x', '3pv7_x', '4f9l_x', '4iok_x', '4z18_x', '6x4g_cd275x', 'q9um44_x'];
+            ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl'];
 
             if(ic.pdbDataArray) {
                 await thisClass.parseRefPdbData(ic.pdbDataArray);
@@ -61804,7 +62266,7 @@ class Dssp {
             }
        }
 
-        try {
+        // try {
             let dataArray2 = [];
             // if(!me.bNode) {
                 let allPromise = Promise.allSettled(ajaxArray);
@@ -61825,12 +62287,12 @@ class Dssp {
             await thisClass.parseAlignData(dataArray2, domainidpairArray);
 
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
-        }
-        catch(err) {
-            if(!me.bNode) console.log("Error in aligning with TM-align...");
-            //console.log("Error in aligning with TM-align...");
-            return;
-        }                       
+        // }
+        // catch(err) {
+        //     if(!me.bNode) console.log("Error in aligning with TM-align...");
+        //     //console.log("Error in aligning with TM-align...");
+        //     return;
+        // }                       
     }
 
     async parseAlignData(dataArray, domainidpairArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -61849,7 +62311,7 @@ class Dssp {
             let queryData = dataArray[i].value; //[0];
 
             if(!queryData) {
-                console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
+                if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
                 continue;
             }
 
@@ -61946,17 +62408,19 @@ if(!me.bNode) {
 
                     ic.resid2refnum[resid] = refnumLabel;
 
-                    if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
-                        ic.refnum2residArray[refnum] = [resid];
-                    }
-                    else {
-                        ic.refnum2residArray[refnum].push(resid);
-                    }
+                    // final reference numbers will be assign in ic.showSeqCls.showRefNum()
 
-                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                    }
-                    ic.chainsMapping[chainid][resid] = refnumLabel;
+                    // if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
+                    //     ic.refnum2residArray[refnum] = [resid];
+                    // }
+                    // else {
+                    //     ic.refnum2residArray[refnum].push(resid);
+                    // }
+
+                    // if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    //     ic.chainsMapping[chainid] = {};
+                    // }
+                    // ic.chainsMapping[chainid][resid] = refnumLabel;
                 //}
             }
         }
@@ -61977,11 +62441,26 @@ if(!me.bNode) {
     getLabelFromRefnum(oriRefnum) { let ic = this.icn3d; ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
-        if(refnum < 100) return oriRefnum;
-        else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum; 
-        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum; // “A” strand or “A*” strand
-        else if(refnum >= 1200 && refnum < 1900) return "A'" + oriRefnum;
-        else if(refnum >= 1900 && refnum < 2000) return "A" + oriRefnum; // “A” strand or “A'” strand
+        // A^: 1xx or 2xx
+        // A: 11xx
+        // A': 12xx
+        // A*: 13xx
+        // B: 21xx
+        // C: 32xx
+        // C': 42xx
+        // C'': 51xx, 52xx
+        // D: 61xx
+        // E: 71xx
+        // F: 82xx
+        // G: 91xx, 92xx
+        // G*: 94xx
+
+        if(refnum < 100) return " " + oriRefnum;
+        else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum;
+        else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
+        else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
+        else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
+        else if(refnum >= 1400 && refnum < 2000) return "A" + oriRefnum;
         else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
         else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
         else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
@@ -61989,9 +62468,9 @@ if(!me.bNode) {
         else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
         else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
         else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-        else if(refnum >= 9000 && refnum < 9200) return "G" + oriRefnum; // 1st beta sheet, “G” strand or “G*” strand
-        else if(refnum >= 9200 && refnum < 9900) return "G*" + oriRefnum; // 2nd beta sheet,  “G” strand or “G*” strand
-        else if(refnum >= 9900) return "G" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9400) return "G" + oriRefnum;
+        else if(refnum >= 9400 && refnum < 9500) return "G*" + oriRefnum;
+        else if(refnum >= 9500) return "G" + oriRefnum;
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
@@ -62608,14 +63087,14 @@ class Symd {
             /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
         }
         catch(err) {
-        $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
+            $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
 
-        me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+            me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
 
-        ic.ParserUtilsCls.hideLoading();
+            ic.ParserUtilsCls.hideLoading();
 
-        /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
-        return;
+            /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
+            return;
         }
     }
 
@@ -66969,6 +67448,7 @@ class ShareLink {
 
            let i = start + 1;
            let tmpUrl = '';
+
            for(let il = ic.commands.length; i < il; ++i) {
                let command_tf = ic.commands[i].split('|||');
                let command_tf2 = command_tf[0].split('&command=');
@@ -66993,18 +67473,12 @@ class ShareLink {
                    ++cntToggle;
                }
                else if(i === start + 1) {
-                   //tmpUrl += prevCommandStr;
-                   
-                   //if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
-                   if(prevCommandStr.substr(0, 4) !== 'load') {
+                //    if(prevCommandStr.substr(0, 4) !== 'load') {
                        tmpUrl += prevCommandStr;
-                   }
-
-                   //statefile += prevCommandStr + "\n";
+                //    }
                }
                else {
                    tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
-                   //statefile += prevCommandStr + "\n";
                }
 
                // keep all commands in statefile
@@ -69025,7 +69499,7 @@ class ARButton {
                 ic.bAr = true;
 				//ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
 
-                ic.drawCls.draw(ic.bAr);
+				ic.drawCls.draw(ic.bAr);
 
 				if ( currentSession === null ) {
 
@@ -69310,7 +69784,8 @@ class iCn3D {
             // }
             // else { // WebGL2 supports EXT_frag_depth and ANGLE_instanced_arrays
                 this.bExtFragDepth = true;
-                this.bImpo = true; 
+                this.bImpo = false; //true; 
+
                 //console.log('WebGL2 is supported. Thus EXT_frag_depth and ANGLE_instanced_arrays are supported. All spheres and cylinders are drawn using shaders. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
             // }
 
@@ -69884,7 +70359,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.22.4';
+    this.REVISION = '3.23.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

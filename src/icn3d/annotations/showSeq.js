@@ -14,7 +14,7 @@ class ShowSeq {
         if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbafid === undefined) {
             bNonMmdb = true;
             giSeq = [];
-            for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
+            for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
                 giSeq.push(ic.chainsSeq[chnid][i]);
             }
         }
@@ -458,8 +458,9 @@ class ShowSeq {
         if(ic.bShowRefnum) {
             ic.hAtoms = ic.hAtomsRefnum;
             
-            let name = 'refnum_anchors';
-            ic.selectionCls.saveSelection(name, name);
+            // commented out because it produced too many commands
+            // let name = 'refnum_anchors';
+            // ic.selectionCls.saveSelection(name, name);
             
             ic.hlUpdateCls.updateHlAll();
         }
@@ -531,117 +532,210 @@ class ShowSeq {
 
         // auto-generate ref numbers for loops 
         let bLoop = false, currStrand = '', prevStrand = '', currFirstDigit = '', currCnt =  1;
-        let refnumLabel, refnumStr_ori, refnumStr;
+        let refnumLabel, refnumStr_ori, refnumStr, postfix, refnum;
 
+        // set hash for the loops
+        let strand2len_start_stop = {};
+        let prevRefnumStr, prevPostfix, prevRefnum;
+
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            if(ic.residues.hasOwnProperty(residueid)) {
+                refnumLabel = ic.resid2refnum[residueid];
+                if(refnumLabel) {                        
+                    refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                    currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                    currFirstDigit = refnumStr_ori.substr(0, 1);
+
+                    refnumStr = refnumStr_ori;
+                    refnum = parseInt(refnumStr);
+                    postfix = refnumStr.replace(refnum.toString(), '');
+
+                    if(!bCustom && !kabat_or_imgt) {
+                        if(currStrand != prevStrand) { // reset currCnt
+                            // end of a loop
+                            if(strand2len_start_stop[prevStrand + prevPostfix]) {
+                                strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
+                                strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
+                                strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
+                            }
+
+                            currCnt = 1;
+                        }
+
+                        // #9##
+                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            if(currCnt == 1) { // start of a loop
+                                strand2len_start_stop[currStrand + postfix] = {};
+                                strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
+                                strand2len_start_stop[currStrand + postfix].chainid = chnid;
+                            }
+                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                            refnumLabel = currStrand + refnumStr;
+                            ++currCnt;
+                        }
+                    }
+                }
+                else {
+                    if(prevStrand && !bCustom && !kabat_or_imgt) {
+                        // no ref num
+                        refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+                        refnumLabel = currStrand + refnumStr;
+                        ++currCnt;
+                    }
+                }
+
+                prevRefnumStr = refnumStr;
+                prevRefnum = refnum;
+                prevPostfix = postfix;
+            }
+
+            prevStrand = currStrand;
+        }
+        if(strand2len_start_stop[prevStrand + prevPostfix]) {
+            strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
+            strand2len_start_stop[prevStrand + prevPostfix].end = prevRefnumStr;
+            //strand2len_start_stop[prevStrand].nextStrand = undefined;
+        }
+
+        let refnumLabelNoPostfix;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             bLoop = false;
 
             html += this.insertGap(chnid, i, '-');
-            // if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
-                // let currResi = ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi;
-                let currResi = ic.ParserUtilsCls.getResi(chnid, i);
-                let residueid = chnid + '_' + currResi;
-                let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-                if(!ic.residues.hasOwnProperty(residueid)) {
-                    html += '<span></span>';
-                }
-                else {
-                    //let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
-                    //let resi_ori = atom.resi_ori;
 
-                    //if(ic.resid2refnum.hasOwnProperty(residueid)) {
-                    refnumLabel = ic.resid2refnum[residueid];
-                    if(refnumLabel) {                        
-                        refnumStr_ori = refnumLabel.replace(/'/g, '').substr(1); // C', C''
-                        currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
-                        currFirstDigit = refnumStr_ori.substr(0, 1);
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+            if(!ic.residues.hasOwnProperty(residueid)) {
+                html += '<span></span>';
+            }
+            else {
+                refnumLabel = ic.resid2refnum[residueid];
+                if(refnumLabel) {                        
+                    refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                    currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                    currFirstDigit = refnumStr_ori.substr(0, 1);
 
-                        if(currStrand != prevStrand) { // reset currCnt
-                            currCnt = 1;
+                    refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
+
+                    if(currStrand != prevStrand) { // reset currCnt
+                        currCnt = 1;
+                    }
+
+                    if(bCustom) {
+                        refnumStr = refnumLabel;
+                    }
+                    else if(kabat_or_imgt == 1) {
+                        refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
+                    }
+                    else if(kabat_or_imgt == 2) {
+                        refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;                            
+                    }
+                    else {
+                        refnumStr = refnumStr_ori;
+                        refnum = parseInt(refnumStr);
+                        postfix = refnumStr.replace(refnum.toString(), '');
+
+                        // #9##
+                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            bLoop = true;
+
+                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
+                            
+                            refnumStr = result.refnumStr
+                            refnumLabel = result.refnumLabel;
+                            refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                            ++currCnt;
                         }
-
-                        refnumStr;
-                        if(bCustom) {
-                            refnumStr = refnumLabel;
-                        }
-                        else if(kabat_or_imgt == 1) {
-                            refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;                            
-                        }
-                        else if(kabat_or_imgt == 2) {
-                            refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;                            
-                        }
-                        else {
-                            refnumStr = refnumStr_ori;
-
-                            // #9##
-                            if(refnumStr.substr(1,1) == '9') { // loop region
-                                bLoop = true;
-                                refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                                refnumLabel = currStrand + refnumStr;
-                                ++currCnt;
-                            }
-                        }
-                    
-                        if(bCustom) {
-                            if(!refnumStr) {                               
-                                html += '<span></span>';
-                            }
-                            else {
-                                let refnum = parseInt(refnumStr);
-
-                                if(refnum % 2 == 0) {
-                                    html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
-                                }
-                                else {
-                                    html += '<span title="' + refnumStr + '">&nbsp;</span>';
-                                }
-                            }
-                        }
-                        else if(kabat_or_imgt == 1 || kabat_or_imgt == 2) {
-                            if(!refnumStr) {                               
-                                html += '<span></span>';
-                            }
-                            else {
-                                let refnum = parseInt(refnumStr).toString();
-                                let color = this.getRefnumColor(currStrand);
-                                let colorStr = 'style="color:' + color + '"'
-
-                                let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
-
-                                if(lastTwo % 2 == 0) {
-                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">' + refnumStr + '</span>';
-                                }
-                                else {
-                                    html += '<span ' + colorStr + ' title="' + refnumStr + '">&nbsp;</span>';
-                                }
-                            }
+                    }
+                
+                    if(bCustom) {
+                        if(!refnumStr) {                               
+                            html += '<span></span>';
                         }
                         else {
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                            let refnum = parseInt(refnumStr);
+
+                            if(refnum % 2 == 0) {
+                                html += '<span title="' + refnumStr + '">' + refnumStr + '</span>';
+                            }
+                            else {
+                                html += '<span title="' + refnumStr + '">&nbsp;</span>';
+                            }
+                        }
+                    }
+                    else if(kabat_or_imgt == 1 || kabat_or_imgt == 2) {
+                        if(!refnumStr) {                               
+                            html += '<span></span>';
+                        }
+                        else {
+                            let refnum = parseInt(refnumStr).toString();
+                            let color = this.getRefnumColor(currStrand);
+                            let colorStr = 'style="color:' + color + '"'
+
+                            let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
+
+                            if(lastTwo % 2 == 0) {
+                                html += '<span ' + colorStr + ' title="' + refnumStr + '">' + refnumStr + '</span>';
+                            }
+                            else {
+                                html += '<span ' + colorStr + ' title="' + refnumStr + '">&nbsp;</span>';
+                            }
                         }
                     }
                     else {
-                        if(!bCustom && !kabat_or_imgt) {
-                            // no ref num
-                            bLoop = true;
-                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                            refnumLabel = currStrand + refnumStr;
-                            ++currCnt;
-
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
-                        }
-                        else {
-                            html += '<span></span>';
-                        }
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
                     }
                 }
-            // }
-            // else {
-            //     html += '<span></span>';
-            // }
+                else {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
+
+                    // skip non-protein residues
+                    if(ic.proteins.hasOwnProperty(atom.serial) && prevStrand && !bCustom && !kabat_or_imgt) {
+                        // no ref num
+                        bLoop = true;
+
+                        // use previous postfix
+                        let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
+                            
+                        refnumStr = result.refnumStr
+                        refnumLabel = result.refnumLabel;
+                        refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+                  
+                        ++currCnt;
+
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                    }
+                    else {
+                        html += '<span></span>';
+                    }
+                }
+
+                // assign the adjusted reference numbers
+                ic.resid2refnum[residueid] = refnumLabel;
+
+                if(!ic.refnum2residArray.hasOwnProperty(refnumStr)) {
+                    ic.refnum2residArray[refnumStr] = [residueid];
+                }
+                else {
+                    ic.refnum2residArray[refnumStr].push(residueid);
+                }
+
+                if(!ic.chainsMapping.hasOwnProperty(chnid)) {
+                    ic.chainsMapping[chnid] = {};
+                }
+
+                // remove the postfix when comparing interactions
+                //ic.chainsMapping[chnid][residueid] = refnumLabel;
+                ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
+            }
 
             prevStrand = currStrand;
         }
+
         html += '<span class="icn3d-residueNum"></span>';
         html += '</span>';
         html += '<br>';
@@ -652,7 +746,46 @@ class ShowSeq {
         return {html: html, html3: html3}
     }
 
-    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) {  let ic = this.icn3d, me = ic.icn3dui;
+    getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d, me = ic.icn3dui;
+        let refnumStr, refnumLabel, refnumLabelNoPostfix;
+
+        if(strand2len_start_stop[currStrand + postfix]) {
+            let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
+            let end = parseInt(strand2len_start_stop[currStrand + postfix].end);
+            // e.g., 2150a
+            let postfixStart = strand2len_start_stop[currStrand + postfix].start.replace(start.toString(), '');
+            let postfixEnd = strand2len_start_stop[currStrand + postfix].end.replace(end.toString(), '');
+
+            let len = strand2len_start_stop[currStrand + postfix].len;
+            let halfLen = (strand2len_start_stop[currStrand + postfix].nextStrand) ? parseInt(len / 2.0 + 0.5) : len;
+
+            let refnum;
+            if(currCnt <= halfLen) {
+                refnum = start + currCnt;
+                refnumStr = refnum + postfixStart;
+                refnumLabel = currStrand + refnumStr;
+            }
+            else {
+                refnum = end - (len + 1 - currCnt);
+                refnumStr = refnum + postfixEnd;
+                refnumLabel = (strand2len_start_stop[currStrand + postfix].nextStrand !== undefined) ? strand2len_start_stop[currStrand + postfix].nextStrand + refnumStr : ' ' + refnumStr;
+            }
+
+            refnumLabelNoPostfix = currStrand + refnum;
+        }
+        else {
+            // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
+            // refnumLabel = currStrand + refnumStr;
+
+            refnumStr = '';
+            refnumLabel = '';
+            refnumLabelNoPostfix = '';
+        }
+
+        return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix};
+    }
+
+    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
         let color = this.getRefnumColor(currStrand);
         let colorStr = 'style="color:' + color + '"'
@@ -661,8 +794,6 @@ class ShowSeq {
         let lastThree = parseInt(refnum.substr(refnum.length - 3, 3));
 
         let html = '';
-
-        if(refnumLabel == 'NaN') refnumLabel = '';
 
         if(lastTwo == 50 && !bLoop) {
             // highlight the anchor residues
@@ -683,38 +814,47 @@ class ShowSeq {
     }
 
     getRefnumColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(currStrand == "A") {
-            return '#777';
+        if(currStrand == "A^") { // deep sky blue
+            return '#00BFFF';
         }
-        else if(currStrand == "B") {
+        else if(currStrand == "A") { // blue
+            return '#0000FF';
+        }
+        else if(currStrand == "A*") { // sky blue
+            return '#87CEEB';
+        }
+        else if(currStrand == "A'") { // steel blue
+            return '#4682B4';
+        }
+        else if(currStrand == "B") { // cyan
+            return '#00FFFF';
+        }
+        else if(currStrand == "C") { // green
+            return '#00FF00';
+        }
+        else if(currStrand == "C'") { // yellow
+            return '#FFFF00';
+        }
+        else if(currStrand == "C''") { // orange
+            return '#FFA500';
+        }
+        else if(currStrand == "D") { // brown
+            return '#A52A2A';
+        }
+        else if(currStrand == "E") { // pink
+            return '#FFC0CB';
+        }
+        else if(currStrand == "F") { // magenta
+            return '#FF00FF';
+        }
+        else if(currStrand == "G") { // red
+            return '#FF0000';
+        }
+        else if(currStrand == "G*") { // salmon
+            return '#FA8072';
+        }
+        else {
             return '#000';
-        }
-        else if(currStrand == "C") {
-            return '#777';
-        }
-        else if(currStrand == "C'") {
-            return '#000';
-        }
-        else if(currStrand == "C''") {
-            return '#777';
-        }
-        else if(currStrand == "D") {
-            return '#000';
-        }
-        else if(currStrand == "E") {
-            return '#777';
-        }
-        else if(currStrand == "F") {
-            return '#000';
-        }
-        else if(currStrand == "G") {
-            return '#777';
-        }
-        else if(currStrand.indexOf("'") != -1) { //A', G', etc
-	    return '#333';
-        }
-        else { // A^, etc
-            return '#AAA';
         }
     }
 

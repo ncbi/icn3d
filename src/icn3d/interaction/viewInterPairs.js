@@ -91,6 +91,7 @@ class ViewInterPairs {
            ic.resids2inter = {}
            ic.resids2interAll = {}
        }
+
        if(bSaltbridge) {
            let threshold = parseFloat($("#" + ic.pre + "saltbridgethreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsIonic;

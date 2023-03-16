@@ -282,7 +282,8 @@ class iCn3D {
             // }
             // else { // WebGL2 supports EXT_frag_depth and ANGLE_instanced_arrays
                 this.bExtFragDepth = true;
-                this.bImpo = true; 
+                this.bImpo = false; //true; 
+
                 //console.log('WebGL2 is supported. Thus EXT_frag_depth and ANGLE_instanced_arrays are supported. All spheres and cylinders are drawn using shaders. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
             // }
 

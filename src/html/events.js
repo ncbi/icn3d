@@ -69,6 +69,20 @@ class Events {
         }
 
         if(bMsa) {
+            // choose the first chain for each structure
+            if(nameArray.length == 0) {
+                nameArray = [];
+                let structureHash = {};
+                
+                for(let chainid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                    if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+                        nameArray.push(chainid);
+                        structureHash[atom.structure] = 1;
+                    }
+                }
+            }
+
             await ic.realignParserCls.realignOnStructAlignMsa(nameArray);
         }
         else {
@@ -184,9 +198,12 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
-    launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
-        let flag = bBiounit ? '1' : '0';
+    async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        if(!me.cfg.notebook) dialog.dialog( "close" );
+        
+        let flag = bBiounit ? 1 : 0;
 
+        // remove space
         ids = ids.replace(/,/g, ' ').replace(/\s+/g, ',').trim();
 
         if(!ids) {
@@ -194,7 +211,9 @@ class Events {
             return;
         }
 
+        /*
         let idArray = ids.split(',');
+
         if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
             thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -205,6 +224,23 @@ class Events {
             let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
             window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
         }
+        */
+
+        // remove space
+        me.cfg.mmdbafid = ids;
+        me.cfg.bu = flag;
+
+        ic.bMmdbafid = true;
+        ic.inputid = me.cfg.mmdbafid;
+        if(me.cfg.bu == 1) {
+            ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+        }
+        else {
+            ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+        }
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+
+        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
     }
 
     //Hold all functions related to click events.
@@ -946,7 +982,6 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             
-
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
 
@@ -955,7 +990,6 @@ class Events {
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            
 
             // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();

@@ -397,13 +397,15 @@ class Annotation {
         $("#" + ic.pre + "dl_annotations > .icn3d-annotation").show();
     }
     setAnnoView(view) { let ic = this.icn3d, me = ic.icn3dui;
-        if(view === 'detailed view') {
-            ic.view = 'detailed view';
-            $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 1 );
-        }
-        else { // overview
-            ic.view = 'overview';
-            $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 0 );
+        if(!me.bNode) {
+            if(view === 'detailed view') {
+                ic.view = 'detailed view';
+                $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 1 );
+            }
+            else { // overview
+                ic.view = 'overview';
+                $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 0 );
+            }
         }
     }
     setAnnoDisplay(display, prefix) { let ic = this.icn3d, me = ic.icn3dui;

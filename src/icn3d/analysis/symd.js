@@ -248,14 +248,14 @@ class Symd {
             /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
         }
         catch(err) {
-        $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
+            $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
 
-        me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+            me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
 
-        ic.ParserUtilsCls.hideLoading();
+            ic.ParserUtilsCls.hideLoading();
 
-        /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
-        return;
+            /// if(ic.deferredSymd !== undefined) ic.deferredSymd.resolve();
+            return;
         }
     }
 

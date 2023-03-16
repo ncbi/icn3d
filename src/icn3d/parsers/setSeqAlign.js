@@ -606,7 +606,7 @@ class SetSeqAlign {
         ic.alnChains = {};
         ic.alnChains[chainid1] = {};      
 
-        let resi2range_t = {}; // aaccumulative aligned residues in the template chain
+        let resi2range_t = {}; // accumulative aligned residues in the template chain
         // start and end of MSA
         let start_t = 9999, end_t = -1;
 
@@ -626,8 +626,16 @@ class SetSeqAlign {
                     end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
                 // }
                 for(let j = start1; j <= end1; ++j) {
-                    let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
-                    let resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+                    let resi;
+
+                    // if(me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
+                    //     resi = ic.qt_start_end[chainIndex][i].t_start;
+                    // }
+                    // else {
+                        let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+                    // }
+
                     resi2range_t[resi] = 1;
                     if(j < start_t) start_t = j;
                     if(j > end_t) end_t = j;

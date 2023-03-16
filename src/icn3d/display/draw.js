@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-class Draw {
+ class Draw {
     constructor(icn3d) {
         this.icn3d = icn3d;
     }
@@ -102,37 +102,103 @@ class Draw {
         }
     }
 
-    handleController( controller, dt, selectPressed) { let ic = this.icn3d, me = ic.icn3dui;
+    handleController( controller, dt, selectPressed, squeezePressed, xArray, yArray) { let ic = this.icn3d, me = ic.icn3dui;
+    try {
         // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
-        if ( selectPressed ){   
-/*             
-            controller.children[0].scale.z = 10;
-            ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
-            ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-            ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+        // thumbstick move
+        let yMax = 0;
+        if(yArray[0] != 0 && yArray[1] != 0) {
+            yMax = yArray[0]; // right
+        }
+        else if(yArray[0] != 0) {
+            yMax = yArray[0]; 
+        }
+        else if(yArray[1] != 0) {
+            yMax = yArray[1]; 
+        }
 
-            const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+        // selection only work when squeeze (menu) is not pressed
+        if(selectPressed && !squeezePressed) {
+            let dtAdjusted = yMax / 1000.0 * dt; 
 
-            if (intersects.length>0){
-                intersects[0].object.add(ic.highlightVR);
-                ic.highlightVR.visible = true;
-
-                controller.children[0].scale.z = intersects[0].distance;
-            }else{
-                ic.highlightVR.visible = false;
-            }
-*/
-           
             const speed = 5; //2;
             const quaternion = ic.dolly.quaternion.clone();
-            //ic.dolly.quaternion.copy(ic.dummyCam.getWorldQuaternion());
             ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
-            ic.dolly.translateZ(-dt * speed);
+            ic.dolly.translateZ(dtAdjusted * speed);
             //ic.dolly.position.y = 0; // limit to a plane
             ic.dolly.quaternion.copy(quaternion); 
-                    
+
+            if(yMax == 0) {               
+                controller.children[0].scale.z = 10;
+                ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
+
+                ic.raycasterVR.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+                ic.raycasterVR.ray.direction.set( 0, 0, - 1 ).applyMatrix4( ic.workingMatrix );
+
+                const intersects = ic.raycasterVR.intersectObjects( ic.objects );
+
+                if (intersects.length>0){
+                    controller.children[0].scale.z = intersects[0].distance; // stop on the object
+
+                    intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+
+                    let threshold = ic.rayThreshold; //0.5;
+                
+                    let atom = ic.rayCls.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+
+                    while(!atom && threshold < 10) {
+                        threshold = threshold + 0.5;
+                        atom = ic.rayCls.getAtomsFromPosition(intersects[ 0 ].point, threshold);
+                    }
+
+                    if(atom) {
+                        ic.pAtom = atom;
+                        //ic.pickingCls.showPicking(atom);
+
+                        this.showPickingVr(ic.pk, atom);
+
+                        //ic.canvasUILog.updateElement( "info", atom.structure + '_' + atom.chain + '_' + atom.resi);
+                    }      
+                } 
+            }
         }
+
+    }
+    catch(err) {
+        //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+    }  
+    }
+
+    showPickingVr(pk, atom) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!pk) pk = 2; // residues
+
+        if(pk === 1) {
+          ic.hAtoms[atom.serial] = 1;
+        }
+        else if(pk === 2) {
+          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+          ic.hAtoms = ic.residues[residueid];
+        }
+        else if(pk === 3) {
+          ic.hAtoms = ic.pickingCls.selectStrandHelixFromAtom(atom);
+        }
+        else if(pk === 4) {
+          ic.hAtoms = ic.pickingCls.select3ddomainFromAtom(atom);
+        }
+        else if(pk === 5) {
+          let chainid = atom.structure + '_' + atom.chain;
+          ic.hAtoms = ic.chains[chainid];
+        }
+
+        if(pk === 2) {
+            ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
+        }
+        else if(pk === 1) {
+            ic.residueLabelsCls.addAtomLabels(atoms);
+        }
+
+        ic.setOptionCls.setStyle("proteins", atom.style);
     }
 
     //Render the scene and objects into pixels.
@@ -158,22 +224,20 @@ class Draw {
             let dt = 0.04; // ic.clock.getDelta();
 
             if (ic.controllers){
-                // let result = this.getThumbStickMove();
-                // let y = result.y * -1;
-                // let pressed = result.pressed;
+                let result = this.updateGamepadState();
 
                 for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                     let controller = ic.controllers[i];
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
-                    thisClass.handleController( controller, dt, controller.userData.selectPressed );
+                    thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
                     //thisClass.handleController( controller, dt, pressed );
                 }
             }
-/*
-            if ( ic.renderer.xr.isPresenting ){    
-                ic.canvasUI.update();
+
+            if ( ic.renderer.xr.isPresenting){    
+                if(ic.canvasUI) ic.canvasUI.update();
+                //if(ic.canvasUILog) ic.canvasUILog.update();
             }
-*/
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
@@ -186,58 +250,40 @@ class Draw {
         }
     }
 
-    getThumbStickMove() { let ic = this.icn3d, me = ic.icn3dui;
-        let x = 0, y = 0;
-        let btnPressed = false;
-
+    updateGamepadState() { let ic = this.icn3d, me = ic.icn3dui;
+        let xAxisIndex = (ic.xAxisIndex) ? ic.xAxisIndex : 2;
+        let yAxisIndex = (ic.yAxisIndex) ? ic.yAxisIndex : 3;
+        //https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture5_3/app.js     
+        // "trigger":{"button":0},
+        // "squeeze":{"button":1},
+        // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
+        //======= left => right =========
+        // "x_button":{"button":4},     "a_button":{"button":4}
+        // "y_button":{"button":5},     "b_button":{"button":5}
+        // "thumbrest":{"button":6}
         if ( ic.renderer.xr.isPresenting ){
             const session = ic.renderer.xr.getSession();
             const inputSources = session.inputSources;
-          
-            if ( ic.getInputSources ){    
-                //const info = [];
                 
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    const axes = gp.axes;
-                    const buttons = gp.buttons;
-                    const mapping = gp.mapping;
-                    ic.useStandard = (mapping == 'xr-standard');
-                    const gamepad = { axes, buttons, mapping };
-                    const handedness = inputSource.handedness;
-                    const profiles = inputSource.profiles;
-                    ic.gamepadType = "";
-                    profiles.forEach( profile => {
-                        if (profile.indexOf('touchpad')!=-1) ic.gamepadType = 'touchpad';
-                        if (profile.indexOf('thumbstick')!=-1) ic.gamepadType = 'thumbstick';
-                    });
-                    const targetRayMode = inputSource.targetRayMode;
-                    //info.push({ gamepad, handedness, profiles, targetRayMode });
-                });
-                 
-                ic.getInputSources = false;
-            }else if (ic.useStandard && ic.gamepadType != ""){
-                inputSources.forEach( inputSource => {
-                    const gp = inputSource.gamepad;
-                    const thumbstick = (ic.gamepadType=='thumbstick');
-                    //{"trigger":{"button":0},"touchpad":{"button":2,"xAxis":0,"yAxis":1}},
-                    //"squeeze":{"button":1},"thumbstick":{"button":3,"xAxis":2,"yAxis":3},"button":{"button":6}}}
-                    const xaxisOffset = (thumbstick) ? 2 : 0;
-                    const btnIndex = (thumbstick) ? 3 : 2;
-                    btnPressed = gp.buttons[btnIndex].pressed;
-                    // if ( inputSource.handedness == 'right') {
-                    // } else if ( inputSource.handedness == 'left') {
-                    // }
+            const info = [];
 
-                    //https://beej.us/blog/data/javascript-gamepad/
-                    // x,y-axis values are between -1 and 1
-                    x = gp.axes[xaxisOffset];
-                    y = gp.axes[xaxisOffset + 1]; 
-                })
-            }
+            let xArray = [], yArray = [];
+            inputSources.forEach( inputSource => {
+                const gp = inputSource.gamepad;
+                const axes = gp.axes;
+
+                let x = parseInt(1000 * axes[xAxisIndex]); // -1000 => 1000
+                let y = parseInt(-1000 * axes[yAxisIndex]); // -1000 => 1000
+
+                xArray.push(x);
+                yArray.push(y);
+            });
+
+            return {xArray: xArray, yArray: yArray};
         }
-
-        return {'y': y, 'pressed': btnPressed};
+        else {
+            return {xArray: [0, 0], yArray: [0, 0]};
+        }
     }
 }
 

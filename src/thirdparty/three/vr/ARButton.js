@@ -121,7 +121,7 @@ class ARButton {
                 ic.bAr = true;
 				//ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.2));
 
-                ic.drawCls.draw(ic.bAr);
+				ic.drawCls.draw(ic.bAr);
 
 				if ( currentSession === null ) {
 

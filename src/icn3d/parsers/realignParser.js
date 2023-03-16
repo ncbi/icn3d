@@ -508,8 +508,6 @@ class RealignParser {
         let allPromise = Promise.allSettled(ajaxArray);
         try {
             let dataArray = await allPromise;
-            //ic.qt_start_end = []; // reset the alignment
-            //await ic.chainalignParserCls.downloadChainalignmentPart2bRealignMsa(dataArray, chainidPairArray); 
 
             // set trans and rotation matrix
             ic.t_trans_add = [];

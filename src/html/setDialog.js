@@ -352,9 +352,10 @@ class SetDialog {
 
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:500px'>";
-        html += "List of PDB, MMDB, or AlphaFold UniProt IDs: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
-        html += me.htmlCls.buttonStr + "reload_mmdbaf'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/><br>";
+        html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
+        html += "Append a list of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdbaf'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
+
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
         + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
         + me.pre + 'asu_bu2_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
@@ -602,15 +603,18 @@ class SetDialog {
         html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign by Sequence</button></div><br>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "' style='max-width:500px'>";
 
-        html += me.htmlCls.divNowrapStr + "<b>1</b>. Select sets below or use your current selection:</div><br>";
+        //html += "<div><b>1</b>. There are two options to align chains. Option \"a\" is to select a list of chains below, and align all chains to the first chain. Option \"b\" is to select sets below or use your current selection, and align all chains pairwise.</div><br>";
+        html += "<div><b>1</b>. Select sets below or use your current selection.</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
 
-        html += "<div><b>2a</b>. <div style='display:inline-block; width:150px'>Align to Same Template:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // some issues in aligning 4orz_C and 5esv_H due to insertion code
+        //html += "<div><b>2a</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        html += "<div>or <b>2b</b>. <div style='display:inline-block; width:135px'>Align to Diff. Templates:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        //html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 
