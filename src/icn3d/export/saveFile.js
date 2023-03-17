@@ -753,7 +753,7 @@ class SaveFile {
                 $("#" + ic.pre + "title").html(title);
             }
             else if(me.cfg.mmdbafid !== undefined) {
-                let structureArray = me.cfg.mmdbafid.split(',');
+                let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
                 if(structureArray.length > 1) {
                     title = 'Multiple structures: ' + structureArray;
                     $("#" + ic.pre + "title").html(title);

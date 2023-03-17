@@ -12668,7 +12668,7 @@ var icn3d = (function (exports) {
             $("#" + me.pre + id).resizable();
         }
 
-        async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d;
+        async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
             if(!me.cfg.notebook) dialog.dialog( "close" );
             
             let flag = bBiounit ? 1 : 0;
@@ -12681,9 +12681,9 @@ var icn3d = (function (exports) {
                 return;
             }
 
-            /*
             let idArray = ids.split(',');
 
+            /*
             if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
                 thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -12696,21 +12696,28 @@ var icn3d = (function (exports) {
             }
             */
 
-            // remove space
-            me.cfg.mmdbafid = ids;
-            me.cfg.bu = flag;
-
-            ic.bMmdbafid = true;
-            ic.inputid = me.cfg.mmdbafid;
-            if(me.cfg.bu == 1) {
-                ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+            // single MMDB ID could show memebranes
+            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
             }
             else {
-                ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
-            }
-            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+                me.cfg.mmdbafid = ids;
+                me.cfg.bu = flag;
 
-            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+                ic.bMmdbafid = true;
+                ic.inputid = (ic.inputid) ? ic.inputid + me.cfg.mmdbafid : me.cfg.mmdbafid;
+                if(me.cfg.bu == 1) {
+                    ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+                }
+                else {
+                    ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+                }
+                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+
+                await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+            }
         }
 
         //Hold all functions related to click events.
@@ -67101,7 +67108,7 @@ var icn3d = (function (exports) {
                     $("#" + ic.pre + "title").html(title);
                 }
                 else if(me.cfg.mmdbafid !== undefined) {
-                    let structureArray = me.cfg.mmdbafid.split(',');
+                    let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
                     if(structureArray.length > 1) {
                         title = 'Multiple structures: ' + structureArray;
                         $("#" + ic.pre + "title").html(title);
