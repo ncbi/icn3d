@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.23.0';
+    this.REVISION = '3.23.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -457,6 +457,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     else if(me.cfg.blast_rep_id !== undefined) {
        // ic.bNCBI = true;
        ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+       
+       me.cfg.oriQuery_id = me.cfg.query_id;
+       me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
        // custom seqeunce has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {

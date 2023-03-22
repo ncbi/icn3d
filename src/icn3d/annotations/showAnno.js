@@ -485,11 +485,12 @@ class ShowAnno {
             }
             else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
               let title;
-              if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+              let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+              if(query_id.length > 14) {
+                  title = 'Query: ' + query_id.substr(0, 6) + '...';
               }
               else {
-                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + query_id : 'Query: gi ' + query_id;
               }
               let compTitle = undefined;
               let compText = undefined;
@@ -502,11 +503,12 @@ class ShowAnno {
             }
             else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
               let title;
-              if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+              let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+              if(query_id.length > 14) {
+                  title = 'Query: ' + query_id.substr(0, 6) + '...';
               }
               else {
-                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + query_id : 'Query: gi ' + query_id;
               }
             
               let evalue, targetSeq, querySeq, segArray;

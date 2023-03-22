@@ -100,11 +100,11 @@ class SetHtml {
 
         html += me.htmlCls.divStr + "specguide" + indexStr + "' style='display:none; width:500px' class='icn3d-box'>";
 
-        html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,LV,3AlaVal,chemicals@CA,C\":";
+        html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,LV,3AlaVal,chemicals@CA,C,C*\":";
         html += "<ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
         html += "<li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
         html += "<li>\":5-10,LV,3LeuVal,chemicals\" uses the colon \":\" to indicate residue selection. Residue selection could be residue number(5-10), one-letter IUPAC residue name abbreviations(LV), three-letter residue names(AlaVal, \"3\" indicates each residue name has three letters), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\". IUPAC abbreviations can be written either as a contiguous string(e.g., \":LV\"), in order to find all instances of that sequence in the structure, or they can be separated by commas(e.g., \":L,V\") to select all residues of a given type in the structure(in the latter case, select all Leucine and Valine in the structure).<br/>";
-        html += "<li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
+        html += "<li>\"@CA,C,C*\" uses \"@\" to indicate atom name selection. \"C*\" selects any atom names starting with \"C\". <br/>";
         html += "<li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
         html += "<li>Different selections can be unioned(with \"<b>or</b>\", default), intersected(with \"<b>and</b>\"), or negated(with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.<br/>";
         html += "<li>The wild card character \"X\" or \"x\" can be used to represent any character.";
@@ -113,9 +113,9 @@ class SetHtml {
         html += "<ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
         html += "<li>Different sets can be unioned(with \"<b>or</b>\", default), intersected(with \"<b>and</b>\"), or negated(with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
         html += "<b>Full commands in url or command window:</b>";
-        html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C<br/>";
+        html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C,C*<br/>";
         //html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name | description my_description</ul>";
-        html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name</ul>";
+        html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C,C* | name my_name</ul>";
 
         html += "</div>";
 

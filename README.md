@@ -17,7 +17,7 @@
 
     You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "Enter VR" at the bottom center of your browser to enter the VR view. You can select residues with the trigger button, open the menu with the squeeze button and click menus with the trigger, navigate with the thumbstick pressed forward/backward and press the trigger. The menu contains options for selection, style, color, and interaction analysis, etc.
 
-    The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap once on the screen to locate a minimized 3D structure in your tapped location, and tap twice quickly to scale up the 3D structure.  
+    The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap twice quickly on the screen to locate a minimized 3D structure in your tapped location, and pinch to scale the 3D structure.  
 
 * <b>Create custom 3D view</b>: 
     You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. 
@@ -110,7 +110,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 
 ## Tools based on
 
-* **[iview](https://github.com/HongjianLi/iview)**: The drawing of 3D objects is based on iview.
+* **[iview](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-15-56)**: The drawing of 3D objects is based on iview.
 * **[GLmol](https://webglmol.osdn.jp/index-en.html)**: The drawing of nucleotides cartoon is based on GLmol.
 * **[3Dmol](https://3dmol.csb.pitt.edu/)**: The surface generation and labeling are based on 3Dmol.
 * **[NGL Viewer](https://github.com/arose/ngl)**: The Imposter shaders are based on NGL Viewer.

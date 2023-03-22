@@ -245,7 +245,7 @@ class ShowSeq {
         }
         if(me.cfg.blast_rep_id == chnid) {
           // change color in 3D
-          ic.opts['color'] = 'conservation';
+          ic.opts['color'] = (ic.blastAcxn) ? 'confidence' : 'conservation';
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
           // remove highlight
           //ic.hlUpdateCls.removeHlSeq();
@@ -538,6 +538,8 @@ class ShowSeq {
         let strand2len_start_stop = {};
         let prevRefnumStr, prevPostfix, prevRefnum;
 
+        // sometimes one chain may have several Ig domains,set a index for each IgDomain
+        let index = 1;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
             let residueid = chnid + '_' + currResi;
@@ -550,7 +552,7 @@ class ShowSeq {
 
                     refnumStr = refnumStr_ori;
                     refnum = parseInt(refnumStr);
-                    postfix = refnumStr.replace(refnum.toString(), '');
+                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
                     if(!bCustom && !kabat_or_imgt) {
                         if(currStrand != prevStrand) { // reset currCnt
@@ -559,26 +561,51 @@ class ShowSeq {
                                 strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
                                 strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
                                 strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
+
+                                console.log("end: " + residueid)
                             }
 
                             currCnt = 1;
                         }
 
                         // #9##
-                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                        if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                             if(currCnt == 1) { // start of a loop
+                                if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                    ++index;
+                                }
+
+                                console.log("start: " + residueid + " refnumStr: " + refnumStr)
+                                
+                                postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                 strand2len_start_stop[currStrand + postfix] = {};
+
                                 strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                                 strand2len_start_stop[currStrand + postfix].chainid = chnid;
                             }
                             refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                             refnumLabel = currStrand + refnumStr;
+                            
                             ++currCnt;
                         }
                     }
                 }
                 else {
                     if(prevStrand && !bCustom && !kabat_or_imgt) {
+                        if(currCnt == 1) { // start of a loop
+                            if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                ++index;
+                                postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+                                strand2len_start_stop[currStrand + postfix] = {};
+                            }
+                            else {
+                                strand2len_start_stop[currStrand + postfix] = {};
+                            }
+
+                            strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
+                            strand2len_start_stop[currStrand + postfix].chainid = chnid;
+                        }
+
                         // no ref num
                         refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                         refnumLabel = currStrand + refnumStr;
@@ -600,6 +627,9 @@ class ShowSeq {
         }
 
         let refnumLabelNoPostfix;
+        // sometimes one chain may have several Ig domains,set a index for each IgDomain
+        index = 1;
+        let appearedStrands = {}, currStrand_ori;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             bLoop = false;
 
@@ -613,9 +643,13 @@ class ShowSeq {
             }
             else {
                 refnumLabel = ic.resid2refnum[residueid];
+                let bNotShow = false;
+
                 if(refnumLabel) {                        
                     refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
                     currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                    currStrand_ori = currStrand;
+
                     currFirstDigit = refnumStr_ori.substr(0, 1);
 
                     refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
@@ -636,17 +670,29 @@ class ShowSeq {
                     else {
                         refnumStr = refnumStr_ori;
                         refnum = parseInt(refnumStr);
-                        postfix = refnumStr.replace(refnum.toString(), '');
+                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
                         // #9##
-                        if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                        if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                             bLoop = true;
+
+                            if(currCnt == 1) { // start of a loop
+                                if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                    ++index;
+                                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+                                }
+
+                                appearedStrands[currStrand + postfix] = 1;
+                            }
 
                             let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
                             
                             refnumStr = result.refnumStr
                             refnumLabel = result.refnumLabel;
                             refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                            bNotShow = result.bNotShow;
+                            currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
 
                             ++currCnt;
                         }
@@ -687,7 +733,7 @@ class ShowSeq {
                         }
                     }
                     else {
-                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
                     }
                 }
                 else {
@@ -698,16 +744,29 @@ class ShowSeq {
                         // no ref num
                         bLoop = true;
 
+                        if(currCnt == 1) { // start of a loop
+                            if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                ++index;
+                            }
+                            
+                            postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+
+                            appearedStrands[currStrand + postfix] = 1;
+                        }
+
                         // use previous postfix
                         let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
                             
                         refnumStr = result.refnumStr
                         refnumLabel = result.refnumLabel;
                         refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                        bNotShow = result.bNotShow;
+                        currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                   
                         ++currCnt;
 
-                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
                     }
                     else {
                         html += '<span></span>';
@@ -733,7 +792,7 @@ class ShowSeq {
                 ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
             }
 
-            prevStrand = currStrand;
+            prevStrand = currStrand_ori; //currStrand;
         }
 
         html += '<span class="icn3d-residueNum"></span>';
@@ -748,6 +807,8 @@ class ShowSeq {
 
     getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d, me = ic.icn3dui;
         let refnumStr, refnumLabel, refnumLabelNoPostfix;
+
+        let bNotShow = false; // do not show the label
 
         if(strand2len_start_stop[currStrand + postfix]) {
             let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
@@ -768,10 +829,15 @@ class ShowSeq {
             else {
                 refnum = end - (len + 1 - currCnt);
                 refnumStr = refnum + postfixEnd;
+                
                 refnumLabel = (strand2len_start_stop[currStrand + postfix].nextStrand !== undefined) ? strand2len_start_stop[currStrand + postfix].nextStrand + refnumStr : ' ' + refnumStr;
             }
 
             refnumLabelNoPostfix = currStrand + refnum;
+
+            if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+                bNotShow = true;
+            }
         }
         else {
             // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
@@ -780,12 +846,14 @@ class ShowSeq {
             refnumStr = '';
             refnumLabel = '';
             refnumLabelNoPostfix = '';
+
+            bNotShow = true;
         }
 
-        return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix};
+        return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bNotShow: bNotShow};
     }
 
-    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) { let ic = this.icn3d, me = ic.icn3dui;
+    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
         let color = this.getRefnumColor(currStrand);
         let colorStr = 'style="color:' + color + '"'
@@ -801,7 +869,7 @@ class ShowSeq {
 
             html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
         }
-        else if(lastTwo % 2 == 0 && lastTwo != 52 && lastThree != 901) {
+        else if(lastTwo % 2 == 0 && lastTwo != 52 && !bNotShow) { // don't show label for the first, middle, and last loop residues
             // e.g., 2152a
             let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
             html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';

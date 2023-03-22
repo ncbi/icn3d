@@ -15401,11 +15401,11 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "specguide" + indexStr + "' style='display:none; width:500px' class='icn3d-box'>";
 
-            html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,LV,3AlaVal,chemicals@CA,C\":";
+            html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,LV,3AlaVal,chemicals@CA,C,C*\":";
             html += "<ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
             html += "<li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
             html += "<li>\":5-10,LV,3LeuVal,chemicals\" uses the colon \":\" to indicate residue selection. Residue selection could be residue number(5-10), one-letter IUPAC residue name abbreviations(LV), three-letter residue names(AlaVal, \"3\" indicates each residue name has three letters), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\". IUPAC abbreviations can be written either as a contiguous string(e.g., \":LV\"), in order to find all instances of that sequence in the structure, or they can be separated by commas(e.g., \":L,V\") to select all residues of a given type in the structure(in the latter case, select all Leucine and Valine in the structure).<br/>";
-            html += "<li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
+            html += "<li>\"@CA,C,C*\" uses \"@\" to indicate atom name selection. \"C*\" selects any atom names starting with \"C\". <br/>";
             html += "<li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
             html += "<li>Different selections can be unioned(with \"<b>or</b>\", default), intersected(with \"<b>and</b>\"), or negated(with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.<br/>";
             html += "<li>The wild card character \"X\" or \"x\" can be used to represent any character.";
@@ -15414,9 +15414,9 @@ var icn3d = (function (exports) {
             html += "<ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
             html += "<li>Different sets can be unioned(with \"<b>or</b>\", default), intersected(with \"<b>and</b>\"), or negated(with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
             html += "<b>Full commands in url or command window:</b>";
-            html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C<br/>";
+            html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C,C*<br/>";
             //html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name | description my_description</ul>";
-            html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name</ul>";
+            html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C,C* | name my_name</ul>";
 
             html += "</div>";
 
@@ -21492,7 +21492,9 @@ var icn3d = (function (exports) {
             this.up = new THREE.Vector3(0,1,0);
             
             this.type = 'unknown';
-            this.touchCount = 0;
+            //this.touchCount = 0;
+
+            this.prevTap = 'none';
             
             this.clock = clock;
             
@@ -21509,9 +21511,9 @@ var icn3d = (function (exports) {
                 self.type = 'unknown';
                 this.userData.selectPressed = true;
                 
-                self.touchCount++;
+                //self.touchCount++;
                 
-                console.log( `onSelectStart touchCount: ${ self.touchCount }` );
+                //console.log( `onSelectStart touchCount: ${ self.touchCount }` );
             }
             
             function onSelectEnd( ){
@@ -21521,27 +21523,36 @@ var icn3d = (function (exports) {
                 const startToEnd = data.endTime - data.startTime;
                 
                 //console.log(`ControllerGestures.onSelectEnd: startToEnd:${startToEnd.toFixed(2)} taps:${data.taps}`);
-                
+    /*             
                 if (self.type === 'swipe'){
                     const direction = ( self.controller1.position.y < data.startPosition.y) ? "DOWN" : "UP";
                     self.dispatchEvent( { type:'swipe', direction } );
                     self.type = 'unknown';
-                }else if (self.type !== "pinch" && self.type !== "rotate" && self.type !== 'pan'){
-                    if ( startToEnd < self.doubleClickLimit ){
+                }else 
+              
+                if (self.type !== "pinch" && self.type !== "rotate" && self.type !== 'pan'){
+                    // if ( startToEnd < self.doubleClickLimit ){
                         self.type = "tap";
-                        data.taps++;
-                    }else if ( startToEnd > self.pressMinimum ){
-                        self.dispatchEvent( { type: 'press', position: self.controller1.position, matrixWorld: self.controller1.matrixWorld }   );
-                        self.type = 'unknown';
-                    }
-                }else {
+                        //data.taps++;
+                    // }
+                    // else if ( startToEnd > self.pressMinimum ){
+                    //     self.dispatchEvent( { type: 'press', position: self.controller1.position, matrixWorld: self.controller1.matrixWorld }   );
+                    //     self.type = 'unknown';
+                    // }
+                }else{
                     self.type = 'unknown';
                 }
-                
+    */
+
+                if ( startToEnd < self.doubleClickLimit ){
+                    data.taps++;
+                }
+                self.type = 'tap';
+
                 this.userData.selectPressed = false;
                 data.startPosition = undefined;
                 
-                self.touchCount--;
+                //self.touchCount--;
             }
         }
         
@@ -21552,8 +21563,7 @@ var icn3d = (function (exports) {
             }else {
                 result = this.controller1.userData.selectPressed && this.controller2.userData.selectPressed;
             }
-            const self = this;
-            console.log( `ControllerGestures multiTouch: ${result} touchCount:${self.touchCount}`);
+            //console.log( `ControllerGestures multiTouch: ${result} touchCount:${self.touchCount}`);
             return result;
         }
         
@@ -21588,86 +21598,104 @@ var icn3d = (function (exports) {
                 elapsedTime = currentTime - data2.startTime;
                 if (elapsedTime > 0.05 ) data2.startPosition = this.controller2.position.clone();
             }
-            
+           
             if (!this.controller1.userData.selectPressed && this.type === 'tap' ){
                 //Only dispatch event after double click limit is passed
                 elapsedTime = this.clock.getElapsedTime() - data1.endTime;
                 if (elapsedTime > this.doubleClickLimit){
-                    console.log( `ControllerGestures.update dispatchEvent taps:${data1.taps}` );
+                    //console.log( `ControllerGestures.update dispatchEvent taps:${data1.taps}` );
                     switch( data1.taps ){
                         case 1:
-                            this.dispatchEvent( { type: 'tap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
+                            //this.dispatchEvent( { type: 'tap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
+                            self.prevTap = 'tap';
                             break;
                         case 2:
                             this.dispatchEvent( { type: 'doubletap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
-                            break;
-                        case 3:
-                            this.dispatchEvent( { type: 'tripletap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld } );
-                            break;
-                        case 4:
-                            this.dispatchEvent( { type: 'quadtap', position: this.controller1.position, matrixWorld: this.controller1.matrixWorld }  );
+                            self.prevTap = 'doubletap';
                             break;
                     }
                     this.type = "unknown";
                     data1.taps = 0;
                 }
             }
-            
+
             if (this.type === 'unknown' && this.touch){
-                if (data1.startPosition !== undefined){
-                    if (this.multiTouch){
-                        if (data2.startPosition !== undefined){
+                //if (data1.startPosition !== undefined){
+                    //if (this.multiTouch){
+
+                    if(self.prevTap == 'doubletap') {
+                        //if (data2.startPosition !== undefined){
                             //startPosition is undefined for 1/20 sec
                             //test for pinch or rotate
-                            const startDistance = data1.startPosition.distanceTo( data2.startPosition );
-                            const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
-                            const delta = currentDistance - startDistance;
-                            if ( Math.abs(delta) > 0.01 ){
+
+                            // const startDistance = data1.startPosition.distanceTo( data2.startPosition );
+                            // const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
+                            // const delta = currentDistance - startDistance;
+
+                            // if ( Math.abs(delta) > 0.01 ){
                                 this.type = 'pinch';
                                 this.startDistance = this.controller1.position.distanceTo( this.controller2.position );
-                                this.dispatchEvent( { type: 'pinch', delta: 0, scale: 1, initialise: true } );
-                            }else {
-                                const v1 = data2.startPosition.clone().sub( data1.startPosition ).normalize();
-                                const v2 = this.controller2.position.clone().sub( this.controller1.position ).normalize();
-                                const theta = v1.angleTo( v2 );
-                                if (Math.abs(theta) > 0.2){
-                                    this.type = 'rotate';
-                                    this.startVector = v2.clone();
-                                    this.dispatchEvent( { type: 'rotate', theta: 0, initialise: true } );
-                                }
-                            }
-                        }
-                    }else {
+                                //this.dispatchEvent( { type: 'pinch', delta: 0, scale: 1, initialise: true } );
+                                this.dispatchEvent( { type: 'pinch', delta: new THREE.Vector3(0,0,0), scale: 1, initialise: true } );
+                            // }else{
+                            //     const v1 = data2.startPosition.clone().sub( data1.startPosition ).normalize();
+                            //     const v2 = this.controller2.position.clone().sub( this.controller1.position ).normalize();
+                            //     const theta = v1.angleTo( v2 );
+                            //     if (Math.abs(theta) > 0.2){
+                            //         this.type = 'rotate';
+                            //         this.startVector = v2.clone();
+                            //         this.dispatchEvent( { type: 'rotate', theta: 0, initialise: true } );
+                            //     }
+                            // }
+                        //}
+                    }else { //if(self.prevTap == 'tap') {
                         //test for swipe or pan
-                        let dist = data1.startPosition.distanceTo( this.controller1.position );
-                        elapsedTime = this.clock.getElapsedTime() - data1.startTime;
-                        const velocity = dist/elapsedTime;
+                        // let dist = data1.startPosition.distanceTo( this.controller1.position );
+                        // elapsedTime = this.clock.getElapsedTime() - data1.startTime;
+                        // const velocity = dist/elapsedTime;
+
                         //console.log(`dist:${dist.toFixed(3)} velocity:${velocity.toFixed(3)}`);
-                        if ( dist > 0.01 && velocity > 0.1 ){
-                            const v = this.controller1.position.clone().sub( data1.startPosition );
-                            let maxY = (Math.abs(v.y) > Math.abs(v.x)) && (Math.abs(v.y) > Math.abs(v.z));
-                            if ( maxY )this.type = "swipe";
-                        }else if (dist > 0.006 && velocity < 0.03){
+                        // if ( dist > 0.01 && velocity > 0.1 ){
+                        //     const v = this.controller1.position.clone().sub( data1.startPosition );
+                        //     let maxY = (Math.abs(v.y) > Math.abs(v.x)) && (Math.abs(v.y) > Math.abs(v.z));
+                        //     if ( maxY )this.type = "swipe";
+                        // }else if (dist > 0.006 && velocity < 0.03){
                             this.type = "pan";
                             this.startPosition = this.controller1.position.clone();
-                            this.dispatchEvent( { type: 'pan', delta: new THREE.Vector3(), initialise: true } );
-                        }
+                            this.dispatchEvent( { type: 'pan', delta: new THREE.Vector3(0,0,0), initialise: true } );
+                        // }
                     }
+                //}
+            }else if (this.type === 'pinch' || this.type === 'pan'){
+                //if (this.type === 'pinch'){
+                //if (this.multiTouch){
+
+                if(self.prevTap == 'doubletap') {
+                    if (this.controller2.position) {
+                        const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
+                        // const delta = currentDistance - this.startDistance;
+                        const scale = currentDistance/this.startDistance;
+
+                        const delta = this.controller1.position.clone().sub( this.startPosition );
+                        this.dispatchEvent( { type: 'pinch', delta, scale });
+                    }
+
+                // }else if (this.type === 'rotate'){
+                //     const v = this.controller2.position.clone().sub( this.controller1.position ).normalize();
+                //     let theta = this.startVector.angleTo( v );
+                //     const cross = this.startVector.clone().cross( v );
+                //     if (this.up.dot(cross) > 0) theta = -theta;
+                //     this.dispatchEvent( { type: 'rotate', theta } );
+    /*
+                //}else if (this.type === 'pan'){
+                } else { //if(self.prevTap == 'tap') {
+                    // const delta = this.controller1.position.clone().sub( this.startPosition );
+                    // this.dispatchEvent( { type: 'pan', delta } );
+
+                    const position = this.controller1.position.clone();
+                    this.dispatchEvent( { type: 'pan', position } );
+    */
                 }
-            }else if (this.type === 'pinch'){
-                const currentDistance = this.controller1.position.distanceTo( this.controller2.position );
-                const delta = currentDistance - this.startDistance;
-                const scale = currentDistance/this.startDistance;
-                this.dispatchEvent( { type: 'pinch', delta, scale });
-            }else if (this.type === 'rotate'){
-                const v = this.controller2.position.clone().sub( this.controller1.position ).normalize();
-                let theta = this.startVector.angleTo( v );
-                const cross = this.startVector.clone().cross( v );
-                if (this.up.dot(cross) > 0) theta = -theta;
-                this.dispatchEvent( { type: 'rotate', theta } );
-            }else if (this.type === 'pan'){
-                const delta = this.controller1.position.clone().sub( this.startPosition );
-                this.dispatchEvent( { type: 'pan', delta } );
             }
         }
     }
@@ -22810,15 +22838,14 @@ var icn3d = (function (exports) {
             // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
             // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
 
+
+
             //if(ic.bVr && !ic.dolly) {       
             if(ic.bVr) {      
                 ic.canvasUI = this.createUI();
-                //ic.canvasUILog = this.createUILog();
-                // add canvasUI
-                //ic.cam.add( ic.canvasUI.mesh );
-                //ic.cam.add( ic.canvasUILog.mesh );
 
-                //ic.cam.remove( ic.canvasUI.mesh );
+                //ic.canvasUILog = this.createUILog();
+                //ic.cam.add( ic.canvasUILog.mesh );
 
                 ic.raycasterVR = new THREE.Raycaster();
                 ic.workingMatrix = new THREE.Matrix4();
@@ -22893,68 +22920,77 @@ var icn3d = (function (exports) {
                 });        
             }      
             else if(ic.bAr) {
+                // the menu didn't work in AR
+                // ic.canvasUILog = this.createUILog();
+                // ic.cam.add( ic.canvasUILog.mesh );
+                
                 //Add gestures here
                 ic.gestures = new ControllerGestures(ic.renderer);
                 ic.scene.add(ic.gestures.controller1);
                 ic.scene.add(ic.gestures.controller2);
 
-                ic.gestures.addEventListener('tap', (ev) => {
-                    //if(!ic.mdl.visible) {
-                    //    ic.mdl.visible = true;
-                    //}
-
-                    const controller = ic.gestures.controller1; 
-                    //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                    ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                    //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.1));
-                    ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
-                });
+                // ic.gestures.addEventListener('tap', (ev) => {
+                //     // const controller = ic.gestures.controller1; 
+                //     // ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+                //     // ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
+                // });
 
                 ic.gestures.addEventListener('doubletap', (ev) => {
-                    const controller = ic.gestures.controller1; 
-                    //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                    ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
-                    //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(10));
-                    ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
+                    thisClass.positionCenter();
                 });
-    /*
-                ic.gestures.addEventListener('swipe', (ev) => {
-                    // if(ic.mdl.visible) {
-                    //     ic.mdl.visible = false;
-                    // }
-                });
-      
-                ic.gestures.addEventListener('pan', (ev) => {
-                    // if(ev.initialise !== undefined) {
-                    //     thisClass.startPosition = ic.mdl.position.clone();
-                    // }
-                    // else {
-                    //     const pos = thisClass.startPosition.clone().add(ev.delta.multiplyScalar(3));
-                    //     ic.mdl.position.copy(pos);
-                    // }
-                });
+    /* 
+                ic.gestures.addEventListener('pan', (ev) => { // touch across screen, move
+                    if(ev.initialise !== undefined) {
+                        thisClass.startPosition = ic.mdl.position.clone();
+                        thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                    }
+                    else {
+                        const endPosition = ev.position;
+                        let angle = Math.acos( thisClass.startPosition.dot( endPosition ) / thisClass.startPosition.length() / endPosition.length() );
 
-                ic.gestures.addEventListener('pinch', (ev) => {
-                    // if(ev.initialise !== undefined) {
-                    //     thisClass.startScale = ic.mdl.scale.clone();                   
-                    // }
-                    // else {
-                    //     const scale = thisClass.startScale.clone().multiplyScalar(ev.scale);                  
-                    //     ic.mdl.scale.copy(scale);
-                    // }
+                        let axis = new THREE.Vector3();
+                        axis.crossVectors( thisClass.startPosition, endPosition ).normalize();
+
+                        let rotateSpeed = 6.0;
+                        angle *= rotateSpeed;
+
+                        let quaternion = new THREE.Quaternion();
+                        quaternion.setFromAxisAngle( axis, -angle );
+
+                        ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                        ic.mdl.quaternion.multiplyQuaternions(quaternion, ic.mdl.quaternion);
+                    }
                 });
-     
-                ic.gestures.addEventListener('rotate', (ev) => {
-                    // if(ev.initialise !== undefined) {
-                    //     thisClass.startQuaternion = ic.mdl.quaternion.clone();
-                    // }
-                    // else {
-                    //     ic.mdl.quaternion.copy(thisClass.startQuaternion);
-                    //     ic.mdl.rotateY(ev.theta);
-                    // }
+    */
+                ic.gestures.addEventListener('pinch', (ev) => { // two fingers opening or closing
+                    if(ev.initialise !== undefined) {
+                        thisClass.startPosition = ic.mdl.position.clone();
+                        thisClass.startScale = ic.mdl.scale.clone();                   
+                    }
+                    else {
+                        let zoomSpeed = 1.0;
+                        const scale = thisClass.startScale.clone().multiplyScalar(ev.scale * zoomSpeed);                  
+                        ic.mdl.scale.copy(scale);
+                    }
+                });
+    /* 
+                ic.gestures.addEventListener('rotate', (ev) => { // two fingers rotating around
+                    if(ev.initialise !== undefined) {
+                        thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                    }
+                    else {
+                        ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                        ic.mdl.rotateY(ev.theta);
+                    }
                 });  
-    */                            
+    */                                       
             }
+        }
+
+        positionCenter() { let ic = this.icn3d; ic.icn3dui;
+            const controller = ic.gestures.controller1; 
+            ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
+            ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
         }
 
         setVrArButtons() { let ic = this.icn3d, me = ic.icn3dui;
@@ -23148,7 +23184,7 @@ var icn3d = (function (exports) {
                         ic.cam.remove( ic.canvasUI.mesh );
                      }
                      catch(err) {
-                        ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+                        //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
                      }
                 } },
                 // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
@@ -23230,14 +23266,13 @@ var icn3d = (function (exports) {
                 renderer: ic.renderer
             };
             const content = {
-                info: ""
+                info: "Debug info"
             };
 
             const ui = new CanvasUI( content, config );
-            
-            //ui.mesh.position.set( 0, 1.5, -1.2 );
-            //ui.mesh.position.set( 0, 0, -1.2 );
-            ui.mesh.position.set( 0, -2, -3 );
+
+            //ui.mesh.position.set( 0, -2, -3 ); // VR
+            ui.mesh.position.set( 0, -1, -2 ); // AR
 
             return ui;
         }
@@ -33032,6 +33067,7 @@ var icn3d = (function (exports) {
             else if(ic.bAr) {
                 if ( ic.renderer.xr.isPresenting ){    
                     ic.gestures.update();
+                    //if(ic.canvasUILog) ic.canvasUILog.update();
                 }
             }
 
@@ -41507,11 +41543,12 @@ var icn3d = (function (exports) {
                 }
                 else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
                   let title;
-                  if(me.cfg.query_id.length > 14) {
-                      title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+                  let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+                  if(query_id.length > 14) {
+                      title = 'Query: ' + query_id.substr(0, 6) + '...';
                   }
                   else {
-                      title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+                      title =(isNaN(me.cfg.query_id)) ? 'Query: ' + query_id : 'Query: gi ' + query_id;
                   }
                   let compTitle = undefined;
                   let compText = undefined;
@@ -41524,11 +41561,12 @@ var icn3d = (function (exports) {
                 }
                 else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
                   let title;
-                  if(me.cfg.query_id.length > 14) {
-                      title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+                  let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+                  if(query_id.length > 14) {
+                      title = 'Query: ' + query_id.substr(0, 6) + '...';
                   }
                   else {
-                      title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+                      title =(isNaN(me.cfg.query_id)) ? 'Query: ' + query_id : 'Query: gi ' + query_id;
                   }
                 
                   let evalue, targetSeq, querySeq, segArray;
@@ -42016,7 +42054,7 @@ var icn3d = (function (exports) {
             }
             if(me.cfg.blast_rep_id == chnid) {
               // change color in 3D
-              ic.opts['color'] = 'conservation';
+              ic.opts['color'] = (ic.blastAcxn) ? 'confidence' : 'conservation';
               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
               // remove highlight
               //ic.hlUpdateCls.removeHlSeq();
@@ -42308,6 +42346,8 @@ var icn3d = (function (exports) {
             let strand2len_start_stop = {};
             let prevRefnumStr, prevPostfix;
 
+            // sometimes one chain may have several Ig domains,set a index for each IgDomain
+            let index = 1;
             for(let i = 0, il = giSeq.length; i < il; ++i) {
                 let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                 let residueid = chnid + '_' + currResi;
@@ -42320,7 +42360,7 @@ var icn3d = (function (exports) {
 
                         refnumStr = refnumStr_ori;
                         refnum = parseInt(refnumStr);
-                        postfix = refnumStr.replace(refnum.toString(), '');
+                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
                         if(!bCustom && !kabat_or_imgt) {
                             if(currStrand != prevStrand) { // reset currCnt
@@ -42329,26 +42369,51 @@ var icn3d = (function (exports) {
                                     strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
                                     strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
                                     strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
+
+                                    console.log("end: " + residueid);
                                 }
 
                                 currCnt = 1;
                             }
 
                             // #9##
-                            if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                                 if(currCnt == 1) { // start of a loop
+                                    if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                        ++index;
+                                    }
+
+                                    console.log("start: " + residueid + " refnumStr: " + refnumStr);
+                                    
+                                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                     strand2len_start_stop[currStrand + postfix] = {};
+
                                     strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                                     strand2len_start_stop[currStrand + postfix].chainid = chnid;
                                 }
                                 refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                                 refnumLabel = currStrand + refnumStr;
+                                
                                 ++currCnt;
                             }
                         }
                     }
                     else {
                         if(prevStrand && !bCustom && !kabat_or_imgt) {
+                            if(currCnt == 1) { // start of a loop
+                                if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                    ++index;
+                                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+                                    strand2len_start_stop[currStrand + postfix] = {};
+                                }
+                                else {
+                                    strand2len_start_stop[currStrand + postfix] = {};
+                                }
+
+                                strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
+                                strand2len_start_stop[currStrand + postfix].chainid = chnid;
+                            }
+
                             // no ref num
                             refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                             refnumLabel = currStrand + refnumStr;
@@ -42369,6 +42434,9 @@ var icn3d = (function (exports) {
             }
 
             let refnumLabelNoPostfix;
+            // sometimes one chain may have several Ig domains,set a index for each IgDomain
+            index = 1;
+            let appearedStrands = {}, currStrand_ori;
             for(let i = 0, il = giSeq.length; i < il; ++i) {
                 bLoop = false;
 
@@ -42382,9 +42450,13 @@ var icn3d = (function (exports) {
                 }
                 else {
                     refnumLabel = ic.resid2refnum[residueid];
+                    let bNotShow = false;
+
                     if(refnumLabel) {                        
                         refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
                         currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+                        currStrand_ori = currStrand;
+
                         currFirstDigit = refnumStr_ori.substr(0, 1);
 
                         refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
@@ -42405,17 +42477,29 @@ var icn3d = (function (exports) {
                         else {
                             refnumStr = refnumStr_ori;
                             refnum = parseInt(refnumStr);
-                            postfix = refnumStr.replace(refnum.toString(), '');
+                            postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
                             // #9##
-                            if(prevStrand && refnumStr.substr(1,1) == '9') { // loop region
+                            if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                                 bLoop = true;
+
+                                if(currCnt == 1) { // start of a loop
+                                    if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                        ++index;
+                                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+                                    }
+
+                                    appearedStrands[currStrand + postfix] = 1;
+                                }
 
                                 let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
                                 
                                 refnumStr = result.refnumStr;
                                 refnumLabel = result.refnumLabel;
                                 refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                                bNotShow = result.bNotShow;
+                                currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
 
                                 ++currCnt;
                             }
@@ -42456,7 +42540,7 @@ var icn3d = (function (exports) {
                             }
                         }
                         else {
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
                         }
                     }
                     else {
@@ -42467,16 +42551,29 @@ var icn3d = (function (exports) {
                             // no ref num
                             bLoop = true;
 
+                            if(currCnt == 1) { // start of a loop
+                                if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                    ++index;
+                                }
+                                
+                                postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+
+                                appearedStrands[currStrand + postfix] = 1;
+                            }
+
                             // use previous postfix
                             let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
                                 
                             refnumStr = result.refnumStr;
                             refnumLabel = result.refnumLabel;
                             refnumLabelNoPostfix = result.refnumLabelNoPostfix;
+
+                            bNotShow = result.bNotShow;
+                            currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                       
                             ++currCnt;
 
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop);
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
                         }
                         else {
                             html += '<span></span>';
@@ -42502,7 +42599,7 @@ var icn3d = (function (exports) {
                     ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
                 }
 
-                prevStrand = currStrand;
+                prevStrand = currStrand_ori; //currStrand;
             }
 
             html += '<span class="icn3d-residueNum"></span>';
@@ -42517,6 +42614,8 @@ var icn3d = (function (exports) {
 
         getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d; ic.icn3dui;
             let refnumStr, refnumLabel, refnumLabelNoPostfix;
+
+            let bNotShow = false; // do not show the label
 
             if(strand2len_start_stop[currStrand + postfix]) {
                 let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
@@ -42537,10 +42636,15 @@ var icn3d = (function (exports) {
                 else {
                     refnum = end - (len + 1 - currCnt);
                     refnumStr = refnum + postfixEnd;
+                    
                     refnumLabel = (strand2len_start_stop[currStrand + postfix].nextStrand !== undefined) ? strand2len_start_stop[currStrand + postfix].nextStrand + refnumStr : ' ' + refnumStr;
                 }
 
                 refnumLabelNoPostfix = currStrand + refnum;
+
+                if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+                    bNotShow = true;
+                }
             }
             else {
                 // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
@@ -42549,18 +42653,20 @@ var icn3d = (function (exports) {
                 refnumStr = '';
                 refnumLabel = '';
                 refnumLabelNoPostfix = '';
+
+                bNotShow = true;
             }
 
-            return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix};
+            return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bNotShow: bNotShow};
         }
 
-        getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop) { let ic = this.icn3d, me = ic.icn3dui;
+        getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow) { let ic = this.icn3d, me = ic.icn3dui;
             let refnum = parseInt(refnumStr).toString();
             let color = this.getRefnumColor(currStrand);
             let colorStr = 'style="color:' + color + '"';
 
             let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
-            let lastThree = parseInt(refnum.substr(refnum.length - 3, 3));
+            parseInt(refnum.substr(refnum.length - 3, 3));
 
             let html = '';
 
@@ -42570,7 +42676,7 @@ var icn3d = (function (exports) {
 
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
             }
-            else if(lastTwo % 2 == 0 && lastTwo != 52 && lastThree != 901) {
+            else if(lastTwo % 2 == 0 && lastTwo != 52 && !bNotShow) { // don't show label for the first, middle, and last loop residues
                 // e.g., 2152a
                 let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -59833,7 +59939,7 @@ var icn3d = (function (exports) {
                // $1,2,3: Structure
                // .A,B,C: chain
                // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-               // @CA,C: atoms
+               // @CA,C,C*: atoms
                // wild card * can be used to select all
                //var currHighlightAtoms = {}
 
@@ -59883,7 +59989,7 @@ var icn3d = (function (exports) {
                  testStr = testStr.substr(0, dollarPos);
                }
 
-               if(atomStrArray.length == 1 && atomStrArray[0] !== '*') {
+               if(atomStrArray.length > 1 || (atomStrArray.length == 1 && atomStrArray[0] !== '*')) {
                  bSelectResidues = false; // selected atoms
                }
 
@@ -60006,17 +60112,16 @@ var icn3d = (function (exports) {
                             for(let m in ic.residues[residueId]) {
                               for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
                                   let atomStr = atomStrArray[n];
-                                  if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                    if(i === 0) {
-                                        //currHighlightAtoms[m] = 1;
-                                        atomHash[m] = 1;
-                                    }
-                                    else {
-                                        //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                        //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                        if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                    }
-                                  }
+                                  atomHash = this.processAtomStr(atomStr, atomHash, i, m);
+                                  
+                                  // if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                                  //   if(i === 0) {
+                                  //       atomHash[m] = 1;
+                                  //   }
+                                  //   else {
+                                  //       if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                                  //   }
+                                  // }
                               }
                             }
                           } // end for(let l = 0, 
@@ -60049,17 +60154,16 @@ var icn3d = (function (exports) {
                              for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
                                  let atomStr = atomStrArray[n];
 
-                                 if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                     if(i === 0) {
-                                         //currHighlightAtoms[m] = 1;
-                                         atomHash[m] = 1;
-                                     }
-                                     else {
-                                         //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                         //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                         if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                     }
-                                 }
+                                 atomHash = this.processAtomStr(atomStr, atomHash, i, m);
+
+                                //  if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                                //      if(i === 0) {
+                                //          atomHash[m] = 1;
+                                //      }
+                                //      else {
+                                //          if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                                //      }
+                                //  }
                              }
 
                            }
@@ -60114,18 +60218,9 @@ var icn3d = (function (exports) {
 
                                  for(let m in ic.residues[residueId]) {
                                    for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                                       let atomStr = atomStrArray[n];
-                                       if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                         if(i === 0) {
-                                             //currHighlightAtoms[m] = 1;
-                                             atomHash[m] = 1;
-                                         }
-                                         else {
-                                             //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                             //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                             if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                         }
-                                       }
+                                      let atomStr = atomStrArray[n];
+
+                                      atomHash = this.processAtomStr(atomStr, atomHash, i, m);
                                    }
                                  }
                                } // for
@@ -60160,6 +60255,34 @@ var icn3d = (function (exports) {
                let nameArray = [commandname];          
                if(!bNoUpdateAll) ic.definedSetsCls.changeCustomAtoms(nameArray);
            }
+        }
+
+        processAtomStr(atomStr, atomHash, i, m) {  let ic = this.icn3d; ic.icn3dui;                           
+            let atomStrLen = atomStr.length;
+            let lastChar = atomStr.substr(atomStrLen - 1, 1);
+
+            if(lastChar == '*' && atomStrLen > 1) { // wildcard to replace anything with *
+              if(atomStr.substr(0, atomStrLen - 1) === ic.atoms[m].name.substr(0, atomStrLen - 1)) {
+                if(i === 0) {
+                    atomHash[m] = 1;
+                }
+                else {
+                    if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                }
+              }
+            }
+            else {
+              if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                if(i === 0) {
+                    atomHash[m] = 1;
+                }
+                else {
+                    if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                }
+              }
+            } 
+
+            return atomHash;
         }
     }
 
@@ -62155,6 +62278,7 @@ var icn3d = (function (exports) {
             else {
                 //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
                 //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl', 'p42081_cd86', 'q7z7d3_vtc', '1bqu_x', '1cdh_x', '1hnf_x', '1hxm_dx', '1hxm_gx', '4jqi_x', '4zt1_x', '5esv_vhx', '5esv_vlx', '6jxr_ax', '6jxr_bx', '1dr9_x', '3pv7_x', '4f9l_x', '4iok_x', '4z18_x', '6x4g_cd275x', 'q9um44_x'];
+                
                 ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1cdh_cd4', '1dr9_cd80', '1hnf_cd2', '1hxm_d', '1hxm_g', '1ifr_lamin', '1ncn_cd86', '1t6v_vnar', '1yjd_cd28', '2atp_a', '2atp_b', '2dm3_iset', '3kys_tead1', '3pv7_ncr', '4f9l_cd277', '4gos_vtc', '4i0k_cd276', '4jqi_b', '4z18_cd274', '4zqk_pd1', '4zt1_e', '5esv_vh', '5esv_vl', '6al5_cd19', '6jxr_a', '6jxr_b', '6jxr_d', '6jxr_e', '6jxr_g', '6oil_vista', '6rp8_at', '6rp8_t', '6umt_cd273', '6x4g_cd275', '6x4g_icos', '7xq8_a', '7xq8_b', 'q71h61_ild', 'q9um44_hhl'];
 
                 if(ic.pdbDataArray) {
@@ -62178,7 +62302,7 @@ var icn3d = (function (exports) {
                             ic.pdbDataArray = await allPromise;
                             await thisClass.parseRefPdbData(ic.pdbDataArray);
                         // }
-                        // else {
+                        // else { 
                         //     ic.pdbDataArray = [];
                         //     for(let i = 0, il = pdbAjaxArray.length; i < il; ++i) {
                         //         try {
@@ -62361,7 +62485,8 @@ var icn3d = (function (exports) {
 
                 if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                     domainid2score[domainid] = queryData[0].score;
-    if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);           
+    if(!me.bNode) console.log(domainid + ' TM-score: ' + domainid2score[domainid] + ' matched ' + ic.refpdbArray[domainid_index[1]]);     
+
                     //ic.chainid2index[chainid] = domainid_index[1]; // could be several, just take the recent one for simplicity
                     ic.domainid2index[domainid] = domainid_index[1];
                     domainid2segs[domainid] = queryData[0].segs;
@@ -62398,9 +62523,11 @@ var icn3d = (function (exports) {
         console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
     }
 
+                let prevStrand;
                 for(let i = 0, il = segArray.length; i < il; ++i) {
                     let seg = segArray[i];
-                    let qStartInt = parseInt(seg.q_start);
+                    let qStart = seg.q_start;
+                    parseInt(seg.q_start);
                     let postfix = '';
                     if(isNaN(seg.q_start)) postfix = seg.q_start.substr(seg.q_start.length - 1, 1);
 
@@ -62412,9 +62539,11 @@ var icn3d = (function (exports) {
                         // let refnum = (j + qStartInt).toString() + postfix;
 
                         let resid = chainid + '_' + seg.t_start;
-                        let refnum = qStartInt.toString() + postfix;
+                        //let refnum = qStartInt.toString() + postfix;
+                        let refnum = qStart + postfix;
 
-                        let refnumLabel = thisClass.getLabelFromRefnum(refnum);
+                        let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand);
+                        prevStrand = refnumLabel.replace(new RegExp(refnum,'g'), '');
 
                         ic.resid2refnum[resid] = refnumLabel;
 
@@ -62448,7 +62577,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getLabelFromRefnum(oriRefnum) { let ic = this.icn3d; ic.icn3dui;
+        getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d; ic.icn3dui;
             let refnum = parseInt(oriRefnum);
 
             // A^: 1xx or 2xx
@@ -62470,7 +62599,14 @@ var icn3d = (function (exports) {
             else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
             else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
             else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
-            else if(refnum >= 1400 && refnum < 2000) return "A" + oriRefnum;
+            else if(refnum >= 1400 && refnum < 2000) {
+                if(prevStrand.substr(0, 1) == 'A') {
+                    return prevStrand + oriRefnum;
+                }
+                else {
+                    return "A" + oriRefnum;
+                }
+            }
             else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
             else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
             else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
@@ -67146,7 +67282,11 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + "title").html(title);
             }
             else if(me.cfg.blast_rep_id) {
-                text = 'Query: ' + me.cfg.query_id + '; target: ' + me.cfg.blast_rep_id;
+                let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+                let blast_rep_id = (me.cfg.oriBlast_rep_id) ? me.cfg.oriBlast_rep_id : me.cfg.blast_rep_id;
+                if(query_id.length > 20) query_id = query_id.substr(0, 17) + '...';
+                
+                text = 'Query: ' + query_id + '; target: ' + blast_rep_id;
                 $("#" + ic.pre + "title").html(text + ", " + title);
             }
             else {
@@ -69387,6 +69527,7 @@ var icn3d = (function (exports) {
     }
 
     //https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+    //https://github.com/NikLever/Learn-WebXR/blob/master/libs/ARButton.js
 
     class ARButton {
         constructor(icn3d) {
@@ -69397,11 +69538,11 @@ var icn3d = (function (exports) {
         }
 
     	//static createButton( renderer, sessionInit = {} ) {
-        createButton( renderer, sessionInit = {} ) { let ic = this.icn3d, me = ic.icn3dui;
+    	createButton( renderer, sessionInit = {} ) { let ic = this.icn3d, me = ic.icn3dui;
 
     		const button = document.createElement( 'button' );
 
-    		function showStartAR( /*device*/ ) {
+    		function showStartAR( ) {
 
     			if ( sessionInit.domOverlay === undefined ) {
 
@@ -69458,8 +69599,8 @@ var icn3d = (function (exports) {
 
     			}
 
-    			function onSessionEnded( /*event*/ ) {
-    				// reset orientation after VR
+    			function onSessionEnded( ) {
+    				// reset orientation after AR
     				ic.transformCls.resetOrientation();
 
     				ic.bAr = false;
@@ -69612,29 +69753,29 @@ var icn3d = (function (exports) {
     			return button;
 
     		} else {
-    /*            
-    			const message = document.createElement( 'a' );
+               
+    			// const message = document.createElement( 'a' );
 
-    			if ( window.isSecureContext === false ) {
+    			// if ( window.isSecureContext === false ) {
 
-    				message.href = document.location.href.replace( /^http:/, 'https:' );
-    				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
+    			// 	message.href = document.location.href.replace( /^http:/, 'https:' );
+    			// 	message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
 
-    			} else {
+    			// } else {
 
-    				message.href = 'https://immersiveweb.dev/';
-    				message.innerHTML = 'WEBXR NOT AVAILABLE';
+    			// 	message.href = 'https://immersiveweb.dev/';
+    			// 	message.innerHTML = 'WEBXR NOT AVAILABLE';
 
-    			}
+    			// }
 
-    			message.style.left = 'calc(66% - 90px)'; //'calc(50% - 90px)';
-    			message.style.width = '180px';
-    			message.style.textDecoration = 'none';
+    			// message.style.left = 'calc(66% - 90px)'; //'calc(50% - 90px)';
+    			// message.style.width = '180px';
+    			// message.style.textDecoration = 'none';
 
-    			stylizeElement( message );
+    			// stylizeElement( message );
 
-    			return message;
-    */
+    			// return message;
+
                 const message = document.createElement( 'span' );
                 return message;
     		}
@@ -69712,6 +69853,8 @@ var icn3d = (function (exports) {
                     });
                     // Enable VR
                     this.renderer.xr.enabled = true;
+                    //https://www.udemy.com/course/learn-webxr/learn/lecture/20512848#questions/18941376
+                    //this.renderer.getContext().makeXRCompatible();
                 }
                 else {
                     this.renderer = new THREE.WebGL1Renderer({
@@ -69794,7 +69937,7 @@ var icn3d = (function (exports) {
                 // }
                 // else { // WebGL2 supports EXT_frag_depth and ANGLE_instanced_arrays
                     this.bExtFragDepth = true;
-                    this.bImpo = false; //true; 
+                    this.bImpo = true; 
 
                     //console.log('WebGL2 is supported. Thus EXT_frag_depth and ANGLE_instanced_arrays are supported. All spheres and cylinders are drawn using shaders. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
                 // }
@@ -70369,7 +70512,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.23.0';
+        this.REVISION = '3.23.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -70663,6 +70806,9 @@ var icn3d = (function (exports) {
         else if(me.cfg.blast_rep_id !== undefined) {
            // ic.bNCBI = true;
            ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+           
+           me.cfg.oriQuery_id = me.cfg.query_id;
+           me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
            // custom seqeunce has query_id such as "Query_78989" in BLAST
            if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
