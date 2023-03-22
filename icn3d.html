@@ -221,7 +221,7 @@ The Virtual Reality (VR) and Augmented Reality (AR) views are shown in this <a h
 <br/>
 You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "ENTER VR" at the bottom center of your browser to enter the VR view. You can select residues with the trigger button, open the menu with the squeeze button and click menus with the trigger, navigate with the thumbstick pressed forward/backward and press the trigger. The menu contains options for selection, style, color, and interaction analysis, etc.<br/>
 <br/>
- The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap once on the screen to locate a minimized 3D structure in your tapped location, and tap twice quickly to scale up the 3D structure. <br/>
+ The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap twice quickly on the screen to locate a minimized 3D structure in your tapped location, and pinch to scale the 3D structure. <br/>
 <br/>
 <li><b>Create custom 3D view</b><br/>
 You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. <br/>
@@ -726,7 +726,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
     <span class="anchor" id="ar"></span><a name="ar"></a><b>Augmented Reality (AR) view in iCn3D:</b><br>
     You need to use the Chrome browser in an Android cell phone (not iPhone) to view 3D structures in AR using iCn3D. (Some cell phones may require you to install ARCore.) In your iCn3D view, click the button "START AR" at the bottom center of the page to enter the AR view.<br>
     <br>
-    You can tap once on the screen to locate a minimized 3D structure in your tapped location, and tap twice quickly to scale up the 3D structure.<br>
+    You can tap twice quickly on the screen to locate a minimized 3D structure in your tapped location, and pinch to scale the 3D structure.<br>
     <br>
 </li>
 
@@ -1351,12 +1351,12 @@ To find icn3d commands and functions, you can first generate a custom view in iC
 <b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <div>
     In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
-    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,LV,3LeuVal,chemicals@CA,C":
+    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,LV,3LeuVal,chemicals@CA,C,C*":
     <ul>
         <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
         <li>".A,B,C" uses "." to indicate chain selection.<br/>
         <li>":5-10,LV,3LeuVal,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number(5-10), one-letter IUPAC residue name abbreviations(LV), three-letter residue names(AlaVal, "3" indicates each residue name has three letters), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water". IUPAC abbreviations can be written either as a contiguous string(e.g., ":LV"), in order to find all instances of that sequence in the structure, or they can be separated by commas(e.g., ":L,V") to select all residues of a given type in the structure(in the latter case, select all Leucine and Valine in the structure).<br/>
-        <li>"@CA,C" uses "@" to indicate atom selection.<br/>
+        <li>"@CA,C,C*" uses "@" to indicate atom selection. "C*" selects any atom names starting with "C".<br/>
         <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
         <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects
         all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
@@ -1370,8 +1370,8 @@ To find icn3d commands and functions, you can first generate a custom view in iC
     </ul>
     <b>Full commands in url or command window:</b>
     <ul>
-        <li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>
-            <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name
+        <li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C*<br/>
+            <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C* | name my_name
     </ul>
 </div>
 <br>

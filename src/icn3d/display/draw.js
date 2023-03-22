@@ -242,6 +242,7 @@
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
                 ic.gestures.update();
+                //if(ic.canvasUILog) ic.canvasUILog.update();
             }
         }
 

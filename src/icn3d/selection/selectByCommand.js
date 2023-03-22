@@ -79,7 +79,7 @@ class SelectByCommand {
            // $1,2,3: Structure
            // .A,B,C: chain
            // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-           // @CA,C: atoms
+           // @CA,C,C*: atoms
            // wild card * can be used to select all
            //var currHighlightAtoms = {}
 
@@ -129,7 +129,7 @@ class SelectByCommand {
              testStr = testStr.substr(0, dollarPos);
            }
 
-           if(atomStrArray.length == 1 && atomStrArray[0] !== '*') {
+           if(atomStrArray.length > 1 || (atomStrArray.length == 1 && atomStrArray[0] !== '*')) {
              bSelectResidues = false; // selected atoms
            }
 
@@ -252,17 +252,16 @@ class SelectByCommand {
                         for(let m in ic.residues[residueId]) {
                           for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
                               let atomStr = atomStrArray[n];
-                              if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                if(i === 0) {
-                                    //currHighlightAtoms[m] = 1;
-                                    atomHash[m] = 1;
-                                }
-                                else {
-                                    //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                    //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                    if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                }
-                              }
+                              atomHash = this.processAtomStr(atomStr, atomHash, i, m);
+                              
+                              // if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                              //   if(i === 0) {
+                              //       atomHash[m] = 1;
+                              //   }
+                              //   else {
+                              //       if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                              //   }
+                              // }
                           }
                         }
                       } // end for(let l = 0, 
@@ -295,17 +294,16 @@ class SelectByCommand {
                          for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
                              let atomStr = atomStrArray[n];
 
-                             if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                 if(i === 0) {
-                                     //currHighlightAtoms[m] = 1;
-                                     atomHash[m] = 1;
-                                 }
-                                 else {
-                                     //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                     //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                     if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                 }
-                             }
+                             atomHash = this.processAtomStr(atomStr, atomHash, i, m);
+
+                            //  if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+                            //      if(i === 0) {
+                            //          atomHash[m] = 1;
+                            //      }
+                            //      else {
+                            //          if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                            //      }
+                            //  }
                          }
 
                        }
@@ -360,18 +358,9 @@ class SelectByCommand {
 
                              for(let m in ic.residues[residueId]) {
                                for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                                   let atomStr = atomStrArray[n];
-                                   if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                                     if(i === 0) {
-                                         //currHighlightAtoms[m] = 1;
-                                         atomHash[m] = 1;
-                                     }
-                                     else {
-                                         //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                         //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                         if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                                     }
-                                   }
+                                  let atomStr = atomStrArray[n];
+
+                                  atomHash = this.processAtomStr(atomStr, atomHash, i, m);
                                }
                              }
                            } // for
@@ -406,6 +395,34 @@ class SelectByCommand {
            let nameArray = [commandname];          
            if(!bNoUpdateAll) ic.definedSetsCls.changeCustomAtoms(nameArray);
        }
+    }
+
+    processAtomStr(atomStr, atomHash, i, m) {  let ic = this.icn3d, me = ic.icn3dui;                           
+        let atomStrLen = atomStr.length;
+        let lastChar = atomStr.substr(atomStrLen - 1, 1);
+
+        if(lastChar == '*' && atomStrLen > 1) { // wildcard to replace anything with *
+          if(atomStr.substr(0, atomStrLen - 1) === ic.atoms[m].name.substr(0, atomStrLen - 1)) {
+            if(i === 0) {
+                atomHash[m] = 1;
+            }
+            else {
+                if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+            }
+          }
+        }
+        else {
+          if(atomStr === '*' || atomStr === ic.atoms[m].name) {
+            if(i === 0) {
+                atomHash[m] = 1;
+            }
+            else {
+                if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+            }
+          }
+        } 
+
+        return atomHash;
     }
 }
 

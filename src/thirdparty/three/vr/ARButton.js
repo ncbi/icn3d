@@ -1,4 +1,5 @@
 //https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
+//https://github.com/NikLever/Learn-WebXR/blob/master/libs/ARButton.js
 
 class ARButton {
     constructor(icn3d) {
@@ -9,11 +10,11 @@ class ARButton {
     }
 
 	//static createButton( renderer, sessionInit = {} ) {
-    createButton( renderer, sessionInit = {} ) { let ic = this.icn3d, me = ic.icn3dui;
+	createButton( renderer, sessionInit = {} ) { let ic = this.icn3d, me = ic.icn3dui;
 
 		const button = document.createElement( 'button' );
 
-		function showStartAR( /*device*/ ) {
+		function showStartAR( ) {
 
 			if ( sessionInit.domOverlay === undefined ) {
 
@@ -70,8 +71,8 @@ class ARButton {
 
 			}
 
-			function onSessionEnded( /*event*/ ) {
-				// reset orientation after VR
+			function onSessionEnded( ) {
+				// reset orientation after AR
 				ic.transformCls.resetOrientation();
 
 				ic.bAr = false;
@@ -226,29 +227,29 @@ class ARButton {
 			return button;
 
 		} else {
-/*            
-			const message = document.createElement( 'a' );
+           
+			// const message = document.createElement( 'a' );
 
-			if ( window.isSecureContext === false ) {
+			// if ( window.isSecureContext === false ) {
 
-				message.href = document.location.href.replace( /^http:/, 'https:' );
-				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
+			// 	message.href = document.location.href.replace( /^http:/, 'https:' );
+			// 	message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
 
-			} else {
+			// } else {
 
-				message.href = 'https://immersiveweb.dev/';
-				message.innerHTML = 'WEBXR NOT AVAILABLE';
+			// 	message.href = 'https://immersiveweb.dev/';
+			// 	message.innerHTML = 'WEBXR NOT AVAILABLE';
 
-			}
+			// }
 
-			message.style.left = 'calc(66% - 90px)'; //'calc(50% - 90px)';
-			message.style.width = '180px';
-			message.style.textDecoration = 'none';
+			// message.style.left = 'calc(66% - 90px)'; //'calc(50% - 90px)';
+			// message.style.width = '180px';
+			// message.style.textDecoration = 'none';
 
-			stylizeElement( message );
+			// stylizeElement( message );
 
-			return message;
-*/
+			// return message;
+
             const message = document.createElement( 'span' );
             return message;
 		}

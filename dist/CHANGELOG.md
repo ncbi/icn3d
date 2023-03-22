@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.23.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.1.zip) was release on March 22, 2023. Added the feature to scale in AR view of iCn3D; changed the default coloring to "AlphaFold Confidence" when lining from BLAST to iCn3D for AlphaFold structures; added the wildcard symbol "*" for atom name selection.
+
 [icn3d-3.23.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.0.zip) was release on March 16, 2023. Added more VR features to allow users to select residues, change style and color, and show interactions in VR. When users input PDB/AlphaFold IDs, the structures append to the existing structures. 
 
 [icn3d-3.22.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.22.4.zip) was release on March 7, 2023. Fixed the menu "View > Reset > All" for side chains. Added a new Node.js script "interactiondetail.js" to show the interaction details between two chains. 

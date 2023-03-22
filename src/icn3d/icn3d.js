@@ -200,6 +200,8 @@ class iCn3D {
                 });
                 // Enable VR
                 this.renderer.xr.enabled = true;
+                //https://www.udemy.com/course/learn-webxr/learn/lecture/20512848#questions/18941376
+                //this.renderer.getContext().makeXRCompatible();
             }
             else {
                 this.renderer = new THREE.WebGL1Renderer({
@@ -282,7 +284,7 @@ class iCn3D {
             // }
             // else { // WebGL2 supports EXT_frag_depth and ANGLE_instanced_arrays
                 this.bExtFragDepth = true;
-                this.bImpo = false; //true; 
+                this.bImpo = true; 
 
                 //console.log('WebGL2 is supported. Thus EXT_frag_depth and ANGLE_instanced_arrays are supported. All spheres and cylinders are drawn using shaders. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
             // }

@@ -228,15 +228,14 @@ class Scene {
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_ar_cones.html
         // https://github.com/mrdoob/three.js/blob/master/examples/webxr_vr_cubes.html
 
+
+
         //if(ic.bVr && !ic.dolly) {       
         if(ic.bVr) {      
             ic.canvasUI = this.createUI();
-            //ic.canvasUILog = this.createUILog();
-            // add canvasUI
-            //ic.cam.add( ic.canvasUI.mesh );
-            //ic.cam.add( ic.canvasUILog.mesh );
 
-            //ic.cam.remove( ic.canvasUI.mesh );
+            //ic.canvasUILog = this.createUILog();
+            //ic.cam.add( ic.canvasUILog.mesh );
 
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
@@ -314,68 +313,77 @@ class Scene {
             });        
         }      
         else if(ic.bAr) {
+            // the menu didn't work in AR
+            // ic.canvasUILog = this.createUILog();
+            // ic.cam.add( ic.canvasUILog.mesh );
+            
             //Add gestures here
             ic.gestures = new ControllerGestures(ic.renderer);
             ic.scene.add(ic.gestures.controller1);
             ic.scene.add(ic.gestures.controller2);
 
-            ic.gestures.addEventListener('tap', (ev) => {
-                //if(!ic.mdl.visible) {
-                //    ic.mdl.visible = true;
-                //}
-
-                const controller = ic.gestures.controller1; 
-                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(0.1));
-                ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
-            });
+            // ic.gestures.addEventListener('tap', (ev) => {
+            //     // const controller = ic.gestures.controller1; 
+            //     // ic.mdl.position.set( -0.03, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+            //     // ic.mdl.scale.copy(new THREE.Vector3( 0.001, 0.001, 0.001 ));  
+            // });
 
             ic.gestures.addEventListener('doubletap', (ev) => {
-                const controller = ic.gestures.controller1; 
-                //ic.mdl.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-                ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
-                //ic.mdl.scale.copy(ic.mdl.scale.multiplyScalar(10));
-                ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
+                thisClass.positionCenter();
             });
-/*
-            ic.gestures.addEventListener('swipe', (ev) => {
-                // if(ic.mdl.visible) {
-                //     ic.mdl.visible = false;
-                // }
-            });
-  
-            ic.gestures.addEventListener('pan', (ev) => {
-                // if(ev.initialise !== undefined) {
-                //     thisClass.startPosition = ic.mdl.position.clone();
-                // }
-                // else {
-                //     const pos = thisClass.startPosition.clone().add(ev.delta.multiplyScalar(3));
-                //     ic.mdl.position.copy(pos);
-                // }
-            });
+/* 
+            ic.gestures.addEventListener('pan', (ev) => { // touch across screen, move
+                if(ev.initialise !== undefined) {
+                    thisClass.startPosition = ic.mdl.position.clone();
+                    thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                }
+                else {
+                    const endPosition = ev.position;
+                    let angle = Math.acos( thisClass.startPosition.dot( endPosition ) / thisClass.startPosition.length() / endPosition.length() );
 
-            ic.gestures.addEventListener('pinch', (ev) => {
-                // if(ev.initialise !== undefined) {
-                //     thisClass.startScale = ic.mdl.scale.clone();                   
-                // }
-                // else {
-                //     const scale = thisClass.startScale.clone().multiplyScalar(ev.scale);                  
-                //     ic.mdl.scale.copy(scale);
-                // }
+                    let axis = new THREE.Vector3();
+                    axis.crossVectors( thisClass.startPosition, endPosition ).normalize();
+
+                    let rotateSpeed = 6.0;
+                    angle *= rotateSpeed;
+
+                    let quaternion = new THREE.Quaternion();
+                    quaternion.setFromAxisAngle( axis, -angle );
+
+                    ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                    ic.mdl.quaternion.multiplyQuaternions(quaternion, ic.mdl.quaternion);
+                }
             });
- 
-            ic.gestures.addEventListener('rotate', (ev) => {
-                // if(ev.initialise !== undefined) {
-                //     thisClass.startQuaternion = ic.mdl.quaternion.clone();
-                // }
-                // else {
-                //     ic.mdl.quaternion.copy(thisClass.startQuaternion);
-                //     ic.mdl.rotateY(ev.theta);
-                // }
+*/
+            ic.gestures.addEventListener('pinch', (ev) => { // two fingers opening or closing
+                if(ev.initialise !== undefined) {
+                    thisClass.startPosition = ic.mdl.position.clone();
+                    thisClass.startScale = ic.mdl.scale.clone();                   
+                }
+                else {
+                    let zoomSpeed = 1.0;
+                    const scale = thisClass.startScale.clone().multiplyScalar(ev.scale * zoomSpeed);                  
+                    ic.mdl.scale.copy(scale);
+                }
+            });
+/* 
+            ic.gestures.addEventListener('rotate', (ev) => { // two fingers rotating around
+                if(ev.initialise !== undefined) {
+                    thisClass.startQuaternion = ic.mdl.quaternion.clone();
+                }
+                else {
+                    ic.mdl.quaternion.copy(thisClass.startQuaternion);
+                    ic.mdl.rotateY(ev.theta);
+                }
             });  
-*/                            
+*/                                       
         }
+    }
+
+    positionCenter() { let ic = this.icn3d, me = ic.icn3dui;
+        const controller = ic.gestures.controller1; 
+        ic.mdl.position.set( -0.06, 0, - 0.6 ).applyMatrix4( controller.matrixWorld );
+        ic.mdl.scale.copy(new THREE.Vector3( 0.005, 0.005, 0.005 )); 
     }
 
     setVrArButtons() { let ic = this.icn3d, me = ic.icn3dui;
@@ -571,7 +579,7 @@ class Scene {
                     ic.cam.remove( ic.canvasUI.mesh );
                  }
                  catch(err) {
-                    ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+                    //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
                  }
             } },
             // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
@@ -653,14 +661,13 @@ class Scene {
             renderer: ic.renderer
         }
         const content = {
-            info: ""
+            info: "Debug info"
         }
 
         const ui = new CanvasUI( content, config );
-        
-        //ui.mesh.position.set( 0, 1.5, -1.2 );
-        //ui.mesh.position.set( 0, 0, -1.2 );
-        ui.mesh.position.set( 0, -2, -3 );
+
+        //ui.mesh.position.set( 0, -2, -3 ); // VR
+        ui.mesh.position.set( 0, -1, -2 ); // AR
 
         return ui;
     }

@@ -791,7 +791,11 @@ class SaveFile {
             $("#" + ic.pre + "title").html(title);
         }
         else if(me.cfg.blast_rep_id) {
-            text = 'Query: ' + me.cfg.query_id + '; target: ' + me.cfg.blast_rep_id;
+            let query_id = (me.cfg.oriQuery_id) ? me.cfg.oriQuery_id : me.cfg.query_id;
+            let blast_rep_id = (me.cfg.oriBlast_rep_id) ? me.cfg.oriBlast_rep_id : me.cfg.blast_rep_id
+            if(query_id.length > 20) query_id = query_id.substr(0, 17) + '...';
+            
+            text = 'Query: ' + query_id + '; target: ' + blast_rep_id;
             $("#" + ic.pre + "title").html(text + ", " + title);
         }
         else {
