@@ -821,7 +821,18 @@ class ChainalignParser {
         }
 
         // ic.deferredMmdbaf = $.Deferred(function() {
-        let structArray = idlist.split(',');
+        let structArrayTmp = idlist.split(',');
+
+        let structArray = [];
+        // remove redundant structures
+        for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
+            if(!ic.structures.hasOwnProperty(structArrayTmp[i].toUpperCase())) {
+                structArray.push(structArrayTmp[i]);
+            }
+        }
+        
+        if(structArray.length == 0) return;
+        
         ic.structArray = ic.structArray.concat(structArray);
 
         let ajaxArray = [];

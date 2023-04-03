@@ -539,11 +539,11 @@ class ShowSeq {
         let prevRefnumStr, prevPostfix, prevRefnum;
 
         // sometimes one chain may have several Ig domains,set a index for each IgDomain
-        let index = 1;
+        let index = 1, prevStrandPostfix = '', bStart = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
             let residueid = chnid + '_' + currResi;
-            if(ic.residues.hasOwnProperty(residueid)) {
+            //if(ic.residues.hasOwnProperty(residueid)) {
                 refnumLabel = ic.resid2refnum[residueid];
                 if(refnumLabel) {                        
                     refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
@@ -561,27 +561,37 @@ class ShowSeq {
                                 strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
                                 strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
                                 strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
-
-                                console.log("end: " + residueid)
                             }
+
+                            bStart = false;
 
                             currCnt = 1;
                         }
 
+                        // sometimes insertions may happen inside a strand. Reset currCnt
+                        if(currStrand == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
+                            currCnt = 1;
+                            
+                            if(bStart && prevStrandPostfix) {
+                                delete strand2len_start_stop[prevStrandPostfix];
+                                prevStrandPostfix = '';
+                            }
+                        }
+
                         // #9##
-                        if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
+                        if(prevStrand && currStrand != ' ' && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                             if(currCnt == 1) { // start of a loop
                                 if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
                                     ++index;
                                 }
-
-                                console.log("start: " + residueid + " refnumStr: " + refnumStr)
                                 
                                 postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                 strand2len_start_stop[currStrand + postfix] = {};
 
                                 strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                                 strand2len_start_stop[currStrand + postfix].chainid = chnid;
+
+                                //prevStrandPostfix = currStrand + postfix;
                             }
                             refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                             refnumLabel = currStrand + refnumStr;
@@ -591,7 +601,7 @@ class ShowSeq {
                     }
                 }
                 else {
-                    if(prevStrand && !bCustom && !kabat_or_imgt) {
+                    if(prevStrand && currStrand != ' ' && !bCustom && !kabat_or_imgt) {
                         if(currCnt == 1) { // start of a loop
                             if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
                                 ++index;
@@ -604,8 +614,11 @@ class ShowSeq {
 
                             strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                             strand2len_start_stop[currStrand + postfix].chainid = chnid;
-                        }
 
+                            prevStrandPostfix = currStrand + postfix;
+                            bStart = true;
+                        }
+                        
                         // no ref num
                         refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                         refnumLabel = currStrand + refnumStr;
@@ -616,7 +629,7 @@ class ShowSeq {
                 prevRefnumStr = refnumStr;
                 prevRefnum = refnum;
                 prevPostfix = postfix;
-            }
+            //}
 
             prevStrand = currStrand;
         }
@@ -625,11 +638,13 @@ class ShowSeq {
             strand2len_start_stop[prevStrand + prevPostfix].end = prevRefnumStr;
             //strand2len_start_stop[prevStrand].nextStrand = undefined;
         }
-
+        
         let refnumLabelNoPostfix;
         // sometimes one chain may have several Ig domains,set a index for each IgDomain
         index = 1;
-        let appearedStrands = {}, currStrand_ori;
+        prevStrandPostfix = '';
+        bStart = false;
+        let appearedStrands = {}, currStrand_ori, bShowRefnum = true;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             bLoop = false;
 
@@ -638,12 +653,12 @@ class ShowSeq {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
             let residueid = chnid + '_' + currResi;
             let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-            if(!ic.residues.hasOwnProperty(residueid)) {
-                html += '<span></span>';
-            }
-            else {
+            //if(!ic.residues.hasOwnProperty(residueid)) {
+            //    html += '<span></span>';
+            //}
+            //else {
                 refnumLabel = ic.resid2refnum[residueid];
-                let bNotShow = false;
+                let bHidelabel = false;
 
                 if(refnumLabel) {                        
                     refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
@@ -654,7 +669,8 @@ class ShowSeq {
 
                     refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
 
-                    if(currStrand != prevStrand) { // reset currCnt
+                    if(currStrand_ori != prevStrand) { // reset currCnt
+                        bStart = false;
                         currCnt = 1;
                     }
 
@@ -672,30 +688,44 @@ class ShowSeq {
                         refnum = parseInt(refnumStr);
                         postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
+                        // sometimes insertions may happen inside a strand. Reset currCnt
+                        if(currStrand_ori == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
+                            currCnt = 1;
+                            
+                            if(bStart && prevStrandPostfix) {
+                                --index;
+                                prevStrandPostfix = '';
+                            }
+                        }
+
                         // #9##
                         if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                             bLoop = true;
 
                             if(currCnt == 1) { // start of a loop
-                                if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
                                     ++index;
                                     postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                 }
 
-                                appearedStrands[currStrand + postfix] = 1;
+                                appearedStrands[currStrand_ori + postfix] = 1;
                             }
 
-                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
-                            
-                            refnumStr = result.refnumStr
+                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
+
+                            refnum = result.refnum;
+                            bShowRefnum = result.bShowRefnum;
+                            refnumStr = result.refnumStr;
                             refnumLabel = result.refnumLabel;
                             refnumLabelNoPostfix = result.refnumLabelNoPostfix;
 
-                            bNotShow = result.bNotShow;
+                            bHidelabel = result.bHidelabel;
                             currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
 
                             ++currCnt;
                         }
+
+                        prevRefnum = refnum;
                     }
                 
                     if(bCustom) {
@@ -733,40 +763,61 @@ class ShowSeq {
                         }
                     }
                     else {
-                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
+                        if(bShowRefnum && currStrand != ' ') {
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
+                            if(bLoop) ic.residIgLoop[residueid] = 1;
+                        }
+                        else {
+                            html += '<span></span>';
+                        }
                     }
                 }
                 else {
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
 
                     // skip non-protein residues
-                    if(ic.proteins.hasOwnProperty(atom.serial) && prevStrand && !bCustom && !kabat_or_imgt) {
+                    // after G strand and before A strand, just use the mapped reference number
+                    if((!atom || ic.proteins.hasOwnProperty(atom.serial)) && prevStrand && !bCustom && !kabat_or_imgt
+                      && (!currStrand_ori || currStrand_ori.substr(0,1) != 'G')) {
                         // no ref num
                         bLoop = true;
 
                         if(currCnt == 1) { // start of a loop
-                            if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                            if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
                                 ++index;
                             }
                             
                             postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
-                            appearedStrands[currStrand + postfix] = 1;
+                            appearedStrands[currStrand_ori + postfix] = 1;
+
+                            bStart = true;
+                            prevStrandPostfix = currStrand_ori + postfix;
                         }
 
                         // use previous postfix
-                        let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
-                            
+                        let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
+
+                        refnum = result.refnum;
+                        bShowRefnum = result.bShowRefnum;                        
                         refnumStr = result.refnumStr
                         refnumLabel = result.refnumLabel;
                         refnumLabelNoPostfix = result.refnumLabelNoPostfix;
 
-                        bNotShow = result.bNotShow;
+                        prevRefnum = refnum;
+
+                        bHidelabel = result.bHidelabel;
                         currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                   
                         ++currCnt;
 
-                        html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
+                        if(bShowRefnum && currStrand != ' ') {
+                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
+                            if(bLoop) ic.residIgLoop[residueid] = 1;
+                        }
+                        else {
+                            html += '<span></span>';
+                        }
                     }
                     else {
                         html += '<span></span>';
@@ -790,7 +841,7 @@ class ShowSeq {
                 // remove the postfix when comparing interactions
                 //ic.chainsMapping[chnid][residueid] = refnumLabel;
                 ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
-            }
+            //}
 
             prevStrand = currStrand_ori; //currStrand;
         }
@@ -805,10 +856,11 @@ class ShowSeq {
         return {html: html, html3: html3}
     }
 
-    getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d, me = ic.icn3dui;
-        let refnumStr, refnumLabel, refnumLabelNoPostfix;
+    getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix, prevRefnum) { let ic = this.icn3d, me = ic.icn3dui;
+        let refnum, refnumStr, refnumLabel, refnumLabelNoPostfix;
 
-        let bNotShow = false; // do not show the label
+        let bHidelabel = false; // do not show the label
+        let bShowRefnum = true;
 
         if(strand2len_start_stop[currStrand + postfix]) {
             let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
@@ -820,7 +872,6 @@ class ShowSeq {
             let len = strand2len_start_stop[currStrand + postfix].len;
             let halfLen = (strand2len_start_stop[currStrand + postfix].nextStrand) ? parseInt(len / 2.0 + 0.5) : len;
 
-            let refnum;
             if(currCnt <= halfLen) {
                 refnum = start + currCnt;
                 refnumStr = refnum + postfixStart;
@@ -835,28 +886,42 @@ class ShowSeq {
 
             refnumLabelNoPostfix = currStrand + refnum;
 
-            if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
-                bNotShow = true;
+            //if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+            // if(currCnt == 1 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+            //     bHidelabel = true;
+            // }
+            if(currCnt == 1 || currCnt == end - 1) {
+                bHidelabel = true;
+            }
+
+            if(currCnt == 1 && start != prevRefnum) { // skip insertions
+                bShowRefnum = false;
+                
+                refnum = 0;
+                refnumStr = '';
+                refnumLabel = '';
+                refnumLabelNoPostfix = '';
             }
         }
         else {
             // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
             // refnumLabel = currStrand + refnumStr;
 
+            refnum = 0;
             refnumStr = '';
             refnumLabel = '';
             refnumLabelNoPostfix = '';
 
-            bNotShow = true;
+            bHidelabel = true;
         }
 
-        return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bNotShow: bNotShow};
+        return {refnum: refnum, refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bHidelabel: bHidelabel, bShowRefnum: bShowRefnum};
     }
 
-    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow) { let ic = this.icn3d, me = ic.icn3dui;
+    getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
         let color = this.getRefnumColor(currStrand);
-        let colorStr = 'style="color:' + color + '"'
+        let colorStr = (!bLoop) ? 'style="color:' + color + '; text-decoration: underline overline;"' : 'style="color:' + color + '"';
 
         let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
         let lastThree = parseInt(refnum.substr(refnum.length - 3, 3));
@@ -869,7 +934,7 @@ class ShowSeq {
 
             html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
         }
-        else if(lastTwo % 2 == 0 && lastTwo != 52 && !bNotShow) { // don't show label for the first, middle, and last loop residues
+        else if(lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
             // e.g., 2152a
             let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
             html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -882,47 +947,47 @@ class ShowSeq {
     }
 
     getRefnumColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(currStrand == "A^") { // deep sky blue
-            return '#00BFFF';
+        if(currStrand == "A^") { //magenta // deep sky blue
+            return '#FF00FF'; //'#9900ff'; //'#00BFFF';
         }
-        else if(currStrand == "A") { // blue
-            return '#0000FF';
+        else if(currStrand == "A") { //rebecca purple // blue
+            return '#663399'; //'#9900ff'; //'#0000FF';
         }
-        else if(currStrand == "A*") { // sky blue
-            return '#87CEEB';
+        else if(currStrand == "A*") { //pink  // sky blue
+            return '#FFC0CB'; //'#9900ff'; //'#87CEEB';
         }
-        else if(currStrand == "A'") { // steel blue
-            return '#4682B4';
+        else if(currStrand == "A'") { //medium purple // steel blue
+            return '#9370db'; //'#9900ff'; //'#4682B4';
         }
-        else if(currStrand == "B") { // cyan
-            return '#00FFFF';
+        else if(currStrand == "B") { //medium orchid // cyan
+            return '#ba55d3'; //'#0000FF'; //'#4a86e8'; //'#00FFFF';
         }
-        else if(currStrand == "C") { // green
-            return '#00FF00';
+        else if(currStrand == "C") { //blue // green
+            return '#0000FF'; //'#76d6ff'; //'#00FF00';
         }
-        else if(currStrand == "C'") { // yellow
-            return '#FFFF00';
+        else if(currStrand == "C'") { //corn blue // yellow
+            return '#6495ED'; //'#006400'; //'#00b050'; //'#FFFF00';
         }
-        else if(currStrand == "C''") { // orange
-            return '#FFA500';
+        else if(currStrand == "C''") { //dark green // orange
+            return '#006400'; //'#00ff00'; //'#FFA500';
         }
-        else if(currStrand == "D") { // brown
-            return '#A52A2A';
+        else if(currStrand == "D") { //green // brown
+            return '#00FF00'; //'#fffb00'; //'#A52A2A';
         }
-        else if(currStrand == "E") { // pink
-            return '#FFC0CB';
+        else if(currStrand == "E") { //yellow // pink
+            return '#FFFF00'; //'#ff9900'; //'#ffd966'; //'#FFC0CB';
         }
-        else if(currStrand == "F") { // magenta
-            return '#FF00FF';
+        else if(currStrand == "F") { //orange // magenta
+            return '#FFA500'; //'#FF00FF'; //'#ff9900'; //'#FF00FF';
         }
-        else if(currStrand == "G") { // red
-            return '#FF0000';
+        else if(currStrand == "G") { //red // red
+            return '#FF0000'; //'#ff2600'; //'#FF0000';
         }
-        else if(currStrand == "G*") { // salmon
-            return '#FA8072';
+        else if(currStrand == "G*") { //dark red // salmon
+            return '#8B0000'; //'#ff2600'; //'#FA8072';
         }
         else {
-            return '#000';
+            return me.htmlCls.GREYB;
         }
     }
 

@@ -7,6 +7,16 @@ class LoadPDB {
         this.icn3d = icn3d;
     }
 
+    getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d, me = ic.icn3dui;
+        let structure = id;
+    
+        if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+            structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+        }
+
+        return structure;
+    }
+
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
     loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let ic = this.icn3d, me = ic.icn3dui;
@@ -91,12 +101,7 @@ class LoadPDB {
                     }
                 }
 
-                structure = id;
-
-                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                //if(id == ic.defaultPdbId) {
-                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                }
+                structure = this.getStructureId(id, moleculeNum, bMutation);
 
                 ic.molTitle = '';
 
@@ -216,12 +221,7 @@ class LoadPDB {
                 ++moleculeNum;
                 id = ic.defaultPdbId;
 
-                structure = id;
-                
-                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                //if(id == ic.defaultPdbId) {
-                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                }
+                structure = this.getStructureId(id, moleculeNum, bMutation);
 
                 //helices = [];
                 //sheets = [];
@@ -240,12 +240,7 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
-                structure = id;
-                
-                if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                //if(id == ic.defaultPdbId) {
-                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                }
+                structure = this.getStructureId(id, moleculeNum, bMutation);
 
                 let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;

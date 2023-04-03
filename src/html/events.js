@@ -198,7 +198,7 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
-    async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async launchMmdb(ids, bBiounit, hostUrl, bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         if(!me.cfg.notebook) dialog.dialog( "close" );
         
         let flag = bBiounit ? 1 : 0;
@@ -213,40 +213,48 @@ class Events {
 
         let idArray = ids.split(',');
 
-        /*
-        if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
-            thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
-            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-            window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
-        }
-        else {
-            thisClass.setLogCmd("load mmdbaf" + flag + " " + ids, false);
-            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-            window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
-        }
-        */
-
-        // single MMDB ID could show memebranes
-        if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
-            thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
-            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-            window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
-        }
-        else {
-            me.cfg.mmdbafid = ids;
-            me.cfg.bu = flag;
-
-            ic.bMmdbafid = true;
-            ic.inputid = (ic.inputid) ? ic.inputid + me.cfg.mmdbafid : me.cfg.mmdbafid;
-            if(me.cfg.bu == 1) {
-                ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+        if(!bAppend) {
+            if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
             }
             else {
-                ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+                thisClass.setLogCmd("load mmdbaf" + flag + " " + ids, false);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
             }
-            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        }
+        else {
+            // single MMDB ID could show memebranes
+            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
+            }
+            else {
+                me.cfg.mmdbafid = ids;
+                me.cfg.bu = flag;
 
-            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+                ic.bMmdbafid = true;
+                ic.inputid = (ic.inputid) ? ic.inputid + me.cfg.mmdbafid : me.cfg.mmdbafid;
+                if(me.cfg.bu == 1) {
+                    ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+                }
+                else {
+                    ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+                }
+                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);  
+
+                let bStructures = (ic.structures && Object.keys(ic.structures).length > 0) ? true : false;
+
+                await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+
+                if(bStructures) {
+                    if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                    if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                }
+            }
         }
     }
 
@@ -988,19 +996,26 @@ class Events {
 
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            
-            // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
-
             thisClass.launchMmdb(ids, 1, hostUrl);
         });
  
          me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-
-            // remove space
             let ids = $("#" + me.pre + "mmdbafid").val();
             thisClass.launchMmdb(ids, 0, hostUrl);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_append", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            let ids = $("#" + me.pre + "mmdbafid").val();
+            thisClass.launchMmdb(ids, 1, hostUrl, true);
+        });
+ 
+         me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym_append", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            let ids = $("#" + me.pre + "mmdbafid").val();
+            thisClass.launchMmdb(ids, 0, hostUrl, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;

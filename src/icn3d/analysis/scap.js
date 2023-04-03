@@ -89,7 +89,7 @@ class Scap {
 
         let data;
          
-        try {
+        // try {
           data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, undefined, 'text');
 
           let pos = data.indexOf('\n');
@@ -179,8 +179,10 @@ console.log("free energy: " + energy + " kcal/mol");
 
                   let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
 
-                  ic.atoms[serial].color = atomWT.color;
-                  ic.atomPrevColors[serial] = atomWT.color;
+                  if(atomWT) {
+                    ic.atoms[serial].color = atomWT.color;
+                    ic.atomPrevColors[serial] = atomWT.color;
+                  }
               }
 
               let chainid = atom.structure + '_' + atom.chain;
@@ -246,6 +248,7 @@ console.log("free energy: " + energy + " kcal/mol");
           // expand the toolbar
           let id = ic.pre + 'selection';
           $("#" + id).show();
+/*
         }
         catch(err) {
             alert("There are some problems in predicting the side chain of the mutant...");
@@ -255,6 +258,7 @@ console.log("free energy: " + energy + " kcal/mol");
             /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
             return;
         }
+        */
     }
 
     async exportPdbProfix(bHydrogen, pdb, snpStr) { let ic = this.icn3d, me = ic.icn3dui;

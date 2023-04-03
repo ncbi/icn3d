@@ -467,6 +467,10 @@ class LoadScript {
 
         // load pdb, mmcif, mmdb, cid
         let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
+
+        // skip loading the structure if it was loaded before
+        if(ic.structures.hasOwnProperty(id)) return;
+
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
@@ -541,7 +545,7 @@ class LoadScript {
         else if(command.indexOf('load alignment') !== -1) {
           me.cfg.align = id;
 
-          if(me.cfg.inpara.indexOf('atype=2') == -1) {
+          if(me.cfg.inpara || me.cfg.inpara.indexOf('atype=2') == -1) {
             await ic.alignParserCls.downloadAlignment(me.cfg.align);
           }
           else {

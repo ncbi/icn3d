@@ -11506,7 +11506,7 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";
             html += "<div style='width:500px'>";
-            html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[<b>uppercase</b> PDB ID or AlphaFold UniProt ID]_[Chain ID]_[Residue Number]_[One Letter Mutant Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/><br/>';
+            html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[<b>uppercase</b> PDB ID or AlphaFold UniProt ID]_[Chain Name]_[Residue Number]_[One Letter Mutant Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/>If you load a custom structure without PDB or UniProt ID, you can open "Seq. & Annotations" window and find the chain ID such as "stru_A". The part before the underscore is the structure ID, which can be used to specify the mutation such as "stru_A_...". Remember to choose "Show Mutation in: Current Page".<br/><br/>';
             html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
      
             html += '<b>ID Type</b>: ';
@@ -11579,8 +11579,9 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
-            html += "Append a list of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
-            html += me.htmlCls.buttonStr + "reload_mmdbaf'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
+            html += "List of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+            html += "<div style='display:inline-block; width:20px'></div>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='width:150px'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px; width:250px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
+            html += "<div style='display:inline-block; width:20px'>or</div>" + me.htmlCls.buttonStr + "reload_mmdbaf_append' style='width:150px'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym_append' style='margin-left:30px; width:250px'>Append Asymmetric ; Unit (All Chains)</button>" + "<br/><br/>";
 
             html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
             + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
@@ -12668,7 +12669,7 @@ var icn3d = (function (exports) {
             $("#" + me.pre + id).resizable();
         }
 
-        async launchMmdb(ids, bBiounit, hostUrl) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        async launchMmdb(ids, bBiounit, hostUrl, bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
             if(!me.cfg.notebook) dialog.dialog( "close" );
             
             let flag = bBiounit ? 1 : 0;
@@ -12683,40 +12684,48 @@ var icn3d = (function (exports) {
 
             let idArray = ids.split(',');
 
-            /*
-            if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
-                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
-                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
-            }
-            else {
-                thisClass.setLogCmd("load mmdbaf" + flag + " " + ids, false);
-                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-                window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
-            }
-            */
-
-            // single MMDB ID could show memebranes
-            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
-                thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
-                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-                window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
-            }
-            else {
-                me.cfg.mmdbafid = ids;
-                me.cfg.bu = flag;
-
-                ic.bMmdbafid = true;
-                ic.inputid = (ic.inputid) ? ic.inputid + me.cfg.mmdbafid : me.cfg.mmdbafid;
-                if(me.cfg.bu == 1) {
-                    ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+            if(!bAppend) {
+                if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+                    thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
                 }
                 else {
-                    ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+                    thisClass.setLogCmd("load mmdbaf" + flag + " " + ids, false);
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?mmdbafid=' + ids + '&bu=' + flag, urlTarget);
                 }
-                me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+            }
+            else {
+                // single MMDB ID could show memebranes
+                if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+                    thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
+                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+                    window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
+                }
+                else {
+                    me.cfg.mmdbafid = ids;
+                    me.cfg.bu = flag;
 
-                await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+                    ic.bMmdbafid = true;
+                    ic.inputid = (ic.inputid) ? ic.inputid + me.cfg.mmdbafid : me.cfg.mmdbafid;
+                    if(me.cfg.bu == 1) {
+                        ic.loadCmd = 'load mmdbaf1 ' + me.cfg.mmdbafid;
+                    }
+                    else {
+                        ic.loadCmd = 'load mmdbaf0 ' + me.cfg.mmdbafid;
+                    }
+                    me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);  
+
+                    let bStructures = (ic.structures && Object.keys(ic.structures).length > 0) ? true : false;
+
+                    await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+
+                    if(bStructures) {
+                        if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                        if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                    }
+                }
             }
         }
 
@@ -13458,19 +13467,26 @@ var icn3d = (function (exports) {
 
              me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf", "click", function(e) { me.icn3d;
                 e.preventDefault();
-                
-                // remove space
                 let ids = $("#" + me.pre + "mmdbafid").val();
-
                 thisClass.launchMmdb(ids, 1, hostUrl);
             });
      
              me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym", "click", function(e) { me.icn3d;
                 e.preventDefault();
-
-                // remove space
                 let ids = $("#" + me.pre + "mmdbafid").val();
                 thisClass.launchMmdb(ids, 0, hostUrl);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_append", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                let ids = $("#" + me.pre + "mmdbafid").val();
+                thisClass.launchMmdb(ids, 1, hostUrl, true);
+            });
+     
+             me.myEventCls.onIds("#" + me.pre + "reload_mmdbaf_asym_append", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                let ids = $("#" + me.pre + "mmdbafid").val();
+                thisClass.launchMmdb(ids, 0, hostUrl, true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
@@ -35261,6 +35277,35 @@ var icn3d = (function (exports) {
 
                     break;
 
+                case 'ig strand':
+                    if(ic.bShowRefnum) {
+                        for(let resid in ic.resid2refnum) {
+                            let refnumLabel = ic.resid2refnum[resid];
+                            let color;
+                            if(!refnumLabel) {
+                                color = me.parasCls.thr(me.htmlCls.GREYB);
+                            }
+                            else {
+                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
+                                color = ic.showSeqCls.getRefnumColor(currStrand);
+
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                    color = me.parasCls.thr(me.htmlCls.GREYB);
+                                }
+                            }
+                            
+                            for (let i in ic.residues[resid]) {
+                                let atom = ic.atoms[i];
+                                atom.color = me.parasCls.thr(color);
+            
+                                ic.atomPrevColors[i] = atom.color;
+                            }
+                        }
+                    }
+
+                    break;
+
                 case 'residue custom':
                     for (let i in atoms) {
                         let atom = ic.atoms[i];
@@ -41283,6 +41328,14 @@ var icn3d = (function (exports) {
                  } // align seq to structure
             }
             ic.bAnnoShown = true;
+
+            if(ic.bShowRefnum) {
+                ic.opts.color = 'ig strand';
+                ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+                ic.selectionCls.selectAll_base();
+                ic.hlUpdateCls.updateHlAll();
+            }
         }
 
         async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
@@ -42344,14 +42397,14 @@ var icn3d = (function (exports) {
 
             // set hash for the loops
             let strand2len_start_stop = {};
-            let prevRefnumStr, prevPostfix;
+            let prevRefnumStr, prevPostfix, prevRefnum;
 
             // sometimes one chain may have several Ig domains,set a index for each IgDomain
-            let index = 1;
+            let index = 1, prevStrandPostfix = '', bStart = false;
             for(let i = 0, il = giSeq.length; i < il; ++i) {
                 let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                 let residueid = chnid + '_' + currResi;
-                if(ic.residues.hasOwnProperty(residueid)) {
+                //if(ic.residues.hasOwnProperty(residueid)) {
                     refnumLabel = ic.resid2refnum[residueid];
                     if(refnumLabel) {                        
                         refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
@@ -42369,27 +42422,37 @@ var icn3d = (function (exports) {
                                     strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
                                     strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
                                     strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
-
-                                    console.log("end: " + residueid);
                                 }
+
+                                bStart = false;
 
                                 currCnt = 1;
                             }
 
+                            // sometimes insertions may happen inside a strand. Reset currCnt
+                            if(currStrand == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
+                                currCnt = 1;
+                                
+                                if(bStart && prevStrandPostfix) {
+                                    delete strand2len_start_stop[prevStrandPostfix];
+                                    prevStrandPostfix = '';
+                                }
+                            }
+
                             // #9##
-                            if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
+                            if(prevStrand && currStrand != ' ' && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                                 if(currCnt == 1) { // start of a loop
                                     if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
                                         ++index;
                                     }
-
-                                    console.log("start: " + residueid + " refnumStr: " + refnumStr);
                                     
                                     postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                     strand2len_start_stop[currStrand + postfix] = {};
 
                                     strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                                     strand2len_start_stop[currStrand + postfix].chainid = chnid;
+
+                                    //prevStrandPostfix = currStrand + postfix;
                                 }
                                 refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                                 refnumLabel = currStrand + refnumStr;
@@ -42399,7 +42462,7 @@ var icn3d = (function (exports) {
                         }
                     }
                     else {
-                        if(prevStrand && !bCustom && !kabat_or_imgt) {
+                        if(prevStrand && currStrand != ' ' && !bCustom && !kabat_or_imgt) {
                             if(currCnt == 1) { // start of a loop
                                 if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
                                     ++index;
@@ -42412,8 +42475,11 @@ var icn3d = (function (exports) {
 
                                 strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
                                 strand2len_start_stop[currStrand + postfix].chainid = chnid;
-                            }
 
+                                prevStrandPostfix = currStrand + postfix;
+                                bStart = true;
+                            }
+                            
                             // no ref num
                             refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                             refnumLabel = currStrand + refnumStr;
@@ -42422,8 +42488,9 @@ var icn3d = (function (exports) {
                     }
 
                     prevRefnumStr = refnumStr;
+                    prevRefnum = refnum;
                     prevPostfix = postfix;
-                }
+                //}
 
                 prevStrand = currStrand;
             }
@@ -42432,11 +42499,13 @@ var icn3d = (function (exports) {
                 strand2len_start_stop[prevStrand + prevPostfix].end = prevRefnumStr;
                 //strand2len_start_stop[prevStrand].nextStrand = undefined;
             }
-
+            
             let refnumLabelNoPostfix;
             // sometimes one chain may have several Ig domains,set a index for each IgDomain
             index = 1;
-            let appearedStrands = {}, currStrand_ori;
+            prevStrandPostfix = '';
+            bStart = false;
+            let appearedStrands = {}, currStrand_ori, bShowRefnum = true;
             for(let i = 0, il = giSeq.length; i < il; ++i) {
                 bLoop = false;
 
@@ -42445,12 +42514,12 @@ var icn3d = (function (exports) {
                 let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                 let residueid = chnid + '_' + currResi;
                 let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-                if(!ic.residues.hasOwnProperty(residueid)) {
-                    html += '<span></span>';
-                }
-                else {
+                //if(!ic.residues.hasOwnProperty(residueid)) {
+                //    html += '<span></span>';
+                //}
+                //else {
                     refnumLabel = ic.resid2refnum[residueid];
-                    let bNotShow = false;
+                    let bHidelabel = false;
 
                     if(refnumLabel) {                        
                         refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
@@ -42461,7 +42530,8 @@ var icn3d = (function (exports) {
 
                         refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
 
-                        if(currStrand != prevStrand) { // reset currCnt
+                        if(currStrand_ori != prevStrand) { // reset currCnt
+                            bStart = false;
                             currCnt = 1;
                         }
 
@@ -42479,30 +42549,44 @@ var icn3d = (function (exports) {
                             refnum = parseInt(refnumStr);
                             postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
+                            // sometimes insertions may happen inside a strand. Reset currCnt
+                            if(currStrand_ori == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
+                                currCnt = 1;
+                                
+                                if(bStart && prevStrandPostfix) {
+                                    --index;
+                                    prevStrandPostfix = '';
+                                }
+                            }
+
                             // #9##
                             if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
                                 bLoop = true;
 
                                 if(currCnt == 1) { // start of a loop
-                                    if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                    if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
                                         ++index;
                                         postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                     }
 
-                                    appearedStrands[currStrand + postfix] = 1;
+                                    appearedStrands[currStrand_ori + postfix] = 1;
                                 }
 
-                                let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
-                                
+                                let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
+
+                                refnum = result.refnum;
+                                bShowRefnum = result.bShowRefnum;
                                 refnumStr = result.refnumStr;
                                 refnumLabel = result.refnumLabel;
                                 refnumLabelNoPostfix = result.refnumLabelNoPostfix;
 
-                                bNotShow = result.bNotShow;
+                                bHidelabel = result.bHidelabel;
                                 currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
 
                                 ++currCnt;
                             }
+
+                            prevRefnum = refnum;
                         }
                     
                         if(bCustom) {
@@ -42540,40 +42624,61 @@ var icn3d = (function (exports) {
                             }
                         }
                         else {
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
+                            if(bShowRefnum && currStrand != ' ') {
+                                html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
+                                if(bLoop) ic.residIgLoop[residueid] = 1;
+                            }
+                            else {
+                                html += '<span></span>';
+                            }
                         }
                     }
                     else {
                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
 
                         // skip non-protein residues
-                        if(ic.proteins.hasOwnProperty(atom.serial) && prevStrand && !bCustom && !kabat_or_imgt) {
+                        // after G strand and before A strand, just use the mapped reference number
+                        if((!atom || ic.proteins.hasOwnProperty(atom.serial)) && prevStrand && !bCustom && !kabat_or_imgt
+                          && (!currStrand_ori || currStrand_ori.substr(0,1) != 'G')) {
                             // no ref num
                             bLoop = true;
 
                             if(currCnt == 1) { // start of a loop
-                                if(appearedStrands.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                                if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
                                     ++index;
                                 }
                                 
                                 postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
 
-                                appearedStrands[currStrand + postfix] = 1;
+                                appearedStrands[currStrand_ori + postfix] = 1;
+
+                                bStart = true;
+                                prevStrandPostfix = currStrand_ori + postfix;
                             }
 
                             // use previous postfix
-                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix);
-                                
+                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
+
+                            refnum = result.refnum;
+                            bShowRefnum = result.bShowRefnum;                        
                             refnumStr = result.refnumStr;
                             refnumLabel = result.refnumLabel;
                             refnumLabelNoPostfix = result.refnumLabelNoPostfix;
 
-                            bNotShow = result.bNotShow;
+                            prevRefnum = refnum;
+
+                            bHidelabel = result.bHidelabel;
                             currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                       
                             ++currCnt;
 
-                            html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow);
+                            if(bShowRefnum && currStrand != ' ') {
+                                html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
+                                if(bLoop) ic.residIgLoop[residueid] = 1;
+                            }
+                            else {
+                                html += '<span></span>';
+                            }
                         }
                         else {
                             html += '<span></span>';
@@ -42597,7 +42702,7 @@ var icn3d = (function (exports) {
                     // remove the postfix when comparing interactions
                     //ic.chainsMapping[chnid][residueid] = refnumLabel;
                     ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
-                }
+                //}
 
                 prevStrand = currStrand_ori; //currStrand;
             }
@@ -42612,10 +42717,11 @@ var icn3d = (function (exports) {
             return {html: html, html3: html3}
         }
 
-        getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix) { let ic = this.icn3d; ic.icn3dui;
-            let refnumStr, refnumLabel, refnumLabelNoPostfix;
+        getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix, prevRefnum) { let ic = this.icn3d; ic.icn3dui;
+            let refnum, refnumStr, refnumLabel, refnumLabelNoPostfix;
 
-            let bNotShow = false; // do not show the label
+            let bHidelabel = false; // do not show the label
+            let bShowRefnum = true;
 
             if(strand2len_start_stop[currStrand + postfix]) {
                 let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
@@ -42627,7 +42733,6 @@ var icn3d = (function (exports) {
                 let len = strand2len_start_stop[currStrand + postfix].len;
                 let halfLen = (strand2len_start_stop[currStrand + postfix].nextStrand) ? parseInt(len / 2.0 + 0.5) : len;
 
-                let refnum;
                 if(currCnt <= halfLen) {
                     refnum = start + currCnt;
                     refnumStr = refnum + postfixStart;
@@ -42642,28 +42747,42 @@ var icn3d = (function (exports) {
 
                 refnumLabelNoPostfix = currStrand + refnum;
 
-                if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
-                    bNotShow = true;
+                //if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+                // if(currCnt == 1 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
+                //     bHidelabel = true;
+                // }
+                if(currCnt == 1 || currCnt == end - 1) {
+                    bHidelabel = true;
+                }
+
+                if(currCnt == 1 && start != prevRefnum) { // skip insertions
+                    bShowRefnum = false;
+                    
+                    refnum = 0;
+                    refnumStr = '';
+                    refnumLabel = '';
+                    refnumLabelNoPostfix = '';
                 }
             }
             else {
                 // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
                 // refnumLabel = currStrand + refnumStr;
 
+                refnum = 0;
                 refnumStr = '';
                 refnumLabel = '';
                 refnumLabelNoPostfix = '';
 
-                bNotShow = true;
+                bHidelabel = true;
             }
 
-            return {refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bNotShow: bNotShow};
+            return {refnum: refnum, refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bHidelabel: bHidelabel, bShowRefnum: bShowRefnum};
         }
 
-        getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bNotShow) { let ic = this.icn3d, me = ic.icn3dui;
+        getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
             let refnum = parseInt(refnumStr).toString();
             let color = this.getRefnumColor(currStrand);
-            let colorStr = 'style="color:' + color + '"';
+            let colorStr = (!bLoop) ? 'style="color:' + color + '; text-decoration: underline overline;"' : 'style="color:' + color + '"';
 
             let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
             parseInt(refnum.substr(refnum.length - 3, 3));
@@ -42676,7 +42795,7 @@ var icn3d = (function (exports) {
 
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
             }
-            else if(lastTwo % 2 == 0 && lastTwo != 52 && !bNotShow) { // don't show label for the first, middle, and last loop residues
+            else if(lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
                 // e.g., 2152a
                 let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -42688,48 +42807,48 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        getRefnumColor(currStrand) {  let ic = this.icn3d; ic.icn3dui;
-            if(currStrand == "A^") { // deep sky blue
-                return '#00BFFF';
+        getRefnumColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
+            if(currStrand == "A^") { //magenta // deep sky blue
+                return '#FF00FF'; //'#9900ff'; //'#00BFFF';
             }
-            else if(currStrand == "A") { // blue
-                return '#0000FF';
+            else if(currStrand == "A") { //rebecca purple // blue
+                return '#663399'; //'#9900ff'; //'#0000FF';
             }
-            else if(currStrand == "A*") { // sky blue
-                return '#87CEEB';
+            else if(currStrand == "A*") { //pink  // sky blue
+                return '#FFC0CB'; //'#9900ff'; //'#87CEEB';
             }
-            else if(currStrand == "A'") { // steel blue
-                return '#4682B4';
+            else if(currStrand == "A'") { //medium purple // steel blue
+                return '#9370db'; //'#9900ff'; //'#4682B4';
             }
-            else if(currStrand == "B") { // cyan
-                return '#00FFFF';
+            else if(currStrand == "B") { //medium orchid // cyan
+                return '#ba55d3'; //'#0000FF'; //'#4a86e8'; //'#00FFFF';
             }
-            else if(currStrand == "C") { // green
-                return '#00FF00';
+            else if(currStrand == "C") { //blue // green
+                return '#0000FF'; //'#76d6ff'; //'#00FF00';
             }
-            else if(currStrand == "C'") { // yellow
-                return '#FFFF00';
+            else if(currStrand == "C'") { //corn blue // yellow
+                return '#6495ED'; //'#006400'; //'#00b050'; //'#FFFF00';
             }
-            else if(currStrand == "C''") { // orange
-                return '#FFA500';
+            else if(currStrand == "C''") { //dark green // orange
+                return '#006400'; //'#00ff00'; //'#FFA500';
             }
-            else if(currStrand == "D") { // brown
-                return '#A52A2A';
+            else if(currStrand == "D") { //green // brown
+                return '#00FF00'; //'#fffb00'; //'#A52A2A';
             }
-            else if(currStrand == "E") { // pink
-                return '#FFC0CB';
+            else if(currStrand == "E") { //yellow // pink
+                return '#FFFF00'; //'#ff9900'; //'#ffd966'; //'#FFC0CB';
             }
-            else if(currStrand == "F") { // magenta
-                return '#FF00FF';
+            else if(currStrand == "F") { //orange // magenta
+                return '#FFA500'; //'#FF00FF'; //'#ff9900'; //'#FF00FF';
             }
-            else if(currStrand == "G") { // red
-                return '#FF0000';
+            else if(currStrand == "G") { //red // red
+                return '#FF0000'; //'#ff2600'; //'#FF0000';
             }
-            else if(currStrand == "G*") { // salmon
-                return '#FA8072';
+            else if(currStrand == "G*") { //dark red // salmon
+                return '#8B0000'; //'#ff2600'; //'#FA8072';
             }
             else {
-                return '#000';
+                return me.htmlCls.GREYB;
             }
         }
 
@@ -44091,6 +44210,8 @@ var icn3d = (function (exports) {
         drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1, nodeArray2, linkArray, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY) { let ic = this.icn3d; ic.icn3dui;
             let html = "";
 
+            let bMutation = structureArray.length == 2 && structureArray[1].replace(structureArray[0], '') == '2';
+
             // draw common interaction
             let label, postfix;
             if(bCommonDiff == 0) {
@@ -44107,11 +44228,21 @@ var icn3d = (function (exports) {
             }
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {  
+                let labelFinal = label;
+                if(bMutation) {
+                    if(i == 0) {
+                        labelFinal += "Wild Type ";
+                    }
+                    else if(i == 1) {
+                        labelFinal += "Mutant ";
+                    }
+                }
+
                 if(bScatterplot) {
-                    html += this.drawScatterplot_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, undefined, label + structureArray[i], textHeight);
+                    html += this.drawScatterplot_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, undefined, labelFinal + structureArray[i], textHeight);
                     height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
                 } else {
-                    html += this.drawLineGraph_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, label + structureArray[i], textHeight);
+                    html += this.drawLineGraph_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, labelFinal + structureArray[i], textHeight);
                 }
                 heightFinal += height;
 
@@ -47959,7 +48090,18 @@ var icn3d = (function (exports) {
             }
 
             // ic.deferredMmdbaf = $.Deferred(function() {
-            let structArray = idlist.split(',');
+            let structArrayTmp = idlist.split(',');
+
+            let structArray = [];
+            // remove redundant structures
+            for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
+                if(!ic.structures.hasOwnProperty(structArrayTmp[i].toUpperCase())) {
+                    structArray.push(structArrayTmp[i]);
+                }
+            }
+            
+            if(structArray.length == 0) return;
+            
             ic.structArray = ic.structArray.concat(structArray);
 
             let ajaxArray = [];
@@ -54959,6 +55101,16 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
+        getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d; ic.icn3dui;
+            let structure = id;
+        
+            if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+                structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+            }
+
+            return structure;
+        }
+
         // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
         //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
         loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let ic = this.icn3d, me = ic.icn3dui;
@@ -55041,12 +55193,7 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    structure = id;
-
-                    if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                    //if(id == ic.defaultPdbId) {
-                            structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                    }
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
 
                     ic.molTitle = '';
 
@@ -55161,12 +55308,7 @@ var icn3d = (function (exports) {
                     ++moleculeNum;
                     id = ic.defaultPdbId;
 
-                    structure = id;
-                    
-                    if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                    //if(id == ic.defaultPdbId) {
-                            structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                    }
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
 
                     //helices = [];
                     //sheets = [];
@@ -55185,12 +55327,7 @@ var icn3d = (function (exports) {
                         ic.pmid = line.substr(19).trim();
                     }
                 } else if (record === 'ATOM  ' || record === 'HETATM') {
-                    structure = id;
-                    
-                    if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
-                    //if(id == ic.defaultPdbId) {
-                            structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                    }
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
 
                     let alt = line.substr(16, 1);
                     //if (alt !== " " && alt !== "A") continue;
@@ -59451,6 +59588,10 @@ var icn3d = (function (exports) {
 
             // load pdb, mmcif, mmdb, cid
             let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
+
+            // skip loading the structure if it was loaded before
+            if(ic.structures.hasOwnProperty(id)) return;
+
             ic.inputid = id;
             if(command.indexOf('load mmtf') !== -1) {
               me.cfg.mmtfid = id;
@@ -59525,7 +59666,7 @@ var icn3d = (function (exports) {
             else if(command.indexOf('load alignment') !== -1) {
               me.cfg.align = id;
 
-              if(me.cfg.inpara.indexOf('atype=2') == -1) {
+              if(me.cfg.inpara || me.cfg.inpara.indexOf('atype=2') == -1) {
                 await ic.alignParserCls.downloadAlignment(me.cfg.align);
               }
               else {
@@ -60084,7 +60225,7 @@ var icn3d = (function (exports) {
                          let residArray = [];
 
                          if(bRefnum) {
-                          let residArrayTmp = ic.refnum2residArray[k];
+                          let residArrayTmp = (ic.refnum2residArray[k]) ? ic.refnum2residArray[k] : [];
                           for(let m = 0, ml = residArrayTmp.length; m < ml; ++m) {
                             let residueId = residArrayTmp[m];
                             if(residueId.substr(0, residueId.lastIndexOf('_')) == molecule_chain) {
@@ -62524,12 +62665,12 @@ var icn3d = (function (exports) {
     }
 
                 let prevStrand;
+                let bCd19 = ic.chainid2index[chainid].length == 1 && ic.refpdbArray[ic.chainid2index[chainid][0]] == '6al5_cd19';
                 for(let i = 0, il = segArray.length; i < il; ++i) {
                     let seg = segArray[i];
                     let qStart = seg.q_start;
                     parseInt(seg.q_start);
-                    let postfix = '';
-                    if(isNaN(seg.q_start)) postfix = seg.q_start.substr(seg.q_start.length - 1, 1);
+                    if(isNaN(seg.q_start)) seg.q_start.substr(seg.q_start.length - 1, 1);
 
                     // one item in "seq"
                     // q_start and q_end are numbers, but saved in string
@@ -62540,9 +62681,10 @@ var icn3d = (function (exports) {
 
                         let resid = chainid + '_' + seg.t_start;
                         //let refnum = qStartInt.toString() + postfix;
-                        let refnum = qStart + postfix;
+                        //let refnum = qStart + postfix;
+                        let refnum = qStart;
 
-                        let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand);
+                        let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
                         prevStrand = refnumLabel.replace(new RegExp(refnum,'g'), '');
 
                         ic.resid2refnum[resid] = refnumLabel;
@@ -62577,7 +62719,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d; ic.icn3dui;
+        getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d; ic.icn3dui;
             let refnum = parseInt(oriRefnum);
 
             // A^: 1xx or 2xx
@@ -62595,7 +62737,10 @@ var icn3d = (function (exports) {
             // G*: 94xx
 
             if(refnum < 100) return " " + oriRefnum;
-            else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum;
+            else if(refnum >= 100 && refnum < 1000) {
+                if(bCd19) return " " + oriRefnum;
+                else return "A^" + oriRefnum;
+            }
             else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
             else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
             else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
@@ -62777,7 +62922,7 @@ var icn3d = (function (exports) {
 
             let data;
              
-            try {
+            // try {
               data = await me.getAjaxPostPromise(url, dataObj, true, undefined, undefined, undefined, 'text');
 
               let pos = data.indexOf('\n');
@@ -62867,8 +63012,10 @@ var icn3d = (function (exports) {
 
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
 
-                      ic.atoms[serial].color = atomWT.color;
-                      ic.atomPrevColors[serial] = atomWT.color;
+                      if(atomWT) {
+                        ic.atoms[serial].color = atomWT.color;
+                        ic.atomPrevColors[serial] = atomWT.color;
+                      }
                   }
 
                   let chainid = atom.structure + '_' + atom.chain;
@@ -62934,6 +63081,7 @@ var icn3d = (function (exports) {
               // expand the toolbar
               let id = ic.pre + 'selection';
               $("#" + id).show();
+    /*
             }
             catch(err) {
                 alert("There are some problems in predicting the side chain of the mutant...");
@@ -62943,6 +63091,7 @@ var icn3d = (function (exports) {
                 /// if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
                 return;
             }
+            */
         }
 
         async exportPdbProfix(bHydrogen, pdb, snpStr) { let ic = this.icn3d, me = ic.icn3dui;
@@ -70073,7 +70222,7 @@ var icn3d = (function (exports) {
         this.optsOri = {};
         this.optsOri['camera']             = 'perspective';        //perspective, orthographic
         this.optsOri['background']         = 'black';              //transparent, black, grey, white
-        this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
+        this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom, ig strand
         this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
         this.optsOri['sidec']              = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
         this.optsOri['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
@@ -70340,6 +70489,7 @@ var icn3d = (function (exports) {
 
         this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
         this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2150', ...}
+        this.residIgLoop = {}; // residue ids in the loop regions of ig domain
         this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2150': ['1WIO_A_16', ...], ...}
         this.bShowRefnum = false;
         
@@ -70512,7 +70662,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.23.1';
+        this.REVISION = '3.23.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
