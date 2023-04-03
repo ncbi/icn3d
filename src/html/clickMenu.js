@@ -1418,6 +1418,12 @@ class ClickMenu {
             thisClass.setLogCmd('color confidence', true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            //ic.legendClick = 6;
+            ic.setOptionCls.setOption('color', 'ig strand');
+            thisClass.setLogCmd('color ig strand', true);
+        });
+
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
