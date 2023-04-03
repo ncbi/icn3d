@@ -7940,6 +7940,12 @@ class ClickMenu {
             thisClass.setLogCmd('color confidence', true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            //ic.legendClick = 6;
+            ic.setOptionCls.setOption('color', 'ig strand');
+            thisClass.setLogCmd('color ig strand', true);
+        });
+
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
@@ -10255,6 +10261,8 @@ class SetMenu {
             //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>', undefined, 1, 1);
             //}
+
+            //!!! html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -10473,7 +10481,7 @@ class SetMenu {
             html += this.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-/*
+/* !!!
             html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
 
@@ -35964,6 +35972,9 @@ class SetOption {
         else if(colorType == 'hydrophobic') {
             colorLabel = 'Hydrophobicity';
         }
+        else if(colorType == 'ig strand') {
+            colorLabel = 'Ig Strand';
+        }
 
         let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -35983,6 +35994,9 @@ class SetOption {
         //else if (ic.legendClick == 3){
         else if (colorType == 'charge'){
             html += this.getColorLegendForCharge(ic.hAtoms);
+        }
+        else if (colorType == 'ig strand'){
+            html += this.getColorLegendForIgstrand(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
         else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
@@ -36203,6 +36217,40 @@ class SetOption {
             }
         }
         html += "<br>(Charges are at pH 7)";
+        html += "</div>";
+
+        return html;
+     }
+
+     getColorLegendForIgstrand(atomHash) { let ic = this.icn3d; ic.icn3dui;
+        let html = '';
+
+        const name2color = {
+            "A^ Strand": "FF00FF", 
+            "A Strand": "663399",
+            "A* Strand": "FFC0CB",
+            "A Strand": "9370db",
+            "B Strand": "ba55d3",
+            "C Strand": "0000FF",
+            "C' Strand": "6495ED",
+            "C'' Strand": "006400",
+            "D Strand": "00FF00",
+            "E Strand": "FFFF00",
+            "F Strand": "FFA500",
+            "G Strand": "FF0000",
+            "G* Strand": "8B0000",
+            "Loop": "CCCCCC"
+        };
+ 
+        html += "<div>";
+        for (let name in name2color) {
+            let color = name2color[name];
+            html += "<span>";
+            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            html += name;
+            html +=  "</span><br>";
+        }
+
         html += "</div>";
 
         return html;

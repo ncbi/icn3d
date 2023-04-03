@@ -20,6 +20,9 @@
         else if(colorType == 'hydrophobic') {
             colorLabel = 'Hydrophobicity';
         }
+        else if(colorType == 'ig strand') {
+            colorLabel = 'Ig Strand';
+        }
 
         let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -39,6 +42,9 @@
         //else if (ic.legendClick == 3){
         else if (colorType == 'charge'){
             html += this.getColorLegendForCharge(ic.hAtoms);
+        }
+        else if (colorType == 'ig strand'){
+            html += this.getColorLegendForIgstrand(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
         else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
@@ -259,6 +265,42 @@
             }
         }
         html += "<br>(Charges are at pH 7)"
+        html += "</div>"
+
+        return html;
+     }
+
+     getColorLegendForIgstrand(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let html = '';
+
+        const name2color = {
+            "A^ Strand": "FF00FF", 
+            "A Strand": "663399",
+            "A* Strand": "FFC0CB",
+            "A Strand": "9370db",
+            "B Strand": "ba55d3",
+            "C Strand": "0000FF",
+            "C' Strand": "6495ED",
+            "C'' Strand": "006400",
+            "D Strand": "00FF00",
+            "E Strand": "FFFF00",
+            "F Strand": "FFA500",
+            "G Strand": "FF0000",
+            "G* Strand": "8B0000",
+            "Loop": "CCCCCC"
+        };
+
+        let chargeOrder = ["Positive", "Partial-Positive", "Negative", "Neutral"]
+ 
+        html += "<div>"
+        for (let name in name2color) {
+            let color = name2color[name];
+            html += "<span>"
+            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            html += name;
+            html +=  "</span><br>"
+        }
+
         html += "</div>"
 
         return html;
