@@ -420,7 +420,7 @@ class iCn3D {
     this.optsOri = {}
     this.optsOri['camera']             = 'perspective';        //perspective, orthographic
     this.optsOri['background']         = 'black';              //transparent, black, grey, white
-    this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
+    this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom, ig strand
     this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
     this.optsOri['sidec']              = 'nothing';            //lines2, stick2, ball and stick2, sphere2, nothing
     this.optsOri['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
@@ -688,6 +688,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
 
     this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
     this.resid2refnum = {}; // residue id -> reference number, e.g.,  {'1WIO_A_16': '2150', ...}
+    this.residIgLoop = {}; // residue ids in the loop regions of ig domain
     this.refnum2residArray = {}; // reference number -> array of residue id, e.g.,  {'2150': ['1WIO_A_16', ...], ...}
     this.bShowRefnum = false;
     

@@ -344,6 +344,8 @@ class LineGraph {
     drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1, nodeArray2, linkArray, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY) { let ic = this.icn3d, me = ic.icn3dui;
         let html = "";
 
+        let bMutation = structureArray.length == 2 && structureArray[1].replace(structureArray[0], '') == '2';
+
         // draw common interaction
         let label, postfix;
         if(bCommonDiff == 0) {
@@ -360,11 +362,21 @@ class LineGraph {
         }
 
         for(let i = 0, il = structureArray.length; i < il; ++i) {  
+            let labelFinal = label;
+            if(bMutation) {
+                if(i == 0) {
+                    labelFinal += "Wild Type ";
+                }
+                else if(i == 1) {
+                    labelFinal += "Mutant ";
+                }
+            }
+
             if(bScatterplot) {
-                html += this.drawScatterplot_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, undefined, label + structureArray[i], textHeight);
+                html += this.drawScatterplot_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, undefined, labelFinal + structureArray[i], textHeight);
                 height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
             } else {
-                html += this.drawLineGraph_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, label + structureArray[i], textHeight);
+                html += this.drawLineGraph_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, labelFinal + structureArray[i], textHeight);
             }
             heightFinal += height;
 

@@ -224,7 +224,7 @@ class SelectByCommand {
                      let residArray = [];
 
                      if(bRefnum) {
-                      let residArrayTmp = ic.refnum2residArray[k];
+                      let residArrayTmp = (ic.refnum2residArray[k]) ? ic.refnum2residArray[k] : [];
                       for(let m = 0, ml = residArrayTmp.length; m < ml; ++m) {
                         let residueId = residArrayTmp[m];
                         if(residueId.substr(0, residueId.lastIndexOf('_')) == molecule_chain) {

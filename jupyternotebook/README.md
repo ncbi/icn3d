@@ -45,30 +45,38 @@ and issue Python script as follows:
 "mmdbid" as input:
 
     view = icn3dpy.view(q='mmdbid=6hjr')
-
     view
 
 You can also try other input besides "mmdbid".
 "pdbid" as input:
 
     view = icn3dpy.view(q='pdbid=2bbv')
-
     view
-
 
 "mmtfid" as input:
 
     view = icn3dpy.view(q='mmtfid=6vxx')
-
     view
-
 
 "cid" as input:
 
     view = icn3dpy.view(q='cid=2244')
-
     view
 
+"url" as input for local PDB files, e.g., "./1TOP.pdb":
+
+    view = icn3dpy.view(q='url=pdb|./1TOP.pdb')
+    view
+
+"url" as input for remote PDB files:
+
+    view = icn3dpy.view(q='url=pdb|https://storage.googleapis.com/membranome-assets/pdb_files/proteins/FCG2A_HUMAN.pdb')
+    view
+
+"url" as input for iCn3D PNG Image files:
+
+    view = icn3dpy.view(q='url=icn3dpng|https://api.figshare.com/v2/file/download/39125801')
+    view
 
 Use predefined commands (see commands in [iCn3D Gallery](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery) for reference):
 

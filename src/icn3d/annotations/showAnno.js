@@ -225,6 +225,14 @@ class ShowAnno {
              } // align seq to structure
         }
         ic.bAnnoShown = true;
+
+        if(ic.bShowRefnum) {
+            ic.opts.color = 'ig strand';
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+            ic.selectionCls.selectAll_base();
+            ic.hlUpdateCls.updateHlAll();
+        }
     }
 
     async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;

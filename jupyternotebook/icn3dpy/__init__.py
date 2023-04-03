@@ -22,9 +22,9 @@ class view(object):
         if v != '':
             v = '_' + v
         
-	jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_full' + v + '.min.js'
-	css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css'
-	css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d' + v + '.css'
+        jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_full' + v + '.min.js'
+        css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css'
+        css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d' + v + '.css'
         
         divid = "icn3dviewerUNIQUEID"
         warnid = "icn3dwarningUNIQUEID"
@@ -101,7 +101,7 @@ css1
 
         self.startjs += 'viewerUNIQUEID = new icn3d.iCn3DUI(cfg);\n'
         
-        self.endjs = "viewerUNIQUEID.show3DStructure();\n" + self.endjs;
+        self.endjs = "viewerUNIQUEID.show3DStructure(cfg.pdb);\n" + self.endjs;
         
     def _make_html(self):
         self.uniqueid = str(time.time()).replace('.','')

@@ -276,6 +276,7 @@ if(!me.bNode) {
 }
 
             let prevStrand;
+            let bCd19 = ic.chainid2index[chainid].length == 1 && ic.refpdbArray[ic.chainid2index[chainid][0]] == '6al5_cd19';
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
                 let qStart = seg.q_start;
@@ -292,9 +293,10 @@ if(!me.bNode) {
 
                     let resid = chainid + '_' + seg.t_start;
                     //let refnum = qStartInt.toString() + postfix;
-                    let refnum = qStart + postfix;
+                    //let refnum = qStart + postfix;
+                    let refnum = qStart;
 
-                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand);
+                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
                     prevStrand = refnumLabel.replace(new RegExp(refnum,'g'), '');
 
                     ic.resid2refnum[resid] = refnumLabel;
@@ -329,7 +331,7 @@ if(!me.bNode) {
         }
     }
 
-    getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d, me = ic.icn3dui;
+    getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
         // A^: 1xx or 2xx
@@ -347,7 +349,10 @@ if(!me.bNode) {
         // G*: 94xx
 
         if(refnum < 100) return " " + oriRefnum;
-        else if(refnum >= 100 && refnum < 1000) return "A^" + oriRefnum;
+        else if(refnum >= 100 && refnum < 1000) {
+            if(bCd19) return " " + oriRefnum;
+            else return "A^" + oriRefnum;
+        }
         else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
         else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
         else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
