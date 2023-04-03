@@ -355,7 +355,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
         html += "List of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
         html += "<div style='display:inline-block; width:20px'></div>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='width:150px'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px; width:250px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
-        html += "<div style='display:inline-block; width:20px'>or</div>" + me.htmlCls.buttonStr + "reload_mmdbaf_append' style='width:150px'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym_append' style='margin-left:30px; width:250px'>Append Asymmetric ; Unit (All Chains)</button>" + "<br/><br/>";
+        html += "<div style='display:inline-block; width:20px'>or</div>" + me.htmlCls.buttonStr + "reload_mmdbaf_append' style='width:150px'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym_append' style='margin-left:30px; width:250px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
 
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
         + me.pre + 'asu_bu2_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
