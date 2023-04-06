@@ -432,7 +432,7 @@ class Scene {
             ic.cam.remove( ic.canvasUI.mesh );
         }
 
-        if (controllerInfo !== undefined){
+        if (controller && controllerInfo !== undefined){
             // "trigger":{"button":0},
             // "squeeze":{"button":1},
             // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
@@ -690,6 +690,8 @@ class Scene {
         
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
+            if(!controller) continue;
+
             ic.dolly.add( controller );
 
             controller.add( line.clone() );

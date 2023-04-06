@@ -25,7 +25,7 @@ class MmcifParser {
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
-        // https://files.rcsb.org/header/ i snot accessible in Node.js 
+        // https://files.rcsb.org/header/ is not accessible in Node.js 
         let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;

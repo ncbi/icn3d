@@ -474,6 +474,8 @@ class ShowSeq {
         let html = '', html3 = '';
 
         let chainList = '';
+        if(!ic.chainid2index[chnid]) return {html: html, html3: html3};
+
         for(let i = 0, il = ic.chainid2index[chnid].length; i < il; ++i) {
             chainList += ic.refpdbArray[ic.chainid2index[chnid][i]] + " ";
         }
@@ -749,7 +751,7 @@ class ShowSeq {
                         }
                         else {
                             let refnum = parseInt(refnumStr).toString();
-                            let color = this.getRefnumColor(currStrand);
+                            let color = this.getRefnumColor(currStrand, true);
                             let colorStr = 'style="color:' + color + '"'
 
                             let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
@@ -920,7 +922,7 @@ class ShowSeq {
 
     getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
-        let color = this.getRefnumColor(currStrand);
+        let color = this.getRefnumColor(currStrand, true);
         let colorStr = (!bLoop) ? 'style="color:' + color + '; text-decoration: underline overline;"' : 'style="color:' + color + '"';
 
         let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
@@ -946,45 +948,66 @@ class ShowSeq {
         return html;
     }
 
-    getRefnumColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(currStrand == "A^") { //magenta // deep sky blue
-            return '#FF00FF'; //'#9900ff'; //'#00BFFF';
+    getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
+        if(currStrand == "A^") { 
+            return '#FF00FF'; 
         }
-        else if(currStrand == "A") { //rebecca purple // blue
-            return '#663399'; //'#9900ff'; //'#0000FF';
+        else if(currStrand == "A") { 
+            return '#663399'; 
         }
-        else if(currStrand == "A*") { //pink  // sky blue
-            return '#FFC0CB'; //'#9900ff'; //'#87CEEB';
+        else if(currStrand == "A*") { 
+            return '#FFC0CB'; 
         }
-        else if(currStrand == "A'") { //medium purple // steel blue
-            return '#9370db'; //'#9900ff'; //'#4682B4';
+        else if(currStrand == "A'") { 
+            return '#663399'; 
         }
-        else if(currStrand == "B") { //medium orchid // cyan
-            return '#ba55d3'; //'#0000FF'; //'#4a86e8'; //'#00FFFF';
+        else if(currStrand == "B") { 
+            return '#ba55d3'; 
         }
-        else if(currStrand == "C") { //blue // green
-            return '#0000FF'; //'#76d6ff'; //'#00FF00';
+        else if(currStrand == "C") { 
+            return '#0000FF'; 
         }
-        else if(currStrand == "C'") { //corn blue // yellow
-            return '#6495ED'; //'#006400'; //'#00b050'; //'#FFFF00';
+        else if(currStrand == "C'") { 
+            return '#6495ED'; 
         }
-        else if(currStrand == "C''") { //dark green // orange
-            return '#006400'; //'#00ff00'; //'#FFA500';
+        else if(currStrand == "C''") { 
+            return '#006400'; 
         }
-        else if(currStrand == "D") { //green // brown
-            return '#00FF00'; //'#fffb00'; //'#A52A2A';
+        else if(currStrand == "D") { 
+            return '#00FF00'; 
         }
-        else if(currStrand == "E") { //yellow // pink
-            return '#FFFF00'; //'#ff9900'; //'#ffd966'; //'#FFC0CB';
+        else if(currStrand == "E") { 
+            return (bText) ? "#F7DC6F" : "#FFFF00"; 
         }
-        else if(currStrand == "F") { //orange // magenta
-            return '#FFA500'; //'#FF00FF'; //'#ff9900'; //'#FF00FF';
+        else if(currStrand == "F") { 
+            return '#FFA500'; 
         }
-        else if(currStrand == "G") { //red // red
-            return '#FF0000'; //'#ff2600'; //'#FF0000';
+        else if(currStrand == "G") { 
+            return '#FF0000'; 
         }
-        else if(currStrand == "G*") { //dark red // salmon
-            return '#8B0000'; //'#ff2600'; //'#FA8072';
+        else if(currStrand == "G*") { 
+            return '#8B0000'; 
+        }
+        else {
+            return me.htmlCls.GREYB;
+        }
+    }
+
+    getProtodomainColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
+        if((currStrand && currStrand.substr(0,1) == "A") || currStrand == "D") {
+            return '#0000FF';
+        }
+        else if(currStrand == "B" || currStrand == "E") {
+            return '#006400';
+        }
+        else if(currStrand == "C" || currStrand == "F") {
+            return "#FFFF00"; //'#F0E68C'; 
+        }
+        else if(currStrand == "C'" || (currStrand && currStrand.substr(0, 1) == "G")) {
+            return '#FFA500'; 
+        }
+        else if(currStrand == "C''") { //linker
+            return '#FF0000'; 
         }
         else {
             return me.htmlCls.GREYB;

@@ -228,6 +228,8 @@
 
                 for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                     let controller = ic.controllers[i];
+                    if(!controller) continue;
+                    
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
                     thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
                     //thisClass.handleController( controller, dt, pressed );

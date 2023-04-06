@@ -337,19 +337,60 @@ class SetColor {
 
             case 'ig strand':
                 if(ic.bShowRefnum) {
-                    for(let resid in ic.resid2refnum) {
-                        let refnumLabel = ic.resid2refnum[resid];
-                        let color;
-                        if(!refnumLabel) {
-                            color = me.parasCls.thr(me.htmlCls.GREYB);
+                    let color;
+                    for(let resid in ic.residues) {
+                        if(!ic.resid2refnum[resid]) {
+                            color = me.parasCls.thr('#FFFFFF');
                         }
                         else {
-                            let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
-                            let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
-                            color = ic.showSeqCls.getRefnumColor(currStrand);
-
-                            if(ic.residIgLoop.hasOwnProperty(resid)) {
+                            let refnumLabel = ic.resid2refnum[resid];
+                            
+                            if(!refnumLabel) {
                                 color = me.parasCls.thr(me.htmlCls.GREYB);
+                            }
+                            else {
+                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
+                                color = ic.showSeqCls.getRefnumColor(currStrand);
+
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                    color = me.parasCls.thr(me.htmlCls.GREYB);
+                                }
+                            }
+                        }
+                            
+                        for (let i in ic.residues[resid]) {
+                            let atom = ic.atoms[i];
+                            atom.color = me.parasCls.thr(color);
+        
+                            ic.atomPrevColors[i] = atom.color;
+                        }
+                    }
+                }
+
+                break;
+
+            case 'ig protodomain':
+                if(ic.bShowRefnum) {
+                    let color;
+                    for(let resid in ic.residues) {
+                        if(!ic.resid2refnum[resid]) {
+                            color = me.parasCls.thr('#FFFFFF');
+                        }
+                        else {
+                            let refnumLabel = ic.resid2refnum[resid];
+
+                            if(!refnumLabel) {
+                                color = me.parasCls.thr(me.htmlCls.GREYB);
+                            }
+                            else {
+                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
+                                color = ic.showSeqCls.getProtodomainColor(currStrand);
+
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                    color = me.parasCls.thr(me.htmlCls.GREYB);
+                                }
                             }
                         }
                         

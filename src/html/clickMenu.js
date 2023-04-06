@@ -1424,6 +1424,12 @@ class ClickMenu {
             thisClass.setLogCmd('color ig strand', true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            //ic.legendClick = 6;
+            ic.setOptionCls.setOption('color', 'ig protodomain');
+            thisClass.setLogCmd('color ig protodomain', true);
+        });
+
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
@@ -1681,11 +1687,27 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum on', true);
             await ic.refnumCls.showIgRefNum();
+
+            if(ic.bShowRefnum) {
+               ic.opts.color = 'ig strand';
+               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+   
+               ic.selectionCls.selectAll_base();
+               ic.hlUpdateCls.updateHlAll();
+               ic.drawCls.draw();
+            }
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
             await ic.refnumCls.hideIgRefNum();
+
+            ic.opts.color = 'chain';
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+            ic.selectionCls.selectAll_base();
+            ic.hlUpdateCls.updateHlAll();
+            ic.drawCls.draw();
          });
 
 

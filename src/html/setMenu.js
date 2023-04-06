@@ -1500,7 +1500,9 @@ class SetMenu {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>', undefined, 1, 1);
             //}
 
-            //!!! html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //!!!
+            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -1719,7 +1721,8 @@ class SetMenu {
             html += this.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-/* !!!
+//!!!
+/*
             html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
 

@@ -330,7 +330,10 @@ class GetGraph {
             let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
+
+        //let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
+        let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondInsideValue);
+
         return hbondStr;
     }
     getIonicLinksForSet(atoms, labelType) { let ic = this.icn3d, me = ic.icn3dui;
@@ -430,9 +433,10 @@ class GetGraph {
     getGraphLinks(hash1, hash2, color, labelType, value, bCartoon2d) {var ic = this.icn3d, me = ic.icn3dui;
         let hbondStr = '';
         value =(value === undefined) ? 1 : value;
-        let prevLinkStr = '';
-        let sourceTargetHash = {};
+        //let prevLinkStr = '';
+        //let sourceTargetHash = {};
 
+        let linkstr2cnt = {};
         for(let resid1 in hash1) {
             //ASN $1KQ2.A:6@ND2
             //or ASN $1KQ2.A:6
@@ -463,7 +467,7 @@ class GetGraph {
                     resName1 = ic.resi2resirange[resName1];
                     resName2 = ic.resi2resirange[resName2];
                 }
-
+/*
                 if(!sourceTargetHash.hasOwnProperty(resName1 + '_' + resName2) && resName1 !== undefined && resName2 !== undefined ) {
                     let linkStr = ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"}';
                     if(linkStr != prevLinkStr) hbondStr += linkStr;
@@ -472,8 +476,29 @@ class GetGraph {
                     sourceTargetHash[resName1 + '_' + resName2] = 1;
                     sourceTargetHash[resName2 + '_' + resName1] = 1;
                 }
+*/
+
+                if(resName1 !== undefined && resName2 !== undefined ) {
+                    let linkStr = '"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"';
+
+                    //prevLinkStr = linkStr;
+
+                    if(!linkstr2cnt.hasOwnProperty(linkStr)) {
+                        linkstr2cnt[linkStr] = 1;
+                        linkstr2cnt[linkStr] = 1;
+                    }
+                    else {
+                        linkstr2cnt[linkStr] += 1;
+                        linkstr2cnt[linkStr] += 1;
+                    }
+                }
             }
         }
+
+        for(let linkStr in linkstr2cnt) {
+            hbondStr += ', {' + linkStr + ', "n": ' + linkstr2cnt[linkStr] + '}';
+        }
+
         return hbondStr;
     }
     convertLabel2Resid(residLabel) {var ic = this.icn3d, me = ic.icn3dui;

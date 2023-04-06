@@ -23,6 +23,9 @@
         else if(colorType == 'ig strand') {
             colorLabel = 'Ig Strand';
         }
+        else if(colorType == 'ig protodomain') {
+            colorLabel = 'Ig Protodomain';
+        }
 
         let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -45,6 +48,9 @@
         }
         else if (colorType == 'ig strand'){
             html += this.getColorLegendForIgstrand(ic.hAtoms);
+        }
+        else if (colorType == 'ig protodomain'){
+            html += this.getColorLegendForIgproto(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
         else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
@@ -277,21 +283,49 @@
             "A^ Strand": "FF00FF", 
             "A Strand": "663399",
             "A* Strand": "FFC0CB",
-            "A Strand": "9370db",
+            "A' Strand": "663399", //"9370db",
             "B Strand": "ba55d3",
             "C Strand": "0000FF",
             "C' Strand": "6495ED",
             "C'' Strand": "006400",
             "D Strand": "00FF00",
-            "E Strand": "FFFF00",
+            "E Strand": "FFFF00", //"F0E68C",
             "F Strand": "FFA500",
             "G Strand": "FF0000",
             "G* Strand": "8B0000",
             "Loop": "CCCCCC"
         };
 
-        let chargeOrder = ["Positive", "Partial-Positive", "Negative", "Neutral"]
- 
+        html += "<div>"
+        for (let name in name2color) {
+            let color = name2color[name];
+            html += "<span>"
+            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            html += name;
+            html +=  "</span><br>"
+        }
+
+        html += "</div>"
+
+        return html;
+     }
+
+     getColorLegendForIgproto(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let html = '';
+
+        const name2color = {
+            "A Strand": "0000FF",
+            "B Strand": "006400",
+            "C Strand": "FFFF00", //"F0E68C",
+            "C' Strand": "FFA500",
+            "C'' Strand": "FF0000",
+            "D Strand": "0000FF",
+            "E Strand": "006400",
+            "F Strand": "FFFF00", //"F0E68C",
+            "G Strand": "FFA500",
+            "Loop": "CCCCCC"
+        };
+
         html += "<div>"
         for (let name in name2color) {
             let color = name2color[name];

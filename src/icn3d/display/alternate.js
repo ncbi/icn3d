@@ -33,6 +33,8 @@ class Alternate {
 
         ic.dAtoms = {};
 
+        let bMutation = moleculeArray.length == 2 && moleculeArray[1].replace(moleculeArray[0], '') == '2';
+
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
             //if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
@@ -65,7 +67,17 @@ class Alternate {
 
                 if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE += il;
 
-                $("#" + ic.pre + "title").html(structure);
+                let label = '';
+                if(bMutation) {
+                    if(i == 0) {
+                        label = "Wild Type ";
+                    }
+                    else if(i == 1) {
+                        label = "Mutant ";
+                    }
+                }
+
+                $("#" + ic.pre + "title").html(label + structure);
 
                 break;
             }
