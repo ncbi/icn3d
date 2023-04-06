@@ -7946,6 +7946,12 @@ class ClickMenu {
             thisClass.setLogCmd('color ig strand', true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            //ic.legendClick = 6;
+            ic.setOptionCls.setOption('color', 'ig protodomain');
+            thisClass.setLogCmd('color ig protodomain', true);
+        });
+
 
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
@@ -8203,11 +8209,27 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum on', true);
             await ic.refnumCls.showIgRefNum();
+
+            if(ic.bShowRefnum) {
+               ic.opts.color = 'ig strand';
+               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+   
+               ic.selectionCls.selectAll_base();
+               ic.hlUpdateCls.updateHlAll();
+               ic.drawCls.draw();
+            }
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
             await ic.refnumCls.hideIgRefNum();
+
+            ic.opts.color = 'chain';
+            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+            ic.selectionCls.selectAll_base();
+            ic.hlUpdateCls.updateHlAll();
+            ic.drawCls.draw();
          });
 
 
@@ -10262,7 +10284,9 @@ class SetMenu {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>', undefined, 1, 1);
             //}
 
-            //!!! html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //!!!
+            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -10481,7 +10505,8 @@ class SetMenu {
             html += this.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-/* !!!
+//!!!
+/*
             html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
 
@@ -23059,7 +23084,7 @@ class Scene {
             ic.cam.remove( ic.canvasUI.mesh );
         }
 
-        if (controllerInfo !== undefined){
+        if (controller && controllerInfo !== undefined){
             // "trigger":{"button":0},
             // "squeeze":{"button":1},
             // "thumbstick":{"button":3,"xAxis":2,"yAxis":3},   "touchpad":{"button":2,"xAxis":0,"yAxis":1},
@@ -23316,6 +23341,8 @@ class Scene {
         
         for(let i=0; i<=1; i++){
             const controller = ic.renderer.xr.getController( i );
+            if(!controller) continue;
+
             ic.dolly.add( controller );
 
             controller.add( line.clone() );
@@ -32753,6 +32780,8 @@ class Alternate {
 
         ic.dAtoms = {};
 
+        let bMutation = moleculeArray.length == 2 && moleculeArray[1].replace(moleculeArray[0], '') == '2';
+
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
             //if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
@@ -32785,7 +32814,17 @@ class Alternate {
 
                 if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE += il;
 
-                $("#" + ic.pre + "title").html(structure);
+                let label = '';
+                if(bMutation) {
+                    if(i == 0) {
+                        label = "Wild Type ";
+                    }
+                    else if(i == 1) {
+                        label = "Mutant ";
+                    }
+                }
+
+                $("#" + ic.pre + "title").html(label + structure);
 
                 break;
             }
@@ -33074,6 +33113,8 @@ class Alternate {
 
                 for(let i = 0, il = ic.controllers.length; i < il; ++i) {
                     let controller = ic.controllers[i];
+                    if(!controller) continue;
+                    
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
                     thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
                     //thisClass.handleController( controller, dt, pressed );
@@ -35284,19 +35325,60 @@ class SetColor {
 
             case 'ig strand':
                 if(ic.bShowRefnum) {
-                    for(let resid in ic.resid2refnum) {
-                        let refnumLabel = ic.resid2refnum[resid];
-                        let color;
-                        if(!refnumLabel) {
-                            color = me.parasCls.thr(me.htmlCls.GREYB);
+                    let color;
+                    for(let resid in ic.residues) {
+                        if(!ic.resid2refnum[resid]) {
+                            color = me.parasCls.thr('#FFFFFF');
                         }
                         else {
-                            let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
-                            let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
-                            color = ic.showSeqCls.getRefnumColor(currStrand);
-
-                            if(ic.residIgLoop.hasOwnProperty(resid)) {
+                            let refnumLabel = ic.resid2refnum[resid];
+                            
+                            if(!refnumLabel) {
                                 color = me.parasCls.thr(me.htmlCls.GREYB);
+                            }
+                            else {
+                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
+                                color = ic.showSeqCls.getRefnumColor(currStrand);
+
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                    color = me.parasCls.thr(me.htmlCls.GREYB);
+                                }
+                            }
+                        }
+                            
+                        for (let i in ic.residues[resid]) {
+                            let atom = ic.atoms[i];
+                            atom.color = me.parasCls.thr(color);
+        
+                            ic.atomPrevColors[i] = atom.color;
+                        }
+                    }
+                }
+
+                break;
+
+            case 'ig protodomain':
+                if(ic.bShowRefnum) {
+                    let color;
+                    for(let resid in ic.residues) {
+                        if(!ic.resid2refnum[resid]) {
+                            color = me.parasCls.thr('#FFFFFF');
+                        }
+                        else {
+                            let refnumLabel = ic.resid2refnum[resid];
+
+                            if(!refnumLabel) {
+                                color = me.parasCls.thr(me.htmlCls.GREYB);
+                            }
+                            else {
+                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
+                                color = ic.showSeqCls.getProtodomainColor(currStrand);
+
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                    color = me.parasCls.thr(me.htmlCls.GREYB);
+                                }
                             }
                         }
                         
@@ -35975,6 +36057,9 @@ class SetOption {
         else if(colorType == 'ig strand') {
             colorLabel = 'Ig Strand';
         }
+        else if(colorType == 'ig protodomain') {
+            colorLabel = 'Ig Protodomain';
+        }
 
         let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -35997,6 +36082,9 @@ class SetOption {
         }
         else if (colorType == 'ig strand'){
             html += this.getColorLegendForIgstrand(ic.hAtoms);
+        }
+        else if (colorType == 'ig protodomain'){
+            html += this.getColorLegendForIgproto(ic.hAtoms);
         }
         //else if (ic.legendClick == 4){
         else if (colorType == 'normalized hydrophobic' || colorType == 'hydrophobic') {
@@ -36229,19 +36317,49 @@ class SetOption {
             "A^ Strand": "FF00FF", 
             "A Strand": "663399",
             "A* Strand": "FFC0CB",
-            "A Strand": "9370db",
+            "A' Strand": "663399", //"9370db",
             "B Strand": "ba55d3",
             "C Strand": "0000FF",
             "C' Strand": "6495ED",
             "C'' Strand": "006400",
             "D Strand": "00FF00",
-            "E Strand": "FFFF00",
+            "E Strand": "FFFF00", //"F0E68C",
             "F Strand": "FFA500",
             "G Strand": "FF0000",
             "G* Strand": "8B0000",
             "Loop": "CCCCCC"
         };
- 
+
+        html += "<div>";
+        for (let name in name2color) {
+            let color = name2color[name];
+            html += "<span>";
+            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            html += name;
+            html +=  "</span><br>";
+        }
+
+        html += "</div>";
+
+        return html;
+     }
+
+     getColorLegendForIgproto(atomHash) { let ic = this.icn3d; ic.icn3dui;
+        let html = '';
+
+        const name2color = {
+            "A Strand": "0000FF",
+            "B Strand": "006400",
+            "C Strand": "FFFF00", //"F0E68C",
+            "C' Strand": "FFA500",
+            "C'' Strand": "FF0000",
+            "D Strand": "0000FF",
+            "E Strand": "006400",
+            "F Strand": "FFFF00", //"F0E68C",
+            "G Strand": "FFA500",
+            "Loop": "CCCCCC"
+        };
+
         html += "<div>";
         for (let name in name2color) {
             let color = name2color[name];
@@ -42380,6 +42498,8 @@ class ShowSeq {
         let html = '', html3 = '';
 
         let chainList = '';
+        if(!ic.chainid2index[chnid]) return {html: html, html3: html3};
+
         for(let i = 0, il = ic.chainid2index[chnid].length; i < il; ++i) {
             chainList += ic.refpdbArray[ic.chainid2index[chnid][i]] + " ";
         }
@@ -42655,7 +42775,7 @@ class ShowSeq {
                         }
                         else {
                             let refnum = parseInt(refnumStr).toString();
-                            let color = this.getRefnumColor(currStrand);
+                            let color = this.getRefnumColor(currStrand, true);
                             let colorStr = 'style="color:' + color + '"';
 
                             let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
@@ -42826,7 +42946,7 @@ class ShowSeq {
 
     getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
-        let color = this.getRefnumColor(currStrand);
+        let color = this.getRefnumColor(currStrand, true);
         let colorStr = (!bLoop) ? 'style="color:' + color + '; text-decoration: underline overline;"' : 'style="color:' + color + '"';
 
         let lastTwo = parseInt(refnum.substr(refnum.length - 2, 2));
@@ -42852,45 +42972,66 @@ class ShowSeq {
         return html;
     }
 
-    getRefnumColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(currStrand == "A^") { //magenta // deep sky blue
-            return '#FF00FF'; //'#9900ff'; //'#00BFFF';
+    getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
+        if(currStrand == "A^") { 
+            return '#FF00FF'; 
         }
-        else if(currStrand == "A") { //rebecca purple // blue
-            return '#663399'; //'#9900ff'; //'#0000FF';
+        else if(currStrand == "A") { 
+            return '#663399'; 
         }
-        else if(currStrand == "A*") { //pink  // sky blue
-            return '#FFC0CB'; //'#9900ff'; //'#87CEEB';
+        else if(currStrand == "A*") { 
+            return '#FFC0CB'; 
         }
-        else if(currStrand == "A'") { //medium purple // steel blue
-            return '#9370db'; //'#9900ff'; //'#4682B4';
+        else if(currStrand == "A'") { 
+            return '#663399'; 
         }
-        else if(currStrand == "B") { //medium orchid // cyan
-            return '#ba55d3'; //'#0000FF'; //'#4a86e8'; //'#00FFFF';
+        else if(currStrand == "B") { 
+            return '#ba55d3'; 
         }
-        else if(currStrand == "C") { //blue // green
-            return '#0000FF'; //'#76d6ff'; //'#00FF00';
+        else if(currStrand == "C") { 
+            return '#0000FF'; 
         }
-        else if(currStrand == "C'") { //corn blue // yellow
-            return '#6495ED'; //'#006400'; //'#00b050'; //'#FFFF00';
+        else if(currStrand == "C'") { 
+            return '#6495ED'; 
         }
-        else if(currStrand == "C''") { //dark green // orange
-            return '#006400'; //'#00ff00'; //'#FFA500';
+        else if(currStrand == "C''") { 
+            return '#006400'; 
         }
-        else if(currStrand == "D") { //green // brown
-            return '#00FF00'; //'#fffb00'; //'#A52A2A';
+        else if(currStrand == "D") { 
+            return '#00FF00'; 
         }
-        else if(currStrand == "E") { //yellow // pink
-            return '#FFFF00'; //'#ff9900'; //'#ffd966'; //'#FFC0CB';
+        else if(currStrand == "E") { 
+            return (bText) ? "#F7DC6F" : "#FFFF00"; 
         }
-        else if(currStrand == "F") { //orange // magenta
-            return '#FFA500'; //'#FF00FF'; //'#ff9900'; //'#FF00FF';
+        else if(currStrand == "F") { 
+            return '#FFA500'; 
         }
-        else if(currStrand == "G") { //red // red
-            return '#FF0000'; //'#ff2600'; //'#FF0000';
+        else if(currStrand == "G") { 
+            return '#FF0000'; 
         }
-        else if(currStrand == "G*") { //dark red // salmon
-            return '#8B0000'; //'#ff2600'; //'#FA8072';
+        else if(currStrand == "G*") { 
+            return '#8B0000'; 
+        }
+        else {
+            return me.htmlCls.GREYB;
+        }
+    }
+
+    getProtodomainColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
+        if((currStrand && currStrand.substr(0,1) == "A") || currStrand == "D") {
+            return '#0000FF';
+        }
+        else if(currStrand == "B" || currStrand == "E") {
+            return '#006400';
+        }
+        else if(currStrand == "C" || currStrand == "F") {
+            return "#FFFF00"; //'#F0E68C'; 
+        }
+        else if(currStrand == "C'" || (currStrand && currStrand.substr(0, 1) == "G")) {
+            return '#FFA500'; 
+        }
+        else if(currStrand == "C''") { //linker
+            return '#FF0000'; 
         }
         else {
             return me.htmlCls.GREYB;
@@ -43959,7 +44100,7 @@ class LineGraph {
             // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
             let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
             let nodeArray1SplitDiff = [], nodeArray2SplitDiff = [], linkArraySplitDiff = [], nameHashSplitDiff = [];
-            let linkedNodeCnt = {};
+            let linkedNodeCnt = {}, linkedNodeInterDiff = {};
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {   
                 nodeArray1Split[i] = [];
@@ -43979,7 +44120,7 @@ class LineGraph {
 
                 struc2index[structureArray[i]] = i;
             }
-
+            
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let link = linkArray[i];
                 let nodeA = name2node[link.source];
@@ -44015,9 +44156,11 @@ class LineGraph {
 
                           if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
                             linkedNodeCnt[mappingid] = 1;
+                            linkedNodeInterDiff[mappingid] = link.n;
                           }
                           else {
                             ++linkedNodeCnt[mappingid];
+                            linkedNodeInterDiff[mappingid] -= link.n; // show difference
                           }
                       }
                 } 
@@ -44068,7 +44211,7 @@ class LineGraph {
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
-                          if(linkedNodeCnt[mappingid] == structureArray.length) {
+                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiff[mappingid] == 0) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  
                           else {
@@ -44857,7 +45000,10 @@ class GetGraph {
             ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
+
+        //let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
+        let hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondInsideValue);
+
         return hbondStr;
     }
     getIonicLinksForSet(atoms, labelType) { let ic = this.icn3d, me = ic.icn3dui;
@@ -44957,9 +45103,10 @@ class GetGraph {
     getGraphLinks(hash1, hash2, color, labelType, value, bCartoon2d) {var ic = this.icn3d, me = ic.icn3dui;
         let hbondStr = '';
         value =(value === undefined) ? 1 : value;
-        let prevLinkStr = '';
-        let sourceTargetHash = {};
+        //let prevLinkStr = '';
+        //let sourceTargetHash = {};
 
+        let linkstr2cnt = {};
         for(let resid1 in hash1) {
             //ASN $1KQ2.A:6@ND2
             //or ASN $1KQ2.A:6
@@ -44990,7 +45137,7 @@ class GetGraph {
                     resName1 = ic.resi2resirange[resName1];
                     resName2 = ic.resi2resirange[resName2];
                 }
-
+/*
                 if(!sourceTargetHash.hasOwnProperty(resName1 + '_' + resName2) && resName1 !== undefined && resName2 !== undefined ) {
                     let linkStr = ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"}';
                     if(linkStr != prevLinkStr) hbondStr += linkStr;
@@ -44999,8 +45146,29 @@ class GetGraph {
                     sourceTargetHash[resName1 + '_' + resName2] = 1;
                     sourceTargetHash[resName2 + '_' + resName1] = 1;
                 }
+*/
+
+                if(resName1 !== undefined && resName2 !== undefined ) {
+                    let linkStr = '"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"';
+
+                    //prevLinkStr = linkStr;
+
+                    if(!linkstr2cnt.hasOwnProperty(linkStr)) {
+                        linkstr2cnt[linkStr] = 1;
+                        linkstr2cnt[linkStr] = 1;
+                    }
+                    else {
+                        linkstr2cnt[linkStr] += 1;
+                        linkstr2cnt[linkStr] += 1;
+                    }
+                }
             }
         }
+
+        for(let linkStr in linkstr2cnt) {
+            hbondStr += ', {' + linkStr + ', "n": ' + linkstr2cnt[linkStr] + '}';
+        }
+
         return hbondStr;
     }
     convertLabel2Resid(residLabel) {var ic = this.icn3d; ic.icn3dui;
@@ -45436,12 +45604,14 @@ class ViewInterPairs {
        let bondCnt;
 
        // reset
-       ic.hbondpnts = [];
-       ic.saltbridgepnts = [];
-       ic.contactpnts = [];
-       ic.halogenpnts = [];
-       ic.picationpnts = [];
-       ic.pistackingpnts = [];
+       if(!bHbondCalc) {
+            ic.hbondpnts = [];
+            ic.saltbridgepnts = [];
+            ic.contactpnts = [];
+            ic.halogenpnts = [];
+            ic.picationpnts = [];
+            ic.pistackingpnts = [];
+       }
 
        // type: view, save, forcegraph
        ic.bRender = false;
@@ -48603,7 +48773,7 @@ class MmcifParser {
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
-        // https://files.rcsb.org/header/ i snot accessible in Node.js 
+        // https://files.rcsb.org/header/ is not accessible in Node.js 
         let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
@@ -49902,7 +50072,8 @@ class PdbParser {
         }
         else {
             url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
-            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
+            pdbid = pdbid.toUpperCase();
+            ic.ParserUtilsCls.setYourNote(pdbid + '(PDB) in iCn3D');
         }
 
         //ic.bCid = undefined;
@@ -55211,6 +55382,7 @@ class LoadPDB {
         //let chainMissingResidueArray = {}
 
         let id = (pdbid) ? pdbid : ic.defaultPdbId;
+
         let structure = id;
 
         let prevMissingChain = '';
@@ -62790,7 +62962,7 @@ if(!me.bNode) {
         else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
         else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
         else if(refnum >= 1400 && refnum < 2000) {
-            if(prevStrand.substr(0, 1) == 'A') {
+            if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
                 return prevStrand + oriRefnum;
             }
             else {
@@ -70707,7 +70879,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.23.2';
+    this.REVISION = '3.23.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

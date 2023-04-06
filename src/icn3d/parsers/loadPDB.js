@@ -74,6 +74,7 @@ class LoadPDB {
         //let chainMissingResidueArray = {}
 
         let id = (pdbid) ? pdbid : ic.defaultPdbId;
+
         let structure = id;
 
         let maxMissingResi = 0, prevMissingChain = '';

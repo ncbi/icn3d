@@ -48,7 +48,7 @@ class LineGraph {
             // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
             let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
             let nodeArray1SplitDiff = [], nodeArray2SplitDiff = [], linkArraySplitDiff = [], nameHashSplitDiff = [];
-            let linkedNodeCnt = {};
+            let linkedNodeCnt = {}, linkedNodeInterDiff = {};
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {   
                 nodeArray1Split[i] = [];
@@ -68,7 +68,7 @@ class LineGraph {
 
                 struc2index[structureArray[i]] = i;
             }
-
+            
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let link = linkArray[i];
                 let nodeA = name2node[link.source];
@@ -104,9 +104,11 @@ class LineGraph {
 
                           if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
                             linkedNodeCnt[mappingid] = 1;
+                            linkedNodeInterDiff[mappingid] = link.n;
                           }
                           else {
                             ++linkedNodeCnt[mappingid];
+                            linkedNodeInterDiff[mappingid] -= link.n; // show difference
                           }
                       }
                 } 
@@ -157,7 +159,7 @@ class LineGraph {
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
-                          if(linkedNodeCnt[mappingid] == structureArray.length) {
+                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiff[mappingid] == 0) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  
                           else {

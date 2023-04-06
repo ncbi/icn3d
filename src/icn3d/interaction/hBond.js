@@ -283,9 +283,9 @@ class HBond {
     calculateChemicalHbonds(startAtoms, targetAtoms, threshold, bSaltbridge, type, bInternal) { let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
-        ic.resid2Residhash = {}
+        ic.resid2Residhash = {};
 
-        let atomHbond = {}
+        let atomHbond = {};
         let chain_resi, chain_resi_atom;
 
         let maxlengthSq = threshold * threshold;

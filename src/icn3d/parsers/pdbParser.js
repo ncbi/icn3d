@@ -24,7 +24,8 @@ class PdbParser {
         }
         else {
             url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
-            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
+            pdbid = pdbid.toUpperCase();
+            ic.ParserUtilsCls.setYourNote(pdbid + '(PDB) in iCn3D');
         }
 
         //ic.bCid = undefined;

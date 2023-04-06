@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.23.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.3.zip) was release on April 6, 2023. Fixed the VR view when only one controller is available.
+
 [icn3d-3.23.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.2.zip) was release on April 2, 2023. Added the document at https://pypi.org/project/icn3dpy/ for loading a local/remote PDB file or iCn3D PNG Image into iCn3D in Jupyter Notebook; added both "Load" and "Append" options when launching a structure.
 
 [icn3d-3.23.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.1.zip) was release on March 22, 2023. Added the feature to scale in AR view of iCn3D; changed the default coloring to "AlphaFold Confidence" when lining from BLAST to iCn3D for AlphaFold structures; added the wildcard symbol "*" for atom name selection.

@@ -12,12 +12,14 @@ class ViewInterPairs {
        let bondCnt;
 
        // reset
-       ic.hbondpnts = [];
-       ic.saltbridgepnts = [];
-       ic.contactpnts = [];
-       ic.halogenpnts = [];
-       ic.picationpnts = [];
-       ic.pistackingpnts = [];
+       if(!bHbondCalc) {
+            ic.hbondpnts = [];
+            ic.saltbridgepnts = [];
+            ic.contactpnts = [];
+            ic.halogenpnts = [];
+            ic.picationpnts = [];
+            ic.pistackingpnts = [];
+       }
 
        // type: view, save, forcegraph
        ic.bRender = false;
@@ -88,8 +90,8 @@ class ViewInterPairs {
            interactionTypes.push('pi-stacking');
        }
        if(!bHbondCalc) {
-           ic.resids2inter = {}
-           ic.resids2interAll = {}
+           ic.resids2inter = {};
+           ic.resids2interAll = {};
        }
 
        if(bSaltbridge) {

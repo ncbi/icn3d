@@ -357,7 +357,7 @@ if(!me.bNode) {
         else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
         else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
         else if(refnum >= 1400 && refnum < 2000) {
-            if(prevStrand.substr(0, 1) == 'A') {
+            if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
                 return prevStrand + oriRefnum;
             }
             else {
