@@ -63,7 +63,7 @@ class ClickMenu {
         if(!bOneset) $("#" + me.pre + id2).resizable();
     }
 
-    applyShownMenus() { let me = this.icn3dui, ic = me.icn3d;
+    applyShownMenus(bNoSave) { let me = this.icn3dui, ic = me.icn3d;
         let idArray = [];
         for(let id in me.htmlCls.allMenus) {
             if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
@@ -83,7 +83,7 @@ class ClickMenu {
         }
 
         // save to localStorage
-        if(localStorage) localStorage.setItem('hiddenmenus', JSON.stringify(idArray));
+        if(localStorage && !bNoSave) localStorage.setItem('hiddenmenus', JSON.stringify(idArray));
     }
 
     getHiddenMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
@@ -1335,7 +1335,7 @@ class ClickMenu {
 
            let legendHtml = thisClass.setLegendHtml();
            //$("#" + me.pre + "legend").html(legendHtml).show();
-           $("#" + me.pre + "dl_legend").html(legendHtml);
+           $("#" + me.pre + "dl_legend_html").html(legendHtml);
            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
 
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);

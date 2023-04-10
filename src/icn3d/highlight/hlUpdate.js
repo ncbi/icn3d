@@ -16,7 +16,7 @@ class HlUpdate {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData, ic.inputid, undefined, true);
           html2ddgm += ic.diagram2dCls.set2DdgmNote();
 
-          $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
+          $("#" + ic.pre + "dl_2ddgm_html").html(html2ddgm);
        }
        else if(ic.mmdbidArray &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign)) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData1, ic.mmdbidArray[0].toUpperCase(), 0, true);
@@ -28,7 +28,7 @@ class HlUpdate {
           }
           html2ddgm += ic.diagram2dCls.set2DdgmNote(true);
 
-          $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
+          $("#" + ic.pre + "dl_2ddgm_html").html(html2ddgm);
        }
     }
 

@@ -307,7 +307,7 @@ class Vastplus {
                         bAligned = true;
 
                         me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-                        $("#" + ic.pre + "dl_rmsd").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                        $("#" + ic.pre + "dl_rmsd_html").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                         if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
 
                         // apply matrix for each atom                       

@@ -1583,14 +1583,15 @@ class SetMenu {
 
             html += this.getLink('mn6_contactmap', 'Contact Map', undefined, 1);
 
-            if(!me.cfg.notebook) {
+            //if(!me.cfg.notebook) {
                 html += this.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr, 1, 1);
-            }
+            //}
 
             //html += this.getMenuSep();
         }
 
-        if(!me.cfg.notebook && !me.cfg.hidelicense) {
+        //if(!me.cfg.notebook && !me.cfg.hidelicense) {
+        if(!me.cfg.hidelicense) {
             html += this.getMenuText('mn1_delphiwrap', 'DelPhi Potential', undefined, 1, 1);
 
             html += "<ul>";       

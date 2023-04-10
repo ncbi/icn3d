@@ -106,8 +106,8 @@ class LineGraph {
                             linkedNodeCnt[mappingid] = 1;
                             linkedNodeInterDiff[mappingid] = link.n;
                           }
-                          else {
-                            ++linkedNodeCnt[mappingid];
+                          else {                           
+                            ++linkedNodeCnt[mappingid];                            
                             linkedNodeInterDiff[mappingid] -= link.n; // show difference
                           }
                       }
@@ -457,9 +457,9 @@ class LineGraph {
             if(pos1 === undefined || pos2 === undefined) continue;
             let linestrokewidth;
             if(link.v == me.htmlCls.contactValue) {
-                linestrokewidth = 1;
+                linestrokewidth = (link.n == 1) ? 1 : 3;
             } else {
-                linestrokewidth = 2;
+                linestrokewidth = (link.n == 1) ? 2 : 4;
             }
             let strokecolor;
             if(link.v == me.htmlCls.hbondValue) {
@@ -476,8 +476,9 @@ class LineGraph {
                 strokecolor = "#" + me.htmlCls.contactColor;
             }
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-            html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
+            let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
+            if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
+            html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "'/></g>";
         }
         // show nodes later
         html += nodeHtml;
@@ -574,9 +575,9 @@ class LineGraph {
 
         let linestrokewidth;
         if(link.v == me.htmlCls.contactValue) {
-            linestrokewidth = 1;
+            linestrokewidth = (link.n == 1) ? 1 : 3;
         } else {
-            linestrokewidth = 2;
+            linestrokewidth = (link.n == 1) ? 2 : 4;
         }
         
         if(bAfMap && ic.hex2skip[link.c]) {
@@ -593,7 +594,8 @@ class LineGraph {
         }
         else {
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
+            if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
             if(bContactMap) {
                 html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
             }

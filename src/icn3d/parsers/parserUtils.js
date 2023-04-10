@@ -33,7 +33,7 @@ class ParserUtils {
                     //if(window.dialog) window.dialog.dialog( "close" );
                     html += me.utilsCls.getMemDesc();
                   }
-                  $("#" + ic.pre + "dl_rmsd").html(html);
+                  $("#" + ic.pre + "dl_rmsd_html").html(html);
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
@@ -214,7 +214,7 @@ class ParserUtils {
         ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
 
         ic.b2DShown = true;
 
@@ -267,7 +267,7 @@ class ParserUtils {
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
 
         ic.b2DShown = true;
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
         if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
@@ -286,7 +286,7 @@ class ParserUtils {
             ic.diagram2dCls.draw2Ddgm(ic.interactionData, mmdbid);
 
             ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote();
-            $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+            $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
         }
 
         ic.b2DShown = true;
@@ -389,7 +389,7 @@ class ParserUtils {
                   let rmsd = ic.rmsd_supr.rmsd;
 
                   me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
-                  //$("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                  //$("#" + ic.pre + "dl_rmsd_html").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                   //if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let dxymaxsq = 0;
@@ -598,6 +598,16 @@ class ParserUtils {
       
       // set defined sets before loadScript
       if(ic.bInitial) {
+        if(me.cfg.mobilemenu) {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+            let bNoSave = true;
+            me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
+        }
+        // else {
+        //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+        //     me.htmlCls.clickMenuCls.applyShownMenus();
+        // }
+        
         if(me.cfg.showsets) {
              ic.definedSetsCls.showSets();
         }

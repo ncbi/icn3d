@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.24.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.0.zip) was release on April 10, 2023. Improved the use of iCn3D in Jupyter Notebook by making the dialogs closable, and adding DelPhi potential and mutation analysis; added DelPhi potential as one option in the Virtual Reality (VR) view of iCn3D.
+
 [icn3d-3.23.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.3.zip) was release on April 6, 2023. Fixed the VR view when only one controller is available.
 
 [icn3d-3.23.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.2.zip) was release on April 2, 2023. Added the document at https://pypi.org/project/icn3dpy/ for loading a local/remote PDB file or iCn3D PNG Image into iCn3D in Jupyter Notebook; added both "Load" and "Append" options when launching a structure.

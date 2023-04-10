@@ -140,6 +140,8 @@ class TextSprite {
             sprite.scale.set(expandWidthFactor * factor, factor, 1.0);
         }
 
+        sprite.renderOrder = 1; // larger than the default 0
+
         return sprite;
     }
 

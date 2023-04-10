@@ -14,7 +14,8 @@
 
 /* theme: blue */
 .ui-widget-header {border:1px solid #4297d7;background:#5c9ccc url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
-.ui-button .ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png");}
+/*.ui-button .ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png");}*/
+.ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png")!important;}
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #444;text-decoration: none;}
 
 .icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
@@ -52,7 +53,7 @@ accordion ul li {cursor:default!important; white-space:nowrap;}
 .icn3d-residueNum {color: green; width:40px!important; text-align:center; white-space:nowrap;}
 
 .icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px; text-align:center;}
-.icn3d-dl_2ddgm {}
+/*.icn3d-dl_2ddgm {} */
 .icn3d-chemical {width:30px!important;} 
  
 button, select, input { font-size: 10px; }
@@ -78,10 +79,12 @@ button, select, input { font-size: 10px; }
 
 .icn3d-box {border: solid 1px #ccc; padding: 5px; margin: 5px;}
 
-/* sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned*/
+/* 
+//sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned
 .icn3d-cons {}
 .icn3d-ncons {}
 .icn3d-nalign {} 
+*/
 
 .icn3d-node, .icn3d-ctnode {cursor:pointer!important; } 
 .icn3d-interaction {cursor:pointer!important; } 
@@ -280,6 +283,8 @@ input:checked + .icn3d-slider:before {
 .icn3d-distance {color:#1c94c4; cursor: pointer;}
 
 .icn3d-menupd {padding-left:1.5em!important;}
+
+.icn3d-nbclose {cursor:pointer; background-color:white;}
 
 .color-picker,
 .color-picker:before,

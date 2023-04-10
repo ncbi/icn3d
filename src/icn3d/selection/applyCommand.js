@@ -1485,7 +1485,7 @@ class ApplyCommand {
 
             let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
             //$("#" + me.pre + "legend").html(legendHtml).show();
-            $("#" + me.pre + "dl_legend").html(legendHtml);
+            $("#" + me.pre + "dl_legend_html").html(legendHtml);
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
     }

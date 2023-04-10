@@ -69,7 +69,7 @@ class Analysis {
            //html += '<b>Buried Surface for both Sets</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
-           $("#" + ic.pre + "dl_buriedarea").html(html);
+           $("#" + ic.pre + "dl_buriedarea_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
            me.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
        }
@@ -175,7 +175,7 @@ class Analysis {
 
             tableHtml += '</table><br><br>';
 
-            $("#" + me.pre + "dl_disttable").html(tableHtml);
+            $("#" + me.pre + "dl_disttable_html").html(tableHtml);
         }
      }
 

@@ -430,7 +430,7 @@ class Diagram2d {
 
         ic.html2ddgm += html;
 
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
 
         return html;
     }
