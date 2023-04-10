@@ -485,11 +485,9 @@ class GetGraph {
 
                     if(!linkstr2cnt.hasOwnProperty(linkStr)) {
                         linkstr2cnt[linkStr] = 1;
-                        linkstr2cnt[linkStr] = 1;
                     }
                     else {
-                        linkstr2cnt[linkStr] += 1;
-                        linkstr2cnt[linkStr] += 1;
+                        ++linkstr2cnt[linkStr];
                     }
                 }
             }

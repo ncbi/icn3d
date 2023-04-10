@@ -294,11 +294,11 @@ class ViewInterPairs {
            html += result.html;
            bondCnt = result.bondCnt;
 
-           $("#" + ic.pre + "dl_interactionsorted").html(html);
+           $("#" + ic.pre + "dl_interactionsorted_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
        }
        else if(type == 'view') {
-           $("#" + ic.pre + "dl_allinteraction").html(html);
+           $("#" + ic.pre + "dl_allinteraction_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
        }
        else if(type == 'linegraph') {

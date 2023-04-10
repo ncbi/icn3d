@@ -123,7 +123,7 @@
             bClose = true;
         }
 
-        $("#" + me.pre + "dl_legend").html(html);
+        $("#" + me.pre + "dl_legend_html").html(html);
         me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
 
         if(bClose) {

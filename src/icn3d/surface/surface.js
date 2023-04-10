@@ -107,11 +107,12 @@ class Surface {
             cfg.isovalue = ic.mapData.contourPhi;
             cfg.type = 'phi';
             cfg.loadPhiFrom = ic.loadPhiFrom;
-
+            
             ps = this.SetupMap(cfg);
         }
         else {
              //1: van der waals surface, 2: molecular surface, 3: solvent accessible surface
+             
 
             //exclude water
             let atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
@@ -145,7 +146,7 @@ class Surface {
 
             ps = this.SetupSurface(cfg);
         }
-
+        
         if(ic.bCalcArea) {
             ic.areavalue = ps.area.toFixed(2);
             let serial2area = ps.serial2area;
@@ -225,7 +226,7 @@ class Surface {
         //geo = new THREE.Geometry();
         geo = new THREE.BufferGeometry();
         let verticeArray = [], colorArray = [], indexArray = [], color;
-
+        
         //var geoVertices = verts.map(function (v) {
         let offset = 0;
         for(let i = 0, il = verts.length; i < il; ++i, offset += 3) {
@@ -300,9 +301,8 @@ class Surface {
         //geo.normalsNeedUpdate = true;
 
         geo.computeVertexNormals();
-
+        
         geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
-
         // use the regular way to show transparency for type == 15 (surface with potential)
     //    if(ic.transparentRenderOrder && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
         if(ic.transparentRenderOrder) { // WebGL has some ordering problem when dealing with transparency
@@ -490,7 +490,7 @@ class Surface {
             mesh.renderOrder = -2; // default: 0, picking: -1
 
             ic.mdl.add(mesh);
-
+            
             if(type == 11 || type == 12) {
                 ic.prevMaps.push(mesh);
             }
@@ -577,7 +577,7 @@ class Surface {
 
     SetupMap(data) { let ic = this.icn3d, me = ic.icn3dui;
         let ps = new ElectronMap(ic);
-
+        
         ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
           data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
 
@@ -586,7 +586,7 @@ class Surface {
         if(!data.header.bSurface) ps.buildboundary();
 
         if(!data.header.bSurface) ps.marchingcube();
-
+        
         ps.vpBits = null; // uint8 array of bitmasks
         //ps.vpDistance = null; // floatarray of _squared_ distances
         ps.vpAtomID = null; // intarray

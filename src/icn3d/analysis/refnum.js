@@ -102,8 +102,8 @@
 
                 // align each 3D domain with reference structure
                 let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
-                let subdomains = result.subdomains;
-                
+                let subdomains = result.subdomains;  
+
                 let domainAtomsArray = [];
                 if(subdomains.length <= 1) {
                     domainAtomsArray.push(ic.chains[chainid]);
@@ -133,9 +133,9 @@
                 }
        
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
-
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     let domainid = chainid + '-' + k;
+
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                         let struct2 = ic.defaultPdbId + index;
                         let pdb_query = dataArray[index].value; //[0];

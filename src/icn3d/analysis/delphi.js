@@ -87,7 +87,7 @@ class Delphi {
         let phidata = await this.CalcPhiPrms(gsize, salt, contour, bSurface, data);
 
         this.loadPhiData(phidata, contour, bSurface);
-    
+
         ic.bAjaxPhi = true;
 
         if(bSurface) {

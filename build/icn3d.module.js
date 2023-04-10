@@ -6586,7 +6586,7 @@ class ClickMenu {
         if(!bOneset) $("#" + me.pre + id2).resizable();
     }
 
-    applyShownMenus() { let me = this.icn3dui; me.icn3d;
+    applyShownMenus(bNoSave) { let me = this.icn3dui; me.icn3d;
         let idArray = [];
         for(let id in me.htmlCls.allMenus) {
             if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
@@ -6606,7 +6606,7 @@ class ClickMenu {
         }
 
         // save to localStorage
-        if(localStorage) localStorage.setItem('hiddenmenus', JSON.stringify(idArray));
+        if(localStorage && !bNoSave) localStorage.setItem('hiddenmenus', JSON.stringify(idArray));
     }
 
     getHiddenMenusFromCache() { let me = this.icn3dui; me.icn3d;
@@ -7857,7 +7857,7 @@ class ClickMenu {
 
            let legendHtml = thisClass.setLegendHtml();
            //$("#" + me.pre + "legend").html(legendHtml).show();
-           $("#" + me.pre + "dl_legend").html(legendHtml);
+           $("#" + me.pre + "dl_legend_html").html(legendHtml);
            me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
 
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
@@ -10367,14 +10367,15 @@ class SetMenu {
 
             html += this.getLink('mn6_contactmap', 'Contact Map', undefined, 1);
 
-            if(!me.cfg.notebook) {
+            //if(!me.cfg.notebook) {
                 html += this.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr, 1, 1);
-            }
+            //}
 
             //html += this.getMenuSep();
         }
 
-        if(!me.cfg.notebook && !me.cfg.hidelicense) {
+        //if(!me.cfg.notebook && !me.cfg.hidelicense) {
+        if(!me.cfg.hidelicense) {
             html += this.getMenuText('mn1_delphiwrap', 'DelPhi Potential', undefined, 1, 1);
 
             html += "<ul>";       
@@ -11188,6 +11189,7 @@ class Dialog {
 
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
+            $( "#" + id + "_nb").show();
 
             height =(me.htmlCls.HEIGHT) * 0.5;
 
@@ -11232,7 +11234,10 @@ class Dialog {
             });
         }
         else {
-            if(ic.bRender) $( "#" + id ).show();
+            if(ic.bRender) {
+                $( "#" + id ).show();
+                $( "#" + id + "_nb").show();
+            }
 
             height = 'auto';
             width = 'auto';
@@ -11282,6 +11287,18 @@ class SetDialog {
         return html;
     }
 
+    addNotebookTitle(id, title, bAddExtraDiv) { let me = this.icn3dui; me.icn3d;
+        //return '<div id="' + me.pre + id + '_nb" style="display:none; background-color:#1c94c4; width:100%"><span style="color:white; font-weight:bold">' + title + '</span>&nbsp;&nbsp;&nbsp;<span onclick="$(\'#' + me.pre + id + '\').hide(); return false;" class="icn3d-nbclose" title="Close">x</span></div>';
+
+        let html = '<div id="' + me.pre + id + '_nb" style="display:none; background-color:#5C9CCC; width:100%"><span style="color:white; font-weight:bold">' + title + '</span>&nbsp;&nbsp;&nbsp;<div onclick="$(\'#' + me.pre + id + '\').hide(); return false;" class="icn3d-nbclose ui-icon ui-icon-close" title="Close"></div></div>';
+
+        if(bAddExtraDiv) {
+            html += '<div id="' + me.pre + id + '_html"></div>';
+        }
+
+        return html;
+    }
+
     //Set the html for all popup dialogs.
     setDialogs() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return '';
@@ -11296,12 +11313,15 @@ class SetDialog {
 
         let divClass =(me.cfg.notebook) ? '' : 'icn3d-hidden';
         let dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
-        html += me.htmlCls.divStr + "alldialogs' class='" + divClass + " icn3d-dialog'>";
+        //html += me.htmlCls.divStr + "alldialogs' class='" + divClass + " icn3d-dialog' style='margin-top:" + me.htmlCls.CMD_HEIGHT + "px'>";
+        html += me.htmlCls.divStr + "alldialogs' class='" + divClass + " icn3d-dialog' style='margin-top:12px'>";
 
         html += me.htmlCls.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm' style='background-color:white'>";
+        html += this.addNotebookTitle('dl_2ddgm', '2D Diagram', true);
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2dctn' class='" + dialogClass + " icn3d-dl_2dctn' style='background-color:white'>";
+        html += this.addNotebookTitle('dl_2dctn', '2D Cartoon');
 
         me.svgid_ct = me.pre + "icn3d_cartoon";
 
@@ -11329,14 +11349,17 @@ class SetDialog {
 
     //    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) {
           html += me.htmlCls.divStr + "dl_alignment' class='" + dialogClass + "' style='background-color:white;'>";
+          html += this.addNotebookTitle('dl_alignment', 'Dynamically Calculated Symmetry using SymD');
           html += me.htmlCls.divStr + "symd_info'></div>";
           html += me.htmlCls.divStr + "alignseqguide_wrapper'><br>" + me.htmlCls.setHtmlCls.setAlignSequenceGuide() + "</div>";
           html += me.htmlCls.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
+          html += this.addNotebookTitle('dl_sequence2', 'Select Residues in Aligned Sequences');
           html += "</div>";
           html += "</div>";
     //    }
 
         html += me.htmlCls.divStr + "dl_definedsets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_definedsets', 'Defined Sets');
         html += me.htmlCls.divStr + "dl_setsmenu'>";
         html += "<b>Defined Sets:</b> <br/>";
         html += "<select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:130px;'>";
@@ -11360,12 +11383,14 @@ class SetDialog {
         html += me.htmlCls.setHtmlCls.setAdvanced(2);
 
         html += me.htmlCls.divStr + "dl_vastplus' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_vastplus', 'Please input PDB ID for VAST+');
         html += "Note: <b>VAST+</b> finds other macromolecular structures that have a similar biological unit. To do this, VAST+ takes into consideration the complete set of 3D domains that VAST identified within a query structure, throughout all of its component protein molecules, and finds other macromolecular structures that have a similar set of proteins/3D domains.<br><br>"; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpluspdbid' value='6VXX' size=8><br>";
         html += me.htmlCls.buttonStr + "reload_vastplus'>VAST+</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_vast' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_vast', 'Pleaes input chain or PDB file for VAST');
         html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
 
         html += '<b>Optione 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
@@ -11394,6 +11419,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_foldseek' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_foldseek', 'Submit your selection to Foldseek');
         html += '1. <input type="submit" id="' + me.pre + 'fssubmit" name="fssubmit" value="Submit"></input> your selection (all residues are selected by default) in the loaded structures to <a href="https://search.foldseek.com/search" target="_blank">Foldseek</a> web server.<br><br>';
         html += '2 (Optional). Once you see the structure neighbors, you can view the alignment in iCn3D by inputing a list of PDB chain IDs or AlphaFold UniProt IDs below. <br><br>The PDB chain IDs are the same as the record names such as "1HHO_A". The UniProt ID is the text between "AF-" and "-F1". For example, the UniProt ID for the record name "AF-P69905-F1-model_v4" is "P69905".<br><br>'; 
 
@@ -11402,16 +11428,19 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_mmtfid', 'Please input an MMTF ID');
         html += "MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmtf'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pdbid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_pdbid', 'Please input a PDB ID');
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "pdbid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdb'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_afid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_afid', 'Please input an AlphaFold UniProt ID');
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
         html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
@@ -11424,27 +11453,32 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_refseqid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_refseqid', 'Please input an NCBI protein accession');
         html += "NCBI Protein Accession: " + me.htmlCls.inputTextStr + "id='" + me.pre + "refseqid' value='NP_001743.1' size=8> ";
         html += me.htmlCls.buttonStr + "reload_refseq'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_opmid', 'Please input an OPM PDB ID');
         html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "opmid' value='6JXR' size=8> ";
         html += me.htmlCls.buttonStr + "reload_opm'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pdbfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_pdbfile', 'Please input a PDB file');
         html += "Note: Several PDB files could be concatenated into a single PDB file. Use the line \"ENDMDL\" to separate PDB files.<br><br>";
         html += "PDB File: " + me.htmlCls.inputFileStr + " id='" + me.pre + "pdbfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdbfile'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pdbfile_app' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_pdbfile_app', 'Please append PDB files');
         html += "Multiple PDB Files: <input type='file' multiple id='" + me.pre + "pdbfile_app' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdbfile_app'>Append</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_rescolorfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_rescolorfile', 'Please input a residue color file');
         html += '<div style="width:450px;">The custom JSON file on residue colors has the following format for proteins("ALA" and "ARG") and nucleotides("G" and "A"):<br>';
         html += '{"ALA":"#C8C8C8", "ARG":"#145AFF", ..., "G":"#008000", "A":"#6080FF", ...}</div><br>';
         html += "Residue Color File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "rescolorfile' size=8> ";
@@ -11452,6 +11486,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_customcolor' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_customcolor', 'Please input a custom color file');
         html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
         html += '<div style="width:450px;">The custom file for the structure has two columns separated by space or tab: ';
         html += 'residue number, and score in the range of 0-100. If you click "Apply Custom Color" button, ';
@@ -11479,6 +11514,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_customref' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_customref', 'Please input a reference number file');
         html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
         html += '<pre>refnum,11,12,,21,22,,10C,11C,20C<br>';
         html += '1TUP_A,100,101,,,132,,,,<br>';
@@ -11492,17 +11528,20 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_align' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_align', 'Please select residues in aligned sequences');
         html += "Enter the PDB IDs or MMDB IDs of the structures: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid1' value='2DN3' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
         html += "<b>VAST+ based on VAST</b>: " + me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button><br><br>";
         html += "<b>VAST+ based on TM-align</b>: " + me.htmlCls.buttonStr + "reload_align_tmalign'>All Matching Molecules Superposed</button><br><br>";
         html += "</div>";
         
         html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_alignaf', 'Align AlphaFold structures');
         html += "Enter two <a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> IDs: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid1' value='P41327' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid2' value='P41331' size=8><br/><br/>";
         html += me.htmlCls.buttonStr + "reload_alignaf_tmalign'>Align with TM-align</button>" + me.htmlCls.buttonStr + "reload_alignaf' style='margin-left:30px'>Align with VAST</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_chainalign' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_chainalign', 'Align chains');
         html += "<div style='width:550px'>";
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
@@ -11512,6 +11551,7 @@ class SetDialog {
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_chainalign2' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_chainalign2', 'Align chains');
         html += "<div style='width:550px'>";
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids2' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
@@ -11523,11 +11563,13 @@ class SetDialog {
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_chainalign3' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_chainalign3', 'Align chains');
         html += "<div style='width:550px'>";
         html += this.getHtmlAlignResidueByResidue('chainalignids3', 'predefinedres', 'reload_chainalign_asym3');
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_realignresbyres' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_realignresbyres', 'Realign residue by residue');
         html += "<div style='width:550px'>";
         html += "<b>Option 1</b>: " + me.htmlCls.buttonStr + "realignSelection'><b>Realign Current Selection Residue by Residue</b></button><br/><br/>";
         html += "<b>Option 2</b>: <br>";
@@ -11535,6 +11577,7 @@ class SetDialog {
         html += "</div></div>";
 
         html += me.htmlCls.divStr + "dl_mutation' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_mutation', 'Mutation analysis');
         html += "<div style='width:500px'>";
         html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[<b>uppercase</b> PDB ID or AlphaFold UniProt ID]_[Chain Name]_[Residue Number]_[One Letter Mutant Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".<br/>If you load a custom structure without PDB or UniProt ID, you can open "Seq. & Annotations" window and find the chain ID such as "stru_A". The part before the underscore is the structure ID, which can be used to specify the mutation such as "stru_A_...". Remember to choose "Show Mutation in: Current Page".<br/><br/>';
         html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
@@ -11553,25 +11596,30 @@ class SetDialog {
         html += "<br/><br/></div></div>";
 
         html += me.htmlCls.divStr + "dl_mol2file' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_mol2file', 'Please input a Mol2 file');
         html += "Mol2 File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "mol2file' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mol2file'>Load</button>";
         html += "</div>";
         html += me.htmlCls.divStr + "dl_sdffile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_sdffile', 'Please input an SDF file');
         html += "SDF File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "sdffile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_sdffile'>Load</button>";
         html += "</div>";
         html += me.htmlCls.divStr + "dl_xyzfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_xyzfile', 'Please input an XYZ file');
         html += "XYZ File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "xyzfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_afmapfile', 'Please input an AlphaFold PAE file');
         html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
         html += me.htmlCls.buttonStr + "reload_afmapfile'>Load Half PAE Map</button>" 
           + me.htmlCls.buttonStr + "reload_afmapfilefull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_urlfile', 'Please input a file via URL');
         html += "File type: ";
         html += "<select id='" + me.pre + "filetype'>";
         html += me.htmlCls.optionStr + "'pdb' selected>PDB</option>";
@@ -11587,16 +11635,19 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmciffile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_mmciffile', 'Please input an mmCIF file');
         html += "mmCIF File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "mmciffile' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmciffile'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmcifid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_mmcifid', 'Please input an mmCIF ID');
         html += "mmCIF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmcifid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmcif'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_mmdbid', 'Please input an MMDB ID');
         html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
         html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
@@ -11609,6 +11660,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
+        html += this.addNotebookTitle('dl_mmdbafid', 'Please input a list of PDB/AlphaFold IDs');
         html += "List of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
         html += "<div style='display:inline-block; width:20px'></div>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='width:150px'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px; width:250px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
         html += "<div style='display:inline-block; width:20px'>or</div>" + me.htmlCls.buttonStr + "reload_mmdbaf_append' style='width:150px'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym_append' style='margin-left:30px; width:250px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
@@ -11623,6 +11675,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_blast_rep_id', 'Align sequence to structure');
         html += "Enter a Sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the Sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
         html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
         html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
@@ -11634,32 +11687,38 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_yournote', 'Your Note');
         html += "Your note will be saved in the HTML file when you click \"File > Save File > iCn3D PNG Image\".<br><br>";
         html += "<textarea id='" + me.pre + "yournote' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='Enter your note here'></textarea><br>";
         html += me.htmlCls.buttonStr + "applyyournote'>Save</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_gi', 'Please input an NCBI gi');
         html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_cid', 'Please input a PubChem CID');
         html += "PubChem CID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
         html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pngimage' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_pngimage', 'Please input an iCn3D PNG Image file');
         html += "iCn3D PNG image: " + me.htmlCls.inputFileStr + "id='" + me.pre + "pngimage'><br/>";
         html += me.htmlCls.buttonStr + "reload_pngimage' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_state' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_state', 'Please input a state file');
         html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
         html += me.htmlCls.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_fixedversion' style='max-width:500px' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_fixedversion', 'Use fixed version of iCn3D');
         html += "Since January 6, 2021, you can show the original view with the archived version of iCn3D by pasting your URL below and click \"Show Originial View\". Note the version in the parameter \"v\" was used to replace \"full.html\" with \"full_[v].html\" in the URL.<br><br>";
         html += "Share Link URL: " + me.htmlCls.inputTextStr + "id='" + me.pre + "sharelinkurl' size=60><br>";
         html += me.htmlCls.buttonStr + "reload_fixedversion'>Show Original View</button><br><br>";
@@ -11667,16 +11726,19 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_selection' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_selection', 'Load a selection file');
         html += "Selection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "selectionfile'><br/>";
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_menuloadpref', 'Load a preference file');
         html += "Preference file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "menupreffile'><br/>";
         html += me.htmlCls.buttonStr + "reload_menupreffile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_dsn6', 'Load a DSN6 file');
         html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
@@ -11699,6 +11761,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_dsn6url', 'Load a selection file via a URL');
         html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
@@ -11720,6 +11783,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_clr' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_clr', 'Pick a color');
         html += "Click in the input box to use the color picker:<br><br> ";
         html += "Custom Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
         html += me.htmlCls.buttonStr + "applycustomcolor'>Apply</button>";
@@ -11731,6 +11795,7 @@ class SetDialog {
         html += me.htmlCls.setHtmlCls.getPotentialHtml('url', dialogClass);
 
         html += me.htmlCls.divStr + "dl_symmetry' class='" + dialogClass + "'><br>";
+        html += this.addNotebookTitle('dl_symmetry', 'Symmetry');
         html += me.htmlCls.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymmetry'>";
         html += "</select>" + me.htmlCls.space3;
         html += me.htmlCls.buttonStr + "applysymmetry'>Apply</button>" + me.htmlCls.space3;
@@ -11738,10 +11803,12 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_symd' style='max-width:400px' class='" + dialogClass + "'><br>";
+        html += this.addNotebookTitle('dl_symd', 'Dynamically symmetry calculation using SymD');
 
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_contact' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_contact', 'Contact Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Distance: <select id='" + me.pre + "contactdist'>";
         html += me.htmlCls.setHtmlCls.getOptionHtml(['4', '5', '6', '7', '8', '9', '10'], 4);
         html += "</select></span>";
@@ -11754,6 +11821,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_hbonds', 'Interaction Analysis');
         html += "1. Choose interaction types and their thresholds:<br>";
         html += "<div class='icn3d-box'><table border=0 width=450><tr>";
         html += "<td style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "analysis_hbond' checked>Hydrogen Bonds <span style='background-color:#" + me.htmlCls.hbondColor + "'>" + me.htmlCls.space3 + "</span></td>";
@@ -11852,6 +11920,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_realign' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_realign', 'Realign by sequence');
 
         html += me.htmlCls.divNowrapStr + "1. Select sets below <br>or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
@@ -11861,6 +11930,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_realignbystruct', 'Realign by structure');
 
         //html += "<div><b>1</b>. There are two options to align chains. Option \"a\" is to select a list of chains below, and align all chains to the first chain. Option \"b\" is to select sets below or use your current selection, and align all chains pairwise.</div><br>";
         html += "<div><b>1</b>. Select sets below or use your current selection.</div><br>";
@@ -11876,6 +11946,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_realigntwostru' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_realigntwostru', 'Realign two structure complexes');
 
         html += me.htmlCls.divNowrapStr + "1. Select sets below or use your current selection:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct2' multiple size='5' style='min-width:130px;'>";
@@ -11888,6 +11959,7 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_colorspectrumacrosssets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_colorspectrumacrosssets', 'Set color spectrum across sets');
 
         html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrumAcross' multiple size='5' style='min-width:130px;'>";
@@ -11898,7 +11970,7 @@ class SetDialog {
 
         
         html += me.htmlCls.divStr + "dl_colorspectrumbysets' class='" + dialogClass + "'>";
-
+        html += this.addNotebookTitle('dl_colorspectrumbysets', 'Set color spectrum for residues in sets');
         html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorSpectrum' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
@@ -11908,7 +11980,7 @@ class SetDialog {
 
         
         html += me.htmlCls.divStr + "dl_colorrainbowacrosssets' class='" + dialogClass + "'>";
-
+        html += this.addNotebookTitle('dl_colorrainbowacrosssets', 'Set color rainbow across sets');
         html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbowAcross' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
@@ -11918,7 +11990,7 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_colorrainbowbysets' class='" + dialogClass + "'>";
-
+        html += this.addNotebookTitle('dl_colorrainbowbysets', 'Set color rainbow for residues in sets');
         html += me.htmlCls.divNowrapStr + "1. Select sets below:</div><br>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomColorRainbow' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
@@ -11928,12 +12000,15 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_allinteraction', 'All interactions', true);
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_interactionsorted' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_interactionsorted', 'Sorted interactions', true);
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_linegraph' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_linegraph', '2D Interaction Network');
 
         html += me.htmlCls.divNowrapStr + '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
           + me.pre + 'dl_linegraphcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
@@ -11964,6 +12039,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_scatterplot' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_scatterplot', '2D Interaction Map');
 
         html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3;
 
@@ -11990,6 +12066,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_contactmap' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_contactmap', 'Contact Map');
 
         html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
 
@@ -12008,6 +12085,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_alignerrormap', 'PAE Map');
 
         html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
       
@@ -12035,6 +12113,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_elecmap2fofc' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_elecmap2fofc', 'Electron Density 2F0-Fc Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigma2fofc'>";
 
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
@@ -12043,6 +12122,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_elecmapfofc' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_elecmapfofc', 'Electron Density F0-Fc Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigmafofc'>";
 
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
@@ -12051,6 +12131,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_emmap' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_emmap', 'EM Density Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "empercentage'>";
 
         html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
@@ -12059,6 +12140,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_aroundsphere' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_aroundsphere', 'Select a sphere around a set of residues');
         html += me.htmlCls.divNowrapStr + "1. Select the first set:</div>";
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere2' multiple size='3' style='min-width:130px;'>";
         html += "</select></div><br>";
@@ -12073,6 +12155,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_adjustmem' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_adjustmem', 'Adjust membranes');
         html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
         html += me.htmlCls.divNowrapStr + "1. Extracellular membrane Z-axis position: " + me.htmlCls.inputTextStr + "id='" + me.pre + "extra_mem_z' value='' size='3'> &#197;</div><br/>";
         html += me.htmlCls.divNowrapStr + "2. intracellular membrane Z-axis position: " + me.htmlCls.inputTextStr + "id='" + me.pre + "intra_mem_z' value='' size='3'> &#197;</div><br/>";
@@ -12080,6 +12163,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_selectplane' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_selectplane', 'Select a plane');
         html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
         html += me.htmlCls.divNowrapStr + "1. Z-axis position of the first X-Y plane: " + me.htmlCls.inputTextStr + "id='" + me.pre + "selectplane_z1' value='15' size='3'> &#197;</div><br/>";
         html += me.htmlCls.divNowrapStr + "2. Z-axis position of the second X-Y plane: " + me.htmlCls.inputTextStr + "id='" + me.pre + "selectplane_z2' value='-15' size='3'> &#197;</div><br/>";
@@ -12087,6 +12171,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addlabel' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_addlabel', 'Add labels between two atoms');
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
         html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
@@ -12101,6 +12186,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_addlabelselection', 'Add labels for your selection');
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
         html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
@@ -12109,11 +12195,13 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_labelColor' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_labelColor', 'Change label color');
         html += "Color for all labels: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolorall' value='" + defaultColor + "' size=4><br/><br/>";
         html += me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "applylabelcolor'>Display</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_distance' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_distance', 'Measure distance');
         if(me.utilsCls.isMobile()) {
             html += me.htmlCls.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
         }
@@ -12125,6 +12213,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_stabilizer' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_stabilizer', 'Add a stabilizer');
         if(me.utilsCls.isMobile()) {
             html += me.htmlCls.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
         }
@@ -12136,6 +12225,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_disttwosets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_disttwosets', 'Measure the distance between two sets');
         html += me.htmlCls.spanNowrapStr + "1. Select two sets</span><br/>";
         html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
@@ -12157,6 +12247,7 @@ class SetDialog {
 
         
         html += me.htmlCls.divStr + "dl_linebtwsets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_linebtwsets', 'Add a line between  two sets');
         html += me.htmlCls.spanNowrapStr + "1. Select two sets</span><br/>";
         html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
@@ -12190,6 +12281,7 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_cartoonshape' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_cartoonshape', 'Cartoon Shape');
         html += me.htmlCls.spanNowrapStr + "1. Select a set:</span><br/>";
         html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "cartoonshape' multiple size='5' style='min-width:130px;'>";
         html += "</select></div><br>";
@@ -12212,6 +12304,7 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_distmanysets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_distmanysets', 'Measure distances among many sets');
         html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise distances</span><br/>";
         html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
@@ -12231,6 +12324,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_stabilizer_rm', 'Remove a stabilizer');
         if(me.utilsCls.isMobile()) {
             html += me.htmlCls.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
         }
@@ -12241,14 +12335,17 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_thickness' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_thickness', 'Set thickness');
         html += me.htmlCls.setHtmlCls.setThicknessHtml('3dprint');
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_thickness2' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_thickness2', 'Set thickness');
         html += me.htmlCls.setHtmlCls.setThicknessHtml('style');
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_menupref' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_menupref', 'Preferences for menus');
         html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
@@ -12264,6 +12361,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_addtrack', 'Add a track');
         html += " <input type='hidden' id='" + me.pre + "track_chainid' value=''>";
 
         html += me.htmlCls.divStr + "dl_addtrack_tabs' style='border:0px;'>";
@@ -12319,6 +12417,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_saveselection' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_saveselection', 'Save Selection');
         let index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
         let suffix = '';
         html += "Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> <br>";
@@ -12328,6 +12427,7 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_copyurl', 'Share Link');
         html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
         html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
         html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
@@ -12335,6 +12435,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_selectannotations' class='" + dialogClass + " icn3d-annotation' style='background-color:white;'>";
+        html += this.addNotebookTitle('dl_selectannotations', 'Sequences & Annotations');
 
         html += me.htmlCls.divStr + "dl_annotations_tabs'>";
 
@@ -12363,6 +12464,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_graph' style='background-color:white;' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_graph', 'Interactions');
         me.svgid = me.pre + 'icn3d_viz';
         html += '<style>';
         html += '#' + me.svgid + ' svg { border: 1px solid; font: 13px sans-serif; text-anchor: end; }';
@@ -12417,6 +12519,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_area' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_area', 'Surface Area');
         html += "Solvent Accessible Surface Area(SASA) calculated using the <a href='https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0008140' target='_blank'>EDTSurf algorithm</a>: <br>";
         html += '(0-20% out is considered "in". 50-100% out is considered "out".)<br><br>';
         html += "<b>Toal</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "areavalue' value='' size='10'> &#8491;<sup>2</sup><br><br>";
@@ -12424,19 +12527,23 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_colorbyarea' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_colorbyarea', 'Color by surface area');
         html += "<div style='width:500px'>Color each residue based on the percentage of solvent accessilbe surface area. The color ranges from blue, to white, to red for a percentage of 0, 35(variable), and 100, respectively.</div><br>";
         html += "<b>Middle Percentage(White)</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "midpercent' value='35' size='10'>% <br><br>";
         html += "<button style='white-space:nowrap;' id='" + me.pre + "applycolorbyarea'>Color</button><br/><br/>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_rmsd' class='" + dialogClass + "' style='max-width:300px'>";
+        html += this.addNotebookTitle('dl_rmsd', 'RMSD', true);
         
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_buriedarea' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_buriedarea', 'Buried surface area', true);
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_propbypercentout' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_propbypercentout', 'Select residues basen on solvent accessilbe surface area');
         html += "<div style='width:400px'>Select residue based on the percentage of solvent accessilbe surface area. The values are in the range of 0-100.</div><br>";
         html += "<b>Min Percentage</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "minpercentout' value='0' size='10'>% <br>";
         html += "<b>Max Percentage</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxpercentout' value='100' size='10'>% <br>";
@@ -12444,6 +12551,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_propbybfactor' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_propbybfactor', 'Select residues basen on B-factor');
         html += "<div style='width:400px'>Select residue based on B-factor. The values are in the range of 0-100.</div><br>";
         html += "<b>Min B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
         html += "<b>Max B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
@@ -12451,9 +12559,11 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_legend' class='" + dialogClass + "' style='max-width:500px; background-color:white'>";
+        html += this.addNotebookTitle('dl_legend', 'Legend', true);
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_disttable' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
         html += "</div>";
 
         html += "</div>";
@@ -15769,6 +15879,8 @@ class SetHtml {
         }
 
         html += me.htmlCls.divStr + "dl_" + name1 + "' class='" + dialogClass + "'>";
+        html += me.htmlCls.setDialogCls.addNotebookTitle("dl_" + name1, 'DelPhi Potential');
+        
         html += me.htmlCls.divStr + "dl_" + name1 + "_tabs' style='border:0px;'>";
         html += "<ul>";
         html += "<li><a href='#" + me.pre + name1 + "tab1'>" + tab1 + "</a></li>";
@@ -16082,7 +16194,7 @@ class SetHtml {
                statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
-
+               
                 if(type === 'pdb') {
                     await ic.pdbParserCls.loadPdbData(data);
 
@@ -23166,8 +23278,11 @@ class Scene {
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
             sphere: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-                ic.setOptionCls.setStyle("proteins", "sphere");
-                ic.setOptionCls.setStyle("nucleotides", "sphere");
+                // ic.setOptionCls.setStyle("proteins", "sphere");
+                // ic.setOptionCls.setStyle("nucleotides", "sphere");
+                ic.opts['surface'] = 'molecular surface';
+                ic.applyMapCls.applySurfaceOptions();
+
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
 
@@ -23233,14 +23348,17 @@ class Scene {
                     //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
                  }
             } },
-            // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-            //     ic.debugStr = '###ic.hAtoms: ' + Object.keys(ic.hAtoms).length  + ' ic.dAtoms: ' + Object.keys(ic.dAtoms).length;
-            //     let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
-            //     ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
-            //     ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
-            //     ic.cam.remove( ic.canvasUI.mesh );
-            // } },
-            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: async function() {
+                let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
+                ic.phisurftype = 22; // molecular surface
+                ic.phisurfop = 1.0; // opacity
+                ic.phisurfwf = 'no'; // wireframe
+                await ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
+                
+                //ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 for(let name in ic.labels) {
                     //if(name === 'residue' || name === 'custom') {
                         ic.labels[name] = [];
@@ -23250,7 +23368,7 @@ class Scene {
                 ic.drawCls.draw();
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.selectionCls.resetAll();
                 
                 ic.cam.remove( ic.canvasUI.mesh );
@@ -23270,7 +23388,8 @@ class Scene {
             ribbon: "Ribbon",
             schematic: "Schem.",
             stick: "Stick",
-            sphere: "Sphere",
+            //sphere: "Sphere",
+            sphere: "Surface",
 
             color: "Color",
             rainbow: "Rainbow",
@@ -23290,7 +23409,7 @@ class Scene {
 
             analysis: "Analysis",
             interaction: "Interact",
-            //delphi: "DelPhi",
+            delphi: "DelPhi",
             removeLabel: "No Label",
             reset: "Reset"
         };
@@ -26652,6 +26771,8 @@ class TextSprite {
             sprite.scale.set(expandWidthFactor * factor, factor, 1.0);
         }
 
+        sprite.renderOrder = 1; // larger than the default 0
+
         return sprite;
     }
 
@@ -29441,11 +29562,12 @@ class Surface {
             cfg.isovalue = ic.mapData.contourPhi;
             cfg.type = 'phi';
             cfg.loadPhiFrom = ic.loadPhiFrom;
-
+            
             ps = this.SetupMap(cfg);
         }
         else {
              //1: van der waals surface, 2: molecular surface, 3: solvent accessible surface
+             
 
             //exclude water
             let atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
@@ -29479,7 +29601,7 @@ class Surface {
 
             ps = this.SetupSurface(cfg);
         }
-
+        
         if(ic.bCalcArea) {
             ic.areavalue = ps.area.toFixed(2);
             let serial2area = ps.serial2area;
@@ -29558,7 +29680,7 @@ class Surface {
         //geo = new THREE.Geometry();
         geo = new THREE.BufferGeometry();
         let verticeArray = [], colorArray = [], indexArray = [], color;
-
+        
         //var geoVertices = verts.map(function (v) {
         let offset = 0;
         for(let i = 0, il = verts.length; i < il; ++i, offset += 3) {
@@ -29633,9 +29755,8 @@ class Surface {
         //geo.normalsNeedUpdate = true;
 
         geo.computeVertexNormals();
-
+        
         geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
-
         // use the regular way to show transparency for type == 15 (surface with potential)
     //    if(ic.transparentRenderOrder && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
         if(ic.transparentRenderOrder) { // WebGL has some ordering problem when dealing with transparency
@@ -29823,7 +29944,7 @@ class Surface {
             mesh.renderOrder = -2; // default: 0, picking: -1
 
             ic.mdl.add(mesh);
-
+            
             if(type == 11 || type == 12) {
                 ic.prevMaps.push(mesh);
             }
@@ -29906,7 +30027,7 @@ class Surface {
 
     SetupMap(data) { let ic = this.icn3d; ic.icn3dui;
         let ps = new ElectronMap(ic);
-
+        
         ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
           data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
 
@@ -29915,7 +30036,7 @@ class Surface {
         if(!data.header.bSurface) ps.buildboundary();
 
         if(!data.header.bSurface) ps.marchingcube();
-
+        
         ps.vpBits = null; // uint8 array of bitmasks
         //ps.vpDistance = null; // floatarray of _squared_ distances
         ps.vpAtomID = null; // intarray
@@ -32942,7 +33063,7 @@ class Alternate {
             //if(window.dialog) window.dialog.dialog( "close" );
             
             let html = me.utilsCls.getMemDesc();
-            $("#" + ic.pre + "dl_rmsd").html(html);
+            $("#" + ic.pre + "dl_rmsd_html").html(html);
             if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Membranes');
         }
     }
@@ -33123,13 +33244,13 @@ class Alternate {
 
             if ( ic.renderer.xr.isPresenting){    
                 if(ic.canvasUI) ic.canvasUI.update();
-                //if(ic.canvasUILog) ic.canvasUILog.update();
+                if(ic.canvasUILog) ic.canvasUILog.update();
             }
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
                 ic.gestures.update();
-                //if(ic.canvasUILog) ic.canvasUILog.update();
+                if(ic.canvasUILog) ic.canvasUILog.update();
             }
         }
 
@@ -36157,7 +36278,7 @@ class SetOption {
             bClose = true;
         }
 
-        $("#" + me.pre + "dl_legend").html(html);
+        $("#" + me.pre + "dl_legend_html").html(html);
         me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
 
         if(bClose) {
@@ -38575,6 +38696,7 @@ class Domain3d {
 		this.icn3d = icn3d;
 
         //this.dcut = 8; // threshold for C-alpha interactions
+
 		// It seemed the threshold 7 angstrom works better
 		this.dcut = 7; // threshold for C-alpha interactions
 
@@ -38609,6 +38731,9 @@ class Domain3d {
         this.mean_cts = 0.0;				// mean number of contacts in a domain
         this.c_delta = 3;				// cut set parameter
         this.nc_fact = 0.0;				// size factor for internal contacts
+
+		// added by Jiyao
+		this.min_contacts = 10;			// minimum number of contacts to be considered as neighbors
 
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];
@@ -39158,6 +39283,7 @@ class Domain3d {
 	//https://www.geeksforgeeks.org/number-groups-formed-graph-friends/
 	countUtil(ss1, sheetNeighbor, existing_groups) {
 		this.visited[ss1] = true;
+
 		if(!this.groupnum2sheet[existing_groups]) this.groupnum2sheet[existing_groups] = [];
 		this.groupnum2sheet[existing_groups].push(parseInt(ss1));
 
@@ -39201,6 +39327,7 @@ class Domain3d {
 		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
 
 		let substructItem = {};
+		let pos2resi = {};
 		for(let i = 0; i < residueArray.length; ++i) {
 			let resid = residueArray[i];
 
@@ -39238,22 +39365,26 @@ class Domain3d {
 			x0.push(atom.coord.x);
 			y0.push(atom.coord.y);
 			z0.push(atom.coord.z);
-			resiArray.push(resi);
+			//resiArray.push(resi);
+			resiArray.push(i+1);
+			pos2resi[i+1] = resi;
 
 			if(atom.ssend) {
-				substructItem.To = parseInt(resi);
+				//substructItem.To = parseInt(resi);
+				substructItem.To = i + 1;
 				substructItem.x2 = atom.coord.x;
 				substructItem.y2 = atom.coord.y;
 				substructItem.z2 = atom.coord.z;
 
 				substructItem.Sheet = (atom.ss == 'sheet') ? true : false;
 				substruct.push(substructItem);
-				substructItem = {};				
+				substructItem = {};		
 			}
 
 			// a residue could be both start and end. check ssend first, then check ssbegin 
 			if(atom.ssbegin) {
-				substructItem.From = parseInt(resi);
+				//substructItem.From = parseInt(resi);
+				substructItem.From = i + 1;
 				substructItem.x1 = atom.coord.x;
 				substructItem.y1 = atom.coord.y;
 				substructItem.z1 = atom.coord.z;
@@ -39273,7 +39404,8 @@ class Domain3d {
 		}
 
 		let seqLen = residueArray.length; // + resiOffset;
-		let lastResi = resiArray[seqLen - 1];
+		//let lastResi = resiArray[seqLen - 1];
+		let lastResi = seqLen;
 
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
@@ -39352,7 +39484,8 @@ class Domain3d {
 			let ss2 = parseInt(ssPair[1]);
 
 			// both are sheets
-			if(substruct[ss1 - 1].Sheet && substruct[ss2 - 1].Sheet) {
+			// min number of contacts: this.min_contacts
+			if(substruct[ss1 - 1].Sheet && substruct[ss2 - 1].Sheet && ctable[pair] >= this.min_contacts ) {
 				if(!sheetNeighbor[ss1]) sheetNeighbor[ss1] = {};
 				if(!sheetNeighbor[ss2]) sheetNeighbor[ss2] = {};
 
@@ -39375,13 +39508,13 @@ class Domain3d {
 			// If not in any group.
 			if (this.visited[ss1] == false) {
 				existing_groups++;
-				 
+					
 				this.countUtil(ss1, sheetNeighbor, existing_groups);
 			}
 		}
 
 		// get sheet2sheetnum
-		// each neighboring sheet willbe represented by the sheet with the smallest sse 
+		// each neighboring sheet will be represented by the sheet with the smallest sse 
 		for(let groupnum in this.groupnum2sheet) {
 			let ssArray = this.groupnum2sheet[groupnum].sort();
 			for(let i = 0, il = ssArray.length; i < il; ++i) {
@@ -39484,7 +39617,7 @@ class Domain3d {
 			this.parts[2*i] = this.parts[2*i + 1] = 0;
 			ratios[i] = 0.0;
 		}
-
+		
 		n_saved = this.new_split_chain(nsse, sratio, minSize, minSSE, maxCsz, avgCts, cDelta, ncFact, this.parts, n_saved, ratios);
 
 		// save domain data
@@ -39525,14 +39658,14 @@ class Domain3d {
 			//resflags.clear();
 
 			//let resflags = [];
-			let resflags = {};
+			let resflags = {}; // keys are 1-based positions
 
 			// a domain must have at least 3 SSEs...
 			if (prts.length <= 2) continue;
 
 			for (let i = 0; i < seqLen; i++) {
 				//resflags.push(0);
-				resflags[resiArray[i]] = 0;
+				resflags[i + 1] = 0;
 			}
 
 			for (let i = 0; i < prts.length; i++) {
@@ -39548,17 +39681,14 @@ class Domain3d {
 				let To = sserec.To;
 
 				for (let j = From; j <= To; j++) {
-					//resflags[j - 1] = 1;
 					resflags[j] = 1;
 				}
 
 				if ((k == 0) && (From > 1)) {
 					// residues with negative residue numbers will not be included
 					for (let j = 1; j < From; j++) {
-						//resflags[j - 1] = 1;
 						// include at most 10 residues
 						if(From - j <= 10) {
-							//resflags[j - 1] = 1;
 							resflags[j] = 1;
 						}
 					}
@@ -39568,10 +39698,8 @@ class Domain3d {
 				if ((k == substruct.length - 1) && (To < parseInt(lastResi))) {
 					//for (let j = To + 1; j <= seqLen; j++) {
 					for (let j = To + 1; j <= parseInt(lastResi); j++) {
-						//resflags[j - 1] = 1;
 						// include at most 10 residues
 						if(j - To <= 10) {
-							//resflags[j - 1] = 1;
 							resflags[j] = 1;
 						}
 					}
@@ -39587,7 +39715,6 @@ class Domain3d {
 
 					if (ll > 0) {
 						for (let j = From - ll; j <= From - 1; j++) {
-							//resflags[j - 1] = 1;
 							resflags[j] = 1;
 						}
 					}
@@ -39606,7 +39733,6 @@ class Domain3d {
 
 					if (ll > 0) {
 						for (let j = To + 1; j <= To + ll; j++) {
-							//resflags[j - 1] = 1;
 							resflags[j] = 1;
 						}
 					}
@@ -39618,16 +39744,15 @@ class Domain3d {
 			let startseg;
 			//vector<int> segments;
 			//segments.clear();
-			let segments = [];
+			let segments = []; //use position instead of residue number
 
 			for (let i = 0; i < seqLen; i++) {
 				//let rf = resflags[i];
-				let rf = resflags[resiArray[i]];
+				let rf = resflags[i + 1];
 
 				if (!inseg && (rf == 1)) {
 					// new segment starts here
-					//startseg = i + 1;
-					startseg = resiArray[i];
+					startseg = i + 1;
 					inseg = true;
 					continue;
 				}
@@ -39635,8 +39760,7 @@ class Domain3d {
 				if (inseg && (rf == 0)) {
 					// segment ends
 					segments.push(startseg);
-					//segments.push(i);
-					segments.push(resiArray[i]);
+					segments.push(i);
 					inseg = false;
 				}
 			}
@@ -39644,7 +39768,6 @@ class Domain3d {
 			// check for the last segment
 			if (inseg) {
 				segments.push(startseg);
-				//segments.push(seqLen);
 				segments.push(lastResi);
 			}
 
@@ -39665,8 +39788,8 @@ class Domain3d {
 				}
 			}
 		}
-
-		return {subdomains: subdomains, substruct: substruct};
+		
+		return {subdomains: subdomains, substruct: substruct, pos2resi:pos2resi };
 	} // end c2b_NewSplitChain
 
 	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
@@ -39674,6 +39797,7 @@ class Domain3d {
 
 		let subdomains = result.subdomains;
 		let substruct = result.substruct;
+		let pos2resi = result.pos2resi;
 
 		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
 		let residueArray = Object.keys(residueHash);
@@ -39701,8 +39825,8 @@ class Domain3d {
 					//ss: sstype	ss_start	ss_end	x1	y1	z1	x2	y2	z2
 						//sstype: 1 (helix), 2 (sheet)
 					let sstype = (substruct[k].Sheet) ? 2 : 1;
-					let from = substruct[k].From;
-					let to = substruct[k].To;
+					let from = pos2resi[substruct[k].From];
+					let to = pos2resi[substruct[k].To];
 
 					let residFrom = chnid + "_" + from;
 					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
@@ -40719,7 +40843,7 @@ class AddTrack {
                 let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
 
                 //$("#" + me.pre + "legend").html(legendHtml);
-                $("#" + me.pre + "dl_legend").html(legendHtml);
+                $("#" + me.pre + "dl_legend_html").html(legendHtml);
                 me.htmlCls.dialogCls.openDlg('dl_legend', 'Color range');
             }
             else if(type == 'tube') {
@@ -43609,7 +43733,7 @@ class HlUpdate {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData, ic.inputid, undefined, true);
           html2ddgm += ic.diagram2dCls.set2DdgmNote();
 
-          $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
+          $("#" + ic.pre + "dl_2ddgm_html").html(html2ddgm);
        }
        else if(ic.mmdbidArray &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign)) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData1, ic.mmdbidArray[0].toUpperCase(), 0, true);
@@ -43621,7 +43745,7 @@ class HlUpdate {
           }
           html2ddgm += ic.diagram2dCls.set2DdgmNote(true);
 
-          $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
+          $("#" + ic.pre + "dl_2ddgm_html").html(html2ddgm);
        }
     }
 
@@ -44158,8 +44282,8 @@ class LineGraph {
                             linkedNodeCnt[mappingid] = 1;
                             linkedNodeInterDiff[mappingid] = link.n;
                           }
-                          else {
-                            ++linkedNodeCnt[mappingid];
+                          else {                           
+                            ++linkedNodeCnt[mappingid];                            
                             linkedNodeInterDiff[mappingid] -= link.n; // show difference
                           }
                       }
@@ -44509,9 +44633,9 @@ class LineGraph {
             if(pos1 === undefined || pos2 === undefined) continue;
             let linestrokewidth;
             if(link.v == me.htmlCls.contactValue) {
-                linestrokewidth = 1;
+                linestrokewidth = (link.n == 1) ? 1 : 3;
             } else {
-                linestrokewidth = 2;
+                linestrokewidth = (link.n == 1) ? 2 : 4;
             }
             let strokecolor;
             if(link.v == me.htmlCls.hbondValue) {
@@ -44528,8 +44652,9 @@ class LineGraph {
                 strokecolor = "#" + me.htmlCls.contactColor;
             }
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-            html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
+            let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
+            if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
+            html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "'/></g>";
         }
         // show nodes later
         html += nodeHtml;
@@ -44622,9 +44747,9 @@ class LineGraph {
 
         let linestrokewidth;
         if(link.v == me.htmlCls.contactValue) {
-            linestrokewidth = 1;
+            linestrokewidth = (link.n == 1) ? 1 : 3;
         } else {
-            linestrokewidth = 2;
+            linestrokewidth = (link.n == 1) ? 2 : 4;
         }
         
         if(bAfMap && ic.hex2skip[link.c]) ;
@@ -44639,7 +44764,8 @@ class LineGraph {
         }
         else {
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
+            if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
             if(bContactMap) {
                 html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
             }
@@ -45155,11 +45281,9 @@ class GetGraph {
 
                     if(!linkstr2cnt.hasOwnProperty(linkStr)) {
                         linkstr2cnt[linkStr] = 1;
-                        linkstr2cnt[linkStr] = 1;
                     }
                     else {
-                        linkstr2cnt[linkStr] += 1;
-                        linkstr2cnt[linkStr] += 1;
+                        ++linkstr2cnt[linkStr];
                     }
                 }
             }
@@ -45883,11 +46007,11 @@ class ViewInterPairs {
            html += result.html;
            bondCnt = result.bondCnt;
 
-           $("#" + ic.pre + "dl_interactionsorted").html(html);
+           $("#" + ic.pre + "dl_interactionsorted_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
        }
        else if(type == 'view') {
-           $("#" + ic.pre + "dl_allinteraction").html(html);
+           $("#" + ic.pre + "dl_allinteraction_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
        }
        else if(type == 'linegraph') {
@@ -48215,7 +48339,7 @@ class ChainalignParser {
                 me.htmlCls.clickMenuCls.setLogCmd(logStr, false);
                 let html = "<br><b>Alignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br>";
                 if(me.cfg.aligntool == 'tmalign') html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
-                $("#" + ic.pre + "dl_rmsd").html(html);
+                $("#" + ic.pre + "dl_rmsd_html").html(html);
                 if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 
                 bAligned = true;
@@ -52481,7 +52605,7 @@ class ParserUtils {
                     //if(window.dialog) window.dialog.dialog( "close" );
                     html += me.utilsCls.getMemDesc();
                   }
-                  $("#" + ic.pre + "dl_rmsd").html(html);
+                  $("#" + ic.pre + "dl_rmsd_html").html(html);
                   if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
@@ -52662,7 +52786,7 @@ class ParserUtils {
         ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
 
         ic.b2DShown = true;
 
@@ -52715,7 +52839,7 @@ class ParserUtils {
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
 
         ic.b2DShown = true;
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
         if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         /// if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
@@ -52733,7 +52857,7 @@ class ParserUtils {
             ic.diagram2dCls.draw2Ddgm(ic.interactionData, mmdbid);
 
             ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote();
-            $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+            $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
         }
 
         ic.b2DShown = true;
@@ -52836,7 +52960,7 @@ class ParserUtils {
                   let rmsd = ic.rmsd_supr.rmsd;
 
                   me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
-                  //$("#" + ic.pre + "dl_rmsd").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                  //$("#" + ic.pre + "dl_rmsd_html").html("<br><b>RMSD of alignment to OPM</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                   //if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let dxymaxsq = 0;
@@ -53042,6 +53166,16 @@ class ParserUtils {
       
       // set defined sets before loadScript
       if(ic.bInitial) {
+        if(me.cfg.mobilemenu) {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+            let bNoSave = true;
+            me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
+        }
+        // else {
+        //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+        //     me.htmlCls.clickMenuCls.applyShownMenus();
+        // }
+        
         if(me.cfg.showsets) {
              ic.definedSetsCls.showSets();
         }
@@ -56482,7 +56616,7 @@ class Vastplus {
                         bAligned = true;
 
                         me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-                        $("#" + ic.pre + "dl_rmsd").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
+                        $("#" + ic.pre + "dl_rmsd_html").html("<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>");
                         if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
 
                         // apply matrix for each atom                       
@@ -58428,7 +58562,7 @@ class ApplyCommand {
 
             let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
             //$("#" + me.pre + "legend").html(legendHtml).show();
-            $("#" + me.pre + "dl_legend").html(legendHtml);
+            $("#" + me.pre + "dl_legend_html").html(legendHtml);
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Range');
         }
     }
@@ -61944,7 +62078,7 @@ class Delphi {
         let phidata = await this.CalcPhiPrms(gsize, salt, contour, bSurface, data);
 
         this.loadPhiData(phidata, contour, bSurface);
-    
+
         ic.bAjaxPhi = true;
 
         if(bSurface) {
@@ -62708,8 +62842,8 @@ class Dssp {
 
                 // align each 3D domain with reference structure
                 let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
-                let subdomains = result.subdomains;
-                
+                let subdomains = result.subdomains;  
+
                 let domainAtomsArray = [];
                 if(subdomains.length <= 1) {
                     domainAtomsArray.push(ic.chains[chainid]);
@@ -62739,9 +62873,9 @@ class Dssp {
                 }
        
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
-
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     let domainid = chainid + '-' + k;
+
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                         let struct2 = ic.defaultPdbId + index;
                         let pdb_query = dataArray[index].value; //[0];
@@ -64331,7 +64465,7 @@ class Analysis {
            //html += '<b>Buried Surface for both Sets</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
-           $("#" + ic.pre + "dl_buriedarea").html(html);
+           $("#" + ic.pre + "dl_buriedarea_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
            me.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
        }
@@ -64437,7 +64571,7 @@ class Analysis {
 
             tableHtml += '</table><br><br>';
 
-            $("#" + me.pre + "dl_disttable").html(tableHtml);
+            $("#" + me.pre + "dl_disttable_html").html(tableHtml);
         }
      }
 
@@ -64994,7 +65128,7 @@ class Diagram2d {
 
         ic.html2ddgm += html;
 
-        $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
+        $("#" + ic.pre + "dl_2ddgm_html").html(ic.html2ddgm);
 
         return html;
     }
@@ -70879,7 +71013,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.23.3';
+    this.REVISION = '3.24.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

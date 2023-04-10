@@ -422,6 +422,8 @@ class SetHtml {
         }
 
         html += me.htmlCls.divStr + "dl_" + name1 + "' class='" + dialogClass + "'>";
+        html += me.htmlCls.setDialogCls.addNotebookTitle("dl_" + name1, 'DelPhi Potential');
+        
         html += me.htmlCls.divStr + "dl_" + name1 + "_tabs' style='border:0px;'>";
         html += "<ul>";
         html += "<li><a href='#" + me.pre + name1 + "tab1'>" + tab1 + "</a></li>";
@@ -735,7 +737,7 @@ class SetHtml {
                statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
-
+               
                 if(type === 'pdb') {
                     await ic.pdbParserCls.loadPdbData(data);
 

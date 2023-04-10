@@ -57,7 +57,7 @@
             //if(window.dialog) window.dialog.dialog( "close" );
             
             let html = me.utilsCls.getMemDesc();
-            $("#" + ic.pre + "dl_rmsd").html(html);
+            $("#" + ic.pre + "dl_rmsd_html").html(html);
             if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Membranes');
         }
     }
@@ -238,13 +238,13 @@
 
             if ( ic.renderer.xr.isPresenting){    
                 if(ic.canvasUI) ic.canvasUI.update();
-                //if(ic.canvasUILog) ic.canvasUILog.update();
+                if(ic.canvasUILog) ic.canvasUILog.update();
             }
         }
         else if(ic.bAr) {
             if ( ic.renderer.xr.isPresenting ){    
                 ic.gestures.update();
-                //if(ic.canvasUILog) ic.canvasUILog.update();
+                if(ic.canvasUILog) ic.canvasUILog.update();
             }
         }
 

@@ -515,8 +515,11 @@ class Scene {
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
             sphere: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-                ic.setOptionCls.setStyle("proteins", "sphere");
-                ic.setOptionCls.setStyle("nucleotides", "sphere");
+                // ic.setOptionCls.setStyle("proteins", "sphere");
+                // ic.setOptionCls.setStyle("nucleotides", "sphere");
+                ic.opts['surface'] = 'molecular surface';
+                ic.applyMapCls.applySurfaceOptions();
+
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
 
@@ -582,14 +585,17 @@ class Scene {
                     //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
                  }
             } },
-            // delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-            //     ic.debugStr = '###ic.hAtoms: ' + Object.keys(ic.hAtoms).length  + ' ic.dAtoms: ' + Object.keys(ic.dAtoms).length;
-            //     let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
-            //     ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
-            //     ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
-            //     ic.cam.remove( ic.canvasUI.mesh );
-            // } },
-            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: async function() {
+                let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
+                ic.phisurftype = 22; // molecular surface
+                ic.phisurfop = 1.0; // opacity
+                ic.phisurfwf = 'no'; // wireframe
+                await ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
+                
+                //ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 for(let name in ic.labels) {
                     //if(name === 'residue' || name === 'custom') {
                         ic.labels[name] = [];
@@ -599,7 +605,7 @@ class Scene {
                 ic.drawCls.draw();
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.selectionCls.resetAll();
                 
                 ic.cam.remove( ic.canvasUI.mesh );
@@ -619,7 +625,8 @@ class Scene {
             ribbon: "Ribbon",
             schematic: "Schem.",
             stick: "Stick",
-            sphere: "Sphere",
+            //sphere: "Sphere",
+            sphere: "Surface",
 
             color: "Color",
             rainbow: "Rainbow",
@@ -639,7 +646,7 @@ class Scene {
 
             analysis: "Analysis",
             interaction: "Interact",
-            //delphi: "DelPhi",
+            delphi: "DelPhi",
             removeLabel: "No Label",
             reset: "Reset"
         };
