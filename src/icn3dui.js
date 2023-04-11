@@ -554,7 +554,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
         ic.loadCmd = 'load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        if(me.cfg.inpara.indexOf('atype=2') == -1) {
+        if(me.cfg.inpara && me.cfg.inpara.indexOf('atype=2') == -1) {
             await ic.alignParserCls.downloadAlignment(me.cfg.align);
         }
         else {
