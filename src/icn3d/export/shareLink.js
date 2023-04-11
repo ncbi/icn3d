@@ -11,6 +11,7 @@ class ShareLink {
     //file (the comand history) is concatenated in the URL to show the current state.
     async shareLink(bPngHtml, bPngOnly) { let ic = this.icn3d, me = ic.icn3dui;
         let url = this.shareLinkUrl();
+
         let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
         if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
         //var inputid =(ic.inputid) ? ic.inputid : "custom";
@@ -42,39 +43,53 @@ class ShareLink {
             }
         }
 
-        let data = await this.getShareLinkPrms(url, bPngHtml);
-
         let shorturl = 'Problem in getting shortened URL';
-        if(data.shortLink !== undefined) {
-            shorturl = data.shortLink;
-            if(bPngHtml) { // save png and corresponding html
-                let strArray = shorturl.split("/");
-                let shortName = strArray[strArray.length - 1];
-                ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
-                let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
-                text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
-                text += '<!--Start of your comments==================-->\n';
-                let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
-                text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
-                text += '<!--End of your comments====================-->\n';
-                text += '</a>';
-                text += '</div>\n\n';
-                ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
+
+        if(!me.cfg.notebook) {
+            let data = await this.getShareLinkPrms(url, bPngHtml);
+
+            if(data.shortLink !== undefined) {
+                shorturl = data.shortLink;
+                if(bPngHtml) { // save png and corresponding html
+                    let strArray = shorturl.split("/");
+                    let shortName = strArray[strArray.length - 1];
+                    ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
+                    let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
+                    text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
+                    text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
+                    text += '<!--Start of your comments==================-->\n';
+                    let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
+                    text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
+                    text += '<!--End of your comments====================-->\n';
+                    text += '</a>';
+                    text += '</div>\n\n';
+                    ic.saveFileCls.saveFile(inputid + '-' + shortName + '.html', 'html', text);
+                }
             }
+
+            if(bPngHtml && data.shortLink === undefined) {
+                ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+            }
+
+            //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
+            let urlArray = shorturl.split('page.link/');
+            //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
+            // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+            // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
+            if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+
+            $("#" + ic.pre + "short_url").val(shorturl);
+            $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
         }
-        if(bPngHtml && data.shortLink === undefined) {
-            ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
+        else {
+            let outputCmd = this.shareLinkUrl(undefined, true);
+            let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
+            let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview\n";
+            $("#" + ic.pre + "jn_commands").val(jnCmd);
         }
-        //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
-        let urlArray = shorturl.split('page.link/');
-        //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
-        // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
-        // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
-        if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+
         $("#" + ic.pre + "ori_url").val(url);
-        $("#" + ic.pre + "short_url").val(shorturl);
-        $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+
         if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
     }
 
@@ -104,8 +119,9 @@ class ShareLink {
         });
     }
 
-    shareLinkUrl(bAllCommands) { let ic = this.icn3d, me = ic.icn3dui;
+    shareLinkUrl(bAllCommands, bOutputCmd) { let ic = this.icn3d, me = ic.icn3dui;
            let url = me.htmlCls.baseUrl + "icn3d/full.html?";
+           let outputCmd = '';
            if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
            if(ic.bInputUrlfile) {
@@ -280,16 +296,17 @@ class ShareLink {
                prevCommandStr = commandStr;
            }
 
-           url += tmpUrl;
-
            // last command
            if(prevCommandStr) {
-               if(tmpUrl) url += '; ';
-               if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
+               if(tmpUrl) tmpUrl += '; ';
+               if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) tmpUrl += toggleStr + '; ';
 
-               url += prevCommandStr + '|||' + ic.transformCls.getTransformationStr(transformation);
+               tmpUrl += prevCommandStr + '|||' + ic.transformCls.getTransformationStr(transformation);
                statefile += prevCommandStr + '|||' + ic.transformCls.getTransformationStr(transformation) + '\n';
            }
+
+           url += tmpUrl;
+           outputCmd = tmpUrl;
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
            if((ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
@@ -303,7 +320,7 @@ class ShareLink {
                url = url.replace(new RegExp('blast_rep_id=!','g'), 'blast_rep_id=' + id + '_');
            }
 
-           return url;
+           return (bOutputCmd) ? outputCmd : url;
     }
 
     getPngText() { let ic = this.icn3d, me = ic.icn3dui;

@@ -1167,10 +1167,22 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_copyurl', 'Share Link');
+
+        if(me.cfg.notebook) {
+            html += "1. <b>Commands Used in Jupyter Noteboook</b><br><br>"
+            html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
+
+            html += buttonStrTmp + me.pre + 'jn_copy">Copy Commands</button><br><textarea id="' + me.pre + 'jn_commands" rows="4" style="width:100%"></textarea><br><br><br>';
+
+            html += "2. <b>URLs Used in Browsers</b><br><br>"
+        }
+
         html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
         html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
-        html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
-        html += "Lifelong Short URL + Window Title:(To update the window title, click \"Analysis > Your Note/Window Title\".)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url_title' value='' style='width:100%'><br><br>";
+        if(!me.cfg.notebook) {
+            html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
+            html += "Lifelong Short URL + Window Title:(To update the window title, click \"Analysis > Your Note/Window Title\".)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url_title' value='' style='width:100%'><br><br>";
+        }
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_selectannotations' class='" + dialogClass + " icn3d-annotation' style='background-color:white;'>";
