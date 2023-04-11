@@ -492,6 +492,7 @@ class Dialog {
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
             $( "#" + id + "_nb").show();
+            $( "#" + id + "_title").html(title);
 
             height =(me.htmlCls.HEIGHT) * 0.5;
 
@@ -539,6 +540,7 @@ class Dialog {
             if(ic.bRender) {
                 $( "#" + id ).show();
                 $( "#" + id + "_nb").show();
+                $( "#" + id + "_title").html(title);
             }
 
             height = 'auto';
