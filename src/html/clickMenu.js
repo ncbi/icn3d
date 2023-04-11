@@ -1248,8 +1248,6 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
-
-           console.log("1 ### ic.commands: " + ic.commands)
         });
         me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow for chains');

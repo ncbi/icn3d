@@ -226,7 +226,6 @@ class ShareLink {
 
            //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
            let start = 0;
-console.log("2 ### ic.commands: " + ic.commands)
 
            if(bAllCommands || ic.bInputUrlfile) start = 0;
 

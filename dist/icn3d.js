@@ -7773,8 +7773,6 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
                ic.setOptionCls.setOption('color', 'rainbow');
                thisClass.setLogCmd('color rainbow', true);
-
-               console.log("1 ### ic.commands: " + ic.commands);
             });
             me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
                ic.setOptionCls.setOption('color', 'rainbow for chains');
@@ -68112,7 +68110,6 @@ var icn3d = (function (exports) {
 
                //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
                let start = 0;
-    console.log("2 ### ic.commands: " + ic.commands);
 
                if(bAllCommands || ic.bInputUrlfile) start = 0;
 
