@@ -81,16 +81,15 @@ class ShareLink {
             $("#" + ic.pre + "short_url").val(shorturl);
             $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
         }
-        else {
-            let outputCmd = this.shareLinkUrl(undefined, true);
-            let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
-            let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview\n";
-            $("#" + ic.pre + "jn_commands").val(jnCmd);
-        }
+
+        let outputCmd = this.shareLinkUrl(undefined, true);
+        let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
+        let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview";
+        $("#" + ic.pre + "jn_commands").val(jnCmd);
 
         $("#" + ic.pre + "ori_url").val(url);
 
-        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL or Jupyter Notebook Commands');
     }
 
     getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
@@ -224,8 +223,13 @@ class ShareLink {
 
            url += 'command=';
 
-           //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
-           let start = 0;
+           let start;
+           if(me.cfg.notebook) {
+                start =(inparaWithoutCommand !== undefined) ? 1 : 0;
+           }
+           else {
+                start = 0;
+           }
 
            if(bAllCommands || ic.bInputUrlfile) start = 0;
 

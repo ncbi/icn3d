@@ -11195,6 +11195,7 @@ class Dialog {
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
             $( "#" + id + "_nb").show();
+            $( "#" + id + "_title").html(title);
 
             height =(me.htmlCls.HEIGHT) * 0.5;
 
@@ -11242,6 +11243,7 @@ class Dialog {
             if(ic.bRender) {
                 $( "#" + id ).show();
                 $( "#" + id + "_nb").show();
+                $( "#" + id + "_title").html(title);
             }
 
             height = 'auto';
@@ -11295,7 +11297,7 @@ class SetDialog {
     addNotebookTitle(id, title, bAddExtraDiv) { let me = this.icn3dui; me.icn3d;
         //return '<div id="' + me.pre + id + '_nb" style="display:none; background-color:#1c94c4; width:100%"><span style="color:white; font-weight:bold">' + title + '</span>&nbsp;&nbsp;&nbsp;<span onclick="$(\'#' + me.pre + id + '\').hide(); return false;" class="icn3d-nbclose" title="Close">x</span></div>';
 
-        let html = '<div id="' + me.pre + id + '_nb" style="display:none; background-color:#5C9CCC; width:100%"><span style="color:white; font-weight:bold">' + title + '</span>&nbsp;&nbsp;&nbsp;<div onclick="$(\'#' + me.pre + id + '\').hide(); return false;" class="icn3d-nbclose ui-icon ui-icon-close" title="Close"></div></div>';
+        let html = '<div id="' + me.pre + id + '_nb" style="display:none; background-color:#5C9CCC; width:100%"><span id="' + me.pre + id + '_title" style="color:white; font-weight:bold">' + title + '</span>&nbsp;&nbsp;&nbsp;<div onclick="$(\'#' + me.pre + id + '\').hide(); return false;" class="icn3d-nbclose ui-icon ui-icon-close" title="Close"></div></div>';
 
         if(bAddExtraDiv) {
             html += '<div id="' + me.pre + id + '_html"></div>';
@@ -12434,14 +12436,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_copyurl', 'Share Link');
 
-        if(me.cfg.notebook) {
-            html += "1. <b>Commands Used in Jupyter Noteboook</b><br><br>";
-            html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
-
-            html += buttonStrTmp + me.pre + 'jn_copy">Copy Commands</button><br><textarea id="' + me.pre + 'jn_commands" rows="4" style="width:100%"></textarea><br><br><br>';
-
-            html += "2. <b>URLs Used in Browsers</b><br><br>";
-        }
+        html += "1. <b>URLs Used in Browsers</b><br><br>";
 
         html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
         html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
@@ -12449,6 +12444,15 @@ class SetDialog {
             html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
             html += "Lifelong Short URL + Window Title:(To update the window title, click \"Analysis > Your Note/Window Title\".)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url_title' value='' style='width:100%'><br><br>";
         }
+        html += "<br>";
+
+        html += "2. <b>Commands Used in Jupyter Noteboook</b><br><br>";
+        html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
+
+        html += '<textarea id="' + me.pre + 'jn_commands" rows="4" style="width:100%"></textarea><br>';
+
+        html += buttonStrTmp + me.pre + 'jn_copy">Copy Commands</button><br>';
+
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_selectannotations' class='" + dialogClass + " icn3d-annotation' style='background-color:white;'>";
@@ -67962,16 +67966,15 @@ class ShareLink {
             $("#" + ic.pre + "short_url").val(shorturl);
             $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
         }
-        else {
-            let outputCmd = this.shareLinkUrl(undefined, true);
-            let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
-            let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview\n";
-            $("#" + ic.pre + "jn_commands").val(jnCmd);
-        }
+
+        let outputCmd = this.shareLinkUrl(undefined, true);
+        let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
+        let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview";
+        $("#" + ic.pre + "jn_commands").val(jnCmd);
 
         $("#" + ic.pre + "ori_url").val(url);
 
-        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+        if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL or Jupyter Notebook Commands');
     }
 
     getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
@@ -68105,8 +68108,13 @@ class ShareLink {
 
            url += 'command=';
 
-           //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
-           let start = 0;
+           let start;
+           if(me.cfg.notebook) {
+                start =(inparaWithoutCommand !== undefined) ? 1 : 0;
+           }
+           else {
+                start = 0;
+           }
 
            if(bAllCommands || ic.bInputUrlfile) start = 0;
 
