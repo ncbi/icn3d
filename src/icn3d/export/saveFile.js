@@ -421,7 +421,6 @@ class SaveFile {
         let bMulStruc =(struArray.length > 1) ? true : false;
 
         let molNum = 1, prevStru = '', prevChain = '';
-        //pdbStr += '\n';
 
         let addedChainResiHash = {};
         for(let i in atomHash) {
@@ -441,20 +440,24 @@ class SaveFile {
 
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
-                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                if(!bNoHeader) {
+                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                    //pdbStr += '\n'; // separate from incomplete secondary structures 
+                }
 
-                prevStru = atom.structure;
+                //prevStru = atom.structure;
                 ++molNum;
             }
-            else {
-                if(atom.chain != prevChain) {
+            //else {
+                //if(atom.chain != prevChain) {
+                if(atom.chain != prevChain && atom.structure == prevStru) {
                     // add a line "TER" to work with scap/profix to add missing atoms
                     if(prevChain) {
                         pdbStr += 'TER\n';
                     }
-                    prevChain = atom.chain;
+                    //prevChain = atom.chain;
                 }
-            }
+            //}
 
             let chainResi = atom.chain + '_' + atom.resi;
             if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {    
@@ -619,6 +622,9 @@ class SaveFile {
             }
 
             pdbStr += line + '\n';
+
+            prevStru = atom.structure;
+            prevChain = atom.chain;
         }
 
         pdbStr += connStr;

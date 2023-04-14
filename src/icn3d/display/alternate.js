@@ -10,6 +10,8 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+        //ic.transformCls.zoominSelection();
+        
         // default ic.ALTERNATE_STRUCTURE = -1
         if(ic.ALTERNATE_STRUCTURE == -1) {
             ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);

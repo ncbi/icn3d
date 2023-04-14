@@ -1167,7 +1167,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_copyurl', 'Share Link');
-
+        html += "<br>";
         html += "1. <b>URLs Used in Browsers</b><br><br>"
 
         html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
@@ -1176,7 +1176,6 @@ class SetDialog {
             html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
             html += "Lifelong Short URL + Window Title:(To update the window title, click \"Analysis > Your Note/Window Title\".)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url_title' value='' style='width:100%'><br><br>";
         }
-        html += "<br>";
 
         html += "2. <b>Commands Used in Jupyter Noteboook</b><br><br>"
         html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";

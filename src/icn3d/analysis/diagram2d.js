@@ -668,6 +668,8 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
+            ic.transformCls.zoominSelection();
+
             me.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
 
@@ -676,6 +678,7 @@ class Diagram2d {
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
+            ic.transformCls.zoominSelection();
         });
 
         $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { let ic = thisClass.icn3d;

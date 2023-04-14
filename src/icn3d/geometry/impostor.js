@@ -107,6 +107,7 @@ class Impostor {
 
     setParametersForShader (opacity) { let ic = this.icn3d, me = ic.icn3dui;
         let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
+        //if(!background) background = me.parasCls.thr(0x000000);      
 
         let near = 2.5*ic.maxD;
         let far = 4*ic.maxD;

@@ -45,7 +45,7 @@ class Domain3d {
         this.nc_fact = 0.0;				// size factor for internal contacts
 
 		// added by Jiyao
-		this.min_contacts = 10;			// minimum number of contacts to be considered as neighbors
+		this.min_contacts = 3;			// minimum number of contacts to be considered as neighbors
 
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];
@@ -1107,7 +1107,7 @@ class Domain3d {
 				}
 			}
 		}
-		
+				
 		return {subdomains: subdomains, substruct: substruct, pos2resi:pos2resi };
 	} // end c2b_NewSplitChain
 

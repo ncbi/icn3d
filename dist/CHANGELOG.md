@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.1.zip) was release on April 14, 2023. Added more menus to the VR view of iCn3D to measure distance, toggle highlight, etc.
+
 [icn3d-3.24.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.0.zip) was release on April 10, 2023. Improved the use of iCn3D in Jupyter Notebook by making the dialogs closable, and adding DelPhi potential and mutation analysis; added DelPhi potential as one option in the Virtual Reality (VR) view of iCn3D.
 
 [icn3d-3.23.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.23.3.zip) was release on April 6, 2023. Fixed the VR view when only one controller is available.

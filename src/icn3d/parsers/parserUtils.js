@@ -30,7 +30,7 @@ class ParserUtils {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                   if(ic.bAfMem) {
-                    //if(window.dialog) window.dialog.dialog( "close" );
+                    //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
                     html += me.utilsCls.getMemDesc();
                   }
                   $("#" + ic.pre + "dl_rmsd_html").html(html);

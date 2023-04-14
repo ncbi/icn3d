@@ -540,7 +540,7 @@ class ShowSeq {
         let strand2len_start_stop = {};
         let prevRefnumStr, prevPostfix, prevRefnum;
 
-        // sometimes one chain may have several Ig domains,set a index for each IgDomain
+        // sometimes one chain may have several Ig domains,set an index for each IgDomain
         let index = 1, prevStrandPostfix = '', bStart = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);

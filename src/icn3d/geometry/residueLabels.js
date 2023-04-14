@@ -9,7 +9,7 @@ class ResidueLabels {
 
     //Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations.
     //If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.
-    addResidueLabels(atoms, bSchematic, alpha, bNumber) { let ic = this.icn3d, me = ic.icn3dui;
+    addResidueLabels(atoms, bSchematic, alpha, bNumber, bRefnum) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let size = 18;
@@ -50,6 +50,15 @@ class ResidueLabels {
                     label.text += atom.resi;
                     //label.factor = 0.3;
                 }
+                else if(bRefnum) {
+                    let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                    let refnum = '';
+                    if(ic.resid2refnum[resid]) {
+                        refnum = (ic.resid2refnum[resid].substr(0, 1) == ' ') ? '' : ic.resid2refnum[resid];
+                    }
+
+                    label.text = refnum;
+                }
                 label.size = size;
                 label.factor = 0.3;
 
@@ -59,6 +68,9 @@ class ResidueLabels {
                 // don't change residue labels
                 if(bNumber) {
                     label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
+                }
+                else if(bRefnum) {
+                    label.color = '#00FFFF';
                 }
                 else {
                     label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
