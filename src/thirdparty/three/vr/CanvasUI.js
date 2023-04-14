@@ -30,7 +30,7 @@ class CanvasUI{
             body:{
                 fontFamily:'Arial', 
                 fontSize:30, 
-                padding:20, 
+                padding:2, //20, 
                 backgroundColor: '#000', 
                 fontColor:'#fff', 
                 borderRadius: 6
@@ -40,12 +40,18 @@ class CanvasUI{
         
         if (this.config.width === undefined) this.config.width = 512;
         if (this.config.height === undefined) this.config.height = 512;
-        if (this.config.body === undefined) this.config.body = {fontFamily:'Arial', size:30, padding:20, backgroundColor: '#000', fontColor:'#fff', borderRadius: 6};
+        if (this.config.body === undefined) this.config.body = {
+            fontFamily:'Arial', 
+            size:30, 
+            padding:2, //20, 
+            backgroundColor: '#000', 
+            fontColor:'#fff', 
+            borderRadius: 6};
         
         const body = this.config.body;
         if (body.borderRadius === undefined) body.borderRadius = 6;
         if (body.fontFamily === undefined) body.fontFamily = "Arial";
-        if (body.padding === undefined) body.padding = 20;
+        if (body.padding === undefined) body.padding = 2; //20;
         if (body.fontSize === undefined) body.fontSize = 30;
         if (body.backgroundColor === undefined) body.backgroundColor = '#000';
         if (body.fontColor === undefined) body.fontColor = '#fff';

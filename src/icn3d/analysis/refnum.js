@@ -122,7 +122,8 @@
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
                             for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + n;
+                                let residNCBI = chainid + '_' + n;
+                                let resid = ic.ncbi2resid[residNCBI];
                                 domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                                 ic.resid2domainid[resid] = chainid + '-' + k;
                             }

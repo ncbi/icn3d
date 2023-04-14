@@ -5269,10 +5269,10 @@ class ParasCls {
         ];
 
         this.backgroundColors = {
-            black: this.thr(0x000000),
-             grey: this.thr(0xCCCCCC),
-            white: this.thr(0xFFFFFF),
-            transparent: this.thr(0xFFFFFF) //this.thr(0x000000)
+            'black': this.thr(0x000000),
+             'grey': this.thr(0xCCCCCC),
+            'white': this.thr(0xFFFFFF),
+            'transparent': this.thr(0xFFFFFF) //this.thr(0x000000)
         };
 
         this.residueColors = {
@@ -8262,6 +8262,13 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
+         ic.selectionCls.saveSelectionIfSelected();
+         thisClass.setLogCmd('add reference number labels', true);
+         ic.drawCls.draw();
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
            ic.analysisCls.addChainLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
@@ -10290,8 +10297,8 @@ class SetMenu {
             //}
 
             //!!!
-            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-            //!!!html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+            //html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -10421,6 +10428,8 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
+            //!!!
+            //html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
         }
@@ -12435,7 +12444,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_copyurl', 'Share Link');
-
+        html += "<br>";
         html += "1. <b>URLs Used in Browsers</b><br><br>";
 
         html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
@@ -12444,7 +12453,6 @@ class SetDialog {
             html += "Lifelong Short URL:(To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
             html += "Lifelong Short URL + Window Title:(To update the window title, click \"Analysis > Your Note/Window Title\".)<br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "short_url_title' value='' style='width:100%'><br><br>";
         }
-        html += "<br>";
 
         html += "2. <b>Commands Used in Jupyter Noteboook</b><br><br>";
         html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
@@ -21909,7 +21917,7 @@ class CanvasUI{
             body:{
                 fontFamily:'Arial', 
                 fontSize:30, 
-                padding:20, 
+                padding:2, //20, 
                 backgroundColor: '#000', 
                 fontColor:'#fff', 
                 borderRadius: 6
@@ -21919,12 +21927,18 @@ class CanvasUI{
         
         if (this.config.width === undefined) this.config.width = 512;
         if (this.config.height === undefined) this.config.height = 512;
-        if (this.config.body === undefined) this.config.body = {fontFamily:'Arial', size:30, padding:20, backgroundColor: '#000', fontColor:'#fff', borderRadius: 6};
+        if (this.config.body === undefined) this.config.body = {
+            fontFamily:'Arial', 
+            size:30, 
+            padding:2, //20, 
+            backgroundColor: '#000', 
+            fontColor:'#fff', 
+            borderRadius: 6};
         
         const body = this.config.body;
         if (body.borderRadius === undefined) body.borderRadius = 6;
         if (body.fontFamily === undefined) body.fontFamily = "Arial";
-        if (body.padding === undefined) body.padding = 20;
+        if (body.padding === undefined) body.padding = 2; //20;
         if (body.fontSize === undefined) body.fontSize = 30;
         if (body.backgroundColor === undefined) body.backgroundColor = '#000';
         if (body.fontColor === undefined) body.fontColor = '#fff';
@@ -23023,8 +23037,8 @@ class Scene {
         if(ic.bVr) {      
             ic.canvasUI = this.createUI();
 
-            //ic.canvasUILog = this.createUILog();
-            //ic.cam.add( ic.canvasUILog.mesh );
+            // ic.canvasUILog = this.createUILog();
+            // ic.cam.add( ic.canvasUILog.mesh );
 
             ic.raycasterVR = new THREE.Raycaster();
             ic.workingMatrix = new THREE.Matrix4();
@@ -23258,128 +23272,207 @@ class Scene {
         }
     }
 
-    createUI() { let ic = this.icn3d; ic.icn3dui;
-        let margin = 6, btnWidth = 94, btnHeight = 50, btnWidth2 = 44;
+    createUI() { let ic = this.icn3d, me = ic.icn3dui;
+        let margin = 6, btnWidth = 94, btnHeight = 50, btnHeight2 = 22, svgWidth = 94, svgHeight2 = 34;
         let fontSize = 12, fontLarge = 14, fontColor = "#1c94c4", bkgdColor = "#ccc", hoverColor = "#fbcb09";
+        let paddingtop = 20, paddingtop2 = 12;
 
         const config = {
-            panelSize: { width: 2, height: 1.2 },
-            height: 300,
-            select: { type: "button", position:{ top: margin, left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
-            residue: { type: "button", position:{ top: margin, left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            panelSize: { width: 2, height: 1.6 },
+            height: 400,
+            select: { type: "button", paddingTop: paddingtop, position:{ top: margin, left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            residue: { type: "button", paddingTop: paddingtop, position:{ top: margin + (btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.pk = 2;
                 //ic.opts['pk'] = 'residue';
+                if(!ic.pAtomNum) ic.pAtomNum = 0;
+
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            secondarySelect: { type: "button", position:{ top: margin, left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            secondarySelect: { type: "button", paddingTop: paddingtop2, position:{ top: margin + 2*(btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.pk = 3;
                 //ic.opts['pk'] = 'strand';
+                if(!ic.pAtomNum) ic.pAtomNum = 0;
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            chainSelect: { type: "button", position:{ top: margin, left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            chainSelect: { type: "button", paddingTop: paddingtop, position:{ top: margin + 3*(btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.pk = 5;
                 //ic.opts['pk'] = 'chain';
+                if(!ic.pAtomNum) ic.pAtomNum = 0;
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            atom: { type: "button", paddingTop: paddingtop, position:{ top: margin + 4*(btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.pk = 1;
+                //ic.opts['pk'] = 'atom';
+                if(!ic.pAtomNum) ic.pAtomNum = 0;
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            reset: { type: "button", paddingTop: paddingtop, position:{ top: margin + 5*(btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.viewInterPairsCls.resetInteractionPairs();
+                ic.selectionCls.resetAll();
+                
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            togglehl: { type: "button", paddingTop: paddingtop2, position:{ top: margin + 6*(btnHeight + margin), left: margin}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.hlUpdateCls.toggleHighlight();
+                
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
 
-            style: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
-            ribbon: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            style: { type: "button", paddingTop: paddingtop, position:{ top: margin, left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            ribbon: { type: "button", paddingTop: paddingtop, position:{ top: margin + (btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setStyle("proteins", "ribbon");
                 ic.setOptionCls.setStyle("nucleotides", "nucleotide cartoon");
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            schematic: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            schematic: { type: "button", paddingTop: paddingtop, position:{ top: margin + 2*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setStyle("proteins", "schematic");
                 ic.setOptionCls.setStyle("nucleotides", "schematic");
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            stick: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            stick: { type: "button", paddingTop: paddingtop, position:{ top: margin + 3*(btnHeight + margin), left: margin + (btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setStyle("proteins", "stick");
                 ic.setOptionCls.setStyle("nucleotides", "stick");
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            sphere: { type: "button", position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-                // ic.setOptionCls.setStyle("proteins", "sphere");
-                // ic.setOptionCls.setStyle("nucleotides", "sphere");
+            sphere: { type: "button", paddingTop: paddingtop, position:{ top: margin + 4*(btnHeight + margin), left: margin + (btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setStyle("proteins", "sphere");
+                ic.setOptionCls.setStyle("nucleotides", "sphere");
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            surface: { type: "button", paddingTop: paddingtop, position:{ top: margin + 5*(btnHeight + margin), left: margin + (btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.opts['surface'] = 'molecular surface';
                 ic.applyMapCls.applySurfaceOptions();
 
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
+            surfaceTrn: { type: "button", paddingTop: paddingtop2, position:{ top: margin + 6*(btnHeight + margin), left: margin + (btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.opts['surface'] = 'molecular surface';
+                ic.opts['opacity'] = '0.2';
+                ic.applyMapCls.applySurfaceOptions();
 
-            color: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
-            rainbow: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+
+            color: { type: "button", paddingTop: paddingtop, position:{ top: margin, left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            rainbow: { type: "button", paddingTop: paddingtop, position:{ top: margin + (btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'rainbow for chains');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            atomColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            atomColor: { type: "button", paddingTop: paddingtop, position:{ top: margin + 2*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'atom');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            secondaryColor: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            chainColor: { type: "button", paddingTop: paddingtop, position:{ top: margin + 3*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'chain');
+                 ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            secondaryColor: { type: "button", paddingTop: paddingtop2, position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'secondary structure green');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            AlphaFold: { type: "button", position:{ top: margin + 2*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            charge: { type: "button", paddingTop: paddingtop, position:{ top: margin + 6*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'charge');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            AlphaFold: { type: "button", paddingTop: paddingtop, position:{ top: margin + 5*(btnHeight + margin), left: margin + 2*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'confidence');
                  ic.cam.remove( ic.canvasUI.mesh );
             } },
+            
 
-            unicolor: { type: "button", position:{ top: margin + 3*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
-            red: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth}, width: btnWidth2, height: btnHeight, fontColor: 'red', hover: hoverColor, onSelect: function() {
+            unicolor: { type: "button", paddingTop: paddingtop, position:{ top: margin, left: margin + 3*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            red: { type: "button", position:{ top: btnHeight, left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'red', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'red');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            green: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + (btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'green', hover: hoverColor, onSelect: function() {
+            green: { type: "button", position:{ top: btnHeight + (btnHeight2 + margin), left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'green', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'green');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            blue: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 2*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'blue', hover: hoverColor, onSelect: function() {
+            blue: { type: "button", position:{ top: 2*(margin + btnHeight) - margin, left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'blue', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'blue');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            magenta: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 3*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'magenta', hover: hoverColor, onSelect: function() {
+            blueviolet: { type: "button", position:{ top: 2*(margin + btnHeight) - margin + (btnHeight2 + margin), left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: '#8A2BE2', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', '8A2BE2');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            magenta: { type: "button", position:{ top: 3*(margin + btnHeight) - margin , left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'magenta', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'magenta');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            orange: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 4*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'orange', hover: hoverColor, onSelect: function() {
+            yellow: { type: "button", position:{ top: 3*(margin + btnHeight) - margin + (btnHeight2 + margin), left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'yellow', hover: hoverColor, onSelect: function() {
+                ic.setOptionCls.setOption('color', 'yellow');
+                ic.cam.remove( ic.canvasUI.mesh );
+            } },
+            orange: { type: "button", position:{ top: 4*(margin + btnHeight) - margin, left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'orange', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'FFA500');
                  ic.cam.remove( ic.canvasUI.mesh );
             } },
-            cyan: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 5*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'cyan', hover: hoverColor, onSelect: function() {
+            cyan: { type: "button", position:{ top: 4*(margin + btnHeight) - margin + (btnHeight2 + margin), left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'cyan', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'cyan');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            gray: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 6*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'gray', hover: hoverColor, onSelect: function() {
+            gray: { type: "button", position:{ top: 5*(margin + btnHeight) - margin, left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'gray', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', '888888');
                  ic.cam.remove( ic.canvasUI.mesh );
             } },
-            white: { type: "button", position:{ top: 3*(btnHeight + margin), left: margin + btnWidth + 7*(btnWidth2 + margin)}, width: btnWidth2, height: btnHeight, fontColor: 'white', hover: hoverColor, onSelect: function() {
+            white: { type: "button", position:{ top: 5*(margin + btnHeight) - margin + (btnHeight2 + margin), left: 3*(btnWidth + margin)}, width: svgWidth, height: svgHeight2, fontColor: 'white', hover: hoverColor, onSelect: function() {
                 ic.setOptionCls.setOption('color', 'white');
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
 
-            analysis: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
-            interaction: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + (btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-                 try {
-                    ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, '3d', 1, 1, 1, 1, 1, 1);
+            analysis: { type: "button", paddingTop: paddingtop, position:{ top: margin, left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: "#000", fontSize: fontLarge, backgroundColor: bkgdColor},
+            distance: { type: "button", paddingTop: paddingtop, position:{ top: margin + (btnHeight + margin), left: margin + 4*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                try {
+                    ic.bMeasureDistance = true;
+
+                    let atoms1 = ic.pickingCls.getPickedAtomList(ic.pk, ic.pAtom);
+                    let atoms2 = ic.pickingCls.getPickedAtomList(ic.pk, ic.pAtom2);
+
+                    let center1 = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(atoms1, ic.atoms)).center;
+                    let center2 = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(atoms2, ic.atoms)).center;
+
+                    let size = 0, background = 0;
+                    let color = '#FFFF00';
+                    let x =(center1.x + center2.x) / 2;
+                    let y =(center1.y + center2.y) / 2;
+                    let z =(center1.z + center2.z) / 2;
+
+                    //ic.analysisCls.addLineFromPicking('distance');
+                    let dashed = true;
+                    ic.analysisCls.addLine(center1.x, center1.y, center1.z, center2.x, center2.y, center2.z, color, dashed, 'distance');
+        
+                    let distance = parseInt(center1.distanceTo(center2) * 10) / 10;
+                    let text = distance.toString() + " A";
+                    ic.analysisCls.addLabel(text, x, y, z, size, color, background, 'distance');
+                    ic.drawCls.draw();
+
                     ic.cam.remove( ic.canvasUI.mesh );
-                 }
-                 catch(err) {
+                }
+                catch(err) {
                     //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
-                 }
+                }
             } },
-            delphi: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 2*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: async function() {
-                let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
-                ic.phisurftype = 22; // molecular surface
-                ic.phisurfop = 1.0; // opacity
-                ic.phisurfwf = 'no'; // wireframe
-                await ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
-                
-                //ic.canvasUILog.updateElement( "info", "debug: " + ic.debugStr );
-                ic.cam.remove( ic.canvasUI.mesh );
-            } },
-            removeLabel: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 3*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+            interaction: { type: "button", paddingTop: paddingtop, position:{ top: margin + 2*(btnHeight + margin), left: margin + 4*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
+                try {
+                   ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, '3d', 1, 1, 1, 1, 1, 1);
+                   ic.cam.remove( ic.canvasUI.mesh );
+                }
+                catch(err) {
+                   //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
+                }
+           } },
+           delphi: { type: "button", paddingTop: paddingtop, position:{ top: margin + 3*(btnHeight + margin), left: margin + 4*(btnWidth + margin)}, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: async function() {
+               let gsize = 65, salt = 0.15, contour = 2, bSurface = true;
+               ic.phisurftype = 22; // molecular surface
+               ic.phisurfop = 1.0; // opacity
+               ic.phisurfwf = 'no'; // wireframe
+               await ic.delphiCls.CalcPhi(gsize, salt, contour, bSurface);
+               
+               ic.cam.remove( ic.canvasUI.mesh );
+           } },
+            removeLabel: { type: "button", paddingTop: paddingtop, position:{ top: margin + 4*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
                 for(let name in ic.labels) {
                     //if(name === 'residue' || name === 'custom') {
                         ic.labels[name] = [];
@@ -23389,12 +23482,6 @@ class Scene {
                 ic.drawCls.draw();
                 ic.cam.remove( ic.canvasUI.mesh );
             } },
-            reset: { type: "button", position:{ top: margin + 4*(btnHeight + margin), left: margin + 4*(btnWidth + margin) }, width: btnWidth, height: btnHeight, fontColor: fontColor, fontSize: fontSize, backgroundColor: bkgdColor, hover: hoverColor, onSelect: function() {
-                ic.selectionCls.resetAll();
-                
-                ic.cam.remove( ic.canvasUI.mesh );
-            } },
-
 
             renderer: ic.renderer
         };
@@ -23402,37 +23489,45 @@ class Scene {
         const content = {
             select: "Select",
             residue: "Residue",
-            secondarySelect: "SSE",
+            secondarySelect: "Secondary Structure",
             chainSelect: "Chain",
+            atom: "Atom",
+            reset: "Reset",
+            togglehl: "Toggle Highlight",
 
             style: "Style",
             ribbon: "Ribbon",
-            schematic: "Schem.",
+            schematic: "Schematic",
             stick: "Stick",
-            //sphere: "Sphere",
-            sphere: "Surface",
+            sphere: "Sphere",
+            surface: "Surface",
+            surfaceTrn: "Transparent Surface",
 
             color: "Color",
             rainbow: "Rainbow",
             atomColor: "Atom",
-            secondaryColor: "SSE",
+            chainColor: "Chain",
+            secondaryColor: "Secondary Structure",
             AlphaFold: "AlphaFold",
+            charge: "Charge",
 
             unicolor: "UniColor",
-            red: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            green: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            blue: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            magenta: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            orange: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            cyan: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            gray: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
-            white: "<path>M 50 15 L 15 15 L 15 50 L 50 50 Z<path>",
+            red: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            green: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            blue: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            blueviolet: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            magenta: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            yellow: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            orange: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            cyan: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            gray: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
+            white: "<path>M 100 15 L 15 15 L 15 100 L 100 100 Z<path>",
 
             analysis: "Analysis",
-            interaction: "Interact",
-            delphi: "DelPhi",
-            removeLabel: "No Label",
-            reset: "Reset"
+            distance: "Distance",
+            interaction: "Interaction",
+            delphi: "DelPhi Potential",
+            removeLabel: "Remove Label"
         };
 
         const ui = new CanvasUI( content, config );
@@ -31640,7 +31735,7 @@ class ResidueLabels {
 
     //Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations.
     //If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.
-    addResidueLabels(atoms, bSchematic, alpha, bNumber) { let ic = this.icn3d, me = ic.icn3dui;
+    addResidueLabels(atoms, bSchematic, alpha, bNumber, bRefnum) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let size = 18;
@@ -31680,6 +31775,15 @@ class ResidueLabels {
                     label.text += atom.resi;
                     //label.factor = 0.3;
                 }
+                else if(bRefnum) {
+                    let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                    let refnum = '';
+                    if(ic.resid2refnum[resid]) {
+                        refnum = (ic.resid2refnum[resid].substr(0, 1) == ' ') ? '' : ic.resid2refnum[resid];
+                    }
+
+                    label.text = refnum;
+                }
                 label.size = size;
                 label.factor = 0.3;
 
@@ -31689,6 +31793,9 @@ class ResidueLabels {
                 // don't change residue labels
                 if(bNumber) {
                     label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
+                }
+                else if(bRefnum) {
+                    label.color = '#00FFFF';
                 }
                 else {
                     label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
@@ -31895,6 +32002,7 @@ class Impostor {
 
     setParametersForShader (opacity) { let ic = this.icn3d, me = ic.icn3dui;
         let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
+        //if(!background) background = me.parasCls.thr(0x000000);      
 
         let near = 2.5*ic.maxD;
         let far = 4*ic.maxD;
@@ -32899,6 +33007,8 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+        //ic.transformCls.zoominSelection();
+        
         // default ic.ALTERNATE_STRUCTURE = -1
         if(ic.ALTERNATE_STRUCTURE == -1) {
             ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
@@ -33081,7 +33191,7 @@ class Alternate {
 
         // show membranes
         if(ic.bOpm) {
-            //if(window.dialog) window.dialog.dialog( "close" );
+            //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
             
             let html = me.utilsCls.getMemDesc();
             $("#" + ic.pre + "dl_rmsd_html").html(html);
@@ -33135,28 +33245,35 @@ class Alternate {
 
         // thumbstick move
         let yMax = 0;
-        if(yArray[0] != 0 && yArray[1] != 0) {
-            yMax = yArray[0]; // right
+        if(yArray) {
+            if(yArray[0] != 0 && yArray[1] != 0) {
+                yMax = yArray[0]; // right
+            }
+            else if(yArray[0] != 0) {
+                yMax = yArray[0]; 
+            }
+            else if(yArray[1] != 0) {
+                yMax = yArray[1]; 
+            }
         }
-        else if(yArray[0] != 0) {
-            yMax = yArray[0]; 
-        }
-        else if(yArray[1] != 0) {
-            yMax = yArray[1]; 
-        }
+        if(yMax === undefined) yMax = 0;
 
         // selection only work when squeeze (menu) is not pressed
         if(selectPressed && !squeezePressed) {
             let dtAdjusted = yMax / 1000.0 * dt; 
-
+            
             const speed = 5; //2;
-            const quaternion = ic.dolly.quaternion.clone();
-            ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
-            ic.dolly.translateZ(dtAdjusted * speed);
-            //ic.dolly.position.y = 0; // limit to a plane
-            ic.dolly.quaternion.copy(quaternion); 
-
-            if(yMax == 0) {               
+            if(yMax != 0) {
+                //if(ic.dolly && ic.dolly.quaternion && ic.dummyCam) {
+                    ic.uistr += "dolly";
+                    const quaternion = ic.dolly.quaternion.clone();
+                    ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
+                    ic.dolly.translateZ(dtAdjusted * speed);
+                    //ic.dolly.position.y = 0; // limit to a plane
+                    ic.dolly.quaternion.copy(quaternion); 
+                //}
+            }
+            else { //if(yMax == 0) {
                 controller.children[0].scale.z = 10;
                 ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
@@ -33180,7 +33297,15 @@ class Alternate {
                     }
 
                     if(atom) {
-                        ic.pAtom = atom;
+                        if(ic.pAtomNum % 2 === 0) {
+                            ic.pAtom = atom;
+                        }
+                        else {
+                            ic.pAtom2 = atom;
+                        }
+
+                        ++ic.pAtomNum;
+
                         //ic.pickingCls.showPicking(atom);
 
                         this.showPickingVr(ic.pk, atom);
@@ -33190,7 +33315,6 @@ class Alternate {
                 } 
             }
         }
-
     }
     catch(err) {
         //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
@@ -33200,29 +33324,13 @@ class Alternate {
     showPickingVr(pk, atom) { let ic = this.icn3d; ic.icn3dui;
         if(!pk) pk = 2; // residues
 
-        if(pk === 1) {
-          ic.hAtoms[atom.serial] = 1;
-        }
-        else if(pk === 2) {
-          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-          ic.hAtoms = ic.residues[residueid];
-        }
-        else if(pk === 3) {
-          ic.hAtoms = ic.pickingCls.selectStrandHelixFromAtom(atom);
-        }
-        else if(pk === 4) {
-          ic.hAtoms = ic.pickingCls.select3ddomainFromAtom(atom);
-        }
-        else if(pk === 5) {
-          let chainid = atom.structure + '_' + atom.chain;
-          ic.hAtoms = ic.chains[chainid];
-        }
+        ic.hAtoms = ic.pickingCls.getPickedAtomList(pk, atom);
 
         if(pk === 2) {
             ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
         }
         else if(pk === 1) {
-            ic.residueLabelsCls.addAtomLabels(atoms);
+            ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
         }
 
         ic.setOptionCls.setStyle("proteins", atom.style);
@@ -33259,7 +33367,6 @@ class Alternate {
                     
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
                     thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
-                    //thisClass.handleController( controller, dt, pressed );
                 }
             }
 
@@ -36305,7 +36412,7 @@ class SetOption {
         }
 
         if(bClose) {
-            if(window.dialog) window.dialog.dialog( "close" );
+            if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
         }
      }
 
@@ -36492,23 +36599,27 @@ class SetOption {
         let html = '';
 
         const name2color = {
+            "<b>Protodomain 1</b>": "",
             "A Strand": "0000FF",
             "B Strand": "006400",
             "C Strand": "FFFF00", //"F0E68C",
             "C' Strand": "FFA500",
+            "<br><b>Linker</b>": "",
             "C'' Strand": "FF0000",
+            "<br><b>Protodomain 2</b>": "",
             "D Strand": "0000FF",
             "E Strand": "006400",
             "F Strand": "FFFF00", //"F0E68C",
             "G Strand": "FFA500",
+            "": "",
             "Loop": "CCCCCC"
         };
 
-        html += "<div>";
+        html += "<div>A protodomain is a supersecondary structure <br>that by its duplication, symmetry operations <br>can generate a structural domain.<br><br>";
         for (let name in name2color) {
             let color = name2color[name];
             html += "<span>";
-            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            if(color) html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
             html += name;
             html +=  "</span><br>";
         }
@@ -38756,7 +38867,7 @@ class Domain3d {
         this.nc_fact = 0.0;				// size factor for internal contacts
 
 		// added by Jiyao
-		this.min_contacts = 10;			// minimum number of contacts to be considered as neighbors
+		this.min_contacts = 3;			// minimum number of contacts to be considered as neighbors
 
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];
@@ -39811,7 +39922,7 @@ class Domain3d {
 				}
 			}
 		}
-		
+				
 		return {subdomains: subdomains, substruct: substruct, pos2resi:pos2resi };
 	} // end c2b_NewSplitChain
 
@@ -42711,7 +42822,7 @@ class ShowSeq {
         let strand2len_start_stop = {};
         let prevRefnumStr, prevPostfix, prevRefnum;
 
-        // sometimes one chain may have several Ig domains,set a index for each IgDomain
+        // sometimes one chain may have several Ig domains,set an index for each IgDomain
         let index = 1, prevStrandPostfix = '', bStart = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
@@ -52625,7 +52736,7 @@ class ParserUtils {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
                   if(ic.bAfMem) {
-                    //if(window.dialog) window.dialog.dialog( "close" );
+                    //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
                     html += me.utilsCls.getMemDesc();
                   }
                   $("#" + ic.pre + "dl_rmsd_html").html(html);
@@ -57436,6 +57547,11 @@ class ApplyCommand {
       }
       else if(command == 'add residue number labels') {
         ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
+
+        ic.drawCls.draw();
+      }
+      else if(command == 'add reference number labels') {
+        ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
 
         ic.drawCls.draw();
       }
@@ -62885,7 +63001,8 @@ class Dssp {
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
                             for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + n;
+                                let residNCBI = chainid + '_' + n;
+                                let resid = ic.ncbi2resid[residNCBI];
                                 domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                                 ic.resid2domainid[resid] = chainid + '-' + k;
                             }
@@ -65389,14 +65506,17 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
+            ic.transformCls.zoominSelection();
+
             me.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
 
         //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
+            ic.transformCls.zoominSelection();
         });
 
         $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { thisClass.icn3d;
@@ -67435,7 +67555,6 @@ class SaveFile {
         let bMulStruc =(struArray.length > 1) ? true : false;
 
         let molNum = 1, prevStru = '', prevChain = '';
-        //pdbStr += '\n';
 
         let addedChainResiHash = {};
         for(let i in atomHash) {
@@ -67455,20 +67574,24 @@ class SaveFile {
 
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
-                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                if(!bNoHeader) {
+                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                    //pdbStr += '\n'; // separate from incomplete secondary structures 
+                }
 
-                prevStru = atom.structure;
+                //prevStru = atom.structure;
                 ++molNum;
             }
-            else {
-                if(atom.chain != prevChain) {
+            //else {
+                //if(atom.chain != prevChain) {
+                if(atom.chain != prevChain && atom.structure == prevStru) {
                     // add a line "TER" to work with scap/profix to add missing atoms
                     if(prevChain) {
                         pdbStr += 'TER\n';
                     }
-                    prevChain = atom.chain;
+                    //prevChain = atom.chain;
                 }
-            }
+            //}
 
             let chainResi = atom.chain + '_' + atom.resi;
             if(chainResi2pdb && chainResi2pdb.hasOwnProperty(chainResi)) {    
@@ -67633,6 +67756,9 @@ class SaveFile {
             }
 
             pdbStr += line + '\n';
+
+            prevStru = atom.structure;
+            prevChain = atom.chain;
         }
 
         pdbStr += connStr;
@@ -69691,27 +69817,33 @@ class Picking {
       }
     }
 
+    getPickedAtomList(pk, atom) {  let ic = this.icn3d; ic.icn3dui;
+        let pickedAtomList = {};
+        if(pk === 1) {
+          pickedAtomList[atom.serial] = 1;
+        }
+        else if(pk === 2) {
+          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+          pickedAtomList = ic.residues[residueid];
+        }
+        else if(pk === 3) {
+          pickedAtomList = this.selectStrandHelixFromAtom(atom);
+        }
+        else if(pk === 4) {
+          pickedAtomList = this.select3ddomainFromAtom(atom);
+        }
+        else if(pk === 5) {
+          let chainid = atom.structure + '_' + atom.chain;
+          pickedAtomList = ic.chains[chainid];
+        }
+
+        return pickedAtomList;
+    }   
+
     showPickingHilight(atom) {  let ic = this.icn3d, me = ic.icn3dui;
       if(!ic.bShift && !ic.bCtrl) ic.hlObjectsCls.removeHlObjects();
 
-      ic.pickedAtomList = {};
-      if(ic.pk === 1) {
-        ic.pickedAtomList[atom.serial] = 1;
-      }
-      else if(ic.pk === 2) {
-        let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-        ic.pickedAtomList = ic.residues[residueid];
-      }
-      else if(ic.pk === 3) {
-        ic.pickedAtomList = this.selectStrandHelixFromAtom(atom);
-      }
-      else if(ic.pk === 4) {
-        ic.pickedAtomList = this.select3ddomainFromAtom(atom);
-      }
-      else if(ic.pk === 5) {
-        let chainid = atom.structure + '_' + atom.chain;
-        ic.pickedAtomList = ic.chains[chainid];
-      }
+      ic.pickedAtomList = this.getPickedAtomList(ic.pk, atom);
 
       if(ic.pk === 0) {
           ic.bShowHighlight = false;
@@ -71057,7 +71189,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.24.0';
+    this.REVISION = '3.24.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

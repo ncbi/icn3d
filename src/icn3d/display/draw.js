@@ -54,7 +54,7 @@
 
         // show membranes
         if(ic.bOpm) {
-            //if(window.dialog) window.dialog.dialog( "close" );
+            //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
             
             let html = me.utilsCls.getMemDesc();
             $("#" + ic.pre + "dl_rmsd_html").html(html);
@@ -108,28 +108,35 @@
 
         // thumbstick move
         let yMax = 0;
-        if(yArray[0] != 0 && yArray[1] != 0) {
-            yMax = yArray[0]; // right
+        if(yArray) {
+            if(yArray[0] != 0 && yArray[1] != 0) {
+                yMax = yArray[0]; // right
+            }
+            else if(yArray[0] != 0) {
+                yMax = yArray[0]; 
+            }
+            else if(yArray[1] != 0) {
+                yMax = yArray[1]; 
+            }
         }
-        else if(yArray[0] != 0) {
-            yMax = yArray[0]; 
-        }
-        else if(yArray[1] != 0) {
-            yMax = yArray[1]; 
-        }
+        if(yMax === undefined) yMax = 0;
 
         // selection only work when squeeze (menu) is not pressed
         if(selectPressed && !squeezePressed) {
             let dtAdjusted = yMax / 1000.0 * dt; 
-
+            
             const speed = 5; //2;
-            const quaternion = ic.dolly.quaternion.clone();
-            ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
-            ic.dolly.translateZ(dtAdjusted * speed);
-            //ic.dolly.position.y = 0; // limit to a plane
-            ic.dolly.quaternion.copy(quaternion); 
-
-            if(yMax == 0) {               
+            if(yMax != 0) {
+                //if(ic.dolly && ic.dolly.quaternion && ic.dummyCam) {
+                    ic.uistr += "dolly"
+                    const quaternion = ic.dolly.quaternion.clone();
+                    ic.dummyCam.getWorldQuaternion(ic.dolly.quaternion);
+                    ic.dolly.translateZ(dtAdjusted * speed);
+                    //ic.dolly.position.y = 0; // limit to a plane
+                    ic.dolly.quaternion.copy(quaternion); 
+                //}
+            }
+            else { //if(yMax == 0) {
                 controller.children[0].scale.z = 10;
                 ic.workingMatrix.identity().extractRotation( controller.matrixWorld );
 
@@ -153,7 +160,15 @@
                     }
 
                     if(atom) {
-                        ic.pAtom = atom;
+                        if(ic.pAtomNum % 2 === 0) {
+                            ic.pAtom = atom;
+                        }
+                        else {
+                            ic.pAtom2 = atom;
+                        }
+
+                        ++ic.pAtomNum;
+
                         //ic.pickingCls.showPicking(atom);
 
                         this.showPickingVr(ic.pk, atom);
@@ -163,7 +178,6 @@
                 } 
             }
         }
-
     }
     catch(err) {
         //ic.canvasUILog.updateElement( "info", "ERROR: " + err );
@@ -173,29 +187,13 @@
     showPickingVr(pk, atom) { let ic = this.icn3d, me = ic.icn3dui;
         if(!pk) pk = 2; // residues
 
-        if(pk === 1) {
-          ic.hAtoms[atom.serial] = 1;
-        }
-        else if(pk === 2) {
-          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-          ic.hAtoms = ic.residues[residueid];
-        }
-        else if(pk === 3) {
-          ic.hAtoms = ic.pickingCls.selectStrandHelixFromAtom(atom);
-        }
-        else if(pk === 4) {
-          ic.hAtoms = ic.pickingCls.select3ddomainFromAtom(atom);
-        }
-        else if(pk === 5) {
-          let chainid = atom.structure + '_' + atom.chain;
-          ic.hAtoms = ic.chains[chainid];
-        }
+        ic.hAtoms = ic.pickingCls.getPickedAtomList(pk, atom);
 
         if(pk === 2) {
             ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
         }
         else if(pk === 1) {
-            ic.residueLabelsCls.addAtomLabels(atoms);
+            ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
         }
 
         ic.setOptionCls.setStyle("proteins", atom.style);
@@ -232,7 +230,6 @@
                     
                     dt = (i % 2 == 0) ? dt : -dt; // dt * y; 
                     thisClass.handleController( controller, dt, controller.userData.selectPressed, controller.userData.squeezePressed, result.xArray, result.yArray );
-                    //thisClass.handleController( controller, dt, pressed );
                 }
             }
 

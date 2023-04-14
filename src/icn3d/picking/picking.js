@@ -81,27 +81,33 @@ class Picking {
       }
     }
 
+    getPickedAtomList(pk, atom) {  let ic = this.icn3d, me = ic.icn3dui;
+        let pickedAtomList = {}
+        if(pk === 1) {
+          pickedAtomList[atom.serial] = 1;
+        }
+        else if(pk === 2) {
+          let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+          pickedAtomList = ic.residues[residueid];
+        }
+        else if(pk === 3) {
+          pickedAtomList = this.selectStrandHelixFromAtom(atom);
+        }
+        else if(pk === 4) {
+          pickedAtomList = this.select3ddomainFromAtom(atom);
+        }
+        else if(pk === 5) {
+          let chainid = atom.structure + '_' + atom.chain;
+          pickedAtomList = ic.chains[chainid];
+        }
+
+        return pickedAtomList;
+    }   
+
     showPickingHilight(atom) {  let ic = this.icn3d, me = ic.icn3dui;
       if(!ic.bShift && !ic.bCtrl) ic.hlObjectsCls.removeHlObjects();
 
-      ic.pickedAtomList = {}
-      if(ic.pk === 1) {
-        ic.pickedAtomList[atom.serial] = 1;
-      }
-      else if(ic.pk === 2) {
-        let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-        ic.pickedAtomList = ic.residues[residueid];
-      }
-      else if(ic.pk === 3) {
-        ic.pickedAtomList = this.selectStrandHelixFromAtom(atom);
-      }
-      else if(ic.pk === 4) {
-        ic.pickedAtomList = this.select3ddomainFromAtom(atom);
-      }
-      else if(ic.pk === 5) {
-        let chainid = atom.structure + '_' + atom.chain;
-        ic.pickedAtomList = ic.chains[chainid];
-      }
+      ic.pickedAtomList = this.getPickedAtomList(ic.pk, atom);
 
       if(ic.pk === 0) {
           ic.bShowHighlight = false;

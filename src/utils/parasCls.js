@@ -225,10 +225,10 @@ class ParasCls {
         ];
 
         this.backgroundColors = {
-            black: this.thr(0x000000),
-             grey: this.thr(0xCCCCCC),
-            white: this.thr(0xFFFFFF),
-            transparent: this.thr(0xFFFFFF) //this.thr(0x000000)
+            'black': this.thr(0x000000),
+             'grey': this.thr(0xCCCCCC),
+            'white': this.thr(0xFFFFFF),
+            'transparent': this.thr(0xFFFFFF) //this.thr(0x000000)
         };
 
         this.residueColors = {

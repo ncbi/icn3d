@@ -339,6 +339,11 @@ class ApplyCommand {
 
         ic.drawCls.draw();
       }
+      else if(command == 'add reference number labels') {
+        ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
+
+        ic.drawCls.draw();
+      }
       else if(command == 'add atom labels') {
         ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
 

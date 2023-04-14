@@ -129,7 +129,7 @@
         }
 
         if(bClose) {
-            if(window.dialog) window.dialog.dialog( "close" );
+            if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
         }
      }
 
@@ -316,23 +316,27 @@
         let html = '';
 
         const name2color = {
+            "<b>Protodomain 1</b>": "",
             "A Strand": "0000FF",
             "B Strand": "006400",
             "C Strand": "FFFF00", //"F0E68C",
             "C' Strand": "FFA500",
+            "<br><b>Linker</b>": "",
             "C'' Strand": "FF0000",
+            "<br><b>Protodomain 2</b>": "",
             "D Strand": "0000FF",
             "E Strand": "006400",
             "F Strand": "FFFF00", //"F0E68C",
             "G Strand": "FFA500",
+            "": "",
             "Loop": "CCCCCC"
         };
 
-        html += "<div>"
+        html += "<div>A protodomain is a supersecondary structure <br>that by its duplication, symmetry operations <br>can generate a structural domain.<br><br>"
         for (let name in name2color) {
             let color = name2color[name];
             html += "<span>"
-            html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
+            if(color) html += "<div style='width: 10px; height: 10px; background-color:#" + color + "; border: 0px;display:inline-block;' ></div> ";
             html += name;
             html +=  "</span><br>"
         }

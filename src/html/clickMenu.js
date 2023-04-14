@@ -1740,6 +1740,13 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
+         ic.selectionCls.saveSelectionIfSelected();
+         thisClass.setLogCmd('add reference number labels', true);
+         ic.drawCls.draw();
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
            ic.analysisCls.addChainLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
