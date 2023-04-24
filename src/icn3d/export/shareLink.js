@@ -83,9 +83,11 @@ class ShareLink {
         }
 
         let outputCmd = this.shareLinkUrl(undefined, true);
-        let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
+        let idStr = (me.cfg.url) ? "url=" + me.cfg.url : me.cfg.idname + "=" + me.cfg.idvalue; //"mmdbafid=" + ic.inputid;
         let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview";
-        $("#" + ic.pre + "jn_commands").val(jnCmd);
+        if(me.cfg.url || me.cfg.idname) {
+            $("#" + ic.pre + "jn_commands").val(jnCmd);
+        }
 
         $("#" + ic.pre + "ori_url").val(url);
 
@@ -224,7 +226,8 @@ class ShareLink {
            url += 'command=';
 
            let start;
-           if(me.cfg.notebook) {
+           //if(me.cfg.notebook) {
+           if(bOutputCmd) {
                 start =(inparaWithoutCommand !== undefined) ? 1 : 0;
            }
            else {

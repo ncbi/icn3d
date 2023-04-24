@@ -1521,7 +1521,7 @@ class ApplyCommand {
         cmd = cmd.trim();
 
         let seqAnnoStr = 'Windows > View Sequences & Annotations';
-        let hbondIntStr = 'Analysis > H-Bonds & Interactions';
+        let hbondIntStr = 'Analysis > Interactions';
         let forceStr = hbondIntStr + ' > 2D Graph(Force-Directed)';
         let rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
         let rotStr2 = 'View > Rotate > Rotate 90 deg > ';

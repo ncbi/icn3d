@@ -1178,7 +1178,7 @@ class SetDialog {
         }
 
         html += "2. <b>Commands Used in Jupyter Noteboook</b><br><br>"
-        html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
+        html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result. <br>More details are at https://github.com/ncbi/icn3d/tree/master/jupyternotebook.<br><br>";
 
         html += '<textarea id="' + me.pre + 'jn_commands" rows="4" style="width:100%"></textarea><br>';
 

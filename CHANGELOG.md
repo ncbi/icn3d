@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.24.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.2.zip) was release on April 24, 2023. Fixed the secondary structures of mutant in the mutation analysis; fixed the lower case in the sequences of VAST+ alignment.
+
 [icn3d-3.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.1.zip) was release on April 14, 2023. Added more menus to the VR view of iCn3D to measure distance, toggle highlight, etc.
 
 [icn3d-3.24.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.0.zip) was release on April 10, 2023. Improved the use of iCn3D in Jupyter Notebook by making the dialogs closable, and adding DelPhi potential and mutation analysis; added DelPhi potential as one option in the Virtual Reality (VR) view of iCn3D.

@@ -86,6 +86,7 @@ class ChainalignParser {
                     }
                     else {
                         let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
+                
                         let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
 
                         let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
@@ -98,13 +99,13 @@ class ChainalignParser {
                 }
 
                 let allPromise = Promise.allSettled(ajaxArray);
-                try {
+                // try {
                     let dataArray = await allPromise;
                     await thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
-                }
-                catch(err) {
-                    if(ic.bRender) alert("These structures can NOT be aligned to each other...");
-                }                  
+                // }
+                // catch(err) {
+                //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+                // }                  
             //});
         }
     }
@@ -428,6 +429,8 @@ class ChainalignParser {
 
         ic.hlUpdateCls.updateHlAll();
 
+        me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         ic.html2ddgm = '';
@@ -576,15 +579,15 @@ class ChainalignParser {
         }
 
         let allPromise = Promise.allSettled(ajaxArray);
-        try {
+        // try {
             let dataArray = await allPromise;
             await thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
-        }
-        catch(err) {
-            let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+        // }
+        // catch(err) {
+        //     let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
          
-            if(ic.bRender) alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
-        }          
+        //     if(ic.bRender) alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
+        // }          
     }
 
     async parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d, me = ic.icn3dui;
@@ -645,8 +648,6 @@ class ChainalignParser {
                 let index2 = chainidArray.length + index - 1;
                 if(ic.afChainIndexHash.hasOwnProperty(index)) {
                     ++missedChainCnt;
-
-                    
 
                     if(me.cfg.aligntool == 'tmalign') {
                         ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
@@ -753,12 +754,12 @@ class ChainalignParser {
         else {
             let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
-            try {
+            // try {
                 let data = await me.getAjaxPromise(url, 'jsonp');
 
                 let mmdbid = data.mmdbid;
                 ic.selectedPdbid = mmdbid;
-
+                
                 if(!mmdbid) {
                   if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                   await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
@@ -768,7 +769,7 @@ class ChainalignParser {
                 else {
                     let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
 
-                    try {
+                    // try {
                         let opmdata = await me.getAjaxPromise(url2, 'text');
 
                         ic.bOpm = true;
@@ -785,23 +786,23 @@ class ChainalignParser {
                         await thisClass.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash, chainidArray);
 
                         /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                    }
-                    catch(err) {
-                        if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                        await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                    // }
+                    // catch(err) {
+                    //     if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+                    //     await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                        /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                        return;
-                    }
+                    //     /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                    //     return;
+                    // }
                 }
-            }
-            catch(err) {
-                  if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                  await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+            // }
+            // catch(err) {
+            //       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+            //       await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                  /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                  return;
-            }
+            //       /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            //       return;
+            // }
         }
     }
 

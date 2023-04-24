@@ -99,12 +99,24 @@
               // VAST+ uses biological units
               cfg.bu = 1;
 
+              cfg.idname = 'align';
+              cfg.idvalue = cfg.align;
+
               var icn3dui = new icn3d.iCn3DUI(cfg);
 
               await icn3dui.show3DStructure();
           }
           else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
               cfg.divid = 'div0';
+
+              if(cfg.chainalign !== undefined) {
+                cfg.idname = 'chainalign';
+                cfg.idvalue = cfg.chainalign;
+              }
+              else {
+                cfg.idname = 'mmdbafid';
+                cfg.idvalue = cfg.mmdbafid;
+              }
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
 
@@ -116,6 +128,9 @@
       }
 
       async function setupViewer(idName, idValue, cfg) {
+        cfg.idname = idName;
+        cfg.idvalue = idValue;
+        
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.toString().replace(/\s/g, '').split(',');

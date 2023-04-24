@@ -463,7 +463,8 @@ class LoadPDB {
         if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {}
         ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
 
-        if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
+        //if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
+        this.adjustSeq(ic.chainMissingResidueArray);
 
     //    ic.missingResidues = [];
     //    for(let chainid in chainMissingResidueArray) {

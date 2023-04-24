@@ -72,10 +72,13 @@ class ShowAnno {
                 }
                 //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
 
-                if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
+                // the first residue of 6AL5_H is non-standard residue and treated as chemical
+                let atom2 = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+
+                if((ic.proteins.hasOwnProperty(atom.serial) || ic.proteins.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
-                else if(ic.nucleotides.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
+                else if((ic.nucleotides.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
                     nucleotide_chainid[chainArray[i]] = chainidBase;
                 }
                 else {
@@ -322,7 +325,9 @@ class ShowAnno {
             try {
                 let pdbChainidArray = [], afChainidArray = [];
                 for(let i = 0, il = chnidBaseArray.length; i < il; ++i) {
-                    if(chnidBaseArray[i].length >= 6) {
+                    let struct = chnidBaseArray[i].substr(0, chnidBaseArray.indexOf('_'));
+                    //if(chnidBaseArray[i].length >= 6) {
+                    if(struct.length >= 6) {
                         afChainidArray.push(chnidBaseArray[i]);
                     }
                     else {
@@ -346,7 +351,6 @@ class ShowAnno {
                     for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
                         seq += ic.chainsSeq[chainid][i].name;
                     }
-
                     ic.chainid_seq[chainid] = seq;
                 }
                 
@@ -464,10 +468,10 @@ class ShowAnno {
             let chnidBase = ic.protein_chainid[chnid];
             //if(chainid_seq.hasOwnProperty(chnid)) {
             //    let allSeq = chainid_seq[chnid];
-
             if(chainid_seq.hasOwnProperty(chnidBase)) {
                 let allSeq = chainid_seq[chnidBase];
                 ic.giSeq[chnid] = allSeq;
+                
                 // the first 10 residues from sequences with structure
                 let startResStr = '';
                 for(let i = 0; i < 10 && i < ic.chainsSeq[chnid].length; ++i) {

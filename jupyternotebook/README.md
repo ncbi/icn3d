@@ -48,16 +48,6 @@ and issue Python script as follows:
     view
 
 You can also try other input besides "mmdbid".
-"pdbid" as input:
-
-    view = icn3dpy.view(q='pdbid=2bbv')
-    view
-
-"mmtfid" as input:
-
-    view = icn3dpy.view(q='mmtfid=6vxx')
-    view
-
 "cid" as input:
 
     view = icn3dpy.view(q='cid=2244')
@@ -78,10 +68,9 @@ You can also try other input besides "mmdbid".
     view = icn3dpy.view(q='url=icn3dpng|https://api.figshare.com/v2/file/download/39125801')
     view
 
-Use predefined commands (see commands in [iCn3D Gallery](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery) for reference):
+Use predefined commands (The Jupyter Notebook commands can be copied from the "Copy Commands" button in the "File > Share Link" menu of interactive iCn3D viewers in Jupyter Notebook or in a [web browser](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=6m0j)):
 
     view = icn3dpy.view(q='mmdbid=6m0j',command='scatterplot interaction pairs | !A !E | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 6; show selection; add residue number labels')
-
     view
 
 
