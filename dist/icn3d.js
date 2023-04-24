@@ -63429,10 +63429,12 @@ var icn3d = (function (exports) {
                 if(struct == pdbid + '2') { // mutant
                   let residWt = pdbid + resid.substr(resid.indexOf('_'));       
                   let atomWt = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWt]);
-                  for(let i in ic.residues[resid]) {
-                    ic.atoms[i].ss = atomWt.ss;
-                    ic.atoms[i].ssbegin = atomWt.ssbegin;
-                    ic.atoms[i].ssend = atomWt.ssend;           
+                  if(atomWt) {
+                    for(let i in ic.residues[resid]) {
+                      ic.atoms[i].ss = atomWt.ss;
+                      ic.atoms[i].ssbegin = atomWt.ssbegin;
+                      ic.atoms[i].ssend = atomWt.ssend;           
+                    }
                   }
                 }
               }
