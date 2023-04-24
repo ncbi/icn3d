@@ -19,11 +19,11 @@
   <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.24.1.css">
+  <link rel="stylesheet" href="icn3d_3.24.2.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.24.1.min.js"></script>
+  <script src="icn3d_3.24.2.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(async function() {
@@ -40,7 +40,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.24.1.min.js', function() {
+          //$.getScript('icn3d_3.24.2.min.js', function() {
             var version = 3;
             await launchIcn3d(version);
           //});
@@ -104,6 +104,9 @@
               // VAST+ uses biological units
               cfg.bu = 1;
 
+              cfg.idname = 'align';
+              cfg.idvalue = cfg.align;
+
               var icn3dui = new icn3d.iCn3DUI(cfg);
               await icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
@@ -126,6 +129,15 @@
               //cfg.resnum = cfg.resnum;
               //cfg.showalignseq = cfg.showalignseq;
 
+              if(cfg.chainalign !== undefined) {
+                cfg.idname = 'chainalign';
+                cfg.idvalue = cfg.chainalign;
+              }
+              else {
+                cfg.idname = 'mmdbafid';
+                cfg.idvalue = cfg.mmdbafid;
+              }
+
               var icn3dui = new icn3d.iCn3DUI(cfg);
               await icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
@@ -142,6 +154,9 @@
       }
 
       async function setupViewer(idName, idValue, cfg) {
+        cfg.idname = idName;
+        cfg.idvalue = idValue;
+        
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.replace(/\s/g, '').split(',');

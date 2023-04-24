@@ -12458,7 +12458,7 @@ var icn3d = (function (exports) {
             }
 
             html += "2. <b>Commands Used in Jupyter Noteboook</b><br><br>";
-            html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result.<br><br>";
+            html += "Please copy the following commands into a cell in Jupyter Notebook to show the same result. <br>More details are at https://github.com/ncbi/icn3d/tree/master/jupyternotebook.<br><br>";
 
             html += '<textarea id="' + me.pre + 'jn_commands" rows="4" style="width:100%"></textarea><br>';
 
@@ -36568,9 +36568,9 @@ var icn3d = (function (exports) {
             let html = '';
 
             const name2color = {
-                "A^ Strand": "FF00FF", 
+                //"A^ Strand": "FF00FF", 
                 "A Strand": "663399",
-                "A* Strand": "FFC0CB",
+                //"A* Strand": "663399", //"FFC0CB",
                 "A' Strand": "663399", //"9370db",
                 "B Strand": "ba55d3",
                 "C Strand": "0000FF",
@@ -36580,7 +36580,7 @@ var icn3d = (function (exports) {
                 "E Strand": "FFFF00", //"F0E68C",
                 "F Strand": "FFA500",
                 "G Strand": "FF0000",
-                "G* Strand": "8B0000",
+                //"G* Strand": "8B0000",
                 "Loop": "CCCCCC"
             };
 
@@ -41599,10 +41599,13 @@ var icn3d = (function (exports) {
                     }
                     //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
 
-                    if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
+                    // the first residue of 6AL5_H is non-standard residue and treated as chemical
+                    let atom2 = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+
+                    if((ic.proteins.hasOwnProperty(atom.serial) || ic.proteins.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
                         ic.protein_chainid[chainArray[i]] = chainidBase;
                     }
-                    else if(ic.nucleotides.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
+                    else if((ic.nucleotides.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
                         nucleotide_chainid[chainArray[i]] = chainidBase;
                     }
                     else {
@@ -41849,7 +41852,9 @@ var icn3d = (function (exports) {
                 try {
                     let pdbChainidArray = [], afChainidArray = [];
                     for(let i = 0, il = chnidBaseArray.length; i < il; ++i) {
-                        if(chnidBaseArray[i].length >= 6) {
+                        let struct = chnidBaseArray[i].substr(0, chnidBaseArray.indexOf('_'));
+                        //if(chnidBaseArray[i].length >= 6) {
+                        if(struct.length >= 6) {
                             afChainidArray.push(chnidBaseArray[i]);
                         }
                         else {
@@ -41873,7 +41878,6 @@ var icn3d = (function (exports) {
                         for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
                             seq += ic.chainsSeq[chainid][i].name;
                         }
-
                         ic.chainid_seq[chainid] = seq;
                     }
                     
@@ -41991,10 +41995,10 @@ var icn3d = (function (exports) {
                 let chnidBase = ic.protein_chainid[chnid];
                 //if(chainid_seq.hasOwnProperty(chnid)) {
                 //    let allSeq = chainid_seq[chnid];
-
                 if(chainid_seq.hasOwnProperty(chnidBase)) {
                     let allSeq = chainid_seq[chnidBase];
                     ic.giSeq[chnid] = allSeq;
+                    
                     // the first 10 residues from sequences with structure
                     let startResStr = '';
                     for(let i = 0; i < 10 && i < ic.chainsSeq[chnid].length; ++i) {
@@ -42427,6 +42431,7 @@ var icn3d = (function (exports) {
             //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
               let resi = ic.ParserUtilsCls.getResi(chnid, i);
               let residueid = chnid + '_' + resi;
+
               if( ic.residues.hasOwnProperty(residueid) ) {
                 if(ic.secondaries[residueid] == 'H') {
                     if(i % 2 == 0) {
@@ -42499,7 +42504,6 @@ var icn3d = (function (exports) {
             html += htmlTmp + htmlTmp2;
             html2 += htmlTmp + htmlTmp2;
             let pos, nGap = 0;
-
             for(let i = 0, il = giSeq.length; i < il; ++i) {
               html += this.insertGap(chnid, i, '-');
               if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
@@ -42818,123 +42822,203 @@ var icn3d = (function (exports) {
             }
 
             // auto-generate ref numbers for loops 
-            let bLoop = false, currStrand = '', prevStrand = '', currFirstDigit = '', currCnt =  1;
-            let refnumLabel, refnumStr_ori, refnumStr, postfix, refnum;
-
-            // set hash for the loops
-            let strand2len_start_stop = {};
-            let prevRefnumStr, prevPostfix, prevRefnum;
+            let bLoop = false, currStrand = '', prevStrand = '';
+            let refnumLabel, refnumStr_ori, refnumStr, postfix, strandPostfix, refnum, refnum3c;
 
             // sometimes one chain may have several Ig domains,set an index for each IgDomain
-            let index = 1, prevStrandPostfix = '', bStart = false;
-            for(let i = 0, il = giSeq.length; i < il; ++i) {
-                let currResi = ic.ParserUtilsCls.getResi(chnid, i);
-                let residueid = chnid + '_' + currResi;
-                //if(ic.residues.hasOwnProperty(residueid)) {
+            let index = 1, bStart = false;
+            
+            // get the range of each strand excluding loops
+            let strandArray = [], strandHash = {}, strandCnt = 0, resCnt = 0;
+            if(!bCustom && !kabat_or_imgt) {
+                for(let i = 0, il = giSeq.length; i < il; ++i, ++resCnt) {
+                    let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+                    let residueid = chnid + '_' + currResi;
                     refnumLabel = ic.resid2refnum[residueid];
+
+                    let firstChar = (refnumLabel) ? refnumLabel.substr(0,1) : ' ';
+                    if(!bStart && refnumLabel && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
+                        bStart = true;
+                        resCnt = 1; // the first oen is included
+                    }
+
+                    if(prevStrand.substr(0,1) == 'G' && !refnumLabel) { // indicate the end of an IG domain
+                        bStart = false;
+                    }
+
                     if(refnumLabel) {                        
                         refnumStr_ori = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
                         currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
-                        currFirstDigit = refnumStr_ori.substr(0, 1);
+                        refnumStr_ori.substr(0, 1);
 
                         refnumStr = refnumStr_ori;
                         refnum = parseInt(refnumStr);
-                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
+                        refnum3c = (refnum - parseInt(refnum/1000) * 1000).toString();
+                        strandPostfix = refnumStr.replace(refnum.toString(), '');
 
-                        if(!bCustom && !kabat_or_imgt) {
-                            if(currStrand != prevStrand) { // reset currCnt
-                                // end of a loop
-                                if(strand2len_start_stop[prevStrand + prevPostfix]) {
-                                    strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
-                                    strand2len_start_stop[prevStrand + prevPostfix].end = refnumStr;
-                                    strand2len_start_stop[prevStrand + prevPostfix].nextStrand = currStrand;
-                                }
+                        postfix = strandPostfix + '_' + index;
 
-                                bStart = false;
-
-                                currCnt = 1;
-                            }
-
-                            // sometimes insertions may happen inside a strand. Reset currCnt
-                            if(currStrand == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
-                                currCnt = 1;
-                                
-                                if(bStart && prevStrandPostfix) {
-                                    delete strand2len_start_stop[prevStrandPostfix];
-                                    prevStrandPostfix = '';
-                                }
-                            }
-
-                            // #9##
-                            if(prevStrand && currStrand != ' ' && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
-                                if(currCnt == 1) { // start of a loop
-                                    if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
+                        if(currStrand && currStrand != ' ') {
+                            if(refnum3c.substr(0,1) != '9') {
+                                if(currStrand != prevStrand) { // reset currCnt
+                                    if(strandHash[currStrand + postfix]) {
                                         ++index;
+                                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
                                     }
+
+                                    strandHash[currStrand + postfix] = 1;
+
+                                    strandArray[strandCnt] = {};    
+                                    strandArray[strandCnt].startResi = currResi;
+                                    strandArray[strandCnt].startRefnum = refnum; // 1250 in A1250a
                                     
-                                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
-                                    strand2len_start_stop[currStrand + postfix] = {};
+                                    strandArray[strandCnt].endResi = currResi;
+                                    strandArray[strandCnt].endRefnum = refnum; // 1250a
 
-                                    strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
-                                    strand2len_start_stop[currStrand + postfix].chainid = chnid;
+                                    strandArray[strandCnt].strandPostfix = strandPostfix; // a in A1250a
+                                    strandArray[strandCnt].strand = currStrand; // A in A1250a
 
-                                    //prevStrandPostfix = currStrand + postfix;
-                                }
-                                refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                                refnumLabel = currStrand + refnumStr;
-                                
-                                ++currCnt;
-                            }
-                        }
-                    }
-                    else {
-                        if(prevStrand && currStrand != ' ' && !bCustom && !kabat_or_imgt) {
-                            if(currCnt == 1) { // start of a loop
-                                if(strand2len_start_stop.hasOwnProperty(currStrand + postfix)) { // the strand appeared in 2nd Id domain
-                                    ++index;
-                                    postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
-                                    strand2len_start_stop[currStrand + postfix] = {};
+                                    strandArray[strandCnt].postfix = postfix; // Aa_1
+
+                                    strandArray[strandCnt].loopResCnt = resCnt - 1;
+
+                                    ++strandCnt;
+                                    resCnt = 0;
                                 }
                                 else {
-                                    strand2len_start_stop[currStrand + postfix] = {};
+                                    if(strandHash[currStrand + postfix]) {
+                                        strandArray[strandCnt - 1].endResi = currResi;
+                                        strandArray[strandCnt - 1].endRefnum = refnum; // 1250a
+
+                                        resCnt = 0;
+                                    }
                                 }
-
-                                strand2len_start_stop[currStrand + postfix].start = prevRefnumStr;
-                                strand2len_start_stop[currStrand + postfix].chainid = chnid;
-
-                                prevStrandPostfix = currStrand + postfix;
-                                bStart = true;
                             }
-                            
-                            // no ref num
-                            refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                            refnumLabel = currStrand + refnumStr;
-                            ++currCnt;
                         }
                     }
 
-                    prevRefnumStr = refnumStr;
-                    prevRefnum = refnum;
-                    prevPostfix = postfix;
-                //}
+                    prevStrand = currStrand;
+                }
 
-                prevStrand = currStrand;
+                strandCnt = 0;
+                let loopCnt = 0;
+
+                let bNterminal = true, refnumLabelNoPostfix, prevStrandCnt = 0, currRefnum;
+                bStart = false;
+                if(strandArray.length > 0) {
+                    for(let i = 0, il = giSeq.length; i < il; ++i, ++loopCnt) {
+                        let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+                        let residueid = chnid + '_' + currResi;
+                        refnumLabel = ic.resid2refnum[residueid];
+
+                        currStrand = strandArray[strandCnt].strand;
+
+                        if(refnumLabel) {
+                            refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                            currRefnum = parseInt(refnumStr);
+                            refnumLabelNoPostfix = currStrand + currRefnum;
+                            
+                            let firstChar = refnumLabel.substr(0,1);
+                            if(!bStart && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
+                                bStart = true;
+                                bNterminal = true;
+                                loopCnt = 0;
+                            }
+                        }
+
+                        if(parseInt(currResi) < parseInt(strandArray[strandCnt].startResi)) {
+                            ic.residIgLoop[residueid] = 1;
+
+                            if(bNterminal) { // make it continuous to the 1st strand
+                                if(bStart) {
+                                    currRefnum = strandArray[strandCnt].startRefnum - strandArray[strandCnt].loopResCnt + loopCnt;
+                                    refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                    refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix;
+                                }                            
+                            }
+                            else {
+                                //currStrand = strandArray[prevStrandCnt].strand;
+
+                                if(prevStrandCnt >= 0 && strandArray[prevStrandCnt].strand.substr(0, 1) == 'G') {
+                                    if(bStart && ic.resid2refnum[residueid]) {
+                                        currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                    }
+                                    else {
+                                        bStart = false;
+                                        bNterminal = true;
+                                        loopCnt = 0;
+                                    }
+                                }
+                                else {
+                                    let len = strandArray[strandCnt].loopResCnt;
+                                    let halfLen = parseInt(len / 2.0 + 0.5);
+                        
+                                    if(loopCnt <= halfLen) {
+                                        currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                    }
+                                    else {
+                                        currRefnum = strandArray[strandCnt].startRefnum - len + loopCnt - 1;
+                                        refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                    }
+                                }
+                            }
+                        }
+                        else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
+                            bNterminal = false;
+
+                            if(currResi == strandArray[strandCnt].endResi) {
+                                ++strandCnt; // next strand
+                                loopCnt = 0;
+
+                                if(!strandArray[strandCnt]) { // last strand
+                                    --strandCnt;
+                                }
+                            }
+                        }
+                        else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
+                            ic.residIgLoop[residueid] = 1;    
+
+                            // C-terminal
+                            if(!ic.resid2refnum[residueid]) {
+                                break;
+                            }
+                            else {
+                                currRefnum = strandArray[strandCnt].endRefnum + loopCnt;
+                                refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                            }
+                        }
+
+                        prevStrand = currStrand;
+                        prevStrandCnt = strandCnt - 1;
+
+                        // assign the adjusted reference numbers
+                        ic.resid2refnum[residueid] = refnumLabel;
+
+                        if(!ic.refnum2residArray.hasOwnProperty(refnumStr)) {
+                            ic.refnum2residArray[refnumStr] = [residueid];
+                        }
+                        else {
+                            ic.refnum2residArray[refnumStr].push(residueid);
+                        }
+
+                        if(!ic.chainsMapping.hasOwnProperty(chnid)) {
+                            ic.chainsMapping[chnid] = {};
+                        }
+
+                        // remove the postfix when comparing interactions
+                        //ic.chainsMapping[chnid][residueid] = refnumLabel;
+                        ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
+                    }
+                }
             }
-            if(strand2len_start_stop[prevStrand + prevPostfix]) {
-                strand2len_start_stop[prevStrand + prevPostfix].len = currCnt - 1;
-                strand2len_start_stop[prevStrand + prevPostfix].end = prevRefnumStr;
-                //strand2len_start_stop[prevStrand].nextStrand = undefined;
-            }
-            
-            let refnumLabelNoPostfix;
-            // sometimes one chain may have several Ig domains,set a index for each IgDomain
-            index = 1;
-            prevStrandPostfix = '';
-            bStart = false;
-            let appearedStrands = {}, currStrand_ori, bShowRefnum = true;
+            let currStrand_ori;
             for(let i = 0, il = giSeq.length; i < il; ++i) {
-                bLoop = false;
-
                 html += this.insertGap(chnid, i, '-');
 
                 let currResi = ic.ParserUtilsCls.getResi(chnid, i);
@@ -42952,14 +43036,7 @@ var icn3d = (function (exports) {
                         currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
                         currStrand_ori = currStrand;
 
-                        currFirstDigit = refnumStr_ori.substr(0, 1);
-
-                        refnumLabelNoPostfix = currStrand + parseInt(refnumStr_ori);
-
-                        if(currStrand_ori != prevStrand) { // reset currCnt
-                            bStart = false;
-                            currCnt = 1;
-                        }
+                        refnumStr_ori.substr(0, 1);
 
                         if(bCustom) {
                             refnumStr = refnumLabel;
@@ -42973,46 +43050,6 @@ var icn3d = (function (exports) {
                         else {
                             refnumStr = refnumStr_ori;
                             refnum = parseInt(refnumStr);
-                            postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
-
-                            // sometimes insertions may happen inside a strand. Reset currCnt
-                            if(currStrand_ori == prevStrand && refnum > 1000 && refnumStr.substr(1,1) != '9') { // strand region
-                                currCnt = 1;
-                                
-                                if(bStart && prevStrandPostfix) {
-                                    --index;
-                                    prevStrandPostfix = '';
-                                }
-                            }
-
-                            // #9##
-                            if(prevStrand && refnum > 1000 && refnumStr.substr(1,1) == '9') { // loop region
-                                bLoop = true;
-
-                                if(currCnt == 1) { // start of a loop
-                                    if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
-                                        ++index;
-                                        postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
-                                    }
-
-                                    appearedStrands[currStrand_ori + postfix] = 1;
-                                }
-
-                                let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
-
-                                refnum = result.refnum;
-                                bShowRefnum = result.bShowRefnum;
-                                refnumStr = result.refnumStr;
-                                refnumLabel = result.refnumLabel;
-                                refnumLabelNoPostfix = result.refnumLabelNoPostfix;
-
-                                bHidelabel = result.bHidelabel;
-                                currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
-
-                                ++currCnt;
-                            }
-
-                            prevRefnum = refnum;
                         }
                     
                         if(bCustom) {
@@ -43050,9 +43087,10 @@ var icn3d = (function (exports) {
                             }
                         }
                         else {
-                            if(bShowRefnum && currStrand != ' ') {
+                            if(currStrand != ' ') {
+                                bLoop = ic.residIgLoop[residueid];
                                 html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
-                                if(bLoop) ic.residIgLoop[residueid] = 1;
+                                // if(bLoop) ic.residIgLoop[residueid] = 1;
                             }
                             else {
                                 html += '<span></span>';
@@ -43060,74 +43098,8 @@ var icn3d = (function (exports) {
                         }
                     }
                     else {
-                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
-
-                        // skip non-protein residues
-                        // after G strand and before A strand, just use the mapped reference number
-                        if((!atom || ic.proteins.hasOwnProperty(atom.serial)) && prevStrand && !bCustom && !kabat_or_imgt
-                          && (!currStrand_ori || currStrand_ori.substr(0,1) != 'G')) {
-                            // no ref num
-                            bLoop = true;
-
-                            if(currCnt == 1) { // start of a loop
-                                if(appearedStrands.hasOwnProperty(currStrand_ori + postfix)) { // the strand appeared in 2nd Id domain
-                                    ++index;
-                                }
-                                
-                                postfix = refnumStr.replace(refnum.toString(), '') + '_' + index;
-
-                                appearedStrands[currStrand_ori + postfix] = 1;
-
-                                bStart = true;
-                                prevStrandPostfix = currStrand_ori + postfix;
-                            }
-
-                            // use previous postfix
-                            let result = this.getAdjustedRefnum(strand2len_start_stop, currStrand_ori, currCnt, currFirstDigit, postfix, prevRefnum);
-
-                            refnum = result.refnum;
-                            bShowRefnum = result.bShowRefnum;                        
-                            refnumStr = result.refnumStr;
-                            refnumLabel = result.refnumLabel;
-                            refnumLabelNoPostfix = result.refnumLabelNoPostfix;
-
-                            prevRefnum = refnum;
-
-                            bHidelabel = result.bHidelabel;
-                            currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
-                      
-                            ++currCnt;
-
-                            if(bShowRefnum && currStrand != ' ') {
-                                html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
-                                if(bLoop) ic.residIgLoop[residueid] = 1;
-                            }
-                            else {
-                                html += '<span></span>';
-                            }
-                        }
-                        else {
-                            html += '<span></span>';
-                        }
+                        html += '<span></span>';
                     }
-
-                    // assign the adjusted reference numbers
-                    ic.resid2refnum[residueid] = refnumLabel;
-
-                    if(!ic.refnum2residArray.hasOwnProperty(refnumStr)) {
-                        ic.refnum2residArray[refnumStr] = [residueid];
-                    }
-                    else {
-                        ic.refnum2residArray[refnumStr].push(residueid);
-                    }
-
-                    if(!ic.chainsMapping.hasOwnProperty(chnid)) {
-                        ic.chainsMapping[chnid] = {};
-                    }
-
-                    // remove the postfix when comparing interactions
-                    //ic.chainsMapping[chnid][residueid] = refnumLabel;
-                    ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
                 //}
 
                 prevStrand = currStrand_ori; //currStrand;
@@ -43143,68 +43115,6 @@ var icn3d = (function (exports) {
             return {html: html, html3: html3}
         }
 
-        getAdjustedRefnum(strand2len_start_stop, currStrand, currCnt, currFirstDigit, postfix, prevRefnum) { let ic = this.icn3d; ic.icn3dui;
-            let refnum, refnumStr, refnumLabel, refnumLabelNoPostfix;
-
-            let bHidelabel = false; // do not show the label
-            let bShowRefnum = true;
-
-            if(strand2len_start_stop[currStrand + postfix]) {
-                let start = parseInt(strand2len_start_stop[currStrand + postfix].start);
-                let end = parseInt(strand2len_start_stop[currStrand + postfix].end);
-                // e.g., 2150a
-                let postfixStart = strand2len_start_stop[currStrand + postfix].start.replace(start.toString(), '');
-                let postfixEnd = strand2len_start_stop[currStrand + postfix].end.replace(end.toString(), '');
-
-                let len = strand2len_start_stop[currStrand + postfix].len;
-                let halfLen = (strand2len_start_stop[currStrand + postfix].nextStrand) ? parseInt(len / 2.0 + 0.5) : len;
-
-                if(currCnt <= halfLen) {
-                    refnum = start + currCnt;
-                    refnumStr = refnum + postfixStart;
-                    refnumLabel = currStrand + refnumStr;
-                }
-                else {
-                    refnum = end - (len + 1 - currCnt);
-                    refnumStr = refnum + postfixEnd;
-                    
-                    refnumLabel = (strand2len_start_stop[currStrand + postfix].nextStrand !== undefined) ? strand2len_start_stop[currStrand + postfix].nextStrand + refnumStr : ' ' + refnumStr;
-                }
-
-                refnumLabelNoPostfix = currStrand + refnum;
-
-                //if(currCnt == 0 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
-                // if(currCnt == 1 || currCnt == halfLen || currCnt == halfLen + 1 || currCnt == end - 1) {
-                //     bHidelabel = true;
-                // }
-                if(currCnt == 1 || currCnt == end - 1) {
-                    bHidelabel = true;
-                }
-
-                if(currCnt == 1 && start != prevRefnum) { // skip insertions
-                    bShowRefnum = false;
-                    
-                    refnum = 0;
-                    refnumStr = '';
-                    refnumLabel = '';
-                    refnumLabelNoPostfix = '';
-                }
-            }
-            else {
-                // refnumStr = (parseInt(currFirstDigit) * 1000 + 900 + currCnt).toString();
-                // refnumLabel = currStrand + refnumStr;
-
-                refnum = 0;
-                refnumStr = '';
-                refnumLabel = '';
-                refnumLabelNoPostfix = '';
-
-                bHidelabel = true;
-            }
-
-            return {refnum: refnum, refnumStr: refnumStr, refnumLabel: refnumLabel, refnumLabelNoPostfix: refnumLabelNoPostfix, bHidelabel: bHidelabel, bShowRefnum: bShowRefnum};
-        }
-
         getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
             let refnum = parseInt(refnumStr).toString();
             let color = this.getRefnumColor(currStrand, true);
@@ -43215,13 +43125,13 @@ var icn3d = (function (exports) {
 
             let html = '';
 
-            if(lastTwo == 50 && !bLoop) {
+            if(refnumLabel && lastTwo == 50 && !bLoop) {
                 // highlight the anchor residues
                 ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
 
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
             }
-            else if(lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
+            else if(refnumLabel && lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
                 // e.g., 2152a
                 let lastTwoStr = isNaN(refnumStr) ? lastTwo + refnumStr.substr(refnumStr.length - 1, 1) : lastTwo;
                 html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -43234,14 +43144,16 @@ var icn3d = (function (exports) {
         }
 
         getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
-            if(currStrand == "A^") { 
-                return '#FF00FF'; 
-            }
-            else if(currStrand == "A") { 
+            // if(currStrand == "A^") { 
+            //     return '#FF00FF'; 
+            // }
+            // else 
+            
+            if(currStrand == "A") { 
                 return '#663399'; 
             }
             else if(currStrand == "A*") { 
-                return '#FFC0CB'; 
+                return '#663399'; //'#FFC0CB'; 
             }
             else if(currStrand == "A'") { 
                 return '#663399'; 
@@ -47836,6 +47748,7 @@ var icn3d = (function (exports) {
                         }
                         else {
                             let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
+                    
                             let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
 
                             let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
@@ -47848,13 +47761,13 @@ var icn3d = (function (exports) {
                     }
 
                     let allPromise = Promise.allSettled(ajaxArray);
-                    try {
+                    // try {
                         let dataArray = await allPromise;
                         await thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
-                    }
-                    catch(err) {
-                        if(ic.bRender) alert("These structures can NOT be aligned to each other...");
-                    }                  
+                    // }
+                    // catch(err) {
+                    //     if(ic.bRender) alert("These structures can NOT be aligned to each other...");
+                    // }                  
                 //});
             }
         }
@@ -48174,6 +48087,8 @@ var icn3d = (function (exports) {
 
             ic.hlUpdateCls.updateHlAll();
 
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             ic.html2ddgm = '';
@@ -48322,15 +48237,15 @@ var icn3d = (function (exports) {
             }
 
             let allPromise = Promise.allSettled(ajaxArray);
-            try {
+            // try {
                 let dataArray = await allPromise;
                 await thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
-            }
-            catch(err) {
-                let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+            // }
+            // catch(err) {
+            //     let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
              
-                if(ic.bRender) alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
-            }          
+            //     if(ic.bRender) alert("These chains can not be aligned by " + serverName + ". You can specify the residue range and try it again...");
+            // }          
         }
 
         async parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d, me = ic.icn3dui;
@@ -48390,8 +48305,6 @@ var icn3d = (function (exports) {
                     let index2 = chainidArray.length + index - 1;
                     if(ic.afChainIndexHash.hasOwnProperty(index)) {
                         ++missedChainCnt;
-
-                        
 
                         if(me.cfg.aligntool == 'tmalign') {
                             ic.q_trans_add[index-1] = {"x":0, "y":0, "z":0};
@@ -48498,12 +48411,12 @@ var icn3d = (function (exports) {
             else {
                 let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
-                try {
+                // try {
                     let data = await me.getAjaxPromise(url, 'jsonp');
 
                     let mmdbid = data.mmdbid;
                     ic.selectedPdbid = mmdbid;
-
+                    
                     if(!mmdbid) {
                       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                       await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
@@ -48513,7 +48426,7 @@ var icn3d = (function (exports) {
                     else {
                         let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
 
-                        try {
+                        // try {
                             let opmdata = await me.getAjaxPromise(url2, 'text');
 
                             ic.bOpm = true;
@@ -48530,23 +48443,23 @@ var icn3d = (function (exports) {
                             await thisClass.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash, chainidArray);
 
                             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                        }
-                        catch(err) {
-                            if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                            await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                        // }
+                        // catch(err) {
+                        //     if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+                        //     await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                            return;
-                        }
+                        //     /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                        //     return;
+                        // }
                     }
-                }
-                catch(err) {
-                      if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
-                      await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+                // }
+                // catch(err) {
+                //       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
+                //       await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-                      /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
-                      return;
-                }
+                //       /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+                //       return;
+                // }
             }
         }
 
@@ -49034,8 +48947,9 @@ var icn3d = (function (exports) {
         }
 
         async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
-            // https://files.rcsb.org/header/ is not accessible in Node.js 
-            let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+            // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
+            //let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+            let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
             //ic.bCid = undefined;
             let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
@@ -53362,6 +53276,7 @@ var icn3d = (function (exports) {
                        me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                        await ic.showAnnoCls.showAnnotations(); 
                   }
+
                   if(me.cfg.closepopup) {
                       ic.resizeCanvasCls.closeDialogs();
                   }
@@ -53529,7 +53444,7 @@ var icn3d = (function (exports) {
         getResiNCBI(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
             let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
             let resiNCBI = (residNCBI) ? parseInt(residNCBI.substr(residNCBI.lastIndexOf('_') + 1)) : 0;
-
+                
             return resiNCBI;
         }
     }
@@ -54921,6 +54836,7 @@ var icn3d = (function (exports) {
 
                 for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                     let start1, end1;
+                    
                     // if(bRealign) { // real residue numbers are stored
                     //     start1 = ic.qt_start_end[chainIndex][i].t_start;
                     //     end1 = ic.qt_start_end[chainIndex][i].t_end;
@@ -55127,6 +55043,10 @@ var icn3d = (function (exports) {
             return resn;
         }
 
+        getResnFromResid(resid) { let ic = this.icn3d; ic.icn3dui;
+            return ic.residueId2Name[resid];
+        }
+
         getResiPosInTemplate(chainid1, resi_t) { let ic = this.icn3d; ic.icn3dui;
             // check the number of gaps before resiStart1 (nGap), and insert 'notAlnLen2 - notAlnLen1 - nGap' gaps
             let nGap = 0;
@@ -55253,7 +55173,7 @@ var icn3d = (function (exports) {
             let result;
 
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
-                let start1, start2, end1, end2;
+                let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
                 if(bRealign) { // real residue numbers are stored
                     start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                     start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
@@ -55264,26 +55184,35 @@ var icn3d = (function (exports) {
                     // start2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_start);
                     // end1 = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
                     // end2 = this.getPosFromResi(chainid2, ic.qt_start_end[chainIndex][i].q_end);
+
+                    // 1. before the mapped residues
+                    resiStart1 = start1;
+                    start1Pos = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_start);
+                    end1Pos = this.getPosFromResi(chainid1, ic.qt_start_end[chainIndex][i].t_end);
                 }
                 else {
                     start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
                     start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start - 1);
                     end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end - 1);
                     end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end - 1);  
-                }
 
-                // 1. before the mapped residues
-                let resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
+                    // 1. before the mapped residues
+                    resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
+                    start1Pos = start1;
+                    end1Pos = end1;
+                }
 
                 //let range = resi2range_t[resiStart1];
       
                 // if the mapping does not start from start_t, add gaps to the query seq
                 if(i == 0) {
-                    result = this.getTemplatePosFromOriPos(chainid1, start_t, start1, bRealign);
+                    //result = this.getTemplatePosFromOriPos(chainid1, start_t, start1, bRealign);
+                    result = this.getTemplatePosFromOriPos(chainid1, start_t, start1Pos, bRealign);
                     pos1 = result.pos1;
                     pos2 = result.pos2;
-
-                    if(start1 > start_t) {
+                    
+                    //if(start1 > start_t) {
+                    if(start1Pos > start_t) {
                         for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
                             ic.alnChainsSeq[chainid2].push(gapResObject2);
                         }
@@ -55313,10 +55242,11 @@ var icn3d = (function (exports) {
                 }
 
                 // 2. In the mapped residues
-                result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
+                //result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
+                result = this.getTemplatePosFromOriPos(chainid1, start1Pos, end1Pos, bRealign);
                 pos1 = result.pos1;
                 pos2 = result.pos2;
-
+                
                 let k = 0;    
                 if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
                 if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
@@ -55326,10 +55256,10 @@ var icn3d = (function (exports) {
                         ic.alnChainsSeq[chainid2].push(gapResObject2);
                     }
                     else {                   
-                        let resi1 = ic.ParserUtilsCls.getResi(chainid1, start1 + k);
-                        let resi2 = ic.ParserUtilsCls.getResi(chainid2, start2 + k);
-                        let resn1 = this.getResn(chainid1, start1 + k);
-                        let resn2 = this.getResn(chainid2, start2 + k);
+                        let resi1 = (bRealign) ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
+                        let resi2 = (bRealign) ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+                        let resn1 = this.getResnFromResid(chainid1 + '_' + resi1); //this.getResn(chainid1, start1 + k);
+                        let resn2 = this.getResnFromResid(chainid2 + '_' + resi2); //this.getResn(chainid2, start2 + k);
                         
                         let bAlign = true;
                         let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1);
@@ -55356,7 +55286,8 @@ var icn3d = (function (exports) {
             result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
             pos1 = result.pos1;
             pos2 = result.pos2;
-            for(let i = pos1; i < pos2; ++i) {
+            //for(let i = pos1; i < pos2; ++i) {
+            for(let i = pos1; i <= pos2; ++i) {
                 ic.alnChainsSeq[chainid2].push(gapResObject2);           
             }     
 
@@ -56027,7 +55958,8 @@ var icn3d = (function (exports) {
             if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {};
             ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
 
-            if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
+            //if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
+            this.adjustSeq(ic.chainMissingResidueArray);
 
         //    ic.missingResidues = [];
         //    for(let chainid in chainMissingResidueArray) {
@@ -58735,7 +58667,7 @@ var icn3d = (function (exports) {
             cmd = cmd.trim();
 
             let seqAnnoStr = 'Windows > View Sequences & Annotations';
-            let hbondIntStr = 'Analysis > H-Bonds & Interactions';
+            let hbondIntStr = 'Analysis > Interactions';
             let forceStr = hbondIntStr + ' > 2D Graph(Force-Directed)';
             let rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
             let rotStr2 = 'View > Rotate > Rotate 90 deg > ';
@@ -62024,6 +61956,17 @@ var icn3d = (function (exports) {
             return ic.atoms[firstIndex];
         }
 
+        getMiddleAtomObj(atomsHash) { let ic = this.icn3d; ic.icn3dui;
+            if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
+                return undefined;
+            }
+
+            let atomKeys = Object.keys(atomsHash);
+            let middleIndex = atomKeys[parseInt(atomKeys.length / 2)];
+
+            return ic.atoms[middleIndex];
+        }
+
         getFirstCalphaAtomObj(atomsHash) { let ic = this.icn3d; ic.icn3dui;
             if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
                 return undefined;
@@ -62906,6 +62849,7 @@ var icn3d = (function (exports) {
 
                 // open sequence view
                 ic.hAtomsRefnum = {};
+                ic.bResetAnno = true;
                 await ic.showAnnoCls.showAnnotations();
                 ic.annotationCls.setAnnoViewAndDisplay('detailed view');
             }
@@ -62979,7 +62923,8 @@ var icn3d = (function (exports) {
                 for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                     let chainid = chainidArray[j];
 
-                    if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)) continue;
+                    if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
+                    && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
                     if(ic.chainsSeq[chainid].length < 50) continue; // peptide
 
                     // align each 3D domain with reference structure
@@ -63179,7 +63124,7 @@ var icn3d = (function (exports) {
                         let refnum = qStart;
 
                         let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
-                        prevStrand = refnumLabel.replace(new RegExp(refnum,'g'), '');
+                        prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                         ic.resid2refnum[resid] = refnumLabel;
 
@@ -63205,6 +63150,7 @@ var icn3d = (function (exports) {
 
                 // open sequence view
                 ic.hAtomsRefnum = {};
+                ic.bResetAnno = true;
                 await ic.showAnnoCls.showAnnotations();
                 ic.annotationCls.setAnnoViewAndDisplay('detailed view');
             }
@@ -63230,11 +63176,14 @@ var icn3d = (function (exports) {
             // G: 91xx, 92xx
             // G*: 94xx
 
-            if(refnum < 100) return " " + oriRefnum;
-            else if(refnum >= 100 && refnum < 1000) {
-                if(bCd19) return " " + oriRefnum;
-                else return "A^" + oriRefnum;
-            }
+            // if(refnum < 100) return " " + oriRefnum;
+            // else if(refnum >= 100 && refnum < 1000) {
+            //     if(bCd19) return " " + oriRefnum;
+            //     else return "A^" + oriRefnum;
+            // }
+            if(refnum < 900) return undefined;
+            else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
+
             else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
             else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
             else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
@@ -63465,13 +63414,37 @@ var icn3d = (function (exports) {
                   }
               }
 
-              // get the full mutatnt PDB
+              // get the full mutant PDB
               let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
 
               ic.hAtoms = {};
               let bMutation = true;
               ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
               //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+              // copy the secondary structures from wild type to mutatnt
+              for(let resid in ic.residues) {
+                let struct = resid.substr(0, resid.indexOf('_'));
+                
+                if(struct == pdbid + '2') { // mutant
+                  let residWt = pdbid + resid.substr(resid.indexOf('_'));       
+                  let atomWt = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWt]);
+                  for(let i in ic.residues[resid]) {
+                    ic.atoms[i].ss = atomWt.ss;
+                    ic.atoms[i].ssbegin = atomWt.ssbegin;
+                    ic.atoms[i].ssend = atomWt.ssend;           
+                  }
+                }
+              }
+              for(let resid in ic.secondaries) {
+                let struct = resid.substr(0, resid.indexOf('_'));
+                
+                if(struct == pdbid + '2') { // mutant
+                  let residWt = pdbid + resid.substr(resid.indexOf('_'));       
+                  ic.secondaries[resid] = ic.secondaries[residWt];
+                }
+              }
+              
 
               ic.setStyleCls.setAtomStyleByOptions(ic.opts);
               ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
@@ -68097,9 +68070,11 @@ var icn3d = (function (exports) {
             }
 
             let outputCmd = this.shareLinkUrl(undefined, true);
-            let idStr = (me.cfg.url) ? "url=" + me.cfg.url : "mmdbafid=" + ic.inputid;
+            let idStr = (me.cfg.url) ? "url=" + me.cfg.url : me.cfg.idname + "=" + me.cfg.idvalue; //"mmdbafid=" + ic.inputid;
             let jnCmd = "view = icn3dpy.view(q='" + idStr + "',command='" + outputCmd + "')\nview";
-            $("#" + ic.pre + "jn_commands").val(jnCmd);
+            if(me.cfg.url || me.cfg.idname) {
+                $("#" + ic.pre + "jn_commands").val(jnCmd);
+            }
 
             $("#" + ic.pre + "ori_url").val(url);
 
@@ -68238,7 +68213,8 @@ var icn3d = (function (exports) {
                url += 'command=';
 
                let start;
-               if(me.cfg.notebook) {
+               //if(me.cfg.notebook) {
+               if(bOutputCmd) {
                     start =(inparaWithoutCommand !== undefined) ? 1 : 0;
                }
                else {
@@ -71192,7 +71168,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.24.1';
+        this.REVISION = '3.24.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

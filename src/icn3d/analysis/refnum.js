@@ -24,6 +24,7 @@
 
             // open sequence view
             ic.hAtomsRefnum = {};
+            ic.bResetAnno = true;
             await ic.showAnnoCls.showAnnotations();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
@@ -97,7 +98,8 @@
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
 
-                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)) continue;
+                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
+                && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
                 if(ic.chainsSeq[chainid].length < 50) continue; // peptide
 
                 // align each 3D domain with reference structure
@@ -298,7 +300,7 @@ if(!me.bNode) {
                     let refnum = qStart;
 
                     let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
-                    prevStrand = refnumLabel.replace(new RegExp(refnum,'g'), '');
+                    prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                     ic.resid2refnum[resid] = refnumLabel;
 
@@ -324,6 +326,7 @@ if(!me.bNode) {
 
             // open sequence view
             ic.hAtomsRefnum = {};
+            ic.bResetAnno = true;
             await ic.showAnnoCls.showAnnotations();
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
@@ -349,11 +352,14 @@ if(!me.bNode) {
         // G: 91xx, 92xx
         // G*: 94xx
 
-        if(refnum < 100) return " " + oriRefnum;
-        else if(refnum >= 100 && refnum < 1000) {
-            if(bCd19) return " " + oriRefnum;
-            else return "A^" + oriRefnum;
-        }
+        // if(refnum < 100) return " " + oriRefnum;
+        // else if(refnum >= 100 && refnum < 1000) {
+        //     if(bCd19) return " " + oriRefnum;
+        //     else return "A^" + oriRefnum;
+        // }
+        if(refnum < 900) return undefined;
+        else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
+
         else if(refnum >= 1000 && refnum < 1200) return "A" + oriRefnum;
         else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
         else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;

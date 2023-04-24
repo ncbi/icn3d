@@ -661,6 +661,7 @@ class ParserUtils {
                    me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                    await ic.showAnnoCls.showAnnotations(); 
               }
+
               if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
               }
@@ -828,7 +829,7 @@ class ParserUtils {
     getResiNCBI(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
         let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
         let resiNCBI = (residNCBI) ? parseInt(residNCBI.substr(residNCBI.lastIndexOf('_') + 1)) : 0;
-
+            
         return resiNCBI;
     }
 }

@@ -138,13 +138,37 @@ console.log("free energy: " + energy + " kcal/mol");
               }
           }
 
-          // get the full mutatnt PDB
+          // get the full mutant PDB
           let pdbDataMutant = ic.saveFileCls.getAtomPDB(ic.atoms, false, false, false, chainResi2pdb);
 
           ic.hAtoms = {};
           let bMutation = true;
           ic.loadPDBCls.loadPDB(pdbDataMutant, pdbid, false, false, bMutation, bAddition);
           //let allAtoms2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+          // copy the secondary structures from wild type to mutatnt
+          for(let resid in ic.residues) {
+            let struct = resid.substr(0, resid.indexOf('_'));
+            
+            if(struct == pdbid + '2') { // mutant
+              let residWt = pdbid + resid.substr(resid.indexOf('_'));       
+              let atomWt = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWt]);
+              for(let i in ic.residues[resid]) {
+                ic.atoms[i].ss = atomWt.ss;
+                ic.atoms[i].ssbegin = atomWt.ssbegin;
+                ic.atoms[i].ssend = atomWt.ssend;           
+              }
+            }
+          }
+          for(let resid in ic.secondaries) {
+            let struct = resid.substr(0, resid.indexOf('_'));
+            
+            if(struct == pdbid + '2') { // mutant
+              let residWt = pdbid + resid.substr(resid.indexOf('_'));       
+              ic.secondaries[resid] = ic.secondaries[residWt];
+            }
+          }
+          
 
           ic.setStyleCls.setAtomStyleByOptions(ic.opts);
           ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
