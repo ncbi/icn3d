@@ -56,7 +56,7 @@ class SaveFile {
             if(me.utilsCls.isIE()) {
                 blob = ic.renderer.domElement.msToBlob();
 
-                if(bAddURL && typeof(blob) == 'Blob') {
+                if(bAddURL) {
                     let reader = new FileReader();
                     reader.onload = function(e) {
                         let arrayBuffer = e.target.result; // or = reader.result;
@@ -82,7 +82,7 @@ class SaveFile {
             }
             else {
                 ic.renderer.domElement.toBlob(function(data) {
-                    if(bAddURL && typeof(blob) == 'data') {
+                    if(bAddURL) {
                         let reader = new FileReader();
                         reader.onload = function(e) {
                             let arrayBuffer = e.target.result; // or = reader.result;

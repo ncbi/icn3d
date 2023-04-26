@@ -645,71 +645,79 @@ class ShowSeq {
                         }
                     }
 
-                    if(parseInt(currResi) < parseInt(strandArray[strandCnt].startResi)) {
-                        ic.residIgLoop[residueid] = 1;
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residueid]);
 
-                        if(bNterminal) { // make it continuous to the 1st strand
-                            if(bStart) {
-                                currRefnum = strandArray[strandCnt].startRefnum - strandArray[strandCnt].loopResCnt + loopCnt;
-                                refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
-                                refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix;
-                            }                            
-                        }
-                        else {
-                            //currStrand = strandArray[prevStrandCnt].strand;
+                    // skip non-protein residues
+                    if(!atom || !ic.proteins.hasOwnProperty(atom.serial)) {
+                        refnumLabel = undefined;
+                    }
+                    else {
+                        if(parseInt(currResi) < parseInt(strandArray[strandCnt].startResi)) {
+                            ic.residIgLoop[residueid] = 1;
 
-                            if(prevStrandCnt >= 0 && strandArray[prevStrandCnt].strand.substr(0, 1) == 'G') {
-                                if(bStart && ic.resid2refnum[residueid]) {
-                                    currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
-                                    refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
-                                    refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
-                                }
-                                else {
-                                    bStart = false;
-                                    bNterminal = true;
-                                    loopCnt = 0;
-                                }
+                            if(bNterminal) { // make it continuous to the 1st strand
+                                if(bStart) {
+                                    currRefnum = strandArray[strandCnt].startRefnum - strandArray[strandCnt].loopResCnt + loopCnt;
+                                    refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                    refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix;
+                                }                            
                             }
                             else {
-                                let len = strandArray[strandCnt].loopResCnt;
-                                let halfLen = parseInt(len / 2.0 + 0.5);
-                    
-                                if(loopCnt <= halfLen) {
-                                    currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
-                                    refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
-                                    refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                //currStrand = strandArray[prevStrandCnt].strand;
+
+                                if(prevStrandCnt >= 0 && strandArray[prevStrandCnt].strand.substr(0, 1) == 'G') {
+                                    if(bStart && ic.resid2refnum[residueid]) {
+                                        currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                    }
+                                    else {
+                                        bStart = false;
+                                        bNterminal = true;
+                                        loopCnt = 0;
+                                    }
                                 }
                                 else {
-                                    currRefnum = strandArray[strandCnt].startRefnum - len + loopCnt - 1;
-                                    refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
-                                    refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                    let len = strandArray[strandCnt].loopResCnt;
+                                    let halfLen = parseInt(len / 2.0 + 0.5);
+                        
+                                    if(loopCnt <= halfLen) {
+                                        currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                    }
+                                    else {
+                                        currRefnum = strandArray[strandCnt].startRefnum - len + loopCnt - 1;
+                                        refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                    }
                                 }
                             }
                         }
-                    }
-                    else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
-                        bNterminal = false;
+                        else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
+                            bNterminal = false;
 
-                        if(currResi == strandArray[strandCnt].endResi) {
-                            ++strandCnt; // next strand
-                            loopCnt = 0;
+                            if(currResi == strandArray[strandCnt].endResi) {
+                                ++strandCnt; // next strand
+                                loopCnt = 0;
 
-                            if(!strandArray[strandCnt]) { // last strand
-                                --strandCnt;
+                                if(!strandArray[strandCnt]) { // last strand
+                                    --strandCnt;
+                                }
                             }
                         }
-                    }
-                    else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
-                        ic.residIgLoop[residueid] = 1;    
+                        else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
+                            ic.residIgLoop[residueid] = 1;    
 
-                        // C-terminal
-                        if(!ic.resid2refnum[residueid]) {
-                            break;
-                        }
-                        else {
-                            currRefnum = strandArray[strandCnt].endRefnum + loopCnt;
-                            refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
-                            refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                            // C-terminal
+                            if(!ic.resid2refnum[residueid]) {
+                                break;
+                            }
+                            else {
+                                currRefnum = strandArray[strandCnt].endRefnum + loopCnt;
+                                refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                            }
                         }
                     }
 

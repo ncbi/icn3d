@@ -706,7 +706,7 @@ class SetHtml {
        let matchedStrState = "Start of state file======\n";
        let posState = imageStr.indexOf(matchedStrState);
        if(pos == -1 && posState == -1) {
-           alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
+           alert('Please load a PNG image saved by clicking the menu "File > Save File > iCn3D PNG Image"...');
        }
        else if(pos != -1) {
            let url = imageStr.substr(pos + matchedStr.length);
