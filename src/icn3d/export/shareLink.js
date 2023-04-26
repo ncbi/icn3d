@@ -203,6 +203,10 @@ class ShareLink {
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
+               if(me.cfg.notebook && me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
+                    url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
+               }
+
                for(let key in paraHash) {
                    if(key === 'v') continue;
 
@@ -242,7 +246,7 @@ class ShareLink {
            transformation.quaternion = ic.quaternion;
 
            let statefile = "";
-           let prevCommandStr = undefined;
+           let prevCommandStr = "";
 
            let toggleStr = 'toggle highlight';
            let cntToggle = 0;
@@ -321,6 +325,7 @@ class ShareLink {
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
                url = url.replace(new RegExp(id + '_','g'), '!');
+               outputCmd = outputCmd.replace(new RegExp(id + '_','g'), '!');
            }
 
            if(me.cfg.blast_rep_id !== undefined) {

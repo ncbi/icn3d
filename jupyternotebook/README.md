@@ -73,6 +73,10 @@ Use predefined commands (The Jupyter Notebook commands can be copied from the "C
     view = icn3dpy.view(q='mmdbid=6m0j',command='scatterplot interaction pairs | !A !E | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 6; show selection; add residue number labels')
     view
 
+Embed a static image instead of an interactive 3D view to improve the performace of a page with multiple structures. The image is clickable to launch an interactive 3D view. The parameters are separated with the symbol "&" (e.g., "imageonly=1&showanno=1"). All parameters are described in the ["URL parameters" section](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters):
+
+    view = icn3dpy.view(q='mmdbid=6hjr', para='imageonly=1')
+    view
 
 Command
 -------

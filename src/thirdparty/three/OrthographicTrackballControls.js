@@ -96,7 +96,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             this.screen.width = window.innerWidth;
             this.screen.height = window.innerHeight;
 
-        } else {
+        } else if(this.domElement) {
 
             var box = this.domElement.getBoundingClientRect();
             // adjustments come from similar code in the jquery offset() function
@@ -646,7 +646,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
     }
 
-    if(Object.keys(window).length >= 2) {
+    if(Object.keys(window).length >= 2 && this.domElement) {
         this.domElement.addEventListener( 'contextmn', function ( event ) {
             //event.preventDefault();
         }, false );

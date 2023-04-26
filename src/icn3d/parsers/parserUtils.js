@@ -15,7 +15,12 @@ class ParserUtils {
 
       if(n < 4) alert("Please select at least four residues in each structure...");
       if(n >= 4) {
-          ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
+          if(ic.bAfMem) { // align to the query (membrane)
+            ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsTo, coordsFrom, n);
+          }
+          else {
+            ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
+          }
 
           // apply matrix for each atom
           if(ic.rmsd_suprTmp.rot !== undefined) {
@@ -662,7 +667,7 @@ class ParserUtils {
                    await ic.showAnnoCls.showAnnotations(); 
               }
 
-              if(me.cfg.closepopup) {
+              if(me.cfg.closepopup || me.cfg.imageonly) {
                   ic.resizeCanvasCls.closeDialogs();
               }
           }
@@ -671,6 +676,8 @@ class ParserUtils {
           }
           if($("#" + ic.pre + "atomsCustom").length > 0) $("#" + ic.pre + "atomsCustom")[0].blur();
           ic.bInitial = false;
+
+          if(me.cfg.imageonly) ic.saveFileCls.saveFile(undefined, 'png', undefined, true);
       }, 0);
     }
 

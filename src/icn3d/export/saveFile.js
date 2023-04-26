@@ -13,7 +13,9 @@ class SaveFile {
     //The type "png" is used to save the current canvas image. The type "html" is used to save html file with the
     //"data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is
     //actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
-    saveFile(filename, type, text) { let ic = this.icn3d, me = ic.icn3dui;
+    saveFile(filename, type, text, bBlob) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
         //Save file
         let blob;
 
@@ -54,7 +56,7 @@ class SaveFile {
             if(me.utilsCls.isIE()) {
                 blob = ic.renderer.domElement.msToBlob();
 
-                if(bAddURL) {
+                if(bAddURL && typeof(blob) == 'Blob') {
                     let reader = new FileReader();
                     reader.onload = function(e) {
                         let arrayBuffer = e.target.result; // or = reader.result;
@@ -64,23 +66,23 @@ class SaveFile {
                         blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
                         //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
-                        saveAs(blob, filename);
+                        thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                        return;
+                        return blob;
                     }
 
                     reader.readAsArrayBuffer(blob);
                 }
                 else {
                     //ic.createLinkForBlob(blob, filename);
-                    saveAs(blob, filename);
+                    thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                    return;
+                    return blob;
                 }
             }
             else {
                 ic.renderer.domElement.toBlob(function(data) {
-                    if(bAddURL) {
+                    if(bAddURL && typeof(blob) == 'data') {
                         let reader = new FileReader();
                         reader.onload = function(e) {
                             let arrayBuffer = e.target.result; // or = reader.result;
@@ -90,9 +92,9 @@ class SaveFile {
                             blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
                             //ic.createLinkForBlob(blob, filename);
-                            saveAs(blob, filename);
+                            thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                            return;
+                            return blob;
                         }
 
                         reader.readAsArrayBuffer(data);
@@ -101,9 +103,9 @@ class SaveFile {
                         blob = data;
 
                         //ic.createLinkForBlob(blob, filename);
-                        saveAs(blob, filename);
+                        thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                        return;
+                        return blob;
                     }
                 });
             }
@@ -139,6 +141,45 @@ class SaveFile {
 
         if(type !== 'png') {
             //https://github.com/eligrey/FileSaver.js/
+            saveAs(blob, filename);
+        }
+
+        return blob;
+    }
+
+    saveBlob(blob, filename, bBlob, width, height) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bBlob) {
+            let urlCreator = window.URL || window.webkitURL;
+            let imageUrl = urlCreator.createObjectURL(blob);
+
+            let url = ic.shareLinkCls.shareLinkUrl();
+
+            url = url.replace(/imageonly=1/g, '');
+
+            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+
+            if(bTooLong || (ic.bInputfile && !ic.bInputUrlfile)) {
+                // $("#" + ic.pre + "viewer").html("<img src='" + imageUrl + "'/>");
+                $("#" + ic.pre + "mnlist").html("<img src='" + imageUrl + "'/>");
+            }
+            else {
+                // $("#" + ic.pre + "viewer").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
+                $("#" + ic.pre + "mnlist").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
+            }
+            
+            $("#" + ic.pre + "viewer").height(height);
+            $("#" + ic.pre + "cmdlog").hide();
+            $("#" + ic.pre + "title").hide();
+            //$("#" + ic.pre + "mnlist").hide();
+            $("#" + ic.pre + "canvas").hide(); // "load mmdbid ..." may cause problems if canvas was removed
+
+            if($("#" + ic.pre + "fullscreen").length > 0) $("#" + ic.pre + "fullscreen").hide();
+
+            // clear memory
+            ic = {};
+            me = {};
+        }
+        else {
             saveAs(blob, filename);
         }
     }
@@ -765,7 +806,9 @@ class SaveFile {
                     $("#" + ic.pre + "title").html(title);
                 }
                 else if(structureArray.length == 1) {
-                    let url = this.getLinkToStructureSummary();
+                    //let url = this.getLinkToStructureSummary();
+                    let url = (isNaN(ic.inputid) && ic.inputid.length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + ic.inputid : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + ic.inputid;
+
                     this.setStructureTitle(url, title, titlelinkColor)
                 }
             }

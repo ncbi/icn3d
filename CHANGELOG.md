@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.25.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.0.zip) was release on April 26, 2023. To improve the performance of embedding several structures in a single page, added the URL parameter "imageonly=1" to render the structure into a static image instead of interactive 3D view. The image is clickable to launch an interactive 3D view.
+
 [icn3d-3.24.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.2.zip) was release on April 24, 2023. Fixed the secondary structures of mutant in the mutation analysis; fixed the lower case in the sequences of VAST+ alignment.
 
 [icn3d-3.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.24.1.zip) was release on April 14, 2023. Added more menus to the VR view of iCn3D to measure distance, toggle highlight, etc.

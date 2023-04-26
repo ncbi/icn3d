@@ -467,9 +467,10 @@ class LoadScript {
 
         // load pdb, mmcif, mmdb, cid
         let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
+        if(id.length == 4) id = id.toUpperCase();
 
         // skip loading the structure if it was loaded before
-        if(ic.structures.hasOwnProperty(id)) return;
+        if(ic.structures && ic.structures.hasOwnProperty(id)) return;
 
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
@@ -822,7 +823,7 @@ class LoadScript {
             ic.drawCls.draw();
         }
 
-        if(me.cfg.closepopup) {
+        if(me.cfg.closepopup || me.cfg.imageonly) {
             setTimeout(function(){
                 ic.resizeCanvasCls.closeDialogs();
             }, 100);
@@ -832,6 +833,8 @@ class LoadScript {
 
         // an extra render to remove artifacts in transparent surface
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
+
+        if(me.cfg.imageonly) ic.saveFileCls.saveFile(undefined, 'png', undefined, true);
 
         /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();

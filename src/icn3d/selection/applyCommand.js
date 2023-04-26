@@ -856,7 +856,9 @@ class ApplyCommand {
           let msa;
           if(paraArray.length >= 7) msa = paraArray[6].substr(4);
 
-          $("#" + ic.pre + "anno_custom")[0].checked = true;
+          if($("#" + ic.pre + "anno_custom")[0]) {
+            $("#" + ic.pre + "anno_custom")[0].checked = true;
+          }
           $("[id^=" + ic.pre + "custom]").show();
 
           if(color == '0') color = undefined;

@@ -14,7 +14,7 @@ class view(object):
             width -- width of 3D canvas in pixels
             height -- height of 3D canvas in pixels
             q -- query, e.g., q='mmdbid=1kq2'
-            para -- iCn3D parameters (e.g., para='showanno=1&show2d=1') defined at www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters
+            para -- iCn3D parameters (e.g., para='showanno=1&show2d=1&imageonly=1&closepopup=1') defined at www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters
             command -- iCn3D commands (e.g., command='color spectrum') defined at www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands
             full -- 1: full version using icn3d_all_full.min.js, 0: simple version using icn3d_all_simple.min.js
             v -- version of iCn3D, e.g., v='2.18.0'
@@ -89,15 +89,17 @@ css1
         self.endjs = "});\n" + self.endjs
         
         inputid='';
+        q=''.join(q.split(' '))
         if q != '':
             queryArray = q.split("=")
             inputid = queryArray[0] + ": \"" + queryArray[1] + "\", "
         
+        para=''.join(para.split(' '))
         para = para.replace("=", ":")
         para = para.replace("&", ",")
         command = unquote(command)
 
-        self.startjs += 'cfg = {divid: "%s", %swidth: "%spx", height: "%spx", mobilemenu: 1, notebook: 1, command: \'%s\', %s};\n' % (divid, inputid, width, height, command, para)
+        self.startjs += 'cfg = {divid: "%s", idname: "%s", idvalue: "%s", %swidth: "%spx", height: "%spx", mobilemenu: 1, notebook: 1, command: \'%s\', %s};\n' % (divid, queryArray[0], queryArray[1], inputid, width, height, command, para)
 
         self.startjs += 'viewerUNIQUEID = new icn3d.iCn3DUI(cfg);\n'
         
