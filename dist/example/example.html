@@ -140,7 +140,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
           matchedchains: (searchPdb) ? searchPdb.matchedchains : undefined
         };
         if(idName !== '') cfg[idName] = idValue;
-
+        
+        cfg.idname = idName;
+        cfg.idvalue = idValue;
+        
         // When pass from VAST neighbor page, use NCBI residue number and use asymmetric units to get all chains
         if(searchPdb) {
           cfg.usepdbnum = 0;

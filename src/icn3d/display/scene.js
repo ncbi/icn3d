@@ -31,7 +31,7 @@ class Scene {
         // }
 
         // if(!ic.bSetVrArButtons) { // call once
-            this.setVrArButtons();
+        if(!me.cfg.imageonly) this.setVrArButtons();
         // }
 
         // if((ic.bVr || ic.bAr) && !ic.bSetVrAr) { // call once
