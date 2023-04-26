@@ -128,9 +128,9 @@
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
         }
 
-        if(bClose) {
-            if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
-        }
+        // if(bClose) {
+        //     if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
+        // }
      }
 
      getColorLegendForElem(category, atomHash) { let ic = this.icn3d, me = ic.icn3dui;

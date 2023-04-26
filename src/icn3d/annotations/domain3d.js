@@ -634,7 +634,7 @@ class Domain3d {
 		let substruct = [];
 		//substruct: array of secondary structures, each of which has the keys: From residue number, To residue number, Sheet (0 or 1), also add these paras: x1, y1, z1, x2, y2, z2
 		let substructResi = [];
-		// determine residue ranges for each subdomain
+		// determine residue position ranges for each subdomain
 		let subdomains = [];
 
 		// sheets: array of sheets, each of which has the key: sheet_num (beta sandwich has two sheets, e.g., 0 and 1), adj_strand1 (not used), adj_strand2
@@ -1063,7 +1063,7 @@ class Domain3d {
 			let startseg;
 			//vector<int> segments;
 			//segments.clear();
-			let segments = []; //use position instead of residue number
+			let segments = [], segmentsResi = []; //use position instead of residue number
 
 			for (let i = 0; i < seqLen; i++) {
 				//let rf = resflags[i];

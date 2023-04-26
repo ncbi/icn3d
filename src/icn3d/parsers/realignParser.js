@@ -262,10 +262,15 @@ class RealignParser {
               //let chainTo = chainidArray[0];
               //let chainFrom = chainidArray[index + 1];
 
-              let bChainAlign = true;
+              let bChainAlign = true, result;
 
-
-              let result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              if(ic.bAfMem) { // align to the query (membrane)
+                result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, toStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              }
+              else {
+                result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              }
+              
               hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
     //          ic.opts['color'] = 'identity';
@@ -353,13 +358,13 @@ class RealignParser {
         }
         
         // use the model from Membranome as template
-        if(ic.bAfMem && chainidArray.length == 2) {
-            if(chainidArray[1].split('_')[0] == pdbidTemplate) {
-                let tmp = chainidArray[0];
-                chainidArray[0] = chainidArray[1]; 
-                chainidArray[1] = tmp;
-            }
-        }
+        // if(ic.bAfMem && chainidArray.length == 2) {
+        //     if(chainidArray[1].split('_')[0] == pdbidTemplate) {
+        //         let tmp = chainidArray[0];
+        //         chainidArray[0] = chainidArray[1]; 
+        //         chainidArray[1] = tmp;
+        //     }
+        // }
         
         let bRealign = true;
         ic.qt_start_end = []; // reset the alignment

@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.24.2';
+    this.REVISION = '3.25.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -177,6 +177,7 @@ class iCn3DUI {
     if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;
     //if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
     if(this.cfg.mobilemenu === undefined) this.cfg.mobilemenu = false;
+    if(this.cfg.imageonly === undefined) this.cfg.imageonly = false;
     if(this.cfg.closepopup === undefined) this.cfg.closepopup = false;
     if(this.cfg.showanno === undefined) this.cfg.showanno = false;
     if(this.cfg.showseq === undefined) this.cfg.showseq = false;

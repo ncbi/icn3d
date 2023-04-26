@@ -2295,7 +2295,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
             this.screen.width = window.innerWidth;
             this.screen.height = window.innerHeight;
 
-        } else {
+        } else if(this.domElement) {
 
             var box = this.domElement.getBoundingClientRect();
             // adjustments come from similar code in the jquery offset() function
@@ -2865,7 +2865,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
     }
 
-    if(Object.keys(window).length >= 2) {
+    if(Object.keys(window).length >= 2 && this.domElement) {
         this.domElement.addEventListener( 'contextmn', function ( event ) {
             //event.preventDefault();
         }, false );
@@ -2991,7 +2991,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             this.screen.width = window.innerWidth;
             this.screen.height = window.innerHeight;
 
-        } else {
+        } else if(this.domElement) {
 
             var box = this.domElement.getBoundingClientRect();
             // adjustments come from similar code in the jquery offset() function
@@ -3541,7 +3541,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
     }
 
-    if(Object.keys(window).length >= 2) {
+    if(Object.keys(window).length >= 2 && this.domElement) {
         this.domElement.addEventListener( 'contextmn', function ( event ) {
             //event.preventDefault();
         }, false );
@@ -10300,8 +10300,8 @@ var icn3d = (function (exports) {
                 //}
 
                 //!!!
-                //html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-                //html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+                // html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+                // html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
             }
             else {
                 //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -36294,7 +36294,6 @@ var icn3d = (function (exports) {
          }
 
          showColorLegend(colorType) { let ic = this.icn3d, me = ic.icn3dui;
-            let bClose = false;
 
             let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
             if(colorType == 'confidence') {
@@ -36406,7 +36405,6 @@ var icn3d = (function (exports) {
             }
             else {
                 html = '';
-                bClose = true;
             }
 
             if(html) {
@@ -36414,9 +36412,9 @@ var icn3d = (function (exports) {
                 me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
             }
 
-            if(bClose) {
-                if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
-            }
+            // if(bClose) {
+            //     if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
+            // }
          }
 
          getColorLegendForElem(category, atomHash) { let ic = this.icn3d, me = ic.icn3dui;
@@ -39453,7 +39451,7 @@ var icn3d = (function (exports) {
 
     		//substruct: array of secondary structures, each of which has the keys: From (1-based), To (1-based), Sheet (0 or 1), also add these paras: x1, y1, z1, x2, y2, z2
     		let substruct = [];
-    		// determine residue ranges for each subdomain
+    		// determine residue position ranges for each subdomain
     		let subdomains = [];
 
     		// sheets: array of sheets, each of which has the key: sheet_num (beta sandwich has two sheets, e.g., 0 and 1), adj_strand1 (not used), adj_strand2
@@ -51062,10 +51060,15 @@ var icn3d = (function (exports) {
                   //let chainTo = chainidArray[0];
                   //let chainFrom = chainidArray[index + 1];
 
-                  let bChainAlign = true;
+                  let bChainAlign = true, result;
 
-
-                  let result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+                  if(ic.bAfMem) { // align to the query (membrane)
+                    result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, toStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+                  }
+                  else {
+                    result = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+                  }
+                  
                   hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
         //          ic.opts['color'] = 'identity';
@@ -51153,13 +51156,13 @@ var icn3d = (function (exports) {
             }
             
             // use the model from Membranome as template
-            if(ic.bAfMem && chainidArray.length == 2) {
-                if(chainidArray[1].split('_')[0] == pdbidTemplate) {
-                    let tmp = chainidArray[0];
-                    chainidArray[0] = chainidArray[1]; 
-                    chainidArray[1] = tmp;
-                }
-            }
+            // if(ic.bAfMem && chainidArray.length == 2) {
+            //     if(chainidArray[1].split('_')[0] == pdbidTemplate) {
+            //         let tmp = chainidArray[0];
+            //         chainidArray[0] = chainidArray[1]; 
+            //         chainidArray[1] = tmp;
+            //     }
+            // }
             
             let bRealign = true;
             ic.qt_start_end = []; // reset the alignment
@@ -52638,7 +52641,12 @@ var icn3d = (function (exports) {
 
           if(n < 4) alert("Please select at least four residues in each structure...");
           if(n >= 4) {
-              ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
+              if(ic.bAfMem) { // align to the query (membrane)
+                ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsTo, coordsFrom, n);
+              }
+              else {
+                ic.rmsd_suprTmp = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
+              }
 
               // apply matrix for each atom
               if(ic.rmsd_suprTmp.rot !== undefined) {
@@ -53277,7 +53285,7 @@ var icn3d = (function (exports) {
                        await ic.showAnnoCls.showAnnotations(); 
                   }
 
-                  if(me.cfg.closepopup) {
+                  if(me.cfg.closepopup || me.cfg.imageonly) {
                       ic.resizeCanvasCls.closeDialogs();
                   }
               }
@@ -53286,6 +53294,8 @@ var icn3d = (function (exports) {
               }
               if($("#" + ic.pre + "atomsCustom").length > 0) $("#" + ic.pre + "atomsCustom")[0].blur();
               ic.bInitial = false;
+
+              if(me.cfg.imageonly) ic.saveFileCls.saveFile(undefined, 'png', undefined, true);
           }, 0);
         }
 
@@ -58002,7 +58012,9 @@ var icn3d = (function (exports) {
               let msa;
               if(paraArray.length >= 7) msa = paraArray[6].substr(4);
 
-              $("#" + ic.pre + "anno_custom")[0].checked = true;
+              if($("#" + ic.pre + "anno_custom")[0]) {
+                $("#" + ic.pre + "anno_custom")[0].checked = true;
+              }
               $("[id^=" + ic.pre + "custom]").show();
 
               if(color == '0') color = undefined;
@@ -60013,9 +60025,10 @@ var icn3d = (function (exports) {
 
             // load pdb, mmcif, mmdb, cid
             let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
+            if(id.length == 4) id = id.toUpperCase();
 
             // skip loading the structure if it was loaded before
-            if(ic.structures.hasOwnProperty(id)) return;
+            if(ic.structures && ic.structures.hasOwnProperty(id)) return;
 
             ic.inputid = id;
             if(command.indexOf('load mmtf') !== -1) {
@@ -60366,7 +60379,7 @@ var icn3d = (function (exports) {
                 ic.drawCls.draw();
             }
 
-            if(me.cfg.closepopup) {
+            if(me.cfg.closepopup || me.cfg.imageonly) {
                 setTimeout(function(){
                     ic.resizeCanvasCls.closeDialogs();
                 }, 100);
@@ -60376,6 +60389,8 @@ var icn3d = (function (exports) {
 
             // an extra render to remove artifacts in transparent surface
             if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
+
+            if(me.cfg.imageonly) ic.saveFileCls.saveFile(undefined, 'png', undefined, true);
 
             /// if(ic.deferred !== undefined) ic.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
             /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
@@ -61271,7 +61286,7 @@ var icn3d = (function (exports) {
 
             ic.reinitAfterLoad();
 
-            ic.loadScriptCls.renderFinalStep(1);
+            //ic.loadScriptCls.renderFinalStep(1);
             ic.definedSetsCls.setMode('all');
 
             ic.selectionCls.selectAll();
@@ -61282,6 +61297,8 @@ var icn3d = (function (exports) {
             ic.hlUpdateCls.removeSeqResidueBkgd();
             ic.hlUpdateCls.removeHl2D();
             ic.hlUpdateCls.removeHlMenus();
+
+            ic.loadScriptCls.renderFinalStep(1);
         }
 
         async loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
@@ -61313,16 +61330,18 @@ var icn3d = (function (exports) {
             if(me.cfg.bSidebyside && structureArray.length == 2) {
                 let dividArray = Object.keys(window.icn3duiHash);
                 let pos = dividArray.indexOf(ic.divid);
-
                 let structure = structureArray[pos];
                 let chainArray = ic.structures[structure];
+                
                 let structAtoms = {};
-                for(let i = 0, il = chainArray.length; i < il; ++i) {
-                    structAtoms = me.hashUtilsCls.unionHash(structAtoms, ic.chains[chainArray[i]]);
-                }
+                if(chainArray) {
+                    for(let i = 0, il = chainArray.length; i < il; ++i) {
+                        structAtoms = me.hashUtilsCls.unionHash(structAtoms, ic.chains[chainArray[i]]);
+                    }
 
-                ic.dAtoms = me.hashUtilsCls.intHash(structAtoms, ic.dAtoms);
-                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+                    ic.dAtoms = me.hashUtilsCls.intHash(structAtoms, ic.dAtoms);
+                    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+                }
             }
         }
 
@@ -62844,14 +62863,17 @@ var icn3d = (function (exports) {
         async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            if(ic.resid2refnum  && Object.keys(ic.resid2refnum).length > 0) {
-                ic.bShowRefnum = true;
+            // if(ic.resid2refnum  && Object.keys(ic.resid2refnum).length > 0) {
+            //     ic.bShowRefnum = true;
 
-                // open sequence view
-                ic.hAtomsRefnum = {};
-                ic.bResetAnno = true;
-                await ic.showAnnoCls.showAnnotations();
-                ic.annotationCls.setAnnoViewAndDisplay('detailed view');
+            //     // open sequence view
+            //     ic.hAtomsRefnum = {};
+            //     ic.bResetAnno = true;
+            //     await ic.showAnnoCls.showAnnotations();
+            //     ic.annotationCls.setAnnoViewAndDisplay('detailed view');
+            // }
+            if(ic.pdbDataArray) {
+                await thisClass.parseRefPdbData(ic.pdbDataArray);
             }
             else {
                 //ic.refpdbArray = ['1bqu_fn3', '1cd8_igv', '1t6v_vnar', '1wio_c2', '1wio_igv', '2atp_a', '2atp_b', '2dm3_iset', '5esv_vh', '5esv_vl', '6al5_cd19', '7bz5_cl1', '7bz5_vh', '7bz5_vl'];
@@ -62914,6 +62936,7 @@ var icn3d = (function (exports) {
 
             let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
+            // if(!ic.resid2domainid) ic.resid2domainid = {};
             ic.resid2domainid = {};
 
             for(let i = 0, il = struArray.length; i < il; ++i) {
@@ -62927,20 +62950,33 @@ var icn3d = (function (exports) {
                     && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
                     if(ic.chainsSeq[chainid].length < 50) continue; // peptide
 
+                    let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
+                    if(Object.keys(currAtoms).length == 0) continue;
+
                     // align each 3D domain with reference structure
-                    let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
+                    //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
+                    // assign ref numbers to selected residues
+                    let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
                     let subdomains = result.subdomains;  
+                    let pos2resi = result.pos2resi;
 
                     let domainAtomsArray = [];
                     if(subdomains.length <= 1) {
-                        domainAtomsArray.push(ic.chains[chainid]);
+                        //domainAtomsArray.push(ic.chains[chainid]);
+                        domainAtomsArray.push(currAtoms);
 
-                        for(let n = 0, nl = ic.chainsSeq[chainid].length; n < nl; ++n) {
-                            let resid = chainid + '_' + ic.chainsSeq[chainid][n].resi;
+                        // for(let n = 0, nl = ic.chainsSeq[chainid].length; n < nl; ++n) {
+                        //     let resid = chainid + '_' + ic.chainsSeq[chainid][n].resi;
+                        //     ic.resid2domainid[resid] = chainid + '-0';
+                        // }    
+                        
+                        let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+                        for(let n = 0, nl = residueArray.length; n < nl; ++n) {
+                            let resid = residueArray[n];
                             ic.resid2domainid[resid] = chainid + '-0';
-                        }             
+                        }   
                     }
-                    else {
+                    else {                 
                         for(let k = 0, kl = subdomains.length; k < kl; ++k) {
                             let domainAtoms = {};
                             let segArray = subdomains[k];
@@ -62949,8 +62985,9 @@ var icn3d = (function (exports) {
                                 let startResi = segArray[m];
                                 let endResi = segArray[m+1];
                                 for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                    let residNCBI = chainid + '_' + n;
-                                    let resid = ic.ncbi2resid[residNCBI];
+                                    //let residNCBI = chainid + '_' + n;
+                                    //let resid = ic.ncbi2resid[residNCBI];
+                                    let resid = chainid + '_' + pos2resi[n];
                                     domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                                     ic.resid2domainid[resid] = chainid + '-' + k;
                                 }
@@ -63016,6 +63053,12 @@ var icn3d = (function (exports) {
 
             // find the best alignment for each chain
             let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
+
+            // if(!ic.chainid2index) ic.chainid2index = {};
+            // if(!ic.domainid2index) ic.domainid2index = {};
+            // if(!ic.domainid2ig2kabat) ic.domainid2ig2kabat = {};
+            // if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
+
             ic.chainid2index = {};
             ic.domainid2index = {};
             ic.domainid2ig2kabat = {};
@@ -67125,7 +67168,9 @@ var icn3d = (function (exports) {
         //The type "png" is used to save the current canvas image. The type "html" is used to save html file with the
         //"data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is
         //actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
-        saveFile(filename, type, text) { let ic = this.icn3d, me = ic.icn3dui;
+        saveFile(filename, type, text, bBlob) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
+
             //Save file
             let blob;
 
@@ -67166,7 +67211,7 @@ var icn3d = (function (exports) {
                 if(me.utilsCls.isIE()) {
                     blob = ic.renderer.domElement.msToBlob();
 
-                    if(bAddURL) {
+                    if(bAddURL && typeof(blob) == 'Blob') {
                         let reader = new FileReader();
                         reader.onload = function(e) {
                             let arrayBuffer = e.target.result; // or = reader.result;
@@ -67176,23 +67221,23 @@ var icn3d = (function (exports) {
                             blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
                             //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
-                            saveAs(blob, filename);
+                            thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                            return;
+                            return blob;
                         };
 
                         reader.readAsArrayBuffer(blob);
                     }
                     else {
                         //ic.createLinkForBlob(blob, filename);
-                        saveAs(blob, filename);
+                        thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                        return;
+                        return blob;
                     }
                 }
                 else {
                     ic.renderer.domElement.toBlob(function(data) {
-                        if(bAddURL) {
+                        if(bAddURL && typeof(blob) == 'data') {
                             let reader = new FileReader();
                             reader.onload = function(e) {
                                 let arrayBuffer = e.target.result; // or = reader.result;
@@ -67202,9 +67247,9 @@ var icn3d = (function (exports) {
                                 blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
                                 //ic.createLinkForBlob(blob, filename);
-                                saveAs(blob, filename);
+                                thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                                return;
+                                return blob;
                             };
 
                             reader.readAsArrayBuffer(data);
@@ -67213,9 +67258,9 @@ var icn3d = (function (exports) {
                             blob = data;
 
                             //ic.createLinkForBlob(blob, filename);
-                            saveAs(blob, filename);
+                            thisClass.saveBlob(blob, filename, bBlob, width, height);
 
-                            return;
+                            return blob;
                         }
                     });
                 }
@@ -67251,6 +67296,44 @@ var icn3d = (function (exports) {
 
             if(type !== 'png') {
                 //https://github.com/eligrey/FileSaver.js/
+                saveAs(blob, filename);
+            }
+
+            return blob;
+        }
+
+        saveBlob(blob, filename, bBlob, width, height) { let ic = this.icn3d; ic.icn3dui;
+            if(bBlob) {
+                let urlCreator = window.URL || window.webkitURL;
+                let imageUrl = urlCreator.createObjectURL(blob);
+
+                let url = ic.shareLinkCls.shareLinkUrl();
+
+                url = url.replace(/imageonly=1/g, '');
+
+                let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+
+                if(bTooLong || (ic.bInputfile && !ic.bInputUrlfile)) {
+                    // $("#" + ic.pre + "viewer").html("<img src='" + imageUrl + "'/>");
+                    $("#" + ic.pre + "mnlist").html("<img src='" + imageUrl + "'/>");
+                }
+                else {
+                    // $("#" + ic.pre + "viewer").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
+                    $("#" + ic.pre + "mnlist").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
+                }
+                
+                $("#" + ic.pre + "viewer").height(height);
+                $("#" + ic.pre + "cmdlog").hide();
+                $("#" + ic.pre + "title").hide();
+                //$("#" + ic.pre + "mnlist").hide();
+                $("#" + ic.pre + "canvas").hide(); // "load mmdbid ..." may cause problems if canvas was removed
+
+                if($("#" + ic.pre + "fullscreen").length > 0) $("#" + ic.pre + "fullscreen").hide();
+
+                // clear memory
+                ic = {};
+            }
+            else {
                 saveAs(blob, filename);
             }
         }
@@ -67877,7 +67960,9 @@ var icn3d = (function (exports) {
                         $("#" + ic.pre + "title").html(title);
                     }
                     else if(structureArray.length == 1) {
-                        let url = this.getLinkToStructureSummary();
+                        //let url = this.getLinkToStructureSummary();
+                        let url = (isNaN(ic.inputid) && ic.inputid.length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + ic.inputid : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + ic.inputid;
+
                         this.setStructureTitle(url, title, titlelinkColor);
                     }
                 }
@@ -68192,6 +68277,10 @@ var icn3d = (function (exports) {
                        if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                    }
 
+                   if(me.cfg.notebook && me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
+                        url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
+                   }
+
                    for(let key in paraHash) {
                        if(key === 'v') continue;
 
@@ -68231,7 +68320,7 @@ var icn3d = (function (exports) {
                transformation.quaternion = ic.quaternion;
 
                let statefile = "";
-               let prevCommandStr = undefined;
+               let prevCommandStr = "";
 
                let toggleStr = 'toggle highlight';
                let cntToggle = 0;
@@ -68305,6 +68394,7 @@ var icn3d = (function (exports) {
                if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                    id = Object.keys(ic.structures)[0];
                    url = url.replace(new RegExp(id + '_','g'), '!');
+                   outputCmd = outputCmd.replace(new RegExp(id + '_','g'), '!');
                }
 
                if(me.cfg.blast_rep_id !== undefined) {
@@ -71170,7 +71260,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.24.2';
+        this.REVISION = '3.25.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -71184,6 +71274,7 @@ var icn3d = (function (exports) {
         if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;
         //if(this.cfg.simplemenu === undefined) this.cfg.simplemenu = false;
         if(this.cfg.mobilemenu === undefined) this.cfg.mobilemenu = false;
+        if(this.cfg.imageonly === undefined) this.cfg.imageonly = false;
         if(this.cfg.closepopup === undefined) this.cfg.closepopup = false;
         if(this.cfg.showanno === undefined) this.cfg.showanno = false;
         if(this.cfg.showseq === undefined) this.cfg.showseq = false;

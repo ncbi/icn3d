@@ -19,11 +19,11 @@
   <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.24.2.css">
+  <link rel="stylesheet" href="icn3d_3.25.0.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.24.2.min.js"></script>
+  <script src="icn3d_3.25.0.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(async function() {
@@ -40,7 +40,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.24.2.min.js', function() {
+          //$.getScript('icn3d_3.25.0.min.js', function() {
             var version = 3;
             await launchIcn3d(version);
           //});
@@ -108,14 +108,14 @@
               cfg.idvalue = cfg.align;
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
-              await icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
+              await icn3dui.show3DStructure();
 
               var cfg2 = cfg;
               cfg2.divid = 'div1';
               var icn3dui2 = new icn3d.iCn3DUI(cfg2);
-              await icn3dui2.show3DStructure();
               window.icn3duiHash['div1'] = icn3dui2;
+              await icn3dui2.show3DStructure();
           }
           else if(cfg.chainalign !== undefined || cfg.mmdbafid !== undefined) {
               cfg.width = '49%'; //width,
@@ -139,14 +139,14 @@
               }
 
               var icn3dui = new icn3d.iCn3DUI(cfg);
-              await icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
+              await icn3dui.show3DStructure();
 
               var cfg2 = cfg;
               cfg2.divid = 'div1';
               var icn3dui2 = new icn3d.iCn3DUI(cfg2);
-              await icn3dui2.show3DStructure();
               window.icn3duiHash['div1'] = icn3dui2;
+              await icn3dui2.show3DStructure();
           }
           else {
               await setupViewer('', '', cfg);
@@ -182,22 +182,16 @@
           if(idName !== '') cfg[idName] = idArray[i];
 
           var icn3dui = new icn3d.iCn3DUI(cfg);
-
-          await icn3dui.show3DStructure();
-          //icn3dui.setOption('color', 'spectrum');
-
           window.icn3duiHash['div0'] = icn3dui;
+          await icn3dui.show3DStructure();
           if(idName === '') $("#div" + i + "_wait").hide();
 
           i = 1;
           var cfg2 = cfg;
           cfg2.divid = 'div' + i;
           var icn3dui2 = new icn3d.iCn3DUI(cfg2);
-
-          await icn3dui2.show3DStructure();
-          //icn3dui2.setOption('color', 'spectrum');
-
           window.icn3duiHash['div1'] = icn3dui2;
+          await icn3dui2.show3DStructure();
           if(idName === '') $("#div" + i + "_wait").hide();
         //}
       }

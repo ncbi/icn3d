@@ -417,7 +417,7 @@ class Selection {
 
         ic.reinitAfterLoad();
 
-        ic.loadScriptCls.renderFinalStep(1);
+        //ic.loadScriptCls.renderFinalStep(1);
         ic.definedSetsCls.setMode('all');
 
         ic.selectionCls.selectAll();
@@ -428,6 +428,8 @@ class Selection {
         ic.hlUpdateCls.removeSeqResidueBkgd();
         ic.hlUpdateCls.removeHl2D();
         ic.hlUpdateCls.removeHlMenus();
+
+        ic.loadScriptCls.renderFinalStep(1);
     }
 
     async loadSelection(dataStr) { let ic = this.icn3d, me = ic.icn3dui;
@@ -459,16 +461,18 @@ class Selection {
         if(me.cfg.bSidebyside && structureArray.length == 2) {
             let dividArray = Object.keys(window.icn3duiHash);
             let pos = dividArray.indexOf(ic.divid);
-
             let structure = structureArray[pos];
             let chainArray = ic.structures[structure];
-            let structAtoms = {}
-            for(let i = 0, il = chainArray.length; i < il; ++i) {
-                structAtoms = me.hashUtilsCls.unionHash(structAtoms, ic.chains[chainArray[i]]);
-            }
+            
+            let structAtoms = {};
+            if(chainArray) {
+                for(let i = 0, il = chainArray.length; i < il; ++i) {
+                    structAtoms = me.hashUtilsCls.unionHash(structAtoms, ic.chains[chainArray[i]]);
+                }
 
-            ic.dAtoms = me.hashUtilsCls.intHash(structAtoms, ic.dAtoms);
-            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+                ic.dAtoms = me.hashUtilsCls.intHash(structAtoms, ic.dAtoms);
+                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+            }
         }
     }
 
