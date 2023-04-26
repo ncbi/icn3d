@@ -203,7 +203,7 @@ class ShareLink {
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
-               if(me.cfg.notebook && me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
+               if(me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
                     url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
                }
 

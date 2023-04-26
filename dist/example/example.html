@@ -108,7 +108,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
     $( document ).ready(async function() {
       let icn3dui;
 
-      async function setupViewer(idName, idValue, divid, command, alignPdb, searchPdb) {
+      async function setupViewer(idName, idValue, divid, command, alignPdb, searchPdb, bImageonly) {
         // remove previous dialogs if you want to update the same div with different views
         // if(icn3dui && icn3dui.icn3d) {
         //   icn3dui.icn3d.resizeCanvasCls.closeDialogs();
@@ -122,6 +122,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
         let resdef = (alignPdb) ? alignPdb.resdef : ((searchPdb) ? searchPdb.resdef : undefined);
         let pdbstr = (alignPdb) ? alignPdb.pdbstr : ((searchPdb) ? searchPdb.pdbstr : undefined);
 
+        let imageonly = (bImageonly) ? true : false;
+
         let cfg = {
           divid: divid,
           width: (pdbstr) ? 600: 300,
@@ -129,6 +131,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
           mobilemenu: true,
           showcommand: false,
           showtitle: false,
+          imageonly: imageonly,
           command: command,
           options: options,
           chains: (alignPdb) ? alignPdb.chains : undefined,
@@ -156,9 +159,9 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
       }
 
       await setupViewer('mmdbid', '1tup', 'div0');
-/*
-      await setupViewer('mmdbid', '1kq2', 'div1');
 
+      await setupViewer('mmdbid', '1kq2', 'div1', undefined, undefined, undefined, true);
+/*
       await setupViewer('mmdbid', '1gpk', 'div2');
 
       await setupViewer('mmdbid', '1top', 'div3');

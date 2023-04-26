@@ -67309,7 +67309,7 @@ class SaveFile {
             url = url.replace(/imageonly=1/g, '');
 
             let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-
+/*
             if(bTooLong || (ic.bInputfile && !ic.bInputUrlfile)) {
                 // $("#" + ic.pre + "viewer").html("<img src='" + imageUrl + "'/>");
                 $("#" + ic.pre + "mnlist").html("<img src='" + imageUrl + "'/>");
@@ -67319,11 +67319,31 @@ class SaveFile {
                 $("#" + ic.pre + "mnlist").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
             }
             
-            $("#" + ic.pre + "viewer").height(height);
+            // $("#" + ic.pre + "viewer").width(width);
+            // $("#" + ic.pre + "viewer").height(height);
+            $("#" + ic.pre + "mnlist").width(width);
+            $("#" + ic.pre + "mnlist").height(height);
+
             $("#" + ic.pre + "cmdlog").hide();
             $("#" + ic.pre + "title").hide();
+
             //$("#" + ic.pre + "mnlist").hide();
             $("#" + ic.pre + "canvas").hide(); // "load mmdbid ..." may cause problems if canvas was removed
+*/
+
+            if(bTooLong || (ic.bInputfile && !ic.bInputUrlfile)) {
+                $("#" + ic.pre + "viewer").html("<img src='" + imageUrl + "'/>");
+            }
+            else {
+                $("#" + ic.pre + "viewer").html("<a href='" + url + "' target='_blank'><img src='" + imageUrl + "'/></a>");
+            }
+
+            $("#" + ic.pre + "viewer").width(width);
+            $("#" + ic.pre + "viewer").height(height);
+
+            $("#" + ic.pre + "cmdlog").hide();
+            $("#" + ic.pre + "title").hide();
+            $("#" + ic.pre + "mnlist").hide();
 
             if($("#" + ic.pre + "fullscreen").length > 0) $("#" + ic.pre + "fullscreen").hide();
 
@@ -68274,7 +68294,7 @@ class ShareLink {
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
-               if(me.cfg.notebook && me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
+               if(me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
                     url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
                }
 
