@@ -148,7 +148,11 @@ class GetGraph {
         let fontsize = '6px'; // '6';
         //let html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
         let html = "<g class='icn3d-node' resid='" + resid + "' >";
-        html += "<title>" + node.id + "</title>";
+        let title = node.id;
+        if(ic.resid2refnum[resid]) {
+            title += '=>' + ic.resid2refnum[resid];
+        }
+        html += "<title>" + title + "</title>";
         if(bVertical) {
             html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
             html += "<text x='" +(y - 20).toString() + "' y='" +(x + 2).toString() + "' fill='" + textcolor + "' stroke='none' style='font-size:" + fontsize + "; text-anchor:middle' >" + nodeName + "</text>";

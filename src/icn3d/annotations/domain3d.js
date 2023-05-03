@@ -714,12 +714,12 @@ class Domain3d {
 
 		if (nsse <= 3)
 			// too small, can't split or trim
-			return {subdomains: subdomains, substruct: substruct};
+			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
 
 		if (nsse > this.MAX_SSE) {
 			// we have a problem...
 
-			return {subdomains: subdomains, substruct: substruct};
+			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
 		}
 
 		let seqLen = residueArray.length; // + resiOffset;
@@ -991,7 +991,7 @@ class Domain3d {
 				let k = prts[i] - 1;
 
 				if ((k < 0) || (k >= substruct.length)) {
-					return {subdomains: subdomains, substruct: substruct};
+					return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
 				}
 
 				//SSE_Rec sserec = substruct[k];
@@ -1108,7 +1108,7 @@ class Domain3d {
 			}
 		}
 				
-		return {subdomains: subdomains, substruct: substruct, pos2resi:pos2resi };
+		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
 	} // end c2b_NewSplitChain
 
 	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;

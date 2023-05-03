@@ -755,11 +755,13 @@ class LoadPDB {
         }
     }
 
-    setSsbond() { let ic = this.icn3d, me = ic.icn3dui;
+    setSsbond(chainidHash) { let ic = this.icn3d, me = ic.icn3dui;
         // get all Cys residues
         let structure2cys_resid = {};
 
         for(let chainid in ic.chainsSeq) {
+            if(chainidHash && !chainidHash.hasOwnProperty(chainid)) continue;
+
             let seq = ic.chainsSeq[chainid];
             let structure = chainid.substr(0, chainid.indexOf('_'));
 
