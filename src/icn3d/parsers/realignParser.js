@@ -374,7 +374,7 @@ class RealignParser {
 
     async realignOnStructAlign() { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
-        let minSseCnt = 3;
+        let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
         let struct2domain = {};
         for(let struct in ic.structures) {
             struct2domain[struct] = {};

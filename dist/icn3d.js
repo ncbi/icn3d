@@ -39530,12 +39530,12 @@ var icn3d = (function (exports) {
 
     		if (nsse <= 3)
     			// too small, can't split or trim
-    			return {subdomains: subdomains, substruct: substruct};
+    			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
 
     		if (nsse > this.MAX_SSE) {
     			// we have a problem...
 
-    			return {subdomains: subdomains, substruct: substruct};
+    			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
     		}
 
     		let seqLen = residueArray.length; // + resiOffset;
@@ -39807,7 +39807,7 @@ var icn3d = (function (exports) {
     				let k = prts[i] - 1;
 
     				if ((k < 0) || (k >= substruct.length)) {
-    					return {subdomains: subdomains, substruct: substruct};
+    					return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
     				}
 
     				//SSE_Rec sserec = substruct[k];
@@ -39924,7 +39924,7 @@ var icn3d = (function (exports) {
     			}
     		}
     				
-    		return {subdomains: subdomains, substruct: substruct, pos2resi:pos2resi };
+    		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
     	} // end c2b_NewSplitChain
 
     	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
@@ -42826,10 +42826,10 @@ var icn3d = (function (exports) {
             // sometimes one chain may have several Ig domains,set an index for each IgDomain
             let index = 1, bStart = false;
             
-            // get the range of each strand excluding loops
-            let strandArray = [], strandHash = {}, strandCnt = 0, resCnt = 0;
+            // 1. get the range of each strand excluding loops
+            let strandArray = [], strandHash = {}, strandCnt = 0, resCnt = 0, resCntBfAnchor = 0, resCntAtAnchor = 0;
             if(!bCustom && !kabat_or_imgt) {
-                for(let i = 0, il = giSeq.length; i < il; ++i, ++resCnt) {
+                for(let i = 0, il = giSeq.length; i < il; ++i, ++resCnt, ++resCntBfAnchor, ++resCntAtAnchor) {
                     let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                     let residueid = chnid + '_' + currResi;
                     refnumLabel = ic.resid2refnum[residueid];
@@ -42858,6 +42858,8 @@ var icn3d = (function (exports) {
 
                         if(currStrand && currStrand != ' ') {
                             if(refnum3c.substr(0,1) != '9') {
+                                let lastTwo = parseInt(refnum.toString().substr(refnum.toString().length - 2, 2));
+                                
                                 if(currStrand != prevStrand) { // reset currCnt
                                     if(strandHash[currStrand + postfix]) {
                                         ++index;
@@ -42869,9 +42871,18 @@ var icn3d = (function (exports) {
                                     strandArray[strandCnt] = {};    
                                     strandArray[strandCnt].startResi = currResi;
                                     strandArray[strandCnt].startRefnum = refnum; // 1250 in A1250a
+
+                                    resCntBfAnchor = 0;
                                     
                                     strandArray[strandCnt].endResi = currResi;
                                     strandArray[strandCnt].endRefnum = refnum; // 1250a
+
+                                    if(lastTwo == 50) {
+                                        strandArray[strandCnt].anchorRefnum = refnum;
+                                        strandArray[strandCnt].resCntBfAnchor = resCntBfAnchor;
+
+                                        resCntAtAnchor = 0;
+                                    }
 
                                     strandArray[strandCnt].strandPostfix = strandPostfix; // a in A1250a
                                     strandArray[strandCnt].strand = currStrand; // A in A1250a
@@ -42885,8 +42896,23 @@ var icn3d = (function (exports) {
                                 }
                                 else {
                                     if(strandHash[currStrand + postfix]) {
+                                        if(lastTwo == 50) {
+                                            strandArray[strandCnt - 1].anchorRefnum = refnum;
+                                            strandArray[strandCnt - 1].resCntBfAnchor = resCntBfAnchor;
+
+                                            // update
+                                            strandArray[strandCnt - 1].startRefnum = strandArray[strandCnt - 1].anchorRefnum - strandArray[strandCnt - 1].resCntBfAnchor;
+
+                                            resCntAtAnchor = 0;
+                                        }
+
                                         strandArray[strandCnt - 1].endResi = currResi;
                                         strandArray[strandCnt - 1].endRefnum = refnum; // 1250a
+                                        strandArray[strandCnt - 1].resCntAtAnchor = resCntAtAnchor;
+
+                                        if(strandArray[strandCnt - 1].anchorRefnum) {
+                                            strandArray[strandCnt - 1].endRefnum = strandArray[strandCnt - 1].anchorRefnum + strandArray[strandCnt - 1].resCntAtAnchor;
+                                        }
 
                                         resCnt = 0;
                                     }
@@ -42898,13 +42924,26 @@ var icn3d = (function (exports) {
                     prevStrand = currStrand;
                 }
 
+                // 2. remove strands with less than 3 residues
+                for(let il = strandArray.length, i = il - 1; i >= 0; --i) {
+                    if(strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
+                        if(i != il - 1) { // modify 
+                            strandArray[i + 1].loopResCnt += strandArray[i].endRefnum - strandArray[i].startRefnum + 1;
+                        }
+
+                        strandArray.splice(i, 1);
+                    }
+                }
+                
+                // 3. assign refnumLabel for each resid
                 strandCnt = 0;
                 let loopCnt = 0;
 
-                let bNterminal = true, refnumLabelNoPostfix, prevStrandCnt = 0, currRefnum;
+                let bNterminal = true, bCterminal = true, refnumLabelNoPostfix, prevStrandCnt = 0, currRefnum;
                 bStart = false;
+                let refnumInStrand = 0;
                 if(strandArray.length > 0) {
-                    for(let i = 0, il = giSeq.length; i < il; ++i, ++loopCnt) {
+                    for(let i = 0, il = giSeq.length; i < il; ++i, ++loopCnt, ++refnumInStrand) {
                         let currResi = ic.ParserUtilsCls.getResi(chnid, i);
                         let residueid = chnid + '_' + currResi;
                         refnumLabel = ic.resid2refnum[residueid];
@@ -42975,6 +43014,20 @@ var icn3d = (function (exports) {
                             }
                             else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
                                 bNterminal = false;
+                                //bCterminal = true; // The next will be C-terminal
+
+                                if(strandArray[strandCnt].anchorRefnum) { // use anchor to name refnum
+                                    if(currResi == strandArray[strandCnt].startResi) {
+                                        refnumInStrand = strandArray[strandCnt].anchorRefnum - strandArray[strandCnt].resCntBfAnchor;
+                                        strandArray[strandCnt].startRefnum = refnumInStrand;
+                                    }
+                                    else if(currResi == strandArray[strandCnt].endResi) {
+                                        strandArray[strandCnt].endRefnum = refnumInStrand;
+                                    }
+
+                                    refnumLabelNoPostfix = strandArray[strandCnt].strand + refnumInStrand;
+                                    refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                }
 
                                 if(currResi == strandArray[strandCnt].endResi) {
                                     ++strandCnt; // next strand
@@ -42988,14 +43041,28 @@ var icn3d = (function (exports) {
                             else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
                                 ic.residIgLoop[residueid] = 1;    
 
-                                // C-terminal
-                                if(!ic.resid2refnum[residueid]) {
-                                    break;
+                                if(!bCterminal) {
+                                    refnumLabelNoPostfix = undefined;
+                                    refnumLabel = undefined;
                                 }
                                 else {
-                                    currRefnum = strandArray[strandCnt].endRefnum + loopCnt;
-                                    refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
-                                    refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                    // C-terminal
+                                    if(!ic.resid2refnum[residueid]) {
+                                        //break;
+
+                                        bCterminal = false;
+                                        //bNterminal = true; // The next will be N-terminal
+
+                                        refnumLabelNoPostfix = undefined;
+                                        refnumLabel = undefined;
+                                    }
+                                    else {
+                                        bCterminal = true;
+
+                                        currRefnum = strandArray[strandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[strandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[strandCnt].strandPostfix; 
+                                    }
                                 }
                             }
                         }
@@ -45000,7 +45067,11 @@ var icn3d = (function (exports) {
             let fontsize = '6px'; // '6';
             //let html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
             let html = "<g class='icn3d-node' resid='" + resid + "' >";
-            html += "<title>" + node.id + "</title>";
+            let title = node.id;
+            if(ic.resid2refnum[resid]) {
+                title += '=>' + ic.resid2refnum[resid];
+            }
+            html += "<title>" + title + "</title>";
             if(bVertical) {
                 html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
                 html += "<text x='" +(y - 20).toString() + "' y='" +(x + 2).toString() + "' fill='" + textcolor + "' stroke='none' style='font-size:" + fontsize + "; text-anchor:middle' >" + nodeName + "</text>";
@@ -51180,7 +51251,7 @@ var icn3d = (function (exports) {
 
         async realignOnStructAlign() { let ic = this.icn3d, me = ic.icn3dui;
             // each 3D domain should have at least 3 secondary structures
-            let minSseCnt = 3;
+            let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
             let struct2domain = {};
             for(let struct in ic.structures) {
                 struct2domain[struct] = {};
@@ -56268,11 +56339,13 @@ var icn3d = (function (exports) {
             }
         }
 
-        setSsbond() { let ic = this.icn3d; ic.icn3dui;
+        setSsbond(chainidHash) { let ic = this.icn3d; ic.icn3dui;
             // get all Cys residues
             let structure2cys_resid = {};
 
             for(let chainid in ic.chainsSeq) {
+                if(chainidHash && !chainidHash.hasOwnProperty(chainid)) continue;
+
                 let seq = ic.chainsSeq[chainid];
                 let structure = chainid.substr(0, chainid.indexOf('_'));
 
@@ -71288,7 +71361,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.25.0';
+        this.REVISION = '3.25.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
