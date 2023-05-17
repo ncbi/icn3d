@@ -613,19 +613,19 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + ic.inputid;
+           let url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + ic.inputid;
            thisClass.setLogCmd("link to 3D protein structures bound to CID " + ic.inputid + ": " + url, false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_link_vast", "click", function(e) { let ic = me.icn3d; e.preventDefault();
-           if(ic.inputid === undefined) {
-                   url = "https://www.ncbi.nlm.nih.gov/pccompound?term=" + ic.molTitle;
-                   thisClass.setLogCmd("link to compounds " + ic.molTitle + ": " + url, false);
+         let url;  
+         if(ic.inputid === undefined) {
+               url = "https://www.ncbi.nlm.nih.gov/pccompound?term=" + ic.molTitle;
+               thisClass.setLogCmd("link to compounds " + ic.molTitle + ": " + url, false);
            }
            else {
-               let url;
                if(me.cfg.cid !== undefined) {
                        url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_pccompound_3d&from_uid=" + ic.inputid;
                        thisClass.setLogCmd("link to compounds with structure similar to CID " + ic.inputid + ": " + url, false);
@@ -651,7 +651,6 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_link_pubmed", "click", function(e) { let ic = me.icn3d; e.preventDefault();
            let url;
            if(ic.inputid === undefined) {
-               let url;
                url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + ic.molTitle;
                thisClass.setLogCmd("link to literature about " + ic.molTitle + ": " + url, false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -659,7 +658,6 @@ class ClickMenu {
            }
            else if(ic.pmid) {
                let idArray = ic.pmid.toString().split('_');
-               let url;
                if(idArray.length === 1) {
                    url = "https://www.ncbi.nlm.nih.gov/pubmed/" + ic.pmid;
                    thisClass.setLogCmd("link to PubMed ID " + ic.pmid + ": " + url, false);
@@ -673,7 +671,6 @@ class ClickMenu {
            }
            else if(isNaN(ic.inputid)) {
                let idArray = ic.inputid.toString().split('_');
-               let url;
                if(idArray.length === 1) {
                    url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + ic.inputid;
                    thisClass.setLogCmd("link to literature about PDB " + ic.inputid + ": " + url, false);
@@ -1688,14 +1685,14 @@ class ClickMenu {
             thisClass.setLogCmd('ig refnum on', true);
             await ic.refnumCls.showIgRefNum();
 
-            if(ic.bShowRefnum) {
-               ic.opts.color = 'ig strand';
-               ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            // if(ic.bShowRefnum) {
+            //    ic.opts.color = 'ig strand';
+            //    ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
    
-               ic.selectionCls.selectAll_base();
-               ic.hlUpdateCls.updateHlAll();
-               ic.drawCls.draw();
-            }
+            //    ic.selectionCls.selectAll_base();
+            //    ic.hlUpdateCls.updateHlAll();
+            //    ic.drawCls.draw();
+            // }
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; e.preventDefault();

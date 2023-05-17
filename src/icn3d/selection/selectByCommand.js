@@ -64,7 +64,7 @@ class SelectByCommand {
 
     selectBySpec(select, commandname, commanddesc, bDisplay, bNoUpdateAll) { let ic = this.icn3d, me = ic.icn3dui;
        select =(select.trim().substr(0, 6) === 'select') ? select.trim().substr(7) : select.trim();
-       ic.hAtoms = {}
+       ic.hAtoms = {};
 
        // selection definition is similar to Chimera: https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/midas/frameatom_spec.html
        // There will be no ' or ' in the spec. It's already separated in selectByCommand()
@@ -79,6 +79,7 @@ class SelectByCommand {
            // $1,2,3: Structure
            // .A,B,C: chain
            // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
+           // :ref_1250,anchors,strands,loops: reference numbers 1250, anchor residues (e.g., 2250), residues in strands, residues in loops
            // @CA,C,C*: atoms
            // wild card * can be used to select all
            //var currHighlightAtoms = {}
@@ -86,7 +87,7 @@ class SelectByCommand {
            let dollarPos = commandArray[i].indexOf('$');
            let periodPos = commandArray[i].indexOf('.');
            let colonPos = commandArray[i].indexOf(':');
-           let colonPos2 = commandArray[i].indexOf('%'); // for reference numbers
+           let colonPos2 = commandArray[i].indexOf(':ref_'); // for reference numbers
            let atPos = commandArray[i].indexOf('@');
 
            let moleculeStr, chainStr, residueStr, refResStr, atomStrArray;
@@ -103,14 +104,14 @@ class SelectByCommand {
            if(colonPos === -1 && colonPos2 === -1 ) {
              residueStr = "*";
            }
+           else if(colonPos2 != -1) {
+            refResStr = testStr.substr(colonPos2 + 5);
+            testStr = testStr.substr(0, colonPos2);
+           }
            else if(colonPos != -1) {
              residueStr = testStr.substr(colonPos + 1);
              testStr = testStr.substr(0, colonPos);
            }
-           else if(colonPos2 != -1) {
-            refResStr = testStr.substr(colonPos2 + 1);
-            testStr = testStr.substr(0, colonPos2);
-          }
 
            if(periodPos === -1) {
              chainStr = "*";
@@ -204,7 +205,9 @@ class SelectByCommand {
                  else if(residueStrArray[j] === '*') { // all resiues
                    bAllResidues = true;
                  }
-                 else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
+                 else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' 
+                   && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water'
+                   && residueStrArray[j] !== 'anchors' && residueStrArray[j] !== 'strands' && residueStrArray[j] !== 'loops') { // residue name
                    let tmpStr = residueStrArray[j].toUpperCase();
                    //oneLetterResidue =(residueStrArray[j].length === 1) ? tmpStr : me.utilsCls.residueName2Abbr(tmpStr);
                    oneLetterResidueStr = tmpStr;
@@ -273,6 +276,16 @@ class SelectByCommand {
                      for(let m in chainAtomHash) {
                        // residue could also be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
                        let tmpStr = ic.atoms[m].resn.substr(0,3).toUpperCase();
+                       let resid = molecule_chain + '_' + ic.atoms[m].resi; 
+                       let refnumLabel, refnumStr, refnum;
+                       if(bRefnum) {
+                         refnumLabel = ic.resid2refnum[resid];
+                         if(refnumLabel) {
+                          refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                          refnum = parseInt(refnumStr);
+                         }
+                       }
+
                        if(bAllResidues
                            //|| me.utilsCls.residueName2Abbr(tmpStr) === oneLetterResidue
                            ||(residueStrArray[j] === 'proteins' && m in ic.proteins)
@@ -280,32 +293,23 @@ class SelectByCommand {
                            ||(residueStrArray[j] === 'chemicals' && m in ic.chemicals)
                            ||(residueStrArray[j] === 'ions' && m in ic.ions)
                            ||(residueStrArray[j] === 'water' && m in ic.water)
+                           ||(bRefnum && refnumLabel && residueStrArray[j] === 'anchors' && refnum % 100 == 50)
+                           ||(bRefnum && refnumLabel && residueStrArray[j] === 'strands' && !ic.residIgLoop.hasOwnProperty(resid))
+                           ||(bRefnum && refnumLabel && residueStrArray[j] === 'loops' && ic.residIgLoop.hasOwnProperty(resid))
                            ) {
                          // many duplicates
                          if(i === 0) {
-                             residueHash[molecule_chain + '_' + ic.atoms[m].resi] = 1;
+                             residueHash[resid] = 1;
                          }
                          else {
-                             let residTmp = molecule_chain + '_' + ic.atoms[m].resi;
-                             //if(!residueHash.hasOwnProperty(residTmp)) residueHash[residTmp] = undefined;
-                             if(!residueHash.hasOwnProperty(residTmp)) delete residueHash[residTmp];
+                             if(!residueHash.hasOwnProperty(resid)) delete residueHash[resid];
                          }
 
                          for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
                              let atomStr = atomStrArray[n];
 
                              atomHash = this.processAtomStr(atomStr, atomHash, i, m);
-
-                            //  if(atomStr === '*' || atomStr === ic.atoms[m].name) {
-                            //      if(i === 0) {
-                            //          atomHash[m] = 1;
-                            //      }
-                            //      else {
-                            //          if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                            //      }
-                            //  }
                          }
-
                        }
                      } // end for(let m in atomHash) {
 

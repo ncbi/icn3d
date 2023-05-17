@@ -564,6 +564,18 @@ class ApplyCommand {
 
          ic.addTrackCls.defineSecondary(chainid, 'coil');
       }
+      else if(commandOri.indexOf('define igstrand sets') == 0) {
+        let chainStr = commandOri.split(' | ')[1];
+        let chainid = chainStr.split(' ')[1];
+
+        ic.addTrackCls.defineIgstrand(chainid, 'igstrand');
+      }
+      else if(commandOri.indexOf('define igloop sets') == 0) {
+        let chainStr = commandOri.split(' | ')[1];
+        let chainid = chainStr.split(' ')[1];
+
+        ic.addTrackCls.defineIgstrand(chainid, 'igloop');
+      }
       else if(commandOri.indexOf('select interaction') == 0) {
         let idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) {
@@ -1329,6 +1341,12 @@ class ApplyCommand {
         let paraArray = commandOri.split(' | ');
         let dataStr = paraArray[1].replace(/\\n/g, '\n');
         await ic.refnumCls.parseCustomRefFile(dataStr);
+      }
+      else if(command.indexOf('show ref number') == 0) {
+        ic.bShownRefnum = true;
+      }
+      else if(command.indexOf('hide ref number') == 0) {
+        ic.bShownRefnum = false;
       }
 
     // special, select ==========

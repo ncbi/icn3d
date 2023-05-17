@@ -282,9 +282,9 @@
         let html = '';
 
         const name2color = {
-            //"A^ Strand": "FF00FF", 
+            //"A- Strand": "FF00FF", 
             "A Strand": "663399",
-            //"A* Strand": "663399", //"FFC0CB",
+            //"A+ Strand": "663399", //"FFC0CB",
             "A' Strand": "663399", //"9370db",
             "B Strand": "ba55d3",
             "C Strand": "0000FF",
@@ -294,7 +294,7 @@
             "E Strand": "FFFF00", //"F0E68C",
             "F Strand": "FFA500",
             "G Strand": "FF0000",
-            //"G* Strand": "8B0000",
+            //"G+ Strand": "8B0000",
             "Loop": "CCCCCC"
         };
 

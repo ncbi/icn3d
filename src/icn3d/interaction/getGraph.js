@@ -142,6 +142,11 @@ class GetGraph {
             if(!bVertical) adjusty += 4 * r;
         }
 
+        // show reference numbers
+        if(ic.bShownRefnum && ic.resid2refnum[resid]) {
+            nodeName = ic.resid2refnum[resid];
+        }
+
         let strokecolor = '#000';
         let strokewidth = '1';
         let textcolor = '#000';

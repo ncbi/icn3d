@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.25.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.2.zip) was release on May 17, 2023. Fixed a bug in VAST alignment.
+
 [icn3d-3.25.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.1.zip) was release on May 3, 2023. Fixed a bug in relaigning structures.
 
 [icn3d-3.25.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.0.zip) was release on April 26, 2023. To improve the performance of embedding several structures in a single page, added the URL parameter "imageonly=1" to render the structure into a static image instead of interactive 3D view. The image is clickable to launch an interactive 3D view.

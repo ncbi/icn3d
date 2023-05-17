@@ -231,10 +231,12 @@ class ShowAnno {
 
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
-            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
             ic.selectionCls.selectAll_base();
             ic.hlUpdateCls.updateHlAll();
+            //ic.drawCls.draw();
         }
     }
 
@@ -304,6 +306,11 @@ class ShowAnno {
                 chainHtml += this.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                 + this.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
+
+                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid)) {
+                    chainHtml += "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
+                    + this.addButton(chnid, "icn3d-igloopsets", "Ig Loop Sets", "Define sets for each Ig loop in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle);
+                }
             $("#" + ic.pre + "dl_annotations").append(chainHtml);
             //let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'ptm', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
             let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
@@ -362,7 +369,7 @@ class ShowAnno {
             }
             catch(err) {
                 thisClass.enableHlSeq();
-                if(!me.bNode) console.log( "No data were found for the protein " + chnidBaseArray + "..." );
+                if(!me.bNode) console.log( "No sequence data were found for the protein " + chnidBaseArray + "..." );
                 for(let chnid in ic.protein_chainid) {
                     let chnidBase = ic.protein_chainid[chnid];
                     ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
@@ -488,7 +495,7 @@ class ShowAnno {
                 }
             }
             else {
-                if(!me.bNode) console.log( "No data were found for the chain " + chnid + "..." );
+                if(!me.bNode) console.log( "No sequence data were found for the chain " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
                      
@@ -736,6 +743,10 @@ class ShowAnno {
         }
     }
     getColorhexFromBlosum62(resA, resB) { let ic = this.icn3d, me = ic.icn3dui;
+        let color = '333333';
+
+        if(!resA || !resB) return color;
+        
         resA = resA.toUpperCase();
         resB = resB.toUpperCase();
 
@@ -745,7 +756,7 @@ class ShowAnno {
         if(matrixValue === undefined) return '333333';
         // range and color: blue for -4 ~ 0, red for 0 ~ 11
         // max value 221 to avoid white
-        let color = '333333';
+        
         if(matrixValue > 0) {
             let c = 221 - parseInt(matrixValue / 11.0 * 221);
             let cStr =(c < 10) ? '0' + c.toString(16) : c.toString(16);

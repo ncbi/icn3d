@@ -395,7 +395,9 @@ class SetSeqAlign {
           if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
 
           let posChain1 = {}, posChain2 = {};
-         
+console.log("###bRealign: " + bRealign);
+ console.log(ic.qt_start_end[chainIndex]);
+
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2;
             if(bRealign) { // real residue numbers are stored, could be "100a"
@@ -510,10 +512,14 @@ class SetSeqAlign {
 
                   let resi1, resi2, resn1, resn2;
                   if(bRealign) { // tmalign: just one residue in this for loop
-                    // resi1 = j + start1;
-                    // resi2 = j + start2;
-                    resi1 = ic.qt_start_end[chainIndex][i].t_start;
-                    resi2 = ic.qt_start_end[chainIndex][i].q_start;
+                    if(me.cfg.aligntool == 'tmalign') {
+                        resi1 = ic.qt_start_end[chainIndex][i].t_start;
+                        resi2 = ic.qt_start_end[chainIndex][i].q_start;
+                    }
+                    else {
+                        resi1 = j + start1;
+                        resi2 = j + start2;
+                    }
 
                     resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
                     resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
@@ -790,7 +796,12 @@ class SetSeqAlign {
         resObject.mmdbid = chainid.substr(0, pos);
         resObject.chain = chainid.substr(pos+1);
         resObject.resi = (bGap) ? '' : resi; // resi will be empty if there is no coordinates
-        resObject.resn = (bGap) ? '-' : ((bAligned) ? resn.toUpperCase() : resn.toLowerCase());
+        if(!resn) {
+            resObject.resn = '-';
+        }
+        else {
+            resObject.resn = (bGap) ? '-' : ((bAligned) ? resn.toUpperCase() : resn.toLowerCase());
+        }
         resObject.aligned = (bGap) ? false : bAligned;
         resObject.color = (bGap || !bAligned) ? me.htmlCls.GREYC : ((resn == resn_t) ? "#FF0000" : "#0000FF"); // color by identity
         resObject.color2 = (bGap || !bAligned) ? me.htmlCls.GREYC : '#' + ic.showAnnoCls.getColorhexFromBlosum62(resn, resn_t); // color by conservation

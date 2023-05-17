@@ -632,11 +632,11 @@ class SetDialog {
         
         html += "<div>4. " + me.htmlCls.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
 
-        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.htmlCls.buttonStr + "sortSet1'> Set 1</button>" + me.htmlCls.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
+        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.htmlCls.buttonStr + "sortSet1'> Set 1</button>" + me.htmlCls.buttonStr + "sortSet2' style='margin-left:12px'>Set 2</button></div><br>";
 
-        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondLineGraph'>2D Interaction Network</button> to show interactions between two lines of residue nodes</div><br>";
+        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondLineGraph'>2D Interaction Network</button> " + me.htmlCls.buttonStr + "hbondLineGraph2' style='margin-left:12px'>2D Network with Reference Numbers</button> to show two lines of residue nodes</div><br>";
 
-        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> to show interactions as map</div><br>";
+        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> " + me.htmlCls.buttonStr + "hbondScatterplot2' style='margin-left:12px'>2D Map with Reference Numbers</button> to show map</div><br>";
 
         tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
 

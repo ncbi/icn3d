@@ -338,25 +338,27 @@ class SetColor {
             case 'ig strand':
                 if(ic.bShowRefnum) {
                     let color;
-                    for(let resid in ic.residues) {
-                        if(!ic.resid2refnum[resid]) {
+                    let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+
+                    for(let resid in residueHash) {
+                        if(!ic.resid2refnum[resid]) {              
                             color = me.parasCls.thr('#FFFFFF');
                         }
                         else {
                             let refnumLabel = ic.resid2refnum[resid];
                             
-                            if(!refnumLabel) {
-                                color = me.parasCls.thr(me.htmlCls.GREYB);
-                            }
-                            else {
-                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                            // if(!refnumLabel) {
+                            //     color = me.parasCls.thr(me.htmlCls.GREYB);
+                            // }
+                            // else {
+                                let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                                 let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                                 color = ic.showSeqCls.getRefnumColor(currStrand);
 
-                                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                                if(ic.residIgLoop.hasOwnProperty(resid)) {                            
                                     color = me.parasCls.thr(me.htmlCls.GREYB);
                                 }
-                            }
+                            // }
                         }
                             
                         for (let i in ic.residues[resid]) {
@@ -373,7 +375,8 @@ class SetColor {
             case 'ig protodomain':
                 if(ic.bShowRefnum) {
                     let color;
-                    for(let resid in ic.residues) {
+                    let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+                    for(let resid in residueHash) {
                         if(!ic.resid2refnum[resid]) {
                             color = me.parasCls.thr('#FFFFFF');
                         }
@@ -384,7 +387,7 @@ class SetColor {
                                 color = me.parasCls.thr(me.htmlCls.GREYB);
                             }
                             else {
-                                let refnumStr = refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').substr(1); // C', C''
+                                let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                                 let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                                 color = ic.showSeqCls.getProtodomainColor(currStrand);
 
