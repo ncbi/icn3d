@@ -53,7 +53,7 @@
         ic.impostorCls.clearImpostors();
 
         // show membranes
-        if(ic.bOpm) {
+        if(ic.bOpm && !me.cfg.chainalign) {
             //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
             
             let html = me.utilsCls.getMemDesc();

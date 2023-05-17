@@ -708,7 +708,7 @@ class AddTrack {
             $("#" + ic.pre + "atomsCustom").resizable();
         }
 
-        let selectedResidues = {}
+        let selectedResidues = {};
         let bUnion = false, bUpdateHighlight = true;
 
         // order of secondary structures
@@ -720,7 +720,7 @@ class AddTrack {
         let prevName = chainid + '_C(Nterm', currName, setName;
 
         // clear selection
-        ic.hAtoms = {}
+        ic.hAtoms = {};
 
         for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
           let currResi = ic.chainsSeq[chainid][i].resi;
@@ -737,7 +737,7 @@ class AddTrack {
                     ++helixCnt;
 
                     if(Object.keys(selectedResidues).length > 0) {
-                        setName = currName + 'H' + helixCnt + ')';
+                        setName = currName + 'H' + helixCnt.toString().padStart(2, '0') + ')';
                         if(type == 'coil') {
                             ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
                             if(!bUnion) bUnion = true;
@@ -749,13 +749,13 @@ class AddTrack {
 
                 //zero =(index < 10) ? '0' : '';
                 //currName = chainid + zero + index + '_H' + helixCnt;
-                currName = chainid + '_H' + helixCnt;
+                currName = chainid + '_H' + helixCnt.toString().padStart(2, '0');
                 selectedResidues[residueid] = 1;
 
                 if(atom.ssend) {
                     //zero =(index < 9) ? '0' : '';
                     //prevName = chainid + zero +(index+1) + '_L(H' + helixCnt;
-                    prevName = chainid + '_C(H' + helixCnt;
+                    prevName = chainid + '_C(H' + helixCnt.toString().padStart(2, '0');
                     if(type == 'helix') {
                         ic.selectionCls.selectResidueList(selectedResidues, currName, currName, bUnion, bUpdateHighlight);
                         if(!bUnion) bUnion = true;
@@ -769,7 +769,7 @@ class AddTrack {
                     ++sheetCnt;
 
                     if(Object.keys(selectedResidues).length > 0) {
-                        setName = currName + 'S' + sheetCnt + ')';
+                        setName = currName + 'S' + sheetCnt.toString().padStart(2, '0') + ')';
                         if(type == 'coil') {
                             ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
                             if(!bUnion) bUnion = true;
@@ -781,13 +781,13 @@ class AddTrack {
 
                 //zero =(index < 10) ? '0' : '';
                 //currName = chainid + zero + index + '_S' + sheetCnt;
-                currName = chainid + '_S' + sheetCnt;
+                currName = chainid + '_S' + sheetCnt.toString().padStart(2, '0');
                 selectedResidues[residueid] = 1;
 
                 if(atom.ssend) {
                     //zero =(index < 9) ? '0' : '';
                     //prevName = chainid + zero +(index+1) + '_L(S' + sheetCnt;
-                    prevName = chainid + '_C(S' + sheetCnt;
+                    prevName = chainid + '_C(S' + sheetCnt.toString().padStart(2, '0');
                     if(type == 'sheet') {
                         ic.selectionCls.selectResidueList(selectedResidues, currName, currName, bUnion, bUpdateHighlight);
                         if(!bUnion) bUnion = true;
@@ -808,6 +808,91 @@ class AddTrack {
             if(type == 'coil') {
                 ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
             }
+        }
+    }
+
+    // type: igstrand, igloop
+    defineIgstrand(chainid, type) { let ic = this.icn3d, me = ic.icn3dui;       
+        if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+            me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+            $("#" + ic.pre + "atomsCustom").resizable();
+        }
+
+        let selectedResidues = {};
+        let bUnion = false, bUpdateHighlight = true;
+
+        let strandCnt = 0, loopCnt = 0;
+        let setName, currStrand, prevStrand, prevStrandReal, currType, prevType;
+
+        // clear selection
+        ic.hAtoms = {};
+
+        let bStart = false;
+
+        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+            let currResi = ic.chainsSeq[chainid][i].resi;
+            let resid = chainid + '_' + currResi;
+
+            if(!ic.residues.hasOwnProperty(resid) ) continue;
+          
+            let refnumLabel, refnumStr, refnum;
+            refnumLabel = ic.resid2refnum[resid];
+            if(!refnumLabel) continue;
+
+            refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+            currStrand = refnumLabel.replace(refnumStr, '');
+            refnum = parseInt(refnumStr);
+
+            if(ic.residIgLoop.hasOwnProperty(resid)) {
+                currType = 'igloop';
+            }
+            else {
+                currType = 'igstrand';
+            }
+
+            if(bStart && currType != prevType && Object.keys(selectedResidues).length > 0) {
+                if(prevType == 'igstrand') {
+                    ++strandCnt;
+                    setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+                    setName = setName.replace(/'/g, '`');
+                    if(type == 'igstrand') {
+                        ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                        if(!bUnion) bUnion = true;
+                    }
+                    prevStrandReal = prevStrand;
+                }
+                else if(prevType == 'igloop') {
+                    ++loopCnt;
+                    setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+                    setName = setName.replace(/'/g, '`');
+                    if(type == 'igloop') {
+                        ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                        if(!bUnion) bUnion = true;
+                    }
+                }
+
+                selectedResidues = {};
+            }
+
+            selectedResidues[resid] = 1;
+
+            prevStrand = currStrand;
+            prevType = currType;
+
+            bStart = true;
+        } // for loop
+
+        if(prevType == 'igstrand') {
+            ++strandCnt;
+            setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+            setName = setName.replace(/'/g, '`');
+            if(type == 'igstrand') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+        }
+        else if(prevType == 'igloop') {
+            ++loopCnt;
+            setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+            setName = setName.replace(/'/g, '`');
+            if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
         }
     }
 

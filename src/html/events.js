@@ -41,7 +41,7 @@ class Events {
     async searchSeq() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        let select = $("#" + me.pre + "search_seq").val();
        if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 
-       && select.indexOf('%') == -1 && select.indexOf('@') == -1) {
+       && select.indexOf('@') == -1) {
            select = ':' + select;
        }
        let commandname = select.replace(/\s+/g, '_');
@@ -1686,11 +1686,29 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
+           ic.bShownRefnum = false;
+           thisClass.setLogCmd("hide ref number", true);
            await ic.showInterCls.showInteractions('linegraph');
         });
+        me.myEventCls.onIds("#" + me.pre + "hbondLineGraph2", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.bShownRefnum = true;
+            thisClass.setLogCmd("show ref number", true);
+            await ic.showInterCls.showInteractions('linegraph');
+        });
         me.myEventCls.onIds("#" + me.pre + "hbondScatterplot", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.bShownRefnum = false;
+            thisClass.setLogCmd("hide ref number", true);
+            await ic.showInterCls.showInteractions('scatterplot');
+        });
+        me.myEventCls.onIds("#" + me.pre + "hbondScatterplot2", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
+           ic.bShownRefnum = true;
+           thisClass.setLogCmd("show ref number", true);
            await ic.showInterCls.showInteractions('scatterplot');
         });
         // select residues
@@ -2477,6 +2495,22 @@ class Events {
           let chainid = $(this).attr('chainid');
           ic.addTrackCls.defineSecondary(chainid, 'coil');
           thisClass.setLogCmd('define coil sets | chain ' + chainid, true);
+        });
+
+        $(document).on("click", ".icn3d-igstrandsets", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            //e.preventDefault();
+            let chainid = $(this).attr('chainid');
+            ic.addTrackCls.defineIgstrand(chainid, 'igstrand');
+            thisClass.setLogCmd('define igstrand sets | chain ' + chainid, true);
+        });
+
+        $(document).on("click", ".icn3d-igloopsets", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            //e.preventDefault();
+            let chainid = $(this).attr('chainid');
+            ic.addTrackCls.defineIgstrand(chainid, 'igloop');
+            thisClass.setLogCmd('define igloop sets | chain ' + chainid, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "deletesets", "click", function(e) { let ic = me.icn3d;

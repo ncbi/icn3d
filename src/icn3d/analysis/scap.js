@@ -24,7 +24,7 @@ class Scap {
     adjust2DWidth(id) { let ic = this.icn3d, me = ic.icn3dui;
         let halfWidth = 125;
         id = ic.pre + id;
-
+/*
         let height =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") : me.htmlCls.HEIGHT;
         let width =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : me.htmlCls.WIDTH * 0.5;
 
@@ -32,7 +32,25 @@ class Scap {
         $("#" + id).dialog( "option", "height", height);
         let position = { my: "left-" + halfWidth + " top+" + me.htmlCls.MENU_HEIGHT, at: "right top", of: "#" + ic.pre + "viewer", collision: "none" }
 
-         $("#" + id).dialog( "option", "position", position );
+        $("#" + id).dialog( "option", "position", position );
+*/
+
+        let width, height, top;
+        
+        if($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) {
+          width = $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "width");
+          height = $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") * 0.5;
+          top = height;
+
+          $("#" + ic.pre + "dl_selectannotations").dialog( "option", "height", height);
+
+          $("#" + id).dialog( "option", "width", width );
+          $("#" + id).dialog( "option", "height", height);
+          
+          let position = { my: "left top", at: "right top+" + top, of: "#" + ic.pre + "viewer", collision: "none" }
+  
+          $("#" + id).dialog( "option", "position", position );
+        }
     }
 
     async retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;

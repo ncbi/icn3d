@@ -945,7 +945,7 @@ class ChainalignParser {
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");
                 ic.bAnnoShown = false;
-                if($('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
+                if($('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content') && $('#' + ic.pre + 'dl_selectannotations').dialog( 'isOpen' )) {
                     $('#' + ic.pre + 'dl_selectannotations').dialog( 'close' );
                 }
            //});
