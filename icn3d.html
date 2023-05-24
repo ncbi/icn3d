@@ -1,0 +1,3000 @@
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<meta name="ncbi_app" content="structure">
+<meta name="ncbi_pdid" content="icn3d">
+<meta name="ncbi_page" content="webapi">
+<meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
+<script type="text/javascript">
+    window.ncbi_startTime = new Date();
+</script>
+
+<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/shlu/jslibs/uswds/resources/uswds-not-greedy.min.css">
+<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/shlu/jslibs/uswds/resources/header.min.css">
+
+<link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
+<link rel="stylesheet" href="icn3d.css">
+<script src="lib/jquery-3.5.0.min.js"></script>
+<script src="lib/jquery-ui-1.13.2.min.js"></script>
+<!---script src="lib/three_0.137.0.min.js"></script>
+<script--- src="icn3d.min.js"></script--->
+
+<style type="text/css">
+/* header */
+html {font-size: 10px;}
+
+.icn3d-main {font-size: 1.5em; color:#444444; padding: 110px 40px 0 40px;}
+.anchor { position: absolute; transform: translateY(-110px); }
+.icn3d-menupos {margin:4px 0 0 280px; position:absolute; z-index:999;}
+@media screen and (max-device-width: 800px) {
+    .icn3d-main {font-size: 1.7em; padding: 150px 40px 0 40px;}
+    .anchor { position: absolute; transform: translateY(-150px); }
+    .icn3d-menupos {margin:4px 0 0 30px; position:absolute; z-index:999;}
+}
+
+.graphbutton {text-decoration: none; color: #1c94c4; width: 110px;
+    text-align: center; font-size: 1em; font-weight: bold;
+    background-color: #f6f6f6; border: 1px solid #ccc;
+    padding:8px; font-size:1.3em; margin-top:3px; border-radius:5px;}
+
+.graphbutton:hover {background-color: #fdf5ce; border: 1px solid #fbcb09;;}
+
+accordion h3 {width: 110px; font-size: 14px!important;}
+
+pre { white-space: pre-wrap; }
+A { text-decoration: none;}
+
+.icn3d-main A:link { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%; color:#0056CC; }
+.icn3d-main A:visited { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%;  color:#00994E; }
+.icn3d-main A:active { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%;  color:#00994E; }
+.icn3d-main A:hover { text-decoration: none; color:black;  font-family: Verdana, Arial, Sans-serif; font-size: 100%; color:#00994E;}
+
+
+.top {
+  width: 12px;
+  height: 12px;
+  background: url(https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif) no-repeat;
+  margin-top: 6px;
+}
+
+.indent {margin-left:40px;}
+
+.gallery {float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;}
+
+body {font-family: Verdana, Arial, Helvetica, sans-serif;}
+
+pre span {color: red;}
+</style>
+
+<script type="text/javascript">
+   
+    $( document ).ready(async function() {
+      $("accordion").show();
+/*
+      var cfg = {
+          divid: 'icn3dwrap',
+          width: 400,
+          height: 400,
+          resize: false,
+          rotate: 'right',
+          mobilemenu: 1,
+          showcommand: 0,
+          mmdbid: '3gvu',
+          usepdbnum: 0,
+          command: 'set chemicalbinding show; select .STI:1; color green; set fog on; set slab on; set background white'
+      };
+
+      var icn3dui = new icn3d.iCn3DUI(cfg);
+      await icn3dui.show3DStructure();
+*/      
+
+        // mn display
+        $("accordion").accordion({ collapsible: true, active: false, heightStyle: "content"});
+        $("accordion div").removeClass("ui-accordion-content ui-corner-all ui-corner-bottom ui-widget-content");
+
+        $(".icn3d-mn-item").menu({position: { my: "left top", at: "right top" }});
+        $(".icn3d-mn-item").hover(function(){},function(){$("accordion").accordion( "option", "active", "none");});
+
+        $("#icn3d-accordion1").hover( function(){ $("#icn3d-accordion1 div").css("display", "block"); }, function(){ $("#icn3d-accordion1 div").css("display", "none"); } );
+        $("#icn3d-accordion2").hover( function(){ $("#icn3d-accordion2 div").css("display", "block"); }, function(){ $("#icn3d-accordion2 div").css("display", "none"); } );
+        $("#icn3d-accordion3").hover( function(){ $("#icn3d-accordion3 div").css("display", "block"); }, function(){ $("#icn3d-accordion3 div").css("display", "none"); } );
+    }); // document ready
+</script>
+
+</head>
+<body>
+<!-- start of header -->
+<div style="position: fixed; width: 100%;">
+
+<div class="us">
+    <!--a class="skipnav" href="#maincontent">Skip to main page content</a-->
+    <header class="ncbi-page-header" role="banner">
+        <div class="prefix" style="background:initial; float:initial;">
+            <span class="nih" title="National Center for Biotechnology Information">
+                <a href="https://www.ncbi.nlm.nih.gov/" title="To NCBI homepage">
+                    <img style="padding:3px;" alt="NCBI"
+                            src="https://www.ncbi.nlm.nih.gov/coreutils/nwds/img/logos/AgencyLogo.svg">
+                </a>
+            </span>
+        </div>
+    </header>
+</div>
+
+<!--div style='position:absolute; z-index:999; float:left; display:table-row;'-->
+<table border='0' cellpadding='0' cellspacing='0' style="width:100%; padding-left: 40px; background-color:#FFF"><tr>
+<td style="padding:6px 0 6px 0;">
+<span style="font-weight:bold; font-size:2.5em; color:#444444">iCn3D</span>
+</td>
+
+<td valign="top"><div class='icn3d-menu icn3d-menupos'>
+<accordion id='icn3d-accordion1' class='icn3d-accordion' style='display:none'>
+<h3>Menu</h3>
+<div>
+<ul class='icn3d-mn-item'>
+<li><a href="#about"><span>About iCn3D</span></a></li>
+<li><a href="#gallery"><span>Live Gallery</span></a></li>
+<li><a href="#videos"><span>iCn3D Videos</span></a></li>
+
+<li><a href="#faq"><span>FAQ</span></a>
+    <ul>
+        <li><a href="#viewstru"><span>View structure</span></a>
+        <li><a href="#tfstru"><span>Transform Structure</span></a>
+        <li><a href="#selsubset"><span>Select Subsets</span></a>
+        <li><a href="#changestylecolor"><span>Change Style/Color</span></a>
+        <li><a href="#saveview"><span>Save Work</span></a>
+        <li><a href="#showanno"><span>Show Annotations</span></a>
+        <li><a href="#exportanno"><span>Export Annotations</span></a>
+        <li><a href="#interanalysis"><span>Interaction Analysis</span></a>
+        <li><a href="#mutationanalysis"><span>Mutation Analysis</span></a>
+        <li><a href="#elecpot"><span>Electrostatic Pot.</span></a>
+        <li><a href="#simivast"><span>Similar PDB</span></a>
+        <li><a href="#simifoldseek"><span>Similar AlphaFold/PDB</span></a>
+        <li><a href="#alignmul"><span>Align Multiple Structures</span></a>
+        <li><a href="#batchanalysis"><span>Batch Analysis</span></a>
+        <li><a href="#embedicn3d"><span>Embed iCn3D</span></a>
+    </ul>
+</li>
+
+<!--li><a href="https://www.ncbi.nlm.nih.gov/structure"><span>Search Structure</span></a></li-->
+<li><a href="#citing"><span>Citing iCn3D</span></a></li>
+<li><span>Source Code</span>
+  <ul>
+    <li><a href="https://github.com/ncbi/icn3d"><span>GitHub (browser)</span></a></li>
+    <li><a href="https://www.npmjs.com/package/icn3d"><span>npm (Node.js)</span></a></li>
+    <li><a href="https://pypi.org/project/icn3dpy"><span>Jupyter Notebook</span></a></li>
+  </ul></li>
+<li><span>Develop</span>
+  <ul>
+    <li><a href="#HowToUse"><span>Embed iCn3D</span></a></li>
+    <li><a href="#parameters"><span>URL Parameters</span></a></li>
+    <li><a href="#commands"><span>Commands</span></a></li>
+    <li><a href="#datastructure"><span>Data Structure</span></a></li>
+    <li><a href="#classstructure"><span>Class Structure</span></a></li>
+    <li><a href="#addclass"><span>Add New Classes</span></a></li>
+    <li><a href="#modifyfunction"><span>Modify Functions</span></a></li>
+    <li><a href="#restfulapi"><span>RESTful APIs</span></a></li>
+    <li><a href="#contributors"><span>Codeathon Contributors</span></a></li>
+  </ul></li>
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html"><span>Help Doc</span></a></li>
+<li><a href="https://support.nlm.nih.gov/support/create-case/" target="_blank"><span>Write to Help Desk</span></a></li>
+</ul>
+</div>
+</accordion>
+</div></td>
+
+<td width="90%"></td>
+
+</tr></table>
+
+</div>
+<!-- End of header -->
+
+<span class="anchor" id="top"></span>
+<a name="Top"></a>
+
+<div class="icn3d-main">
+
+<span class="anchor" id="about"></span>
+<a name="about"></a>
+
+<h3>What is iCn3D Structure Viewer?</h3>
+"I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
+<!---br/>
+<br/>
+<div id="icn3dwrap" style="font-size: 0.8em; width:420px"></div>
+<br/--->
+
+<ol>
+<li><b>View a 3D structure in iCn3D</b><br/>
+Open the link <a href="https://structure.ncbi.nlm.nih.gov/icn3d" target="_blank">https://structure.ncbi.nlm.nih.gov/icn3d</a>, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.<br/>
+<br/>
+As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. <br>
+<br>
+The most important point about using iCn3D is the current selection. Any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.<br/>
+<br/>
+<li><b>VR and AR views in iCn3D</b><br/> 
+The Virtual Reality (VR) and Augmented Reality (AR) views are shown in this <a href="hhttps://youtu.be/hX8IAkYRiyA">video</a>.<br/>
+<br/>
+You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "ENTER VR" at the bottom center of your browser to enter the VR view. You can select residues with the trigger button, open the menu with the squeeze button and click menus with the trigger, navigate with the thumbstick pressed forward/backward and press the trigger. There are menus for Select, Style, Color, and Analysis. You need to make one selection before clicking the Interaction button and make two selections before clicking the  Distance button.<br/>
+<br/>
+ The Augmented Reality (AR) view is currently only available to iCn3D views in Chrome browser using Android phones. You can view a 3D structure in iCn3D and click the button "START AR" at the bottom center to see the 3D structure in your surroundings. You can tap twice quickly on the screen to locate a minimized 3D structure in your tapped location, and pinch to scale the 3D structure. <br/>
+<br/>
+<li><b>Create custom 3D view</b><br/>
+You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. <br/>
+<br/>
+Each operation has a corresponding command as listed at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands. These commands will show up in the command/log window right beneath the 3D display. To view all previous commands, you can click "Share Link" in "File" menu. Both the original URL and the short URL can be used to display your custom view.<br/>
+<br/>
+<li><b>Save your work</b><br/>
+You can save "iCn3D PNG Image" in the menu "File > Save File". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br/>
+<br/>
+The "iCn3D PNG Image" can also be stored in a web server (e.g., https://figshare.com, https://zenodo.org). The PNG image can then be loaded into iCn3D via the URL, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801</a>, or <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png</a>, where the URL of the PNG image is retrieved from the JSON blob at https://zenodo.org/api/records/7599970.<br/>
+<br/>
+You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA">custom display</a> was generated.<br/>
+<br/>
+All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.<br/>
+<br/>
+
+<li><b>Python scripts" to batch process structures</b>:
+Python scripts can be used to process 3D structures (e.g., export secondary structures, PNG images, or analysis output) in batch mode. The example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython">icn3dpython</a>.<br/>
+<br/>
+
+<li><b>Node.js scripts using npm "icn3d" to batch process structures</b>:
+You can download <a href="https://www.npmjs.com/package/icn3d">npm "icn3d" package</a> to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode">icn3dnode</a>.<br/>
+<br/>
+
+<li><b>Annotations for AlphaFold structures</b>: 
+For any custom structures such as AlphaFold structures, you can show <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bPSkpeshtiH1TxbP8">conserved domain and 3D domain annotations</a>. For AlphaFold structures, you can also show <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?XSQ5oqDCTfEQ3iAY7">SNP and ClinVar annotations</a>.
+<br/>
+
+<li><b>Align AlphaFold structures</b>: 
+You can align <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0">AlphaFold structures or PDB structures</a> with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". You can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the meu "File > Realign Selection > by Structure Alignment".
+<br/>
+
+<li><b>Alternate SNPs in 3D</b><br/>
+You can <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8">alternate in 3D wild type and mutant of SNPs</a> by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.<br/>
+<br/>
+
+<li><b>DelPhi Electrostatic Potential</b><br/>
+You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">DelPhi Electrostatic Potential</a> in the menu "Analysis > DelPhi Potential".<br/>
+<br/>
+
+<li><b>Use iCn3D in Jupyter Notebook</b><br/>
+You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at <a href="https://pypi.org/project/icn3dpy">pypi.org/project/icn3dpy</a>.<br/>
+<br/>
+
+<li><b>2D Cartoons in the chain, domain, and secondary structure levels</b><br/>
+You can use click "Analysis > 2D Cartoon" to show 2D Cartoons in the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pzmT7EMTAxXKVbZu7">chain</a>, <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Arh4H9VTMuHQURY5A">domain</a>, and <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?5iZSHNbXcJisp7gQ6">secondary structure</a> levels.<br/>
+<br/>
+
+<li><b>Contact Map for any Selected Residues</b><br/>
+You can click the menu "Analysis > Contact Map" to show the interactive <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rnMbe26tNsAjJLGK9">contact map</a> for any selected residues. You can export the map in PNG or SVG. <br/>
+<br/>
+
+<li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?JR5B">Show binding site</a></b><br/>
+You can click "Chem. Binding" in "View" menu to show all hydrogen bonds around chemicals. You can also <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?CuXYgGLCukDeUKnJ6">Show interaction interface</a> by clicking "H-Bonds & Interactions > 2D Interaction Graph, or Highlight Interactionsin Table" in "View" menu.<br/>
+<br/>
+<li><b><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file">Export models for 3D printing</a></b><br/>
+You can click "3D Printing" in "File" menu to export models for 3D printing. Both STL and VRML files are supported.<br/>
+<br/>
+<li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?TuSd">Show transmembrane proteins</a></b><br/>
+If the protein is a transmembrane protein, you can click "File > Retrieve by ID > OPM PDB ID" to input a PDB ID to view the membranes.<br/>
+<br/>
+<li><b>Show <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aYAjP4S3NbrBJX3x6">surface</a>, <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?L4C4WYE85tYRiFeK7">EM map</a>, or <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?QpqNZ3k65ToYFvUB6">electron density map</a></b><br/>
+You can click "Style > Surface Type", "Style > EM Density Map", or "Style > Electron Density".<br/>
+<br/>
+<li><b>View 1D sequences and 2D interactions</b><br/>
+In the page https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1TUP, you can click in "Windows" menu to "View Sequences & Annotations",
+"View Interactions", and see all "Defined Sets", which can be clicked to see any of your selections.<br/>
+<br/>
+<li><b>Select on 3D, 1D and 2D</b><br/>
+To select on 3D structures: hold "Alt" and use mouse to pick, hold "Ctrl" to union selection, hold "Shift" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure. Click "Save Selection" in "Select" menu to save the current selection.<br/>
+<br/>
+To select on 1D sequences: drag on the sequences or the blue track title to select.<br/>
+<br/>
+To select on 2D interaction diagram: click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/>
+<br/>
+<li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wPoW56e8QnzVfuZw6">Align two structures</a></b>, <b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?PfsQFtZRTgFAW2LG6">align multiple chains</a></b>, or <b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9">align a protein sequence to a structure</a></b><br/>
+You can click "File > Align" to see all three alignment options. You can also <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?UccFrXLDNeVB7Jk16">realign</a> a subset of the structures.<br/>
+<br/>
+<li><b><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view+annotations;+set+view+detailed+view;+add+track+|+chainid+1TUP_B+|+title+Custom+Key+Sites+|+text+82+R,+152+G,+155-156+RR,+180+R,+189+R;+select+.B:82,152,155-156,180,189+|+name+mutation">Add custom tracks</a></b><br/>
+You can add custom tracks in various formats (FASTA, bed file, etc.) in the annotation window by clicking the menu "Analysis > View Sequences & Annotations".<br/>
+<br/>
+
+<li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rshvjTFXpAFu8GDa9">Show force-directed graph for interactions</a></b><br/>
+You can show the interactions using 2D force-directed graph in the menu "View > H-Bonds & Interactions > 2D Graph (Force-Directed)".<br/>
+<br/>
+
+<li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xKSyfd1umbKstGh29">Calculate and show Solvent accessible surface area (SASA)</a></b><br/>
+You can color structures with SASA, or show the SASA for each residue.<br/>
+<br/>
+
+<li>Show <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8"><b>precalculated symmetry</b></a>, or calculate <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6NvhQ45XrnbuXyGe6">symmetry dynamically</a> using SymD.<br/>
+<br/>
+
+</ol>
+
+<span class="anchor" id="gallery"></span>
+<a name="gallery"></a>
+
+<a name="alphafold-gallery"></a>
+<h3><a href="https://alphafold.ebi.ac.uk/">AlphaFold</a>-related gallery with live examples <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bPSkpeshtiH1TxbP8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-domains.png"><br>AlphaFold structures with conserved domain <br>and 3D domain annotations (Uniprot ID A0A044R7Z7)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?XSQ5oqDCTfEQ3iAY7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-snp-clinvar.png"><br>AlphaFold structures with <br>SNP and ClinVar annotations (Uniprot ID Q08426)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-align.png"><br>Align AlphaFold and PDB structures <br>(chains: P69905_A,P01942_A,1HHO_A)
+</a>
+</div>
+
+<div class="gallery">
+    <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbafid=A4D1S0&afmem=on" target="_blank">
+    <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/af-mem.png"><br>Membrane for AlphaFold structure <br>(Uniprot ID A4D1S0)
+    </a>
+</div>
+
+<div class="gallery">
+    <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?refseqid=NP_001743.1" target="_blank">
+    <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/ncbi-protein.png"><br>AlphaFold structure with NCBI <br> protein accession (NP_001743.1)
+    </a>
+</div>
+
+<div style="clear:both;"></div>
+<br>
+
+<a name="covid19-gallery"></a>
+<h3><a href="https://www.ncbi.nlm.nih.gov/structure/?term=covid-19">COVID-19-related</a> gallery with live examples <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<div class="gallery">
+    <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?uKfxQdN5GjHWgDZT7" target="_blank">
+    <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6m0j_2ajf_inter.png"><br>Differential Interaction Analysis for<br>SARS-CoV-2 and SARS-CoV-1 (PDBs 6M0J and 2AJF)
+    </a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?7HCiMKzwTMnCeE2V8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-N501Y-ZCmBNcB926cawLNf9.png"><br>Alternate Wild Type and Mutant of SNP N501Y<br>in 2019-nCov spike protein (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?7uQHrWYFUBDqPPw69" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6VSB-fNpzDuUE287SBFtz8.png"><br>Alternate Wild Type and Mutant of SNP D614G<br>in 2019-nCov spike protein (PDB 6VSB)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?RcnHS2h8UMueak5A8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6VSB-So5PM9t7PWbzN9JC9.png"><br>Cryo-EM structure of the 2019-nCoV spike <br>in the prefusion conformation (PDB 6VSB)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Gw1Da9w9jMXkNwMm7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-UPU5Fxryc9MbPQsC8.png"><br>2019-nCoV RBD/ACE2-B0AT1<br> complex (PDB 6M17)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?GXrsxjtBeLWCLNkXA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-LkGJv5SvRras7ZM77.png"><br>DelPhi Electrostatic Potential (25 mV) of<br>2019-nCoV RBD/ACE2-B0AT1 complex (PDB 6M17)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pvSYXSfVZSKzapuZA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-pvSYXSfVZSKzapuZA.png"><br>SARS-COV-2 Receptor Binding domain <br>interacting with ACE2 receptor (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?U15Q3ajmYj4rUr6z5" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-Jupyter-U15Q3ajmYj4rUr6z5.png"><br>2D interaction map<br>in Jupyter Notebook (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?CuXYgGLCukDeUKnJ6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-CuXYgGLCukDeUKnJ6-linegraph.png"><br>2D interaction network<br>(PDB 6M0J)
+</a>
+</div>
+
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-u7gp4xS9rn4hahcLA-linegraph-replay.png"><br>Replay each step of <br>2D interaction graph (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?1CPsLzoer5SpBoNo9" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-rK8kQrLYXvG6YqrY6-force.png"><br>2D interaction display, with force on X-axis,<br>at "View > H-Bonds & Interactions > 2D Graph (Force-Directed)" (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?eH1X8fDsQpPBeD1C6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-eH1X8fDsQpPBeD1C6-force-circle.png"><br>2D interaction display, with force on Circle,<br>at "View > H-Bonds & Interactions > 2D Graph (Force-Directed)" (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?SvuVwqxKAKU8Vo6g6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6W41-SvuVwqxKAKU8Vo6g6.png"><br>RBD interacting with <br>a patient antibody CR3022 (PDB 6W41)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aVPWWuptu452W4QJ9" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6w41_2dd8-s8kydLio6XnziC1L7.png"><br>Comparing two antibodies against SARS-COV-1 vs. SARS-COV-2<br> epitopes on the virus Receptor Binding Domain (PDBs 6W41 and 2DD8)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gFXswHAPNzu2by8y5" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6m0j-msa-BKYzBV6KXMvQL7sr9.png"><br>Show Multiple Sequence Alignment<br> as Tracks and Add Custom Color (PDB 6M0J)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?SMcYob1zYvV9V52s8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6LU7-zDjCoXuxHE2PK1KMA.png"><br>COVID-19 main protease in complex<br> with an inhibitor N3 (PDB 6LU7)
+</a>
+</div>
+
+<div style="clear:both;"></div>
+<br>
+
+<h3>iCn3D gallery with live examples<span style="font-size:0.7em"> ("iCn3D PNG Images", all images below except the first five snapshots, can be loaded into iCn3D by clicking "Open File > iCn3D PNG Image" in <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html" target="_blank">iCn3D File menu</a>)</span> <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wUuKpZDbK3Xr79EQ7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-wUuKpZDbK3Xr79EQ7.png"><br>Synchronized 1D, 2D and 3D Displays (PDB 1TUP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gVnT" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-mobilemenu-gVnT.png"><br>Mobile-style Menus (PDB 1TUP)
+</a>
+</div>
+
+<!---div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?afid=A0A061AD48&showanno=1" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/A0A061AD48-alphafold.png"><br>Domains of AlphaFold Structures (UniProt ID A0A061AD48)
+</a>
+</div--->
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pzmT7EMTAxXKVbZu7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1KQ2_cartoon_chain.png"><br>2D Cartoon in the chain level (PDB 1KQ2)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Arh4H9VTMuHQURY5A" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6VXX_cartoon_domain.png"><br>2D Cartoon in the domain level (PDB 6VXX)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?5iZSHNbXcJisp7gQ6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TOP_cartoon_secondary.png"><br>2D Cartoon in the secondary structure level (PDB 1TOP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?WsF6qnqhpQDZFj5M7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1KQ2-contact-map.png"><br>Contact Map for Selected Residues (PDB 1KQ2)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wPoW56e8QnzVfuZw6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1HHO-4N7N-wPoW56e8QnzVfuZw6.png"><br>VAST+ Structure Alignment (PDBs 1HHO and 4N7N)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TSR-align-Mmm82craCwGMAxru9.png"><br>Align Protein NP_001108451.1 to Structure 1TSR (PDB 1TSR)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?AzdRqTaUscB74JSq8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2ajf_6w41_side_by_side_h7bBXPkeu71C7GgR8.png"><br>Side-by-Side View (PDBs 2AJF and 6W41)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ijnf" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1HHO-4N7N-ijnf.png"><br>Align chain A of PDB 1HHO with chain A of PDB 4N7N
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?inswVgdXMe6EEtXk9" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-kQA2.png"><br>Hydrogen Bonds and Zn Interactions (PDB 1TUP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?nR3yCXUQafgK2qN87" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-JR5B.png"><br>Ligand Binding with Fog and Slab (PDB 3GVU)
+</a>
+</div>
+
+<!--div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?j45sXGcukpPKfL1cA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-j45sXGcukpPKfL1cA.png"><br>Ligand Binding with Two-color Helices (PDB 3GVU)
+</a>
+</div-->
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?WYqJduJLuyqC4kZFA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-D6LC.png"><br>Ligand Binding with Thinner Coils (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?GyYtGf9gbQsf5ou16" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-vzTs.png"><br>Ligand Binding with Surfaces and Labels (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?XCxR6fSTmXHxR3o1A" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-XCxR6fSTmXHxR3o1A.png"><br>Ligand Binding with Electrostatic Potentials (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ead1" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6jxr-ead1.png"><br>Charged Residues in Transmembrane (PDB 6JXR)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xj2K" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6jxr-xj2K.png"><br>TCR-epsilon and TCR-delta Interactions (PDB 6JXR)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/custom_image_icn3d_loadable.png"><br>Custom PDB (load the image in iCn3D)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2kod-17g3r1JDvZ7ZL39e6.png"><br>Multiple Structures (PDB 2KOD, press "a" to alternate)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gLx2qTdDVySqxcXv7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-gLx2qTdDVySqxcXv7.png"><br>Electron Density Map (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?QpqNZ3k65ToYFvUB6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-ed2-QpqNZ3k65ToYFvUB6.png"><br>Electron Density Map for a Subset (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?yyYxeJSiYbSWRkHCA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6ENY-yyYxeJSiYbSWRkHCA.png"><br>EM Density Map (PDB 6ENY)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?L4C4WYE85tYRiFeK7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6ENY-em2-L4C4WYE85tYRiFeK7.png"><br>EM Density Map for a Subset (PDB 6ENY)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1KQ2-bGH1BfLsiGFhhTDn8.png"><br>Protein Symmetry (PDB 1KQ2, precalculated)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6NvhQ45XrnbuXyGe6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3HUJ-6NvhQ45XrnbuXyGe6.png"><br>Protein Symmetry (PDB 3HUJ, dynamically using SymD)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?1yydeU3ktdkPyptAA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-1yydeU3ktdkPyptAA.png"><br>3D Printing (PDB 1TUP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ypAj" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1KQ2-ypAj.png"><br>Schematic Style (PDB 1KQ2)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aYAjP4S3NbrBJX3x6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/4UN3-o-aYAjP4S3NbrBJX3x6.png"><br>Solid Surface (PDB 4UN3)
+</a>
+</div>
+
+<!--div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?MT8QssuYbfsSumFHA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/4UN3-t-MT8QssuYbfsSumFHA.png"><br>Transparent Surface (PDB 4UN3)
+</a>
+</div-->
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?DFSLHuzN5T8GYdJSA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2MLR-DFSLHuzN5T8GYdJSA.png"><br>Lipid Bilayer (PDB 2MLR)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1r09&bu=1" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1R09-ZLxYRrdZTFTg5fuF8.png"><br>Large Structure (PDB 1R09)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?hYJ8dLnLNRYWzvLS7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2QZV-iPgmQqMQ6tKNfqvo6.png"><br>Large Structure (PDB 2QZV)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=3j3q" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3J3Q-M2koemdfWbewV1ri8.png"><br>Large Structure (PDB 3J3Q)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?e9tDyp13ePPjnvdH6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/cid2244-all-e9tDyp13ePPjnvdH6.png"><br>Compound with Hydrogens (CID 2244)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?y4t5iA1YvEoib2517" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/cid2244-y4t5iA1YvEoib2517.png"><br>Compound without Hydrogens (CID 2244)
+</a>
+</div>
+
+<div style="clear:both;"></div>
+<br>
+
+<span class="anchor" id="Tutorial"></span>
+<a name="Tutorial"></a>
+
+<span class="anchor" id="videos"></span>
+<a name="videos"></a>
+<h3>iCn3D Videos<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<ul>
+<!-- 
+<li><a href="https://youtu.be/SZsaVj_47AY">iCn3D Tutorial Video (2022)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_v4.pptx">Slide</a></li><br>
+-->
+
+<!-- 
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D-tutorial-sep-2022-v4.mp4">iCn3D Tutorial Video (2022)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_v4.pptx">Slide</a></li><br>
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d-vr-202303.mp4">Virtual Reality (VR) views in iCn3D (2023)</a></li><br>
+-->
+<li><a href="https://www.nlm.nih.gov/ncbi/workshops/2023-03_3d-molecular-structures/workshop-details.html">iCn3D Workshop, by NCBI in March 2023</a>, <a href="https://www.nlm.nih.gov/ncbi/workshops/2023-03_3d-molecular-structures/slides/icn3d_workshop-03-23.pdf">Slide</a></li><br>
+<li><a href="https://www.nlm.nih.gov/ncbi/workshops/2022-10_3d-molecular-structures/workshop-details.html">iCn3D Workshop, by NCBI in October 2022</a>, <a href="https://www.nlm.nih.gov/ncbi/workshops/2022-10_3d-molecular-structures/slides/icn3d_workshop_10-22.pdf">Slide</a></li><br>
+
+<!-- 
+<li><a href="https://youtu.be/hX8IAkYRiyA">Virtual Reality (VR) views in iCn3D (2023)</a></li><br>
+<li><a href="https://youtu.be/qzhuomrJPnI">Virtual Reality (VR) and Augmented Reality (AR) views in iCn3D (2022)</a></li><br>
+
+<li><a href="https://youtu.be/vfawu0qrNTA">Exploring 3D Molecular Structures with iCn3D, by Dr. Salsbury in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/alexa_ismb_2022.pdf">Slide</a></li><br>
+<li><a href="https://youtu.be/Rai-0pWusP8">iCn3D in Teaching and OERs, by Dr. Jakubowski in July 2022</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/henry_ismb_2022.pptx">Slide</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=QCSNqwgp2xo">iCn3D Tutorial by Dr. Jakubowski in July 2021</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D_Tutorial_by_Jakubowski_072121.pdf">Slide</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=Mj77EFgAAQM&list=PLSAXB_etwzD824Q8TMqWPHOUv5z8gIcs5&index=8">iCn3D Tutorials by Digital World Biology (2021-)</a></li><br>
+<li><a href="https://www.youtube.com/watch?v=7GGw4S9tE9E">iCn3D Tutorial by BioMolViz Group (2021)</a></li>
+-->
+</ul>
+
+<span class="anchor" id="faq"></span>
+<a name="faq"></a>
+<h3>Frequently Asked Questions<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+
+<ul>
+<li><span class="anchor" id="viewstru"></span><a name="viewstru"></a><b>Q: How to view a 3D structure in iCn3D?</b><br>
+    You can use iCn3D to view a 3D structure in different platforms such as web browser, Jupyter Notebook, Virtual Reality, or Augmented Reality.<br>
+    <br>
+    To view in a web browser, you can open the link <a href="https://structure.ncbi.nlm.nih.gov/icn3d">https://structure.ncbi.nlm.nih.gov/icn3d</a> and input PDB ID(s) or AlphaFold UniProt ID(s) with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". You can also open several PDB files with the menu "File > Open File > PDB Files (appendable)".<br>
+    <br>
+    To view 3D structures in Jupyter Notebook, you can follow the instructions at <a href="https://pypi.org/project/icn3dpy/" taget="_blank">icn3dpy</a>.<br>
+    <br>
+    <span class="anchor" id="vr"></span><a name="vr"></a><b>Virtual Reality (VR) view in iCn3D:</b><br>
+    You need a VR headset to view 3D structures in VR using iCn3D. In your VR browser, load a 3D structure in iCn3D and click the button "ENTER VR" at the bottom center of the page to enter the VR view.<br>
+    <br>
+    You can select residues with the trigger button, open the menu with the squeeze button and click menus with the trigger, navigate with the thumbstick pressed forward/backward and press the trigger. The menu contains options for selection, style, color, and interaction analysis, etc.<br>
+    <br>
+    <span class="anchor" id="ar"></span><a name="ar"></a><b>Augmented Reality (AR) view in iCn3D:</b><br>
+    You need to use the Chrome browser in an Android cell phone (not iPhone) to view 3D structures in AR using iCn3D. (Some cell phones may require you to install ARCore.) In your iCn3D view, click the button "START AR" at the bottom center of the page to enter the AR view.<br>
+    <br>
+    You can tap twice quickly on the screen to locate a minimized 3D structure in your tapped location, and pinch to scale the 3D structure.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="tfstru"></span><a name="tfstru"></a><a name="HowToUseStep4"></a><b>Q: How to Rotate/translate/zoom structures in iCn3D?</b>
+    <ul>
+    <li>Rotate
+        <ul>
+            <li>Left mouse (Click & Drag)</li>
+            <li>Key L: left</li>
+            <li>Key J: right</li>
+            <li>Key I: up</li>
+            <li>Key M: down</li>
+            <li>Shift + Key L: left 90&deg;</li>
+            <li>Shift + Key J: right 90&deg;</li>
+            <li>Shift + Key I: up 90&deg;</li>
+            <li>Shift + Key M: down 90&deg;</li>
+        </ul>
+    </li>
+    <li>Zoom
+        <ul>
+            <li>Middle mouse (Pinch & Spread)</li>
+            <li>Key Z: zoom in</li>
+            <li>Key X: zoom out</li>
+        </ul>
+    </li>
+    <li>Translate
+        <ul>
+            <li>Right mouse (Two Finger Click & Drag)</li>
+        </ul>
+    </li>
+    </ul>
+    <br>
+</li>
+
+<li><span class="anchor" id="selsubset"></span><a name="selsubset"></a><a name="HowToUseStep5"></a><b>Q: How to select a subset of structures?</b><br>
+    You can select a subset in 3D structures, 2D interactions, or 1D sequences.<br>
+    <br>
+    <div>To pick an atom/residue/strand in the 3D structure, hold "Alt" key and use mouse to pick. Click the second time to deselect. To add more selection to the current selection, hold "Ctrl" key and use mouse to pick. To add a range of selection starting from the current selection, hold "Shift" key and use mouse to pick the ending selection. To change the selected residue to the strand/chain/structure containing the residue, press the up/down arrow. <br/>
+    <br/>
+    To select chains or interactions in the 2D interactions diagram, click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the "Select -> Advanced" menu.<br/>
+    <br/>
+    To select residues in the 1D sequence window, drag with mouse or touch to select residues. Drag or touch again to deselect residues. Multiple selection is allowed without the Ctrl key.<br/>
+    <br/>
+    To save the current selection (either on 3D structure, 2D interactions, or 1D sequence), open the menu "Select -> Save Selection", specify the name and description for the selection, and click "Save".
+    </div>
+    <br>
+</li>
+
+<li><span class="anchor" id="changestylecolor"></span><a name="changestylecolor"></a><b>Q: How to change style and color?</b><br>
+    You can use the "Style" menu to change the styles for your currently selected atoms. You can also use it to show surfaces, or change the background color.<br>
+    <br>
+    You can use the "Color" menu to color your currently selected atoms.<br>
+    <br>
+    It's important to remember that any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="saveview"></span><a name="saveview"></a><b>Q: How to save your work?</b><br>
+    There are two ways to save your work: "iCn3D PNG Image" or "Share Link".<br>
+    <br>
+    You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br>
+    <br>
+    The "iCn3D PNG Image" can also be stored in a web server with access control (CORS) set as allowing any origin. The PNG image can then be loaded into iCn3D via the URL, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801</a>, or <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png</a>. <br>
+    <br>
+    You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a custom display was generated.<br>
+    <br>
+    All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="showanno"></span><a name="showanno"></a><b>Q: How to show annotations?</b><br>
+    You can show annotations by clicking the menu "Analysis > Seq. & Annotations". The annotations include "SNPs", "ClinVar", "Conserved Domains", "Functional Sites", "3D Domains", "Interactions", "Disulfide Bonds", "Cross-Linkages", and "PTM (UniProt)". You can also add your own annotations with the button "Add Tack".<br>
+    <br>
+    <a name="HowToUseStep7"></a><b>Turn on scroll bars in Mac:</b><br>
+    <div>If you are using Macintosh computer and need to scroll in the sequences/annotations dialog, you can turn on the scroll bars as follows: Systems preferences -> GENERAL -> show scroll bars -> check "always".
+    </div>
+    <br>
+</li>
+
+<li><span class="anchor" id="exportanno"></span><a name="exportanno"></a><b>Q: How to export annotations?</b><br>
+    There are three ways to export annotations.<br>
+    <br>
+    First, you can save the annotations in an HTML file by clicking the save icon at the upper right corner of the dialog.<br>
+    <br>
+    Second, you can retrieve the annotations using the Node.js script <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/annotations.js">annotations.js</a>. The description is at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/">icn3dnode</a>". For example, you can use the following command to retrieve Post Translational Modification (PTM) annotation for the AlphaFold UniProt ID Q08426: "node annotations.js Q08426 9".<br>
+    <br>
+    Third, you can retrieve the annotations using the Python script <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url/batch_export_panel.py">batch_export_panel.py</a>. The description is at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url">icn3dpython</a>.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="interanalysis"></span><a name="interanalysis"></a><b>Q: How to do interactions analysis?</b><br>
+    Once you load structures into iCn3D, you can click the menu "Analysis > Interactions" to analyze the interactions between any two sets. <br>
+    <br>
+    First, you need to define your interested interaction types and their thresholds in the Interactions dialog. Then select two sets. You can check the section <a href="#selsubset">"Select Subsets"</a> to define sets. Finally you can show the interactions in different formats, such as "2D Interaction Network", "2D Interaction Map", etc. If you want to clear the current interaction and try a different interaction analysis, you can click the "Reset" button at the bottom of the Interactions dialog.<br>
+    <br>
+</li>
+<li><span class="anchor" id="mutationanalysis"></span><a name="mutationanalysis"></a><b>Q: How to do mutation analysis ?</b><br>
+    You can start the mutation analysis by clicking the menu "Analysis > Mutation". First you need to define the mutation(s) in the format of "[PDB or AlphaFold ID]_[chain Name]_[residue number]_[Mutant residue in one letter]". Then you can choose whether the ID is PDB ID or AlphaFold UniProt ID. <br>
+    <br>
+    Next, if you have not loaded a structure yet, you can choose "Show Mutation in New Page" to launch the mutation analysis.<br>
+    <br>
+    If you have already loaded a structure, you can choose "Show Mutation in Current Page". Your loaded structure may come from a custom PDB file without a PDB/AlphaFold ID. You can replace "[PDB or AlphaFold ID]" with the real ID such as "STRU" as shown in the "Defined Sets" by clicking the menu "Analysis > Defined Sets".<br>
+    <br>
+    Mutation Analysis can be done only for one structure. If you want to check the effect of mutations between different structures, you can output the current structures as a PDB file, modify the PDB file to have one structure, load the modified PDB, and do mutation analysis on the modified PDB.<br>
+    <br>
+</li>
+<li><span class="anchor" id="elecpot"></span><a name="elecpot"></a><b>Q: How to show electrostatic potential?</b><br>
+    Once you load structures into iCn3D, you can click the menu "Analysis > DelPhi Potential" to show DelPhi electrostatic potential. You can show the potentials on molecular surface, or as equipotential map. You can define the salt concentration and grid size. The pH is set at 7.0.<br>
+    <br>
+    You can also output a PQR file for your structures. The PQR file contains the partial charges and radii information.<br>
+    <br>
+</li>
+<li><span class="anchor" id="simivast"></span><a name="simivast"></a><b>Q: How to find similar PDB structures?</b><br>
+    If you want to find similar PDB structures for an input structure with multiple chains, you can click the menu "File > Search Similar > NCBI VAST+ (PDB Assembly)", input a PDB ID, then click the button "VAST+" to get a list of similar structures. You can expand each similar structure for more details.<br>
+    <br>
+    If you want to find similar PDB chains for an input chain, you can click the menu "File > Search Similar > NCBI VAST (PDB)" to get a popup with two options for the input. The first input option is a PDB chain. You can input the PDB ID and the chain name, then click "VAST" to get a list of similar chains. You can select a few chains to view the alignment in iCn3D. The second input option is a custom PDB file. You can select the PDB file and click "Submit" to launch a VAST neighbor search. The search result shows a list of similar chains. You can select a few chains and show the alignment in iCn3D. (The search result will be accessible only for a week. But you can save your alignment in iCn3D permanently using the menu "File > Save File > iCn3D PNG Image". The saved "iCn3D PNG Image" can be loaded back to iCn3D with the menu "File > Open File > iCn3D PNG Image".)<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="simifoldseek"></span><a name="simifoldseek"></a><b>Q: How to find similar AlphaFold or PDB structures?</b><br>
+    If you want to find similar predicted AlphaFold structures, you can click the menu "File > Search Similar > Foldseek (PDB & AlphaFold)", and click the "Foldseek" link in the popup to search similar structures in <a href="https://search.foldseek.com/">Foldseek</a>. If you want to view the alignment of Foldseek in iCn3D, you can input the UniProt IDs or chain names in the popup and align them.<br>
+    <br>
+</li>
+<li><span class="anchor" id="alignmul"></span><a name="alignmul"></a><b>Q: How to align multiple structures?</b><br>
+    To align multiple structures with PDB IDs or AlphaFold UniProt IDs, you can use the menu "File > Align > Multiple Chains". You can choose to align them by structure alignment, sequence alignment, or residue by residue.<br>
+    <br>
+    To align multiple structures loaded from custom PDB files, you can use the menu "File > Realign Selection". You can also choose to align them by structure alignment, sequence alignment, or residue by residue.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="batchanalysis"></span><a name="batchanalysis"></a><b>Q: How to analyze many structures with scripts?</b><br>
+    You can use either Node.js scripts or Python scripts to do batch analysis in command line.<br>
+    <br>
+    You can use Node.js scripts to retrieve any data in iCn3D, even those unavailable in the UI. Some example scripts are listed at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/">icn3dnode</a>" to retrieve annotations, interactions, electrostatic potentials, and surface areas, etc. For example, you can use the following command to retrieve the residues interacting with the ligand "JFM" in the structure with PDB ID 5R7Y: "node ligand.js 5R7Y JFM".<br>
+    <br>
+    You can also use Python scripts to retrieve data in the UI. Some example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url">icn3dpython</a> to retrieve secondary structures, iCn3D PNG Images, JSON data for interactions, etc.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="embedicn3d"></span><a name="embedicn3d"></a><b>Q: How to embed iCn3D?</b><br>
+    You can follow the instruction <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse" target="_blank">here</a>.
+    <br>
+</li>
+</ul>
+
+<span class="anchor" id="parameters"></span>
+<a name="parameters"></a>
+<h3>URL parameters<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<table><tr valign='top'><th>Parameter</th><th>Description</th></tr>
+<tr valign='top'><td>mmdbafid</td><td>A list of PDB or AlphaFold UniProt IDs for realignment, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbafid=1HHO,4N7N,P69905,P01942">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbafid=1HHO,4N7N,P69905,P01942</a>. You could then input multiple PDB files with the menu "File > Open File > PDB Files (appendable)". Next you could click the menu "File > Realign Selection > by Structure Alignment" to realign all loaded structures.</td></tr>
+<tr valign='top'><td>mmdbid</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=1tup&showanno=1&show2d=1">?mmdbid=1tup&showanno=1&show2d=1</a></td></tr>
+<tr valign='top'><td>mmtfid</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=1tup">?mmtfid=1tup</a></td></tr>
+<tr valign='top'><td>pdbid</td><td>PDB ID, e.g., <a href="full.html?pdbid=1tup">?pdbid=1tup</a></td></tr>
+<tr valign='top'><td>mmcifid</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=1tup">?mmcifid=1tup</a></td></tr>
+<tr valign='top'><td>gi</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
+<tr valign='top'><td>cid</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>blast_rep_id</td><td>NCBI protein accession of a chain of a 3D structure. "blast_rep_id" combines with the parameter "query_id" of a protein sequence to show the sequence-structure alignment, e.g., <a href="full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1">from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1</a></td></tr>
+<tr valign='top'><td>align</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
+<tr valign='top'><td>chainalign</td><td>Two chains for structure alignment, e.g., <a href="full.html?chainalign=1HHO_A,4N7N_A">?chainalign=1HHO_A,4N7N_A</a></td></tr>
+<tr valign='top'><td>url</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
+
+<tr valign='top'><td>width</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
+<tr valign='top'><td>height</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
+<tr valign='top'><td>resize</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
+<tr valign='top'><td>rotate</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
+
+<tr valign='top'><td>showanno</td><td>Set "true" or "1" to show annotations, such as SNPs, ClinVar, domains, binding sites. The default is "false".</td></tr>
+<tr valign='top'><td>showalignseq</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
+<tr valign='top'><td>showsets</td><td>Set "true" or "1" to show the defined sets. The default is "false".</td></tr>
+<tr valign='top'><td>show2d</td><td>Set "true" or "1" to show the 2D interaction. The default is "false".</td></tr>
+<tr valign='top'><td>showmenu</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showtitle</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showcommand</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
+<!--tr valign='top'><td>simplemenu</td><td>Set "true" or "1" to show some basic menus with many advanced ones hidden to simplify the UI. The default is "false".</td></tr-->
+<tr valign='top'><td>mobilemenu</td><td>Set "true" or "1" to show the mobile-style menu. Users can click to see all menus. The default is "false".</td></tr>
+<tr valign='top'><td>imageonly</td><td>Set "true" or "1" to show an image instead of interactive 3D viewer. The default is "false".</td></tr>
+<tr valign='top'><td>closepopup</td><td>Set "true" or "1" to close the dialogs of "Defined Sets", "Interactions", and "Sequences and Annotations". The default is "false".</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
+<tr valign='top'><td>replay</td><td>Set "true" or "1" to replay each step of a custom display.</td></tr>
+<tr valign='top'><td>usepdbnum</td><td>Set "true" or "1" to use PDB residue numbers instead of NCBI residue numbers when the input is MMDB ID and the residue numbers are different. The default is "true".</td></tr>
+<tr valign='top'><td>hidelicense</td><td>Set "true" or "1" to hide the features requiring licenses, such as "Analysis > DelPhi Potential". The default is "false".</td></tr>
+<tr valign='top'><td>shownote</td><td>Set "true" or "1" to show the content in "Analysis > Window Title" as the window title. The default is "false".</td></tr>
+<tr valign='top'><td>menuicon</td><td>Set "true" or "1" to show icons for those menus requiring internet or license. The default is "false".</td></tr>
+</table>
+
+<span class="anchor" id="commands"></span>
+<a name="commands"></a>
+<h3>Menus, Commands, and Functions of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
+    <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
+</h3>
+To find icn3d commands and functions, you can first generate a custom view in iCn3D interactively. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands". Most commands are processed with functions in the file "src/icn3d/selection/applyCommand.js". Other commands with asynchronized retrieval are processed with functions in the file "src/icn3d/selection/loadScript.js".<br><br>
+
+<a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Function</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a) Retrieve by ID</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">MMDB ID:</span></td>
+            <td valign='top'>load mmdb0 [1GPK]</td>
+            <td valign='top'>ic.mmdbParserCls.downloadMmdb</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">MMTF ID:</span></td>
+            <td valign='top'>load mmtf [1GPK]</td>
+            <td valign='top'>ic.mmtfParserCls.downloadMmtf</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB ID:</span></td>
+            <td valign='top'>load pdb [1GPK]</td>
+            <td valign='top'>ic.pdbParserCls.downloadPdb</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">OPM PDB ID:</span></td>
+            <td valign='top'>load opm [6JXR]</td>
+            <td valign='top'>ic.opmParserCls.downloadOpm</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">mmCIF ID:</span></td>
+            <td valign='top'>load mmcif [1GPK]</td>
+            <td valign='top'>ic.mmcifParserCls.downloadMmcif</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PubChem CID:</span></td>
+            <td valign='top'>load cid [2244]</td>
+            <td valign='top'>ic.sdfParserCls.downloadCid</td>
+        </tr>
+
+        <tr>
+            <td colspan="3">b) Open File</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">mmCIF File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Mol2 File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">SDF File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">XYZ File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">URL (CORS):</span></td>
+            <td valign='top'>load url [https://files.rcsb.org/view/1gpk.pdb]</td>
+            <td valign='top'>ic.pdbParserCls.downloadUrl</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">State/Script File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.loadScriptCls.loadScript</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Selection File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Electron Density (DSN6) - Local File:</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5</td>
+            <td valign='top'>ic.dsn6ParserCls.loadDsn6Data()</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Electron Density (DSN6) - URL (CORS):</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5 | [URL]</td>
+            <td valign='top'>ic.dsn6ParserCls.dsn6ParserBase()</td>
+        </tr>
+
+        <tr>
+            <td colspan="3">c) Align</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sequence to Structure:</span></td>
+            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td>
+            <td valign='top'>ic.mmdbParserCls.downloadBlast_rep_id</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Protein Complexes - Invariant Substructure Superposed:</span></td>
+            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=1</td>
+            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Protein Complexes - All Matching Molecules Superposed:</span></td>
+            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td>
+            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Chain to Chain:</span></td>
+            <td valign='top'>load chainalignment [1HHO_A,4N7N_A]</td>
+            <td valign='top'>ic.chainalignParserCls.downloadChainAlignment</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>d) Realign Selection</td>
+            <td valign='top'>realign on seq align</td>
+            <td valign='top'>ic.realignParserCls.realignOnSeqAlign</td>
+        </tr>
+
+        <tr>
+            <td colspan="3">e) 3D Printing</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>
+            <td valign='top'>export vrml stabilizer file</td>
+            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">STL (W/ Stabilizers):</span></td>
+            <td valign='top'>export stl stabilizer file</td>
+            <td valign='top'>ic.export3DCls.saveStlFile</td>
+        </tr>
+
+        <tr>
+            <td valign='top'><span class="indent">VRML (Color):</span></td>
+            <td valign='top'>export vrml file</td>
+            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">STL:</span></td>
+            <td valign='top'>export stl file</td>
+            <td valign='top'>ic.export3DCls.saveStlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Add All Stabilizers:</span></td>
+            <td valign='top'>stabilizer</td>
+            <td valign='top'>ic.threeDPrintCls.addStabilizer</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove All Stabilizers:</span></td>
+            <td valign='top'>set stabilizer off</td>
+            <td valign='top'>ic.threeDPrintCls.hideStabilizer</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Add One Stabilizer:</span></td>
+            <td valign='top'>add one stabilizer | [atom serial] [atom serial]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove One Stabilizer:</span></td>
+            <td valign='top'>remove one stabilizer | [atom serial] [atom serial]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Set Thickness:</span></td>
+            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | crosslinkrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Reset Thickness:</span></td>
+            <td valign='top'>reset thickness</td>
+            <td valign='top'>ic.threeDPrintCls.resetAfter3Dprint</td>
+        </tr>
+
+        <tr>
+            <td colspan="3">f) Save File</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
+            <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas</a>)</td>
+            <td valign='top'>ic.saveFileCls.saveFile([filename], 'png')</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">State File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">All Selections:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Residue Counts:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.getAtomPDB</td>
+        </tr>
+        </tr>
+
+        <tr>
+            <td valign='top'>g) Share Link:</td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.shareLinkCls.shareLink</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>g) Replay Each Step:</td>
+            <td valign='top'>replay on</td>
+            <td valign='top'>replayon</td>
+        </tr>
+
+    </tbody>
+</table>
+<br>
+<a name="select"></a><b>2. Select</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tr>
+        <td valign='top'>a) Defined Sets:</td>
+        <td valign='top'>defined sets</td>
+        <td valign='top'>ic.definedSetsCls.showSets</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Select sets:</span></td>
+        <td valign='top'>select saved atoms [name1] or/and/not [name2]</td>
+        <td valign='top'>ic.definedSetsCls.changeCustomAtoms</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Delete selected sets:</span></td>
+        <td valign='top'>delete selected sets</td>
+        <td valign='top'>ic.definedSetsCls.deleteSelectedSets</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>b) All:</td>
+        <td valign='top'>select all</td>
+        <td valign='top'>ic.selectionCls.selectAll</td>
+    </tr>
+    <tr>
+        <td valign='top'>c) Displayed Set:</td>
+        <td valign='top'>select displayed set</td>
+        <td valign='top'>ic.hAtoms = me.HashUtilsCls.cloneHash(ic.dAtoms)</td>
+    </tr>
+
+    <tr>
+        <td colspan="3">d) by Distance</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Display:</span></td>
+        <td valign='top'>select zone cutoff [cutoff in angstrom]</td>
+        <td valign='top'>ic.showInterCls.pickCustomSphere</td>
+    </tr>
+
+    <tr>
+        <td colspan="3"><br>e) by Property</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Positive:</span></td>
+        <td valign='top'>select prop positive</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Negative:</span></td>
+        <td valign='top'>select prop negative</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Hydrophobic:</span></td>
+        <td valign='top'>select prop hydrophobic</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Polar:</span></td>
+        <td valign='top'>select prop polar</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">B-factor:</span></td>
+        <td valign='top'>select prop b factor</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Solvent Accessibility:</span></td>
+        <td valign='top'>select prop percent out</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>f) Inverse:</td>
+        <td valign='top'>select complement</td>
+        <td valign='top'>ic.resid2specCls.selectComplement</td>
+    </tr>
+    <tr>
+        <td valign='top'>g) Main Chains:</td>
+        <td valign='top'>select main chains</td>
+        <td valign='top'>ic.selectionCls.selectMainChains</td>
+    </tr>
+    <tr>
+        <td valign='top'>h) Side Chains:</td>
+        <td valign='top'>select side chains</td>
+        <td valign='top'>ic.selectionCls.selectSideChains</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>i) Advanced</td>
+        <td valign='top'>select [command] | name [commandname]</td>
+        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
+    </tr>
+
+    <tr>
+        <td colspan="3"><br>j) Select on 3D</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Chain (Alt):</span></td>
+        <td valign='top'>set pk chain</td>
+        <td valign='top'>ic.pk = 5; ic.opts['pk'] = 'chain';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">3D Domain (Alt):</span></td>
+        <td valign='top'>set pk domain</td>
+        <td valign='top'>ic.pk = 4; ic.opts['pk'] = 'domain';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>
+        <td valign='top'>set pk strand</td>
+        <td valign='top'>ic.pk = 3; ic.opts['pk'] = 'strand';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Residue (Alt):</span></td>
+        <td valign='top'>set pk residue</td>
+        <td valign='top'>ic.pk = 2; ic.opts['pk'] = 'residue';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Atom (Alt):</span></td>
+        <td valign='top'>set pk atom</td>
+        <td valign='top'>ic.pk = 1; ic.opts['pk'] = 'atom';</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>k) Save Selection:</td>
+        <td valign='top'>select [command] | name [commandname]</td>
+        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
+    </tr>
+    <tr>
+        <td valign='top'>l) Clear Selection:</td>
+        <td valign='top'>clear all</td>
+        <td valign='top'>ic.selectionCls.selectAll</td>
+    </tr>
+
+    <tr>
+        <td colspan="3"><br>m) Highlight Color</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Yellow:</span></td>
+        <td valign='top'>set highlight color yellow</td>
+        <td valign='top'></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Green:</span></td>
+        <td valign='top'>set highlight color green</td>
+        <td valign='top'></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Red:</span></td>
+        <td valign='top'>set highlight color red</td>
+        <td valign='top'></td>
+    </tr>
+
+    <tr>
+        <td colspan="3"><br>n) Highlight Style</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Outline:</span></td>
+        <td valign='top'>set highlight style outline</td>
+        <td valign='top'>ic.bHighlight = 1;</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">3D Objects:</span></td>
+        <td valign='top'>set highlight style 3d</td>
+        <td valign='top'>ic.bHighlight = 2;</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>o) Toggle Highlight</td>
+        <td valign='top'>toggle highlight</td>
+        <td valign='top'>ic.hlUpdateCls.toggleHighlight</td>
+    </tr>
+
+    <tr>
+        <td colspan="3"><br>p) Switch Highlight Level</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">&uarr;:</span></td>
+        <td valign='top'>highlight level up</td>
+        <td valign='top'>ic.resid2specCls.switchHighlightLevelUp
+            <a></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">&darr;:</span></td>
+        <td valign='top'>highlight level down</td>
+        <td valign='top'>ic.resid2specCls.switchHighlightLevelDown</td>
+    </tr>
+
+    </tbody>
+</table>
+<br>
+
+<span class="anchor" id="selectb"></span>
+<a name="selectb"></a>
+<b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<div>
+    In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
+    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,LV,3LeuVal,chemicals@CA,C,C*":
+    <ul>
+        <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
+        <li>".A,B,C" uses "." to indicate chain selection.<br/>
+        <li>":5-10,LV,3LeuVal,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number(5-10), one-letter IUPAC residue name abbreviations(LV), three-letter residue names(AlaVal, "3" indicates each residue name has three letters), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water". IUPAC abbreviations can be written either as a contiguous string(e.g., ":LV"), in order to find all instances of that sequence in the structure, or they can be separated by commas(e.g., ":L,V") to select all residues of a given type in the structure(in the latter case, select all Leucine and Valine in the structure).<br/>
+        <li>"@CA,C,C*" uses "@" to indicate atom selection. "C*" selects any atom names starting with "C".<br/>
+        <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
+        <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects
+        all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
+        <li>The wild card character "X" or "x" can be used to represent any character.
+    </ul>
+    <b>Set Operation:</b>
+    <ul>
+        <li>Users can select multiple sets in the menu "Select > Defined Sets".<br/>
+            <li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or excluded (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms
+                :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
+    </ul>
+    <b>Full commands in url or command window:</b>
+    <ul>
+        <li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C*<br/>
+            <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C* | name my_name
+    </ul>
+</div>
+<br>
+<a name="view"></a><b>3. View</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+
+        <tr>
+            <td valign='top'>a) View -&gt; View Only Selection:</td>
+            <td valign='top'>show selection</td>
+            <td valign='top'>ic.selectionCls.showSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>b) View -&gt; Zoom in Selection:</td>
+            <td valign='top'>zoom selection</td>
+            <td valign='top'>ic.resizeCanvasCls.zoominSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>c) View -&gt; Center Selection:</td>
+            <td valign='top'>center selection</td>
+            <td valign='top'>ic.applyCenterCls.centerSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>d) View -&gt; View Full Structure:</td>
+            <td valign='top'>show all</td>
+            <td valign='top'>ic.selectionCls.showAll</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>e) View -&gt; Show Side by Side:</td>
+            <td valign='top'>side by side | [url]</td>
+            <td valign='top'>window.open()</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>f) View -&gt; Rotate</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br><span class="indent">f1) Rotate 90&deg;</span></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">X-axis:</span></td>
+            <td valign='top'>rotate x</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Y-axis:</span></td>
+            <td valign='top'>rotate y</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Z-axis:</span></td>
+            <td valign='top'>rotate z</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br><span class="indent">f2) Auto Rotation</span></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Left:</span></td>
+            <td valign='top'>rotate left</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Right:</span></td>
+            <td valign='top'>rotate right</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Up:</span></td>
+            <td valign='top'>rotate up</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Down:</span></td>
+            <td valign='top'>rotate down</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>g) View -&gt; Camera</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Perspective:</span></td>
+            <td valign='top'>set camera perspective</td>
+            <td valign='top'>ic.opts['camera'] = 'perspective';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orthographic:</span></td>
+            <td valign='top'>set camera orthographic</td>
+            <td valign='top'>ic.opts['camera'] = 'orthographic';</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>h) View -&gt; Fog for Selection</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">On:</span></td>
+            <td valign='top'>set fog on</td>
+            <td valign='top'>ic.opts['fog'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Off:</span></td>
+            <td valign='top'>set fog off</td>
+            <td valign='top'>ic.opts['fog'] = 'no';</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>i) View -&gt; Slab for Selection</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">On:</span></td>
+            <td valign='top'>set slab on</td>
+            <td valign='top'>ic.opts['slab'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Off:</span></td>
+            <td valign='top'>set slab off</td>
+            <td valign='top'>ic.opts['slab'] = 'no';</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>j) View -&gt; XYZ-axes</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>set axis on</td>
+            <td valign='top'>ic.opts['axis'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set axis off</td>
+            <td valign='top'>ic.opts['axis'] = 'no';</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>k) View -&gt; Reset:</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">All:</span></td>
+            <td valign='top'>reset</td>
+            <td valign='top'>ic.loadScriptCls.renderFinalStep</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orientation:</span></td>
+            <td valign='top'>reset orientation</td>
+            <td valign='top'>ic.transformCls.resetOrientation</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>l) View -&gt; Undo:</td>
+            <td valign='top'>back</td>
+            <td valign='top'>ic.resizeCanvasCls.back</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>m) View -&gt; Redo:</td>
+            <td valign='top'>forward</td>
+            <td valign='top'>ic.resizeCanvasCls.forward</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>n) View -&gt; Full Screen:</td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+
+    </tbody>
+</table>
+
+<br>
+<a name="style"></a><b>4. Style</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a) Style -&gt; Protein</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Ribbon:</span></td>
+            <td valign='top'>style proteins ribbon</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Strand:</span></td>
+            <td valign='top'>style proteins strand</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Cylinder and Plate:</span></td>
+            <td valign='top'>style proteins cylinder and plate</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style proteins schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">C Alpha Trace:</span></td>
+            <td valign='top'>style proteins c alpha trace</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Backbone:</span></td>
+            <td valign='top'>style proteins backbone</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">B-factor Tube:</span></td>
+            <td valign='top'>style proteins b factor tube</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style proteins lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style proteins stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style proteins ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style proteins sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style proteins nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>b) Style -&gt; Side Chains</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style sidec lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style sidec stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style sidec ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style sidec sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style sidec nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>c) Style -&gt; Nucleotides</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Nucleotide Cartoon:</span></td>
+            <td valign='top'>style nucleotides nucleotide cartoon</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">O3' Trace:</span></td>
+            <td valign='top'>style nucleotides o3 trace</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Backbone:</span></td>
+            <td valign='top'>style nucleotides backbone</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style nucleotides schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style nucleotides lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style nucleotides stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style nucleotides ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style nucleotides sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style nucleotides nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>d) Style -&gt; Chemicals</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style chemicals lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style chemicals stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style chemicals ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style chemicals schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style chemicals sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style chemicals nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>d2) Style -&gt; Hydrogens</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>hydrogens</td>
+            <td valign='top'>ic.setOptionCls.showHydrogens</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set hydrogens off</td>
+            <td valign='top'>ic.setOptionCls.hideHydrogens</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>e) Style -&gt; Ions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style ions sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Dot:</span></td>
+            <td valign='top'>style ions dot</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style ions nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>f) Style -&gt; Water</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style water sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Dot:</span></td>
+            <td valign='top'>style water dot</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style water nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>g) Style -&gt; Set Thickness:</td>
+            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | crosslinkrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
+            <td valign='top'></td>
+        </tr>
+
+        <tr>
+            <td valign='top'>h) Style -&gt; Save Style:</td>
+            <td valign='top'>save style</td>
+            <td valign='top'>ic.setOptionCls.saveStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'>i) Style -&gt; Apply Saved Style:</td>
+            <td valign='top'>apply saved style</td>
+            <td valign='top'>ic.setOptionCls.applySavedStyle</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>j) Style -&gt; Surface Type</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Van der Waals:</span></td>
+            <td valign='top'>set surface Van der Waals surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">VDW with Context:</span></td>
+            <td valign='top'>set surface Van der Waals surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Molecular Surface:</span></td>
+            <td valign='top'>set surface molecular surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">MS with Context:</span></td>
+            <td valign='top'>set surface molecular surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Solvent Accessible:</span></td>
+            <td valign='top'>set surface solvent accessible surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">SA with Context:</span></td>
+            <td valign='top'>set surface solvent accessible surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>k) Style -&gt; Remove Surface:</td>
+            <td valign='top'>set surface nothing</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>l) Style -&gt; Surface Opacity</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">1.0:</span></td>
+            <td valign='top'>set surface opacity 1.0</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.9:</span></td>
+            <td valign='top'>set surface opacity 0.9</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.8:</span></td>
+            <td valign='top'>set surface opacity 0.8</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.7:</span></td>
+            <td valign='top'>set surface opacity 0.7</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.6:</span></td>
+            <td valign='top'>set surface opacity 0.6</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.5:</span></td>
+            <td valign='top'>set surface opacity 0.5</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.4:</span></td>
+            <td valign='top'>set surface opacity 0.4</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.3:</span></td>
+            <td valign='top'>set surface opacity 0.3</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.2:</span></td>
+            <td valign='top'>set surface opacity 0.2</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.1:</span></td>
+            <td valign='top'>set surface opacity 0.1</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>m) Style -&gt; Surface Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set surface wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set surface wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>n) Style -&gt; Electron Density</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">2Fo-Fc Map:</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Fo-Fc Map:</span></td>
+            <td valign='top'>set map 2fofc sigma 3</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>o) Style -&gt; Remove Map:</td>
+            <td valign='top'>set map nothing</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>p) Style -&gt; Map Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set map wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set map wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>q) Style -&gt; EM Density Map:</td>
+            <td valign='top'>set emmap percentage 20</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandEmmap</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>r) Style -&gt; Remove EM Map:</td>
+            <td valign='top'>set emmap nothing</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>s) Style -&gt; EM Map Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set emmap wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set emmap wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>t) Style -&gt; Background</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Transparent:</span></td>
+            <td valign='top'>set background transparent</td>
+            <td valign='top'>ic.opts['background'] = 'transparent'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Black:</span></td>
+            <td valign='top'>set background black</td>
+            <td valign='top'>ic.opts['background'] = 'black'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Grey:</span></td>
+            <td valign='top'>set background grey</td>
+            <td valign='top'>ic.opts['background'] = 'grey'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">White:</span></td>
+            <td valign='top'>set background white</td>
+            <td valign='top'>ic.opts['background'] = 'white'</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>u) Style -&gt; Dialog Color</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Blue:</span></td>
+            <td valign='top'>set theme blue</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orange:</span></td>
+            <td valign='top'>set theme orange</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Black:</span></td>
+            <td valign='top'>set theme black</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
+
+        <!--tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
+<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set double color on</td> <td valign='top'>ic.bDoublecolor = true</td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr-->
+
+
+    </tbody>
+</table>
+<br>
+<a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a)</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Spectrum:</td>
+            <td valign='top'>color spectrum</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Sheet in Green):</td>
+            <td valign='top'>color secondary structure</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Sheet in Yellow):</td>
+            <td valign='top'>color secondary structure yellow</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Spectrum):</td>
+            <td valign='top'>color secondary structure spectrum</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Charge:</td>
+            <td valign='top'>color charge</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Wimley-White Hydrophobicity:</td>
+            <td valign='top'>color hydrophobic</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; B-factor (Original):</td>
+            <td valign='top'>color b factor</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; B-factor (Percentile):</td>
+            <td valign='top'>color b factor percentile</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Solvent Accessibility:</td>
+            <td valign='top'>color area | 35</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Chain:</td>
+            <td valign='top'>color chain</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; 3D Domain:</td>
+            <td valign='top'>color 3ddomain</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Residue - Default:</td>
+            <td valign='top'>color residue</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Residue - Custom:</td>
+            <td valign='top'>color residue custom</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Atom:</td>
+            <td valign='top'>color atom</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>b) Color -&gt; Unicolor</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Red:</span></td>
+            <td valign='top'>color red</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Green:</span></td>
+            <td valign='top'>color green</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Blue:</span></td>
+            <td valign='top'>color blue</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Magenta:</span></td>
+            <td valign='top'>color magenta</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yellow:</span></td>
+            <td valign='top'>color yellow</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Cyan:</span></td>
+            <td valign='top'>color cyan</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">White:</span></td>
+            <td valign='top'>color white</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Grey:</span></td>
+            <td valign='top'>color grey</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>c) Color -&gt; Color Picker</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Apply:</span></td>
+            <td valign='top'>color [e.g., FF0000]</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>Color -&gt; Save Color:</td>
+            <td valign='top'>save color</td>
+            <td valign='top'>ic.setOptionCls.saveColor</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Apply Saved Color:</td>
+            <td valign='top'>apply saved color</td>
+            <td valign='top'>ic.setOptionCls.applySavedColor</td>
+        </tr>
+
+    </tbody>
+</table>
+<br>
+
+<a name="analysis"></a><b>6. Analysis</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+
+        <tr>
+            <td width="240">a) Analysis -&gt; View Sequences & Annotations:</td>
+            <td valign='top'>view annotations</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandAnnotationsAndCddSite</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>b) Analysis -&gt; View 2D Diagram</td>
+            <td valign='top'>view interactions</td>
+            <td valign='top'>ic.parserUtilsCls.set2DDiagrams</td>
+        </tr>
+        <tr>
+            <td valign='top'>c) Analysis -&gt; Defined Sets</td>
+            <td valign='top'>defined sets</td>
+            <td valign='top'>ic.definedSetsCls.showSets</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>
+            <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td>
+            <td valign='top'>ic.showInterCls.showHbonds;ic.showInterCls.showSaltbridge;ic.showInterCls.pickCustomSphere</td>
+        </tr>
+        <tr>
+            <td valign='top'>e) Analysis -&gt; Bring to Front:</td>
+            <td valign='top'>window ...</td>
+            <td valign='top'>ic.dialogCls.openDlg</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>f) Analysis -&gt; DelPhi Potential</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Local Phi/Cube File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.delphiCls.loadPhiFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">URL (CORS) Phi/Cube:</span></td>
+            <td valign='top'>set phimap cubeurl contour 1 | [url]</td>
+            <td valign='top'>ic.delphiCls.loadPhiFileUrl</td>
+        </tr>
+        <tr>
+            <td valign='top'>g) Analysis -&gt; Remove Potential:</td>
+            <td valign='top'>setoption phimap nothing</td>
+            <td valign='top'>ic.setOptionCls.setOption('phimap', 'nothing')</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>h) Analysis -&gt; Chemical Binding</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>set chemicalbinding show</td>
+            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'show');</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set hbonds off</td>
+            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'hide');</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>i) Analysis -&gt; Disulfide Bonds</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>disulfide bonds</td>
+            <td valign='top'>ic.showInterCls.showSsbonds</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Export Pairs:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set disulfide bonds off</td>
+            <td valign='top'>ic.opts["ssbonds"] = "no</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>j) Analysis -&gt; Cross-Linkages</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>cross linkage</td>
+            <td valign='top'>ic.bShowCrossResidueBond = true;</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set cross linkage off</td>
+            <td valign='top'>ic.bShowCrossResidueBond = false;</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>k) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">yes:</span></td>
+            <td valign='top'>set assembly on</td>
+            <td valign='top'>ic.bAssembly = true;</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">no:</span></td>
+            <td valign='top'>set assembly off</td>
+            <td valign='top'>ic.bAssembly = false;</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>l) Analysis -&gt; Symmetry:</td>
+            <td valign='top'>symmetry C6 (global)</td>
+            <td valign='top'>ic.symdCls.retrieveSymmetry; ic.applySymdCls.applySymmetry</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>m) Analysis -&gt; Distance</td>
+        </tr>
+        <tr>
+            <td valign='top' rowspan="2"><span class="indent">between Two Atoms:</span></td>
+            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td>
+            <td valign='top'>ic.analysisCls.addLine</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">between Two Sets:</span></td>
+            <td valign='top'>dist | [set1] [set2]</td>
+            <td valign='top'>ic.analysisCls.measureDistTwoSets</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set lines off</td>
+            <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>n) Analysis -&gt; Label</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">by Picking Atoms:</span></td>
+            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Selection:</span></td>
+            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Atom:</span></td>
+            <td valign='top'>add atom labels</td>
+            <td valign='top'>ic.residueLabelsCls.addAtomLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Residue:</span></td>
+            <td valign='top'>add residue labels</td>
+            <td valign='top'>ic.residueLabelsCls.addResiudeLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Chain:</span></td>
+            <td valign='top'>add chain labels</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">N- & C- Termini:</span></td>
+            <td valign='top'>add terminal labels</td>
+            <td valign='top'>ic.residueLabelsCls.addTerminiLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove:</span></td>
+            <td valign='top'>set labels off</td>
+            <td valign='top'>ic.residueLabelsCls.addChainLabels</td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>o) Analysis -&gt; Label Scale</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.1:</span></td>
+            <td valign='top'>set label scale 0.1</td>
+            <td valign='top'>ic.labelScale=0.1</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.2:</span></td>
+            <td valign='top'>set label scale 0.2</td>
+            <td valign='top'>ic.labelScale=0.2</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.4:</span></td>
+            <td valign='top'>set label scale 0.4</td>
+            <td valign='top'>ic.labelScale=0.4</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.6:</span></td>
+            <td valign='top'>set label scale 0.6</td>
+            <td valign='top'>ic.labelScale=0.6</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.8:</span></td>
+            <td valign='top'>set label scale 0.8</td>
+            <td valign='top'>ic.labelScale=0.8</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">1.0:</span></td>
+            <td valign='top'>set label scale 1.0</td>
+            <td valign='top'>ic.labelScale=1.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">2.0:</span></td>
+            <td valign='top'>set label scale 2.0</td>
+            <td valign='top'>ic.labelScale=2.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">4.0:</span></td>
+            <td valign='top'>set label scale 4.0</td>
+            <td valign='top'>ic.labelScale=4.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">6.0:</span></td>
+            <td valign='top'>set label scale 6.0</td>
+            <td valign='top'>ic.labelScale=6.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">8.0:</span></td>
+            <td valign='top'>set label scale 8.0</td>
+            <td valign='top'>ic.labelScale=8.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">10.0:</span></td>
+            <td valign='top'>set label scale 10.0</td>
+            <td valign='top'>ic.labelScale=10.0</td>
+        </tr>
+
+        <tr>
+            <td valign='top'>p) Analysis -&gt; Your Note / Window Title</td>
+            <td valign='top'>your note | [text]</td>
+            <td valign='top'></td>
+        </tr>
+
+        <tr>
+            <td colspan="3"><br>q) Analysis -&gt; View Links</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Structure Summary:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Find Similar Structures:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Literature:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Protein:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+
+    </tbody>
+</table>
+<br>
+
+<a name="help"></a><b>7. Help</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table width='100%'>
+    <tr>
+        <td width='30%'><b>Menu</b></td>
+        <td width='40%'><b>Command</b></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>a) Help -&gt; About iCn3D:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>b) Help -&gt; Help DOc:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>c) Help -&gt; Web Methods:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>d) Help -&gt; Transform Hints:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>e) Help -&gt; Selection Hints:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+</ul>
+<br>
+
+<span class="anchor" id="citing"></span>
+<a name="citing"></a>
+
+<h3>Citing iCn3D:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<TABLE style="margin:0px 0px 0px 0px;" border="0" cellpadding="4" class="ReferenceText">
+<TR>
+    <TD width="10" align="center"><b>&#160;</b></TD>
+    <TD width="18" valign="top" align="left"><img border=0 align=left height=15 width=15 style="margin-right:0.2em" src="https://www.ncbi.nlm.nih.gov/Structure/IMG/PubMed.gif"></A></TD>
+    <TD valign="top" align="left">Wang J, Youkharibache P, Zhang D, Lanczycki CJ, Geer RC, Madej T, Phan L, Ward M, Lu S, Marchler GH, Wang Y, Bryant SH, Geer LY, Marchler-Bauer A. iCn3D, a Web-based 3D Viewer for Sharing 1D/2D/3D Representations of Biomolecular Structures. <B><I>Bioinformatics.</I> 2020</B> Jan 1;36(1):131-135. (Epub 2019 June 20.) doi: 10.1093/bioinformatics/btz502. <A HREF="https://www.ncbi.nlm.nih.gov/pubmed/31218344">[PubMed PMID: 31218344]</A> [<A HREF="https://academic.oup.com/bioinformatics/article/36/1/131/5520951">Full Text at Oxford Academic</A>]</TD>
+    <TD width="124" align="center" valign="top"><A href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6956771/"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/full_text/pubmed-pmc.gif" WIDTH="120" HEIGHT="28" BORDER="0" ALT="Click here to read"></A></TD>
+    <TD width="10" align="center"><b>&#160;</b></TD>
+</TR>
+
+<TR>
+    <TD width="10" align="center"><b>&#160;</b></TD>
+    <TD width="18" valign="top" align="left"><img border=0 align=left height=15 width=15 style="margin-right:0.2em" src="https://www.ncbi.nlm.nih.gov/Structure/IMG/PubMed.gif"></A></TD>
+    <TD valign="top" align="left">Wang J, Youkharibache P, Marchler-Bauer A, Lanczycki C, Zhang D, Lu S, Madej T, Marchler GH, Cheng T, Chong LC, Zhao S, Yang K, Lin J, Cheng Z, Dunn R, Malkaram SA, Tai C-H, Enoma D, Busby B, Johnson NL, Tabaro F, Song G, Ge Y. iCn3D: From Web-Based 3D Viewer to Structural Analysis Tool in Batch Mode. <B><I>Front. Mol. Biosci.</I> 2022</B> 9:831740. (Epub 2022 Feb 17.) doi: 10.3389/fmolb.2022.831740. <A HREF="https://www.ncbi.nlm.nih.gov/pubmed/35252351">[PubMed PMID: 35252351]</A> [<A HREF="https://www.frontiersin.org/articles/10.3389/fmolb.2022.831740/full">Full Text at Frontiers</A>]</TD>
+    <TD width="124" align="center" valign="top"></TD>
+    <TD width="10" align="center"><b>&#160;</b></TD>
+</TR>
+</TABLE>
+
+<span class="anchor" id="sourcecode"></span>
+<a name="sourcecode"></a>
+
+<h3>iCn3D source code:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<ul>
+<li><a href="https://github.com/ncbi/icn3d"><span>GitHub (browser)</span></a>
+<li><a href="https://www.npmjs.com/package/icn3d"><span>npm (Node.js)</span></a>
+<li><a href="https://pypi.org/project/icn3dpy"><span>pypi (Jupyter Notebook)</span></a>
+</ul>
+<br>
+
+<h3>Develop</h3>
+
+<span class="anchor" id="HowToUse"></span>
+<a name="HowToUse"></a>
+
+<h3>How to embed iCn3D Structure Viewer in your html page:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<ul>
+<li><a name="embedIframe"></a><b>Embed using iframe</b><br>
+<p>To embed iCn3D Structure Viewer in your own HTML page using iframe, simply add the following to your page. Note the URL should be the original URL with commands, not the shorten share link.
+</p><div class="indent"><code>&lt;iframe allowFullScreen="true" src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&amp;width=300&amp;height=300&amp;showcommand=0&amp;shownote=0&amp;mobilemenu=1&amp;showtitle=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div><br>
+
+</li>
+
+<li><a name="embedJS"></a><b>Embed as a Web Server</b><br>
+<br>
+<ol>
+<li>Go to iCn3D GitHub page: <a href="https://github.com/ncbi/icn3d" target="_blank">github.com/ncbi/icn3d</a></li>
+<li>Download the zip file near "Complete Package", e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.9.zip</li>
+<li>Copy all unzipped files to your server directory, e.g., "http://[domain name]/icn3d".</li>
+<li>Launch iCn3D in your server, e.g., http://[domain name]/icn3d.</li>
+</ol>
+<br>
+</li>
+
+<li><a name="embedJS"></a><b>Embed as a Javascript Widget</b><br>
+
+<p>To embed iCn3D Structure Viewer in your own HTML page using the distribution files on NCBI servers, simply follow these 3 steps. Note the changes to iCn3D version 3 are colored in red. (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example/example.html">example page</a> for reference)</p>
+
+<ol>
+    <li><a name="HowToUseStep1"></a><b>Include the CSS and JavaScript libraries in the &lt;head&gt; of your html page, as shown here.</b></li>
+    <pre>&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css"&gt;
+&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/<span>icn3d.css</span>"&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/<span>threeClass.min.js</span>"&gt;&lt;/script&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/<span>icn3d.min.js</span>"&gt;&lt;/script&gt;</pre>
+
+    <li><a name="HowToUseStep2"></a><b>Position the widget with an html div</b></li>
+    <pre>      &lt;div id="icn3dwrap"&gt;&lt;/div&gt;
+    </pre>
+    The widget will be rendered inside of the div.<br><br>
+
+    <li><a name="HowToUseStep3"></a><b>Initialize the widget with desired parameters:</b></li>
+    <pre>  &lt;script type="text/javascript"&gt;
+    $( document ).ready(async function() {
+          var cfg = {
+              divid: 'icn3dwrap',
+              width: '100%',
+              height: '100%',
+              resize: true,
+              rotate: 'right',
+              mobilemenu: true,
+              showcommand: false,
+              showtitle: false
+          };
+          cfg['mmdbid'] = '1tup';
+
+          var icn3dui = new <span>icn3d.</span>iCn3DUI(cfg);
+
+          //communicate with the 3D viewer with chained functions
+          await icn3dui.show3DStructure();
+          //icn3dui.setOption('color', 'cyan');
+    });
+  &lt;/script&gt;</pre>
+</ol>
+</li>
+</ul>
+
+<span class="anchor" id="datastructure"></span>
+<a name="datastructure"></a>
+
+<h3>Data Structure<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<ul>
+  <li><b>Atom Object</b>
+    <pre>
+var atomDetails = {
+    serial: serial,         // required, unique atom id
+    structure: structure,   // required, used to identify the structure
+    chain: chain,           // required, used to identify the chain
+    resi: resi,             // required, used to identify residue ID, has to be a integer
+    name: atom,             // required, atom name
+    coord: coord,           // required, used to draw 3D shape
+    coord2: ribbonCoord,    // optional, ribbon's real positions, used to draw stabilizers for 3D printing
+    bonds: [],              // required, used to connect atoms
+
+    color: color,           // optional, used to assign atom color, default is grey
+    style: style,           // optional, used to assign atom style as one of 13 styles: ribbon, strand, cylinder and plate,
+                            //   nucleotide cartoon, o3' trace, schematic, c alpha trace, b factor tube, lines, stick,
+                            //   ball and stick, sphere, dot, nothing
+    style2: sideChainStyle, // optional, used to assign protein side chain style as one of 13 styles: ribbon, strand, cylinder and plate,
+                            //   nucleotide cartoon, o3' trace, schematic, c alpha trace, b factor tube, lines, stick,
+                            //   ball and stick, sphere, dot, nothing
+    het: false,             // optional, used to determine chemicals, water, ions, etc
+    resn: resn,             // optional, used to determine protein or nucleotide
+    b: b,                   // optional, used to draw B-factor tube
+    elem: elem,             // optional, used to determine hydrogen bond
+    ss: 'coil',             // optional, used to show secondary structures
+    ssbegin: false,         // optional, used to show the beginning of secondary structures
+    ssend: false            // optional, used to show the end of secondary structures
+}
+    </pre>
+  </li>
+  <li><b>Data required from the input to set up 3D viewer</b><br>
+    <pre>
+atoms: {};          // REQUIRED, all atoms in the input: atom index => atom details, ONLY THIS HASH STORE ALL ATOM DETAILS
+dAtoms: {};         // REQUIRED, atoms used to display: atom index => 1
+pmin: pmin;         // REQUIRED, the position with minimum x,y,z
+pmax: pmax;         // REQUIRED, the position with maximum x,y,z
+cnt: cnt;           // REQUIRED, total number of atoms
+maxD: pmax.distanceTo(pmin);             // REQUIRED, max dimension of the structure
+center: psum.multiplyScalar(1.0 / cnt);  // REQUIRED, center position of the structure
+
+hAtoms: {};         // OPTIONAL, atoms used to highlight: atom index => 1
+structures: {};         // OPTIONAL, structure name => array of chain IDs
+chains: {};           // OPTIONAL, structure_chain name => (atom index => 1)
+residues: {};          // OPTIONAL, structure_chain_resi name => (atom index => 1)
+
+chainsSeq: {};        // OPTIONAL, structure_chain name => array of residue object: {"name":[residue name], "resi": [residue number]}
+chainsAn: {};         // OPTIONAL, structure_chain name => array of annotation
+chainsAnTitle: [];    // OPTIONAL, the titles for the array of annotation
+molTitle: "";       // OPTIONAL, ID and name
+hbondpnts: [];      // OPTIONAL, array of positions of hydrogen bond
+ssbondpnts: {};     // OPTIONAL, structure name => positions of disulfide bonds
+residueId2Name: {}; // OPTIONAL, structure_chain_resi => one letter abbreviation
+
+proteins: {};       // OPTIONAL, proteins: atom index => 1
+sidec: {};          // OPTIONAL, protein sidechains: atom index => 1
+calphas: {};        // OPTIONAL, protein C alphas: atom index => 1
+nucleotides: {};    // OPTIONAL, DNA, RNA: atom index => 1
+nucleotidesO3: {};  // OPTIONAL, DNA, RNA O3': atom index => 1
+chemicals: {};        // OPTIONAL, chemicals: atom index => 1
+ions: {};           // OPTIONAL, ions: atom index => 1
+water: {};          // OPTIONAL, water: atom index => 1
+    </pre>
+  </li>
+</ul>
+
+<span class="anchor" id="classstructure"></span>
+<a name="classstructure"></a>
+
+<h3>Class Structure<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+iCn3D uses JavaScript classes starting from version 3.0.0. In both the browser version (<a href="https://github.com/ncbi/icn3d">GitHub</a>) and the Node.js version (<a href="https://www.npmjs.com/package/icn3d">npm</a>), a global variable "icn3d" is used to access all classes in iCn3D. As shown in the table below, the variable "icn3d" can access the class "iCn3DUI" (with the instance "icn3dui"). The instance "icn3dui" can access all util classes (e.g., "icn3d.icn3dui.utilsCls") and two major classes "iCn3D" (with the instance "icn3d", which is different from the global variable "icn3d") and "Html" (with the instance "htmlCls"), which can access all the rest classes. For example, the class "AlignSeq" (with the instance "alignSeqCls") can be called using "icn3d.icn3dui.htmlCls.alignSeqCls". All class names except "icn3dui" and "icn3d" start with an upper-case letter. <br><br>
+
+Since static functions are not supported in Safari, all classes (e.g., "AlignSeq") don't have static functions. The instance names of the classes convert the first letter to lower-case and add the postfix "Cls" (e.g., "alignSeqCls"). Each class has its own file with the file name the same as the class name with the first letter lower-case (e.g., "alignSeq.js").<br><br>
+
+Each function in classes in the directory "icn3d" has a variable "ic" to represent the instance "icn3d". "ic.icn3dui" can be used to represent the instance "icn3dui".<br><br>
+
+Each function in classes in the directory "html" has a variable "me" to represent the instance "icn3dui". "me.icn3d" can be used to represent the instance "icn3d".<br><br>
+
+<table border='1' cellpadding='5' cellspacing='0'>
+<tr><th>Global</th><th>Class (directory)</th><th>Class (directory)</th><th>Class (directory)</th><th>Functions</th></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>utilsCls (utils)</b></td><td></td><td>setIcn3d, setDialogAjax</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>utilsCls (utils)</td><td></td><td>isIE, isMobile, isMac, isSessionStorageSupported, hexToRgb, isCalphaPhosOnly, hasCovalentBond, residueName2Abbr, residueAbbr2Name, getJSONFromArray, checkFileAPI, getIdArray, compResid, toggle, setViewerWidthHeight</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>hashUtilsCls (utils)</td><td></td><td>cloneHash, intHash, exclHash, unionHash, unionHashInPlace, unionHashNotInPlace, intHash2Atoms, exclHash2Atoms, unionHash2Atoms, hash2Atoms, hashvalue2array</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>parasCls (utils)</td><td></td><td>Parameters: glycanHash, nucleotidesArray, ionsArray, cationsTrimArray, anionsTrimArray, ionCharges, vdwRadii, covalentRadii, surfaces, atomColors, defaultAtomColor, stdChainColors, backgroundColors, residueColors, residueArea, defaultResidueColor, chargeColors, hydrophobicColors, ssColors, ssColors2, b62ResArray, b62Matrix<br>Functions: thr</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>myEventCls (utils)</td><td></td><td>onId, onIds</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>subdivideCls (utils)</td><td></td><td>subdivide, getKnot, getValueFromKnot</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>rmsdSuprCls (utils)</td><td></td><td>getRmsdSuprCls, eigen_values, null_basis, getEigenForSelection, getEigenVectors</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>convertTypeCls (utils)</td><td></td><td>passFloat32, passInt8, passInt16, passInt32, getUint8View, getDataView, getView, getBlobFromBufferAndText</td></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>htmlCls (html)</b></td><td></td><td>N/A</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>alignSeqCls (html)</td><td>getAlignSequencesAnnotations</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>clickMenuCls (html)</td><td>clickMenu1, clickMenu2, clickMenu3, clickMenu4, clickMenu5, clickMenu6, setLogCmd</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>dialogCls (html)</td><td>openDlg, addSaveButton, addHideButton, getDialogStatus, openDlgHalfWindow, openDlg2Ddgm, openDlgRegular, openDlgNotebook</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>eventsCls (html)</td><td>fullScreenChange, allEventFunctions</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setDialogCls (html)</td><td>setCustomDialogs, setDialogs</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setHtmlCls (html)</td><td>getLink, getLinkWrapper, getRadio, getRadioColor, setAdvanced, getOptionHtml, setColorHints, setThicknessHtml, setSequenceGuide, setAlignSequenceGuide, getSelectionHints, addGsizeSalt, getFootHtml, getPotentialHtml, exportPqr, clickReload_pngimage, setLineThickness, updateSurfPara, exportPdb</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setMenuCls (html)</td><td>setTopMenusHtml, setTopMenusHtmlMobile, setReplayHtml, setTools, setButton, setTools_base, setTheme, setLogWindow, setMenu1, setMenu1_base, setMenu2, setMenu2_base, setMenu2b, setMenu2b_base, setMenu3, setMenu3_base, setMenu4, setMenu4_base, setMenu5, setMenu5_base, setMenu6, setMenu6_base, hideMenu, showMenu</td></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>icn3d (icn3d)</b></td><td></td><td>init, init_base, reinitAfterLoad, resetConfig</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>analysisCls (analysis)</td><td>calculateArea, calcBuriedSurface, measureDistTwoSets, addLine, addLineFromPicking, addLabel, addChainLabels, addTerminiLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySymdCls (analysis)</td><td>applySymd, applySymmetry</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>delphiCls (analysis)</td><td>CalcPhiUrl, CalcPhi, PhiParser, loadPhiData, loadCubeData, applyCommandPhi, applyCommandDelphi, loadDelphiFile, loadPhiFile, loadPhiFileUrl</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>diagram2dCls (analysis)</td><td>draw2Ddgm, set2DdgmNote, highlightNode, removeLineGraphSelection, removeScatterplotSelection, click2Ddgm, selectInteraction, selectInteractionAtoms, draw2DProtein, draw2DNucleotide, draw2DChemical</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cartoon2dCls (analysis)</td><td>draw2Dcartoon, click2Dcartoon</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsspCls (analysis)</td><td>applyDssp, parseDsspData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>scapCls (analysis)</td><td>applyCommandScap, adjust2DWidth, retrieveScap</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>symdCls (analysis)</td><td>applyCommandSymd, retrieveSymd, getResObj, setSeqAlignForSymmetry, retrieveSymmetry, getPolygonColor, getAxisColor</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>addTrackCls (annotations)</td><td>clickAddTrackButton, showNewTrack, alignSequenceToStructure, defineSecondary, simplifyText, checkGiSeq, getFullText, setCustomFile</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCddSiteCls (annotations)</td><td>showCddSiteAll, setDomainFeature, showAnnoType, setToolTip</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoContactCls (annotations)</td><td>showInteraction, showInteraction_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoPTMCls (annotations)</td><td>showPTM</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCrossLinkCls (annotations)</td><td>showCrosslink, showCrosslink_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoDomainCls (annotations)</td><td>showDomainPerStructure, showDomainAll, showDomainWithData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSnpClinVarCls (annotations)</td><td>navClinVar, showClinVarLabelOn3D, getSnpLine, processSnpClinvar, showClinvarPart2, showSnp, showClinvar, showSnpClinvar, showSnpPart2, processNoClinvar, processNoSnp</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSsbondCls (annotations)</td><td>showSsbond, showSsbond_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoTransMemCls (annotations)</td><td>showTransmem, showTransmem_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annotationCls (annotations)</td><td>hideAllAnno, hideAllAnnoBase, setAnnoSeqBase, setAnnoTabBase, setAnnoTabAll, hideAnnoTabAll, resetAnnoAll, resetAnnoTabAll, setAnnoTabCustom, hideAnnoTabCustom, setAnnoTabClinvar, hideAnnoTabClinvar, setAnnoTabSnp, hideAnnoTabSnp, setAnnoTabCdd, hideAnnoTabCdd, setAnnoTab3ddomain, hideAnnoTab3ddomain, setAnnoTabSite, hideAnnoTabSite, setAnnoTabInteraction, hideAnnoTabInteraction, setAnnoTabSsbond, hideAnnoTabSsbond, setAnnoTabCrosslink, hideAnnoTabCrosslink, setAnnoTabTransmem, hideAnnoTabTransmem, setTabs, clickCdd, showAnnoSelectedChains, showAnnoAllChains, setAnnoView, setAnnoDisplay, showFixedTitle, hideFixedTitle, setAnnoViewAndDisplay, updateClinvar, updateSnp, updateDomain, updateInteraction, updatPTM, updateSsbond, updateCrosslink, updateTransmem</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showAnnoCls (annotations)</td><td>showAnnotations, showAnnoSeqData, getAnnotationData, getSequenceData, getCombinedSequenceData, processSeqData, enableHlSeq, getAnDiv, addButton, addSnpButton, conservativeReplacement, getColorhexFromBlosum62</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showSeqCls (annotations)</td><td>showSeq, insertGap, insertGapOverview, setAlternativeSeq, getProteinName</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alternateCls (display)</td><td>alternateStructures, alternateWrapper</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCenterCls (display)</td><td>applyCenterOptions, setRotationCenter, setCenter, centerSelection, centerAtoms, setWidthHeight</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyClbondsCls (display)</td><td>applyClbondsOptions, applyClbondsOptions_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyDisplayCls (display)</td><td>applyDisplayOptions, selectMainChainSubset</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyOtherCls (display)</td><td>applyOtherOptions, applyChemicalbindingOptions, updateStabilizer, getResidueRepPos</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySsbondsCls (display)</td><td>applySsbondsOptions</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cameraCls (display)</td><td>setCamera</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawCls (display)</td><td>draw, applyTransformation, render</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>fogCls (display)</td><td>setFog</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sceneCls (display)</td><td>rebuildScene, rebuildSceneBase</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setColorCls (display)</td><td>setColorByOptions, setAtmClr, updateChainsColor, setMmdbChainColor, setConservationColor, applyOriginalColor, applyPrevColor, setOutlineColor</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setOptionCls (display)</td><td>setOption, setStyle, saveStyle, applySavedStyle, saveColor, applySavedColor</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setStyleCls (display)</td><td>setStyle2Atoms, setAtomStyleByOptions, setBackground, saveCommandsToSession, getCommandsBeforeCrash, handleContextLost, adjustIcon</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>export3DCls (export)</td><td>exportStlFile, exportVrmlFile, getFaceCnt, saveStlFile, updateArray, processStlMeshGroup, saveVrmlFile, processVrmlMeshGroup</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saveFileCls (export)</td><td>saveFile, saveSvg, getSvgXml, savePng, exportCustomAtoms, getAtomPDB, getSelectedResiduePDB, getPDBHeader, showTitle, getLinkToStructureSummary, setEntrezLinks</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>shareLinkCls (export)</td><td>shareLink, shareLinkUrl, getPngText</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>threeDPrintCls (export)</td><td>setThichknessFor3Dprint, prepareFor3Dprint, resetAfter3Dprint, removeOneStabilizer, outputSelection, addStabilizer, hideStabilizer, getResidueRepAtom</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>axesCls (geometry)</td><td>buildAxes, buildAllAxes, createArrow, setPc1Axes</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>boxCls (geometry)</td><td>createBox, createBox_base, createBoxRepresentation_P_CA</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>brickCls (geometry)</td><td>createBrick</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cartoonNuclCls (geometry)</td><td>drawStrandNucleicAcid, drawNucleicAcidStick</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveCls (geometry)</td><td>createCurveSub</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveStripArrowCls (geometry)</td><td>createCurveSubArrow, createStripArrow, prepareStrand</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cylinderCls (geometry)</td><td>createCylinder, createCylinder_base, createCylinderHelix, createCylinderCurve</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>glycanCls (geometry)</td><td>showGlycans</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>impostorCls (geometry)</td><td>setParametersForShader , drawImpostorShader , getShader , createImpostorShaderBase, createImpostorShaderCylinder, createImpostorShaderSphere, clearImpostors</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>instancingCls (geometry)</td><td>positionFromGeometry, colorFromGeometry, indexFromGeometry, normalFromGeometry, drawSymmetryMates, applyMat, drawSymmetryMatesNoInstancing, createInstancedGeometry, getInstancedMaterial, createInstancedMesh, drawSymmetryMatesInstancing</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>labelCls (geometry)</td><td>makeTextSprite, createLabelRepresentation, hideLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineCls (geometry)</td><td>createLineRepresentation, createConnCalphSidechain, createSingleLine, createLines</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>reprSubCls (geometry)</td><td>createRepresentationSub</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>residueLabelsCls (geometry)</td><td>addResidueLabels, addNonCarbonAtomLabels, addAtomLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sphereCls (geometry)</td><td>createSphere, createSphereBase, createSphereRepresentation</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stickCls (geometry)</td><td>createStickRepresentation</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>strandCls (geometry)</td><td>createStrand, getSSExpandedAtoms</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stripCls (geometry)</td><td>createStrip, setCalphaDrawnCoord</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>tubeCls (geometry)</td><td>createTube, getCustomtubesize, createTubeSub, getRadius</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlObjectsCls (highlight)</td><td>addHlObjects, removeHlObjects</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlSeqCls (highlight)</td><td>selectSequenceNonMobile, selectSequenceMobile, selectChainMobile, selectTitle, selectResidues</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlUpdateCls (highlight)</td><td>update2DdgmContent, changeSeqColor, removeHlAll, removeHlObjects, removeHlSeq, removeHl2D, removeHlMenus, updateHlAll, updateHlObjects, updateHlSeq, updateHlSeqInChain, updateHl2D, updateHlMenus, hlSequence, hlSeqInChain, toggleHighlight, clearHighlight, showHighlight, highlightChains, hlSummaryDomain3ddomain, updateHlAll</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>contactCls (interaction)</td><td>getAtomsWithinAtom, getNeighboringAtoms, getExtent, hideContact</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawGraphCls (interaction)</td><td>drawGraph</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>getGraphCls (interaction)</td><td>getGraphData, drawResNode, getNodeTopBottom, updateGraphJson, updateGraphColor, handleForce, getNodesLinksForSet, getHbondLinksForSet, getIonicLinksForSet, getHalogenPiLinksForSet, getContactLinksForSet, getContactLinks, compNode, getGraphLinks, convertLabel2Resid</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hBondCls (interaction)</td><td>isHbondDonorAcceptor, calcAngles, calcPlaneAngle, isValidHbond, calculateChemicalHbonds, setHbondsContacts, hideHbonds</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineGraphCls (interaction)</td><td>drawLineGraph, drawLineGraph_base, drawScatterplot_base, copyStylesInline</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>piHalogenCls (interaction)</td><td>calculateHalogenPiInteractions, getHalogenDonar, getHalogenAcceptor, getPi, getCation, getHalogenPiInteractions, getRingNormal, getAromaticRings, dfs_cycle, getAromaticPisLigand, hideHalogenPi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saltbridgeCls (interaction)</td><td>calculateIonicInteractions, hideSaltbridge</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showInterCls (interaction)</td><td>showInteractions, showHbonds, showHydrogens, hideHydrogens, hideHbondsContacts, showIonicInteractions, showHalogenPi, showClbonds, showSsbonds, pickCustomSphere, pickCustomSphere_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>viewInterPairsCls (interaction)</td><td>viewInteractionPairs, clearInteractions, resetInteractionPairs, retrieveInteractionData, getAllInteractionTable, getInteractionPerResidue, getInteractionPairDetails, getContactPairDetails, exportInteractions, exportSsbondPairs, exportClbondPairs, exportHbondPairs, exportSaltbridgePairs, exportHalogenPiPairs, exportSpherePairs</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alignParserCls (parsers)</td><td>downloadAlignment, downloadAlignmentPart2, loadOpmDataForAlign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>chainalignParserCls (parsers)</td><td>downloadChainalignmentPart2, downloadChainalignmentPart3, downloadChainalignment, parseChainAlignData, loadOpmDataForChainalign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>densityCifParserCls (parsers)</td><td>densityCifParser, parseChannels, getChannel, CIFParse, BinaryParse, MessagePackParse</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsn6ParserCls (parsers)</td><td>dsn6Parser, dsn6ParserBase, loadDsn6Data, getMatrix, loadDsn6File, loadDsn6FileUrl</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadAtomDataCls (parsers)</td><td>loadAtomDataIn</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadPDBCls (parsers)</td><td>loadPDB, adjustSeq, setSsbond, getChainCalpha</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td><td>downloadMmcif, downloadMmcifSymmetry, loadMmcifData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td><td>parseMmdbData, downloadMmdb, downloadBlast_rep_id, loadMmdbOpmData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td><td>downloadMmtf, parseMmtfData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td><td>loadMol2Data, loadMol2AtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td><td>downloadOpm, loadOpmData, setOpmData, parseAtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>ParserUtilsCls (parsers)</td><td>alignCoords, getMissingResidues, set2DDiagramsForAlign, set2DDiagramsForChainalign, parse2DDiagramsData, set2DDiagrams, showLoading, hideLoading, setYourNote, transformToOpmOri, transformToOpmOriForAlign, addOneDumAtom, addMemAtoms, setMaxD, renderStructure</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pdbParserCls (parsers)</td><td>downloadPdb, downloadUrl, loadPdbData, loadPdbDataRender</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>realignParserCls (parsers)</td><td>realign, parseChainRealignData, realignOnSeqAlign, realignChainOnSeqAlign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sdfParserCls (parsers)</td><td>downloadCid, loadSdfData, loadSdfAtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setSeqAlignCls (parsers)</td><td>setSeqAlign, setSeqAlignChain, setSeqAlignForRealign, setSeqPerResi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>xyzParserCls (parsers)</td><td>loadXyzData, setXyzAtomSeq, loadXyzAtomData</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>controlCls (picking)</td><td>setControl, mouseMove</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pickingCls (picking)</td><td>showPicking, showPickingBase, showPickingHilight, select3ddomainFromAtom, selectStrandHelixFromAtom</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>rayCls (picking)</td><td>rayCasterBase, isIntersect, getAtomsFromPosition</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCommandCls (selection)</td><td>applyCommand, setStrengthPara, getThresholdNameArrays, setQueryresi2score, getMenuFromCmd</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>definedSetsCls (selection)</td><td>setProtNuclLigInMenu, setPredefinedInMenu, setAtomMenu, setChainsInMenu, setTransmemInMenu, showSets, clickCustomAtoms, deleteSelectedSets, changeCustomAtoms, setHAtomsFromSets, updateAdvancedCommands, combineSets, commandSelect, clickCommand_apply, selectCombinedSets, clickModeswitch, setModeAndDisplay, setMode, getAtomsFromOneSet, getAtomsFromSets, getAtomsFromNameArray</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>firstAtomObjCls (selection)</td><td>getFirstAtomObj, getFirstCalphaAtomObj, getFirstAtomObjByName, getLastAtomObj, getResiduesFromAtoms, getResiduesFromCalphaAtoms, getChainsFromAtoms, getAtomFromResi, getAtomCoordFromResi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadScriptCls (selection)</td><td>loadScript, execCommands, execCommandsBase, pressCommandtext, applyCommandLoad, applyCommandMap, applyCommandEmmap, applyCommandRealign, applyCommandGraphinteractionBase, applyCommandGraphinteraction, applyCommandAnnotationsAndCddSite, applyCommandClinvarBase, applyCommandSnpBase, applyCommandClinvar, applyCommandSnp, applyCommand3ddomainBase, applyCommand3ddomain, applyCommandViewinteractionBase, applyCommandViewinteraction, renderFinalStep, replayFirstStep</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resid2specCls (selection)</td><td>residueids2spec, atoms2spec, atoms2residues, selectProperty, selectComplement, switchHighlightLevel, switchHighlightLevelUp, switchHighlightLevelDown</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectByCommandCls (selection)</td><td>selectByCommand, selectBySpec</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectionCls (selection)</td><td>selectAll, selectAll_base, selectAChain, selectResidueList, selectMainChains, selectSideChains, selectMainSideChains, clickShow_selected, clickHide_selected, getGraphDataForDisplayed, updateSelectionNameDesc, addCustomSelection, showSelection, hideSelection, saveSelection, removeSelection, resetAll, loadSelection, oneStructurePerWindow, showAll, saveSelectionIfSelected, saveSelectionPrep, selectOneResid, toggleSelection, toggleMembrane, adjustMembrane, selectBtwPlanes</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyMapCls (surface)</td><td>applySurfaceOptions, applyMapOptions, applyEmmapOptions, applyPhimapOptions, applyphisurfaceOptions, removeSurfaces, removeLastSurface, removeMaps, removeEmmaps, removePhimaps, removeLastMap, removeLastEmmap, removeLastPhimap</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>electronMapCls (surface)</td><td>getFacesAndVertices, initparm, transformMemPro, fillvoxels, buildboundary, marchingcubeinit, counter, marchingcube</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>marchingCubeCls (surface)</td><td>march, laplacianSmooth</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>proteinSurfaceCls (surface)</td><td>getVDWIndex, inOrigExtent, getFacesAndVertices, initparm, boundingatom, fillvoxels, fillAtom, fillvoxelswaals, fillAtomWaals, buildboundary, fastdistancemap, fastoneshell, marchingcubeinit, counter, marchingcube</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>surfaceCls (surface)</td><td>createSurfaceRepresentation, transformMemPro, SetupSurface, SetupMap</td></tr>
+
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resizeCanvasCls (transform)</td><td>resizeCanvas, windowResize, openFullscreen, rotStruc, back, forward, replayon, replayoff, closeDialogs</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>transformCls (transform)</td><td>resetOrientation, rotateLeft , rotateRight , rotateUp , rotateDown , rotate_base , setRotation, translateLeft, translateRight, translateUp, translateDown, translate_base, zoomIn, zoomOut, zoominSelection, getTransformationStr</td></tr>
+</table>
+<br>
+
+<span class="anchor" id="addclass"></span>
+<a name="addclass"></a>
+
+<h3>Add New Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+To contribute new classes to iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example/module/module.html">"module.html"</a>. You need to do the following steps:<br>
+<ol>
+<li>Comment out icn3d library: &lt;!--script src="icn3d.min.js"&gt;&lt;/script--&gt;</li>
+<li>Script type should be "module": &lt;script type="module"&gt; </li>
+<li>Import iCn3D module: "import * as icn3d from './icn3d.module.js';"</li>
+<li>Import your custom class (e.g., "LoadStateFile"): "import {LoadStateFile} from './loadStateFile.js';"</li>
+<li>Remove "$( document ).ready(async function() {" and the coresponding "//});" since module will always be run after the document is ready.</li>
+<li>Call your class after the function "await icn3dui.show3DStructure()". You first define the class instance "loadStateFileCls" and pass the iCn3D instance "icn3dui.icn3d". Then call the functions of your class.<br>
+<pre>
+    var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
+    loadStateFileCls.loadStateFile('color spectrum');
+</pre>
+</li>
+<li>Your custom class could look like the following.
+<br>
+<pre>
+    // import any classes from icn3d.module.js to be used in your class
+    import {LoadScript} from './icn3d.module.js';
+
+    // class name starts with a upper-case letter
+    class LoadStateFile {
+        // pass the instance of the class iCn3D
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        // functions start with a lower-case letter
+        // use "ic" to access the instance of iCn3D class
+        loadStateFile(fileStr) { var ic = this.icn3d;
+            // "ic" has a lot of class instances such as "loadScriptCls"
+            ic.loadScriptCls.loadScript(fileStr, true);
+        }
+    }
+
+    // export your class
+    export {LoadStateFile}
+</pre>
+</li>
+<li>Install <a href="https://www.npmjs.com/package/static-server">static-server</a> and run "static-server -i module.html -o" to test your code. "import" and "export" do not work in "file://" protocol.
+</li>
+<li>Specify the ID of the structure in the URL, e.g., "localhost:9080/module.html?mmdbid=1kq2".
+</li>
+</ol>
+<br>
+
+<span class="anchor" id="modifyfunction"></span>
+<a name="modifyfunction"></a>
+
+<h3>Modify Functions in Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+To modify functions in some classes of iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example/example.html">"example.html"</a>. You can add the modified functions after the line containing "icn3d.min.js". The line to define the function starts with the global variable "icn3d", then the class name (e.g., "Picking"), then the keyword "prototype", then the function name. One example is as follows:<br>
+<pre>
+    icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
+        // 1. copy the function showPicking() here
+        // 2. Modify the function as if it is in the class "Picking"
+    }
+</pre>
+<br>
+
+<span class="anchor" id="restfulapi"></span>
+<a name="restfulapi"></a>
+
+<h3>RESTful APIs<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<b>delphi.cgi</b><br>
+The "DelPhi" program from the <a href=http://honig.c2b2.columbia.edu/delphi">Honig lab</a> calculates electrostatic potentials. It was <a href="https://github.com/ncbi/icn3d/blob/master/LICENSE.md">licensed</a> to be used in iCn3D by Columbia University. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi is to post data to this API with a few parameters. The parameter "pdb2pqr" inputs the Protein Data Bank (PDB) string and outputs the PQR string with atom partial charge and atom size. The parameters "pdb2phi" and "pqr2phi" input the PDB string or PQR string, respectively, and both output the calculated potential. The parameters "gsize" and "salt" are used to define the grid size and salt concentration (M), respectively. The parameter "cube" is used to output the potential in the text format, not the default binary format.<br>
+<br>
+
+<b>scap.cgi</b><br>
+The "scap" program from the <a href="http://honig.c2b2.columbia.edu/jackal">Honig lab</a> predicts side chains due to mutations. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi is to post data to this API with a few parameters. The parameters "pdb" and "snp" input the PDB string and the SNP in the format "[chain ID],[residue number],[mutant]". For example, "A,10,K" means that the residue with a residue number 10 in the chain A will be mutated to Lys. The parameter "json=1" outputs the mutant's PDB string in the JSON format. <br>
+<br>
+
+<b>tmalign.cgi</b><br>
+The "TM-align" program from the <a href="https://zhanggroup.org/TM-align/">Zhang lab</a> aligns two structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/tmalign/tmalign.cgi is to post data to this API with two parameters: "pdb_query" and "pdb_target", which are the query and target PDB files, respectively. <br>
+<br>
+
+<b>symd.cgi</b><br>
+The "SymD" program from <a href="https://symd.nci.nih.gov">NCI</a> determines symmetries in structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi is to post a PDB string to this API with the parameter "pdb". The output is a JSON blob describing the symmetry.<br>
+<br>
+
+<b>cdannots.fcgi</b><br>
+The "cdannots.fcgi" backend returns conserved domains and binding sites information from NCBI in JSON format. An example use of the API is <a href="https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=1KQ2_A,22219082,Q76EI6">https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&live=lcl&queries=1KQ2_A,22219082,Q76EI6</a>. The input is a list of accessions such as NCBI protein accession, NCBI gi, or UniProt IDs. The parsing code is in the file https://github.com/ncbi/icn3d/blob/master/src/icn3d/annotations/annoCddSite.js.<br>
+<br>
+<br>
+
+<span class="anchor" id="contributors"></span>
+<a name="contributors"></a>
+
+<h3>Codeathon/Workshop Contributors<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<ul>
+
+<li><b>2016 NCBI Codeathon</b> (Organizers: Ben Busby)
+    <ul>
+        <li><a href="https://github.com/NCBI-Hackathons/Structure_Visualization"><b>Visualizations of SNPs and Protein Interaction Data</b></a>:<br> Jiyao Wang, Eric Weitz, Peter Meric, Rajeeva Lochan Musunuri, Elise Flynn, and Ben Busby<br><br></li>
+    </ul>
+</li>
+
+<li><b>2016 ISMB Codeathon</b> (Organizers: Ben Busby and Philippe Youkharibache)
+    <ul>
+        <li><a href="https://github.com/NCBI-Hackathons/3D_2D_Rep_Structure"><b>2D Interaction Schematic</b></a>:<br> Qiangling Li, Spencer Bliven, Eli Draizen, Jose Duarte, Keiichiro Oto, Tim Schaefer, Jiyao Wang, and Philippe Youkharibache<br><br></li>
+        <li><a href="https://github.com/NCBI-Hackathons/iCN3D-MMTF"><b>Use MMTF in iCn3D</b></a>:<br>Jiyao Wang, and Alexander S. Rose<br><br></li>
+    </ul>
+</li>
+
+<li><b>2020 ISMB Codeathon</b> (Organizers: Ravinder Abrol, Philippe Youkharibache, and Allissa Dillman)
+    <ul>
+        <li><a href="https://github.com/hackathonismb/iCn-Jupyter-3D"><b>iCn3D in Jupyter Notebook</b></a>:<br> Jiyao Wang, Ben Busby, Nicholas Johnson, Francesco Tabaro, David Enoma, Jiyao Wang, Guangfeng Song, and Yuchen Ge<br><br></li>
+        <li><a href="https://github.com/hackathonismb/Differential-analysis-of-viral-protein-sequence-variants-interactions-with-host-proteins"><b>Differential analysis of viral protein sequence variants interactions with host proteins</b></a>:<br> Philippe Youkharibache, Adriaan Ludl, Mingzhang Yang, Yuchen Ge, Yuk Kei Wan, Ariel Aptekmann, Awtum Brashear, Xavier Watkins, Tom Madej, and Jiyao Wang<br><br></li>
+        <li><a href="https://github.com/hackathonismb/ExoDATA"><b>ExoDATA</b></a>:<br> Raul Cachau, Giulia Babbi, Matthew Sinnott, Todd Smith, and Francesco Tabaro<br><br></li>
+    </ul>
+</li>
+
+<li><b>2020 NCBI Codeathon</b>
+    <ul>
+        <li><a href="https://github.com/NCBI-Codeathons/SARS2-Variation-Viewer"><b>Variation Analysis and Visualization of SARS-CoV-2 sequences in GenBank</b></a>:<br> Brad Holmes, Jiyao Wang, Vichet Hem, Eric Cox, Kurtis Haro, and Carl Leubsdorf, Jr.<br><br></li>
+    </ul>
+</li>
+
+<li><b>2020 STRIDES Codeathon</b> (Organizer: Allissa Dillman)
+    <ul>
+        <li><a href="https://github.com/STRIDES-Codes/View-SNPs-in-3D"><b>View SNPs in 3D, Dynamic Symmetry Calculation</b></a>:<br> Jiyao Wang, Rachel Dunn, Sridhar Acharya Malkaram, Chin-Hsien Tai, Thomas Madej, and David Enoma<br><br></li>
+    </ul>
+</li>
+
+<li><b>2021 ISMB Codeathon</b> (Organizers: Ravinder Abrol, Philippe Youkharibache, and Allissa Dillman)
+    <ul>
+        <li><a href="https://github.com/hackathonismb/2D-3D-Molecular-Cartoons"><b>2D Cartoons</b></a>:<br> Jiyao Wang, Li Chuin Chong, Kevin Yang, Sarah Zhao, Zhiyu Cheng, and Jack Lin<br><br></li>
+        <li><a href="https://github.com/hackathonismb/2D-Maps-for-Ig-domains-and-for-RBDs"><b>ProteoMaps</b></a>:<br> Philippe Youkharibache, Matteo Manfredi, Chiragkumar Patel, Stephanie Byrum, and Raul Cachau<br><br></li>
+        <li><a href="https://github.com/hackathonismb/Interface-analysis-of-SARS-CoV-2-antibodies-vs-ACE2"><b>SARS2 antibody interface analysis</b></a>:<br> Marcus Mendes, Mahita Jarjapu, Henry Webel, and David Bell<br><br></li>
+        <li><a href="https://github.com/hackathonismb/Molecular-Sentry"><b>Molecular Sentry</b></a>:<br> Todd Smith, Sandra Porter, Elzbieta Gralinska, Sachendra Kumar, Giovanni Madeo, Luis Jaimes Santiago, and Sheela Vemu<br><br></li>
+    </ul>
+</li>
+
+<li><b>2022 Antibody Engineers Codeathon</b> (Organizers: Sandra Porter, Todd Smith, and Allissa Dillman)
+    <ul>
+        <li><a href="https://qubeshub.org/community/projects/janhackicn3d"><b>Antibody Engineers - iCn3D</b></a>:<br> Todd Smith, Jiyao Wang, Ami Johanson, Chetna Patel, David Menshew, Kate Johnston, Madhavan Narayanan, Khalid Tantawi, Nik Tsotakos, Selena Lu, and Christain John Ventura<br><br></li>
+        <li><b>Break an Antibody</b>:<br> Margaret Bryans, Andrew Givone, Hetal Doshi, Savita, David Menshew, Feather Ives, and Annie<br><br></li>
+        <li><b>Anti-SARS vs variants</b>:<br> Sandra Porter, Arshdeep Kaur, Ben Bekey, Uwe Hilgert, Erica Lannan, and Michelle Stieber<br><br></li>
+    </ul>
+</li>
+
+<li><b>2022 ISMB Codeathon</b> (Organizers: Ravinder Abrol, Philippe Youkharibache, Allissa Dillman, and Alexa Salsbury)
+    <ul>
+        <li><a href="https://github.com/hackathonismb/Annotations-in-iCn3D"><b>Annotations in iCn3D</b></a>:<br> Jiyao Wang, Raphael Trevizani, Sachendra Kumar, and Li Chuin Chong<br><br></li>
+        <li><a href="https://github.com/hackathonismb/differential-analysis-of-residue-interactions-of-a-SNP-based-on-side-chain-prediction"><b>Differential analysis of residue interactions of a SNP based on side chain prediction</b></a>:<br> Zachery Mielko, Kailash Adhikari, David Bell, Jiyao Wang, Marina Herrera Sarrias, and Ravinder Abrol<br><br></li>
+        <li><a href="https://github.com/hackathonismb/VizSNP-St"><b>Visualizing the effect of SNPs extracted from genomic data on protein structure using iCn3D</b></a>:<br> Bonface Onyango, Manoj M Wagle, Michael Sierk, and Pranavathiyani G<br><br></li>
+        <li><a href="https://github.com/hackathonismb/Standardization-of-Ig-datasets-using-universal-numbering-system-and-auto-generating-Bridged-1D-maps"><b>Standardization of Ig datasets using universal numbering system and auto generating Bridged 1D maps</b></a>:<br> Umesh Khaniya, Chirag Patel, Caesar Tawfeeq, Siddhi Jani, Sujitkumar, Prasanthkumar, and Philippe Youkharibache<br><br></li>
+        <li><a href="https://github.com/hackathonismb/ImmunoZoo"><b>ImmunoZoo - Making iCn3D accessble for many audiences</b></a>:<br> Sandra Porter, Todd Smith, Sheela Vemu, Carsten Fortmann-Grote, Yagoub Adam, Shikha Kathrani, and Jack Lin<br><br></li>
+        <li><a href="https://github.com/hackathonismb/Analysis-of-multiple-structures-for-automatic-capture-of-conformational-changes"><b>Analysis of multiple structures for automatic capture of conformational changes</b></a>:<br> Tom Madej, David Bell, Chase Freschlin, Gabby Vent, and Lianna Khachikyan<br><br></li>
+    </ul>
+</li>
+
+<li><b>2022 NCBI Workshop</b>, <a href="https://ncbiinsights.ncbi.nlm.nih.gov/event/exploring-structures-10-22/"><b>Exploring 3D Molecular Structures with iCn3D</b></a>: (Organizers: Alexa Salsbury, Rana Morris, Jiyao Wang, Aron Marchler-Bauer)</li>
+
+<li><b>2022 BioMolViz Workshop</b>, <a href="https://biomolviz.org/events/"><b>Modeling Program Training (iCn3D, Jmol, PyMOL, UCSF Chimera)</b></a>: (Organizers: Kristen Procko, etc.)</li>
+
+<!--
+<li><b>2023 NCBI Workshop</b>, <a href="https://ncbiinsights.ncbi.nlm.nih.gov/event/exploring-structures-03-23/"><b>Exploring 3D Molecular Structures with iCn3D</b></a>: (Organizers: Alexa Salsbury, Rana Morris, Jiyao Wang, Aron Marchler-Bauer)</li>
+
+<li><b>2023 DiscoveryBMB Workshop</b>, <a href="https://discoverbmb.asbmb.org/program/workshops"><b>Basics of the iCn3D program, a user-friendly tool for biomolecular modeling</b></a>: (Organizers: Kristen Procko, Henry Jakubowski, Josh T. Beckham, Daniel Dries, Shane Austin, Pamela Mertz)</li>
+-->
+
+</ul>
+<br>
+
+<span class="anchor" id="helpdoc"></span>
+<a name="helpdoc"></a>
+
+<h3>Help Doc:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html</a>
+<br>
+
+<br><br>
+</div>
+
+  <!-- log & Google Analytics -->
+  <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>
+
+</body></html>
