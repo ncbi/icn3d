@@ -209,13 +209,13 @@ class ParserUtils {
         let allPromise = Promise.allSettled([prms1, prms2]);
         let dataArray = await allPromise;
         
-        ic.interactionData1 = dataArray[0].value;
+        ic.interactionData1 = (me.bNode) ? dataArray[0] : dataArray[0].value;
         ic.html2ddgm = '';
         ic.diagram2dCls.draw2Ddgm(ic.interactionData1, mmdbid1, 0);
         if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
 
-        ic.interactionData2 = dataArray[1].value;
+        ic.interactionData2 = (me.bNode) ? dataArray[1] : dataArray[1].value;
         ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
@@ -263,7 +263,7 @@ class ParserUtils {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-            let data = dataArray[index].value;//[0];
+            let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
             let mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);

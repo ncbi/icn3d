@@ -116,7 +116,7 @@ class ChainalignParser {
 
         // modify the previous trans and rotation matrix
         for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let align = dataArray[i].value;//[0];
+            let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
 
             let mmdbid_q = struArray[i];
             let index = indexArray[i];
@@ -194,7 +194,7 @@ class ChainalignParser {
         return hAtomsAll;
     }
 
-    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse) { let ic = this.icn3d, me = ic.icn3dui;
         // set trans and rotation matrix
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -208,7 +208,7 @@ class ChainalignParser {
              
         let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let align = dataArray[i].value;//[0];
+            let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
 
             let bEqualMmdbid = false;
             let bEqualChain = false;
@@ -236,9 +236,16 @@ class ChainalignParser {
         }
 
         if(!bFoundAlignment) {
-            /// if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
-            if(ic.bRender) alert("These structures can NOT be aligned...");
-            return;
+            // sometimes VAST align works for the reversed pair
+            if(!bReverse) {
+                ic.realignParserCls.realignOnStructAlign(true);
+                return;
+            }
+            else {
+                /// if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+                if(ic.bRender) alert("These structures can NOT be aligned...");
+                return;
+            }
         }
 
         // find the max aligned mmdbid as mmdbid_t
@@ -598,7 +605,7 @@ class ChainalignParser {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         // index = 0: the mmdb data of target
-        let targetData = dataArray[0].value; //[0];
+        let targetData = (me.bNode) ? dataArray[0] : dataArray[0].value; //[0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
         if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
@@ -616,7 +623,7 @@ class ChainalignParser {
         let queryDataArray = [];
 
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-            let queryData = dataArray[index].value;//[0];
+            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
 
             let pos = chainidArray[index].indexOf('_');
             let mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
@@ -662,7 +669,7 @@ class ChainalignParser {
                     ic.qt_start_end[index-1] = undefined;
                 }
                 else {
-                    let align = dataArray[index2 - missedChainCnt].value;//[0];
+                    let align = (me.bNode) ? dataArray[index2 - missedChainCnt] : dataArray[index2 - missedChainCnt].value;//[0];
 
                     let bEqualMmdbid = (mmdbid_q == mmdbid_t);
                     let bEqualChain = (chain_q == chain_t);
@@ -881,7 +888,7 @@ class ChainalignParser {
 
         let queryDataArray = [];
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
-            let queryData = dataArray[index].value;//[0];
+            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
             if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 

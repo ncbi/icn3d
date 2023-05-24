@@ -56,6 +56,8 @@ class Scap {
     async retrieveScap(snp, bInteraction, bPdb) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
+        ic.bScap = true;
+
         //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
         let snpStr = '';
         let snpArray = snp.split(','); //stru_chain_resi_snp

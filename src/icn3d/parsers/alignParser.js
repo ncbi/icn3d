@@ -142,8 +142,8 @@ class AlignParser {
             let dataArray = await allPromise;
 
             let data2 = data;
-            let data3 = dataArray[0].value; //v3[0];
-            let data4 = dataArray[1].value; //v4[0];
+            let data3 = (me.bNode) ? dataArray[0] : dataArray[0].value; //v3[0];
+            let data4 = (me.bNode) ? dataArray[1] : dataArray[1].value; //v4[0];
 
             if(data3.atoms !== undefined && data4.atoms !== undefined) {
                 // ic.deferredOpm = $.Deferred(function() {
@@ -305,7 +305,7 @@ class AlignParser {
             
             let bFound = false;
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                let opmdata = dataArray[i].value;
+                let opmdata = (me.bNode) ? dataArray[i] : dataArray[i].value;
 
                 if(!opmdata) continue;
 

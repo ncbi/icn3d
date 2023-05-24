@@ -678,7 +678,7 @@ class ShowAnno {
               }
               let compTitle = (ic.seqStructAlignData !== undefined) ? 'BLAST, E: ' + evalue : 'Score: ' + evalue;
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
-              let residueidHash = {}
+              let residueidHash = {};
               let residueid;
               if(ic.consrvResPosArray !== undefined) {
                 for(let i = 0, il = ic.consrvResPosArray.length; i < il; ++i) {

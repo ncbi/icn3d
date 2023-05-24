@@ -35,7 +35,7 @@ class Alternate {
 
         ic.dAtoms = {};
 
-        let bMutation = moleculeArray.length == 2 && moleculeArray[1].replace(moleculeArray[0], '') == '2';
+        let bMutation = ic.bScap; //moleculeArray.length == 2 && moleculeArray[1].replace(moleculeArray[0], '') == '2';
 
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
