@@ -263,6 +263,7 @@ class SetSeqAlign {
     }
 
     getResnFromResi(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
+        /*
         let pos = this.getPosFromResi(chainid, resi);
         if(!pos) return '?';
 
@@ -277,6 +278,28 @@ class SetSeqAlign {
         }
 
         return resn;
+        */
+
+        let resid = chainid + '_' + resi;
+        return ic.residueId2Name[resid];
+    }
+
+    getResiAferAlign(chainid, bRealign, pos) { let ic = this.icn3d, me = ic.icn3dui;
+        let resi;
+        if(bRealign && me.cfg.aligntool == 'tmalign') {
+          resi = pos;
+        }
+        else {
+          if(ic.posid2resid) {
+              let resid = ic.posid2resid[chainid + '_' + pos];
+              resi = resid.substr(resid.lastIndexOf('_') + 1);
+          }
+          else {
+              resi = ic.chainsSeq[chainid][pos].resi;
+          }
+        }
+
+        return resi;
     }
 
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -395,12 +418,10 @@ class SetSeqAlign {
           if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
 
           let posChain1 = {}, posChain2 = {};
-console.log("###bRealign: " + bRealign);
- console.log(ic.qt_start_end[chainIndex]);
 
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2;
-            if(bRealign) { // real residue numbers are stored, could be "100a"
+            if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored, could be "100a"
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
                 end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
@@ -422,7 +443,7 @@ console.log("###bRealign: " + bRealign);
 
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
               let start1, start2, end1, end2;
-              if(bRealign) { // real residue numbers are stored
+              if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
                 end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
@@ -444,8 +465,9 @@ console.log("###bRealign: " + bRealign);
 
                       if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
-                      let resi = (bRealign) ? j : ic.chainsSeq[chainid1][j].resi;
-                      let resn = (bRealign) ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
+                      let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
+                      //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
+                      let resn = this.getResnFromResi(chainid1, resi).toLowerCase();
                       
                       if(resn == '?') continue;
 
@@ -463,11 +485,11 @@ console.log("###bRealign: " + bRealign);
                       posChain2[j] = 1;
 
                       if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
-                      
-                      //let resi = ic.chainsSeq[chainid2][j].resi;
-                      //let resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
-                      let resi = (bRealign) ? j : ic.chainsSeq[chainid2][j].resi;
-                      let resn = (bRealign) ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
+
+                      let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
+                      //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
+                      let resn = this.getResnFromResi(chainid2, resi).toLowerCase();
+
 
                       if(resn == '?') continue;
 
@@ -511,6 +533,7 @@ console.log("###bRealign: " + bRealign);
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   let resi1, resi2, resn1, resn2;
+/*                 
                   if(bRealign) { // tmalign: just one residue in this for loop
                     if(me.cfg.aligntool == 'tmalign') {
                         resi1 = ic.qt_start_end[chainIndex][i].t_start;
@@ -526,13 +549,28 @@ console.log("###bRealign: " + bRealign);
 
                     if(resn1 == '?' || resn2 == '?') continue;
                   }
+*/
+                  if(bRealign && me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
+                    resi1 = ic.qt_start_end[chainIndex][i].t_start;
+                    resi2 = ic.qt_start_end[chainIndex][i].q_start;
+
+                    resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
+                    resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
+
+                    if(resn1 == '?' || resn2 == '?') continue;
+                  }
                   else {
                     if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
 
-                    resi1 = ic.chainsSeq[chainid1][j + start1].resi;
-                    resi2 = ic.chainsSeq[chainid2][j + start2].resi;
-                    resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
-                    resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                    // resi1 = ic.chainsSeq[chainid1][j + start1].resi;
+                    // resi2 = ic.chainsSeq[chainid2][j + start2].resi;
+                    // resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
+                    // resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+
+                    resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
+                    resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
+                    resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
+                    resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
                   }
 
                   if(resn1 === resn2) {
@@ -835,9 +873,9 @@ console.log("###bRealign: " + bRealign);
         return resn;
     }
 
-    getResnFromResid(resid) { let ic = this.icn3d, me = ic.icn3dui;
-        return ic.residueId2Name[resid];
-    }
+    // getResnFromResid(resid) { let ic = this.icn3d, me = ic.icn3dui;
+    //     return ic.residueId2Name[resid];
+    // }
 
     getResiPosInTemplate(chainid1, resi_t) { let ic = this.icn3d, me = ic.icn3dui;
         // check the number of gaps before resiStart1 (nGap), and insert 'notAlnLen2 - notAlnLen1 - nGap' gaps
@@ -972,7 +1010,7 @@ console.log("###bRealign: " + bRealign);
 
         for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
-            if(bRealign) { // real residue numbers are stored
+            if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
                 end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
@@ -1056,8 +1094,8 @@ console.log("###bRealign: " + bRealign);
                 else {                   
                     let resi1 = (bRealign) ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
                     let resi2 = (bRealign) ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
-                    let resn1 = this.getResnFromResid(chainid1 + '_' + resi1); //this.getResn(chainid1, start1 + k);
-                    let resn2 = this.getResnFromResid(chainid2 + '_' + resi2); //this.getResn(chainid2, start2 + k);
+                    let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
+                    let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
                     
                     let bAlign = true;
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1)

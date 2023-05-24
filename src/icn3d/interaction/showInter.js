@@ -10,6 +10,15 @@ class ShowInter {
     async showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
        let nameArray = $("#" + ic.pre + "atomsCustomHbond").val();
        let nameArray2 = $("#" + ic.pre + "atomsCustomHbond2").val();
+
+       let atoms, atoms2;
+       atoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+       atoms2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+
+       // add the interacting atoms to display
+       ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms);
+       ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms2);
+
        if(nameArray2.length == 0) {
            alert("Please select the first set");
        }
@@ -95,7 +104,8 @@ class ShowInter {
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
 
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
+            // let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
+            let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let commanddesc;
             if(bSaltbridge) {
                 ic.resid2ResidhashSaltbridge = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
@@ -223,7 +233,8 @@ class ShowInter {
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
+            // let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
+            let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let commanddesc;
             ic.resid2ResidhashSaltbridge = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
             commanddesc = 'all atoms that have ionic interactions with the selected atoms';
@@ -259,7 +270,8 @@ class ShowInter {
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), type, interactionType );
+            // let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), type, interactionType );
+            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), me.hashUtilsCls.hash2Atoms(complement, ic.atoms), parseFloat(threshold), type, interactionType );
             let commanddesc;
             if(interactionType == 'halogen') {
                 ic.resid2ResidhashHalogen = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
@@ -387,7 +399,8 @@ class ShowInter {
     pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select, bGetPairs, bIncludeTarget) {  let ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
         let atoms;
         if(bInteraction) {
-            atoms = ic.contactCls.getAtomsWithinAtom(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, otherAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, atomlistTarget, ic.atoms), parseFloat(radius), bGetPairs, bInteraction, undefined, bIncludeTarget);
+            // atoms = ic.contactCls.getAtomsWithinAtom(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, otherAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, atomlistTarget, ic.atoms), parseFloat(radius), bGetPairs, bInteraction, undefined, bIncludeTarget);
+            atoms = ic.contactCls.getAtomsWithinAtom(me.hashUtilsCls.hash2Atoms(otherAtoms, ic.atoms), me.hashUtilsCls.hash2Atoms(atomlistTarget, ic.atoms), parseFloat(radius), bGetPairs, bInteraction, undefined, bIncludeTarget);
             ic.resid2ResidhashInteractions = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
         else {

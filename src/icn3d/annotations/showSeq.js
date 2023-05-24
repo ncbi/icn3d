@@ -824,6 +824,8 @@ class ShowSeq {
                     // assign the adjusted reference numbers
                     ic.resid2refnum[residueid] = refnumLabel;
 
+                    refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+
                     if(!ic.refnum2residArray.hasOwnProperty(refnumStr)) {
                         ic.refnum2residArray[refnumStr] = [residueid];
                     }

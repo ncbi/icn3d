@@ -60,7 +60,7 @@ class Dssp {
         //var data2 = v2[0];
         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
             //let ssHash = dataArray[index][0];
-            let ssHash = dataArray[index].value;
+            let ssHash = (me.bNode) ? dataArray[index] : dataArray[index].value;
 
             if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
               for(let chainNum in ic.chainsSeq) {

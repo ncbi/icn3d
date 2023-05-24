@@ -644,49 +644,49 @@ class Domain3d {
 		let residueArray = Object.keys(residueHash);
 		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
 
+		if(!ic.posid2resid) ic.posid2resid = {};
+
 		let substructItem = {};
 		let resiOffset = 0;
 		let pos2resi = {};
+		let dummyCoord = -100000;
 		for(let i = 0; i < residueArray.length; ++i) {
 			let resid = residueArray[i];
 
             let resi = resid.substr(resid.lastIndexOf('_') + 1);
-/*			
-			if(i == 0) {
-				resiOffset = resi - 1;
-
-				for(let j = 0; j < resiOffset; ++j) {
-					x0.push(undefined);
-					y0.push(undefined);
-					z0.push(undefined);					
-				}
-			}
-*/
 
 			//let resid = chnid + "_" + resi;
 			let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
 
-			if(!atom) continue;    
-/*
 			if(atom) {
 				x0.push(atom.coord.x);
 				y0.push(atom.coord.y);
 				z0.push(atom.coord.z);
 			}
 			else {
-				x0.push(undefined);
-				y0.push(undefined);
-				z0.push(undefined);
+				// x0.push(dummyCoord);
+				// y0.push(dummyCoord);
+				// z0.push(dummyCoord);
+
+				continue;
 			}
-*/
-			//if(!atom) continue;   
-			
-			x0.push(atom.coord.x);
-			y0.push(atom.coord.y);
-			z0.push(atom.coord.z);
+	
+			// if(!atom) {
+			// 	// continue;    
+			// }
+
+			// x0.push(atom.coord.x);
+			// y0.push(atom.coord.y);
+			// z0.push(atom.coord.z);
+
 			//resiArray.push(resi);
 			resiArray.push(i+1);
 			pos2resi[i+1] = resi;
+
+			ic.posid2resid[atom.structure + '_' + atom.chain + '_' + (i+1).toString()]  = resid;
+			// let residNCBI = ic.resid2ncbi[resid];
+			// let pos = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
+			// pos2resi[pos] = resi;
 
 			if(atom.ssend) {
 				//substructItem.To = parseInt(resi);
@@ -1106,8 +1106,8 @@ class Domain3d {
 					ic.tddomains[domainName][resid] = 1;
 				}
 			}
-		}
-				
+		}			
+
 		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
 	} // end c2b_NewSplitChain
 
@@ -1125,9 +1125,14 @@ class Domain3d {
 		//the whole structure is also considered as a large domain
 		//if(subdomains.length == 0) {
 			//subdomains.push([parseInt(ic.chainsSeq[chnid][0].resi), parseInt(ic.chainsSeq[chnid][ic.chainsSeq[chnid].length - 1].resi)]);
-			subdomains.push([parseInt(residueArray[0].substr(residueArray[0].lastIndexOf('_') + 1)), 
-			 	parseInt(residueArray[residueArray.length-1].substr(residueArray[residueArray.length-1].lastIndexOf('_') + 1))]);
-		//}
+
+			// subdomains.push([parseInt(residueArray[0].substr(residueArray[0].lastIndexOf('_') + 1)), 
+			//  	parseInt(residueArray[residueArray.length-1].substr(residueArray[residueArray.length-1].lastIndexOf('_') + 1))]);
+
+			// use position based
+			subdomains.push([1, residueArray.length]);
+				
+		//}	
 
 		// m_domains1: {"data": [ {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]], "domain": [[1,43,x,y,z],[2,58,x,y,z], ...]}, {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]],"domain": [[1,43,x,y,z],[2,58,x,y,z], ...]} ] }
 		let jsonStr = '{"data": [';
@@ -1147,6 +1152,10 @@ class Domain3d {
 					let from = pos2resi[substruct[k].From];
 					let to = pos2resi[substruct[k].To];
 
+					// 1-based residue numbers
+					let fromPos = substruct[k].From;
+					let toPos = substruct[k].To;
+
 					let residFrom = chnid + "_" + from;
 					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
 					if(!atomFrom || !ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
@@ -1155,9 +1164,9 @@ class Domain3d {
 					let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
 					if(!atomTo || !ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
 
-					if(from >= start && to <= end) {
+					if(fromPos >= start && toPos <= end) {
 						if(ssCnt > 0) jsonStr += ', ';
-						jsonStr += '[' + sstype + ',' + from + ',' + to + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
+						jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
 							+ substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
 						++ssCnt;
 					}
@@ -1175,7 +1184,10 @@ class Domain3d {
 				for(let k = 0, kl = residueArray.length; k < kl; ++k) {
 					let resid = residueArray[k];
 
-					let resi = resid.substr(resid.lastIndexOf('_') + 1);
+					// let resi = resid.substr(resid.lastIndexOf('_') + 1);
+					// let residNCBI = ic.resid2ncbi[resid];
+					// let pos = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
+					let pos = k + 1;
 		
 					//let resid = chnid + "_" + resi;
 					let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
@@ -1185,9 +1197,9 @@ class Domain3d {
 
 					//domain: resi, restype, x, y, z
 					let restype = me.parasCls.resn2restype[atom.resn];
-					if(restype !== undefined && resi >= start && resi <= end) {
+					if(restype !== undefined && pos >= start && pos <= end) {
 						if(domainCnt > 0) jsonStr += ', ';
-						jsonStr += '[' + resi + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' 
+						jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' 
 							+ atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
 						++domainCnt;
 					}

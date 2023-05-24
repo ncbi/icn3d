@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.25.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.3.zip) was release on May 24, 2023. Fixed a bug in Node.js scripts about retrieving data from Ajax calls.
+
 [icn3d-3.25.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.2.zip) was release on May 17, 2023. Fixed a bug in VAST alignment.
 
 [icn3d-3.25.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.1.zip) was release on May 3, 2023. Fixed a bug in relaigning structures.

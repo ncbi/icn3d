@@ -822,7 +822,7 @@ class AddTrack {
         let bUnion = false, bUpdateHighlight = true;
 
         let strandCnt = 0, loopCnt = 0;
-        let setName, currStrand, prevStrand, prevStrandReal, currType, prevType;
+        let setName, currStrand, prevStrand, prevStrandReal = 'NT', currType, prevType;
 
         // clear selection
         ic.hAtoms = {};
@@ -890,6 +890,7 @@ class AddTrack {
         }
         else if(prevType == 'igloop') {
             ++loopCnt;
+            currStrand = 'CT';
             setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
             setName = setName.replace(/'/g, '`');
             if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);

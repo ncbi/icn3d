@@ -336,7 +336,8 @@ class GetGraph {
         let complement = firstSetAtoms;
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let bSaltbridge = false;
-            let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
+            // let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
+            let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
 
@@ -353,7 +354,8 @@ class GetGraph {
         let complement = firstSetAtoms;
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let bSaltbridge = false;
-            let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
+            // let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
+            let selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
         let ionicStr = this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.ionicInsideColor, labelType, me.htmlCls.ionicInsideValue);
@@ -366,19 +368,22 @@ class GetGraph {
         let halogenpiStr = '', threshold;
         threshold = parseFloat($("#" + ic.pre + "halogenthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'halogen', true );
+            // let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'halogen', true );
+            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), me.hashUtilsCls.hash2Atoms(complement, ic.atoms), parseFloat(threshold), 'graph', 'halogen', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
         halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.halogenInsideColor, labelType, me.htmlCls.halogenInsideValue);
         threshold = parseFloat($("#" + ic.pre + "picationthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-cation', true );
+            // let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-cation', true );
+            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), me.hashUtilsCls.hash2Atoms(complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-cation', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
         halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.picationInsideColor, labelType, me.htmlCls.picationInsideValue);
         threshold = parseFloat($("#" + ic.pre + "pistackingthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-stacking', true );
+            // let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-stacking', true );
+            let selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), me.hashUtilsCls.hash2Atoms(complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-stacking', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
         halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.pistackingInsideColor, labelType, me.htmlCls.pistackingInsideValue);

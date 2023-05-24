@@ -28,7 +28,12 @@ class AnnoCddSite {
             || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
                 let data = {};
                 try {
-                    data.value = await me.getAjaxPromise(url, 'jsonp');
+                    if(me.bNode) {
+                        data = await me.getAjaxPromise(url, 'jsonp');
+                    }
+                    else {
+                        data.value = await me.getAjaxPromise(url, 'jsonp');
+                    }
                  
                     thisClass.parseCddData([data], chnidArray);
                     /// if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
@@ -86,7 +91,9 @@ class AnnoCddSite {
 
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             //let data = (bSeq) ? dataArray[i][0] : dataArray[i];
-            let data = dataArray[i].value;
+            let data = (me.bNode) ? dataArray[i] : dataArray[i].value;
+
+            if(!data) continue;
 
             for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
                 let cddData = data.data[chainI];
