@@ -606,7 +606,7 @@ class SetHtml {
           let bPqr = (bPdb) ? false : true;
           pqrStr += ic.saveFileCls.getAtomPDB(atomHash, bPqr) + ic.saveFileCls.getAtomPDB(ionHash, bPqr);
 
-          let file_pref =(ic.inputid) ? ic.inputid : "custom";
+          let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
           ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
        }
        else {
@@ -662,7 +662,7 @@ class SetHtml {
             pqrStr = pdbStr;
             }
 
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
         }
     }
@@ -923,7 +923,7 @@ class SetHtml {
         pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
         if(!me.bNode) {
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
         }
         
@@ -936,7 +936,7 @@ class SetHtml {
         secondaryStr += ic.saveFileCls.getSecondary(atoms);
 
         if(!me.bNode) {
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
         }
         

@@ -248,7 +248,7 @@ console.log("free energy: " + energy + " kcal/mol");
           }
 
           if(bPdb) {
-              // let file_pref =(ic.inputid) ? ic.inputid : "custom";
+              // let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
               // ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
 
               await thisClass.exportPdbProfix(false, pdbDataMutant, snpStr) 
@@ -333,7 +333,7 @@ console.log("free energy: " + energy + " kcal/mol");
       }
 
       if(!me.bNode) {
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
         if(snpStr) postfix = snpStr;
 

@@ -502,7 +502,11 @@ class SaveFile {
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
                 if(!bNoHeader) {
-                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                    //pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+
+                    // make sur ethe PDB ID is correct
+                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, atom.structure);
+
                     //pdbStr += '\n'; // separate from incomplete secondary structures 
                 }
 
@@ -845,18 +849,54 @@ class SaveFile {
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
-        let text = ic.inputid.toUpperCase();
+        let inputid = ic.inputid;
 
-        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
-        if(ic.inputid.indexOf('http') != -1) {
+        let text, idName;
+        if(inputid.indexOf('http') != -1) {
             idName = "Data from";
-            url = ic.inputid;
-            text = ic.inputid;
+            url = inputid;
+            text = inputid;
+        }
+        else {
+            let idHash = me.utilsCls.getHlStructures();
+
+            let bPdb = false, bAlphaFold = false;
+            for(let structureid in idHash) {
+                if(structureid.length > 5) {
+                    bAlphaFold = true;
+                }
+                else {
+                    bPdb = true;
+                }
+            }
+
+            let structureidArray = Object.keys(idHash);
+            inputid = structureidArray.join(',');
+
+            text = inputid.toUpperCase();
+
+            //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
+            if(bPdb && bAlphaFold) {
+                idName = "AlphaFold/PDB ID";
+            }
+            else if(bPdb) {
+                idName = "PDB ID";
+            }
+            else if(bAlphaFold) {
+                idName = "AlphaFold ID";
+            }
+
+            if(structureidArray.length > 1) {
+                idName += 's';
+            }
+            else if(ic.molTitleHash) {
+                title = ic.molTitleHash[inputid];
+            }
         }
 
         if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
-        if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
+        if(!inputid || inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);
         }
         else if(me.cfg.blast_rep_id) {

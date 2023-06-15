@@ -5040,6 +5040,28 @@ class UtilsCls {
     getMemDesc() {
       return "<div style='width:150px'><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br></div>";
     }
+
+    getStructures(atoms) { let me = this.icn3dui;
+      let idHash = {};
+      for(let i in atoms) {
+          let structureid = me.icn3d.atoms[i].structure;
+          idHash[structureid] = 1;
+      }
+
+      return idHash;
+    }
+
+    getHlStructures(atoms) { let me = this.icn3dui;
+      if(!atoms) atoms = me.icn3d.hAtoms;
+
+      return this.getStructures(atoms);
+    }
+
+    getDisplayedStructures(atoms) { let me = this.icn3dui;
+      if(!atoms) atoms = me.icn3d.dAtoms;
+
+      return this.getStructures(atoms);
+    }
 }
 
 /**
@@ -6686,96 +6708,96 @@ class ClickMenu {
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_vastplus', 'Please input PDB ID for VAST+');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input chain or PDB file for VAST');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Submit your selection to Foldseek');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input MMTF ID');
         });
 
     //    clkMn1_pdbid: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_pdbid', 'Please input PDB ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_afid', 'Please input AlphaFold UniProt ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI Protein Accession');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_opmid', 'Please input OPM PDB ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_align', 'Align two PDB structures');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_alignaf', 'Align two AlphaFold structures');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_chainalign', 'Align multiple chains by structure alignment');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign2", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign2", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_chainalign2', 'Align multiple chains by sequence alignment');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign3", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign3", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_chainalign3', 'Align multiple chains residue by residue');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mutation", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mutation", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mutation', 'Show the mutations in 3D');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile", "click", function(e) { me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
         });
-        me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mol2file', 'Please input Mol2 File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_sdffile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_sdffile", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_sdffile', 'Please input SDF File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE File');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = $("#" + me.pre + "sharelinkurl").val();
            thisClass.setLogCmd("open " + url, false);
            localStorage.setItem('fixedversion', '1');
@@ -6783,65 +6805,65 @@ class ClickMenu {
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmciffile", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmciffile", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmciffile', 'Please input mmCIF File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmcifid', 'Please input mmCIF ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbafid", , "#" + me.pre + "tool_mmdbafid"], "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbafid", , "#" + me.pre + "tool_mmdbafid"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem CID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_pngimage', 'Please input the PNG image');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_state", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_state", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_state', 'Please input the state file');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_selection', 'Please input the selection file');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the DSN6 file to display electron density map');
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2", "#" + me.pre + "tool_delphi"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2", "#" + me.pre + "tool_delphi"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'delphi';
            $("#" + me.pre + "dl_delphi_tabs").tabs();
            me.htmlCls.dialogCls.openDlg('dl_delphi', 'Please set parameters to display DelPhi potential map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_phi", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_phi", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'phi';
            $("#" + me.pre + "dl_phi_tabs").tabs();
            $("#" + me.pre + "phitab1_tabs").tabs();
            $("#" + me.pre + "phitab2_tabs").tabs();
            me.htmlCls.dialogCls.openDlg('dl_phi', 'Please input local phi or cube file to display DelPhi potential map');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_phiurl", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_phiurl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'phiurl';
            $("#" + me.pre + "dl_phiurl_tabs").tabs();
            $("#" + me.pre + "phiurltab1_tabs").tabs();
@@ -6850,74 +6872,75 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6url", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6url", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6url', 'Please input the DSN6 file to display electron density map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export state file", false);
-           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
 
            ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportPdbRes", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportPdbRes", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.setHtmlCls.exportPdb();
 
            thisClass.setLogCmd("export pdb", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.setHtmlCls.exportSecondary();
 
            thisClass.setLogCmd("export secondary structure", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let pdbStr = ic.saveFileCls.getSelectedResiduePDB();
 
            thisClass.setLogCmd("export PDB of selected residues", false);
-           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           //let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { me.icn3d; //e.preventDefault();
            await me.htmlCls.setHtmlCls.exportPqr();
            thisClass.setLogCmd("export pqr", true);
         });
 
-      //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+      //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
       //       let bPdb = true;
       //       await me.htmlCls.setHtmlCls.exportPqr(bPdb);
       //       thisClass.setLogCmd("export pdbh", false);
       //    });
 
-        me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
          let bHydrogen = false;
          await ic.scapCls.exportPdbProfix(bHydrogen);
          thisClass.setLogCmd("export pdb missing atoms", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
         let bHydrogen = true;
         await ic.scapCls.exportPdbProfix(bHydrogen);
         thisClass.setLogCmd("export pdb hydrogen", true);
        });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl file", false);
            //ic.threeDPrintCls.hideStabilizer();
            ic.export3DCls.exportStlFile('');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrml", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrml", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export vrml file", false);
            //ic.threeDPrintCls.hideStabilizer();
            ic.export3DCls.exportVrmlFile('');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportStlStab", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportStlStab", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl stabilizer file", false);
            //ic.bRender = false;
            ic.threeDPrintCls.hideStabilizer();
@@ -6926,7 +6949,7 @@ class ClickMenu {
            ic.export3DCls.exportStlFile('_stab');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrmlStab", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrmlStab", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export vrml stabilizer file", false);
            //ic.bRender = false;
            ic.threeDPrintCls.hideStabilizer();
@@ -6935,13 +6958,13 @@ class ClickMenu {
            ic.export3DCls.exportVrmlFile('_stab');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export interactions", false);
            if(me.cfg.mmdbid !== undefined) await ic.viewInterPairsCls.retrieveInteractionData();
            ic.viewInterPairsCls.exportInteractions();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            // do not record the export command
            //thisClass.setLogCmd("export canvas", true);
            thisClass.setLogCmd("export canvas", false);
@@ -6950,28 +6973,28 @@ class ClickMenu {
            let bPngHtml = true;
            await ic.shareLinkCls.shareLink(bPngHtml);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 1", true);
            ic.scaleFactor = 1;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 2", true);
            ic.scaleFactor = 2;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 4", true);
            ic.scaleFactor = 4;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 8", true);
            ic.scaleFactor = 8;
            await ic.shareLinkCls.shareLink(true, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export counts", false);
            let text = '<html><body><div style="text-align:center"><br><b>Total Count for atoms with coordinates</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Structure Count</th><th>Chain Count</th><th>Residue Count</th><th>Atom Count</th></tr>';
            text += '<tr><td>' + Object.keys(ic.structures).length + '</td><td>' + Object.keys(ic.chains).length + '</td><td>' + Object.keys(ic.residues).length + '</td><td>' + Object.keys(ic.atoms).length + '</td></tr>';
@@ -6994,57 +7017,57 @@ class ClickMenu {
                text += '<tr><td>' + structure + '</td><td>' + chain + '</td><td>' + Object.keys(residueHash).length + '</td><td>' + Object.keys(ic.chains[chainid]).length + '</td></tr>';
            }
            text += '</table><br/></div></body></html>';
-           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
            ic.saveFileCls.saveFile(file_pref + '_counts.html', 'html', text);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export all selections", false);
           
            thisClass.SetChainsAdvancedMenu();
 
            let text = ic.saveFileCls.exportCustomAtoms();
-           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export all selections with details", false);
           
            thisClass.SetChainsAdvancedMenu();
 
            let bDetails = true;
            let text = ic.saveFileCls.exportCustomAtoms(bDetails);
-           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
            ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             await ic.shareLinkCls.shareLink();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
           await ic.resizeCanvasCls.replayon();
           thisClass.setLogCmd("replay on", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             await ic.resizeCanvasCls.replayoff();
             thisClass.setLogCmd("replay off", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();    
           });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
           });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
 
             thisClass.getHiddenMenusFromCache();
@@ -7052,7 +7075,7 @@ class ClickMenu {
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { me.icn3d; //e.preventDefault();
             var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
             me.htmlCls.shownMenus = {};
             for (var checkbox of checkboxes) {
@@ -7062,21 +7085,21 @@ class ClickMenu {
             thisClass.applyShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             let menuStr = '[';
 
             //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
@@ -7093,8 +7116,9 @@ class ClickMenu {
             ic.saveFileCls.saveFile('icn3d_menus_pref.txt', 'text', [menuStr]);
          });
 
-         me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { me.icn3d; e.preventDefault();
- 
+         me.myEventCls.onIds("#" + me.pre + "reload_menupreffile", "click", function(e) { me.icn3d; 
+            e.preventDefault();
+
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let file = $("#" + me.pre + "menupreffile")[0].files[0];
             if(!file) {
@@ -7124,25 +7148,25 @@ class ClickMenu {
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_menuloadpref', 'Please input the menu preference file');
         });
          
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = ic.saveFileCls.getLinkToStructureSummary(true);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + ic.inputid;
            thisClass.setLogCmd("link to 3D protein structures bound to CID " + ic.inputid + ": " + url, false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_vast", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_vast", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          let url;  
          if(ic.inputid === undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pccompound?term=" + ic.molTitle;
@@ -7171,7 +7195,7 @@ class ClickMenu {
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_pubmed", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_pubmed", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url;
            if(ic.inputid === undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + ic.molTitle;
@@ -7215,7 +7239,7 @@ class ClickMenu {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_protein", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_protein", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
           //ic.saveFileCls.setEntrezLinks('protein');
           let structArray = Object.keys(ic.structures);
           let chainArray = Object.keys(ic.chains);
@@ -7240,19 +7264,19 @@ class ClickMenu {
 
         let thisClass = this;
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            await ic.showAnnoCls.showAnnotations();
            thisClass.setLogCmd("view annotations", true);
            //thisClass.setLogCmd("window annotations", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectall", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectall", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select all", true);
            ic.selectionCls.selectAll();
            ic.hlUpdateCls.removeHlAll();
            ic.drawCls.draw();
         });
-        me.myEventCls.onIds("#" + me.pre + "clearall", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "clearall", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("clear all", true);
            ic.bSelectResidue = false;
            ic.selectionCls.selectAll();
@@ -7260,7 +7284,7 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select displayed set", true);
            //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
@@ -7268,106 +7292,106 @@ class ClickMenu {
            //ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_fullstru", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_fullstru", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("show all", true);
            ic.selectionCls.showAll();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectcomplement", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectcomplement", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) {
                thisClass.setLogCmd("select complement", true);
                ic.resid2specCls.selectComplement();
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainchains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainchains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select main chains", true);
            ic.selectionCls.selectMainChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectsidechains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectsidechains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select side chains", true);
            ic.selectionCls.selectSideChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainsidechains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainsidechains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select main side chains", true);
            ic.selectionCls.selectMainSideChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_propPos", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propPos", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop positive", true);
            ic.resid2specCls.selectProperty('positive');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propNeg", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propNeg", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop negative", true);
            ic.resid2specCls.selectProperty('negative');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propHydro", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propHydro", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop hydrophobic", true);
            ic.resid2specCls.selectProperty('hydrophobic');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propPolar", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propPolar", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop polar", true);
            ic.resid2specCls.selectProperty('polar');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propBfactor", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propBfactor", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_propbybfactor', 'Select residue based on B-factor');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propSolAcc", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propSolAcc", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_propbypercentout', 'Select residue based on the percentage of solvent accessilbe surface area');
         });
-        me.myEventCls.onIds("#" + me.pre + "applypropbybfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applypropbybfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let from = $("#" + me.pre + "minbfactor").val();
            let to = $("#" + me.pre + "maxbfactor").val();
            thisClass.setLogCmd("select prop b factor | " + from + '_' + to, true);
            ic.resid2specCls.selectProperty('b factor', from, to);
         });
-        me.myEventCls.onIds("#" + me.pre + "applypropbypercentout", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applypropbypercentout", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let from = $("#" + me.pre + "minpercentout").val();
            let to = $("#" + me.pre + "maxpercentout").val();
            thisClass.setLogCmd("select prop percent out | " + from + '_' + to, true);
            ic.resid2specCls.selectProperty('percent out', from, to);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_alignment", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_alignment", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
            thisClass.setLogCmd("window aligned sequences", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_table", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_table", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
            thisClass.setLogCmd("window interaction table", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_linegraph", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_linegraph", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
            thisClass.setLogCmd("window interaction graph", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_scatterplot", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_scatterplot", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as map');
            thisClass.setLogCmd("window interaction scatterplot", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_graph", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_graph", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
            thisClass.setLogCmd("window force-directed graph", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_yournote", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_yournote", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_yournote', 'Your note about the current display');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.yournote = $("#" + me.pre + "yournote").val();
            if(me.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_command", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_command", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_advanced2', 'Select by specification');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2", "#" + me.pre + "tool_definedsets"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2", "#" + me.pre + "tool_definedsets"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.definedSetsCls.showSets();
            thisClass.setLogCmd('defined sets', true);
            //thisClass.setLogCmd('window defined sets', true);
@@ -7386,7 +7410,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 0;
            ic.opts['pk'] = 'no';
            thisClass.setLogCmd('set pk off', true);
@@ -7394,50 +7418,50 @@ class ClickMenu {
            ic.hlObjectsCls.removeHlObjects();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
            thisClass.setLogCmd('set pk atom', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkResidue", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 2;
            ic.opts['pk'] = 'residue';
            thisClass.setLogCmd('set pk residue', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkStrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkStrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 3;
            ic.opts['pk'] = 'strand';
            thisClass.setLogCmd('set pk strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkDomain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkDomain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 4;
            ic.opts['pk'] = 'domain';
            thisClass.setLogCmd('set pk domain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 5;
            ic.opts['pk'] = 'chain';
            thisClass.setLogCmd('set pk chain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "adjustmem", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "adjustmem", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_adjustmem', 'Adjust the Z-axis positions of the membrane');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "togglemem", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "togglemem", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.selectionCls.toggleMembrane();
            thisClass.setLogCmd('toggle membrane', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "selectplane", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "selectplane", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_selectplane', 'Select a region between two planes');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_aroundsphere", "#" + me.pre + "tool_aroundsphere"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_aroundsphere", "#" + me.pre + "tool_aroundsphere"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
@@ -7454,7 +7478,7 @@ class ClickMenu {
             $("#" + me.pre + "atomsCustomSphere2").resizable();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_select_chain", "#" + me.pre + "definedSets"], "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_select_chain", "#" + me.pre + "definedSets"], "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_select_chain', 'Select Structure/Chain/Custom Selection');
         });
 
@@ -7465,242 +7489,242 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 3
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsRibbon","#" + me.pre + "tool_proteinsRibbon"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsRibbon","#" + me.pre + "tool_proteinsRibbon"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'ribbon');
            thisClass.setLogCmd('style proteins ribbon', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'strand');
            thisClass.setLogCmd('style proteins strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCylinder", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCylinder", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'cylinder and plate');
            thisClass.setLogCmd('style proteins cylinder and plate', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'schematic');
            thisClass.setLogCmd('style proteins schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCalpha", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCalpha", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'c alpha trace');
            thisClass.setLogCmd('style proteins c alpha trace', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBackbone", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBackbone", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'backbone');
            thisClass.setLogCmd('style proteins backbone', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'b factor tube');
            thisClass.setLogCmd('style proteins b factor tube', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'lines');
            thisClass.setLogCmd('style proteins lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'stick');
            thisClass.setLogCmd('style proteins stick', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsBallstick", "#" + me.pre + "tool_proteinsBallstick"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsBallstick", "#" + me.pre + "tool_proteinsBallstick"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'ball and stick');
            thisClass.setLogCmd('style proteins ball and stick', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsSphere", "#" + me.pre + "tool_proteinsSphere"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsSphere", "#" + me.pre + "tool_proteinsSphere"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'sphere');
            thisClass.setLogCmd('style proteins sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'nothing');
            thisClass.setLogCmd('style proteins nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'lines2');
            thisClass.setLogCmd('style sidec lines2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'stick2');
            thisClass.setLogCmd('style sidec stick2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'ball and stick2');
            thisClass.setLogCmd('style sidec ball and stick2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'sphere2');
            thisClass.setLogCmd('style sidec sphere2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'nothing');
            thisClass.setLogCmd('style sidec nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'lines2');
             thisClass.setLogCmd('style ntbase lines2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'stick2');
             thisClass.setLogCmd('style ntbase stick2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'ball and stick2');
             thisClass.setLogCmd('style ntbase ball and stick2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'sphere2');
             thisClass.setLogCmd('style ntbase sphere2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'nothing');
             thisClass.setLogCmd('style ntbase nothing', true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'nucleotide cartoon');
            thisClass.setLogCmd('style nucleotides nucleotide cartoon', true);
        });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBackbone", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBackbone", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'backbone');
            thisClass.setLogCmd('style nucleotides backbone', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'schematic');
            thisClass.setLogCmd('style nucleotides schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclPhos", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclPhos", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'o3 trace');
            thisClass.setLogCmd('style nucleotides o3 trace', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'lines');
            thisClass.setLogCmd('style nucleotides lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'stick');
            thisClass.setLogCmd('style nucleotides stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'ball and stick');
            thisClass.setLogCmd('style nucleotides ball and stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'sphere');
            thisClass.setLogCmd('style nucleotides sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'nothing');
            thisClass.setLogCmd('style nucleotides nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'lines');
            thisClass.setLogCmd('style chemicals lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'stick');
            thisClass.setLogCmd('style chemicals stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'ball and stick');
            thisClass.setLogCmd('style chemicals ball and stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'schematic');
            thisClass.setLogCmd('style chemicals schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'sphere');
            thisClass.setLogCmd('style chemicals sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'nothing');
            thisClass.setLogCmd('style chemicals nothing', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bGlycansCartoon = true;
            ic.drawCls.draw();
            thisClass.setLogCmd('glycans cartoon yes', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bGlycansCartoon = false;
            ic.drawCls.draw();
            thisClass.setLogCmd('glycans cartoon no', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.showHydrogens();
            ic.drawCls.draw();
            thisClass.setLogCmd('hydrogens', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.hideHydrogens();
            ic.drawCls.draw();
            thisClass.setLogCmd('set hydrogens off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'sphere');
            thisClass.setLogCmd('style ions sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsDot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsDot", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'dot');
            thisClass.setLogCmd('style ions dot', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'nothing');
            thisClass.setLogCmd('style ions nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'sphere');
            thisClass.setLogCmd('style water sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterDot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterDot", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'dot');
            thisClass.setLogCmd('style water dot', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'nothing');
            thisClass.setLogCmd('style water nothing', true);
         });
@@ -7712,16 +7736,16 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 4
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'spectrum');
            thisClass.setLogCmd('color spectrum', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'spectrum for chains');
            thisClass.setLogCmd('color spectrum for chains', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumAcrossSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumAcrossSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorSpectrumAcross").length) {
@@ -7732,7 +7756,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorSpectrumAcross").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorSpectrum").length) {
@@ -7743,7 +7767,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorSpectrum").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowAcrossSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowAcrossSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorRainbowAcross").length) {
@@ -7754,7 +7778,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorRainbowAcross").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorRainbow").length) {
@@ -7765,64 +7789,65 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorRainbow").resizable();
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
         });
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow for chains');
            thisClass.setLogCmd('color rainbow for chains', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrChain", "#" + me.pre + "tool_clrChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrChain", "#" + me.pre + "tool_clrChain"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'chain');
            thisClass.setLogCmd('color chain', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setOption('color', 'structure');
             thisClass.setLogCmd('color structure', true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'domain');
            thisClass.setLogCmd('color domain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'defined sets');
            thisClass.setLogCmd('color defined sets', true);
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrSSGreen", "#" + me.pre + "tool_clrSSGreen"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrSSGreen", "#" + me.pre + "tool_clrSSGreen"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.sheetcolor = 'green';
            ic.setOptionCls.setOption('color', 'secondary structure green');
            thisClass.setLogCmd('color secondary structure green', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSYellow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSYellow", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.sheetcolor = 'yellow';
            ic.setOptionCls.setOption('color', 'secondary structure yellow');
            thisClass.setLogCmd('color secondary structure yellow', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSSpectrum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSSpectrum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'secondary structure spectrum');
            thisClass.setLogCmd('color secondary structure spectrum', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 2;
             ic.setOptionCls.setOption('color', 'residue');
             thisClass.setLogCmd('color residue', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { me.icn3d; //e.preventDefault();
             //ic.legendClick = 2;
             me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_rescolorfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_rescolorfile", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let file = $("#" + me.pre + "rescolorfile")[0].files[0];
@@ -7846,7 +7871,8 @@ class ClickMenu {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_customcolorfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_customcolorfile", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.startColor = $("#" + me.pre + "startColor").val();
@@ -7861,12 +7887,12 @@ class ClickMenu {
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { me.icn3d; //e.preventDefault();
  
             me.htmlCls.dialogCls.openDlg('dl_customref', 'Set custom reference numbers');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
  
             if(!me.cfg.notebook) dialog.dialog( "close" );
             
@@ -7889,121 +7915,123 @@ class ClickMenu {
             }
         }); 
 
-        me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { me.icn3d; 
+           e.preventDefault();
 
            $("#" + me.pre + "legend").hide();
 
            thisClass.setLogCmd('remove legend', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_customtubefile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_customtubefile", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.addTrackCls.setCustomFile('tube');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 3;
             ic.setOptionCls.setOption('color', 'charge');
             thisClass.setLogCmd('color charge', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 4; 
             ic.setOptionCls.setOption('color', 'hydrophobic');
             thisClass.setLogCmd('color hydrophobic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 4;
             ic.setOptionCls.setOption('color', 'normalized hydrophobic');
             thisClass.setLogCmd('color normalized hydrophobic', true);
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 1;
             ic.setOptionCls.setOption('color', 'atom');
             thisClass.setLogCmd('color atom', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 5;
             ic.setOptionCls.setOption('color', 'b factor');
             thisClass.setLogCmd('color b factor', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'confidence');
             thisClass.setLogCmd('color confidence', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'ig strand');
             thisClass.setLogCmd('color ig strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'ig protodomain');
             thisClass.setLogCmd('color ig protodomain', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
         });
-        me.myEventCls.onIds("#" + me.pre + "applycolorbyarea", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applycolorbyarea", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.midpercent = $("#" + me.pre + 'midpercent').val();
             ic.setOptionCls.setOption('color', 'area');
             thisClass.setLogCmd('color area | ' + ic.midpercent, true);
 
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactorNorm", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactorNorm", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'b factor percentile');
            thisClass.setLogCmd('color b factor percentile', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIdentity", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIdentity", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'identity');
            thisClass.setLogCmd('color identity', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrConserved", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConserved", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'conservation');
            thisClass.setLogCmd('color conservation', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrCustom", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrCustom", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_clr', 'Color picker');
         });
 
-        $(document).on("click", ".icn3d-color-rad-text", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", ".icn3d-color-rad-text", function(e) { let ic = me.icn3d; 
           e.stopImmediatePropagation();
-          e.preventDefault();
+          //e.preventDefault();
           let color = $(this).attr('color');
           ic.setOptionCls.setOption("color", color);
           thisClass.setLogCmd("color " + color, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.saveColor();
            thisClass.setLogCmd('save color', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrApplySave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrApplySave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.applySavedColor();
            thisClass.setLogCmd('apply saved color', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_styleSave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_styleSave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.saveStyle();
            thisClass.setLogCmd('save style', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_styleApplySave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_styleApplySave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.applySavedStyle();
            thisClass.setLogCmd('apply saved style', true);
         });
@@ -8015,7 +8043,7 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 5
-        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.applyMapCls.removeLastSurface();
            ic.applyMapCls.applySurfaceOptions();
@@ -8023,7 +8051,7 @@ class ClickMenu {
            thisClass.setLogCmd('set surface neighbors on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.applyMapCls.removeLastSurface();
            ic.applyMapCls.applySurfaceOptions();
@@ -8031,48 +8059,48 @@ class ClickMenu {
            thisClass.setLogCmd('set surface neighbors off', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_surfaceVDW", "#" + me.pre + "tool_surfaceVDW"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_surfaceVDW", "#" + me.pre + "tool_surfaceVDW"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'Van der Waals surface');
            thisClass.setLogCmd('set surface Van der Waals surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSAS", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSAS", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'solvent accessible surface');
            thisClass.setLogCmd('set surface solvent accessible surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecular", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecular", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'molecular surface');
            thisClass.setLogCmd('set surface molecular surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceVDWContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceVDWContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'Van der Waals surface with context');
            thisClass.setLogCmd('set surface Van der Waals surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSASContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSASContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'solvent accessible surface with context');
            thisClass.setLogCmd('set surface solvent accessible surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecularContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecularContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'molecular surface with context');
            thisClass.setLogCmd('set surface molecular surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('surface', 'nothing');
            thisClass.setLogCmd('set surface nothing', true);
         });
 
-        $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.transparentRenderOrder = false;
 
             let value = $(this).attr('v');
@@ -8080,7 +8108,7 @@ class ClickMenu {
            thisClass.setLogCmd('set surface opacity ' + value, true);
         });
 
-        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.transparentRenderOrder = true;
 
             let value = $(this).attr('v');
@@ -8088,42 +8116,43 @@ class ClickMenu {
             thisClass.setLogCmd('set surface2 opacity ' + value, true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('wireframe', 'yes');
            thisClass.setLogCmd('set surface wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('wireframe', 'no');
            thisClass.setLogCmd('set surface wireframe off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_elecmap2fofc", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_elecmap2fofc", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_elecmapfofc", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_elecmapfofc", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_elecmapfofc', 'Fo-Fc Electron Density Map');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_elecmapNo", "#" + me.pre + "elecmapNo2", "#" + me.pre + "elecmapNo3", "#" + me.pre + "elecmapNo4", "#" + me.pre + "elecmapNo5"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_elecmapNo", "#" + me.pre + "elecmapNo2", "#" + me.pre + "elecmapNo3", "#" + me.pre + "elecmapNo4", "#" + me.pre + "elecmapNo5"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('map', 'nothing');
            thisClass.setLogCmd('setoption map nothing', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphimapNo", "#" + me.pre + "phimapNo", "#" + me.pre + "phiurlmapNo", "#" + me.pre + "mn1_phimapNo"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphimapNo", "#" + me.pre + "phimapNo", "#" + me.pre + "phiurlmapNo", "#" + me.pre + "mn1_phimapNo"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('phimap', 'nothing');
            thisClass.setLogCmd('setoption phimap nothing', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphimapNo2", "#" + me.pre + "phimapNo2", "#" + me.pre + "phiurlmapNo2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphimapNo2", "#" + me.pre + "phimapNo2", "#" + me.pre + "phiurlmapNo2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('surface', 'nothing');
            //thisClass.setLogCmd('set surface nothing', true);
            ic.setOptionCls.setOption('phisurface', 'nothing');
            thisClass.setLogCmd('setoption phisurface nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
@@ -8133,7 +8162,8 @@ class ClickMenu {
            thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
@@ -8143,27 +8173,28 @@ class ClickMenu {
            thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.dsn6ParserCls.dsn6Parser(ic.inputid);
            ic.setOptionCls.setOption('mapwireframe', 'yes');
            thisClass.setLogCmd('set map wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('mapwireframe', 'no');
            thisClass.setLogCmd('set map wireframe off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmap", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmap", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_emmap', 'EM Density Map');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_emmapNo", "#" + me.pre + "emmapNo2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_emmapNo", "#" + me.pre + "emmapNo2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('emmap', 'nothing');
            thisClass.setLogCmd('setoption emmap nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", function(e) { let ic = me.icn3d; 
+           e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let empercentage = parseFloat($("#" + me.pre + "empercentage" ).val());
@@ -8174,13 +8205,13 @@ class ClickMenu {
            thisClass.setLogCmd('set emmap percentage ' + empercentage, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.dsn6ParserCls.dsn6Parser(ic.inputid);
            ic.setOptionCls.setOption('emmapwireframe', 'yes');
            thisClass.setLogCmd('set emmap wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('emmapwireframe', 'no');
            thisClass.setLogCmd('set emmap wireframe off', true);
         });
@@ -8192,19 +8223,19 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 6
-        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAssembly = true;
            thisClass.setLogCmd('set assembly on', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAssembly = false;
            thisClass.setLogCmd('set assembly off', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum on', true);
             await ic.refnumCls.showIgRefNum();
 
@@ -8218,7 +8249,7 @@ class ClickMenu {
             // }
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
             await ic.refnumCls.hideIgRefNum();
 
@@ -8231,14 +8262,14 @@ class ClickMenu {
          });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelAtoms", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelAtoms", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add atom labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelElements", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelElements", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addAtomLabels(ic.hAtoms, true);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add element labels', true);
@@ -8246,42 +8277,42 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResidues", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResidues", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addResidueLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add residue labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResnum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add residue number labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
          ic.selectionCls.saveSelectionIfSelected();
          thisClass.setLogCmd('add reference number labels', true);
          ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.analysisCls.addChainLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add chain labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelTermini", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelTermini", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.analysisCls.addTerminiLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add terminal labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_addlabel', 'Add custom labels by selection');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -8289,19 +8320,19 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_addlabelselection', 'Add custom labels by the selected');
         });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_labelColor', 'Change color for all labels');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_saveselection","#" + me.pre + "tool_saveselection"], "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_saveselection","#" + me.pre + "tool_saveselection"], "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_saveselection', 'Save the selected');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.labelcolor = undefined;
             ic.pickpair = false;
            //ic.labels['residue'] = [];
@@ -8316,14 +8347,14 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        $(document).on("click", "." + me.pre + "mn6_labelscale", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_labelscale", function(e) { let ic = me.icn3d; //e.preventDefault();
            let value = $(this).attr('v');
            ic.labelScale = value;
            ic.drawCls.draw();
            thisClass.setLogCmd('set label scale ' + value, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distanceYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distanceYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_distance', 'Measure the distance of atoms');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -8333,7 +8364,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
             thisClass.setSetsMenus('atomsCustomDist');
@@ -8341,7 +8372,7 @@ class ClickMenu {
            ic.bMeasureDistance = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
 
             thisClass.setSetsMenus('atomsCustomDistTable');
@@ -8349,7 +8380,7 @@ class ClickMenu {
            ic.bMeasureDistance = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pickpair = false;
            let select = "set lines off";
            thisClass.setLogCmd(select, true);
@@ -8360,7 +8391,7 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_cartoonshape', 'Draw cartoon for a set');
 
             let bOneset = true;
@@ -8369,7 +8400,7 @@ class ClickMenu {
            ic.bCartoonshape = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_linebtwsets', 'Draw a line between two sets');
 
             thisClass.setSetsMenus('linebtwsets');
@@ -8378,21 +8409,21 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('zoom selection', true);
            ic.transformCls.zoominSelection();
            ic.drawCls.draw();
            thisClass.setLogCmd('zoom selection', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_center", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_center", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('center selection', true);
            ic.applyCenterCls.centerSelection();
            ic.drawCls.draw();
            thisClass.setLogCmd('center selection', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation", "#" + me.pre + "tool_resetOrientation"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation", "#" + me.pre + "tool_resetOrientation"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('reset orientation', true);
            ic.transformCls.resetOrientation();
            //ic.setColorCls.applyOriginalColor();
@@ -8400,17 +8431,17 @@ class ClickMenu {
            thisClass.setLogCmd('reset orientation', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindingshow", "#" + me.pre + "chemicalbindingshow"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindingshow", "#" + me.pre + "chemicalbindingshow"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('chemicalbinding', 'show');
            thisClass.setLogCmd('set chemicalbinding show', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindinghide", "#" + me.pre + "chemicalbindinghide"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindinghide", "#" + me.pre + "chemicalbindinghide"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('chemicalbinding', 'hide');
            thisClass.setLogCmd('set chemicalbinding hide', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            if(ic.bInputfile) {
                 alert("Side-by-Side does NOT work when the input is from a local file.");
                 return;
@@ -8429,7 +8460,7 @@ class ClickMenu {
         });
 
 
-        $(document).on("click", "." + me.pre + "mn6_rotate", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_rotate", function(e) { let ic = me.icn3d; //e.preventDefault();
            let value = $(this).attr('v').toLowerCase();
            let direction = value.split(' ')[1];
 
@@ -8441,7 +8472,7 @@ class ClickMenu {
            ic.resizeCanvasCls.rotStruc(direction);
         });
 
-        $(document).on("click", "." + me.pre + "mn6_rotate90", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_rotate90", function(e) { let ic = me.icn3d; //e.preventDefault();
           let value = $(this).attr('v').toLowerCase();
           let direction = value.split('-')[0];
 
@@ -8460,21 +8491,21 @@ class ClickMenu {
           ic.transformCls.setRotation(axis, angle);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_cameraPers", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_cameraPers", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('camera', 'perspective');
            thisClass.setLogCmd('set camera perspective', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_cameraOrth", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_cameraOrth", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('camera', 'orthographic');
            thisClass.setLogCmd('set camera orthographic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdBlack", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdBlack", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('black');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "tool_bkgd", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "tool_bkgd", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             if(ic.opts['background'] == 'black') {
                 ic.setStyleCls.setBackground('white');
             }
@@ -8483,19 +8514,19 @@ class ClickMenu {
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdGrey", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdGrey", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('grey');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_bkgdWhite", "#" + me.pre + "tool_bkgdWhite"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_bkgdWhite", "#" + me.pre + "tool_bkgdWhite"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('white');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdTransparent", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdTransparent", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('transparent');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showfogYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showfogYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('fog', 'yes');
            ic.opts['fog'] = 'yes';
            ic.fogCls.setFog(true);
@@ -8503,7 +8534,7 @@ class ClickMenu {
            thisClass.setLogCmd('set fog on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showfogNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showfogNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('fog', 'no');
            ic.opts['fog'] = 'no';
            ic.fogCls.setFog(true);
@@ -8511,22 +8542,22 @@ class ClickMenu {
            thisClass.setLogCmd('set fog off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showslabYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showslabYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('slab', 'yes');
            thisClass.setLogCmd('set slab on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showslabNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showslabNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('slab', 'no');
            thisClass.setLogCmd('set slab off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('axis', 'yes');
            thisClass.setLogCmd('set axis on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisSel", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisSel", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pc1 = true;
 
            ic.axesCls.setPc1Axes();
@@ -8534,7 +8565,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pc1 = false;
            ic.axes = [];
 
@@ -8543,37 +8574,37 @@ class ClickMenu {
            thisClass.setLogCmd('set axis off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
            await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
            //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
            await ic.symdCls.retrieveSymd();
            ic.bSymd = true;
 
            thisClass.setLogCmd('symd symmetry', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_clear_sym", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clear_sym", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.symdArray = [];
            ic.drawCls.draw();
            thisClass.setLogCmd('clear symd symmetry', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = true;
            ic.drawCls.draw();
            thisClass.setLogCmd('show axis', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_area", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_area", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.analysisCls.calculateArea();
             thisClass.setLogCmd('area', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
 
            let title = $("#" + me.pre + "selectSymmetry" ).val();
@@ -8583,14 +8614,14 @@ class ClickMenu {
            ic.drawCls.draw();
            thisClass.setLogCmd('symmetry ' + title, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "clearsymmetry", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "clearsymmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let title = 'none';
            ic.symmetrytitle = undefined;
            ic.drawCls.draw();
            thisClass.setLogCmd('symmetry ' + title, true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
@@ -8607,17 +8638,17 @@ class ClickMenu {
            $("#" + me.pre + "atomsCustomHbond2").resizable();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.hideHbondsContacts();
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "stabilizer";
            ic.threeDPrintCls.addStabilizer();
            ic.threeDPrintCls.prepareFor3Dprint();
@@ -8625,14 +8656,14 @@ class ClickMenu {
            thisClass.setLogCmd(select, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "set stabilizer off";
            thisClass.setLogCmd(select, true);
            ic.threeDPrintCls.hideStabilizer();
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerOne", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerOne", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_stabilizer', 'Add One Stabilizer');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -8640,7 +8671,7 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerRmOne", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerRmOne", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_stabilizer_rm', 'Remove One Stabilizer');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -8648,27 +8679,27 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_thicknessSet", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_thicknessSet", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_thickness', 'Set Thickness for 3D Printing');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Style Preferences');
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "disulfide bonds";
            thisClass.setLogCmd(select, true);
            ic.showInterCls.showSsbonds();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsExport", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsExport", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.viewInterPairsCls.exportSsbondPairs();
            thisClass.setLogCmd("export disulfide bond pairs", false);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.opts["ssbonds"] = "no";
            let select = "set disulfide bonds off";
            thisClass.setLogCmd(select, true);
@@ -8676,7 +8707,7 @@ class ClickMenu {
            ic.setOptionCls.setStyle('sidec', 'nothing');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "cross linkage";
            thisClass.setLogCmd(select, true);
            //ic.bShowCrossResidueBond = true;
@@ -8684,12 +8715,12 @@ class ClickMenu {
            ic.showInterCls.showClbonds();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsExport", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsExport", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.viewInterPairsCls.exportClbondPairs();
            thisClass.setLogCmd("export cross linkage pairs", false);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.opts["clbonds"] = "no";
            let select = "set cross linkage off";
            thisClass.setLogCmd(select, true);
@@ -8737,7 +8768,7 @@ class ClickMenu {
             });
         });
 
-        me.myEventCls.onIds("#" + me.pre + "jn_copy", "click", function(e) { me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "jn_copy", "click", function(e) { me.icn3d; //e.preventDefault();
             let text = $("#" + me.pre + "jn_commands").val();
             navigator.clipboard.writeText(text);
         });
@@ -11407,7 +11438,7 @@ class SetDialog {
         html += this.addNotebookTitle('dl_vast', 'Pleaes input chain or PDB file for VAST');
         html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
 
-        html += '<b>Optione 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
+        html += '<b>Option 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
         html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
         html += '<input type=hidden id="' + me.pre + 'pdbstr" name="pdbstr">';
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
@@ -11416,12 +11447,12 @@ class SetDialog {
         html += '<input type="submit" id="' + me.pre + 'cmdVSMmdb2" name="cmdVSMmdb" value="Submit"></input>';
         html += "</form><br>";
 
-        html += '<b>Optione 2</b>, search with PDB ID and chain name:<br>'; 
+        html += '<b>Option 2</b>, search with PDB ID and chain name:<br>'; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='4N7N' size=8> &nbsp;&nbsp;";
         html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
         html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
 
-        html += '<b>Optione 3</b>, search with a PDB file:<br>'; 
+        html += '<b>Option 3</b>, search with a PDB file:<br>'; 
         html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
         html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
@@ -14231,7 +14262,7 @@ class Events {
                 ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
                 let text = ic.viewInterPairsCls.exportSpherePairs();
-                let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
 
                 thisClass.setLogCmd("export pairs | " + nameArray2 + " " + nameArray + " | dist " + radius, true);
@@ -16124,7 +16155,7 @@ class SetHtml {
           let bPqr = (bPdb) ? false : true;
           pqrStr += ic.saveFileCls.getAtomPDB(atomHash, bPqr) + ic.saveFileCls.getAtomPDB(ionHash, bPqr);
 
-          let file_pref =(ic.inputid) ? ic.inputid : "custom";
+          let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
           ic.saveFileCls.saveFile(file_pref + '_icn3d.' + fileExt, 'text', [pqrStr]);
        }
        else {
@@ -16180,7 +16211,7 @@ class SetHtml {
             pqrStr = pdbStr;
             }
 
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.' + fileExt, 'text', [pqrStr]);
         }
     }
@@ -16441,7 +16472,7 @@ class SetHtml {
         pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
         if(!me.bNode) {
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
         }
         
@@ -16454,7 +16485,7 @@ class SetHtml {
         secondaryStr += ic.saveFileCls.getSecondary(atoms);
 
         if(!me.bNode) {
-            let file_pref =(ic.inputid) ? ic.inputid : "custom";
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
         }
         
@@ -30986,6 +31017,7 @@ class ApplyOther {
         else if (options.chemicalbinding === 'hide') {
             // truen off hdonds
             ic.hBondCls.hideHbonds();
+            ic.showInterCls.hideExtraBonds();
 
             // center on the atoms
             if(!ic.bSetFog) ic.transformCls.zoominSelection(ic.atoms);
@@ -31064,6 +31096,9 @@ class ApplySsbonds {
               end = ic.ALTERNATE_STRUCTURE % nStructures + 1;
           }
           else {
+            //   let structureHash = me.utilsCls.getDisplayedStructures();
+            //   structureArray = Object.keys(structureHash);
+
               start = 0;
               end = structureArray.length;
           }
@@ -31073,7 +31108,7 @@ class ApplySsbonds {
           for(let s = start, sl = end; s < sl; ++s) {
               let structure = structureArray[s];
 
-              if(ic.ssbondpnts[structure] === undefined) continue;
+              if(!ic.ssbondpnts[structure]) continue;
 
               //for(let i = 0, lim = Math.floor(ic.ssbondpnts[structure].length / 2); i < lim; i++) {
               for(let i = Math.floor(ic.ssbondpnts[structure].length / 2) - 1; i >= 0; i--) {
@@ -33156,7 +33191,8 @@ class Alternate {
         ic.drawCls.draw();
 
         ic.bShowHighlight = true;
-        ic.opts['rotationcenter'] = 'molecule center';
+        //ic.opts['rotationcenter'] = 'molecule center';
+        ic.opts['rotationcenter'] = 'highlight center';
     }
 
     alternateWrapper() { let ic = this.icn3d; ic.icn3dui;
@@ -33178,6 +33214,8 @@ class Alternate {
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
     draw(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.impostorCls.clearImpostors();
+        
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -33219,7 +33257,7 @@ class Alternate {
           this.render(bVrAr);
         }
 
-        ic.impostorCls.clearImpostors();
+        //ic.impostorCls.clearImpostors();
 
         // show membranes
         if(ic.bOpm && !me.cfg.chainalign) {
@@ -33647,22 +33685,6 @@ class Contact {
         if(ic.lines === undefined) ic.lines = { };
         ic.lines['contact'] = [];
         ic.contactpnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }
@@ -34226,22 +34248,6 @@ class HBond {
         if(ic.lines === undefined) ic.lines = { };
         ic.lines['hbond'] = [];
         ic.hbondpnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }
@@ -34833,22 +34839,6 @@ class PiHalogen {
         ic.halogenpnts = [];
         ic.picationpnts = [];
         ic.pistackingpnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }
@@ -35065,22 +35055,6 @@ class Saltbridge {
         if(ic.lines === undefined) ic.lines = { };
         ic.lines['saltbridge'] = [];
         ic.saltbridgepnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }
@@ -36756,6 +36730,7 @@ class AnnoCddSite {
 
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             //let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+            // somehow Node.js returned data in dataArray[i]
             let data = (me.bNode) ? dataArray[i] : dataArray[i].value;
 
             if(!data) continue;
@@ -41716,7 +41691,11 @@ class ShowAnno {
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 Math.round(chainArray[i].indexOf('_'));
                 //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
-                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
+                // let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
+
+                // the first residue of 6AL5_H is non-standard residue and treated as chemical
+                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+
                 if(atom === undefined) atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainArray[i]]);
                 if(atom === undefined) continue;
 
@@ -41732,13 +41711,10 @@ class ShowAnno {
                 }
                 //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
 
-                // the first residue of 6AL5_H is non-standard residue and treated as chemical
-                let atom2 = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
-
-                if((ic.proteins.hasOwnProperty(atom.serial) || ic.proteins.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
+                if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
-                else if((ic.nucleotides.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
+                else if(ic.nucleotides.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     nucleotide_chainid[chainArray[i]] = chainidBase;
                 }
                 else {
@@ -41795,8 +41771,11 @@ class ShowAnno {
         let nucleotide_chainid = result.nucleotide_chainid;
         let chemical_chainid = result.chemical_chainid;
         let chemical_set = result.chemical_set;
-            
+
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
+            // assign early to avoid load annotations twice
+            ic.bAnnoShown = true;
+
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                     if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
@@ -41887,7 +41866,7 @@ class ShowAnno {
                 await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
              } // align seq to structure
         }
-        ic.bAnnoShown = true;
+        //ic.bAnnoShown = true;
 
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
@@ -41967,7 +41946,7 @@ class ShowAnno {
                 + this.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
-                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid)) {
+                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {
                     chainHtml += "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
                     + this.addButton(chnid, "icn3d-igloopsets", "Ig Loop Sets", "Define sets for each Ig loop in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle);
                 }
@@ -42671,7 +42650,7 @@ class ShowSeq {
               }
               else {
                   let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[chnid + '_' + pos]);
-                  let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                  let colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF' || atom.color.getHexString().toUpperCase() === 'FFF') ? 'DDDDDD' : atom.color.getHexString();
                   color =(atom.color !== undefined) ? colorStr : "CCCCCC";
               }
               html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
@@ -42864,18 +42843,8 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }         
-            else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid)) {              
-                let result = this.showRefNum(giSeq, chnid);
-                html += result.html;
-                html3 += result.html3;
-
-                let kabat_or_imgt = 1;
-                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
-                html += result.html;
-                html3 += result.html3;
-
-                kabat_or_imgt = 2;
-                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+            else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
+                let result = this.showAllRefNum(giSeq, chnid);
                 html += result.html;
                 html3 += result.html3;
             }
@@ -42903,7 +42872,27 @@ class ShowSeq {
         $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
     }
 
-    showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d; ic.icn3dui;
+    showAllRefNum(giSeq, chnid) {  let ic = this.icn3d; ic.icn3dui;
+        let html = '', html3 = '';
+
+        let result = this.showRefNum(giSeq, chnid);
+        html += result.html;
+        html3 += result.html3;
+
+        let kabat_or_imgt = 1;
+        result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+        html += result.html;
+        html3 += result.html3;
+
+        kabat_or_imgt = 2;
+        result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+        html += result.html;
+        html3 += result.html3;
+
+        return {'html': html, 'html3': html3};
+    }
+
+    showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
         let html = '', html3 = '';
 
         let chainList = '';
@@ -42935,11 +42924,12 @@ class ShowSeq {
 
         //check if Kabat refnum available
         let bKabatFound = false;
+
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
             let residueid = chnid + '_' + currResi;
             let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-
+            
             if(ic.domainid2ig2kabat[domainid] && Object.keys(ic.domainid2ig2kabat[domainid]).length > 0) {
                 bKabatFound = true;
                 break;
@@ -42972,7 +42962,7 @@ class ShowSeq {
         // sometimes one chain may have several Ig domains,set an index for each IgDomain
         let index = 1, bStart = false;
 
-        if(!bCustom && !kabat_or_imgt) {     
+        if(!bCustom && !kabat_or_imgt && !me.bNode) { // do not overwrite loops in node  
             // reset ic.residIgLoop for the current selection, which could be the second round of ref num assignment
             let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
             for(let resid in residHash) {
@@ -43080,12 +43070,10 @@ class ShowSeq {
                 prevStrand = currStrand;
             }
 
-            // 2. remove strands with less than 3 residues
+            // 2. remove strands with less than 3 residues except G strand
             for(let il = strandArray.length, i = il - 1; i >= 0; --i) {
-                if(strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
+                if(strandArray[i].strand.substr(0, 1) != 'G' && strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
                     if(i != il - 1) { // modify 
-                        // strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + strandArray[i].endRefnum - strandArray[i].startRefnum + 1;
-
                         strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + parseInt(strandArray[i].endResi) - parseInt(strandArray[i].startResi) + 1;
                     }
 
@@ -43112,6 +43100,8 @@ class ShowSeq {
                         refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                         currRefnum = parseInt(refnumStr);
                         refnumLabelNoPostfix = currStrand + currRefnum;
+
+                        currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                         
                         let firstChar = refnumLabel.substr(0,1);
                         if(!bStart && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
@@ -43128,7 +43118,26 @@ class ShowSeq {
                         refnumLabel = undefined;
                     }
                     else {
-                        if(parseInt(currResi) < parseInt(strandArray[strandCnt].startResi)) {
+                        let bBefore = false, bInRange= false, bAfter = false;
+                        // 100, 100A
+                        if(parseInt(currResi) == parseInt(strandArray[strandCnt].startResi) && currResi != strandArray[strandCnt].startResi) {
+                            bBefore = currResi < strandArray[strandCnt].startResi;
+                        }
+                        else {
+                            bBefore = parseInt(currResi) < parseInt(strandArray[strandCnt].startResi);
+                        }
+
+                        // 100, 100A
+                        if(parseInt(currResi) == parseInt(strandArray[strandCnt].endResi) && currResi != strandArray[strandCnt].endResi) {
+                            bAfter = currResi > strandArray[strandCnt].endResi;
+                        }
+                        else {
+                            bAfter = parseInt(currResi) > parseInt(strandArray[strandCnt].endResi);
+                        }
+
+                        bInRange = (!bBefore && !bAfter) ? true : false;
+
+                        if(bBefore) {
                             ic.residIgLoop[residueid] = 1;
 
                             if(bBeforeAstrand) { // make it continuous to the 1st strand
@@ -43189,7 +43198,7 @@ class ShowSeq {
                                 }
                             }
                         }
-                        else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
+                        else if(bInRange) {
                             // not in loop any more if you assign ref numbers multiple times
                             //delete ic.residIgLoop[residueid];
 
@@ -43217,7 +43226,7 @@ class ShowSeq {
                                 }
                             }
                         }
-                        else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
+                        else if(bAfter) {     
                             ic.residIgLoop[residueid] = 1;    
 
                             if(!bAfterGstrand) {
@@ -44721,6 +44730,9 @@ class LineGraph {
                 heightAll = height * strucArray.length;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX;
+
+                // add some extra space
+                width += 20;
             }
 
             // show common and diff interaction as well
@@ -44776,6 +44788,7 @@ class LineGraph {
                 let height = 110;
                 let margin = 10;
                 let width =(len1 > len2) ? len1 *(r + gap) + 2 * margin : len2 *(r + gap) + 2 * margin;
+
                 ic.linegraphWidth = 2 * width;
                 html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
                 html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + ic.linegraphWidth + "px'>";
@@ -45099,6 +45112,658 @@ class LineGraph {
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+ class Refnum {
+    constructor(icn3d) {
+        this.icn3d = icn3d;
+    }
+
+    async hideIgRefNum() { let ic = this.icn3d; ic.icn3dui;
+        ic.bShowRefnum = false;
+
+        ic.hAtoms = {};
+        //ic.bResetAnno = true;
+
+        // await ic.showAnnoCls.showAnnotations();
+        if(ic.bAnnoShown) {
+            for(let chain in ic.protein_chainid) {
+                let chainidBase = ic.protein_chainid[chain];
+                ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
+            }
+        }
+        else {
+            await ic.showAnnoCls.showAnnotations();
+        }
+
+        ic.hlUpdateCls.updateHlAll();
+    }
+ 
+    async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        // if(ic.pdbDataArray) {
+        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
+        // }
+        // else {
+        //ic.refpdbArray = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
+        
+        //ic.refpdbArray = ['1ASF1A_2iijA_human', '1B2Microglobulin_7phrL_human_C1', '1BArrestin1_4jqiA_rat_n1', '1BTLA_2aw2A_human_Iset', '1C3_2qkiD_human_n1', '1CD19_6al5A_human_C2orV-n1', '1CD2_1hnfA_human_C2-n2', '1CD2_1hnfA_human_V-n1', '1CD8a_1cd8A_human_V', '1CoAtomerGamma1_1r4xA_human', '1Contactin1_2ee2A_human_FN3-n9', '1Contactin1_3s97C_human_C2-n2', '1CuZnSuperoxideDismutase_1hl5C_human', '1ECadherin_4zt1A_human_n2', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1FAB-HEAVY_5esv_C1-n2', '1FAB-HEAVY_5esv_V-n1', '1FAB-LIGHT_5esv_C1-n2', '1FAB-LIGHT_5esv_V-n1', '1GHR_1axiB_human_FN3-n1', '1ICOS_6x4gA_human_V', '1IL6Rb_1bquB_human_FN3-n2', '1IL6Rb_1bquB_human_FN3-n3', '1InsulinR_8guyE_human_FN3-n1', '1InsulinR_8guyE_human_FN3-n2', '1IsdA_2iteA_bacteria', '1JAM1_1nbqA_human_VorIset-n2', '1LAG3_7tzgD_human_C2-n2', '1LAG3_7tzgD_human_V-n1', '1LaminAC_1ifrA_human', '1MHCIa_7phrH_human_C1', '1MPT63_1lmiA_bacteria', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1ORF7a_1xakA_virus', '1PD1_4zqkB_human_V', '1PDL1_4z18B_human_V-n1', '1Palladin_2dm3A_human_Iset-n1', '1RBPJ_6py8C_human_Unk-n1', '1RBPJ_6py8C_human_Unk-n2', '1Sidekick2_1wf5A_human_FN3-n7', '1Siglec3_5j0bB_human_C2-n2', '1TCRa_6jxrm_human_C1-n2', '1TCRa_6jxrm_human_V-n1', '1TEAD1_3kysC_human', '1TP34_2o6cA_bacteria', '1TP47_1o75A_bacteria', '1Titin_4uowM_human_Unk-n152', '1VISTA_6oilA_human_V', '1VNAR_1t6vN_shark_V', '1VTCN1_Q7Z7D3_human_V-n2'];
+     
+/*
+        // round 1
+        ic.refpdbArray = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'GHR_1axiB_human_FN3-n1', 'FAB-HEAVY_5esv_C1-n2', 'IL6Rb_1bquB_human_FN3-n2', 'LAG3_7tzgD_human_C2-n2', 'VNAR_1t6vN_shark_V', 'VISTA_6oilA_human_V', 'CD19_6al5A_human_C2orV-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria'];
+        // round 2
+        ic.refpdbHash = {};
+
+        ic.refpdbHash['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'NaCaExchanger_2fwuA_dog_n2', 'BArrestin1_4jqiA_rat_n1', 'ECadherin_4zt1A_human_n2', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
+        ic.refpdbHash['GHR_1axiB_human_FN3-n1'] = ['GHR_1axiB_human_FN3-n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'CD2_1hnfA_human_C2-n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        ic.refpdbHash['FAB-HEAVY_5esv_C1-n2'] = ['FAB-HEAVY_5esv_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['IL6Rb_1bquB_human_FN3-n2'] = ['IL6Rb_1bquB_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2'];
+        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'BTLA_2aw2A_human_Iset', 'Titin_4uowM_human_Unk-n152'];
+        ic.refpdbHash['VNAR_1t6vN_shark_V'] = ['VNAR_1t6vN_shark_V', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1'];
+        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
+        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ASF1A_2iijA_human'];
+        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CoAtomerGamma1_1r4xA_human', 'MPT63_1lmiA_bacteria'];
+*/
+/*
+        // round 1
+        ic.refpdbArray = ['NaCaExchanger_2fwuA_dog_n2', 'C3_2qkiD_human_n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'Contactin1_2ee2A_human_FN3-n9', 'InsulinR_8guyE_human_FN3-n1', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CD19_6al5A_human_C2orV-n1'];
+
+        // round 2
+        ic.refpdbHash = {};      
+        ic.refpdbHash['NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'BArrestin1_4jqiA_rat_n1'];
+        ic.refpdbHash['Siglec3_5j0bB_human_C2-n2'] = ['Siglec3_5j0bB_human_C2-n2', 'CD2_1hnfA_human_C2-n2', 'GHR_1axiB_human_FN3-n1'];
+        ic.refpdbHash['ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        ic.refpdbHash['B2Microglobulin_7phrL_human_C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['VTCN1_Q7Z7D3_human_V-n2'] = ['VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2'];
+        ic.refpdbHash['Contactin1_2ee2A_human_FN3-n9'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7'];
+        ic.refpdbHash['InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n2'];
+        ic.refpdbHash['JAM1_1nbqA_human_VorIset-n2'] = ['JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
+        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'BTLA_2aw2A_human_Iset'];
+        ic.refpdbHash['Palladin_2dm3A_human_Iset-n1'] = ['Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
+        ic.refpdbHash['PD1_4zqkB_human_V'] = ['PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-LIGHT_5esv_V-n1'];
+        ic.refpdbHash['CD8a_1cd8A_human_V'] = ['CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'VNAR_1t6vN_shark_V'];
+        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
+        ic.refpdbHash['LAG3_7tzgD_human_V-n1'] = ['LAG3_7tzgD_human_V-n1'];
+        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria'];
+        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria'];
+        ic.refpdbHash['TEAD1_3kysC_human'] = ['TEAD1_3kysC_human', 'CuZnSuperoxideDismutase_1hl5C_human'];
+        ic.refpdbHash['RBPJ_6py8C_human_Unk-n2'] = ['RBPJ_6py8C_human_Unk-n2', 'ASF1A_2iijA_human'];
+        ic.refpdbHash['TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria', 'CoAtomerGamma1_1r4xA_human'];
+        ic.refpdbHash['LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'MPT63_1lmiA_bacteria'];
+        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
+*/
+        // round 1, 16 templates
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1'];
+
+        // round 2
+        ic.refpdbHash = {};
+        ic.refpdbHash['1InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
+        ic.refpdbHash['1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'ICOS_6x4gA_human_V'];
+        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
+        ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
+        ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
+        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria'];
+        ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
+        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
+        ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
+        ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
+        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human'];
+        ic.refpdbHash['1IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria'];
+        ic.refpdbHash['1TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];         
+
+        // use known ref structure
+        ic.refpdbHash['5ESV'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2', 'FAB-LIGHT_5esv_C1-n2'];
+        ic.refpdbHash['8GUY'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2'];
+        ic.refpdbHash['6JXR'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['1HNF'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
+        ic.refpdbHash['7TZG'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C2-n2'];
+        ic.refpdbHash['6PY8'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+        ic.refpdbHash['1BQU'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
+
+        ic.refpdbHash['1R4X'] = ['CoAtomerGamma1_1r4xA_human'];
+        ic.refpdbHash['6OIL'] = ['VISTA_6oilA_human_V'];
+        ic.refpdbHash['2ZXE'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1I8A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        ic.refpdbHash['2FWU'] = ['NaCaExchanger_2fwuA_dog_n2'];
+        ic.refpdbHash['4JQI'] = ['BArrestin1_4jqiA_rat_n1'];
+        ic.refpdbHash['1NBQ'] = ['JAM1_1nbqA_human_VorIset-n2'];
+        ic.refpdbHash['1O75'] = ['TP47_1o75A_bacteria'];
+        ic.refpdbHash['7PHR'] = ['MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['2IIJ'] = ['ASF1A_2iijA_human'];
+        ic.refpdbHash['4Z18'] = ['PDL1_4z18B_human_V-n1'];
+        ic.refpdbHash['1T6V'] = ['VNAR_1t6vN_shark_V'];
+        ic.refpdbHash['2O6C'] = ['TP34_2o6cA_bacteria'];
+        ic.refpdbHash['3KYS'] = ['TEAD1_3kysC_human'];
+        ic.refpdbHash['7PHR'] = ['B2Microglobulin_7phrL_human_C1'];
+        ic.refpdbHash['2AW2'] = ['BTLA_2aw2A_human_Iset'];
+        ic.refpdbHash['1HL5'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
+        ic.refpdbHash['1WF5'] = ['Sidekick2_1wf5A_human_FN3-n7'];
+        ic.refpdbHash['5J0B'] = ['Siglec3_5j0bB_human_C2-n2'];
+        ic.refpdbHash['1IFR'] = ['LaminAC_1ifrA_human'];
+        ic.refpdbHash['Q7Z7D3'] = ['VTCN1_Q7Z7D3_human_V-n2'];
+        ic.refpdbHash['4ZQK'] = ['PD1_4zqkB_human_V'];
+        ic.refpdbHash['2DM3'] = ['Palladin_2dm3A_human_Iset-n1'];
+        ic.refpdbHash['2ITE'] = ['IsdA_2iteA_bacteria'];
+        ic.refpdbHash['1XAK'] = ['ORF7a_1xakA_virus'];
+        ic.refpdbHash['4ZT1'] = ['ECadherin_4zt1A_human_n2'];
+        ic.refpdbHash['1LMI'] = ['MPT63_1lmiA_bacteria'];
+        ic.refpdbHash['1CD8'] = ['CD8a_1cd8A_human_V'];
+        ic.refpdbHash['3S97'] = ['Contactin1_3s97C_human_C2-n2'];
+        ic.refpdbHash['1AXI'] = ['GHR_1axiB_human_FN3-n1'];
+        ic.refpdbHash['6X4G'] = ['ICOS_6x4gA_human_V'];
+        ic.refpdbHash['2EE2'] = ['Contactin1_2ee2A_human_FN3-n9'];
+        ic.refpdbHash['4UOW'] = ['Titin_4uowM_human_Unk-n152'];
+        ic.refpdbHash['6A15'] = ['CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbHash['2QKI'] = ['C3_2qkiD_human_n1'];
+
+        // if(ic.pdbDataArray) {
+        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
+        // }
+        // else {
+
+        let pdbAjaxArray = [];
+        for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
+            //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
+            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+
+            let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
+
+            pdbAjaxArray.push(pdbAjax);
+        }
+
+        try {
+            let allPromise = Promise.allSettled(pdbAjaxArray);
+            ic.pdbDataArray = await allPromise;
+            await thisClass.parseRefPdbData(ic.pdbDataArray);
+        }
+        catch(err) {
+            if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+            //alert("Error in retrieveing reference PDB data...");
+            return;
+        }       
+
+        // }
+        // }
+    }
+
+    async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        let struArray = Object.keys(ic.structures);
+ 
+        let ajaxArray = [];
+        let domainidpairArray = [];
+
+        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+        if(!ic.resid2domainid) ic.resid2domainid = {};
+        //ic.resid2domainid = {};
+        ic.domainid2pdb = {};
+
+        let minResidues = 20;
+
+        for(let i = 0, il = struArray.length; i < il; ++i) {
+            let struct = struArray[i];
+            let chainidArray = ic.structures[struct];
+
+            for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
+                let chainid = chainidArray[j];
+
+                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
+                && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
+                if(ic.chainsSeq[chainid].length < minResidues) continue; // peptide
+
+                let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
+                if(Object.keys(currAtoms).length == 0) continue;
+
+                // align each 3D domain with reference structure
+                //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
+                // assign ref numbers to selected residues
+                let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
+                let subdomains = result.subdomains;  
+                let pos2resi = result.pos2resi;
+
+                let domainAtomsArray = [];
+                if(subdomains.length <= 1) {
+                    //domainAtomsArray.push(ic.chains[chainid]);
+                    domainAtomsArray.push(currAtoms);
+
+                    let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+                    for(let n = 0, nl = residueArray.length; n < nl; ++n) {
+                        let resid = residueArray[n];
+                        ic.resid2domainid[resid] = chainid + '-0' + '_' + Object.keys(currAtoms).length; 
+                    }
+                }
+                else {                 
+                    for(let k = 0, kl = subdomains.length; k < kl; ++k) {
+                        let domainAtoms = {};
+                        let segArray = subdomains[k];
+
+                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                            let startResi = segArray[m];
+                            let endResi = segArray[m+1];
+                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                                let resid = chainid + '_' + pos2resi[n];
+                                domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                                //ic.resid2domainid[resid] = chainid + '-' + k;
+                            }
+                        }
+
+                        domainAtomsArray.push(domainAtoms);
+
+                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                            let startResi = segArray[m];
+                            let endResi = segArray[m+1];
+                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                                let resid = chainid + '_' + pos2resi[n];
+                                //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + Object.keys(domainAtoms).length; 
+                            }
+                        }
+                    }
+                }
+
+                for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
+                    let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
+                    // ig strand for any subset will have the same k, use the number of residue to separate them
+                    let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
+                    ic.domainid2pdb[domainid] = pdb_target;
+
+                    for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
+                        let struct2 = ic.defaultPdbId + index;
+                        //let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+                        let pdb_query = dataArray[index].value; //[0];
+                        let header = 'HEADER                                                        ' + struct2 + '\n';
+                        pdb_query = header + pdb_query;
+
+                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                        ajaxArray.push(alignAjax);
+                        
+                        domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
+                    }
+                }
+            }
+        }
+
+        try {
+            let dataArray2 = [];
+            let allPromise = Promise.allSettled(ajaxArray);
+            dataArray2 = await allPromise;
+        
+            let bRound1 = true;
+            await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+
+            /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
+        }
+        catch(err) {
+            if(!me.bNode) console.log("Error in aligning with TM-align...");
+            //console.log("Error in aligning with TM-align...");
+            return;
+        }                       
+    }
+
+    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        let tmscoreThreshold = 0.4; // 0.4; //0.5;
+
+        // find the best alignment for each chain
+        let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
+
+        if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
+        if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
+        if(!ic.domainid2ig2kabat) ic.domainid2ig2kabat = {};
+        if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
+
+        // ic.chainid2refpdbname = {};
+        // ic.domainid2refpdbname = {};
+        // ic.domainid2ig2kabat = {};
+        // ic.domainid2ig2imgt = {};
+
+        let minResidues = 20;
+
+        for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
+            //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
+            let queryData = dataArray[i].value; //[0];
+
+            if(!queryData) {
+                if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
+                continue;
+            }
+
+            if(queryData.length == 0) continue;
+            
+            if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                continue;
+            }
+
+            //let domainid_index = domainidpairArray[i].split(',');
+            //let domainid = domainid_index[0];
+            let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
+            let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
+            //let chainid = domainid.split('-')[0];
+
+            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
+            // Ig domain may require G (7050). But we'll leave that out for now.
+            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
+            for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
+                let seg = queryData[0].segs[i];
+
+                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
+                    bBstrand = true;
+                }
+                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
+                    bCstrand = true;
+                }
+                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
+                    bEstrand = true;
+                }
+                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
+                    bFstrand = true;
+                }
+
+                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
+                if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+            }
+
+            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
+            if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
+
+            if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
+                domainid2score[domainid] = queryData[0].score;    
+
+                ic.domainid2refpdbname[domainid] = refpdbname;
+                domainid2segs[domainid] = queryData[0].segs;
+                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+            }
+        }
+
+        if(bRound1) {
+            if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
+
+            // start round2
+            let ajaxArray = [];
+            let domainidpairArray3 = [];
+            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+            for(let domainid in ic.domainid2refpdbname) {
+                let pdbAjaxArray = [];
+                let refpdbname = ic.domainid2refpdbname[domainid];
+                let pdbid = domainid.substr(0, domainid.indexOf('_'));
+
+                if(ic.refpdbHash.hasOwnProperty(pdbid)) {
+                    // use itself as the ref structure
+                    refpdbname = pdbid;
+
+                    if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + refpdbname);   
+                }
+
+                if(!ic.refpdbHash[refpdbname]) {
+                    continue;
+                }
+
+                for(let k = 0, kl = ic.refpdbHash[refpdbname].length; k < kl; ++k) {
+                    let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbHash[refpdbname][k];
+
+                    let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
+
+                    pdbAjaxArray.push(pdbAjax);
+                }
+
+                let allPromise2 = Promise.allSettled(pdbAjaxArray);
+                ic.pdbDataArray = await allPromise2;
+
+                let pdb_target = ic.domainid2pdb[domainid];
+                for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
+                    let struct2 = ic.defaultPdbId + index;
+                    //let pdb_query = (me.bNode) ? ic.pdbDataArray[index] : ic.pdbDataArray[index].value; //[0];
+                    let pdb_query = ic.pdbDataArray[index].value; //[0];
+                    let header = 'HEADER                                                        ' + struct2 + '\n';
+                    pdb_query = header + pdb_query;
+
+                    let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbHash[refpdbname][index]};
+                    let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                    ajaxArray.push(alignAjax);
+                    
+                    //domainidpairArray3.push(domainid + "," + refpdbname);
+                    domainidpairArray3.push(domainid + "|" + ic.refpdbHash[refpdbname][index]);
+                }
+            }
+
+            let dataArray3 = [];
+            let allPromise = Promise.allSettled(ajaxArray);
+            dataArray3 = await allPromise;
+
+            await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+
+            // end of round 2
+            return;
+        }
+
+        // combine domainid into chainid
+        for(let domainid in ic.domainid2refpdbname) {
+            let chainid = domainid.split('-')[0];
+            if(!ic.chainid2refpdbname.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
+            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid]);
+        }
+        
+        // combine domainid into chainid
+        for(let domainid in domainid2segs) {
+            let chainid = domainid.split('-')[0];
+            if(!chainid2segs[chainid]) chainid2segs[chainid] = [];
+            chainid2segs[chainid] = chainid2segs[chainid].concat(domainid2segs[domainid]);
+        }
+        
+        // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
+        if(!ic.resid2refnum) ic.resid2refnum = {};
+        if(!ic.refnum2residArray) ic.refnum2residArray = {};
+        if(!ic.chainsMapping) ic.chainsMapping = {};
+        for(let chainid in chainid2segs) {
+            let segArray = chainid2segs[chainid];
+
+            let chainList = '';
+            for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
+                chainList += ic.chainid2refpdbname[chainid][i] + " ";
+            }
+            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+
+            let prevStrand;
+            let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';
+            for(let i = 0, il = segArray.length; i < il; ++i) {
+                let seg = segArray[i];
+                let qStart = seg.q_start;
+                parseInt(seg.q_start);
+                if(isNaN(seg.q_start)) seg.q_start.substr(seg.q_start.length - 1, 1);
+
+                // one item in "seq"
+                // q_start and q_end are numbers, but saved in string
+                // t_start and t_end are strings such as 100a
+                //for(let j = 0; j <= parseInt(seg.t_end) - parseInt(seg.t_start); ++j) {
+                    // let resid = chainid + '_' + (j + parseInt(seg.t_start)).toString();
+                    // let refnum = (j + qStartInt).toString() + postfix;
+
+                    let resid = chainid + '_' + seg.t_start;
+                    //let refnum = qStartInt.toString() + postfix;
+                    //let refnum = qStart + postfix;
+                    let refnum = qStart;
+
+                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
+                    prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
+
+                    ic.resid2refnum[resid] = refnumLabel;
+
+                    // final reference numbers will be assign in ic.showSeqCls.showRefNum()
+
+                    // if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
+                    //     ic.refnum2residArray[refnum] = [resid];
+                    // }
+                    // else {
+                    //     ic.refnum2residArray[refnum].push(resid);
+                    // }
+
+                    // if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    //     ic.chainsMapping[chainid] = {};
+                    // }
+                    // ic.chainsMapping[chainid][resid] = refnumLabel;
+                //}
+            }
+        }
+
+        if(Object.keys(ic.resid2refnum).length > 0) {
+            ic.bShowRefnum = true;
+
+            // open sequence view
+            ic.hAtomsRefnum = {};
+            //ic.bResetAnno = true;
+            if(ic.bAnnoShown) {
+                for(let chain in ic.protein_chainid) {
+                    let chainidBase = ic.protein_chainid[chain];
+                    ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
+                }
+            }
+            else {
+                await ic.showAnnoCls.showAnnotations();
+            }
+
+            ic.annotationCls.setAnnoViewAndDisplay('detailed view');
+        }
+        else {
+            alert("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
+        }
+    }
+
+    getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d; ic.icn3dui;
+        let refnum = parseInt(oriRefnum);
+
+        // A-: 10xx
+        // A: 11xx
+        // A': 12xx
+        // A+: 13xx
+        // B: 21xx
+        // C: 32xx
+        // C': 42xx
+        // C'': 51xx, 52xx
+        // D: 61xx
+        // E: 71xx
+        // F: 82xx
+        // G: 91xx, 92xx
+        // G+: 94xx
+
+        // if(refnum < 100) return " " + oriRefnum;
+        // else if(refnum >= 100 && refnum < 1000) {
+        //     if(bCd19) return " " + oriRefnum;
+        //     else return "A^" + oriRefnum;
+        // }
+        if(refnum < 900) return undefined;
+        else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
+        else if(refnum >= 1000 && refnum < 1100) return "A-" + oriRefnum;
+        else if(refnum >= 1100 && refnum < 1200) return "A" + oriRefnum;
+        else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
+        //else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
+        else if(refnum >= 1300 && refnum < 1400) return "A+" + oriRefnum;
+        else if(refnum >= 1400 && refnum < 2000) {
+            if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
+                return prevStrand + oriRefnum;
+            }
+            else {
+                return "A" + oriRefnum;
+            }
+        }
+        else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
+        else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
+        else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
+        else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
+        else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
+        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
+        else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9400) return "G" + oriRefnum;
+        //else if(refnum >= 9400 && refnum < 9500) return "G*" + oriRefnum;
+        else if(refnum >= 9400 && refnum < 9500) return "G+" + oriRefnum;
+        else if(refnum >= 9500) return "G" + oriRefnum;
+    }
+
+    async parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
+        ic.bShowCustomRefnum = true;
+
+        //refnum,11,12,,21,22
+        //1TUP_A,100,101,,,132
+        //1TUP_B,110,111,,141,142
+
+        let lineArray = data.split('\n');
+
+        if(!ic.resid2refnum) ic.resid2refnum = {};
+        if(!ic.refnum2residArray) ic.refnum2residArray = {};
+        if(!ic.chainsMapping) ic.chainsMapping = {};
+
+        let refAA = [];
+        for(let i = 0, il = lineArray.length; i < il; ++i) {
+            let numArray = lineArray[i].split(',');
+            refAA.push(numArray);
+        }
+
+        // assign ic.refnum2residArray
+        let refI = 0;
+        for(let j = 1, jl = refAA[refI].length; j < jl; ++j) {
+            if(!refAA[refI][j]) continue;
+
+            let refnum = refAA[refI][j].trim();
+            if(refnum) {
+                for(let i = 1, il = refAA.length; i < il; ++i) {
+                    if(!refAA[i][j]) continue;
+                    let chainid = refAA[i][0].trim();
+                    let resid = chainid + '_' + refAA[i][j].trim();
+                    if(!ic.refnum2residArray[refnum]) {
+                        ic.refnum2residArray[refnum] = [resid];
+                    }
+                    else {
+                        ic.refnum2residArray[refnum].push(resid);
+                    }
+                }
+            }
+        }
+
+        // assign ic.resid2refnum and ic.chainsMapping
+        for(let i = 1, il = refAA.length; i < il; ++i) {
+            let chainid = refAA[i][0].trim();
+
+            for(let j = 1, jl = refAA[i].length; j < jl; ++j) {
+                if(!refAA[i][j] || !refAA[refI][j]) continue;
+
+                let resi = refAA[i][j].trim();
+                let refnum = refAA[refI][j].trim();
+                if(resi && refnum) {
+                    let resid = chainid + '_' + resi;
+                    ic.resid2refnum[resid] = refnum;
+
+                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                        ic.chainsMapping[chainid] = {};
+                    }
+                    ic.chainsMapping[chainid][resid] = refnum;
+                }
+            }
+        }
+
+        // open sequence view
+        await ic.showAnnoCls.showAnnotations();
+        ic.annotationCls.setAnnoViewAndDisplay('detailed view');
+    }
+
+    rmStrandFromRefnumlabel(refnumLabel) {
+        return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
+    }
+ }
+
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 class GetGraph {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -45241,7 +45906,11 @@ class GetGraph {
 
         // show reference numbers
         if(ic.bShownRefnum && ic.resid2refnum[resid]) {
-            nodeName = ic.resid2refnum[resid];
+            let refnumLabel = ic.resid2refnum[resid];
+            let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+
+            let resn = ic.residueId2Name[resid];
+            nodeName = resn + refnumStr;
         }
 
         let strokecolor = '#000';
@@ -45832,6 +46501,24 @@ class ShowInter {
        }
     }
 
+    hideExtraBonds() { let ic = this.icn3d; ic.icn3dui;
+        for(let i in ic.atoms) {
+            ic.atoms[i].style2 = 'nothing';
+        }
+
+        for(let i in ic.sidec) {
+            if(ic.hAtoms.hasOwnProperty(i)) {
+                ic.atoms[i].style2 = ic.opts["sidec"];
+            }
+        }
+
+        for(let i in ic.water) {
+            if(ic.hAtoms.hasOwnProperty(i)) {
+                ic.atoms[i].style = ic.opts["water"];
+            }
+        }
+    }
+
     hideHbondsContacts() { let ic = this.icn3d, me = ic.icn3dui;
            let select = "set hbonds off";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
@@ -45846,6 +46533,8 @@ class ShowInter {
            select = "set halogen pi off";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.piHalogenCls.hideHalogenPi();
+
+           this.hideExtraBonds();
     }
 
     showIonicInteractions(threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -46623,7 +47312,7 @@ class ViewInterPairs {
     }
 
     //Export the list of residues in some chain interacting with residues in another chain.
-    exportInteractions() {var ic = this.icn3d; ic.icn3dui;
+    exportInteractions() {var ic = this.icn3d, me = ic.icn3dui;
        let text = '<html><body><div style="text-align:center"><br><b>Interacting residues</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
        for(let fisrtChainid in ic.chainname2residues) {
            for(let name in ic.chainname2residues[fisrtChainid]) {
@@ -46634,10 +47323,10 @@ class ViewInterPairs {
            }
        }
        text += '</table><br/></div></body></html>';
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + '_interactions.html', 'html', text);
     }
-    exportSsbondPairs() {var ic = this.icn3d; ic.icn3dui;
+    exportSsbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
         let tmpText = '';
         let cnt = 0;
         for(let structure in ic.structures) {
@@ -46655,10 +47344,10 @@ class ViewInterPairs {
         let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' disulfide pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
     }
-    exportClbondPairs() {var ic = this.icn3d; ic.icn3dui;
+    exportClbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
         let tmpText = '';
         let cnt = 0;
         let residHash = {};
@@ -46683,7 +47372,7 @@ class ViewInterPairs {
         let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' cross-linkage pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_crosslinkage_pairs.html', 'html', text);
     }
     exportHbondPairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
@@ -47733,8 +48422,10 @@ class AlignParser {
             let dataArray = await allPromise;
 
             let data2 = data;
-            let data3 = (me.bNode) ? dataArray[0] : dataArray[0].value; //v3[0];
-            let data4 = (me.bNode) ? dataArray[1] : dataArray[1].value; //v4[0];
+            // let data3 = (me.bNode) ? dataArray[0] : dataArray[0].value; //v3[0];
+            // let data4 = (me.bNode) ? dataArray[1] : dataArray[1].value; //v4[0];
+            let data3 = dataArray[0].value; //v3[0];
+            let data4 = dataArray[1].value; //v4[0];
 
             if(data3.atoms !== undefined && data4.atoms !== undefined) {
                 // ic.deferredOpm = $.Deferred(function() {
@@ -47896,7 +48587,8 @@ class AlignParser {
             
             let bFound = false;
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                let opmdata = (me.bNode) ? dataArray[i] : dataArray[i].value;
+                //let opmdata = (me.bNode) ? dataArray[i] : dataArray[i].value;
+                let opmdata = dataArray[i].value;
 
                 if(!opmdata) continue;
 
@@ -48056,7 +48748,8 @@ class ChainalignParser {
 
         // modify the previous trans and rotation matrix
         for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
+            // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
+            let align = dataArray[i].value;//[0];
 
             let mmdbid_q = struArray[i];
             let index = indexArray[i];
@@ -48148,7 +48841,8 @@ class ChainalignParser {
              
         let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
+            // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
+            let align = dataArray[i].value;//[0];
 
             let bEqualMmdbid = false;
             let bEqualChain = false;
@@ -48540,7 +49234,8 @@ class ChainalignParser {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         // index = 0: the mmdb data of target
-        let targetData = (me.bNode) ? dataArray[0] : dataArray[0].value; //[0];
+        // let targetData = (me.bNode) ? dataArray[0] : dataArray[0].value; //[0];
+        let targetData = dataArray[0].value; //[0];
         let header = 'HEADER                                                        ' + mmdbid_t + '\n';
         if(isNaN(mmdbid_t) && mmdbid_t.length > 5) targetData = header + targetData;
 
@@ -48558,7 +49253,8 @@ class ChainalignParser {
         let queryDataArray = [];
 
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            // let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            let queryData = dataArray[index].value;//[0];
 
             let pos = chainidArray[index].indexOf('_');
             let mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
@@ -48604,7 +49300,8 @@ class ChainalignParser {
                     ic.qt_start_end[index-1] = undefined;
                 }
                 else {
-                    let align = (me.bNode) ? dataArray[index2 - missedChainCnt] : dataArray[index2 - missedChainCnt].value;//[0];
+                    // let align = (me.bNode) ? dataArray[index2 - missedChainCnt] : dataArray[index2 - missedChainCnt].value;//[0];
+                    let align = dataArray[index2 - missedChainCnt].value;//[0];
 
                     let bEqualMmdbid = (mmdbid_q == mmdbid_t);
                     let bEqualChain = (chain_q == chain_t);
@@ -48822,7 +49519,8 @@ class ChainalignParser {
 
         let queryDataArray = [];
         for(let index = 0, indexl = structArray.length; index < indexl; ++index) {
-            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            // let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            let queryData = dataArray[index].value;//[0];
             let header = 'HEADER                                                        ' + structArray[index] + '\n';
             if(isNaN(structArray[index]) && structArray[index].length > 5) queryData = header + queryData;
 
@@ -51274,7 +51972,8 @@ class RealignParser {
       //var data2 = v2[0];
       for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
     //  for(let index = 1, indexl = dataArray.length; index < indexl; ++index) {
-          let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+        //   let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+          let data = dataArray[index].value;//[0];
           if(!data) continue;
 
           let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
@@ -53124,13 +53823,15 @@ class ParserUtils {
         let allPromise = Promise.allSettled([prms1, prms2]);
         let dataArray = await allPromise;
         
-        ic.interactionData1 = (me.bNode) ? dataArray[0] : dataArray[0].value;
+        // ic.interactionData1 = (me.bNode) ? dataArray[0] : dataArray[0].value;
+        ic.interactionData1 = dataArray[0].value;
         ic.html2ddgm = '';
         ic.diagram2dCls.draw2Ddgm(ic.interactionData1, mmdbid1, 0);
         if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
 
-        ic.interactionData2 = (me.bNode) ? dataArray[1] : dataArray[1].value;
+        // ic.interactionData2 = (me.bNode) ? dataArray[1] : dataArray[1].value;
+        ic.interactionData2 = dataArray[1].value;
         ic.diagram2dCls.draw2Ddgm(ic.interactionData2, mmdbid2, 1);
 
         ic.html2ddgm += "<br>" + ic.diagram2dCls.set2DdgmNote(true);
@@ -53178,7 +53879,8 @@ class ParserUtils {
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-            let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            // let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+            let data = dataArray[index].value;//[0];
             let mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);
@@ -54810,7 +55512,10 @@ class SetSeqAlign {
         */
 
         let resid = chainid + '_' + resi;
-        return ic.residueId2Name[resid];
+        let resn = ic.residueId2Name[resid];
+        if(!resn) resn = '?';
+
+        return resn;
     }
 
     getResiAferAlign(chainid, bRealign, pos) { let ic = this.icn3d, me = ic.icn3dui;
@@ -55963,11 +56668,14 @@ class LoadPDB {
                 structure = this.getStructureId(id, moleculeNum, bMutation);
 
                 ic.molTitle = '';
+                ic.molTitleHash = {};
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
                 let name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
+                if(!ic.molTitleHash) ic.molTitleHash = {};
+                ic.molTitleHash[structure] = name.trim() + " ";
 
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;
@@ -56870,7 +57578,8 @@ class Vastplus {
 
         let queryDataArray = [];
         for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
-            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+            // let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+            let queryData = dataArray[index].value; //[0];
 
             queryDataArray.push(queryData);
 /*
@@ -57683,18 +58392,22 @@ class ApplyCommand {
       }
       else if(command == 'set hbonds off') {
         ic.hBondCls.hideHbonds();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set salt bridge off') {
         ic.saltbridgeCls.hideSaltbridge();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set contact off') {
         ic.contactCls.hideContact();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set halogen pi off') {
         ic.piHalogenCls.hideHalogenPi();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
 
@@ -58539,7 +59252,7 @@ class ApplyCommand {
                 ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
                 let text = ic.viewInterPairsCls.exportSpherePairs();
-                let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
             }
         }
@@ -63084,14 +63797,15 @@ class Dssp {
         }
     }
 
-    async parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d; ic.icn3dui;
         //var dataArray =(struArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
             //let ssHash = dataArray[index][0];
-            let ssHash = (me.bNode) ? dataArray[index] : dataArray[index].value;
+            //let ssHash = (me.bNode) ? dataArray[index] : dataArray[index].value;
+            let ssHash = dataArray[index].value;
 
             if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
               for(let chainNum in ic.chainsSeq) {
@@ -63203,646 +63917,6 @@ class Dssp {
         /// if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }
 }
-
-/**
- * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
- */
-
- class Refnum {
-    constructor(icn3d) {
-        this.icn3d = icn3d;
-    }
-
-    async hideIgRefNum() { let ic = this.icn3d; ic.icn3dui;
-        ic.bShowRefnum = false;
-
-        ic.hAtoms = {};
-        //ic.bResetAnno = true;
-
-        // await ic.showAnnoCls.showAnnotations();
-        if(ic.bAnnoShown) {
-            for(let chain in ic.protein_chainid) {
-                let chainidBase = ic.protein_chainid[chain];
-                ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
-            }
-        }
-        else {
-            await ic.showAnnoCls.showAnnotations();
-        }
-
-        ic.hlUpdateCls.updateHlAll();
-    }
- 
-    async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-        //ic.refpdbArray = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
-        
-        //ic.refpdbArray = ['1ASF1A_2iijA_human', '1B2Microglobulin_7phrL_human_C1', '1BArrestin1_4jqiA_rat_n1', '1BTLA_2aw2A_human_Iset', '1C3_2qkiD_human_n1', '1CD19_6al5A_human_C2orV-n1', '1CD2_1hnfA_human_C2-n2', '1CD2_1hnfA_human_V-n1', '1CD8a_1cd8A_human_V', '1CoAtomerGamma1_1r4xA_human', '1Contactin1_2ee2A_human_FN3-n9', '1Contactin1_3s97C_human_C2-n2', '1CuZnSuperoxideDismutase_1hl5C_human', '1ECadherin_4zt1A_human_n2', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1FAB-HEAVY_5esv_C1-n2', '1FAB-HEAVY_5esv_V-n1', '1FAB-LIGHT_5esv_C1-n2', '1FAB-LIGHT_5esv_V-n1', '1GHR_1axiB_human_FN3-n1', '1ICOS_6x4gA_human_V', '1IL6Rb_1bquB_human_FN3-n2', '1IL6Rb_1bquB_human_FN3-n3', '1InsulinR_8guyE_human_FN3-n1', '1InsulinR_8guyE_human_FN3-n2', '1IsdA_2iteA_bacteria', '1JAM1_1nbqA_human_VorIset-n2', '1LAG3_7tzgD_human_C2-n2', '1LAG3_7tzgD_human_V-n1', '1LaminAC_1ifrA_human', '1MHCIa_7phrH_human_C1', '1MPT63_1lmiA_bacteria', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1ORF7a_1xakA_virus', '1PD1_4zqkB_human_V', '1PDL1_4z18B_human_V-n1', '1Palladin_2dm3A_human_Iset-n1', '1RBPJ_6py8C_human_Unk-n1', '1RBPJ_6py8C_human_Unk-n2', '1Sidekick2_1wf5A_human_FN3-n7', '1Siglec3_5j0bB_human_C2-n2', '1TCRa_6jxrm_human_C1-n2', '1TCRa_6jxrm_human_V-n1', '1TEAD1_3kysC_human', '1TP34_2o6cA_bacteria', '1TP47_1o75A_bacteria', '1Titin_4uowM_human_Unk-n152', '1VISTA_6oilA_human_V', '1VNAR_1t6vN_shark_V', '1VTCN1_Q7Z7D3_human_V-n2'];
-     
-/*
-        // round 1
-        ic.refpdbArray = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'GHR_1axiB_human_FN3-n1', 'FAB-HEAVY_5esv_C1-n2', 'IL6Rb_1bquB_human_FN3-n2', 'LAG3_7tzgD_human_C2-n2', 'VNAR_1t6vN_shark_V', 'VISTA_6oilA_human_V', 'CD19_6al5A_human_C2orV-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria'];
-        // round 2
-        ic.refpdbHash = {};
-
-        ic.refpdbHash['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'NaCaExchanger_2fwuA_dog_n2', 'BArrestin1_4jqiA_rat_n1', 'ECadherin_4zt1A_human_n2', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['GHR_1axiB_human_FN3-n1'] = ['GHR_1axiB_human_FN3-n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'CD2_1hnfA_human_C2-n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['FAB-HEAVY_5esv_C1-n2'] = ['FAB-HEAVY_5esv_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['IL6Rb_1bquB_human_FN3-n2'] = ['IL6Rb_1bquB_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'BTLA_2aw2A_human_Iset', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['VNAR_1t6vN_shark_V'] = ['VNAR_1t6vN_shark_V', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CoAtomerGamma1_1r4xA_human', 'MPT63_1lmiA_bacteria'];
-*/
-/*
-        // round 1
-        ic.refpdbArray = ['NaCaExchanger_2fwuA_dog_n2', 'C3_2qkiD_human_n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'Contactin1_2ee2A_human_FN3-n9', 'InsulinR_8guyE_human_FN3-n1', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CD19_6al5A_human_C2orV-n1'];
-
-        // round 2
-        ic.refpdbHash = {};      
-        ic.refpdbHash['NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['Siglec3_5j0bB_human_C2-n2'] = ['Siglec3_5j0bB_human_C2-n2', 'CD2_1hnfA_human_C2-n2', 'GHR_1axiB_human_FN3-n1'];
-        ic.refpdbHash['ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['B2Microglobulin_7phrL_human_C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['VTCN1_Q7Z7D3_human_V-n2'] = ['VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2'];
-        ic.refpdbHash['Contactin1_2ee2A_human_FN3-n9'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['JAM1_1nbqA_human_VorIset-n2'] = ['JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['Palladin_2dm3A_human_Iset-n1'] = ['Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['PD1_4zqkB_human_V'] = ['PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['CD8a_1cd8A_human_V'] = ['CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['LAG3_7tzgD_human_V-n1'] = ['LAG3_7tzgD_human_V-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['TEAD1_3kysC_human'] = ['TEAD1_3kysC_human', 'CuZnSuperoxideDismutase_1hl5C_human'];
-        ic.refpdbHash['RBPJ_6py8C_human_Unk-n2'] = ['RBPJ_6py8C_human_Unk-n2', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria', 'CoAtomerGamma1_1r4xA_human'];
-        ic.refpdbHash['LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-*/
-        // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1'];
-
-        // round 2
-        ic.refpdbHash = {};
-        ic.refpdbHash['1InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'ICOS_6x4gA_human_V'];
-        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
-        ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
-        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
-        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
-        ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
-        ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human'];
-        ic.refpdbHash['1IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];         
-
-        // use known ref structure
-        ic.refpdbHash['5ESV'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2', 'FAB-LIGHT_5esv_C1-n2'];
-        ic.refpdbHash['8GUY'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2'];
-        ic.refpdbHash['6JXR'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['1HNF'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
-        ic.refpdbHash['7TZG'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C2-n2'];
-        ic.refpdbHash['6PY8'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
-        ic.refpdbHash['1BQU'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
-
-        ic.refpdbHash['1R4X'] = ['CoAtomerGamma1_1r4xA_human'];
-        ic.refpdbHash['6OIL'] = ['VISTA_6oilA_human_V'];
-        ic.refpdbHash['2ZXE'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['1I8A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['2FWU'] = ['NaCaExchanger_2fwuA_dog_n2'];
-        ic.refpdbHash['4JQI'] = ['BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['1NBQ'] = ['JAM1_1nbqA_human_VorIset-n2'];
-        ic.refpdbHash['1O75'] = ['TP47_1o75A_bacteria'];
-        ic.refpdbHash['7PHR'] = ['MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['2IIJ'] = ['ASF1A_2iijA_human'];
-        ic.refpdbHash['4Z18'] = ['PDL1_4z18B_human_V-n1'];
-        ic.refpdbHash['1T6V'] = ['VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['2O6C'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['3KYS'] = ['TEAD1_3kysC_human'];
-        ic.refpdbHash['7PHR'] = ['B2Microglobulin_7phrL_human_C1'];
-        ic.refpdbHash['2AW2'] = ['BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['1HL5'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
-        ic.refpdbHash['1WF5'] = ['Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['5J0B'] = ['Siglec3_5j0bB_human_C2-n2'];
-        ic.refpdbHash['1IFR'] = ['LaminAC_1ifrA_human'];
-        ic.refpdbHash['Q7Z7D3'] = ['VTCN1_Q7Z7D3_human_V-n2'];
-        ic.refpdbHash['4ZQK'] = ['PD1_4zqkB_human_V'];
-        ic.refpdbHash['2DM3'] = ['Palladin_2dm3A_human_Iset-n1'];
-        ic.refpdbHash['2ITE'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1XAK'] = ['ORF7a_1xakA_virus'];
-        ic.refpdbHash['4ZT1'] = ['ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1LMI'] = ['MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['1CD8'] = ['CD8a_1cd8A_human_V'];
-        ic.refpdbHash['3S97'] = ['Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1AXI'] = ['GHR_1axiB_human_FN3-n1'];
-        ic.refpdbHash['6X4G'] = ['ICOS_6x4gA_human_V'];
-        ic.refpdbHash['2EE2'] = ['Contactin1_2ee2A_human_FN3-n9'];
-        ic.refpdbHash['4UOW'] = ['Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['6A15'] = ['CD19_6al5A_human_C2orV-n1'];
-        ic.refpdbHash['2QKI'] = ['C3_2qkiD_human_n1'];
-
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-
-        let pdbAjaxArray = [];
-        for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
-            //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
-            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
-
-            let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
-
-            pdbAjaxArray.push(pdbAjax);
-        }
-
-        // try {
-            let allPromise = Promise.allSettled(pdbAjaxArray);
-            ic.pdbDataArray = await allPromise;
-            await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // catch(err) {
-        //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-        //     //alert("Error in retrieveing reference PDB data...");
-        //     return;
-        // }             
-        // }
-        // }
-    }
-
-    async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
-        let struArray = Object.keys(ic.structures);
- 
-        let ajaxArray = [];
-        let domainidpairArray = [];
-
-        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-
-        // if(!ic.resid2domainid) ic.resid2domainid = {};
-        ic.resid2domainid = {};
-        ic.domainid2pdb = {};
-
-        let minResidues = 20;
-
-        for(let i = 0, il = struArray.length; i < il; ++i) {
-            let struct = struArray[i];
-            let chainidArray = ic.structures[struct];
-
-            for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
-                let chainid = chainidArray[j];
-
-                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
-                && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
-                if(ic.chainsSeq[chainid].length < minResidues) continue; // peptide
-
-                let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
-                if(Object.keys(currAtoms).length == 0) continue;
-
-                // align each 3D domain with reference structure
-                //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
-                // assign ref numbers to selected residues
-                let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
-                let subdomains = result.subdomains;  
-                let pos2resi = result.pos2resi;
-
-                let domainAtomsArray = [];
-                if(subdomains.length <= 1) {
-                    //domainAtomsArray.push(ic.chains[chainid]);
-                    domainAtomsArray.push(currAtoms);
-
-                    let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
-                    for(let n = 0, nl = residueArray.length; n < nl; ++n) {
-                        let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0';
-                    }   
-                }
-                else {                 
-                    for(let k = 0, kl = subdomains.length; k < kl; ++k) {
-                        let domainAtoms = {};
-                        let segArray = subdomains[k];
-
-                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                            let startResi = segArray[m];
-                            let endResi = segArray[m+1];
-                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                //let residNCBI = chainid + '_' + n;
-                                //let resid = ic.ncbi2resid[residNCBI];
-                                let resid = chainid + '_' + pos2resi[n];
-                                domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k;
-                            }
-                        }
-
-                        domainAtomsArray.push(domainAtoms);
-                    }
-                }
-
-                for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
-                    let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
-                    // ig strand for any subset will have the same k, use the number of residue to separate them
-                    let domainid = chainid + '-' + k + '_' + domainAtomsArray[k].length; 
-                    ic.domainid2pdb[domainid] = pdb_target;
-
-                    for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        let struct2 = ic.defaultPdbId + index;
-                        let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
-                        let header = 'HEADER                                                        ' + struct2 + '\n';
-                        pdb_query = header + pdb_query;
-
-                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
-                        ajaxArray.push(alignAjax);
-                        
-                        domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
-                    }
-                }
-            }
-        }
-
-        // try {
-            let dataArray2 = [];
-            let allPromise = Promise.allSettled(ajaxArray);
-            dataArray2 = await allPromise;
-        
-            let bRound1 = true;
-            await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
-
-            /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
-        // }
-        // catch(err) {
-        //     if(!me.bNode) console.log("Error in aligning with TM-align...");
-        //     //console.log("Error in aligning with TM-align...");
-        //     return;
-        // }                       
-    }
-
-    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
-        let tmscoreThreshold = 0.4; // 0.4; //0.5;
-
-        // find the best alignment for each chain
-        let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
-
-        if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
-        if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
-        if(!ic.domainid2ig2kabat) ic.domainid2ig2kabat = {};
-        if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
-
-        // ic.chainid2refpdbname = {};
-        // ic.domainid2refpdbname = {};
-        // ic.domainid2ig2kabat = {};
-        // ic.domainid2ig2imgt = {};
-
-        let minResidues = 20;
-
-        for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
-            let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
-
-            if(!queryData) {
-                if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
-                continue;
-            }
-
-            if(queryData.length == 0) continue;
-            
-            if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
-                continue;
-            }
-
-            //let domainid_index = domainidpairArray[i].split(',');
-            //let domainid = domainid_index[0];
-            let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
-            let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
-            //let chainid = domainid.split('-')[0];
-
-            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
-            // Ig domain may require G (7050). But we'll leave that out for now.
-            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
-            for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
-                let seg = queryData[0].segs[i];
-
-                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
-                    bBstrand = true;
-                }
-                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
-                    bCstrand = true;
-                }
-                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
-                    bEstrand = true;
-                }
-                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
-                    bFstrand = true;
-                }
-
-                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
-                if(bBstrand && bCstrand && bEstrand && bFstrand) break;
-            }
-
-            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
-            if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
-
-            if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
-                domainid2score[domainid] = queryData[0].score;    
-
-                ic.domainid2refpdbname[domainid] = refpdbname;
-                domainid2segs[domainid] = queryData[0].segs;
-                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-            }
-        }
-
-        if(bRound1) {
-            if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
-
-            // start round2
-            let ajaxArray = [];
-            let domainidpairArray3 = [];
-            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-            for(let domainid in ic.domainid2refpdbname) {
-                let pdbAjaxArray = [];
-                let refpdbname = ic.domainid2refpdbname[domainid];
-                let pdbid = domainid.substr(0, domainid.indexOf('_'));
-
-                if(ic.refpdbHash.hasOwnProperty(pdbid)) {
-                    // use itself as the ref structure
-                    refpdbname = pdbid;
-
-                    if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + refpdbname);   
-                }
-
-                if(!ic.refpdbHash[refpdbname]) {
-                    continue;
-                }
-
-                for(let k = 0, kl = ic.refpdbHash[refpdbname].length; k < kl; ++k) {
-                    let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbHash[refpdbname][k];
-
-                    let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
-
-                    pdbAjaxArray.push(pdbAjax);
-                }
-
-                let allPromise2 = Promise.allSettled(pdbAjaxArray);
-                ic.pdbDataArray = await allPromise2;
-
-                let pdb_target = ic.domainid2pdb[domainid];
-                for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
-                    let struct2 = ic.defaultPdbId + index;
-                    let pdb_query = (me.bNode) ? ic.pdbDataArray[index] : ic.pdbDataArray[index].value; //[0];
-                    let header = 'HEADER                                                        ' + struct2 + '\n';
-                    pdb_query = header + pdb_query;
-
-                    let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbHash[refpdbname][index]};
-                    let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
-                    ajaxArray.push(alignAjax);
-                    
-                    //domainidpairArray3.push(domainid + "," + refpdbname);
-                    domainidpairArray3.push(domainid + "|" + ic.refpdbHash[refpdbname][index]);
-                }
-            }
-
-            let dataArray3 = [];
-            let allPromise = Promise.allSettled(ajaxArray);
-            dataArray3 = await allPromise;
-        
-            await thisClass.parseAlignData(dataArray3, domainidpairArray3);
-
-            // end of round 2
-            return;
-        }
-
-        // combine domainid into chainid
-        for(let domainid in ic.domainid2refpdbname) {
-            let chainid = domainid.split('-')[0];
-            if(!ic.chainid2refpdbname.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
-            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid]);
-        }
-        
-        // combine domainid into chainid
-        for(let domainid in domainid2segs) {
-            let chainid = domainid.split('-')[0];
-            if(!chainid2segs[chainid]) chainid2segs[chainid] = [];
-            chainid2segs[chainid] = chainid2segs[chainid].concat(domainid2segs[domainid]);
-        }
-        
-        // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
-        if(!ic.resid2refnum) ic.resid2refnum = {};
-        if(!ic.refnum2residArray) ic.refnum2residArray = {};
-        if(!ic.chainsMapping) ic.chainsMapping = {};
-        for(let chainid in chainid2segs) {
-            let segArray = chainid2segs[chainid];
-
-            let chainList = '';
-            for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
-                chainList += ic.chainid2refpdbname[chainid][i] + " ";
-            }
-            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
-
-            let prevStrand;
-            let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';
-            for(let i = 0, il = segArray.length; i < il; ++i) {
-                let seg = segArray[i];
-                let qStart = seg.q_start;
-                parseInt(seg.q_start);
-                if(isNaN(seg.q_start)) seg.q_start.substr(seg.q_start.length - 1, 1);
-
-                // one item in "seq"
-                // q_start and q_end are numbers, but saved in string
-                // t_start and t_end are strings such as 100a
-                //for(let j = 0; j <= parseInt(seg.t_end) - parseInt(seg.t_start); ++j) {
-                    // let resid = chainid + '_' + (j + parseInt(seg.t_start)).toString();
-                    // let refnum = (j + qStartInt).toString() + postfix;
-
-                    let resid = chainid + '_' + seg.t_start;
-                    //let refnum = qStartInt.toString() + postfix;
-                    //let refnum = qStart + postfix;
-                    let refnum = qStart;
-
-                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
-                    prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
-
-                    ic.resid2refnum[resid] = refnumLabel;
-
-                    // final reference numbers will be assign in ic.showSeqCls.showRefNum()
-
-                    // if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
-                    //     ic.refnum2residArray[refnum] = [resid];
-                    // }
-                    // else {
-                    //     ic.refnum2residArray[refnum].push(resid);
-                    // }
-
-                    // if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                    //     ic.chainsMapping[chainid] = {};
-                    // }
-                    // ic.chainsMapping[chainid][resid] = refnumLabel;
-                //}
-            }
-        }
-
-        if(Object.keys(ic.resid2refnum).length > 0) {
-            ic.bShowRefnum = true;
-
-            // open sequence view
-            ic.hAtomsRefnum = {};
-            //ic.bResetAnno = true;
-            if(ic.bAnnoShown) {
-                for(let chain in ic.protein_chainid) {
-                    let chainidBase = ic.protein_chainid[chain];
-                    ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
-                }
-            }
-            else {
-                await ic.showAnnoCls.showAnnotations();
-            }
-
-            ic.annotationCls.setAnnoViewAndDisplay('detailed view');
-        }
-        else {
-            alert("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
-        }
-    }
-
-    getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d; ic.icn3dui;
-        let refnum = parseInt(oriRefnum);
-
-        // A-: 10xx
-        // A: 11xx
-        // A': 12xx
-        // A+: 13xx
-        // B: 21xx
-        // C: 32xx
-        // C': 42xx
-        // C'': 51xx, 52xx
-        // D: 61xx
-        // E: 71xx
-        // F: 82xx
-        // G: 91xx, 92xx
-        // G+: 94xx
-
-        // if(refnum < 100) return " " + oriRefnum;
-        // else if(refnum >= 100 && refnum < 1000) {
-        //     if(bCd19) return " " + oriRefnum;
-        //     else return "A^" + oriRefnum;
-        // }
-        if(refnum < 900) return undefined;
-        else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
-        else if(refnum >= 1000 && refnum < 1100) return "A-" + oriRefnum;
-        else if(refnum >= 1100 && refnum < 1200) return "A" + oriRefnum;
-        else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
-        //else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
-        else if(refnum >= 1300 && refnum < 1400) return "A+" + oriRefnum;
-        else if(refnum >= 1400 && refnum < 2000) {
-            if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
-                return prevStrand + oriRefnum;
-            }
-            else {
-                return "A" + oriRefnum;
-            }
-        }
-        else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
-        else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
-        else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
-        else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
-        else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
-        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
-        else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-        else if(refnum >= 9000 && refnum < 9400) return "G" + oriRefnum;
-        //else if(refnum >= 9400 && refnum < 9500) return "G*" + oriRefnum;
-        else if(refnum >= 9400 && refnum < 9500) return "G+" + oriRefnum;
-        else if(refnum >= 9500) return "G" + oriRefnum;
-    }
-
-    async parseCustomRefFile(data) { let ic = this.icn3d; ic.icn3dui;
-        ic.bShowCustomRefnum = true;
-
-        //refnum,11,12,,21,22
-        //1TUP_A,100,101,,,132
-        //1TUP_B,110,111,,141,142
-
-        let lineArray = data.split('\n');
-
-        if(!ic.resid2refnum) ic.resid2refnum = {};
-        if(!ic.refnum2residArray) ic.refnum2residArray = {};
-        if(!ic.chainsMapping) ic.chainsMapping = {};
-
-        let refAA = [];
-        for(let i = 0, il = lineArray.length; i < il; ++i) {
-            let numArray = lineArray[i].split(',');
-            refAA.push(numArray);
-        }
-
-        // assign ic.refnum2residArray
-        let refI = 0;
-        for(let j = 1, jl = refAA[refI].length; j < jl; ++j) {
-            if(!refAA[refI][j]) continue;
-
-            let refnum = refAA[refI][j].trim();
-            if(refnum) {
-                for(let i = 1, il = refAA.length; i < il; ++i) {
-                    if(!refAA[i][j]) continue;
-                    let chainid = refAA[i][0].trim();
-                    let resid = chainid + '_' + refAA[i][j].trim();
-                    if(!ic.refnum2residArray[refnum]) {
-                        ic.refnum2residArray[refnum] = [resid];
-                    }
-                    else {
-                        ic.refnum2residArray[refnum].push(resid);
-                    }
-                }
-            }
-        }
-
-        // assign ic.resid2refnum and ic.chainsMapping
-        for(let i = 1, il = refAA.length; i < il; ++i) {
-            let chainid = refAA[i][0].trim();
-
-            for(let j = 1, jl = refAA[i].length; j < jl; ++j) {
-                if(!refAA[i][j] || !refAA[refI][j]) continue;
-
-                let resi = refAA[i][j].trim();
-                let refnum = refAA[refI][j].trim();
-                if(resi && refnum) {
-                    let resid = chainid + '_' + resi;
-                    ic.resid2refnum[resid] = refnum;
-
-                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                    }
-                    ic.chainsMapping[chainid][resid] = refnum;
-                }
-            }
-        }
-
-        // open sequence view
-        await ic.showAnnoCls.showAnnotations();
-        ic.annotationCls.setAnnoViewAndDisplay('detailed view');
-    }
-
-    rmStrandFromRefnumlabel(refnumLabel) {
-        return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
-    }
- }
 
 /**
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
@@ -64093,7 +64167,7 @@ console.log("free energy: " + energy + " kcal/mol");
           }
 
           if(bPdb) {
-              // let file_pref =(ic.inputid) ? ic.inputid : "custom";
+              // let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
               // ic.saveFileCls.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbDataMutant]);
 
               await thisClass.exportPdbProfix(false, pdbDataMutant, snpStr); 
@@ -64178,7 +64252,7 @@ console.log("free energy: " + energy + " kcal/mol");
       }
 
       if(!me.bNode) {
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         let postfix = (bHydrogen) ? "add_hydrogen" : "add_missing_atoms";
         if(snpStr) postfix = snpStr;
 
@@ -68202,7 +68276,11 @@ class SaveFile {
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
                 if(!bNoHeader) {
-                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+                    //pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
+
+                    // make sur ethe PDB ID is correct
+                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, atom.structure);
+
                     //pdbStr += '\n'; // separate from incomplete secondary structures 
                 }
 
@@ -68545,18 +68623,54 @@ class SaveFile {
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
-        let text = ic.inputid.toUpperCase();
+        let inputid = ic.inputid;
 
-        let idName = (isNaN(ic.inputid) && ic.inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
-        if(ic.inputid.indexOf('http') != -1) {
+        let text, idName;
+        if(inputid.indexOf('http') != -1) {
             idName = "Data from";
-            url = ic.inputid;
-            text = ic.inputid;
+            url = inputid;
+            text = inputid;
+        }
+        else {
+            let idHash = me.utilsCls.getHlStructures();
+
+            let bPdb = false, bAlphaFold = false;
+            for(let structureid in idHash) {
+                if(structureid.length > 5) {
+                    bAlphaFold = true;
+                }
+                else {
+                    bPdb = true;
+                }
+            }
+
+            let structureidArray = Object.keys(idHash);
+            inputid = structureidArray.join(',');
+
+            text = inputid.toUpperCase();
+
+            //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
+            if(bPdb && bAlphaFold) {
+                idName = "AlphaFold/PDB ID";
+            }
+            else if(bPdb) {
+                idName = "PDB ID";
+            }
+            else if(bAlphaFold) {
+                idName = "AlphaFold ID";
+            }
+
+            if(structureidArray.length > 1) {
+                idName += 's';
+            }
+            else if(ic.molTitleHash) {
+                title = ic.molTitleHash[inputid];
+            }
         }
 
         if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
 
-        if(!ic.inputid || ic.inputid.substr(0, 4) == ic.defaultPdbId) {
+        if(!inputid || inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);
         }
         else if(me.cfg.blast_rep_id) {
@@ -69146,7 +69260,7 @@ class ThreeDPrint {
     }
 
     //Output the selected residues in the residue dialog.
-    outputSelection() { let ic = this.icn3d; ic.icn3dui;
+    outputSelection() { let ic = this.icn3d, me = ic.icn3dui;
         let residues = {};
         for(let i in ic.hAtoms) {
             let residueId = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
@@ -69183,7 +69297,7 @@ class ThreeDPrint {
             output += "<tr><td>" + structure + "</td><td>" + chain + "</td><td>" + resi + "</td></tr>";
         }
 
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_residues.txt', 'html', output);
 
     }
@@ -69431,7 +69545,7 @@ class Export3D {
         this.icn3d = icn3d;
     }
 
-    exportStlFile(postfix) { let ic = this.icn3d; ic.icn3dui;
+    exportStlFile(postfix) { let ic = this.icn3d, me = ic.icn3dui;
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -69444,7 +69558,7 @@ class Export3D {
             ic.applyMapCls.applyEmmapOptions();
        }
        let text = this.saveStlFile();
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + postfix + '.stl', 'binary', text);
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
@@ -69472,7 +69586,7 @@ class Export3D {
        }
     }
 
-    exportVrmlFile(postfix) { let ic = this.icn3d; ic.icn3dui;
+    exportVrmlFile(postfix) { let ic = this.icn3d, me = ic.icn3dui;
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -69485,7 +69599,7 @@ class Export3D {
             ic.applyMapCls.applyEmmapOptions();
        }
        let text = this.saveVrmlFile();
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
        //ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
        // assemblies
@@ -71826,7 +71940,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.25.3';
+    this.REVISION = '3.25.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -72154,25 +72268,35 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
 
             for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
-                let hitArray = data.BlastOutput2[q].report.results.search.hits;
+                
+                let hitArray;
+                if(data.BlastOutput2[q].report.results.iterations) { // psi-blast may have "iterations". Use the last iteration.
+                    let nIterations = data.BlastOutput2[q].report.results.iterations.length;
+                    if(data.BlastOutput2[q].report.results.iterations[nIterations - 1].search.query_id != me.cfg.query_id) continue;
+                    hitArray = data.BlastOutput2[q].report.results.iterations[nIterations - 1].search.hits;
+                }
+                else { // blastp may not have "iterations"
+                    if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
+                    hitArray = data.BlastOutput2[q].report.results.search.hits;
+                }
+                
                 let qseq = undefined;
                 for(let i = 0, il = hitArray.length; i < il; ++i) {
-                let hit = hitArray[i];
-                let bFound = false;
-                for(let j = 0, jl = hit.description.length; j < jl; ++j) {
-                    let acc = hit.description[j].accession;
-                    if(acc == me.cfg.blast_rep_id) {
-                    bFound = true;
-                    break;
+                    let hit = hitArray[i];
+                    let bFound = false;
+                    for(let j = 0, jl = hit.description.length; j < jl; ++j) {
+                        let acc = hit.description[j].accession;
+                        if(acc == me.cfg.blast_rep_id) {
+                            bFound = true;
+                            break;
+                        }
                     }
-                }
-                if(bFound) {
-                    qseq = hit.hsps[0].qseq;
-                    //remove gap '-'
-                    qseq = qseq.replace(/-/g, '');
-                    break;
-                }
+                    if(bFound) {
+                        qseq = hit.hsps[0].qseq;
+                        //remove gap '-'
+                        qseq = qseq.replace(/-/g, '');
+                        break;
+                    }
                 }
                 if(qseq !== undefined) me.cfg.query_id = qseq;
                 ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;

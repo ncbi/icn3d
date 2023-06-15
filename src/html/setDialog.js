@@ -132,7 +132,7 @@ class SetDialog {
         html += this.addNotebookTitle('dl_vast', 'Pleaes input chain or PDB file for VAST');
         html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
 
-        html += '<b>Optione 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
+        html += '<b>Option 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
         html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
         html += '<input type=hidden id="' + me.pre + 'pdbstr" name="pdbstr">';
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
@@ -141,12 +141,12 @@ class SetDialog {
         html += '<input type="submit" id="' + me.pre + 'cmdVSMmdb2" name="cmdVSMmdb" value="Submit"></input>';
         html += "</form><br>";
 
-        html += '<b>Optione 2</b>, search with PDB ID and chain name:<br>'; 
+        html += '<b>Option 2</b>, search with PDB ID and chain name:<br>'; 
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastpdbid' value='4N7N' size=8> &nbsp;&nbsp;";
         html += "Chain Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "vastchainid' value='A' size=8> <br>";
         html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
 
-        html += '<b>Optione 3</b>, search with a PDB file:<br>'; 
+        html += '<b>Option 3</b>, search with a PDB file:<br>'; 
         html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
         html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";

@@ -573,22 +573,6 @@ class HBond {
         if(ic.lines === undefined) ic.lines = { }
         ic.lines['hbond'] = [];
         ic.hbondpnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }

@@ -91,6 +91,7 @@ class AnnoCddSite {
 
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             //let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+            // somehow Node.js returned data in dataArray[i]
             let data = (me.bNode) ? dataArray[i] : dataArray[i].value;
 
             if(!data) continue;

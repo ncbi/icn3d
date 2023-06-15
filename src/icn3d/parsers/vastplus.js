@@ -142,7 +142,8 @@ class Vastplus {
 
         let queryDataArray = [];
         for(let index = 0, indexl = chainidpairArray.length; index < indexl; ++index) {
-            let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+            // let queryData = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+            let queryData = dataArray[index].value; //[0];
 
             queryDataArray.push(queryData);
 /*

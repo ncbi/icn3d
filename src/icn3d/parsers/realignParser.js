@@ -189,7 +189,8 @@ class RealignParser {
       //var data2 = v2[0];
       for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
     //  for(let index = 1, indexl = dataArray.length; index < indexl; ++index) {
-          let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+        //   let data = (me.bNode) ? dataArray[index] : dataArray[index].value;//[0];
+          let data = dataArray[index].value;//[0];
           if(!data) continue;
 
           let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();

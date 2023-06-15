@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import { Refnum } from "../analysis/refnum";
+
 class GetGraph {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -144,7 +146,11 @@ class GetGraph {
 
         // show reference numbers
         if(ic.bShownRefnum && ic.resid2refnum[resid]) {
-            nodeName = ic.resid2refnum[resid];
+            let refnumLabel = ic.resid2refnum[resid];
+            let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+
+            let resn = ic.residueId2Name[resid]
+            nodeName = resn + refnumStr;
         }
 
         let strokecolor = '#000';

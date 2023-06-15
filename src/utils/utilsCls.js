@@ -461,6 +461,28 @@ class UtilsCls {
     getMemDesc() {
       return "<div style='width:150px'><span style='color:red'>Red</span> and <span style='color:blue'>blue</span> membranes indicate <span style='color:red'>extracellular</span> and <span style='color:blue'>intracellular</span> membranes, respectively.<br><br></div>";
     }
+
+    getStructures(atoms) { let me = this.icn3dui;
+      let idHash = {};
+      for(let i in atoms) {
+          let structureid = me.icn3d.atoms[i].structure;
+          idHash[structureid] = 1;
+      }
+
+      return idHash;
+    }
+
+    getHlStructures(atoms) { let me = this.icn3dui;
+      if(!atoms) atoms = me.icn3d.hAtoms;
+
+      return this.getStructures(atoms);
+    }
+
+    getDisplayedStructures(atoms) { let me = this.icn3dui;
+      if(!atoms) atoms = me.icn3d.dAtoms;
+
+      return this.getStructures(atoms);
+    }
 }
 
 export {UtilsCls}

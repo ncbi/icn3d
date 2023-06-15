@@ -56,7 +56,11 @@ class ShowAnno {
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 let pos = Math.round(chainArray[i].indexOf('_'));
                 //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
-                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
+                // let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
+
+                // the first residue of 6AL5_H is non-standard residue and treated as chemical
+                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+
                 if(atom === undefined) atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainArray[i]]);
                 if(atom === undefined) continue;
 
@@ -72,13 +76,10 @@ class ShowAnno {
                 }
                 //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
 
-                // the first residue of 6AL5_H is non-standard residue and treated as chemical
-                let atom2 = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
-
-                if((ic.proteins.hasOwnProperty(atom.serial) || ic.proteins.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
+                if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
-                else if((ic.nucleotides.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chainsSeq[chainArray[i]].length > 1) {
+                else if(ic.nucleotides.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     nucleotide_chainid[chainArray[i]] = chainidBase;
                 }
                 else {
@@ -135,8 +136,11 @@ class ShowAnno {
         let nucleotide_chainid = result.nucleotide_chainid;
         let chemical_chainid = result.chemical_chainid;
         let chemical_set = result.chemical_set;
-            
+
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
+            // assign early to avoid load annotations twice
+            ic.bAnnoShown = true;
+
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                     if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
@@ -227,7 +231,7 @@ class ShowAnno {
                 await thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
              } // align seq to structure
         }
-        ic.bAnnoShown = true;
+        //ic.bAnnoShown = true;
 
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
@@ -307,7 +311,7 @@ class ShowAnno {
                 + this.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
-                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid)) {
+                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {
                     chainHtml += "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
                     + this.addButton(chnid, "icn3d-igloopsets", "Ig Loop Sets", "Define sets for each Ig loop in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle);
                 }
@@ -678,7 +682,7 @@ class ShowAnno {
               }
               let compTitle = (ic.seqStructAlignData !== undefined) ? 'BLAST, E: ' + evalue : 'Score: ' + evalue;
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
-              let residueidHash = {};
+              let residueidHash = {}
               let residueid;
               if(ic.consrvResPosArray !== undefined) {
                 for(let i = 0, il = ic.consrvResPosArray.length; i < il; ++i) {

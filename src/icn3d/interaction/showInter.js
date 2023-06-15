@@ -206,6 +206,24 @@ class ShowInter {
        }
     }
 
+    hideExtraBonds() { let ic = this.icn3d, me = ic.icn3dui;
+        for(let i in ic.atoms) {
+            ic.atoms[i].style2 = 'nothing';
+        }
+
+        for(let i in ic.sidec) {
+            if(ic.hAtoms.hasOwnProperty(i)) {
+                ic.atoms[i].style2 = ic.opts["sidec"];
+            }
+        }
+
+        for(let i in ic.water) {
+            if(ic.hAtoms.hasOwnProperty(i)) {
+                ic.atoms[i].style = ic.opts["water"];
+            }
+        }
+    }
+
     hideHbondsContacts() { let ic = this.icn3d, me = ic.icn3dui;
            let select = "set hbonds off";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
@@ -220,6 +238,8 @@ class ShowInter {
            select = "set halogen pi off";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.piHalogenCls.hideHalogenPi();
+
+           this.hideExtraBonds();
     }
 
     showIonicInteractions(threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type) { let ic = this.icn3d, me = ic.icn3dui;

@@ -587,22 +587,6 @@ class PiHalogen {
         ic.halogenpnts = [];
         ic.picationpnts = [];
         ic.pistackingpnts = [];
-
-        for(let i in ic.atoms) {
-            ic.atoms[i].style2 = 'nothing';
-        }
-
-        for(let i in ic.sidec) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style2 = ic.opts["sidec"];
-            }
-        }
-
-        for(let i in ic.water) {
-            if(ic.hAtoms.hasOwnProperty(i)) {
-                ic.atoms[i].style = ic.opts["water"];
-            }
-        }
     }
 
 }
