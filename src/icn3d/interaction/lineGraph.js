@@ -245,6 +245,9 @@ class LineGraph {
                 heightAll = height * strucArray.length;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX;
+
+                // add some extra space
+                width += 20;
             }
 
             // show common and diff interaction as well
@@ -300,6 +303,7 @@ class LineGraph {
                 let height = 110;
                 let margin = 10;
                 let width =(len1 > len2) ? len1 *(r + gap) + 2 * margin : len2 *(r + gap) + 2 * margin;
+
                 ic.linegraphWidth = 2 * width;
                 html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
                 html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + ic.linegraphWidth + "px'>";

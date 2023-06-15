@@ -1593,7 +1593,7 @@ class Events {
                 ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
                 let text = ic.viewInterPairsCls.exportSpherePairs();
-                let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
 
                 thisClass.setLogCmd("export pairs | " + nameArray2 + " " + nameArray + " | dist " + radius, true);

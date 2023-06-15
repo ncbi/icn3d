@@ -167,16 +167,17 @@
             pdbAjaxArray.push(pdbAjax);
         }
 
-        // try {
+        try {
             let allPromise = Promise.allSettled(pdbAjaxArray);
             ic.pdbDataArray = await allPromise;
             await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // catch(err) {
-        //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-        //     //alert("Error in retrieveing reference PDB data...");
-        //     return;
-        // }             
+        }
+        catch(err) {
+            if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+            //alert("Error in retrieveing reference PDB data...");
+            return;
+        }       
+
         // }
         // }
     }
@@ -191,8 +192,8 @@
 
         let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-        // if(!ic.resid2domainid) ic.resid2domainid = {};
-        ic.resid2domainid = {};
+        if(!ic.resid2domainid) ic.resid2domainid = {};
+        //ic.resid2domainid = {};
         ic.domainid2pdb = {};
 
         let minResidues = 20;
@@ -226,8 +227,8 @@
                     let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
                     for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                         let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0';
-                    }   
+                        ic.resid2domainid[resid] = chainid + '-0' + '_' + Object.keys(currAtoms).length; 
+                    }
                 }
                 else {                 
                     for(let k = 0, kl = subdomains.length; k < kl; ++k) {
@@ -238,27 +239,36 @@
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
                             for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                //let residNCBI = chainid + '_' + n;
-                                //let resid = ic.ncbi2resid[residNCBI];
                                 let resid = chainid + '_' + pos2resi[n];
                                 domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k;
+                                //ic.resid2domainid[resid] = chainid + '-' + k;
                             }
                         }
 
                         domainAtomsArray.push(domainAtoms);
+
+                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                            let startResi = segArray[m];
+                            let endResi = segArray[m+1];
+                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                                let resid = chainid + '_' + pos2resi[n];
+                                //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + Object.keys(domainAtoms).length; 
+                            }
+                        }
                     }
                 }
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     // ig strand for any subset will have the same k, use the number of residue to separate them
-                    let domainid = chainid + '-' + k + '_' + domainAtomsArray[k].length; 
+                    let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
                         let struct2 = ic.defaultPdbId + index;
-                        let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+                        //let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
+                        let pdb_query = dataArray[index].value; //[0];
                         let header = 'HEADER                                                        ' + struct2 + '\n';
                         pdb_query = header + pdb_query;
 
@@ -272,7 +282,7 @@
             }
         }
 
-        // try {
+        try {
             let dataArray2 = [];
             let allPromise = Promise.allSettled(ajaxArray);
             dataArray2 = await allPromise;
@@ -281,12 +291,12 @@
             await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
 
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
-        // }
-        // catch(err) {
-        //     if(!me.bNode) console.log("Error in aligning with TM-align...");
-        //     //console.log("Error in aligning with TM-align...");
-        //     return;
-        // }                       
+        }
+        catch(err) {
+            if(!me.bNode) console.log("Error in aligning with TM-align...");
+            //console.log("Error in aligning with TM-align...");
+            return;
+        }                       
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
@@ -310,7 +320,8 @@
         let minResidues = 20;
 
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
-            let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
+            //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
+            let queryData = dataArray[i].value; //[0];
 
             if(!queryData) {
                 if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
@@ -402,7 +413,8 @@
                 let pdb_target = ic.domainid2pdb[domainid];
                 for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
                     let struct2 = ic.defaultPdbId + index;
-                    let pdb_query = (me.bNode) ? ic.pdbDataArray[index] : ic.pdbDataArray[index].value; //[0];
+                    //let pdb_query = (me.bNode) ? ic.pdbDataArray[index] : ic.pdbDataArray[index].value; //[0];
+                    let pdb_query = ic.pdbDataArray[index].value; //[0];
                     let header = 'HEADER                                                        ' + struct2 + '\n';
                     pdb_query = header + pdb_query;
 
@@ -418,7 +430,7 @@
             let dataArray3 = [];
             let allPromise = Promise.allSettled(ajaxArray);
             dataArray3 = await allPromise;
-        
+
             await thisClass.parseAlignData(dataArray3, domainidpairArray3);
 
             // end of round 2

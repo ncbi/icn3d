@@ -281,7 +281,10 @@ class SetSeqAlign {
         */
 
         let resid = chainid + '_' + resi;
-        return ic.residueId2Name[resid];
+        let resn = ic.residueId2Name[resid];
+        if(!resn) resn = '?';
+
+        return resn;
     }
 
     getResiAferAlign(chainid, bRealign, pos) { let ic = this.icn3d, me = ic.icn3dui;

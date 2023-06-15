@@ -24,6 +24,9 @@ class ApplySsbonds {
               end = ic.ALTERNATE_STRUCTURE % nStructures + 1;
           }
           else {
+            //   let structureHash = me.utilsCls.getDisplayedStructures();
+            //   structureArray = Object.keys(structureHash);
+
               start = 0;
               end = structureArray.length;
           }
@@ -33,7 +36,7 @@ class ApplySsbonds {
           for(let s = start, sl = end; s < sl; ++s) {
               let structure = structureArray[s];
 
-              if(ic.ssbondpnts[structure] === undefined) continue;
+              if(!ic.ssbondpnts[structure]) continue;
 
               //for(let i = 0, lim = Math.floor(ic.ssbondpnts[structure].length / 2); i < lim; i++) {
               for(let i = Math.floor(ic.ssbondpnts[structure].length / 2) - 1; i >= 0; i--) {

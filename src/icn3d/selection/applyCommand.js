@@ -187,18 +187,22 @@ class ApplyCommand {
       }
       else if(command == 'set hbonds off') {
         ic.hBondCls.hideHbonds();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set salt bridge off') {
         ic.saltbridgeCls.hideSaltbridge();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set contact off') {
         ic.contactCls.hideContact();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
       else if(command == 'set halogen pi off') {
         ic.piHalogenCls.hideHalogenPi();
+        ic.showInterCls.hideExtraBonds();
         ic.drawCls.draw();
       }
 
@@ -1043,7 +1047,7 @@ class ApplyCommand {
                 ic.showInterCls.pickCustomSphere(radius, nameArray2, nameArray, ic.bSphereCalc);
                 ic.bSphereCalc = true;
                 let text = ic.viewInterPairsCls.exportSpherePairs();
-                let file_pref =(ic.inputid) ? ic.inputid : "custom";
+                let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
                 ic.saveFileCls.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
             }
         }

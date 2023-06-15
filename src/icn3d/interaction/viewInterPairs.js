@@ -597,7 +597,7 @@ class ViewInterPairs {
            }
        }
        text += '</table><br/></div></body></html>';
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + '_interactions.html', 'html', text);
     }
     exportSsbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
@@ -618,7 +618,7 @@ class ViewInterPairs {
         let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' disulfide pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
     }
     exportClbondPairs() {var ic = this.icn3d, me = ic.icn3dui;
@@ -646,7 +646,7 @@ class ViewInterPairs {
         let text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' cross-linkage pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
         text += tmpText;
         text += '</table><br/></div></body></html>';
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_crosslinkage_pairs.html', 'html', text);
     }
     exportHbondPairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;

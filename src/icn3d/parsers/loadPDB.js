@@ -105,11 +105,14 @@ class LoadPDB {
                 structure = this.getStructureId(id, moleculeNum, bMutation);
 
                 ic.molTitle = '';
+                ic.molTitleHash = {};
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
                 let name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
+                if(!ic.molTitleHash) ic.molTitleHash = {};
+                ic.molTitleHash[structure] = name.trim() + " ";
 
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;

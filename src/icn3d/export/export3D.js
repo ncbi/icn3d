@@ -20,7 +20,7 @@ class Export3D {
             ic.applyMapCls.applyEmmapOptions();
        }
        let text = this.saveStlFile();
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + postfix + '.stl', 'binary', text);
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
@@ -61,7 +61,7 @@ class Export3D {
             ic.applyMapCls.applyEmmapOptions();
        }
        let text = this.saveVrmlFile();
-       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
        ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
        //ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
        // assemblies

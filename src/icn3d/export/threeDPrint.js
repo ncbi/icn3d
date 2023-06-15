@@ -161,7 +161,7 @@ class ThreeDPrint {
             output += "<tr><td>" + structure + "</td><td>" + chain + "</td><td>" + resi + "</td></tr>";
         }
 
-        let file_pref =(ic.inputid) ? ic.inputid : "custom";
+        let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
         ic.saveFileCls.saveFile(file_pref + '_residues.txt', 'html', output);
 
     }

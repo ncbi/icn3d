@@ -186,6 +186,7 @@ class ApplyOther {
         else if (options.chemicalbinding === 'hide') {
             // truen off hdonds
             ic.hBondCls.hideHbonds();
+            ic.showInterCls.hideExtraBonds();
 
             // center on the atoms
             if(!ic.bSetFog) ic.transformCls.zoominSelection(ic.atoms);

@@ -237,7 +237,7 @@ class ShowSeq {
               }
               else {
                   let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[chnid + '_' + pos]);
-                  let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                  let colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF' || atom.color.getHexString().toUpperCase() === 'FFF') ? 'DDDDDD' : atom.color.getHexString();
                   color =(atom.color !== undefined) ? colorStr : "CCCCCC";
               }
               html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
@@ -431,18 +431,8 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }         
-            else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid)) {              
-                let result = this.showRefNum(giSeq, chnid);
-                html += result.html;
-                html3 += result.html3;
-
-                let kabat_or_imgt = 1;
-                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
-                html += result.html;
-                html3 += result.html3;
-
-                kabat_or_imgt = 2;
-                result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+            else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
+                let result = this.showAllRefNum(giSeq, chnid);
                 html += result.html;
                 html3 += result.html3;
             }
@@ -468,6 +458,26 @@ class ShowSeq {
         $("#" + ic.pre + 'dt_giseq_' + chnid).html(html);
         $("#" + ic.pre + 'ov_giseq_' + chnid).html(html2);
         $("#" + ic.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
+    }
+
+    showAllRefNum(giSeq, chnid) {  let ic = this.icn3d, me = ic.icn3dui;
+        let html = '', html3 = '';
+
+        let result = this.showRefNum(giSeq, chnid);
+        html += result.html;
+        html3 += result.html3;
+
+        let kabat_or_imgt = 1;
+        result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+        html += result.html;
+        html3 += result.html3;
+
+        kabat_or_imgt = 2;
+        result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
+        html += result.html;
+        html3 += result.html3;
+
+        return {'html': html, 'html3': html3};
     }
 
     showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
@@ -502,11 +512,12 @@ class ShowSeq {
 
         //check if Kabat refnum available
         let bKabatFound = false;
+
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
             let residueid = chnid + '_' + currResi;
             let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
-
+            
             if(ic.domainid2ig2kabat[domainid] && Object.keys(ic.domainid2ig2kabat[domainid]).length > 0) {
                 bKabatFound = true;
                 break;
@@ -543,7 +554,7 @@ class ShowSeq {
         // sometimes one chain may have several Ig domains,set an index for each IgDomain
         let index = 1, prevStrandPostfix = '', bStart = false;
 
-        if(!bCustom && !kabat_or_imgt) {     
+        if(!bCustom && !kabat_or_imgt && !me.bNode) { // do not overwrite loops in node  
             // reset ic.residIgLoop for the current selection, which could be the second round of ref num assignment
             let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
             for(let resid in residHash) {
@@ -655,12 +666,10 @@ class ShowSeq {
                 prevStrand = currStrand;
             }
 
-            // 2. remove strands with less than 3 residues
+            // 2. remove strands with less than 3 residues except G strand
             for(let il = strandArray.length, i = il - 1; i >= 0; --i) {
-                if(strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
+                if(strandArray[i].strand.substr(0, 1) != 'G' && strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
                     if(i != il - 1) { // modify 
-                        // strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + strandArray[i].endRefnum - strandArray[i].startRefnum + 1;
-
                         strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + parseInt(strandArray[i].endResi) - parseInt(strandArray[i].startResi) + 1;
                     }
 
@@ -687,6 +696,8 @@ class ShowSeq {
                         refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                         currRefnum = parseInt(refnumStr);
                         refnumLabelNoPostfix = currStrand + currRefnum;
+
+                        currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                         
                         let firstChar = refnumLabel.substr(0,1);
                         if(!bStart && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
@@ -703,7 +714,26 @@ class ShowSeq {
                         refnumLabel = undefined;
                     }
                     else {
-                        if(parseInt(currResi) < parseInt(strandArray[strandCnt].startResi)) {
+                        let bBefore = false, bInRange= false, bAfter = false;
+                        // 100, 100A
+                        if(parseInt(currResi) == parseInt(strandArray[strandCnt].startResi) && currResi != strandArray[strandCnt].startResi) {
+                            bBefore = currResi < strandArray[strandCnt].startResi;
+                        }
+                        else {
+                            bBefore = parseInt(currResi) < parseInt(strandArray[strandCnt].startResi);
+                        }
+
+                        // 100, 100A
+                        if(parseInt(currResi) == parseInt(strandArray[strandCnt].endResi) && currResi != strandArray[strandCnt].endResi) {
+                            bAfter = currResi > strandArray[strandCnt].endResi;
+                        }
+                        else {
+                            bAfter = parseInt(currResi) > parseInt(strandArray[strandCnt].endResi);
+                        }
+
+                        bInRange = (!bBefore && !bAfter) ? true : false;
+
+                        if(bBefore) {
                             ic.residIgLoop[residueid] = 1;
 
                             if(bBeforeAstrand) { // make it continuous to the 1st strand
@@ -764,7 +794,7 @@ class ShowSeq {
                                 }
                             }
                         }
-                        else if(parseInt(currResi) >= parseInt(strandArray[strandCnt].startResi) && parseInt(currResi) <= parseInt(strandArray[strandCnt].endResi)) {
+                        else if(bInRange) {
                             // not in loop any more if you assign ref numbers multiple times
                             //delete ic.residIgLoop[residueid];
 
@@ -792,7 +822,7 @@ class ShowSeq {
                                 }
                             }
                         }
-                        else if(parseInt(currResi) > parseInt(strandArray[strandCnt].endResi)) {     
+                        else if(bAfter) {     
                             ic.residIgLoop[residueid] = 1;    
 
                             if(!bAfterGstrand) {

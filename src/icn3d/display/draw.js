@@ -9,6 +9,8 @@
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
     draw(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.impostorCls.clearImpostors();
+        
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -50,7 +52,7 @@
           this.render(bVrAr);
         }
 
-        ic.impostorCls.clearImpostors();
+        //ic.impostorCls.clearImpostors();
 
         // show membranes
         if(ic.bOpm && !me.cfg.chainalign) {

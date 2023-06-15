@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.25.3';
+    this.REVISION = '3.25.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -491,25 +491,35 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
 
             for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
-                let hitArray = data.BlastOutput2[q].report.results.search.hits;
+                
+                let hitArray;
+                if(data.BlastOutput2[q].report.results.iterations) { // psi-blast may have "iterations". Use the last iteration.
+                    let nIterations = data.BlastOutput2[q].report.results.iterations.length;
+                    if(data.BlastOutput2[q].report.results.iterations[nIterations - 1].search.query_id != me.cfg.query_id) continue;
+                    hitArray = data.BlastOutput2[q].report.results.iterations[nIterations - 1].search.hits;
+                }
+                else { // blastp may not have "iterations"
+                    if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
+                    hitArray = data.BlastOutput2[q].report.results.search.hits;
+                }
+                
                 let qseq = undefined;
                 for(let i = 0, il = hitArray.length; i < il; ++i) {
-                let hit = hitArray[i];
-                let bFound = false;
-                for(let j = 0, jl = hit.description.length; j < jl; ++j) {
-                    let acc = hit.description[j].accession;
-                    if(acc == me.cfg.blast_rep_id) {
-                    bFound = true;
-                    break;
+                    let hit = hitArray[i];
+                    let bFound = false;
+                    for(let j = 0, jl = hit.description.length; j < jl; ++j) {
+                        let acc = hit.description[j].accession;
+                        if(acc == me.cfg.blast_rep_id) {
+                            bFound = true;
+                            break;
+                        }
                     }
-                }
-                if(bFound) {
-                    qseq = hit.hsps[0].qseq;
-                    //remove gap '-'
-                    qseq = qseq.replace(/-/g, '');
-                    break;
-                }
+                    if(bFound) {
+                        qseq = hit.hsps[0].qseq;
+                        //remove gap '-'
+                        qseq = qseq.replace(/-/g, '');
+                        break;
+                    }
                 }
                 if(qseq !== undefined) me.cfg.query_id = qseq;
                 ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
