@@ -570,6 +570,14 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        html += "<ul>";
+        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
+        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        html += "</ul>";
+
+        
+
         html += this.getMenuText('mn1_alignwrap', 'Align', undefined, 1, 1);
         html += "<ul>";
         

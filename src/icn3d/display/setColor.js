@@ -530,7 +530,7 @@ class SetColor {
                     }
                     else {
                         let b = atom.b;
-
+                        
                         // PDB
                         b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length < 6) ? 100 - b : b;
 

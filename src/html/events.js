@@ -1053,6 +1053,44 @@ class Events {
              + blast_rep_id + '; show selection', urlTarget);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "run_esmfold", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            if($('#' + me.pre + 'dl_mmdbafid').hasClass('ui-dialog-content')) {
+                $('#' + me.pre + 'dl_mmdbafid').dialog( 'close' );
+            }
+
+            let esmfold_fasta = $("#" + me.pre + "esmfold_fasta").val();
+            let pdbid;
+
+            if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
+                let pos = esmfold_fasta.indexOf('\n');
+                ic.esmTitle = esmfold_fasta.substr(1, pos - 1);
+                pdbid = ic.esmTitle.substr(0, ic.esmTitle.indexOf(' '));
+                if(pdbid.length < 6) pdbid = pdbid.padEnd(6, '-');
+
+                esmfold_fasta = esmfold_fasta.substr(pos + 1);
+            }
+
+            // remove new lines
+            esmfold_fasta = esmfold_fasta.replace(/\s/g, '');
+
+            if(esmfold_fasta.length > 1024) {
+                alert("Your seqeunce is larger than 1024 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
+                return;
+            }
+
+            let esmUrl = "https://api.esmatlas.com/foldSequence/v1/pdb/";
+            let alertMess = 'Problem in returning PDB from ESMFold server...';
+            thisClass.setLogCmd("Run ESMFold with the sequence " + esmfold_fasta, false);
+
+            let esmData = await me.getAjaxPostPromise(esmUrl, esmfold_fasta, true, alertMess, undefined, true, 'text');
+            ic.bEsmfold = true;
+            let bAppend = true;
+            await ic.pdbParserCls.loadPdbData(esmData, pdbid, undefined, bAppend, undefined, undefined, undefined, ic.bEsmfold);
+         });
+
         me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );

@@ -889,8 +889,13 @@ class SaveFile {
             if(structureidArray.length > 1) {
                 idName += 's';
             }
-            else if(ic.molTitleHash) {
-                title = ic.molTitleHash[inputid];
+            
+            if(ic.molTitleHash) {
+                title = '';
+                for(let i = 0, il = structureidArray.length; i < il; ++i) {
+                    title += ic.molTitleHash[structureidArray[i]];
+                    if(i < il - 1) title += '; ';
+                }
             }
         }
 

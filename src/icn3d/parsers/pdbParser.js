@@ -98,14 +98,14 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bAppend && (type === undefined || type === 'target')) {
             // if a command contains "load...", the commands should not be cleared with init()
             let bKeepCmd = (ic.bCommandLoad) ? true : false;
             if(!ic.bStatefile) ic.init(bKeepCmd);
         }
 
-        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bLastQuery); // defined in the core library
+        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library
 
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -178,7 +178,7 @@ class PdbParser {
         }
 
         //if(me.cfg.afid && !ic.bAfMem && !me.cfg.blast_rep_id) {
-        if(me.cfg.afid && !ic.bAfMem) {
+        if( (me.cfg.afid && !ic.bAfMem) || ic.bEsmfold) {
             ic.opts['color'] = 'confidence';
         }
 

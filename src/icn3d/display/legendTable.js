@@ -12,7 +12,7 @@
 
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
         if(colorType == 'confidence') {
-            colorLabel = 'AlphaFold Confidence';
+            colorLabel = 'AlphaFold Confidence (pLDDT)';
         }
         else if(colorType == 'normalized hydrophobic') {
             colorLabel = 'Normalized Hydrophobicity';

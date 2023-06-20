@@ -320,7 +320,7 @@ class ShareLink {
            outputCmd = tmpUrl;
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
-           if((ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
+           if(ic.bEmsfold || (ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
            let id;
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
