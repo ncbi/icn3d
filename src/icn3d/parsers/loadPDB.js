@@ -19,7 +19,7 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;
@@ -111,8 +111,10 @@ class LoadPDB {
             } else if (record === 'TITLE ') {
                 let name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
+                if(bEsmfold && ic.esmTitle) ic.molTitle = ic.esmTitle;
+
                 if(!ic.molTitleHash) ic.molTitleHash = {};
-                ic.molTitleHash[structure] = name.trim() + " ";
+                ic.molTitleHash[structure] = ic.molTitle;
 
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;
@@ -302,6 +304,9 @@ class LoadPDB {
                 let z = parseFloat(line.substr(46, 8));
                 let coord = new THREE.Vector3(x, y, z);
 
+                let bFactor = parseFloat(line.substr(60, 8));
+                if(bEsmfold) bFactor *= 100;
+
                 let atomDetails = {
                     het: record[0] === 'H', // optional, used to determine chemicals, water, ions, etc
                     serial: serial,         // required, unique atom id
@@ -313,7 +318,7 @@ class LoadPDB {
                     resi: resi,             // optional, used to identify residue ID
                     //insc: line.substr(26, 1),
                     coord: coord,           // required, used to draw 3D shape
-                    b: parseFloat(line.substr(60, 8)), // optional, used to draw B-factor tube
+                    b: bFactor,             // optional, used to draw B-factor tube
                     elem: elem,             // optional, used to determine hydrogen bond
                     bonds: [],              // required, used to connect atoms
                     ss: 'coil',             // optional, used to show secondary structures

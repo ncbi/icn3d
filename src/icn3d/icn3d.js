@@ -825,7 +825,7 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
         this.opts['chemicals'] = 'ball and stick';
     }
 
-    if(me.cfg.afid !== undefined) {
+    if(me.cfg.afid !== undefined || ic.bEsmfold) {
         this.opts['color'] = 'confidence';
     }
 

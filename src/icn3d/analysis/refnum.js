@@ -462,7 +462,8 @@
             for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
                 chainList += ic.chainid2refpdbname[chainid][i] + " ";
             }
-            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            //if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
 
             let prevStrand;
             let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';

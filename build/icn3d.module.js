@@ -6825,6 +6825,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_esmfold", "click", function(e) { me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_esmfold', 'Sequence to structure prediction with ESMFold');
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
@@ -6878,7 +6882,7 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export state file", false);
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
 
            ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
         });
@@ -6900,8 +6904,8 @@ class ClickMenu {
            let pdbStr = ic.saveFileCls.getSelectedResiduePDB();
 
            thisClass.setLogCmd("export PDB of selected residues", false);
-           //let file_pref =(ic.inputid) ? ic.inputid : "custom";
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           //let file_pref = Object.keys(ic.structures).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
         });
 
@@ -7017,7 +7021,7 @@ class ClickMenu {
                text += '<tr><td>' + structure + '</td><td>' + chain + '</td><td>' + Object.keys(residueHash).length + '</td><td>' + Object.keys(ic.chains[chainid]).length + '</td></tr>';
            }
            text += '</table><br/></div></body></html>';
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_counts.html', 'html', text);
         });
 
@@ -7027,7 +7031,7 @@ class ClickMenu {
            thisClass.SetChainsAdvancedMenu();
 
            let text = ic.saveFileCls.exportCustomAtoms();
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
 
@@ -7038,7 +7042,7 @@ class ClickMenu {
 
            let bDetails = true;
            let text = ic.saveFileCls.exportCustomAtoms(bDetails);
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
         });
 
@@ -7157,6 +7161,11 @@ class ClickMenu {
            let url = ic.saveFileCls.getLinkToStructureSummary(true);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_alphafold", "click", function(e) { me.icn3d; //e.preventDefault();
+           let url = 'https://github.com/sokrypton/ColabFold';
+           window.open(url, '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -9396,6 +9405,14 @@ class SetMenu {
 
         html += "</ul>";
         html += "</li>";
+
+        html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        html += "<ul>";
+        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
+        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        html += "</ul>";
+
+        
 
         html += this.getMenuText('mn1_alignwrap', 'Align', undefined, 1, 1);
         html += "<ul>";
@@ -11731,6 +11748,13 @@ class SetDialog {
             + me.htmlCls.buttonStr + "reload_alignswlocal' style='margin-left:30px'>Align with Local Smith-Waterman</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_esmfold' style='max-width:600px;' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_esmfold', 'Sequence to structure prediction with ESMFold');
+        html += "The sequence to structure prediction is done via <a href='https://esmatlas.com/resources?action=fold' target='_blank'>ESM Metagenomic Atlas</a>. Generally the sequence should be less than 1024 characters. For any seqeunce longer than 1024, please see the discussion <a href='https://github.com/facebookresearch/esm/issues/21' target='_blank'>here</a>.<br><br> ";
+        html += "FASTA sequence: <br><textarea id='" + me.pre + "esmfold_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+        html += me.htmlCls.buttonStr + "run_esmfold'>ESMFold</button> ";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_yournote', 'Your Note');
         html += "Your note will be saved in the HTML file when you click \"File > Save File > iCn3D PNG Image\".<br><br>";
@@ -13721,6 +13745,44 @@ class Events {
              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
              + blast_rep_id + '; show selection', urlTarget);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "run_esmfold", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            if($('#' + me.pre + 'dl_mmdbafid').hasClass('ui-dialog-content')) {
+                $('#' + me.pre + 'dl_mmdbafid').dialog( 'close' );
+            }
+
+            let esmfold_fasta = $("#" + me.pre + "esmfold_fasta").val();
+            let pdbid;
+
+            if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
+                let pos = esmfold_fasta.indexOf('\n');
+                ic.esmTitle = esmfold_fasta.substr(1, pos - 1);
+                pdbid = ic.esmTitle.substr(0, ic.esmTitle.indexOf(' '));
+                if(pdbid.length < 6) pdbid = pdbid.padEnd(6, '-');
+
+                esmfold_fasta = esmfold_fasta.substr(pos + 1);
+            }
+
+            // remove new lines
+            esmfold_fasta = esmfold_fasta.replace(/\s/g, '');
+
+            if(esmfold_fasta.length > 1024) {
+                alert("Your seqeunce is larger than 1024 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
+                return;
+            }
+
+            let esmUrl = "https://api.esmatlas.com/foldSequence/v1/pdb/";
+            let alertMess = 'Problem in returning PDB from ESMFold server...';
+            thisClass.setLogCmd("Run ESMFold with the sequence " + esmfold_fasta, false);
+
+            let esmData = await me.getAjaxPostPromise(esmUrl, esmfold_fasta, true, alertMess, undefined, true, 'text');
+            ic.bEsmfold = true;
+            let bAppend = true;
+            await ic.pdbParserCls.loadPdbData(esmData, pdbid, undefined, bAppend, undefined, undefined, undefined, ic.bEsmfold);
+         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -35773,7 +35835,7 @@ class SetColor {
                     }
                     else {
                         let b = atom.b;
-
+                        
                         // PDB
                         b = (atom.structure.substr(0, 4) != ic.defaultPdbId && atom.structure.length < 6) ? 100 - b : b;
 
@@ -36303,7 +36365,7 @@ class SetOption {
 
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
         if(colorType == 'confidence') {
-            colorLabel = 'AlphaFold Confidence';
+            colorLabel = 'AlphaFold Confidence (pLDDT)';
         }
         else if(colorType == 'normalized hydrophobic') {
             colorLabel = 'Normalized Hydrophobicity';
@@ -45572,7 +45634,8 @@ class LineGraph {
             for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
                 chainList += ic.chainid2refpdbname[chainid][i] + " ";
             }
-            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            //if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
 
             let prevStrand;
             let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';
@@ -51304,14 +51367,14 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         if(!bAppend && (type === undefined || type === 'target')) {
             // if a command contains "load...", the commands should not be cleared with init()
             let bKeepCmd = (ic.bCommandLoad) ? true : false;
             if(!ic.bStatefile) ic.init(bKeepCmd);
         }
 
-        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bLastQuery); // defined in the core library
+        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library
 
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -51381,7 +51444,7 @@ class PdbParser {
         }
 
         //if(me.cfg.afid && !ic.bAfMem && !me.cfg.blast_rep_id) {
-        if(me.cfg.afid && !ic.bAfMem) {
+        if( (me.cfg.afid && !ic.bAfMem) || ic.bEsmfold) {
             ic.opts['color'] = 'confidence';
         }
 
@@ -54618,6 +54681,11 @@ class LoadAtomData {
               }
             }
         }
+
+        if(type === 'mmdbid') {
+            if(!ic.molTitleHash) ic.molTitleHash = {};
+            ic.molTitleHash[id] = ic.molTitle;
+        }
         
         let atomid2serial = {};
         let prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
@@ -56584,7 +56652,7 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;
@@ -56674,8 +56742,10 @@ class LoadPDB {
             } else if (record === 'TITLE ') {
                 let name = line.substr(10).replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
+                if(bEsmfold && ic.esmTitle) ic.molTitle = ic.esmTitle;
+
                 if(!ic.molTitleHash) ic.molTitleHash = {};
-                ic.molTitleHash[structure] = name.trim() + " ";
+                ic.molTitleHash[structure] = ic.molTitle;
 
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;
@@ -56852,6 +56922,9 @@ class LoadPDB {
                 let z = parseFloat(line.substr(46, 8));
                 let coord = new THREE.Vector3(x, y, z);
 
+                let bFactor = parseFloat(line.substr(60, 8));
+                if(bEsmfold) bFactor *= 100;
+
                 let atomDetails = {
                     het: record[0] === 'H', // optional, used to determine chemicals, water, ions, etc
                     serial: serial,         // required, unique atom id
@@ -56863,7 +56936,7 @@ class LoadPDB {
                     resi: resi,             // optional, used to identify residue ID
                     //insc: line.substr(26, 1),
                     coord: coord,           // required, used to draw 3D shape
-                    b: parseFloat(line.substr(60, 8)), // optional, used to draw B-factor tube
+                    b: bFactor,             // optional, used to draw B-factor tube
                     elem: elem,             // optional, used to determine hydrogen bond
                     bonds: [],              // required, used to connect atoms
                     ss: 'coil',             // optional, used to show secondary structures
@@ -68663,8 +68736,13 @@ class SaveFile {
             if(structureidArray.length > 1) {
                 idName += 's';
             }
-            else if(ic.molTitleHash) {
-                title = ic.molTitleHash[inputid];
+            
+            if(ic.molTitleHash) {
+                title = '';
+                for(let i = 0, il = structureidArray.length; i < il; ++i) {
+                    title += ic.molTitleHash[structureidArray[i]];
+                    if(i < il - 1) title += '; ';
+                }
             }
         }
 
@@ -69069,7 +69147,7 @@ class ShareLink {
            outputCmd = tmpUrl;
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
-           if((ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
+           if(ic.bEmsfold || (ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
            let id;
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
@@ -71904,7 +71982,7 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
         this.opts['chemicals'] = 'ball and stick';
     }
 
-    if(me.cfg.afid !== undefined) {
+    if(me.cfg.afid !== undefined || ic.bEsmfold) {
         this.opts['color'] = 'confidence';
     }
 
@@ -71940,7 +72018,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.25.4';
+    this.REVISION = '3.26.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

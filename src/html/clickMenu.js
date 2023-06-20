@@ -280,6 +280,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_esmfold", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_esmfold', 'Sequence to structure prediction with ESMFold');
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
@@ -333,7 +337,7 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export state file", false);
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
 
            ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
         });
@@ -355,8 +359,8 @@ class ClickMenu {
            let pdbStr = ic.saveFileCls.getSelectedResiduePDB();
 
            thisClass.setLogCmd("export PDB of selected residues", false);
-           //let file_pref =(ic.inputid) ? ic.inputid : "custom";
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           //let file_pref = Object.keys(ic.structures).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
         });
 
@@ -472,7 +476,7 @@ class ClickMenu {
                text += '<tr><td>' + structure + '</td><td>' + chain + '</td><td>' + Object.keys(residueHash).length + '</td><td>' + Object.keys(ic.chains[chainid]).length + '</td></tr>';
            }
            text += '</table><br/></div></body></html>';
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_counts.html', 'html', text);
         });
 
@@ -482,7 +486,7 @@ class ClickMenu {
            thisClass.SetChainsAdvancedMenu();
 
            let text = ic.saveFileCls.exportCustomAtoms();
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
 
@@ -493,7 +497,7 @@ class ClickMenu {
 
            let bDetails = true;
            let text = ic.saveFileCls.exportCustomAtoms(bDetails);
-           let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+           let file_pref = Object.keys(ic.structures).join(',');
            ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
         });
 
@@ -612,6 +616,11 @@ class ClickMenu {
            let url = ic.saveFileCls.getLinkToStructureSummary(true);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_alphafold", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           let url = 'https://github.com/sokrypton/ColabFold';
+           window.open(url, '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; //e.preventDefault();

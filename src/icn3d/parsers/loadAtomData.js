@@ -168,6 +168,11 @@ class LoadAtomData {
               }
             }
         }
+
+        if(type === 'mmdbid') {
+            if(!ic.molTitleHash) ic.molTitleHash = {};
+            ic.molTitleHash[id] = ic.molTitle;
+        }
         
         let atomid2serial = {};
         let prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
