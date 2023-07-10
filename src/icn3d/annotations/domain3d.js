@@ -1111,7 +1111,7 @@ class Domain3d {
 		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
 	} // end c2b_NewSplitChain
 
-	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+	getDomainJsonForAlign(atoms, bForceOneDomain) { let ic = this.icn3d, me = ic.icn3dui;
 		let result = this.c2b_NewSplitChain(atoms);
 
 		let subdomains = result.subdomains;
@@ -1121,6 +1121,8 @@ class Domain3d {
 		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
 		let residueArray = Object.keys(residueHash);
 		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+
+		if(bForceOneDomain) subdomains = [];
 
 		//the whole structure is also considered as a large domain
 		//if(subdomains.length == 0) {

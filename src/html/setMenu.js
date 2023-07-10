@@ -570,10 +570,11 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
         html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
         html += "</ul>";
 
         
@@ -667,6 +668,16 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
         }
+
+        //!!!
+        /*
+        html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
+        html += "<ul>";
+        html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
+        html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
+        html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
+        html += "</ul>";
+        */
 
         html += "<li><br/></li>";
 

@@ -427,7 +427,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_esmfold' style='max-width:600px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_esmfold', 'Sequence to structure prediction with ESMFold');
-        html += "The sequence to structure prediction is done via <a href='https://esmatlas.com/resources?action=fold' target='_blank'>ESM Metagenomic Atlas</a>. Generally the sequence should be less than 1024 characters. For any seqeunce longer than 1024, please see the discussion <a href='https://github.com/facebookresearch/esm/issues/21' target='_blank'>here</a>.<br><br> ";
+        html += "The sequence to structure prediction is done via <a href='https://esmatlas.com/resources?action=fold' target='_blank'>ESM Metagenomic Atlas</a>. The sequence should be less than 400 characters. For any sequence longer than 400, please see the discussion <a href='https://github.com/facebookresearch/esm/issues/21' target='_blank'>here</a>.<br><br> ";
         html += "FASTA sequence: <br><textarea id='" + me.pre + "esmfold_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
         html += me.htmlCls.buttonStr + "run_esmfold'>ESMFold</button> ";
         html += "</div>";

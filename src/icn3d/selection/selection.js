@@ -306,6 +306,8 @@ class Selection {
           ic.graphStr = this.getGraphDataForDisplayed();
         }
 
+        ic.saveFileCls.showTitle();
+
         // don not redraw graphs after the selection changes
         /*
         if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');

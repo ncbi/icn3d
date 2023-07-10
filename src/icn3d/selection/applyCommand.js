@@ -77,6 +77,11 @@ class ApplyCommand {
       else if(command == 'export pdb hydrogen') {
         await ic.scapCls.exportPdbProfix(true);
       }
+      else if(command.indexOf('export refnum ') != -1) {
+        let type = command.substr(14);
+        
+        ic.refnumCls.exportRefnum(type);
+      }
       else if(command == 'export secondary structure') {
          me.htmlCls.setHtmlCls.exportSecondary();
       }

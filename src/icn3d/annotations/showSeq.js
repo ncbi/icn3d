@@ -477,18 +477,25 @@ class ShowSeq {
         html += result.html;
         html3 += result.html3;
 
+        if(ic.bShowRefnum) {
+            ic.opts.color = 'ig strand';
+            //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+
+            ic.selectionCls.selectAll_base();
+            ic.hlUpdateCls.updateHlAll();
+            //ic.drawCls.draw();
+        }
+
         return {'html': html, 'html3': html3};
     }
 
     showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
         let html = '', html3 = '';
 
-        let chainList = '';
         if(!ic.chainid2refpdbname[chnid]) return {html: html, html3: html3};
 
-        for(let i = 0, il = ic.chainid2refpdbname[chnid].length; i < il; ++i) {
-            chainList += ic.chainid2refpdbname[chnid][i] + " ";
-        }
+        let chainList = ic.refnumCls.getTemplateList(chnid);
 
         let refStruTitle = (chainList) ? "based on " + chainList : "";
 
@@ -523,11 +530,12 @@ class ShowSeq {
                 break;
             }
         }
+
         if(kabat_or_imgt == 1 && !bKabatFound) {
             return {html: '', html3: ''};
         }
 
-        //check if Kabat refnum available
+        //check if IMGT refnum available
         let bImgtFound = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
@@ -946,7 +954,7 @@ class ShowSeq {
                             }
                         }
                     }
-                    else {
+                    else {                       
                         if(bShowRefnum && currStrand != ' ') {
                             bLoop = ic.residIgLoop[residueid];
                             html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);

@@ -6932,6 +6932,21 @@ class ClickMenu {
         thisClass.setLogCmd("export pdb hydrogen", true);
        });
 
+       me.myEventCls.onIds("#" + me.pre + "mn1_exportIgstrand", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+       ic.refnumCls.exportRefnum('igstrand');
+       thisClass.setLogCmd("export refnum igstrand", true);
+      });
+
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+         ic.refnumCls.exportRefnum('kabat');
+         thisClass.setLogCmd("export refnum kabat", true);
+      });
+
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportImgt", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+      ic.refnumCls.exportRefnum('imgt');
+      thisClass.setLogCmd("export refnum imgt", true);
+      });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl file", false);
            //ic.threeDPrintCls.hideStabilizer();
@@ -9406,10 +9421,11 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
+        html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
         html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
         html += "</ul>";
 
         
@@ -9503,6 +9519,16 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
         }
+
+        //!!!
+        /*
+        html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
+        html += "<ul>";
+        html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
+        html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
+        html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
+        html += "</ul>";
+        */
 
         html += "<li><br/></li>";
 
@@ -11217,6 +11243,9 @@ class Dialog {
                     if(me.cfg.align) {
                         position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };
                     }
+                    else if(id === me.pre + 'dl_mmdbafid') {
+                        position ={ my: "left top", at: "left top+130", of: "#" + me.pre + "canvas", collision: "none" };
+                    }
                     else {
                         position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" };
                     }
@@ -11750,7 +11779,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_esmfold' style='max-width:600px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_esmfold', 'Sequence to structure prediction with ESMFold');
-        html += "The sequence to structure prediction is done via <a href='https://esmatlas.com/resources?action=fold' target='_blank'>ESM Metagenomic Atlas</a>. Generally the sequence should be less than 1024 characters. For any seqeunce longer than 1024, please see the discussion <a href='https://github.com/facebookresearch/esm/issues/21' target='_blank'>here</a>.<br><br> ";
+        html += "The sequence to structure prediction is done via <a href='https://esmatlas.com/resources?action=fold' target='_blank'>ESM Metagenomic Atlas</a>. The sequence should be less than 400 characters. For any sequence longer than 400, please see the discussion <a href='https://github.com/facebookresearch/esm/issues/21' target='_blank'>here</a>.<br><br> ";
         html += "FASTA sequence: <br><textarea id='" + me.pre + "esmfold_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
         html += me.htmlCls.buttonStr + "run_esmfold'>ESMFold</button> ";
         html += "</div>";
@@ -13759,8 +13788,15 @@ class Events {
 
             if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
                 let pos = esmfold_fasta.indexOf('\n');
-                ic.esmTitle = esmfold_fasta.substr(1, pos - 1);
-                pdbid = ic.esmTitle.substr(0, ic.esmTitle.indexOf(' '));
+                ic.esmTitle = esmfold_fasta.substr(1, pos - 1).trim();
+                if(ic.esmTitle.indexOf('|') != -1) { // uniprot
+                    let idArray = ic.esmTitle.split('|');
+                    pdbid = (idArray.length > 2) ? idArray[1] : ic.esmTitle;
+                }
+                else { // NCBI
+                    pdbid = (ic.esmTitle.indexOf(' ') != -1) ? ic.esmTitle.substr(0, ic.esmTitle.indexOf(' ')) : ic.esmTitle;
+                }
+
                 if(pdbid.length < 6) pdbid = pdbid.padEnd(6, '-');
 
                 esmfold_fasta = esmfold_fasta.substr(pos + 1);
@@ -13769,8 +13805,8 @@ class Events {
             // remove new lines
             esmfold_fasta = esmfold_fasta.replace(/\s/g, '');
 
-            if(esmfold_fasta.length > 1024) {
-                alert("Your seqeunce is larger than 1024 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
+            if(esmfold_fasta.length > 400) {
+                alert("Your sequence is larger than 400 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
                 return;
             }
 
@@ -15404,8 +15440,17 @@ class AlignSeq {
 
         let chainHash = {};
         if (alignChainArray !== undefined) {
+
             for (let i = 0, il = alignChainArray.length; i < il; ++i) {
-                chainHash[alignChainArray[i]] = 1;
+                let chainid = alignChainArray[i];
+
+                // make sure some residues are aligned
+                if(ic.alnChainsSeq[chainid] && ic.alnChainsSeq[chainid].length > 0) {
+                    chainHash[chainid] = 1;
+                }
+                else {
+                    return { "sequencesHtml": sequencesHtml, "maxSeqCnt": maxSeqCnt };
+                }
             }
         }
 
@@ -15420,7 +15465,7 @@ class AlignSeq {
         let bHighlightChain;
         let index = 0, prevResCnt2nd = 0;
         let firstChainid, oriChainid;
-
+console.log("alignChainArray.length: " + alignChainArray.length);
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
@@ -15597,7 +15642,7 @@ class AlignSeq {
                 //sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-seqTitle' chain='" + i + "' anno='" + j + "'>" + annotitle + "</div>" + resiHtmlArray[j] + "<br/></div>";
                 sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-seqTitle' anno='" + j + "'>" + annotitle + "</div>" + resiHtmlArray[j] + "<br/></div>";
             }
-
+            
             sequencesHtml += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" chain="' + i + '" anno="sequence" title="' + title + '">' + chainidTmp + ' </div><span class="icn3d-seqLine">' + seqHtml + '</span><br/>';
 
             if (index > 0) prevResCnt2nd += seqLength;
@@ -35659,7 +35704,6 @@ class SetColor {
                                 let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                                 let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                                 color = ic.showSeqCls.getRefnumColor(currStrand);
-
                                 if(ic.residIgLoop.hasOwnProperty(resid)) {                            
                                     color = me.parasCls.thr(me.htmlCls.GREYB);
                                 }
@@ -40002,7 +40046,7 @@ class Domain3d {
 		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
 	} // end c2b_NewSplitChain
 
-	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+	getDomainJsonForAlign(atoms, bForceOneDomain) { let ic = this.icn3d, me = ic.icn3dui;
 		let result = this.c2b_NewSplitChain(atoms);
 
 		let subdomains = result.subdomains;
@@ -40012,6 +40056,8 @@ class Domain3d {
 		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
 		let residueArray = Object.keys(residueHash);
 		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+
+		if(bForceOneDomain) subdomains = [];
 
 		//the whole structure is also considered as a large domain
 		//if(subdomains.length == 0) {
@@ -41870,7 +41916,7 @@ class ShowAnno {
                     dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
                 }
 
-                // get seqeunce
+                // get sequence
                 if(ic.blastAcxn) { 
                     let chainid = me.cfg.afid + '_A';
                     let seq = '';
@@ -41901,7 +41947,7 @@ class ShowAnno {
                     idArray.push(me.cfg.query_id);
                 }
 
-                // get seqeunce
+                // get sequence
                 if(ic.blastAcxn) { 
                     let chainid = me.cfg.afid + '_A';
                     let seq = '';
@@ -41929,16 +41975,6 @@ class ShowAnno {
              } // align seq to structure
         }
         //ic.bAnnoShown = true;
-
-        if(ic.bShowRefnum) {
-            ic.opts.color = 'ig strand';
-            //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
-            ic.selectionCls.selectAll_base();
-            ic.hlUpdateCls.updateHlAll();
-            //ic.drawCls.draw();
-        }
     }
 
     async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
@@ -42238,7 +42274,7 @@ class ShowAnno {
                 let data = ic.seqStructAlignData;
                 if(data.data !== undefined) {
                     query = data.data[0].query;
-                    // if target is seqeunce, the key is not chnid
+                    // if target is sequence, the key is not chnid
                     //target = data.data[0].targets[chnid];
                     let keys = Object.keys(data.data[0].targets);
                     target = data.data[0].targets[keys[0]];
@@ -42250,7 +42286,7 @@ class ShowAnno {
                     evalue = target.scores.e_value.toPrecision(2);
                     if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
                     target.scores.bit_score;
-                    // if target is seqeunce, the key is not chnid
+                    // if target is sequence, the key is not chnid
                     // targetSeq = data.targets[chnid].seqdata;
                     let keys = Object.keys(data.targets);
                     targetSeq = data.targets[keys[0]].seqdata;
@@ -42951,18 +42987,25 @@ class ShowSeq {
         html += result.html;
         html3 += result.html3;
 
+        if(ic.bShowRefnum) {
+            ic.opts.color = 'ig strand';
+            //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+
+            ic.selectionCls.selectAll_base();
+            ic.hlUpdateCls.updateHlAll();
+            //ic.drawCls.draw();
+        }
+
         return {'html': html, 'html3': html3};
     }
 
     showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
         let html = '', html3 = '';
 
-        let chainList = '';
         if(!ic.chainid2refpdbname[chnid]) return {html: html, html3: html3};
 
-        for(let i = 0, il = ic.chainid2refpdbname[chnid].length; i < il; ++i) {
-            chainList += ic.chainid2refpdbname[chnid][i] + " ";
-        }
+        let chainList = ic.refnumCls.getTemplateList(chnid);
 
         let refStruTitle = (chainList) ? "based on " + chainList : "";
 
@@ -42997,11 +43040,12 @@ class ShowSeq {
                 break;
             }
         }
+
         if(kabat_or_imgt == 1 && !bKabatFound) {
             return {html: '', html3: ''};
         }
 
-        //check if Kabat refnum available
+        //check if IMGT refnum available
         let bImgtFound = false;
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             let currResi = ic.ParserUtilsCls.getResi(chnid, i);
@@ -43408,7 +43452,7 @@ class ShowSeq {
                             }
                         }
                     }
-                    else {
+                    else {                       
                         if(currStrand != ' ') {
                             bLoop = ic.residIgLoop[residueid];
                             html += this.getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel);
@@ -43686,6 +43730,8 @@ class HlSeq {
            //});
 
             // remove possible text selection
+            // the following code caused the scroll of sequence window to the top, remove it for now
+            /*
             if(window.getSelection) {
               if(window.getSelection().empty) {  // Chrome
                 window.getSelection().empty();
@@ -43695,6 +43741,7 @@ class HlSeq {
             } else if(document.selection) {  // IE?
               document.selection.empty();
             }
+            */
       });
     }
 
@@ -45202,61 +45249,6 @@ class LineGraph {
     async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-        //ic.refpdbArray = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
-        
-        //ic.refpdbArray = ['1ASF1A_2iijA_human', '1B2Microglobulin_7phrL_human_C1', '1BArrestin1_4jqiA_rat_n1', '1BTLA_2aw2A_human_Iset', '1C3_2qkiD_human_n1', '1CD19_6al5A_human_C2orV-n1', '1CD2_1hnfA_human_C2-n2', '1CD2_1hnfA_human_V-n1', '1CD8a_1cd8A_human_V', '1CoAtomerGamma1_1r4xA_human', '1Contactin1_2ee2A_human_FN3-n9', '1Contactin1_3s97C_human_C2-n2', '1CuZnSuperoxideDismutase_1hl5C_human', '1ECadherin_4zt1A_human_n2', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1FAB-HEAVY_5esv_C1-n2', '1FAB-HEAVY_5esv_V-n1', '1FAB-LIGHT_5esv_C1-n2', '1FAB-LIGHT_5esv_V-n1', '1GHR_1axiB_human_FN3-n1', '1ICOS_6x4gA_human_V', '1IL6Rb_1bquB_human_FN3-n2', '1IL6Rb_1bquB_human_FN3-n3', '1InsulinR_8guyE_human_FN3-n1', '1InsulinR_8guyE_human_FN3-n2', '1IsdA_2iteA_bacteria', '1JAM1_1nbqA_human_VorIset-n2', '1LAG3_7tzgD_human_C2-n2', '1LAG3_7tzgD_human_V-n1', '1LaminAC_1ifrA_human', '1MHCIa_7phrH_human_C1', '1MPT63_1lmiA_bacteria', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1ORF7a_1xakA_virus', '1PD1_4zqkB_human_V', '1PDL1_4z18B_human_V-n1', '1Palladin_2dm3A_human_Iset-n1', '1RBPJ_6py8C_human_Unk-n1', '1RBPJ_6py8C_human_Unk-n2', '1Sidekick2_1wf5A_human_FN3-n7', '1Siglec3_5j0bB_human_C2-n2', '1TCRa_6jxrm_human_C1-n2', '1TCRa_6jxrm_human_V-n1', '1TEAD1_3kysC_human', '1TP34_2o6cA_bacteria', '1TP47_1o75A_bacteria', '1Titin_4uowM_human_Unk-n152', '1VISTA_6oilA_human_V', '1VNAR_1t6vN_shark_V', '1VTCN1_Q7Z7D3_human_V-n2'];
-     
-/*
-        // round 1
-        ic.refpdbArray = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'GHR_1axiB_human_FN3-n1', 'FAB-HEAVY_5esv_C1-n2', 'IL6Rb_1bquB_human_FN3-n2', 'LAG3_7tzgD_human_C2-n2', 'VNAR_1t6vN_shark_V', 'VISTA_6oilA_human_V', 'CD19_6al5A_human_C2orV-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria'];
-        // round 2
-        ic.refpdbHash = {};
-
-        ic.refpdbHash['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'NaCaExchanger_2fwuA_dog_n2', 'BArrestin1_4jqiA_rat_n1', 'ECadherin_4zt1A_human_n2', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['GHR_1axiB_human_FN3-n1'] = ['GHR_1axiB_human_FN3-n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'CD2_1hnfA_human_C2-n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['FAB-HEAVY_5esv_C1-n2'] = ['FAB-HEAVY_5esv_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['IL6Rb_1bquB_human_FN3-n2'] = ['IL6Rb_1bquB_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'BTLA_2aw2A_human_Iset', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['VNAR_1t6vN_shark_V'] = ['VNAR_1t6vN_shark_V', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CoAtomerGamma1_1r4xA_human', 'MPT63_1lmiA_bacteria'];
-*/
-/*
-        // round 1
-        ic.refpdbArray = ['NaCaExchanger_2fwuA_dog_n2', 'C3_2qkiD_human_n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'Contactin1_2ee2A_human_FN3-n9', 'InsulinR_8guyE_human_FN3-n1', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CD19_6al5A_human_C2orV-n1'];
-
-        // round 2
-        ic.refpdbHash = {};      
-        ic.refpdbHash['NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['Siglec3_5j0bB_human_C2-n2'] = ['Siglec3_5j0bB_human_C2-n2', 'CD2_1hnfA_human_C2-n2', 'GHR_1axiB_human_FN3-n1'];
-        ic.refpdbHash['ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['B2Microglobulin_7phrL_human_C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['VTCN1_Q7Z7D3_human_V-n2'] = ['VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2'];
-        ic.refpdbHash['Contactin1_2ee2A_human_FN3-n9'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['JAM1_1nbqA_human_VorIset-n2'] = ['JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['Palladin_2dm3A_human_Iset-n1'] = ['Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['PD1_4zqkB_human_V'] = ['PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['CD8a_1cd8A_human_V'] = ['CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['LAG3_7tzgD_human_V-n1'] = ['LAG3_7tzgD_human_V-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['TEAD1_3kysC_human'] = ['TEAD1_3kysC_human', 'CuZnSuperoxideDismutase_1hl5C_human'];
-        ic.refpdbHash['RBPJ_6py8C_human_Unk-n2'] = ['RBPJ_6py8C_human_Unk-n2', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria', 'CoAtomerGamma1_1r4xA_human'];
-        ic.refpdbHash['LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-*/
         // round 1, 16 templates
         ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1'];
 
@@ -45324,33 +45316,24 @@ class LineGraph {
         ic.refpdbHash['6A15'] = ['CD19_6al5A_human_C2orV-n1'];
         ic.refpdbHash['2QKI'] = ['C3_2qkiD_human_n1'];
 
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
-            //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
-            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+            //let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refjsonid=" + ic.refpdbArray[k];
 
             let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
 
             pdbAjaxArray.push(pdbAjax);
         }
 
-        try {
+        // try {
             let allPromise = Promise.allSettled(pdbAjaxArray);
             ic.pdbDataArray = await allPromise;
             await thisClass.parseRefPdbData(ic.pdbDataArray);
-        }
-        catch(err) {
-            if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-            //alert("Error in retrieveing reference PDB data...");
-            return;
-        }       
-
         // }
+        // catch(err) {
+        //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+        //     return;
         // }
     }
 
@@ -45362,7 +45345,8 @@ class LineGraph {
         let ajaxArray = [];
         let domainidpairArray = [];
 
-        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+        me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
 
         if(!ic.resid2domainid) ic.resid2domainid = {};
         //ic.resid2domainid = {};
@@ -45397,9 +45381,14 @@ class LineGraph {
                     domainAtomsArray.push(currAtoms);
 
                     let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+
+                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
+                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
+                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+
                     for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                         let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0' + '_' + Object.keys(currAtoms).length; 
+                        ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
                     }
                 }
                 else {                 
@@ -45419,13 +45408,17 @@ class LineGraph {
 
                         domainAtomsArray.push(domainAtoms);
 
+                        let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
+                        let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
+                        let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+
                         for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
                             for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
                                 let resid = chainid + '_' + pos2resi[n];
                                 //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + Object.keys(domainAtoms).length; 
+                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
                             }
                         }
                     }
@@ -45433,19 +45426,31 @@ class LineGraph {
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
+                    let bForceOneDomain = true;
+                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
+
                     // ig strand for any subset will have the same k, use the number of residue to separate them
-                    let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
+                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtomsArray[k]);
+                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtomsArray[k]);
+                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+                    //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
+                    let domainid = chainid + '-' + k + '_' + resiSum; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        let struct2 = ic.defaultPdbId + index;
-                        //let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
-                        let pdb_query = dataArray[index].value; //[0];
-                        let header = 'HEADER                                                        ' + struct2 + '\n';
-                        pdb_query = header + pdb_query;
+                        // let struct2 = ic.defaultPdbId + index;
+                        // let pdb_query = dataArray[index].value; //[0];
+                        // let header = 'HEADER                                                        ' + struct2 + '\n';
+                        // pdb_query = header + pdb_query;
+                        let jsonStr_q = dataArray[index].value; //[0];
 
-                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                        // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
+                        // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                        // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+
+                        let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                        let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+
                         ajaxArray.push(alignAjax);
                         
                         domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
@@ -45456,8 +45461,27 @@ class LineGraph {
 
         try {
             let dataArray2 = [];
-            let allPromise = Promise.allSettled(ajaxArray);
-            dataArray2 = await allPromise;
+
+            // let allPromise = Promise.allSettled(ajaxArray);
+            // dataArray2 = await allPromise;
+
+            //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+            let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+
+            for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                let currAjaxArray = [];
+                if(i == il - 1) { // last one 
+                    currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                }
+                else {
+                    currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                }
+
+                let currPromise = Promise.allSettled(currAjaxArray);
+                let currDataArray = await currPromise;
+
+                dataArray2 = dataArray2.concat(currDataArray);
+            }
         
             let bRound1 = true;
             await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
@@ -45465,16 +45489,47 @@ class LineGraph {
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
-            if(!me.bNode) console.log("Error in aligning with TM-align...");
+            let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
+            if(!me.bNode) {
+                alert(mess);
+            }
+            else {
+                console.log(mess);
+            }
             //console.log("Error in aligning with TM-align...");
             return;
         }                       
+    }
+
+    getTemplateList(chainid) { let ic = this.icn3d; ic.icn3dui;
+        let domainid2refpdbname = {};
+
+        for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
+            let refpdbname_domainid = ic.chainid2refpdbname[chainid][i].split('|');
+            domainid2refpdbname[refpdbname_domainid[1]] = refpdbname_domainid[0];
+        }
+
+        let domainidArray = Object.keys(domainid2refpdbname);
+        domainidArray.sort(function(id1, id2) {
+            let resi1 = parseInt(id1.substr(id1.lastIndexOf('_') + 1));
+            let resi2 = parseInt(id2.substr(id2.lastIndexOf('_') + 1));
+            return resi1 - resi2;
+        });
+
+        let chainList = '';
+        for(let i = 0, il = domainidArray.length; i < il; ++i) {
+            chainList += domainid2refpdbname[domainidArray[i]];
+            if(i < il - 1) chainList += ", ";
+        }
+
+        return chainList;
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let tmscoreThreshold = 0.4; // 0.4; //0.5;
+        let rmsdThreshold = 10;
 
         // find the best alignment for each chain
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
@@ -45502,8 +45557,15 @@ class LineGraph {
 
             if(queryData.length == 0) continue;
             
-            if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
-                continue;
+            if(!bRound1) {
+                if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                    continue;
+                }
+            }
+            else {
+                if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
+                    continue;
+                }
             }
 
             //let domainid_index = domainidpairArray[i].split(',');
@@ -45512,39 +45574,63 @@ class LineGraph {
             let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
             //let chainid = domainid.split('-')[0];
 
-            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
-            // Ig domain may require G (7050). But we'll leave that out for now.
-            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
-            for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
-                let seg = queryData[0].segs[i];
-
-                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
-                    bBstrand = true;
-                }
-                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
-                    bCstrand = true;
-                }
-                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
-                    bEstrand = true;
-                }
-                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
-                    bFstrand = true;
-                }
-
-                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
-                if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+            if(!bRound1) {
+                if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
+            }
+            else {
+                if(!me.bNode) console.log("refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd);
             }
 
-            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
-            if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
+            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
+            // Ig domain may require G (7050). But we'll leave that out for now.
+            if(!bRound1) {
+                let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false;
+                for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
+                    let seg = queryData[0].segs[i];
 
-            if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
-                domainid2score[domainid] = queryData[0].score;    
+                    if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
+                        bBstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
+                        bCstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
+                        bEstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
+                        bFstrand = true;
+                    }
 
-                ic.domainid2refpdbname[domainid] = refpdbname;
-                domainid2segs[domainid] = queryData[0].segs;
-                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                    //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
+                    if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+                }
+
+                //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
+                if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
+                    if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                    continue;
+                }
+            }
+
+            if(!bRound1) {
+                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
+                    domainid2score[domainid] = queryData[0].score;  
+        
+                    ic.domainid2refpdbname[domainid] = refpdbname;
+                    domainid2segs[domainid] = queryData[0].segs;
+                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                }
+            }
+            else {
+                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].super_rmsd < domainid2score[domainid]) {
+                    domainid2score[domainid] = queryData[0].super_rmsd;  
+        
+                    ic.domainid2refpdbname[domainid] = refpdbname;
+                    domainid2segs[domainid] = queryData[0].segs;
+                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                }                
             }
         }
 
@@ -45610,10 +45696,15 @@ class LineGraph {
         }
 
         // combine domainid into chainid
+        let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
             let chainid = domainid.split('-')[0];
+
+            if(!processedChainid.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
+            processedChainid[chainid] = 1;
+
             if(!ic.chainid2refpdbname.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
-            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid]);
+            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid] + '|' + domainid);
         }
         
         // combine domainid into chainid
@@ -45627,18 +45718,21 @@ class LineGraph {
         if(!ic.resid2refnum) ic.resid2refnum = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};
         if(!ic.chainsMapping) ic.chainsMapping = {};
+
+        if(!ic.refPdbList) ic.refPdbList = [];
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
 
-            let chainList = '';
-            for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
-                chainList += ic.chainid2refpdbname[chainid][i] + " ";
-            }
+            let refpdbnameArray = ic.chainid2refpdbname[chainid];
+
+            let chainList = this.getTemplateList(chainid);
+
             //if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
-            console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            ic.refPdbList.push("The reference PDB(s) for chain " + chainid + " are " + chainList);
 
             let prevStrand;
-            let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';
+            let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human_C2orV-n1';
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
                 let qStart = seg.q_start;
@@ -45818,8 +45912,120 @@ class LineGraph {
         ic.annotationCls.setAnnoViewAndDisplay('detailed view');
     }
 
-    rmStrandFromRefnumlabel(refnumLabel) {
+    rmStrandFromRefnumlabel(refnumLabel) { let ic = this.icn3d; ic.icn3dui;
         return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
+    }
+
+    exportRefnum(type) { let ic = this.icn3d, me = ic.icn3dui;
+        let refData = '';
+
+        // 1. show IgStrand ref numbers
+        if(type == 'igstrand' || type == 'IgStrand') {
+            // iGStrand reference numbers were adjusted when showing in sequences
+            if(me.bNode) {
+                for(let chnid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        let giSeq = [];
+                        for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                            giSeq.push(ic.chainsSeq[chnid][i].name);
+                        }
+                        ic.showSeqCls.showRefNum(giSeq, chnid);
+                    }
+                }
+            }
+    
+            let resid2refnum = {};
+            for(let resid in ic.resid2refnum) {
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                if(!atom) continue;
+                
+                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+        
+                let domainid = ic.resid2domainid[resid];
+                let refnumLabel = ic.resid2refnum[resid];
+        
+                if(refnumLabel) {
+                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                    (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                }
+        
+                if(ic.resid2refnum[resid]) {
+                    if(ic.residIgLoop.hasOwnProperty(resid)) { // loop
+                    resid2refnum[resid + '_' + resn] = ic.resid2refnum[resid] + '_loop';
+                    }
+                    else {
+                    resid2refnum[resid + '_' + resn] = ic.resid2refnum[resid];
+                    }
+                }
+            }
+
+            refData += '{"ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n";
+    
+            refData += '"data": {\n';
+            for(let chnid in ic.chains) {
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+            if(ic.proteins.hasOwnProperty(atom.serial)) {
+                for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
+    
+                refData += "'" + resid + "': '" + resid2refnum[resid] + "',\n";
+                }
+            }
+            }
+            refData += '}\n';
+            refData += '}\n';
+        }
+        // 2. show Kabat ref numbers
+        else if(type == 'kabat' || type == 'Kabat') {
+            let resid2kabat = {};
+            for(let resid in ic.resid2refnum) {
+            let domainid = ic.resid2domainid[resid];
+            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+    
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+    
+            if(refnumLabel) {
+                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+            }
+    
+            resid2kabat[resid + '_' + resn] = refnumStr;
+            }
+            
+            refData += JSON.stringify(resid2kabat);
+        }
+        // 3. show IMGT ref numbers
+        else if(type == 'imgt'|| type == 'IMGT') {
+            let resid2imgt = {};
+            for(let resid in ic.resid2refnum) {
+            let domainid = ic.resid2domainid[resid];
+            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+    
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+    
+            if(refnumLabel) {
+                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+            }
+    
+            resid2imgt[resid + '_' + resn] = refnumStr;
+            }
+            
+            refData += JSON.stringify(resid2imgt);
+        }
+
+
+        if(!me.bNode) {
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+    
+            ic.saveFileCls.saveFile(file_pref + '_refnum_' + type + '.txt', 'text', [refData]);
+        }
+        else {
+            return refData;
+        }
     }
  }
 
@@ -48841,7 +49047,7 @@ class ChainalignParser {
         let hAtomsAll = {};
 
         if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-            // set multiple seqeunce alignment from ic.qt_start_end
+            // set multiple sequence alignment from ic.qt_start_end
             hAtomsAll = this.setMsa(chainidArray);
         }
 
@@ -48901,7 +49107,7 @@ class ChainalignParser {
         ic.qt_start_end = [];
 
         let mmdbid2cnt = {}, mmdbidpairHash = {};
-             
+
         let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
@@ -49162,7 +49368,7 @@ class ChainalignParser {
             let chainid = chainidArray[i];
             let pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos); 
-            if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
+            //if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
 
             if(!struct2cnt.hasOwnProperty(struct)) {
                 struct2cnt[struct] = 1;
@@ -49381,6 +49587,7 @@ class ChainalignParser {
 
     processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
+
         if((!align || align.length == 0) && !bNoAlert) {
             let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
         
@@ -49565,14 +49772,14 @@ class ChainalignParser {
         ic.ParserUtilsCls.showLoading();
 
         let allPromise = Promise.allSettled(ajaxArray);
-        try {
+        // try {
             let dataArray = await allPromise;
             await thisClass.parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype);
             if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
-        }
-        catch(err) {
-            alert("There are some problems in retrieving the coordinates...");
-        }          
+        // }
+        // catch(err) {
+        //     alert("There are some problems in retrieving the coordinates...");
+        // }          
     //   });
     
     //   return ic.deferredMmdbaf.promise();
@@ -52222,6 +52429,7 @@ class RealignParser {
     async realignOnStructAlign(bReverse) { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
         let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
+
         let struct2domain = {};
         for(let struct in ic.structures) {
             struct2domain[struct] = {};
@@ -52232,7 +52440,7 @@ class RealignParser {
                 let sseCnt = 0;
                 for(let serial in atoms) {
                     if(ic.atoms[serial].ssbegin) ++sseCnt;
-                    if(sseCnt == minSseCnt) {
+                    if(sseCnt > minSseCnt) {
                         struct2domain[struct][chainid] = atoms;
                         break;
                     }
@@ -52264,7 +52472,6 @@ class RealignParser {
                         let chainid2 = chainidArray2[j];
 
                         let alignAjax;
-
                         if(me.cfg.aligntool != 'tmalign') {
                             let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                         
@@ -52303,7 +52510,7 @@ class RealignParser {
 
     async realignOnStructAlignMsa(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
-        let minSseCnt = 3;
+        let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
         let chainid2domain = {};
 
         for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -52312,7 +52519,7 @@ class RealignParser {
             let sseCnt = 0;
             for(let serial in atoms) {
                 if(ic.atoms[serial].ssbegin) ++sseCnt;
-                if(sseCnt == minSseCnt) {
+                if(sseCnt > minSseCnt) {
                     chainid2domain[chainid] = atoms;
                     break;
                 }
@@ -52412,7 +52619,7 @@ class RealignParser {
             let pos = chainidArray[i].indexOf('_');
             let mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
 
-            if(!bRealign) mmdbid =  mmdbid.toUpperCase();
+            // if(!bRealign) mmdbid =  mmdbid.toUpperCase();
 
             if(i == 0) {
                 mmdbid_t = mmdbid;
@@ -52591,14 +52798,12 @@ class RealignParser {
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
-
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                     // from VAST neighbor page, use NCBI residue number
                     //if(me.cfg.usepdbnum === false) k += base - 1;
 
                     //let seqIndex = k - base;
                     let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-
                     // if(ic.bNCBI) {
                     //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                     //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
@@ -52615,9 +52820,9 @@ class RealignParser {
                 }            
             }
             else { // one residue
+                
                 //let k = parseInt(resiArray[j]);
                 let k = resiArray[j];
-
                 // from VAST neighbor page, use NCBI residue number
                 //if(me.cfg.usepdbnum === false) k += base - 1;
 
@@ -54435,7 +54640,7 @@ class ParserUtils {
                         if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                     }
 
-                    // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                    // Realign by sequence alignment with the residues in "segment", i.e., transmembrane helix
                     let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
                                                 //the second range is the range of the helix
                     let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
@@ -55541,22 +55746,23 @@ class SetSeqAlign {
     }
 
     getPosFromResi(chainid, resi) { let ic = this.icn3d; ic.icn3dui;
-/*        
-        let pos = undefined; //parseInt(resi);
-
-        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
-            if(ic.chainsSeq[chainid][i].resi == resi) {
-                pos = i;
-                break;
-            }
-        }
-*/
         let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
         let pos = undefined;
+        
         if(residNCBI) {
             let resiNCBI = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
             pos = resiNCBI - 1;
         }
+        // else {
+        //     //let il = ic.chainsSeq[chainid].length;
+        //     let il = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid].length : 0;
+        //     for(let i = 0; i < il; ++i) {
+        //         if(ic.chainsSeq[chainid][i].resi == resi) {
+        //             pos = i;
+        //             break;
+        //         }
+        //     }
+        // }
 
         return pos;
     }
@@ -56248,7 +56454,7 @@ class SetSeqAlign {
 
         //mmdbid1 = ic.mmdbid_t; 
         mmdbid1 = chainidArray[0].substr(0, pos1); //.toUpperCase();
-        mmdbid2 = chainid.substr(0, pos2); //.toUpperCase();
+        mmdbid2 = chainid.substr(0, pos2); //.toUpperCase()mergeTwoSeqForAll;
 
         chain1 = chainidArray[0].substr(pos1 + 1);
         chain2 = chainid.substr(pos2 + 1);
@@ -56643,7 +56849,7 @@ class LoadPDB {
     getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d; ic.icn3dui;
         let structure = id;
     
-        if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+        if(id == ic.defaultPdbId || bMutation || ic.structures.hasOwnProperty(id)) { // bMutation: side chain prediction
             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
         }
 
@@ -56711,7 +56917,7 @@ class LoadPDB {
         let prevMissingChain = '';
         let CSerial, prevCSerial, OSerial, prevOSerial;
         
-        let bHeader = false;
+        let bHeader = false, bFirstAtom = true;
 
         for (let i in lines) {
             let line = lines[i];
@@ -56872,7 +57078,11 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
-                structure = this.getStructureId(id, moleculeNum, bMutation);
+                if(bFirstAtom) {
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
+
+                    bFirstAtom = false;
+                }
 
                 let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
@@ -57015,6 +57225,7 @@ class LoadPDB {
 
                 // different residue
                 //if(residueNum !== prevResidueNum) {
+                    
                 if(oriResidueNum !== prevOriResidueNum) {
                     let residue = me.utilsCls.residueName2Abbr(resn);
                     ic.residueId2Name[residueNum] = residue;
@@ -57762,7 +57973,7 @@ class Vastplus {
 
             // reinitialize the alignment
             $("#" + ic.pre + "dl_sequence2").html('');
-          
+
             for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                 let node = parseInt(nodeArray[j]);
                 let segs = queryDataArray[node][0].segs;
@@ -57839,7 +58050,7 @@ class Vastplus {
                         for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                             chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
                         }
-                        console.log("Selected the alignment: " + chainpairStr);
+                        if(!me.bNode) console.log("Selected the alignment: " + chainpairStr);
 
                         break;
                     }
@@ -57848,7 +58059,7 @@ class Vastplus {
                         for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                             chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
                         }
-                        console.log("skipped the alignment: " + chainpairStr);
+                        if(!me.bNode) console.log("skipped the alignment: " + chainpairStr);
                     }
                 }
             }
@@ -58354,6 +58565,11 @@ class ApplyCommand {
       }
       else if(command == 'export pdb hydrogen') {
         await ic.scapCls.exportPdbProfix(true);
+      }
+      else if(command.indexOf('export refnum ') != -1) {
+        let type = command.substr(14);
+        
+        ic.refnumCls.exportRefnum(type);
       }
       else if(command == 'export secondary structure') {
          me.htmlCls.setHtmlCls.exportSecondary();
@@ -62322,6 +62538,8 @@ class Selection {
         if(ic.graphStr !== undefined) {
           ic.graphStr = this.getGraphDataForDisplayed();
         }
+
+        ic.saveFileCls.showTitle();
 
         // don not redraw graphs after the selection changes
         /*
@@ -68207,6 +68425,26 @@ class SaveFile {
          return html;
     }
 
+    printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt) { let ic = this.icn3d; ic.icn3dui;
+        let ssText = '';
+
+        // print prev
+        if(prevRealSsObj) {
+            if(bHelix) {
+                let helixType = 1;
+                ssText += prevRealSsObj.resn.padStart(5, ' ') + prevRealSsObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    + prevRealSsObj.resi.toString().padStart(5, ' ') + '  ' + helixType + ssCnt.toString().padStart(36, ' ') + '\n';
+            }
+            else if(bSheet) {
+                let sense = 0;
+                ssText += prevRealSsObj.resn.padStart(5, ' ') + prevRealSsObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    + prevRealSsObj.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
+            }
+        }
+
+        return ssText;
+    }
+
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
     getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
@@ -68239,8 +68477,6 @@ class SaveFile {
 
         let calphaHash = me.hashUtilsCls.intHash(atomHash, ic.calphas);
         let helixStr = 'HELIX', sheetStr = 'SHEET';
-        let bHelixBegin = false, bHelixEnd = true;
-        let bSheetBegin = false, bSheetEnd = true;
 
         let stru2header = {};
         for(let stru in ic.structures) {
@@ -68248,48 +68484,82 @@ class SaveFile {
         }
 
 //        if(!bNoSs) {
-            let prevResi, stru, chainid;
+            let prevResi, stru;
+            let ssArray = [];
             for(let i in calphaHash) {
                 let atom = ic.atoms[i];
                 stru = atom.structure;
-                chainid = atom.structure + '_' + atom.chain;
+                atom.structure + '_' + atom.chain;
 
-                if(atom.ssbegin) {
-                    if(atom.ss == 'helix') {
-                        bHelixBegin = true;
-                        if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ');
-                        bHelixEnd = false;
-                        prevResi = atom.resi;
-                    }
-                    else if(atom.ss == 'sheet') {
-                        bSheetBegin = true;
-                        if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ');
-                        bSheetEnd = false;
-                    }
+                let ssObj = {};
+                ssObj.chain = atom.chain;
+                ssObj.resn = atom.resn;
+                ssObj.resi = atom.resi;
+
+                if(parseInt(atom.resi) > parseInt(prevResi) + 1) {
+                    ssObj.ss = ' ';
+                    ssArray.push(ssObj);
+                }
+
+                if(atom.ss == 'helix') {
+                    ssObj.ss = 'H';
+                    ssArray.push(ssObj);
+                }
+                else if(atom.ss == 'sheet') {
+                    ssObj.ss = 'S';
+                    ssArray.push(ssObj);
                 }
 
                 if(atom.ssend) {
-                    if(atom.ss == 'helix') {
-                        bHelixEnd = true;
-                        let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
-                        let residStart = ic.resid2ncbi[chainid + '_' + prevResi];
-                        let helixLen = (residEnd && residStart) ? parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1)) : 0;
-                        let helixType = 1;
-                        if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
-                        bHelixBegin = false;
-                    }
-                    else if(atom.ss == 'sheet') {
-                        bSheetEnd = true;
-                        let sense = 0;
-                        if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
-                        bSheetBegin = false;
+                    let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
+                    ssObj2.ss = ' ';
+                    ssArray.push(ssObj2);
+                }
+
+                prevResi = atom.resi;
+            }
+
+            let prevSs, prevRealSsObj, ssCnt = 0, bHelix = false, bSheet = false;
+            for(let i = 0, il = ssArray.length; i < il; ++i) {
+                let ssObj = ssArray[i];
+
+                if(ssObj.ss != prevSs) {
+                    // print prev
+                    stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+
+                    // print current
+                    ssCnt = 0;
+                    bHelix = false;
+                    bSheet = false;
+                    prevRealSsObj = undefined;
+
+                    if(ssObj.ss != ' ') {
+                        if(ssObj.ss == 'H') {
+                            bHelix = true;
+                            prevRealSsObj = ssObj;
+                            stru2header[stru] += helixStr.padEnd(15, ' ') + ssObj.resn.padStart(3, ' ') + ssObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + ssObj.resi.toString().padStart(5, ' ');
+                        }
+                        else if(ssObj.ss == 'S') {
+                            bSheet = true;
+                            prevRealSsObj = ssObj;
+                            stru2header[stru] += sheetStr.padEnd(17, ' ') + ssObj.resn.padStart(3, ' ') + ssObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + ssObj.resi.toString().padStart(4, ' ');
+                        }
                     }
                 }
+
+                if(ssObj.ss != ' ') {
+                    ++ssCnt;
+                    prevRealSsObj = ssObj;
+                }
+
+                prevSs = ssObj.ss;
             }
+
+            // print prev
+            stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+
             // add a new line in case the structure is a subset
             stru2header[stru] += '\n';
 //        }
@@ -68644,13 +68914,13 @@ class SaveFile {
 
     //Show the title and PDB ID of the PDB structure at the beginning of the viewer.
     showTitle() {var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.molTitle !== undefined && ic.molTitle !== '') {
-            let title = ic.molTitle;
+        // if(ic.molTitle !== undefined && ic.molTitle !== '') {
+            let title = (ic.molTitle) ? ic.molTitle : '';
 
             let titlelinkColor =(ic.opts['background'] == 'black') ?  me.htmlCls.GREYD : 'black';
 
             if(ic.inputid === undefined) {
-                if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+                if(title.length > 40) title = title.substr(0, 40) + "...";
 
                 $("#" + ic.pre + "title").html(title);
             }
@@ -68670,31 +68940,38 @@ class SaveFile {
 
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(me.cfg.mmdbafid !== undefined) {
-                let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
+            else { //if(me.cfg.mmdbafid !== undefined) {
+                //let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
+                let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
+
                 if(structureArray.length > 1) {
-                    title = 'Multiple structures: ' + structureArray;
+                    title = 'Multiple structures: ';
+                    for(let i = 0, il = structureArray.length; i < il; ++i) {
+                        let url = (isNaN(structureArray[i]) && structureArray[i].length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + structureArray[i] : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + structureArray[i];
+                        title += '<a href="' + url + '" style="color:' + titlelinkColor + '" target="_blank">' + structureArray[i] + '</a>';
+                        if(i < il - 1) title += ', ';
+                    }
                     $("#" + ic.pre + "title").html(title);
                 }
                 else if(structureArray.length == 1) {
                     //let url = this.getLinkToStructureSummary();
-                    let url = (isNaN(ic.inputid) && ic.inputid.length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + ic.inputid : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + ic.inputid;
+                    let url = (isNaN(structureArray[0]) && structureArray[0].length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + structureArray[0] : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + structureArray[0];
 
                     this.setStructureTitle(url, title, titlelinkColor);
                 }
             }
-            else {
-                let url = this.getLinkToStructureSummary();
-                this.setStructureTitle(url, title, titlelinkColor);
-            }
-        }
-        else {
-            $("#" + ic.pre + "title").html("");
-        }
+            // else {
+            //     let url = this.getLinkToStructureSummary();
+            //     this.setStructureTitle(url, title, titlelinkColor);
+            // }
+        // }
+        // else {
+        //     $("#" + ic.pre + "title").html("");
+        // }
     }
 
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+        if(title.length > 40) title = title.substr(0, 40) + "...";
 
         let inputid = ic.inputid;
 
@@ -68720,7 +68997,7 @@ class SaveFile {
             let structureidArray = Object.keys(idHash);
             inputid = structureidArray.join(',');
 
-            text = inputid.toUpperCase();
+            text = (me.cfg.refseqid) ? ic.inputid : inputid.toUpperCase();
 
             //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
             if(bPdb && bAlphaFold) {
@@ -69147,7 +69424,7 @@ class ShareLink {
            outputCmd = tmpUrl;
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
-           if(ic.bEmsfold || (ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
+           if(ic.bEsmfold || (ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
            let id;
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
@@ -72018,7 +72295,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.26.0';
+    this.REVISION = '3.26.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -72210,6 +72487,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         }
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
             let stru_t = Object.keys(ic.structures)[0];
+
             let chain_t = stru_t + '_' + me.cfg.masterchain;
             let domainidArray = me.cfg.matchedchains.split(',');
             let chainidArray = [];
@@ -72317,7 +72595,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        me.cfg.oriQuery_id = me.cfg.query_id;
        me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
-       // custom seqeunce has query_id such as "Query_78989" in BLAST
+       // custom sequence has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
             // make it backward compatible for  figure 2 in iCn3D paper: https://academic.oup.com/bioinformatics/article/36/1/131/5520951
             if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
@@ -72496,58 +72774,91 @@ iCn3DUI.prototype.setIcn3d = function() { let me = this;
     me.setDialogAjax();
 };
 
-iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete) { let me = this;
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: url,
-            dataType: dataType,
-            cache: true,
-            beforeSend: function() {
-                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
-            },
-            success: function(data) {
-                resolve(data);
-            },
-            error : function() {
-                if(alertMess) alert(alertMess);
-                if(logMess) console.log(logMess);
-                
-                reject('error');
-            }
+iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete, bNode) { let me = this;
+    // if(!bNode || dataType != 'json') {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) me.icn3d.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
         });
-    });
+    // }
+    // else {
+    //     return new Promise(async function(resolve, reject) {
+    //         const response = await fetch(url);
+
+    //         response.json().then(function(data) {
+    //             resolve(data);
+    //         }).catch(function(error) {
+    //             reject('error');
+    //         });
+    //     });
+    // }
 };
 
-iCn3DUI.prototype.getAjaxPostPromise = function(url, data, beforeSend, alertMess, logMess, complete, dataType) { let me = this;
+iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, alertMess, logMess, complete, dataType, bNode) { let me = this;
     dataType = (dataType) ? dataType : 'json';
 
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data : data,
-            dataType: dataType,
-            cache: true,
-            beforeSend: function() {
-                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
-            },
-            success: function(data) {
-                resolve(data);
-            },
-            error : function() {
-                if(alertMess) alert(alertMess);
-                if(logMess) console.log(logMess);
-                
-                reject('error');
-            }
+    // if(!bNode || dataType != 'json') {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data : data,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) me.icn3d.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
         });
-    });
+    // }
+    // else {
+    //     return new Promise(async function(resolve, reject) {
+    //         const response = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: data
+    //         });
+
+    //         response.json().then(function(data) {
+    //             resolve(data);
+    //         }).catch(function(error) {
+    //             reject('error');
+    //         });
+    //     });
+    // }
 };
 
 iCn3DUI.prototype.setDialogAjax = function() { let me = this;

@@ -354,7 +354,6 @@ class SetColor {
                                 let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                                 let currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                                 color = ic.showSeqCls.getRefnumColor(currStrand);
-
                                 if(ic.residIgLoop.hasOwnProperty(resid)) {                            
                                     color = me.parasCls.thr(me.htmlCls.GREYB);
                                 }

@@ -387,6 +387,21 @@ class ClickMenu {
         thisClass.setLogCmd("export pdb hydrogen", true);
        });
 
+       me.myEventCls.onIds("#" + me.pre + "mn1_exportIgstrand", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+       ic.refnumCls.exportRefnum('igstrand');
+       thisClass.setLogCmd("export refnum igstrand", true);
+      });
+
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+         ic.refnumCls.exportRefnum('kabat');
+         thisClass.setLogCmd("export refnum kabat", true);
+      });
+
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportImgt", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+      ic.refnumCls.exportRefnum('imgt');
+      thisClass.setLogCmd("export refnum imgt", true);
+      });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl file", false);
            //ic.threeDPrintCls.hideStabilizer();

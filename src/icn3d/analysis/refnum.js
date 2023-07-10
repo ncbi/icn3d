@@ -30,61 +30,6 @@
     async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-        //ic.refpdbArray = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
-        
-        //ic.refpdbArray = ['1ASF1A_2iijA_human', '1B2Microglobulin_7phrL_human_C1', '1BArrestin1_4jqiA_rat_n1', '1BTLA_2aw2A_human_Iset', '1C3_2qkiD_human_n1', '1CD19_6al5A_human_C2orV-n1', '1CD2_1hnfA_human_C2-n2', '1CD2_1hnfA_human_V-n1', '1CD8a_1cd8A_human_V', '1CoAtomerGamma1_1r4xA_human', '1Contactin1_2ee2A_human_FN3-n9', '1Contactin1_3s97C_human_C2-n2', '1CuZnSuperoxideDismutase_1hl5C_human', '1ECadherin_4zt1A_human_n2', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1FAB-HEAVY_5esv_C1-n2', '1FAB-HEAVY_5esv_V-n1', '1FAB-LIGHT_5esv_C1-n2', '1FAB-LIGHT_5esv_V-n1', '1GHR_1axiB_human_FN3-n1', '1ICOS_6x4gA_human_V', '1IL6Rb_1bquB_human_FN3-n2', '1IL6Rb_1bquB_human_FN3-n3', '1InsulinR_8guyE_human_FN3-n1', '1InsulinR_8guyE_human_FN3-n2', '1IsdA_2iteA_bacteria', '1JAM1_1nbqA_human_VorIset-n2', '1LAG3_7tzgD_human_C2-n2', '1LAG3_7tzgD_human_V-n1', '1LaminAC_1ifrA_human', '1MHCIa_7phrH_human_C1', '1MPT63_1lmiA_bacteria', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1ORF7a_1xakA_virus', '1PD1_4zqkB_human_V', '1PDL1_4z18B_human_V-n1', '1Palladin_2dm3A_human_Iset-n1', '1RBPJ_6py8C_human_Unk-n1', '1RBPJ_6py8C_human_Unk-n2', '1Sidekick2_1wf5A_human_FN3-n7', '1Siglec3_5j0bB_human_C2-n2', '1TCRa_6jxrm_human_C1-n2', '1TCRa_6jxrm_human_V-n1', '1TEAD1_3kysC_human', '1TP34_2o6cA_bacteria', '1TP47_1o75A_bacteria', '1Titin_4uowM_human_Unk-n152', '1VISTA_6oilA_human_V', '1VNAR_1t6vN_shark_V', '1VTCN1_Q7Z7D3_human_V-n2'];
-     
-/*
-        // round 1
-        ic.refpdbArray = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'GHR_1axiB_human_FN3-n1', 'FAB-HEAVY_5esv_C1-n2', 'IL6Rb_1bquB_human_FN3-n2', 'LAG3_7tzgD_human_C2-n2', 'VNAR_1t6vN_shark_V', 'VISTA_6oilA_human_V', 'CD19_6al5A_human_C2orV-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria'];
-        // round 2
-        ic.refpdbHash = {};
-
-        ic.refpdbHash['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'NaCaExchanger_2fwuA_dog_n2', 'BArrestin1_4jqiA_rat_n1', 'ECadherin_4zt1A_human_n2', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['GHR_1axiB_human_FN3-n1'] = ['GHR_1axiB_human_FN3-n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'CD2_1hnfA_human_C2-n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['FAB-HEAVY_5esv_C1-n2'] = ['FAB-HEAVY_5esv_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['IL6Rb_1bquB_human_FN3-n2'] = ['IL6Rb_1bquB_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'BTLA_2aw2A_human_Iset', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['VNAR_1t6vN_shark_V'] = ['VNAR_1t6vN_shark_V', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CoAtomerGamma1_1r4xA_human', 'MPT63_1lmiA_bacteria'];
-*/
-/*
-        // round 1
-        ic.refpdbArray = ['NaCaExchanger_2fwuA_dog_n2', 'C3_2qkiD_human_n1', 'Siglec3_5j0bB_human_C2-n2', 'ICOS_6x4gA_human_V', 'B2Microglobulin_7phrL_human_C1', 'VTCN1_Q7Z7D3_human_V-n2', 'Contactin1_2ee2A_human_FN3-n9', 'InsulinR_8guyE_human_FN3-n1', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'Palladin_2dm3A_human_Iset-n1', 'PD1_4zqkB_human_V', 'CD8a_1cd8A_human_V', 'VISTA_6oilA_human_V', 'LAG3_7tzgD_human_V-n1', 'TP47_1o75A_bacteria', 'TP34_2o6cA_bacteria', 'TEAD1_3kysC_human', 'RBPJ_6py8C_human_Unk-n2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria', 'LaminAC_1ifrA_human', 'CD19_6al5A_human_C2orV-n1'];
-
-        // round 2
-        ic.refpdbHash = {};      
-        ic.refpdbHash['NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['Siglec3_5j0bB_human_C2-n2'] = ['Siglec3_5j0bB_human_C2-n2', 'CD2_1hnfA_human_C2-n2', 'GHR_1axiB_human_FN3-n1'];
-        ic.refpdbHash['ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['B2Microglobulin_7phrL_human_C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['VTCN1_Q7Z7D3_human_V-n2'] = ['VTCN1_Q7Z7D3_human_V-n2', 'FAB-LIGHT_5esv_C1-n2'];
-        ic.refpdbHash['Contactin1_2ee2A_human_FN3-n9'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['JAM1_1nbqA_human_VorIset-n2'] = ['JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['LAG3_7tzgD_human_C2-n2'] = ['LAG3_7tzgD_human_C2-n2', 'BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['Palladin_2dm3A_human_Iset-n1'] = ['Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['PD1_4zqkB_human_V'] = ['PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'FAB-LIGHT_5esv_V-n1'];
-        ic.refpdbHash['CD8a_1cd8A_human_V'] = ['CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['VISTA_6oilA_human_V'] = ['VISTA_6oilA_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1'];
-        ic.refpdbHash['LAG3_7tzgD_human_V-n1'] = ['LAG3_7tzgD_human_V-n1'];
-        ic.refpdbHash['TP47_1o75A_bacteria'] = ['TP47_1o75A_bacteria'];
-        ic.refpdbHash['TP34_2o6cA_bacteria'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['TEAD1_3kysC_human'] = ['TEAD1_3kysC_human', 'CuZnSuperoxideDismutase_1hl5C_human'];
-        ic.refpdbHash['RBPJ_6py8C_human_Unk-n2'] = ['RBPJ_6py8C_human_Unk-n2', 'ASF1A_2iijA_human'];
-        ic.refpdbHash['TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria', 'CoAtomerGamma1_1r4xA_human'];
-        ic.refpdbHash['LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
-*/
         // round 1, 16 templates
         ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1'];
 
@@ -152,33 +97,24 @@
         ic.refpdbHash['6A15'] = ['CD19_6al5A_human_C2orV-n1'];
         ic.refpdbHash['2QKI'] = ['C3_2qkiD_human_n1'];
 
-        // if(ic.pdbDataArray) {
-        //     await thisClass.parseRefPdbData(ic.pdbDataArray);
-        // }
-        // else {
-
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
-            //let urlpdb = me.htmlCls.baseUrl + "icn3d/refpdb/" + ic.refpdbArray[k] + ".pdb";
-            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+            //let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refjsonid=" + ic.refpdbArray[k];
 
             let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
 
             pdbAjaxArray.push(pdbAjax);
         }
 
-        try {
+        // try {
             let allPromise = Promise.allSettled(pdbAjaxArray);
             ic.pdbDataArray = await allPromise;
             await thisClass.parseRefPdbData(ic.pdbDataArray);
-        }
-        catch(err) {
-            if(!me.bNode) alert("Error in retrieveing reference PDB data...");
-            //alert("Error in retrieveing reference PDB data...");
-            return;
-        }       
-
         // }
+        // catch(err) {
+        //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
+        //     return;
         // }
     }
 
@@ -191,6 +127,7 @@
         let domainidpairArray = [];
 
         let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
 
         if(!ic.resid2domainid) ic.resid2domainid = {};
         //ic.resid2domainid = {};
@@ -225,9 +162,14 @@
                     domainAtomsArray.push(currAtoms);
 
                     let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+
+                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
+                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
+                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+
                     for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                         let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0' + '_' + Object.keys(currAtoms).length; 
+                        ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
                     }
                 }
                 else {                 
@@ -247,13 +189,17 @@
 
                         domainAtomsArray.push(domainAtoms);
 
+                        let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
+                        let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
+                        let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+
                         for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                             let startResi = segArray[m];
                             let endResi = segArray[m+1];
                             for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
                                 let resid = chainid + '_' + pos2resi[n];
                                 //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + Object.keys(domainAtoms).length; 
+                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
                             }
                         }
                     }
@@ -261,19 +207,31 @@
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
+                    let bForceOneDomain = true;
+                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
+
                     // ig strand for any subset will have the same k, use the number of residue to separate them
-                    let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
+                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtomsArray[k]);
+                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtomsArray[k]);
+                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+                    //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
+                    let domainid = chainid + '-' + k + '_' + resiSum; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        let struct2 = ic.defaultPdbId + index;
-                        //let pdb_query = (me.bNode) ? dataArray[index] : dataArray[index].value; //[0];
-                        let pdb_query = dataArray[index].value; //[0];
-                        let header = 'HEADER                                                        ' + struct2 + '\n';
-                        pdb_query = header + pdb_query;
+                        // let struct2 = ic.defaultPdbId + index;
+                        // let pdb_query = dataArray[index].value; //[0];
+                        // let header = 'HEADER                                                        ' + struct2 + '\n';
+                        // pdb_query = header + pdb_query;
+                        let jsonStr_q = dataArray[index].value; //[0];
 
-                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                        // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
+                        // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                        // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+
+                        let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                        let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+
                         ajaxArray.push(alignAjax);
                         
                         domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
@@ -284,8 +242,27 @@
 
         try {
             let dataArray2 = [];
-            let allPromise = Promise.allSettled(ajaxArray);
-            dataArray2 = await allPromise;
+
+            // let allPromise = Promise.allSettled(ajaxArray);
+            // dataArray2 = await allPromise;
+
+            //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+            let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+
+            for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                let currAjaxArray = []
+                if(i == il - 1) { // last one 
+                    currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                }
+                else {
+                    currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                }
+
+                let currPromise = Promise.allSettled(currAjaxArray);
+                let currDataArray = await currPromise;
+
+                dataArray2 = dataArray2.concat(currDataArray);
+            }
         
             let bRound1 = true;
             await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
@@ -293,16 +270,47 @@
             /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
         }
         catch(err) {
-            if(!me.bNode) console.log("Error in aligning with TM-align...");
+            let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
+            if(!me.bNode) {
+                alert(mess);
+            }
+            else {
+                console.log(mess);
+            }
             //console.log("Error in aligning with TM-align...");
             return;
         }                       
+    }
+
+    getTemplateList(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let domainid2refpdbname = {};
+
+        for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
+            let refpdbname_domainid = ic.chainid2refpdbname[chainid][i].split('|');
+            domainid2refpdbname[refpdbname_domainid[1]] = refpdbname_domainid[0];
+        }
+
+        let domainidArray = Object.keys(domainid2refpdbname);
+        domainidArray.sort(function(id1, id2) {
+            let resi1 = parseInt(id1.substr(id1.lastIndexOf('_') + 1));
+            let resi2 = parseInt(id2.substr(id2.lastIndexOf('_') + 1));
+            return resi1 - resi2;
+        });
+
+        let chainList = '';
+        for(let i = 0, il = domainidArray.length; i < il; ++i) {
+            chainList += domainid2refpdbname[domainidArray[i]];
+            if(i < il - 1) chainList += ", ";
+        }
+
+        return chainList;
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let tmscoreThreshold = 0.4; // 0.4; //0.5;
+        let rmsdThreshold = 10;
 
         // find the best alignment for each chain
         let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
@@ -330,8 +338,15 @@
 
             if(queryData.length == 0) continue;
             
-            if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
-                continue;
+            if(!bRound1) {
+                if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                    continue;
+                }
+            }
+            else {
+                if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
+                    continue;
+                }
             }
 
             //let domainid_index = domainidpairArray[i].split(',');
@@ -340,39 +355,63 @@
             let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
             //let chainid = domainid.split('-')[0];
 
-            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
-            // Ig domain may require G (7050). But we'll leave that out for now.
-            let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
-            for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
-                let seg = queryData[0].segs[i];
-
-                if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
-                    bBstrand = true;
-                }
-                else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
-                    bCstrand = true;
-                }
-                else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
-                    bEstrand = true;
-                }
-                else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
-                    bFstrand = true;
-                }
-
-                //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
-                if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+            if(!bRound1) {
+                if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
+            }
+            else {
+                if(!me.bNode) console.log("refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd);
             }
 
-            //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
-            if(!(bBstrand && bCstrand && bEstrand && bFstrand)) continue;
+            // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
+            // Ig domain may require G (7050). But we'll leave that out for now.
+            if(!bRound1) {
+                let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
+                for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
+                    let seg = queryData[0].segs[i];
 
-            if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
-                domainid2score[domainid] = queryData[0].score;    
+                    if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
+                        bBstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
+                        bCstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
+                        bEstrand = true;
+                    }
+                    else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
+                        bFstrand = true;
+                    }
 
-                ic.domainid2refpdbname[domainid] = refpdbname;
-                domainid2segs[domainid] = queryData[0].segs;
-                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                    //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
+                    if(bBstrand && bCstrand && bEstrand && bFstrand) break;
+                }
+
+                //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
+                if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
+                    if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                    continue;
+                }
+            }
+
+            if(!bRound1) {
+                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
+                    domainid2score[domainid] = queryData[0].score;  
+        
+                    ic.domainid2refpdbname[domainid] = refpdbname;
+                    domainid2segs[domainid] = queryData[0].segs;
+                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                }
+            }
+            else {
+                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].super_rmsd < domainid2score[domainid]) {
+                    domainid2score[domainid] = queryData[0].super_rmsd;  
+        
+                    ic.domainid2refpdbname[domainid] = refpdbname;
+                    domainid2segs[domainid] = queryData[0].segs;
+                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
+                }                
             }
         }
 
@@ -438,10 +477,15 @@
         }
 
         // combine domainid into chainid
+        let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
             let chainid = domainid.split('-')[0];
+
+            if(!processedChainid.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
+            processedChainid[chainid] = 1;
+
             if(!ic.chainid2refpdbname.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
-            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid]);
+            ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid] + '|' + domainid);
         }
         
         // combine domainid into chainid
@@ -455,18 +499,21 @@
         if(!ic.resid2refnum) ic.resid2refnum = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};
         if(!ic.chainsMapping) ic.chainsMapping = {};
+
+        if(!ic.refPdbList) ic.refPdbList = [];
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
 
-            let chainList = '';
-            for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
-                chainList += ic.chainid2refpdbname[chainid][i] + " ";
-            }
+            let refpdbnameArray = ic.chainid2refpdbname[chainid];
+
+            let chainList = this.getTemplateList(chainid);
+
             //if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
-            console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            ic.refPdbList.push("The reference PDB(s) for chain " + chainid + " are " + chainList);
 
             let prevStrand;
-            let bCd19 = ic.chainid2refpdbname[chainid].length == 1 && ic.chainid2refpdbname[chainid][0] == 'CD19_6al5A_human_C2orV-n1';
+            let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human_C2orV-n1';
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
                 let qStart = seg.q_start;
@@ -647,8 +694,120 @@
         ic.annotationCls.setAnnoViewAndDisplay('detailed view');
     }
 
-    rmStrandFromRefnumlabel(refnumLabel) {
+    rmStrandFromRefnumlabel(refnumLabel) { let ic = this.icn3d, me = ic.icn3dui;
         return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
+    }
+
+    exportRefnum(type) { let ic = this.icn3d, me = ic.icn3dui;
+        let refData = '';
+
+        // 1. show IgStrand ref numbers
+        if(type == 'igstrand' || type == 'IgStrand') {
+            // iGStrand reference numbers were adjusted when showing in sequences
+            if(me.bNode) {
+                for(let chnid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        let giSeq = [];
+                        for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                            giSeq.push(ic.chainsSeq[chnid][i].name);
+                        }
+                        ic.showSeqCls.showRefNum(giSeq, chnid);
+                    }
+                }
+            }
+    
+            let resid2refnum = {};
+            for(let resid in ic.resid2refnum) {
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                if(!atom) continue;
+                
+                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+        
+                let domainid = ic.resid2domainid[resid];
+                let refnumStr, refnumLabel = ic.resid2refnum[resid];
+        
+                if(refnumLabel) {
+                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                    refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                }
+        
+                if(ic.resid2refnum[resid]) {
+                    if(ic.residIgLoop.hasOwnProperty(resid)) { // loop
+                    resid2refnum[resid + '_' + resn] = ic.resid2refnum[resid] + '_loop';
+                    }
+                    else {
+                    resid2refnum[resid + '_' + resn] = ic.resid2refnum[resid];
+                    }
+                }
+            }
+
+            refData += '{"ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n"
+    
+            refData += '"data": {\n';
+            for(let chnid in ic.chains) {
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+            if(ic.proteins.hasOwnProperty(atom.serial)) {
+                for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
+    
+                refData += "'" + resid + "': '" + resid2refnum[resid] + "',\n";
+                }
+            }
+            }
+            refData += '}\n';
+            refData += '}\n';
+        }
+        // 2. show Kabat ref numbers
+        else if(type == 'kabat' || type == 'Kabat') {
+            let resid2kabat = {};
+            for(let resid in ic.resid2refnum) {
+            let domainid = ic.resid2domainid[resid];
+            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+    
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+    
+            if(refnumLabel) {
+                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+            }
+    
+            resid2kabat[resid + '_' + resn] = refnumStr;
+            }
+            
+            refData += JSON.stringify(resid2kabat);
+        }
+        // 3. show IMGT ref numbers
+        else if(type == 'imgt'|| type == 'IMGT') {
+            let resid2imgt = {};
+            for(let resid in ic.resid2refnum) {
+            let domainid = ic.resid2domainid[resid];
+            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+    
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+    
+            if(refnumLabel) {
+                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+            }
+    
+            resid2imgt[resid + '_' + resn] = refnumStr;
+            }
+            
+            refData += JSON.stringify(resid2imgt);
+        }
+
+
+        if(!me.bNode) {
+            let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
+    
+            ic.saveFileCls.saveFile(file_pref + '_refnum_' + type + '.txt', 'text', [refData]);
+        }
+        else {
+            return refData;
+        }
     }
  }
  

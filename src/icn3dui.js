@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.26.0';
+    this.REVISION = '3.26.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -355,6 +355,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         }
         else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
             let stru_t = Object.keys(ic.structures)[0];
+
             let chain_t = stru_t + '_' + me.cfg.masterchain;
             let domainidArray = me.cfg.matchedchains.split(',');
             let chainidArray = [];
@@ -462,7 +463,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        me.cfg.oriQuery_id = me.cfg.query_id;
        me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
-       // custom seqeunce has query_id such as "Query_78989" in BLAST
+       // custom sequence has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
             // make it backward compatible for  figure 2 in iCn3D paper: https://academic.oup.com/bioinformatics/article/36/1/131/5520951
             if(me.cfg.from == 'icn3d' && me.cfg.blast_rep_id == '1TSR_A' && me.cfg.query_id == 'NP_001108451.1') {
@@ -641,58 +642,91 @@ iCn3DUI.prototype.setIcn3d = function() { let me = this;
     me.setDialogAjax();
 };
 
-iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete) { let me = this;
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: url,
-            dataType: dataType,
-            cache: true,
-            beforeSend: function() {
-                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
-            },
-            success: function(data) {
-                resolve(data);
-            },
-            error : function() {
-                if(alertMess) alert(alertMess);
-                if(logMess) console.log(logMess);
-                
-                reject('error');
-            }
+iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete, bNode) { let me = this;
+    // if(!bNode || dataType != 'json') {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) me.icn3d.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
         });
-    });
+    // }
+    // else {
+    //     return new Promise(async function(resolve, reject) {
+    //         const response = await fetch(url);
+
+    //         response.json().then(function(data) {
+    //             resolve(data);
+    //         }).catch(function(error) {
+    //             reject('error');
+    //         });
+    //     });
+    // }
 };
 
-iCn3DUI.prototype.getAjaxPostPromise = function(url, data, beforeSend, alertMess, logMess, complete, dataType) { let me = this;
+iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, alertMess, logMess, complete, dataType, bNode) { let me = this;
     dataType = (dataType) ? dataType : 'json';
 
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data : data,
-            dataType: dataType,
-            cache: true,
-            beforeSend: function() {
-                if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
-            },
-            complete: function() {
-                if(complete) me.icn3d.ParserUtilsCls.hideLoading();
-            },
-            success: function(data) {
-                resolve(data);
-            },
-            error : function() {
-                if(alertMess) alert(alertMess);
-                if(logMess) console.log(logMess);
-                
-                reject('error');
-            }
+    // if(!bNode || dataType != 'json') {
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data : data,
+                dataType: dataType,
+                cache: true,
+                beforeSend: function() {
+                    if(beforeSend) me.icn3d.ParserUtilsCls.showLoading();
+                },
+                complete: function() {
+                    if(complete) me.icn3d.ParserUtilsCls.hideLoading();
+                },
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function() {
+                    if(alertMess) alert(alertMess);
+                    if(logMess) console.log(logMess);
+                    
+                    reject('error');
+                }
+            });
         });
-    });
+    // }
+    // else {
+    //     return new Promise(async function(resolve, reject) {
+    //         const response = await fetch(url, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: data
+    //         });
+
+    //         response.json().then(function(data) {
+    //             resolve(data);
+    //         }).catch(function(error) {
+    //             reject('error');
+    //         });
+    //     });
+    // }
 };
 
 iCn3DUI.prototype.setDialogAjax = function() { let me = this;

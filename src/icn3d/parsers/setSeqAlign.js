@@ -242,22 +242,23 @@ class SetSeqAlign {
     }
 
     getPosFromResi(chainid, resi) { let ic = this.icn3d, me = ic.icn3dui;
-/*        
-        let pos = undefined; //parseInt(resi);
-
-        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
-            if(ic.chainsSeq[chainid][i].resi == resi) {
-                pos = i;
-                break;
-            }
-        }
-*/
         let residNCBI = ic.resid2ncbi[chainid + '_' + resi];
         let pos = undefined;
+        
         if(residNCBI) {
             let resiNCBI = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
             pos = resiNCBI - 1;
         }
+        // else {
+        //     //let il = ic.chainsSeq[chainid].length;
+        //     let il = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid].length : 0;
+        //     for(let i = 0; i < il; ++i) {
+        //         if(ic.chainsSeq[chainid][i].resi == resi) {
+        //             pos = i;
+        //             break;
+        //         }
+        //     }
+        // }
 
         return pos;
     }
@@ -960,7 +961,7 @@ class SetSeqAlign {
 
         //mmdbid1 = ic.mmdbid_t; 
         mmdbid1 = chainidArray[0].substr(0, pos1); //.toUpperCase();
-        mmdbid2 = chainid.substr(0, pos2); //.toUpperCase();
+        mmdbid2 = chainid.substr(0, pos2); //.toUpperCase()mergeTwoSeqForAll;
 
         chain1 = chainidArray[0].substr(pos1 + 1);
         chain2 = chainid.substr(pos2 + 1);

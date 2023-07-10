@@ -766,7 +766,7 @@ class ParserUtils {
                         if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                     }
 
-                    // Realign by seqeunce alignment with the residues in "segment", i.e., transmembrane helix
+                    // Realign by sequence alignment with the residues in "segment", i.e., transmembrane helix
                     let segment = data.segment;   // e.g., " 361- 379 ( 359- 384)", the first range is trnasmembrane range, 
                                                 //the second range is the range of the helix
                     let range = segment.replace(/ /gi, '').split('(')[0]; //361-379
