@@ -253,7 +253,7 @@ class Vastplus {
 
             // reinitialize the alignment
             $("#" + ic.pre + "dl_sequence2").html('');
-          
+
             for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                 let node = parseInt(nodeArray[j]);
                 let segs = queryDataArray[node][0].segs;
@@ -330,7 +330,7 @@ class Vastplus {
                         for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                             chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
                         }
-                        console.log("Selected the alignment: " + chainpairStr);
+                        if(!me.bNode) console.log("Selected the alignment: " + chainpairStr);
 
                         break;
                     }
@@ -339,7 +339,7 @@ class Vastplus {
                         for(let j = 0, jl = nodeArray.length; j < jl; ++j) {
                             chainpairStr += chainidpairArray[parseInt(nodeArray[j])] + '; ';
                         }
-                        console.log("skipped the alignment: " + chainpairStr);
+                        if(!me.bNode) console.log("skipped the alignment: " + chainpairStr);
                     }
                 }
             }

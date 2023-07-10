@@ -459,8 +459,11 @@ class Dialog {
                     if(me.cfg.align) {
                         position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" }
                     }
+                    else if(id === me.pre + 'dl_mmdbafid') {
+                        position ={ my: "left top", at: "left top+130", of: "#" + me.pre + "canvas", collision: "none" }
+                    }
                     else {
-                        position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" }
+                        position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" };
                     }
                 }
 

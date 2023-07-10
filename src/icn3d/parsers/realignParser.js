@@ -376,6 +376,7 @@ class RealignParser {
     async realignOnStructAlign(bReverse) { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
         let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
+
         let struct2domain = {};
         for(let struct in ic.structures) {
             struct2domain[struct] = {};
@@ -386,7 +387,7 @@ class RealignParser {
                 let sseCnt = 0;
                 for(let serial in atoms) {
                     if(ic.atoms[serial].ssbegin) ++sseCnt;
-                    if(sseCnt == minSseCnt) {
+                    if(sseCnt > minSseCnt) {
                         struct2domain[struct][chainid] = atoms;
                         break;
                     }
@@ -418,7 +419,6 @@ class RealignParser {
                         let chainid2 = chainidArray2[j];
 
                         let alignAjax;
-
                         if(me.cfg.aligntool != 'tmalign') {
                             let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
                         
@@ -457,7 +457,7 @@ class RealignParser {
 
     async realignOnStructAlignMsa(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
-        let minSseCnt = 3;
+        let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
         let chainid2domain = {};
 
         for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -466,7 +466,7 @@ class RealignParser {
             let sseCnt = 0;
             for(let serial in atoms) {
                 if(ic.atoms[serial].ssbegin) ++sseCnt;
-                if(sseCnt == minSseCnt) {
+                if(sseCnt > minSseCnt) {
                     chainid2domain[chainid] = atoms;
                     break;
                 }
@@ -569,7 +569,7 @@ class RealignParser {
             let pos = chainidArray[i].indexOf('_');
             let mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
 
-            if(!bRealign) mmdbid =  mmdbid.toUpperCase();
+            // if(!bRealign) mmdbid =  mmdbid.toUpperCase();
 
             if(i == 0) {
                 mmdbid_t = mmdbid;
@@ -756,14 +756,12 @@ class RealignParser {
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
-
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                     // from VAST neighbor page, use NCBI residue number
                     //if(me.cfg.usepdbnum === false) k += base - 1;
 
                     //let seqIndex = k - base;
                     let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-
                     // if(ic.bNCBI) {
                     //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
                     //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
@@ -780,9 +778,9 @@ class RealignParser {
                 }            
             }
             else { // one residue
+                
                 //let k = parseInt(resiArray[j]);
                 let k = resiArray[j];
-
                 // from VAST neighbor page, use NCBI residue number
                 //if(me.cfg.usepdbnum === false) k += base - 1;
 

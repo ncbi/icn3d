@@ -173,7 +173,7 @@ class ShowAnno {
                     dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
                 }
 
-                // get seqeunce
+                // get sequence
                 if(ic.blastAcxn) { 
                     let chainid = me.cfg.afid + '_A';
                     let seq = '';
@@ -204,7 +204,7 @@ class ShowAnno {
                     idArray.push(me.cfg.query_id);
                 }
 
-                // get seqeunce
+                // get sequence
                 if(ic.blastAcxn) { 
                     let chainid = me.cfg.afid + '_A';
                     let seq = '';
@@ -232,16 +232,6 @@ class ShowAnno {
              } // align seq to structure
         }
         //ic.bAnnoShown = true;
-
-        if(ic.bShowRefnum) {
-            ic.opts.color = 'ig strand';
-            //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
-            ic.selectionCls.selectAll_base();
-            ic.hlUpdateCls.updateHlAll();
-            //ic.drawCls.draw();
-        }
     }
 
     async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
@@ -541,7 +531,7 @@ class ShowAnno {
                 let data = ic.seqStructAlignData;
                 if(data.data !== undefined) {
                     query = data.data[0].query;
-                    // if target is seqeunce, the key is not chnid
+                    // if target is sequence, the key is not chnid
                     //target = data.data[0].targets[chnid];
                     let keys = Object.keys(data.data[0].targets);
                     target = data.data[0].targets[keys[0]];
@@ -553,7 +543,7 @@ class ShowAnno {
                     evalue = target.scores.e_value.toPrecision(2);
                     if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
                     let bitscore = target.scores.bit_score;
-                    // if target is seqeunce, the key is not chnid
+                    // if target is sequence, the key is not chnid
                     // targetSeq = data.targets[chnid].seqdata;
                     let keys = Object.keys(data.targets);
                     targetSeq = data.targets[keys[0]].seqdata;

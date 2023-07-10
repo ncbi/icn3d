@@ -146,7 +146,7 @@ class ChainalignParser {
         let hAtomsTmp = {}, hAtomsAll = {};
 
         if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-            // set multiple seqeunce alignment from ic.qt_start_end
+            // set multiple sequence alignment from ic.qt_start_end
             hAtomsAll = this.setMsa(chainidArray);
         }
 
@@ -206,7 +206,7 @@ class ChainalignParser {
         ic.qt_start_end = [];
 
         let mmdbid2cnt = {}, mmdbidpairHash = {};
-             
+
         let bFoundAlignment = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
@@ -471,7 +471,7 @@ class ChainalignParser {
             let chainid = chainidArray[i];
             let pos = chainid.indexOf('_');
             let struct = chainid.substr(0, pos); 
-            if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
+            //if(struct != ic.defaultPdbId) struct = struct.toUpperCase();
 
             if(!struct2cnt.hasOwnProperty(struct)) {
                 struct2cnt[struct] = 1;
@@ -691,6 +691,7 @@ class ChainalignParser {
 
     processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
+
         if((!align || align.length == 0) && !bNoAlert) {
             let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
         
@@ -875,14 +876,14 @@ class ChainalignParser {
         ic.ParserUtilsCls.showLoading();
 
         let allPromise = Promise.allSettled(ajaxArray);
-        try {
+        // try {
             let dataArray = await allPromise;
             await thisClass.parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype);
             if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
-        }
-        catch(err) {
-            alert("There are some problems in retrieving the coordinates...");
-        }          
+        // }
+        // catch(err) {
+        //     alert("There are some problems in retrieving the coordinates...");
+        // }          
     //   });
     
     //   return ic.deferredMmdbaf.promise();

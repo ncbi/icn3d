@@ -4,13 +4,15 @@
 # please set up selenium, chrome, chromedriver
 
 # please set the following directories in the code:
-# /path/to/download at line 22
-# /path/to/chrome at line 38
-# /path/to/chromedriver at line 41
-# Please set the pdbid name at line 42
-# Please set the exported file name at line 43. The file name had better match the file name from interactive usage of iCn3D.
+# /path/to/download at line 24
+# /path/to/chrome at line 40
+# Please set the pdbid name at line 49
+# Please set the exported file name at line 50. The file name had better match the file name from interactive usage of iCn3D.
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService 
+from webdriver_manager.chrome import ChromeDriverManager
+
 from pathlib import Path
 
 import time
@@ -35,10 +37,15 @@ options.add_argument("--no-sandbox") # bypass OS security model
 options.add_argument("--disable-gpu") # applicable to windows os only
 options.add_argument("--disable-extensions") # disable extensions
 options.add_argument("--window-size=320,320") # start with specific window size (300x300 viewport/image size)
-options.binary_location = "/usr/local/chrome/89.0.4389.90/bin/chrome" # chrome binary location (required if chrome is not in the default path)
+options.binary_location = "/usr/local/chrome/114.0.5735.106/bin/chrome" # chrome binary location (required if chrome is not in the default path)
 
 # start a broser
-browser = webdriver.Chrome(executable_path='/usr/local/chromedriver/89.0.4389.23/bin/chromedriver', options=options)
+#browser = webdriver.Chrome(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver', options=options)
+#service = ChromeService(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver')
+service = ChromeService(ChromeDriverManager().install())
+browser = webdriver.Chrome(service=service, options=options)
+
+
 pdbfile = "1GPK.pdb" # use upper case if it's a PDB ID
 pngfile = Path(f"{downdir}/{Path(pdbfile).stem}_icn3d_loadable.png")
 

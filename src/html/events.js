@@ -1066,8 +1066,15 @@ class Events {
 
             if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
                 let pos = esmfold_fasta.indexOf('\n');
-                ic.esmTitle = esmfold_fasta.substr(1, pos - 1);
-                pdbid = ic.esmTitle.substr(0, ic.esmTitle.indexOf(' '));
+                ic.esmTitle = esmfold_fasta.substr(1, pos - 1).trim();
+                if(ic.esmTitle.indexOf('|') != -1) { // uniprot
+                    let idArray = ic.esmTitle.split('|');
+                    pdbid = (idArray.length > 2) ? idArray[1] : ic.esmTitle;
+                }
+                else { // NCBI
+                    pdbid = (ic.esmTitle.indexOf(' ') != -1) ? ic.esmTitle.substr(0, ic.esmTitle.indexOf(' ')) : ic.esmTitle;
+                }
+
                 if(pdbid.length < 6) pdbid = pdbid.padEnd(6, '-');
 
                 esmfold_fasta = esmfold_fasta.substr(pos + 1);
@@ -1076,8 +1083,8 @@ class Events {
             // remove new lines
             esmfold_fasta = esmfold_fasta.replace(/\s/g, '');
 
-            if(esmfold_fasta.length > 1024) {
-                alert("Your seqeunce is larger than 1024 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
+            if(esmfold_fasta.length > 400) {
+                alert("Your sequence is larger than 400 characters. Please consider to split it as described at https://github.com/facebookresearch/esm/issues/21.");
                 return;
             }
 

@@ -360,6 +360,26 @@ class SaveFile {
          return html;
     }
 
+    printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt) { let ic = this.icn3d, me = ic.icn3dui;
+        let ssText = '';
+
+        // print prev
+        if(prevRealSsObj) {
+            if(bHelix) {
+                let helixType = 1;
+                ssText += prevRealSsObj.resn.padStart(5, ' ') + prevRealSsObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    + prevRealSsObj.resi.toString().padStart(5, ' ') + '  ' + helixType + ssCnt.toString().padStart(36, ' ') + '\n';
+            }
+            else if(bSheet) {
+                let sense = 0;
+                ssText += prevRealSsObj.resn.padStart(5, ' ') + prevRealSsObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    + prevRealSsObj.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
+            }
+        }
+
+        return ssText;
+    }
+
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
     getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
@@ -402,47 +422,81 @@ class SaveFile {
 
 //        if(!bNoSs) {
             let prevResi, stru, chainid;
+            let ssArray = [];
             for(let i in calphaHash) {
                 let atom = ic.atoms[i];
                 stru = atom.structure;
                 chainid = atom.structure + '_' + atom.chain;
 
-                if(atom.ssbegin) {
-                    if(atom.ss == 'helix') {
-                        bHelixBegin = true;
-                        if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ');
-                        bHelixEnd = false;
-                        prevResi = atom.resi;
-                    }
-                    else if(atom.ss == 'sheet') {
-                        bSheetBegin = true;
-                        if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ');
-                        bSheetEnd = false;
-                    }
+                let ssObj = {};
+                ssObj.chain = atom.chain;
+                ssObj.resn = atom.resn;
+                ssObj.resi = atom.resi;
+
+                if(parseInt(atom.resi) > parseInt(prevResi) + 1) {
+                    ssObj.ss = ' ';
+                    ssArray.push(ssObj);
+                }
+
+                if(atom.ss == 'helix') {
+                    ssObj.ss = 'H';
+                    ssArray.push(ssObj);
+                }
+                else if(atom.ss == 'sheet') {
+                    ssObj.ss = 'S';
+                    ssArray.push(ssObj);
                 }
 
                 if(atom.ssend) {
-                    if(atom.ss == 'helix') {
-                        bHelixEnd = true;
-                        let residEnd = ic.resid2ncbi[chainid + '_' + atom.resi];
-                        let residStart = ic.resid2ncbi[chainid + '_' + prevResi]
-                        let helixLen = (residEnd && residStart) ? parseInt(residEnd.substr(residEnd.lastIndexOf('_') + 1)) - parseInt(residStart.substr(residStart.lastIndexOf('_') + 1)) : 0;
-                        let helixType = 1;
-                        if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(5, ' ') + '  ' + helixType + helixLen.toString().padStart(36, ' ') + '\n';
-                        bHelixBegin = false;
-                    }
-                    else if(atom.ss == 'sheet') {
-                        bSheetEnd = true;
-                        let sense = 0;
-                        if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
-                            + atom.resi.toString().padStart(4, ' ') + '  ' + sense + '\n';
-                        bSheetBegin = false;
+                    let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
+                    ssObj2.ss = ' ';
+                    ssArray.push(ssObj2);
+                }
+
+                prevResi = atom.resi;
+            }
+
+            let prevSs, prevRealSsObj, ssCnt = 0, bHelix = false, bSheet = false;
+            for(let i = 0, il = ssArray.length; i < il; ++i) {
+                let ssObj = ssArray[i];
+
+                if(ssObj.ss != prevSs) {
+                    // print prev
+                    stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+
+                    // print current
+                    ssCnt = 0;
+                    bHelix = false;
+                    bSheet = false;
+                    prevRealSsObj = undefined;
+
+                    if(ssObj.ss != ' ') {
+                        if(ssObj.ss == 'H') {
+                            bHelix = true;
+                            prevRealSsObj = ssObj;
+                            stru2header[stru] += helixStr.padEnd(15, ' ') + ssObj.resn.padStart(3, ' ') + ssObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + ssObj.resi.toString().padStart(5, ' ');
+                        }
+                        else if(ssObj.ss == 'S') {
+                            bSheet = true;
+                            prevRealSsObj = ssObj;
+                            stru2header[stru] += sheetStr.padEnd(17, ' ') + ssObj.resn.padStart(3, ' ') + ssObj.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                                + ssObj.resi.toString().padStart(4, ' ');
+                        }
                     }
                 }
+
+                if(ssObj.ss != ' ') {
+                    ++ssCnt;
+                    prevRealSsObj = ssObj;
+                }
+
+                prevSs = ssObj.ss;
             }
+
+            // print prev
+            stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+
             // add a new line in case the structure is a subset
             stru2header[stru] += '\n';
 //        }
@@ -797,13 +851,13 @@ class SaveFile {
 
     //Show the title and PDB ID of the PDB structure at the beginning of the viewer.
     showTitle() {var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.molTitle !== undefined && ic.molTitle !== '') {
-            let title = ic.molTitle;
+        // if(ic.molTitle !== undefined && ic.molTitle !== '') {
+            let title = (ic.molTitle) ? ic.molTitle : '';
 
             let titlelinkColor =(ic.opts['background'] == 'black') ?  me.htmlCls.GREYD : 'black';
 
             if(ic.inputid === undefined) {
-                if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+                if(title.length > 40) title = title.substr(0, 40) + "...";
 
                 $("#" + ic.pre + "title").html(title);
             }
@@ -823,31 +877,38 @@ class SaveFile {
 
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(me.cfg.mmdbafid !== undefined) {
-                let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
+            else { //if(me.cfg.mmdbafid !== undefined) {
+                //let structureArray = Object.keys(ic.structures); //me.cfg.mmdbafid.split(',');
+                let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
+
                 if(structureArray.length > 1) {
-                    title = 'Multiple structures: ' + structureArray;
+                    title = 'Multiple structures: ';
+                    for(let i = 0, il = structureArray.length; i < il; ++i) {
+                        let url = (isNaN(structureArray[i]) && structureArray[i].length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + structureArray[i] : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + structureArray[i];
+                        title += '<a href="' + url + '" style="color:' + titlelinkColor + '" target="_blank">' + structureArray[i] + '</a>';
+                        if(i < il - 1) title += ', ';
+                    }
                     $("#" + ic.pre + "title").html(title);
                 }
                 else if(structureArray.length == 1) {
                     //let url = this.getLinkToStructureSummary();
-                    let url = (isNaN(ic.inputid) && ic.inputid.length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + ic.inputid : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + ic.inputid;
+                    let url = (isNaN(structureArray[0]) && structureArray[0].length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + structureArray[0] : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + structureArray[0];
 
                     this.setStructureTitle(url, title, titlelinkColor)
                 }
             }
-            else {
-                let url = this.getLinkToStructureSummary();
-                this.setStructureTitle(url, title, titlelinkColor);
-            }
-        }
-        else {
-            $("#" + ic.pre + "title").html("");
-        }
+            // else {
+            //     let url = this.getLinkToStructureSummary();
+            //     this.setStructureTitle(url, title, titlelinkColor);
+            // }
+        // }
+        // else {
+        //     $("#" + ic.pre + "title").html("");
+        // }
     }
 
     setStructureTitle(url, title, titlelinkColor) {var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+        if(title.length > 40) title = title.substr(0, 40) + "...";
 
         let inputid = ic.inputid;
 
@@ -873,7 +934,7 @@ class SaveFile {
             let structureidArray = Object.keys(idHash);
             inputid = structureidArray.join(',');
 
-            text = inputid.toUpperCase();
+            text = (me.cfg.refseqid) ? ic.inputid : inputid.toUpperCase();
 
             //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
             if(bPdb && bAlphaFold) {

@@ -10,7 +10,7 @@ class LoadPDB {
     getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d, me = ic.icn3dui;
         let structure = id;
     
-        if(id == ic.defaultPdbId || bMutation) { // bMutation: side chain prediction
+        if(id == ic.defaultPdbId || bMutation || ic.structures.hasOwnProperty(id)) { // bMutation: side chain prediction
             structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
         }
 
@@ -80,7 +80,7 @@ class LoadPDB {
         let maxMissingResi = 0, prevMissingChain = '';
         let CSerial, prevCSerial, OSerial, prevOSerial;
         
-        let bHeader = false;
+        let bHeader = false, bFirstAtom = true;
 
         for (let i in lines) {
             let line = lines[i];
@@ -246,7 +246,11 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
-                structure = this.getStructureId(id, moleculeNum, bMutation);
+                if(bFirstAtom) {
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
+
+                    bFirstAtom = false;
+                }
 
                 let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
@@ -397,6 +401,7 @@ class LoadPDB {
 
                 // different residue
                 //if(residueNum !== prevResidueNum) {
+                    
                 if(oriResidueNum !== prevOriResidueNum) {
                     let residue = me.utilsCls.residueName2Abbr(resn);
                     ic.residueId2Name[residueNum] = residue;

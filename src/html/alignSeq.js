@@ -23,8 +23,17 @@ class AlignSeq {
 
         let chainHash = {}
         if (alignChainArray !== undefined) {
+
             for (let i = 0, il = alignChainArray.length; i < il; ++i) {
-                chainHash[alignChainArray[i]] = 1;
+                let chainid = alignChainArray[i];
+
+                // make sure some residues are aligned
+                if(ic.alnChainsSeq[chainid] && ic.alnChainsSeq[chainid].length > 0) {
+                    chainHash[chainid] = 1;
+                }
+                else {
+                    return { "sequencesHtml": sequencesHtml, "maxSeqCnt": maxSeqCnt };
+                }
             }
         }
 
@@ -39,7 +48,7 @@ class AlignSeq {
         let bHighlightChain;
         let index = 0, prevResCnt2nd = 0;
         let firstChainid, oriChainid;
-
+console.log("alignChainArray.length: " + alignChainArray.length)
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
@@ -216,7 +225,7 @@ class AlignSeq {
                 //sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-seqTitle' chain='" + i + "' anno='" + j + "'>" + annotitle + "</div>" + resiHtmlArray[j] + "<br/></div>";
                 sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-seqTitle' anno='" + j + "'>" + annotitle + "</div>" + resiHtmlArray[j] + "<br/></div>";
             }
-
+            
             sequencesHtml += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" chain="' + i + '" anno="sequence" title="' + title + '">' + chainidTmp + ' </div><span class="icn3d-seqLine">' + seqHtml + '</span><br/>';
 
             if (index > 0) prevResCnt2nd += seqLength;

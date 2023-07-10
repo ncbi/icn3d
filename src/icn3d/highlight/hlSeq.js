@@ -93,6 +93,8 @@ class HlSeq {
            //});
 
             // remove possible text selection
+            // the following code caused the scroll of sequence window to the top, remove it for now
+            /*
             if(window.getSelection) {
               if(window.getSelection().empty) {  // Chrome
                 window.getSelection().empty();
@@ -102,6 +104,7 @@ class HlSeq {
             } else if(document.selection) {  // IE?
               document.selection.empty();
             }
+            */
       });
     }
 

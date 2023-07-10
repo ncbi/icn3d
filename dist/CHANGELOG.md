@@ -1,7 +1,9 @@
 ## Change Log
-[icn3d-3.26.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.4.zip) was release on June 20, 2023. Added the feature to run  ESMFold on the fly via the menu "File > AlphaFold/ESM > ESMFold" in iCn3D.
+[icn3d-3.26.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.26.1.zip) was release on July 10, 2023. Fixed a bug in TM-align.
 
-[icn3d-3.25.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.4.zip) was release on June 15, 2023. Fixed the extra side chains of disulfide bonds when the disulfide bonds are not showing; fixed the extra tracks in Seqeunces & Annotations window.
+[icn3d-3.26.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.26.0.zip) was release on June 20, 2023. Added the feature to run  ESMFold on the fly via the menu "File > AlphaFold/ESM > ESMFold" in iCn3D.
+
+[icn3d-3.25.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.4.zip) was release on June 15, 2023. Fixed the extra side chains of disulfide bonds when the disulfide bonds are not showing; fixed the extra tracks in Sequences & Annotations window.
 
 [icn3d-3.25.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.25.3.zip) was release on May 24, 2023. Fixed a bug in Node.js scripts about retrieving data from Ajax calls.
 
@@ -99,7 +101,7 @@
 
 [icn3d-3.12.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.1.zip) was release on June 8, 2022. Fixed the bug about exporting iCn3D PNG Image.
 
-[icn3d-3.12.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.0.zip) was release on June 6, 2022. Users now can have Virtual Reality (VR) view on any iCn3D display; enabled to view multiple seqeunce alignment (MSA) instead of pairwise alignment; changed the tools in toolbar from buttons to icons; switched to WegGL2 from WebGL1.
+[icn3d-3.12.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.0.zip) was release on June 6, 2022. Users now can have Virtual Reality (VR) view on any iCn3D display; enabled to view multiple sequence alignment (MSA) instead of pairwise alignment; changed the tools in toolbar from buttons to icons; switched to WegGL2 from WebGL1.
 
 [icn3d-3.11.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.8.zip) was release on May 20, 2022. Enabled to import "icn3d.css" and "three.module.js" from npm icn3d to work with React.
 
