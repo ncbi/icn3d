@@ -439,10 +439,10 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "applyyournote'>Save</button>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_gi', 'Please input an NCBI gi');
-        html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
+        html += me.htmlCls.divStr + "dl_proteinname' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_proteinname', 'Please input a protein/gene name');
+        html += "Protein/Gene name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "proteinname' value='TP53' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_proteinname'>Search</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";

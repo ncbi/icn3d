@@ -504,10 +504,16 @@ class SetMenu {
         let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
-        //html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
-        html += this.getMenuUrl('mn1_searchstru', "https://www.ncbi.nlm.nih.gov/structure", "Search Structure " + me.htmlCls.wifiStr, 1, 1);
+        
+        html += this.getMenuText('mn1_searchgrooup', 'Search Structure ' + me.htmlCls.wifiStr, undefined, 1, 1);
+        html += "<ul>";
+        html += this.getMenuUrl('mn1_searchstru', 'https://www.ncbi.nlm.nih.gov/structure', 'PDB Structures ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_proteinname', 'AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getMenuUrl('mn1_afdatabase', 'https://alphafold.ebi.ac.uk', 'AlphaFold UniProt Database ' + me.htmlCls.wifiStr, undefined, 2);
+        html += "</ul>";
+        html += "</li>";
 
-        html += this.getMenuText('mn1_searchsimilar', 'Search Similar', undefined, undefined, 1);
+        html += this.getMenuText('mn1_searchsimilar', 'Search Similar' + me.htmlCls.wifiStr, undefined, undefined, 1);
         html += "<ul>";
         html += this.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Complex)' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_vast', 'NCBI VAST (PDB Chain)' + me.htmlCls.wifiStr, undefined, 2);
@@ -528,7 +534,6 @@ class SetMenu {
         
         html += this.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
         html += this.getLink('mn1_refseqid', 'NCBI Protein Accession ' + me.htmlCls.wifiStr, undefined, 3);
-        // html += this.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
         

@@ -18,6 +18,9 @@ class PdbParser {
             if(me.cfg.refseqid) {
                 ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(NCBI Protein Acc.) in iCn3D');
             }
+            else if(me.cfg.protein) {
+                ic.ParserUtilsCls.setYourNote(me.cfg.protein + '(NCBI Protein/Gene) in iCn3D');
+            }
             else {
                 ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
             }
