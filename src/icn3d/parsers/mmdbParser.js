@@ -119,6 +119,73 @@ class MmdbParser {
         //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
 
+    async downloadProteinname(protein) { let ic = this.icn3d, me = ic.icn3dui;
+        me.icn3d.bCid = undefined;
+
+        // get RefSeq ID from protein name
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?protein2acc=" + protein;
+
+        let accJson = await me.getAjaxPromise(url, 'jsonp');
+
+        let accArray = accJson.acc;
+
+        if(accArray.length == 0) {
+            if(!me.bNode) alert('The protein/gene name ' + protein + ' can not be mapped to RefSeq proteins...');
+            return;
+        }
+
+        let ajaxArray = [];
+        for(let index = 0, indexl = accArray.length; index < indexl; ++index) {
+            let refseqid = accArray[index];
+            url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+
+            let ajax = me.getAjaxPromise(url, 'jsonp');
+
+            ajaxArray.push(ajax);
+        }
+
+        let allPromise = Promise.allSettled(ajaxArray);
+        let dataArray = await allPromise;
+
+        ajaxArray = [];
+        let afidArray = [];
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = dataArray[i].value;
+
+            if(data && data.uniprot) {
+                let afid = data.uniprot;
+                url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
+                ic.ParserUtilsCls.setYourNote(me.cfg.protein + '(NCBI Protein/Gene) in iCn3D');
+
+                let ajax = me.getAjaxPromise(url, 'text', true);
+                ajaxArray.push(ajax);
+                afidArray.push(afid);
+            }
+        }
+        
+        allPromise = Promise.allSettled(ajaxArray);
+        dataArray = await allPromise;
+       
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = dataArray[i].value;
+            me.cfg.afid = afidArray[i];
+
+            if(data) {
+                // add UniProt ID into the header
+                let header = 'HEADER                                                        ' + me.cfg.afid + '\n';
+                data = header + data;          
+                await ic.opmParserCls.parseAtomData(data, me.cfg.afid, undefined, 'pdb', undefined);
+
+                break;
+            }
+        }
+
+        if(!me.cfg.afid) {
+            if(!me.bNode) alert('The protein/gene name ' + protein + ' can not be mapped to AlphaFold structures...');
+            return;
+        }
+    }
+
     getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
         if(bGi) {
             alert("This gi " + mmdbid + " has no corresponding 3D structure...");

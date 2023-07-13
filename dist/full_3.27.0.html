@@ -18,11 +18,11 @@
   <div id="div0"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.26.1.css">
+  <link rel="stylesheet" href="icn3d_3.27.0.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.26.1.min.js"></script>
+  <script src="icn3d_3.27.0.min.js"></script>
 
   <script type="text/javascript">
 
@@ -40,7 +40,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.26.1.min.js', function() {
+          //$.getScript('icn3d_3.27.0.min.js', function() {
             var version = 3;
             await launchIcn3d(version); //await 
           //});
@@ -197,7 +197,7 @@
                 else {
                     var paraPos = cfg.command.indexOf(' | parameters ');
 
-                    if(paraPos != -1) { //"&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
+                    if(paraPos != -1) { // "&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
                         var tmpPos = cfg.command.indexOf('}}&');
                         if(tmpPos != -1) { // more parameters after the command
                           decodeSearch += cfg.command.substr(tmpPos + 2);

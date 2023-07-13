@@ -5357,23 +5357,23 @@ class ParasCls {
             //this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/(0 + 1.85)),
-            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/(0 + 1.85)),
-            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/(0 + 1.85)),
-            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/(0 + 1.85)),
-            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/(0 + 1.85)),
-            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/(0 + 1.85)),
-            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/(0 + 1.85)),
+            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-2.09 + 2.09) / (0 + 2.09)),
+            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.71 + 2.09) / (0 + 2.09)),
+            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.25 + 2.09) / (0 + 2.09)),
+            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.12 + 2.09) / (0 + 2.09)),
+            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.71 + 2.09) / (0 + 2.09)),
+            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.67 + 2.09) / (0 + 2.09)),
+            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.46 + 2.09) / (0 + 2.09)),
+            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.02 + 2.09) / (0 + 2.09)),
 
             // polar
-            'GLY': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.01 + 0.58)/(0 + 0.58)),
-            'VAL': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.07 + 0.58)/(0 + 0.58)),
-            'SER': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.13 + 0.58)/(0 + 0.58)),
-            'THR': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 0.58)/(0 + 0.58)),
-            'ALA': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.17 + 0.58)/(0 + 0.58)),
-            'ASN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.42 + 0.58)/(0 + 0.58)),
-            'PRO': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.45 + 0.58)/(0 + 0.58)),
-            'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
+            'PRO': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 1.15) / (0 + 1.15)),
+            'THR': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.25 + 1.15) / (0 + 1.15)),
+            'SER': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.46 + 1.15) / (0 + 1.15)),
+            'ALA': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.50 + 1.15) / (0 + 1.15)),
+            'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.77 + 1.15) / (0 + 1.15)),
+            'ASN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.85 + 1.15) / (0 + 1.15)),
+            'GLY': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-1.15 + 1.15) / (0 + 1.15))
         };
 
         this.normalizedHPColors = {
@@ -5391,59 +5391,58 @@ class ParasCls {
             //this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            // 0.65 ~ -1.85: white ~ green
-            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/2.5),
-            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/2.5),
-            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/2.5),
-            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/2.5),
-            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/2.5),
-            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/2.5),
-            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/2.5),
+            // 1.15 ~ -2.09: white ~ green
+            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-2.09 + 2.09) / 3.24),
+            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.71 + 2.09) / 3.24),
+            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.25 + 2.09) / 3.24),
+            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.12 + 2.09) / 3.24),
+            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.71 + 2.09) / 3.24),
+            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.67 + 2.09) / 3.24),
+            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.46 + 2.09) / 3.24),
+            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.02 + 2.09) / 3.24),
 
             // polar
-            'GLY': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.01 + 1.85)/2.5),
-            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.07 + 1.85)/2.5),
-            'SER': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.13 + 1.85)/2.5),
-            'THR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.14 + 1.85)/2.5),
-            'ALA': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.17 + 1.85)/2.5),
-            'ASN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.42 + 1.85)/2.5),
-            'PRO': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.45 + 1.85)/2.5),
-            'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.58 + 1.85)/2.5)
+            'PRO': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.14 + 2.09) / 3.24),
+            'THR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.25 + 2.09) / 3.24),
+            'SER': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.46 + 2.09) / 3.24),
+            'ALA': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.50 + 2.09) / 3.24),
+            'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.77 + 2.09) / 3.24),
+            'ASN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.85 + 2.09) / 3.24),
+            'GLY': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (1.15 + 2.09) / 3.24)
         };
 
         this.hydrophobicValues = {
-            // charged residues
+            // charged residues, larger than max polar (1.15)
             '  G': 3,     '  A': 3,     '  T': 3,
             '  C': 3,     '  U': 3,     ' DG': 3,
             ' DA': 3,     ' DT': 3,     ' DC': 3,
             ' DU': 3,       'G': 3,       'A': 3,
             'T': 3,         'C': 3,       'U': 3,
             'DG': 3,       'DA': 3,      'DT': 3,
-            'DC': 3,       'DU': 3,     'ARG': 1,
-            'LYS': 1,     'ASP': 3,     'GLU': 3,
+            'DC': 3,       'DU': 3,     'ARG': 1.5,
+            'LYS': 1.5,     'ASP': 3,     'GLU': 3,
             'HIS': 2,
 
-            // + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            // 0.65 ~ -1.85: white ~ green
-            'TRP': -1.85,
-            'PHE': -1.13,
-            'TYR': -0.94,
-            'LEU': -0.56,
-            'ILE': -0.31,
-            'CYS': -0.24,
-            'MET': -0.23,
+            // 1.15 ~ -2.09: white ~ green
+            'TRP': -2.09,
+            'PHE': -1.71,
+            'LEU': -1.25,
+            'ILE': -1.12,
+            'TYR': -0.71,
+            'MET': -0.67,
+            'VAL': -0.46,
+            'CYS': -0.02,
 
             // polar
-            'GLY': 0.01,
-            'VAL': 0.07,
-            'SER': 0.13,
-            'THR': 0.14,
-            'ALA': 0.17,
-            'ASN': 0.42,
-            'PRO': 0.45,
-            'GLN': 0.58
+            'PRO': 0.14,
+            'THR': 0.25,
+            'SER': 0.46,
+            'ALA': 0.50,
+            'GLN': 0.77,
+            'ASN': 0.85,
+            'GLY': 1.15
         };
 
         this.residueAbbrev = {
@@ -6829,8 +6828,8 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_esmfold', 'Sequence to structure prediction with ESMFold');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
+        me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_proteinname', 'Please input protein or gene name');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { me.icn3d; //e.preventDefault();
@@ -9355,10 +9354,16 @@ class SetMenu {
         let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
-        //html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
-        html += this.getMenuUrl('mn1_searchstru', "https://www.ncbi.nlm.nih.gov/structure", "Search Structure " + me.htmlCls.wifiStr, 1, 1);
+        
+        html += this.getMenuText('mn1_searchgrooup', 'Search Structure ' + me.htmlCls.wifiStr, undefined, 1, 1);
+        html += "<ul>";
+        html += this.getMenuUrl('mn1_searchstru', 'https://www.ncbi.nlm.nih.gov/structure', 'PDB Structures ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_proteinname', 'AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getMenuUrl('mn1_afdatabase', 'https://alphafold.ebi.ac.uk', 'AlphaFold UniProt Database ' + me.htmlCls.wifiStr, undefined, 2);
+        html += "</ul>";
+        html += "</li>";
 
-        html += this.getMenuText('mn1_searchsimilar', 'Search Similar', undefined, undefined, 1);
+        html += this.getMenuText('mn1_searchsimilar', 'Search Similar' + me.htmlCls.wifiStr, undefined, undefined, 1);
         html += "<ul>";
         html += this.getLink('mn1_vastplus', 'NCBI VAST+ (PDB Complex)' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_vast', 'NCBI VAST (PDB Chain)' + me.htmlCls.wifiStr, undefined, 2);
@@ -9379,7 +9384,6 @@ class SetMenu {
         
         html += this.getLink('mn1_afid', 'UniProt ID ' + me.htmlCls.wifiStr, undefined, 3);
         html += this.getLink('mn1_refseqid', 'NCBI Protein Accession ' + me.htmlCls.wifiStr, undefined, 3);
-        // html += this.getLink('mn1_proteinname', 'Protein Name ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
         
@@ -11791,10 +11795,10 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "applyyournote'>Save</button>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_gi', 'Please input an NCBI gi');
-        html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
+        html += me.htmlCls.divStr + "dl_proteinname' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_proteinname', 'Please input a protein/gene name');
+        html += "Protein/Gene name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "proteinname' value='TP53' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_proteinname'>Search</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
@@ -13784,7 +13788,7 @@ class Events {
             }
 
             let esmfold_fasta = $("#" + me.pre + "esmfold_fasta").val();
-            let pdbid;
+            let pdbid = 'stru--';
 
             if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
                 let pos = esmfold_fasta.indexOf('\n');
@@ -13815,6 +13819,11 @@ class Events {
             thisClass.setLogCmd("Run ESMFold with the sequence " + esmfold_fasta, false);
 
             let esmData = await me.getAjaxPostPromise(esmUrl, esmfold_fasta, true, alertMess, undefined, true, 'text');
+            
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + esmData : esmData;
+
             ic.bEsmfold = true;
             let bAppend = true;
             await ic.pdbParserCls.loadPdbData(esmData, pdbid, undefined, bAppend, undefined, undefined, undefined, ic.bEsmfold);
@@ -13853,12 +13862,12 @@ class Events {
          });
 
 
-        me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_proteinname", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           thisClass.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
+           thisClass.setLogCmd("load protein " + $("#" + me.pre + "proteinname").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-           window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+           window.open(hostUrl + '?protein=' + $("#" + me.pre + "proteinname").val(), urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { let ic = me.icn3d;
@@ -36481,13 +36490,13 @@ class SetOption {
             html += "<div>";
             
             if(colorType == 'normalized hydrophobic') {
-                html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-                html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Dark green (W, F, L, I, Y, M, V, C): Hydrophobic<br>";
+                html += "Light green (P, T, S, A, Q, N, G): Polar<br>";
                 html += "Grey: Charged, not hydrophobic<br><br>";
             }
             else {
-                html += "Green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-                html += "Yellow (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Green (W, F, L, I, Y, M, V, C): Hydrophobic<br>";
+                html += "Yellow (P, T, S, A, Q, N, G): Polar<br>";
                 html += "Red: Negatively Charged<br>";
                 html += "Blue: Positively Charged<br><br>";
             }
@@ -50418,6 +50427,73 @@ class MmdbParser {
         //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
 
+    async downloadProteinname(protein) { let ic = this.icn3d, me = ic.icn3dui;
+        me.icn3d.bCid = undefined;
+
+        // get RefSeq ID from protein name
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?protein2acc=" + protein;
+
+        let accJson = await me.getAjaxPromise(url, 'jsonp');
+
+        let accArray = accJson.acc;
+
+        if(accArray.length == 0) {
+            if(!me.bNode) alert('The protein/gene name ' + protein + ' can not be mapped to RefSeq proteins...');
+            return;
+        }
+
+        let ajaxArray = [];
+        for(let index = 0, indexl = accArray.length; index < indexl; ++index) {
+            let refseqid = accArray[index];
+            url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + refseqid;
+
+            let ajax = me.getAjaxPromise(url, 'jsonp');
+
+            ajaxArray.push(ajax);
+        }
+
+        let allPromise = Promise.allSettled(ajaxArray);
+        let dataArray = await allPromise;
+
+        ajaxArray = [];
+        let afidArray = [];
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = dataArray[i].value;
+
+            if(data && data.uniprot) {
+                let afid = data.uniprot;
+                url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
+                ic.ParserUtilsCls.setYourNote(me.cfg.protein + '(NCBI Protein/Gene) in iCn3D');
+
+                let ajax = me.getAjaxPromise(url, 'text', true);
+                ajaxArray.push(ajax);
+                afidArray.push(afid);
+            }
+        }
+        
+        allPromise = Promise.allSettled(ajaxArray);
+        dataArray = await allPromise;
+       
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = dataArray[i].value;
+            me.cfg.afid = afidArray[i];
+
+            if(data) {
+                // add UniProt ID into the header
+                let header = 'HEADER                                                        ' + me.cfg.afid + '\n';
+                data = header + data;          
+                await ic.opmParserCls.parseAtomData(data, me.cfg.afid, undefined, 'pdb', undefined);
+
+                break;
+            }
+        }
+
+        if(!me.cfg.afid) {
+            if(!me.bNode) alert('The protein/gene name ' + protein + ' can not be mapped to AlphaFold structures...');
+            return;
+        }
+    }
+
     getNoData(mmdbid, bGi) { let ic = this.icn3d, me = ic.icn3dui;
         if(bGi) {
             alert("This gi " + mmdbid + " has no corresponding 3D structure...");
@@ -51493,6 +51569,9 @@ class PdbParser {
             url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_" + ic.AFUniprotVersion + ".pdb";
             if(me.cfg.refseqid) {
                 ic.ParserUtilsCls.setYourNote(me.cfg.refseqid.toUpperCase() + '(NCBI Protein Acc.) in iCn3D');
+            }
+            else if(me.cfg.protein) {
+                ic.ParserUtilsCls.setYourNote(me.cfg.protein + '(NCBI Protein/Gene) in iCn3D');
             }
             else {
                 ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
@@ -61444,6 +61523,10 @@ class LoadScript {
             me.cfg.refseqid = id;
             await ic.mmdbParserCls.downloadRefseq(id);
         }
+        else if(command.indexOf('load protein') !== -1) {
+            me.cfg.protein = id;
+            await ic.mmdbParserCls.downloadProteinname(id);
+        }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
           ic.bLocalSmithwm = false;
@@ -67780,7 +67863,7 @@ class ResizeCanvas {
         //let itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
         //    'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
         //    'dl_symmetry', 'dl_symd', 'dl_rmsd', 'dl_legend', 'dl_disttable'];
-        let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_gi', 'dl_refseqid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteracton', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterploitcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
+        let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_proteinname', 'dl_refseqid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteracton', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterploitcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable'];
 
         for(let i in itemArray) {
             let item = itemArray[i];
@@ -68997,7 +69080,7 @@ class SaveFile {
             let structureidArray = Object.keys(idHash);
             inputid = structureidArray.join(',');
 
-            text = (me.cfg.refseqid) ? ic.inputid : inputid.toUpperCase();
+            text = (me.cfg.refseqid || me.cfg.protein) ? ic.inputid : inputid.toUpperCase();
 
             //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
             if(bPdb && bAlphaFold) {
@@ -69023,7 +69106,12 @@ class SaveFile {
             }
         }
 
-        if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
+        if(me.cfg.refseqid) {
+            idName = 'NCBI Protein Acc.';
+        }
+        else if(me.cfg.protein) {
+            idName = 'Protein/Gene Name';
+        }
 
         if(!inputid || inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);
@@ -72295,7 +72383,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.26.1';
+    this.REVISION = '3.27.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -72587,6 +72675,14 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.mmdbParserCls.downloadRefseq(me.cfg.refseqid);
+    }
+    else if(me.cfg.protein !== undefined) {
+        ic.inputid = me.cfg.protein;
+        
+        // ic.bNCBI = true;
+        ic.loadCmd = 'load protein ' + me.cfg.protein;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.mmdbParserCls.downloadProteinname(me.cfg.protein);
     }
     else if(me.cfg.blast_rep_id !== undefined) {
        // ic.bNCBI = true;

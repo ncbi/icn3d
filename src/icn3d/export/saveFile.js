@@ -934,7 +934,7 @@ class SaveFile {
             let structureidArray = Object.keys(idHash);
             inputid = structureidArray.join(',');
 
-            text = (me.cfg.refseqid) ? ic.inputid : inputid.toUpperCase();
+            text = (me.cfg.refseqid || me.cfg.protein) ? ic.inputid : inputid.toUpperCase();
 
             //idName = (isNaN(inputid) && inputid.length > 5) ? "AlphaFold ID" : "PDB ID";
             if(bPdb && bAlphaFold) {
@@ -960,7 +960,12 @@ class SaveFile {
             }
         }
 
-        if(me.cfg.refseqid) idName = 'NCBI Protein Acc.';
+        if(me.cfg.refseqid) {
+            idName = 'NCBI Protein Acc.';
+        }
+        else if(me.cfg.protein) {
+            idName = 'Protein/Gene Name';
+        }
 
         if(!inputid || inputid.substr(0, 4) == ic.defaultPdbId) {
             $("#" + ic.pre + "title").html(title);

@@ -526,6 +526,10 @@ class LoadScript {
             me.cfg.refseqid = id;
             await ic.mmdbParserCls.downloadRefseq(id);
         }
+        else if(command.indexOf('load protein') !== -1) {
+            me.cfg.protein = id;
+            await ic.mmdbParserCls.downloadProteinname(id);
+        }
         else if(command.indexOf('load seq_struct_ids ') !== -1) {
           ic.bSmithwm = false;
           ic.bLocalSmithwm = false;

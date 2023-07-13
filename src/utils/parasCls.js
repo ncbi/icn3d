@@ -291,23 +291,23 @@ class ParasCls {
             //this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/(0 + 1.85)),
-            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/(0 + 1.85)),
-            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/(0 + 1.85)),
-            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/(0 + 1.85)),
-            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/(0 + 1.85)),
-            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/(0 + 1.85)),
-            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/(0 + 1.85)),
+            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-2.09 + 2.09) / (0 + 2.09)),
+            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.71 + 2.09) / (0 + 2.09)),
+            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.25 + 2.09) / (0 + 2.09)),
+            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.12 + 2.09) / (0 + 2.09)),
+            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.71 + 2.09) / (0 + 2.09)),
+            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.67 + 2.09) / (0 + 2.09)),
+            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.46 + 2.09) / (0 + 2.09)),
+            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.02 + 2.09) / (0 + 2.09)),
 
             // polar
-            'GLY': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.01 + 0.58)/(0 + 0.58)),
-            'VAL': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.07 + 0.58)/(0 + 0.58)),
-            'SER': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.13 + 0.58)/(0 + 0.58)),
-            'THR': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 0.58)/(0 + 0.58)),
-            'ALA': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.17 + 0.58)/(0 + 0.58)),
-            'ASN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.42 + 0.58)/(0 + 0.58)),
-            'PRO': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.45 + 0.58)/(0 + 0.58)),
-            'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
+            'PRO': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 1.15) / (0 + 1.15)),
+            'THR': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.25 + 1.15) / (0 + 1.15)),
+            'SER': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.46 + 1.15) / (0 + 1.15)),
+            'ALA': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.50 + 1.15) / (0 + 1.15)),
+            'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.77 + 1.15) / (0 + 1.15)),
+            'ASN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.85 + 1.15) / (0 + 1.15)),
+            'GLY': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-1.15 + 1.15) / (0 + 1.15))
         };
 
         this.normalizedHPColors = {
@@ -325,59 +325,58 @@ class ParasCls {
             //this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            // 0.65 ~ -1.85: white ~ green
-            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/2.5),
-            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/2.5),
-            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/2.5),
-            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/2.5),
-            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/2.5),
-            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/2.5),
-            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/2.5),
+            // 1.15 ~ -2.09: white ~ green
+            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-2.09 + 2.09) / 3.24),
+            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.71 + 2.09) / 3.24),
+            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.25 + 2.09) / 3.24),
+            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.12 + 2.09) / 3.24),
+            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.71 + 2.09) / 3.24),
+            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.67 + 2.09) / 3.24),
+            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.46 + 2.09) / 3.24),
+            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.02 + 2.09) / 3.24),
 
             // polar
-            'GLY': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.01 + 1.85)/2.5),
-            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.07 + 1.85)/2.5),
-            'SER': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.13 + 1.85)/2.5),
-            'THR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.14 + 1.85)/2.5),
-            'ALA': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.17 + 1.85)/2.5),
-            'ASN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.42 + 1.85)/2.5),
-            'PRO': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.45 + 1.85)/2.5),
-            'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.58 + 1.85)/2.5)
+            'PRO': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.14 + 2.09) / 3.24),
+            'THR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.25 + 2.09) / 3.24),
+            'SER': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.46 + 2.09) / 3.24),
+            'ALA': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.50 + 2.09) / 3.24),
+            'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.77 + 2.09) / 3.24),
+            'ASN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.85 + 2.09) / 3.24),
+            'GLY': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (1.15 + 2.09) / 3.24)
         };
 
         this.hydrophobicValues = {
-            // charged residues
+            // charged residues, larger than max polar (1.15)
             '  G': 3,     '  A': 3,     '  T': 3,
             '  C': 3,     '  U': 3,     ' DG': 3,
             ' DA': 3,     ' DT': 3,     ' DC': 3,
             ' DU': 3,       'G': 3,       'A': 3,
             'T': 3,         'C': 3,       'U': 3,
             'DG': 3,       'DA': 3,      'DT': 3,
-            'DC': 3,       'DU': 3,     'ARG': 1,
-            'LYS': 1,     'ASP': 3,     'GLU': 3,
+            'DC': 3,       'DU': 3,     'ARG': 1.5,
+            'LYS': 1.5,     'ASP': 3,     'GLU': 3,
             'HIS': 2,
 
-            // + 0.81)/(1.14 + 0.81)),
             // hydrophobic
             // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-            // 0.65 ~ -1.85: white ~ green
-            'TRP': -1.85,
-            'PHE': -1.13,
-            'TYR': -0.94,
-            'LEU': -0.56,
-            'ILE': -0.31,
-            'CYS': -0.24,
-            'MET': -0.23,
+            // 1.15 ~ -2.09: white ~ green
+            'TRP': -2.09,
+            'PHE': -1.71,
+            'LEU': -1.25,
+            'ILE': -1.12,
+            'TYR': -0.71,
+            'MET': -0.67,
+            'VAL': -0.46,
+            'CYS': -0.02,
 
             // polar
-            'GLY': 0.01,
-            'VAL': 0.07,
-            'SER': 0.13,
-            'THR': 0.14,
-            'ALA': 0.17,
-            'ASN': 0.42,
-            'PRO': 0.45,
-            'GLN': 0.58
+            'PRO': 0.14,
+            'THR': 0.25,
+            'SER': 0.46,
+            'ALA': 0.50,
+            'GLN': 0.77,
+            'ASN': 0.85,
+            'GLY': 1.15
         };
 
         this.residueAbbrev = {

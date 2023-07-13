@@ -1062,7 +1062,7 @@ class Events {
             }
 
             let esmfold_fasta = $("#" + me.pre + "esmfold_fasta").val();
-            let pdbid;
+            let pdbid = 'stru--';
 
             if(esmfold_fasta.indexOf('>') != -1) { //FASTA with header
                 let pos = esmfold_fasta.indexOf('\n');
@@ -1093,6 +1093,11 @@ class Events {
             thisClass.setLogCmd("Run ESMFold with the sequence " + esmfold_fasta, false);
 
             let esmData = await me.getAjaxPostPromise(esmUrl, esmfold_fasta, true, alertMess, undefined, true, 'text');
+            
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + esmData : esmData;
+
             ic.bEsmfold = true;
             let bAppend = true;
             await ic.pdbParserCls.loadPdbData(esmData, pdbid, undefined, bAppend, undefined, undefined, undefined, ic.bEsmfold);
@@ -1131,12 +1136,12 @@ class Events {
          });
 
 
-        me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_proteinname", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           thisClass.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
+           thisClass.setLogCmd("load protein " + $("#" + me.pre + "proteinname").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-           window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), urlTarget);
+           window.open(hostUrl + '?protein=' + $("#" + me.pre + "proteinname").val(), urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_refseq", "click", function(e) { let ic = me.icn3d;

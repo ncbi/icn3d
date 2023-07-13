@@ -284,8 +284,8 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_esmfold', 'Sequence to structure prediction with ESMFold');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
+        me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_proteinname', 'Please input protein or gene name');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();

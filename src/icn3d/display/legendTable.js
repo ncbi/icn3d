@@ -84,13 +84,13 @@
             html += "<div>";
             
             if(colorType == 'normalized hydrophobic') {
-                html += "Dark green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-                html += "Light green (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Dark green (W, F, L, I, Y, M, V, C): Hydrophobic<br>";
+                html += "Light green (P, T, S, A, Q, N, G): Polar<br>";
                 html += "Grey: Charged, not hydrophobic<br><br>";
             }
             else {
-                html += "Green (W, F, Y, L, I, C, M): Hydrophobic<br>";
-                html += "Yellow (G, V, S, T, A, N, P, Q): Polar<br>";
+                html += "Green (W, F, L, I, Y, M, V, C): Hydrophobic<br>";
+                html += "Yellow (P, T, S, A, Q, N, G): Polar<br>";
                 html += "Red: Negatively Charged<br>";
                 html += "Blue: Positively Charged<br><br>";
             }
