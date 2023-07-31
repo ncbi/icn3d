@@ -188,7 +188,7 @@ input:checked + .icn3d-slider:before {
 }
 
 .icn3d-clinvar {color:green; font-size:12px; font-weight:bold;}
-.icn3d-clinvar-path {color:purple; font-size:12px; font-weight:bold;}
+.icn3d-clinvar-path {color:red; font-size:12px; font-weight:bold;}
 
 /*.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} */
 .icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #008000 25%, #008000 75%, transparent 75%, transparent 100%);} 

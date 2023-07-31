@@ -887,9 +887,9 @@ class SetMenu {
 
         html += this.getMenuText('mn2_rotate90', 'Rotate 90&deg;', undefined, undefined, 2);
         html += "<ul>";
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatex', 'X-axis(Shift + Key M)', undefined, undefined, 2);
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatey', 'Y-axis(Shift + Key J)', undefined, undefined, 2);
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatez', 'Z-axis', undefined, undefined, 2);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatex', 'rotate x', undefined, undefined, 2);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatey', 'rotate y', undefined, undefined, 2);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatez', 'rotate z', undefined, undefined, 2);
         html += "</ul>";
         html += "</li>";
         html += this.getMenuText('mn2_rotateauto', 'Auto Rotation', undefined, 1, 2);

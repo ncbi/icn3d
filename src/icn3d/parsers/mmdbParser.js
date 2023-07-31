@@ -102,6 +102,8 @@ class MmdbParser {
 
         if(data && data.uniprot) {
             me.cfg.afid = data.uniprot;
+            if(!ic.uniprot2acc) ic.uniprot2acc = {};
+            ic.uniprot2acc[data.uniprot] = refseqid;
         }
         else {
             alert('The accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID. It will be treated as a UniProt ID instead.');

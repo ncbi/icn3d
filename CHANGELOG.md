@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.28.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.0.zip) was release on July 31, 2023. Added the feature to show isoforms and exons as tracks with the button "Add Track" in the "Sequences & Annotations" window via the menu "Analysis > Sequences & Annotations". Also displayed pathogenic ClinVars in red and the rest in green in the ClinVar track.
+
 [icn3d-3.27.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.27.0.zip) was release on July 13, 2023. Added the feature to search AlphaFold structures with protein/gene names directly in iCn3D via the menu "File > Search Structures > AlphaFold Structures".
 
 [icn3d-3.26.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.26.1.zip) was release on July 10, 2023. Fixed a bug in TM-align and updated Python scripts.

@@ -225,6 +225,10 @@ class AnnoPTM {
             let prevEmptyWidth = 0;
             let prevLineWidth = 0;
             let widthPerRes = 1;
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                 html += ic.showSeqCls.insertGap(chnid, i, '-');
                 if(resPosArray.indexOf(i) != -1) {
@@ -257,6 +261,9 @@ class AnnoPTM {
                     html += '<span>-</span>'; //'<span>-</span>';
                 }
             }
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+
             htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
             htmlTmp += '</span>';
             htmlTmp += '<br>';

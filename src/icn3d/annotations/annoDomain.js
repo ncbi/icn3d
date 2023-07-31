@@ -184,6 +184,9 @@ class AnnoDomain {
             html += htmlTmp2 + htmlTmp3 + htmlTmp;
             html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
             let pre = 'domain3d' + index.toString();
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
               //if(i >= domainFrom && i <= domainTo) {
@@ -203,9 +206,15 @@ class AnnoDomain {
                 html += '<span>-</span>'; //'<span>-</span>';
               }
             }
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
             let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+
             if(me.cfg.blast_rep_id != chnid) { // regular
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);

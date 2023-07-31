@@ -105,12 +105,18 @@ class SelectByCommand {
              residueStr = "*";
            }
            else if(colonPos2 != -1) {
-            refResStr = testStr.substr(colonPos2 + 5);
-            testStr = testStr.substr(0, colonPos2);
+              refResStr = testStr.substr(colonPos2 + 5);
+              testStr = testStr.substr(0, colonPos2);
+
+              // somehow sometimes refResStr or residueStr is rmpty
+              if(!refResStr) continue;
            }
            else if(colonPos != -1) {
-             residueStr = testStr.substr(colonPos + 1);
-             testStr = testStr.substr(0, colonPos);
+              residueStr = testStr.substr(colonPos + 1);
+              testStr = testStr.substr(0, colonPos);
+
+              // somehow sometimes refResStr or residueStr is rmpty
+              if(!residueStr) continue;
            }
 
            if(periodPos === -1) {

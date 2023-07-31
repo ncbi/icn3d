@@ -116,13 +116,14 @@ class ShowAnno {
                 } // if(me.cfg.mmdbid
             } // for(let i = 0
 
-            ic.maxAnnoLength = 1;
+            ic.maxAnnoLengthOri = 1;
             for(let chainid in ic.chainsSeq) {
                 // use protein or nucleotide as the max length
-                if(ic.chainsSeq[chainid].length > ic.maxAnnoLength && (ic.protein_chainid.hasOwnProperty(chainid) || nucleotide_chainid.hasOwnProperty(chainid)) ) {
-                    ic.maxAnnoLength = ic.chainsSeq[chainid].length;
+                if(ic.chainsSeq[chainid].length > ic.maxAnnoLengthOri && (ic.protein_chainid.hasOwnProperty(chainid) || nucleotide_chainid.hasOwnProperty(chainid)) ) {
+                    ic.maxAnnoLengthOri = ic.chainsSeq[chainid].length;
                 }
             }
+            ic.maxAnnoLength = ic.maxAnnoLengthOri;
         }
 
         return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
@@ -137,7 +138,7 @@ class ShowAnno {
         let chemical_chainid = result.chemical_chainid;
         let chemical_set = result.chemical_set;
 
-        if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
+        if(!ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             // assign early to avoid load annotations twice
             ic.bAnnoShown = true;
 
@@ -278,13 +279,52 @@ class ShowAnno {
         let thisClass = this;
         let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
         let index = 0;
+
+        // get geneid
+        if(!ic.chainsGene) ic.chainsGene = {};
+        for(let chnid in ic.protein_chainid) {
+            let structure = chnid.substr(0, chnid.indexOf('_'));
+            // UniProt or NCBI protein accession
+            if(structure.length > 5) {
+                let refseqid, url;
+                if(ic.uniprot2acc && ic.uniprot2acc[structure]) {
+                    refseqid = ic.uniprot2acc[structure];
+                }
+                else {
+                    try {
+                        if(!ic.uniprot2acc) ic.uniprot2acc = {};
+                        url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?uniprot2refseq=" + structure;
+                        let result = await me.getAjaxPromise(url, 'jsonp');
+                        refseqid = (result && result.refseq) ? result.refseq : structure;
+
+                        ic.uniprot2acc[structure] = refseqid;
+                    }
+                    catch {
+                        console.log("Problem in getting protein accession from UniProt ID...")
+                        refseqid = structure;
+                    }
+                }
+
+                // get Gene info from protein name
+                // url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?protein2gene=" + refseqid;
+                // ic.chainsGene[chnid] = await me.getAjaxPromise(url, 'jsonp');
+
+                // get Gene info from uniprot
+                url = "https://rest.uniprot.org/uniprotkb/search?format=json&fields=xref_geneid,gene_names&query=" + structure;
+                let geneData = await me.getAjaxPromise(url, 'json');
+                let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
+                let geneSymbol = (geneData.results[0] && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined
+                ic.chainsGene[chnid] = {geneId: geneId, geneSymbol: geneSymbol};
+            }
+        }
+
         for(let chnid in ic.protein_chainid) {
             let buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
             let fullProteinName = ic.showSeqCls.getProteinName(chnid);
             let proteinName = fullProteinName;
             //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
             let categoryStr =(index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
-            let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
+            let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "?report=gene_table' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
             let structure = chnid.substr(0, chnid.indexOf('_'));
             let chainLink = (structure.length > 5) ? '<a href="https://alphafold.ebi.ac.uk/entry/' + structure + '" target="_blank">' + chnid + '</a>' : chnid;
             let chainHtml = "<div id='" + ic.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr
