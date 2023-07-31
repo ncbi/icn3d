@@ -41694,7 +41694,7 @@ var icn3d = (function (exports) {
 
         async showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons) { let ic = this.icn3d; ic.icn3dui;
             //ic.startposGiSeq = undefined;
-            for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
+            for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
                 //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq, [chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
                 let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
@@ -41898,6 +41898,8 @@ var icn3d = (function (exports) {
         }
 
         async addExonTracks(chainid, geneid, startpos, type) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
+
             let seqFirst, trackTitleArray = [], trackSeqArray = [];
 
             // get acclist from geneid
@@ -42006,12 +42008,14 @@ var icn3d = (function (exports) {
                 ++j;
             }
 
-            await this.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
+            await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
 
             me.htmlCls.clickMenuCls.setLogCmd("add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type, true);
         }
 
         async addMsaTracks(chainid, startpos, type, fastaList) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
+
             let seqFirst, trackTitleArray = [], trackSeqArray = [];
 
             let fastaArray = fastaList.split('>');
@@ -42036,8 +42040,8 @@ var icn3d = (function (exports) {
                 trackSeqArray.push(seq);
             }
 
-            await this.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type);
-
+            await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type);
+            
             me.htmlCls.clickMenuCls.setLogCmd("add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList , true);
         }
     }
@@ -42886,8 +42890,8 @@ var icn3d = (function (exports) {
                     // get Gene info from uniprot
                     url = "https://rest.uniprot.org/uniprotkb/search?format=json&fields=xref_geneid,gene_names&query=" + structure;
                     let geneData = await me.getAjaxPromise(url, 'json');
-                    let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
-                    let geneSymbol = (geneData.results[0] && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined;
+                    let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
+                    let geneSymbol = (geneData.results[0] && geneData.results[0].genes && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined;
                     ic.chainsGene[chnid] = {geneId: geneId, geneSymbol: geneSymbol};
                 }
             }
