@@ -1112,9 +1112,10 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_addtrack_tabs' style='border:0px;'>";
         html += "<ul>";
+        html += "<li><a href='#" + me.pre + "tracktab2c'>Isoforms & Exons</a></li>";
+        html += "<li><a href='#" + me.pre + "tracktab2b'>MSA</a></li>";
         html += "<li><a href='#" + me.pre + "tracktab1'>NCBI gi/Accession</a></li>";
         html += "<li><a href='#" + me.pre + "tracktab2'>FASTA</a></li>";
-        html += "<li><a href='#" + me.pre + "tracktab2b'>FASTA Alignment</a></li>";
         html += "<li><a href='#" + me.pre + "tracktab3'>BED File</a></li>";
         html += "<li><a href='#" + me.pre + "tracktab4'>Custom</a></li>";
         html += "<li><a href='#" + me.pre + "tracktab5'>Current Selection</a></li>";
@@ -1130,10 +1131,16 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "tracktab2b'>";
-        html += "<div style='width:600px'>The full protein sequences with gaps are listed one by one. The sequence of the structure is listed at the top. If there are non-gap residues(e.g., from RefSeq) outside of the sequence of the structure, please remove them. Each sequence has a title line starting with \">\".</div><br>";
-        html += "<b>FASTA alignment sequences</b>:<br>";
+        // html += "<div style='width:600px'>The full protein sequences with gaps are listed one by one. The sequence of the structure is listed at the top. If there are non-gap residues(e.g., from RefSeq) outside of the sequence of the structure, please remove them. Each sequence has a title line starting with \">\".</div><br>";
+        html += "<div style='width:600px'>Note: The full protein sequences with gaps in MSA are listed one by one. The sequence of the structure is listed at the top. Each sequence has a title line starting with \">\".</div><br>";
+
+        html += "<b>Precalculated Multiple Sequence Alignment (MSA)</b>:<br>";
         html += "<textarea id='" + me.pre + "track_fastaalign' rows='5' style='width: 100%; height: " +(2*me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
-        html += "Position of the first residue in Sequences & Annotations window: " + me.htmlCls.inputTextStr + "id='" + me.pre + "fasta_startpos' value='1' size=2> <br><br>";
+
+        // html += "<b>Opion 1. Precalculated Multiple Sequence Alignment (MSA)</b>:<br>";
+        // html += "<textarea id='" + me.pre + "track_fastaalign' rows='5' style='width: 100%; height: " +(2*me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+        // html += "<b>Opion 2. NCBI Protein Accessions</b>: "+ me.htmlCls.inputTextStr + "id='" + me.pre + "track_acclist' size=60> <br><br>";
+        html += "<b>Position of the first residue in Sequences & Annotations window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "fasta_startpos' value='1' size=2> <br><br>";
 
         html += "Color Sequence by: <select id='" + me.pre + "colorseqby'>";
         html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
@@ -1142,6 +1149,22 @@ class SetDialog {
 
         html += me.htmlCls.buttonStr + "addtrack_button2b'>Add Track(s)</button>";
         html += "</div>";
+
+        html += me.htmlCls.divStr + "tracktab2c'>";
+        html += "<div style='width:500px'>Note: Show exons for all isoforms of the protein in the same gene as specified below.</div><br>";
+
+        html += "<b><a href='https://www.ncbi.nlm.nih.gov/gene' target='_blank'>NCBI Gene</a> ID</b>: "+ me.htmlCls.inputTextStr + "id='" + me.pre + "track_geneid' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "exons_table'>Exons & Introns in Gene Table</button><br><br>";
+
+        html += "<b>Position of the first residue in Sequences & Annotations window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "fasta_startpos2' value='1' size=2> <br><br>";
+
+        html += "Color Sequence by: <select id='" + me.pre + "colorseqby2'>";
+        html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
+        html += me.htmlCls.optionStr + "'conservation'>Conservation</option>";
+        html += "</select> <br><br>";
+
+        html += me.htmlCls.buttonStr + "addtrack_button2c'>Show Isoforms & Exons</button>";
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "tracktab3'>";
         html += "BED file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "track_bed' size=16> <br><br>";

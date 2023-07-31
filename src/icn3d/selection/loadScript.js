@@ -279,6 +279,38 @@ class LoadScript {
     
             await ic.cartoon2dCls.draw2Dcartoon(type);
           }
+          else if(command.indexOf('add msa track') == 0) {
+            //add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList 
+            let paraArray = command.split(' | ');
+    
+            let chainid = paraArray[1].substr(8);
+            let startpos = paraArray[2].substr(9);
+            let type = paraArray[3].substr(5);
+            let fastaList = paraArray[4].substr(10);
+
+            if($("#" + ic.pre + "anno_custom")[0]) {
+                $("#" + ic.pre + "anno_custom")[0].checked = true;
+            }
+            $("[id^=" + ic.pre + "custom]").show();
+
+            await ic.addTrackCls.addMsaTracks(chainid, startpos, type, fastaList);
+          }
+          else if(command.indexOf('add exon track') == 0) {
+            //add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type
+            let paraArray = command.split(' | ');
+
+            let chainid = paraArray[1].substr(8);
+            let geneid = paraArray[2].substr(7);
+            let startpos = paraArray[3].substr(9);
+            let type = paraArray[4].substr(5);
+
+            if($("#" + ic.pre + "anno_custom")[0]) {
+                $("#" + ic.pre + "anno_custom")[0].checked = true;
+            }
+            $("[id^=" + ic.pre + "custom]").show();
+
+            await ic.addTrackCls.addExonTracks(chainid, geneid, startpos, type);
+          }
           else {
             await ic.applyCommandCls.applyCommand(ic.commands[i]);
           }

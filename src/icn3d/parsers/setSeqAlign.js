@@ -1126,12 +1126,119 @@ class SetSeqAlign {
         result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
         pos1 = result.pos1;
         pos2 = result.pos2;
-        //for(let i = pos1; i < pos2; ++i) {
-        for(let i = pos1; i <= pos2; ++i) {
+        for(let i = pos1; i < pos2; ++i) {
+        //for(let i = pos1; i <= pos2; ++i) {
             ic.alnChainsSeq[chainid2].push(gapResObject2);           
         }     
 
         return hAtoms;
+    }
+
+    // used for seq MSA
+    mergeTwoSeqForAllSimple(targetId, chainidArray, index, alignedChainIndice, start_t, end_t, querySeqArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid1 = targetId;
+        let chainid2 = chainidArray[index];
+
+        let pos1, pos2, prevIndex1, prevIndex2;
+
+        for(let i = 0, il = ic.qt_start_end[index].length; i < il; ++i) {
+            let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
+            
+            start1 = ic.qt_start_end[index][i].t_start;
+            start2 = ic.qt_start_end[index][i].q_start;
+            end1 = ic.qt_start_end[index][i].t_end;
+            end2 = ic.qt_start_end[index][i].q_end;  
+
+            // 1. before the mapped residues
+            //resiStart1 = ic.ParserUtilsCls.getResi(chainid1, start1);
+            resiStart1 = start1;
+            start1Pos = start1;
+            end1Pos = end1;
+
+            // if the mapping does not start from start_t, add gaps to the query seq
+            if(i == 0) {
+                pos1 = start_t;
+                pos2 = start1Pos;
+                
+                if(start1Pos > start_t) {
+                    for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
+                        ic.msaSeq[chainid2] += '-';
+                    }
+                }
+            }
+            else {
+                pos1 = prevIndex1;
+                pos2 = start1;
+                let notAlnLen1 = pos2 - (pos1 + 1);
+                let notAlnLen2 = start2 - (prevIndex2 + 1);
+                
+                // insert non-aligned residues in query seq
+                // this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
+
+                for(let j = 0, jl = notAlnLen2; j < jl; ++j) {
+                    let resn = querySeqArray[index][prevIndex2+1 + j];
+                    ic.msaSeq[chainid2] += resn;
+                }
+
+                if(notAlnLen1 >= notAlnLen2) {
+                    // add gaps before the query sequence
+                    for(let j = 0, jl = notAlnLen1 - notAlnLen2; j < jl; ++j) {
+                        ic.msaSeq[chainid2] += '-';
+                    }                       
+                }
+                else {
+                    // check the number of gaps before resiStart1 (n), and insert 'notAlnLen2 - notAlnLen1 - n' gaps
+                    // this.addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resiStart1, notAlnLen2 - notAlnLen1);
+
+                    // let result = this.getResiPosInTemplate(chainid1, resi_t);
+                    // let nGap = result.ngap, pos_t = result.pos;
+
+                    let pos_t = resiStart1; // position to add gap
+            
+                    // add gaps for all previously aligned sequences, not the current sequence, which is the last one
+                    for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
+                        let chainidTmp = (j == 0) ? chainid1 : chainidArray[alignedChainIndice[j]];
+
+                        for(let k = 0, kl = notAlnLen2 - notAlnLen1; k < kl; ++k) {
+                            //ic.msaSeq[chainidTmp].splice(pos_t, 0, '-');
+                            ic.msaSeq[chainidTmp] = ic.msaSeq[chainidTmp].substr(0, pos_t) + '-' + ic.msaSeq[chainidTmp].substr(pos_t);
+                        }
+                    }
+                }                           
+            }
+
+            // 2. In the mapped residues
+            pos1 = start1Pos;
+            pos2 = end1Pos;
+            
+            let k = 0;    
+            for(let j = pos1; j <= pos2; ++j) {
+                // inherit the gaps from the template
+                if(ic.msaSeq[chainid1][j] == '-') {
+                    ic.msaSeq[chainid2] += '-';
+                }
+                else {
+                    //let resn1 = targetSeq[start1 + k];
+                    let resn2 = querySeqArray[index][start2 + k];
+                    //let resn2 = (querySeqArray[index]) ? querySeqArray[index][start2 + k] : '?';
+                    
+                    ic.msaSeq[chainid2] += resn2;
+
+                    ++k;
+                }
+            }
+            
+            prevIndex1 = end1;
+            prevIndex2 = end2;  
+        } 
+
+        // add gaps at the end
+        pos1 = prevIndex1;
+        pos2 = end_t;
+        for(let i = pos1; i < pos2; ++i) {
+        //for(let i = pos1; i <= pos2; ++i) {
+            ic.msaSeq[chainid2] += '-';           
+        }
     }
 
     setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let ic = this.icn3d, me = ic.icn3dui;

@@ -67,6 +67,9 @@ class ShowSeq {
             html += htmlTmp + '<span class="icn3d-seqLine">';
             let helixCnt = 0, sheetCnt = 0;
             let savedSsName = '';
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqStartLen[chnid], ' ');
+
             for(let i = 0, il = giSeq.length; i < il; ++i) {
               html += this.insertGap(chnid, i, '-');
               let currResi;
@@ -124,18 +127,25 @@ class ShowSeq {
               }
               html += '</span>'
             }
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqEndLen[chnid], ' ');
+
             html += '<span class="icn3d-residueNum"></span>';
             html += '</span>';
             html += '<br>';
             html += '</div>';
             html3 += '</div>';
         }
+
         // html to display secondary structures
         htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
         htmlTmp += '<div class="icn3d-annoTitle" anno="0"></div>';
         htmlTmp += '<span class="icn3d-residueNum"></span>';
         html3 += htmlTmp + '<br>';
         html += htmlTmp + '<span class="icn3d-seqLine">';
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqStartLen[chnid], '-');
+
         for(let i = 0, il = giSeq.length; i < il; ++i) {
           html += this.insertGap(chnid, i, '-');
         //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
@@ -183,6 +193,9 @@ class ShowSeq {
             html += '<span>-</span>'; //'<span>-</span>';
           }
         }
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqEndLen[chnid], '-');
+
         html += '<span class="icn3d-residueNum"></span>';
         html += '</span>';
         html += '<br>';
@@ -214,6 +227,9 @@ class ShowSeq {
         html += htmlTmp + htmlTmp2;
         html2 += htmlTmp + htmlTmp2;
         let pos, nGap = 0;
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqStartLen[chnid], '-');
+
         for(let i = 0, il = giSeq.length; i < il; ++i) {
           html += this.insertGap(chnid, i, '-');
           if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(i)) nGap += ic.targetGapHash[i].to - ic.targetGapHash[i].from + 1;
@@ -243,6 +259,9 @@ class ShowSeq {
               html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
           }
         }
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqEndLen[chnid], '-');
+
         if(me.cfg.blast_rep_id == chnid) {
           // change color in 3D
           ic.opts['color'] = (ic.blastAcxn) ? 'confidence' : 'conservation';
@@ -253,8 +272,11 @@ class ShowSeq {
         // sequence, overview
         let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
         let color =(atom.color) ? atom.color.getHexString() : "CCCCCC";
-        let width = Math.round(ic.seqAnnWidth * giSeq.length / ic.maxAnnoLength);
+        let width = Math.round(ic.seqAnnWidth * giSeq.length / (ic.maxAnnoLength + ic.nTotalGap));
         if(width < 1) width = 1;
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += this.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+
         if(me.cfg.blast_rep_id != chnid) { // regular
             html2 += '<div id="giseq_summary_' + ic.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
         }
@@ -268,7 +290,9 @@ class ShowSeq {
                 }
             }
             toArray2.push(giSeq.length - 1);
+
             html2 += '<div id="giseq_summary_' + ic.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="width:' + width + 'px;">';
+            
             for(let i = 0, il = fromArray2.length; i < il; ++i) {
                 html2 += this.insertGapOverview(chnid, fromArray2[i]);
                 html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" anno="sequence" gi chain="' + chnid + '" title="' + chnid + '">' + chnid + '</div>';
@@ -401,6 +425,9 @@ class ShowSeq {
                 htmlTmp += '<span class="icn3d-residueNum"></span>';
                 html3 += htmlTmp + '<br>';
                 html += htmlTmp + '<span class="icn3d-seqLine">';
+
+                if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqStartLen[chnid], '-');
+
                 for(let i = 0, il = giSeq.length; i < il; ++i) {
                     html += this.insertGap(chnid, i, '-');
                     //if(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) {
@@ -424,6 +451,9 @@ class ShowSeq {
                     //   html += '<span></span>';
                     // }
                 }
+
+                if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqEndLen[chnid], '-');
+
                 html += '<span class="icn3d-residueNum"></span>';
                 html += '</span>';
                 html += '<br>';
@@ -1083,24 +1113,41 @@ class ShowSeq {
       let html = '';
       //if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
       if(ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
-          for(let j = 0; j <(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1); ++j) {
-              if(bNohtml) {
-                 html += text;
-              }
-              else {
-                 html += '<span>' + text + '</span>';
-              }
-          }
+        html += this.insertMulGap(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1, text, bNohtml);
       }
       return html;
     }
+
+    insertMulGap(n, text, bNohtml) {  let ic = this.icn3d, me = ic.icn3dui;
+        let html = '';
+        for(let j = 0; j < n; ++j) {
+            if(bNohtml) {
+                html += text;
+            }
+            else {
+                html += '<span>' + text + '</span>';
+            }
+        }
+        return html;
+    }
+
     insertGapOverview(chnid, seqIndex) {  let ic = this.icn3d, me = ic.icn3dui;
       let html2 = '';
-      if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
-          let width = ic.seqAnnWidth *(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1) /(ic.maxAnnoLength + ic.nTotalGap);
-          html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
+    //   if(me.cfg.blast_rep_id == chnid && ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+      if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+        html2 += this.insertMulGapOverview(chnid, ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1);
       }
       return html2;
+    }
+
+    insertMulGapOverview(chnid, n) {  let ic = this.icn3d, me = ic.icn3dui;
+        let html2 = '';
+        let width = ic.seqAnnWidth * n /(ic.maxAnnoLength + ic.nTotalGap);
+        width = parseInt(width);
+        
+        // html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
+        html2 += '<div style="display:inline-block; width:' + width + 'px;">&nbsp;</div>';
+        return html2;
     }
 
     setAlternativeSeq(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;

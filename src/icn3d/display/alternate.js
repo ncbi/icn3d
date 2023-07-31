@@ -10,6 +10,8 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+        ic.bAlernate = true;
+
         //ic.transformCls.zoominSelection();
         
         // default ic.ALTERNATE_STRUCTURE = -1
@@ -124,11 +126,11 @@ class Alternate {
 
         //ic.glycanCls.showGlycans();
 
+        ic.opts['rotationcenter'] = 'highlight center';
+        
         ic.drawCls.draw();
 
         ic.bShowHighlight = true;
-        //ic.opts['rotationcenter'] = 'molecule center';
-        ic.opts['rotationcenter'] = 'highlight center';
     }
 
     alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;

@@ -180,6 +180,10 @@ class AnnoCddSite {
                     let prevEmptyWidth = 0;
                     let prevLineWidth = 0;
                     let widthPerRes = 1;
+
+                    if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+                    if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
                     for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                         html += ic.showSeqCls.insertGap(chnid, i, '-');
                         if(resPosArray.indexOf(i) != -1) {
@@ -212,6 +216,9 @@ class AnnoCddSite {
                             html += '<span>-</span>'; //'<span>-</span>';
                         }
                     }
+
+                    if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+
                     htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
                     htmlTmp += '</span>';
                     htmlTmp += '<br>';
@@ -370,6 +377,9 @@ class AnnoCddSite {
                 html2 += '<div style="width:' + titleSpace + 'px!important;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 html2 += htmlTmp3 + htmlTmp;
                 let pre = type + index.toString();
+
+                if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
 
@@ -397,9 +407,15 @@ class AnnoCddSite {
                       html += '<span>-</span>'; //'<span>-</span>';
                   }
                 }
+
+                if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
                 let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
+
+                if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+
                 if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
@@ -476,6 +492,10 @@ class AnnoCddSite {
         let prevEmptyWidth = 0;
         let prevLineWidth = 0;
         let widthPerRes = 1;
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
         for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
           html += ic.showSeqCls.insertGap(chnid, i, '-');
           let resi = ic.ParserUtilsCls.getResi(chnid, i);
@@ -551,6 +571,9 @@ class AnnoCddSite {
             html += '<span>-</span>'; //'<span>-</span>';
           }
         }
+
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+
         htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
         htmlTmp += '</span>';
         htmlTmp += '<br>';

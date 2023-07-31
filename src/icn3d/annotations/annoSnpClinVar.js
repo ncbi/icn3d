@@ -223,9 +223,18 @@ class AnnoSnpClinVar {
         let prevEmptyWidth = 0;
         let prevLineWidth = 0;
         let widthPerRes = 1;
+
+        if(bOverview) {
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+        }
+        else {
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+        }
+
         for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
             if(bOverview) {
                 if(resi2index[i] !== undefined) {
+                    
                     // get the mouse over text
                     let cFull = ic.giSeq[chnid][i-1];
                     let c = cFull;
@@ -252,7 +261,8 @@ class AnnoSnpClinVar {
                         }
                     }
                     html += ic.showSeqCls.insertGapOverview(chnid, i-1);
-                    let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                    let emptyWidth = Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth);
+                    //let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;
                     if(bClinvar) {
                         if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
@@ -484,6 +494,10 @@ class AnnoSnpClinVar {
               }
             } // if(bOverview) {
         } // for
+
+        if(!bOverview) {
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+        }
         
         //var end = bStartEndRes ? ic.chainsSeq[chnid][ic.giSeq[chnid].length - 1 - ic.matchedPos[chnid] ].resi : '';
         if(line == 1) {

@@ -48,7 +48,7 @@ class AlignSeq {
         let bHighlightChain;
         let index = 0, prevResCnt2nd = 0;
         let firstChainid, oriChainid;
-console.log("alignChainArray.length: " + alignChainArray.length)
+
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];

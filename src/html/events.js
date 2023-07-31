@@ -1094,6 +1094,8 @@ class Events {
 
             let esmData = await me.getAjaxPostPromise(esmUrl, esmfold_fasta, true, alertMess, undefined, true, 'text');
             
+            ic.bResetAnno = true;
+            
             ic.bInputfile = true;
             ic.InputfileType = 'pdb';
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + esmData : esmData;
@@ -2510,7 +2512,9 @@ class Events {
           $("[id^=" + me.pre + "custom]").show();
           //e.preventDefault();
           let chainid = $(this).attr('chainid');
+          let geneid = ic.chainsGene[chainid].geneId;
           $("#" + me.pre + "track_chainid").val(chainid);
+          $("#" + me.pre + "track_geneid").val(geneid);
           me.htmlCls.dialogCls.openDlg('dl_addtrack', 'Add track for Chain: ' + chainid);
           $( "#" + me.pre + "track_gi" ).focus();
         });
