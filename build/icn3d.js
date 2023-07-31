@@ -41829,11 +41829,11 @@ var icn3d = (function (exports) {
                 let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
                 this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray);
             }
-
+    /*
             // set color for the master seq
             if(trackSeqArray.length > 0) {
-                if(ic.queryresi2score === undefined) ic.queryresi2score = {};
-                if(ic.queryresi2score[chainid] === undefined) ic.queryresi2score[chainid] = {};
+                if(ic.queryresi2score === undefined) ic.queryresi2score = {}
+                if(ic.queryresi2score[chainid] === undefined) ic.queryresi2score[chainid] = {}
 
                 let nSeq = trackSeqArray.length;
                 for(let resi in resi2cntSameRes) {
@@ -41864,6 +41864,7 @@ var icn3d = (function (exports) {
 
                 //me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             }
+            */
         }
 
         processAccList(acclist) { let ic = this.icn3d; ic.icn3dui;
