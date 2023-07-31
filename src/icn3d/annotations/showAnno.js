@@ -312,8 +312,8 @@ class ShowAnno {
                 // get Gene info from uniprot
                 url = "https://rest.uniprot.org/uniprotkb/search?format=json&fields=xref_geneid,gene_names&query=" + structure;
                 let geneData = await me.getAjaxPromise(url, 'json');
-                let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
-                let geneSymbol = (geneData.results[0] && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined
+                let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
+                let geneSymbol = (geneData.results[0] && geneData.results[0].genes && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined
                 ic.chainsGene[chnid] = {geneId: geneId, geneSymbol: geneSymbol};
             }
         }

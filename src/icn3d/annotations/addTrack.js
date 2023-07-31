@@ -1493,7 +1493,7 @@ class AddTrack {
 
     async showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.startposGiSeq = undefined;
-        for(let i = 0, il = ic.giSeq[chainid].length; i < il; ++i) {
+        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
             //let pos =(i >= ic.matchedPos[chainid] && i - ic.matchedPos[chainid] < ic.chainsSeq, [chainid].length) ? ic.chainsSeq[chainid][i - ic.matchedPos[chainid]].resi : ic.baseResi[chainid] + 1 + i;
             let pos = ic.ParserUtilsCls.getResi(chainid, i);
 
@@ -1697,6 +1697,8 @@ class AddTrack {
     }
 
     async addExonTracks(chainid, geneid, startpos, type) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
         let seqFirst, trackTitleArray = [], trackSeqArray = [];
 
         // get acclist from geneid
@@ -1805,12 +1807,14 @@ class AddTrack {
             ++j;
         }
 
-        await this.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
+        await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
 
         me.htmlCls.clickMenuCls.setLogCmd("add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type, true);
     }
 
     async addMsaTracks(chainid, startpos, type, fastaList) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
         let seqFirst, trackTitleArray = [], trackSeqArray = [];
 
         let fastaArray = fastaList.split('>');
@@ -1835,8 +1839,8 @@ class AddTrack {
             trackSeqArray.push(seq);
         }
 
-        await this.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type);
-
+        await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type);
+        
         me.htmlCls.clickMenuCls.setLogCmd("add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList , true);
     }
 }
