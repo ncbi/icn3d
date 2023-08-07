@@ -26,6 +26,9 @@
         else if(colorType == 'ig protodomain') {
             colorLabel = 'Ig Protodomain';
         }
+        else if(colorType == 'exon') {
+            colorLabel = 'Exon';
+        }
 
         let html = "Color by <b>" + colorLabel + "</b><br><br>";
  
@@ -118,6 +121,17 @@
         else if (colorType == 'confidence') {
             html += me.htmlCls.clickMenuCls.setLegendHtml(true);
         }
+        else if (colorType == 'exon') {
+            ic.startColor = 'red';
+            ic.midColor = 'white';
+            ic.endColor = 'blue';
+
+            ic.startValue = 'Start';
+            ic.midValue = 'Middle';
+            ic.endValue = 'End';
+
+            html += me.htmlCls.clickMenuCls.setLegendHtml();
+        }
         else {
             html = '';
             bClose = true;
@@ -126,6 +140,9 @@
         if(html) {
             $("#" + me.pre + "dl_legend_html").html(html);
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+        }
+        else {
+            $("#" + me.pre + "dl_legend").dialog("close");
         }
 
         // if(bClose) {

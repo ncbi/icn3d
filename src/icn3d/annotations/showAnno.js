@@ -291,18 +291,21 @@ class ShowAnno {
                     refseqid = ic.uniprot2acc[structure];
                 }
                 else {
-                    try {
-                        if(!ic.uniprot2acc) ic.uniprot2acc = {};
-                        url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?uniprot2refseq=" + structure;
-                        let result = await me.getAjaxPromise(url, 'jsonp');
-                        refseqid = (result && result.refseq) ? result.refseq : structure;
+                    ic.uniprot2acc = {};
 
-                        ic.uniprot2acc[structure] = refseqid;
-                    }
-                    catch {
-                        console.log("Problem in getting protein accession from UniProt ID...")
-                        refseqid = structure;
-                    }
+                    // try {
+                    //     if(!ic.uniprot2acc) ic.uniprot2acc = {};
+                    // the following query is slow due to the missing index in DB
+                    //     url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?uniprot2refseq=" + structure;
+                    //     let result = await me.getAjaxPromise(url, 'jsonp');
+                    //     refseqid = (result && result.refseq) ? result.refseq : structure;
+
+                    //     ic.uniprot2acc[structure] = refseqid;
+                    // }
+                    // catch {
+                    //     console.log("Problem in getting protein accession from UniProt ID...")
+                    //     refseqid = structure;
+                    // }
                 }
 
                 // get Gene info from protein name

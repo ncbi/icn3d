@@ -12516,10 +12516,10 @@ var icn3d = (function (exports) {
 
             html += "<b>Position of the first residue in Sequences & Annotations window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "fasta_startpos2' value='1' size=2> <br><br>";
 
-            html += "Color Sequence by: <select id='" + me.pre + "colorseqby2'>";
-            html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
-            html += me.htmlCls.optionStr + "'conservation'>Conservation</option>";
-            html += "</select> <br><br>";
+            // html += "Color Sequence by: <select id='" + me.pre + "colorseqby2'>";
+            // html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
+            // html += me.htmlCls.optionStr + "'conservation'>Conservation</option>";
+            // html += "</select> <br><br>";
 
             html += me.htmlCls.buttonStr + "addtrack_button2c'>Show Isoforms & Exons</button>";
             html += "</div>";
@@ -31478,7 +31478,6 @@ var icn3d = (function (exports) {
                     }
                     else { // bSymd, subset, and one chain
                         if(Object.keys(ic.hAtoms).length == 0) {
-                            //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
                             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
                         }
 
@@ -36464,6 +36463,9 @@ var icn3d = (function (exports) {
             else if(colorType == 'ig protodomain') {
                 colorLabel = 'Ig Protodomain';
             }
+            else if(colorType == 'exon') {
+                colorLabel = 'Exon';
+            }
 
             let html = "Color by <b>" + colorLabel + "</b><br><br>";
      
@@ -36556,6 +36558,17 @@ var icn3d = (function (exports) {
             else if (colorType == 'confidence') {
                 html += me.htmlCls.clickMenuCls.setLegendHtml(true);
             }
+            else if (colorType == 'exon') {
+                ic.startColor = 'red';
+                ic.midColor = 'white';
+                ic.endColor = 'blue';
+
+                ic.startValue = 'Start';
+                ic.midValue = 'Middle';
+                ic.endValue = 'End';
+
+                html += me.htmlCls.clickMenuCls.setLegendHtml();
+            }
             else {
                 html = '';
             }
@@ -36563,6 +36576,9 @@ var icn3d = (function (exports) {
             if(html) {
                 $("#" + me.pre + "dl_legend_html").html(html);
                 me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
+            }
+            else {
+                $("#" + me.pre + "dl_legend").dialog("close");
             }
 
             // if(bClose) {
@@ -40360,8 +40376,10 @@ var icn3d = (function (exports) {
                 let startpos = $("#" + ic.pre + "fasta_startpos2").val();
                 if(!startpos) startpos = 1;
 
-                let colorseqby = $("#" + ic.pre + "colorseqby2").val();
-                let type =(colorseqby == 'identity') ? 'identity' : 'custom';
+                //let colorseqby = $("#" + ic.pre + "colorseqby2").val();
+                //let type =(colorseqby == 'identity') ? 'identity' : 'custom';
+
+                let type = 'identity';
         
                 await thisClass.addExonTracks(chainid, geneid, startpos, type);
             });
@@ -40716,6 +40734,13 @@ var icn3d = (function (exports) {
 
                   let tmpStrExon = 'style="background-color:' + pos2exonColor[cnt] + '"';
                   htmlExon += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + ', Exon ' + (pos2exonIndex[cnt] + 1) + ': ' + pos2genome[cnt] + '" class="icn3d-residue" ' + tmpStrExon + '>&nbsp;</span>';
+
+                  // set atom color
+                  for(let serial in ic.residues[chnid + '_' + pos]) {
+                    let atom = ic.atoms[serial];
+                    atom.color = me.parasCls.thr(pos2exonColor[cnt]);
+                    ic.atomPrevColors[serial] = atom.color;
+                  }
 
                   htmlTmp2 += ic.showSeqCls.insertGapOverview(chnid, i);
 
@@ -41829,6 +41854,14 @@ var icn3d = (function (exports) {
                 let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
                 this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray);
             }
+
+            // update exon color
+            ic.opts['color'] = 'exon';
+            ic.legendTableCls.showColorLegend(ic.opts['color']);
+
+            ic.hlUpdateCls.updateHlAll();
+            ic.drawCls.draw();
+
     /*
             // set color for the master seq
             if(trackSeqArray.length > 0) {
@@ -42865,23 +42898,26 @@ var icn3d = (function (exports) {
                 let structure = chnid.substr(0, chnid.indexOf('_'));
                 // UniProt or NCBI protein accession
                 if(structure.length > 5) {
-                    let refseqid, url;
+                    let url;
                     if(ic.uniprot2acc && ic.uniprot2acc[structure]) {
-                        refseqid = ic.uniprot2acc[structure];
+                        ic.uniprot2acc[structure];
                     }
                     else {
-                        try {
-                            if(!ic.uniprot2acc) ic.uniprot2acc = {};
-                            url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?uniprot2refseq=" + structure;
-                            let result = await me.getAjaxPromise(url, 'jsonp');
-                            refseqid = (result && result.refseq) ? result.refseq : structure;
+                        ic.uniprot2acc = {};
 
-                            ic.uniprot2acc[structure] = refseqid;
-                        }
-                        catch {
-                            console.log("Problem in getting protein accession from UniProt ID...");
-                            refseqid = structure;
-                        }
+                        // try {
+                        //     if(!ic.uniprot2acc) ic.uniprot2acc = {};
+                        // the following query is slow due to the missing index in DB
+                        //     url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?uniprot2refseq=" + structure;
+                        //     let result = await me.getAjaxPromise(url, 'jsonp');
+                        //     refseqid = (result && result.refseq) ? result.refseq : structure;
+
+                        //     ic.uniprot2acc[structure] = refseqid;
+                        // }
+                        // catch {
+                        //     console.log("Problem in getting protein accession from UniProt ID...")
+                        //     refseqid = structure;
+                        // }
                     }
 
                     // get Gene info from protein name
@@ -50589,16 +50625,16 @@ var icn3d = (function (exports) {
                 // try {
                     let data = await me.getAjaxPromise(url, 'jsonp');
 
-                    let mmdbid = data.mmdbid;
-                    ic.selectedPdbid = mmdbid;
-                    
-                    if(!mmdbid) {
+                    if(!data || !data.mmdbid) {
                       if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                       await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
                       /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                     }
                     else {
+                        let mmdbid = data.mmdbid;
+                        ic.selectedPdbid = mmdbid;
+
                         let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
 
                         // try {
@@ -61796,9 +61832,9 @@ var icn3d = (function (exports) {
            this.setHAtomsFromSets(orArray, 'or');
 
            if(Object.keys(ic.hAtoms).length == 0) {
-               //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
            }
+
            this.setHAtomsFromSets(andArray, 'and');
 
            this.setHAtomsFromSets(notArray, 'not');
@@ -63653,7 +63689,6 @@ var icn3d = (function (exports) {
             //ic.dAtoms = {};
 
             if(Object.keys(ic.hAtoms).length == 0) {
-                //this.selectAll_base();
                 ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
             }
 
@@ -63694,9 +63729,12 @@ var icn3d = (function (exports) {
         }
 
         hideSelection() { let ic = this.icn3d, me = ic.icn3dui;
-            ic.dAtoms = me.hashUtilsCls.exclHash(ic.dAtoms, ic.hAtoms);
+            ic.hAtoms = me.hashUtilsCls.exclHash(ic.dAtoms, ic.hAtoms);
+            if(Object.keys(ic.hAtoms).length == 0) {
+                ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+            }
 
-            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+            ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
             let centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
             ic.maxD = centerAtomsResults.maxD;

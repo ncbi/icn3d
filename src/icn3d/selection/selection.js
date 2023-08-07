@@ -276,7 +276,6 @@ class Selection {
         //ic.dAtoms = {};
 
         if(Object.keys(ic.hAtoms).length == 0) {
-            //this.selectAll_base();
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
         }
 
@@ -317,9 +316,12 @@ class Selection {
     }
 
     hideSelection() { let ic = this.icn3d, me = ic.icn3dui;
-        ic.dAtoms = me.hashUtilsCls.exclHash(ic.dAtoms, ic.hAtoms);
+        ic.hAtoms = me.hashUtilsCls.exclHash(ic.dAtoms, ic.hAtoms);
+        if(Object.keys(ic.hAtoms).length == 0) {
+            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        }
 
-        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
         let centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;

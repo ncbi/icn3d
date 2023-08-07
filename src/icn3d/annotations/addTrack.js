@@ -146,8 +146,10 @@ class AddTrack {
             let startpos = $("#" + ic.pre + "fasta_startpos2").val();
             if(!startpos) startpos = 1;
 
-            let colorseqby = $("#" + ic.pre + "colorseqby2").val();
-            let type =(colorseqby == 'identity') ? 'identity' : 'custom';
+            //let colorseqby = $("#" + ic.pre + "colorseqby2").val();
+            //let type =(colorseqby == 'identity') ? 'identity' : 'custom';
+
+            let type = 'identity';
     
             await thisClass.addExonTracks(chainid, geneid, startpos, type);
         });
@@ -502,6 +504,13 @@ class AddTrack {
 
               let tmpStrExon = 'style="background-color:' + pos2exonColor[cnt] + '"';
               htmlExon += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + ', Exon ' + (pos2exonIndex[cnt] + 1) + ': ' + pos2genome[cnt] + '" class="icn3d-residue" ' + tmpStrExon + '>&nbsp;</span>';
+
+              // set atom color
+              for(let serial in ic.residues[chnid + '_' + pos]) {
+                let atom = ic.atoms[serial];
+                atom.color = me.parasCls.thr(pos2exonColor[cnt]);
+                ic.atomPrevColors[serial] = atom.color;
+              }
 
               htmlTmp2 += ic.showSeqCls.insertGapOverview(chnid, i);
 
@@ -1628,6 +1637,14 @@ class AddTrack {
             let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
             this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray);
         }
+
+        // update exon color
+        ic.opts['color'] = 'exon';
+        ic.legendTableCls.showColorLegend(ic.opts['color']);
+
+        ic.hlUpdateCls.updateHlAll();
+        ic.drawCls.draw();
+
 /*
         // set color for the master seq
         if(trackSeqArray.length > 0) {

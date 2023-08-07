@@ -1157,10 +1157,10 @@ class SetDialog {
 
         html += "<b>Position of the first residue in Sequences & Annotations window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "fasta_startpos2' value='1' size=2> <br><br>";
 
-        html += "Color Sequence by: <select id='" + me.pre + "colorseqby2'>";
-        html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
-        html += me.htmlCls.optionStr + "'conservation'>Conservation</option>";
-        html += "</select> <br><br>";
+        // html += "Color Sequence by: <select id='" + me.pre + "colorseqby2'>";
+        // html += me.htmlCls.optionStr + "'identity' selected>Identity</option>";
+        // html += me.htmlCls.optionStr + "'conservation'>Conservation</option>";
+        // html += "</select> <br><br>";
 
         html += me.htmlCls.buttonStr + "addtrack_button2c'>Show Isoforms & Exons</button>";
         html += "</div>";
