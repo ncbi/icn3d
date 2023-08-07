@@ -770,16 +770,16 @@ class ChainalignParser {
             // try {
                 let data = await me.getAjaxPromise(url, 'jsonp');
 
-                let mmdbid = data.mmdbid;
-                ic.selectedPdbid = mmdbid;
-                
-                if(!mmdbid) {
+                if(!data || !data.mmdbid) {
                   if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                   await thisClass.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
                   /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
                 }
                 else {
+                    let mmdbid = data.mmdbid;
+                    ic.selectedPdbid = mmdbid;
+
                     let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
 
                     // try {

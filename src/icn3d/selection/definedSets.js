@@ -475,9 +475,9 @@ class DefinedSets {
        this.setHAtomsFromSets(orArray, 'or');
 
        if(Object.keys(ic.hAtoms).length == 0) {
-           //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
        }
+
        this.setHAtomsFromSets(andArray, 'and');
 
        this.setHAtomsFromSets(notArray, 'not');
