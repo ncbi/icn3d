@@ -142,7 +142,7 @@
             me.htmlCls.dialogCls.openDlg('dl_legend', 'Color Legend');
         }
         else {
-            $("#" + me.pre + "dl_legend").dialog("close");
+            if($('#' + me.pre + 'dl_legend').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_legend').dialog( 'isOpen' )) $("#" + me.pre + "dl_legend").dialog("close");
         }
 
         // if(bClose) {
