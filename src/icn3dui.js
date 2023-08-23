@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.0';
+    this.REVISION = '3.28.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -648,6 +648,42 @@ iCn3DUI.prototype.setIcn3d = function() { let me = this;
     me.icn3d.controlCls.setControl(); // rotation, translation, zoom, etc
 
     me.setDialogAjax();
+};
+
+iCn3DUI.prototype.getMmtfPromise = function(mmtfid) { let me = this;
+    return new Promise(function(resolve, reject) {
+        MMTF.fetch(
+            mmtfid,
+            // onLoad callback
+            async function( mmtfData ){
+                resolve(mmtfData);
+            },
+            // onError callback
+            function( error ){
+                //alert('This PDB structure is not found at RCSB...');
+                //console.error( error )
+                reject('error');
+            }
+        );
+    });
+};
+
+iCn3DUI.prototype.getMmtfReducedPromise = function(mmtfid) { let me = this;
+    return new Promise(function(resolve, reject) {
+        MMTF.fetchReduced(
+            mmtfid,
+            // onLoad callback
+            async function( mmtfData ){
+                resolve(mmtfData);
+            },
+            // onError callback
+            function( error ){
+                //alert('This PDB structure is not found at RCSB...');
+                //console.error( error )
+                reject('error');
+            }
+        );
+    });
 };
 
 iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete, bNode) { let me = this;

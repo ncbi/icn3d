@@ -32,7 +32,7 @@ class MmdbParser {
         if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;
-            ic.mmtfParserCls.downloadMmtf(pdbid);
+            await ic.mmtfParserCls.downloadMmtf(pdbid);
 
             return;
         }
@@ -441,7 +441,7 @@ class MmdbParser {
             url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
         }
 
-        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
+        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
         if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
 
         //ic.bCid = undefined;

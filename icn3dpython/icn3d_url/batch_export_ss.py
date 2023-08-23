@@ -51,8 +51,8 @@ ssfile = Path(f"{downdir}/{Path(pdbid).stem}_icn3d_ss.txt")
 
 try:
     # send web request to icn3d
-    #url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid={pdbid}&command=export secondary structure"
-    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?afid={pdbid}&command=export secondary structure"
+    #url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid={pdbid}&command=export secondary structure"
+    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?afid={pdbid}&command=export secondary structure"
     browser.get(url)
 
     ok = False

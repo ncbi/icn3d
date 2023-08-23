@@ -133,7 +133,7 @@ class SetDialog {
         html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
 
         html += '<b>Option 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
-        html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
+        html += '<form data-ncbi-sg-search="true" method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
         html += '<input type=hidden id="' + me.pre + 'pdbstr" name="pdbstr">';
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
         // the submit value has to be "Submit" in order to make the backend cgi works
@@ -147,12 +147,12 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
 
         html += '<b>Option 3</b>, search with a PDB file:<br>'; 
-        html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
+        html += '<form data-ncbi-sg-search="true" method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
         html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
         html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
         // the submit value has to be "Submit" in order to make the backend cgi works
         //html += '<input type="submit" name="' + me.pre + 'cmdVSMmdb" value="VAST Search"></input>';
-        html += '<input type="submit" name="cmdVSMmdb" value="Submit"></input>';
+        html += '<input type="submit" id="' + me.pre + 'cmdVSMmdb" name="cmdVSMmdb" value="Submit"></input>';
         html += "</form><br>";
 
         html += "</div>";
@@ -388,7 +388,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
         html += this.addNotebookTitle('dl_mmdbid', 'Please input an MMDB ID');
         html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
-        html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdb'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdb_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button><br/><br/><br/>";
         html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
           + me.pre + 'asu_bu_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
           + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';

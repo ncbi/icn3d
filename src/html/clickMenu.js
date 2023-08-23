@@ -122,7 +122,7 @@ class ClickMenu {
                     continue;
             }
 
-            if(id == 'mn1_searchstru') {
+            if(id == 'mn1_searchgrooup') {
                 html += "<td valign='top'>";
             }
             else if(id == 'mn2_definedsets') {

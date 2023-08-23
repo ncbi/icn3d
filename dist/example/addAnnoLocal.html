@@ -9,6 +9,7 @@
 <meta name="ncbi_pdid" content="icn3d">
 <meta name="ncbi_page" content="full">
 <meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<meta name="ncbi_pinger_click_ping_selector" content="button, a, input[type=submit], span[data-pinger], div[data-pinger], label[data-pinger]"/>
 <title>iCn3D: Web-based 3D Structure Viewer</title>
 <script type="text/javascript">
     window.ncbi_startTime = new Date();
@@ -43,32 +44,32 @@
             launchIcn3d(version);
           //});
       }
-      function launchIcn3d(version) {
+      async function launchIcn3d(version) {
           var cfg_params = getConfig();
           var cfg = cfg_params.cfg;
           var params = (cfg_params.params) ? cfg_params.params : {};
           params.version = version;
 
           if(params.mmtfid !== undefined) {
-              setupViewer('mmtfid', params.mmtfid, cfg, params);
+              await setupViewer('mmtfid', params.mmtfid, cfg, params);
           }
           else if(params.pdbid !== undefined) {
-              setupViewer('pdbid', params.pdbid, cfg, params);
+              await setupViewer('pdbid', params.pdbid, cfg, params);
           }
           else if(params.opmid !== undefined) {
-              setupViewer('opmid', params.opmid, cfg, params);
+              await setupViewer('opmid', params.opmid, cfg, params);
           }
           else if(params.cid !== undefined) {
-              setupViewer('cid', params.cid, cfg, params);
+              await setupViewer('cid', params.cid, cfg, params);
           }
           else if(params.mmcifid !== undefined) {
-              setupViewer('mmcifid', params.mmcifid, cfg, params);
+              await setupViewer('mmcifid', params.mmcifid, cfg, params);
           }
           else if(params.mmdbid !== undefined) {
-              setupViewer('mmdbid', params.mmdbid, cfg, params);
+              await setupViewer('mmdbid', params.mmdbid, cfg, params);
           }
           else if(params.gi !== undefined) {
-              setupViewer('gi', params.gi, cfg, params);
+              await setupViewer('gi', params.gi, cfg, params);
           }
           else if(params.blast_rep_id !== undefined) {
               if( (params.from === 'blast' || params.from === 'icn3d') && params.command == '') {
@@ -76,12 +77,12 @@
                   + params.blast_rep_id + ';+show+selection';
               }
 
-              setupViewer('blast_rep_id', params.blast_rep_id, cfg, params);
+              await setupViewer('blast_rep_id', params.blast_rep_id, cfg, params);
           }
           else if(params.urlname !== undefined) {
               var urlname = decodeURIComponent(params.urlname);
 
-              setupViewer('url', params.urltype + '|' + urlname, cfg, params);
+              await setupViewer('url', params.urltype + '|' + urlname, cfg, params);
           }
           // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
           else if(params.align !== undefined) {
@@ -91,7 +92,7 @@
 
               var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
-              icn3dui.show3DStructure();
+              await icn3dui.show3DStructure();
           }
           else if(params.chainalign !== undefined) {
               cfg.divid = 'div0';
@@ -101,21 +102,21 @@
 
               var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
-              icn3dui.show3DStructure();
+              await icn3dui.show3DStructure();
           }
           else if(params.mmdbafid !== undefined) {
               cfg.divid = 'div0';
 
               var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
-              icn3dui.show3DStructure();
+              await icn3dui.show3DStructure();
           }
           else {
-              setupViewer('', '', cfg, params);
+              await setupViewer('', '', cfg, params);
           }
       }
 
-      function setupViewer(idName, idValue, cfg, params) {
+      async function setupViewer(idName, idValue, cfg, params) {
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.replace(/\s/g, '').split(',');
@@ -147,22 +148,22 @@
 
           var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
-          $.when(icn3dui.show3DStructure()).then(function() {
-               // hide all default annotations
-               ic.annotationCls.hideAnnoTabAll();
+          await icn3dui.show3DStructure();
+          
+          // hide all default annotations
+          ic.annotationCls.hideAnnoTabAll();
 
-               // update annotation header
-               let title = 'My local annotation';
-               let annoHtml = "<span style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_" + ic.annotationCls.shortLabel + "' checked>" + title + "</span>";
-               $("#" + me.pre + "annoHeader").html(annoHtml);
+          // update annotation header
+          let title = 'My local annotation';
+          let annoHtml = "<span style='white-space:nowrap'>" + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_" + ic.annotationCls.shortLabel + "' checked>" + title + "</span>";
+          $("#" + me.pre + "annoHeader").html(annoHtml);
 
-               // show your local annotation
-               ic.annoLocalCls.updateLocalAnno();
-               ic.annoLocalCls.setAnnoTabLocal();
+          // show your local annotation
+          ic.annoLocalCls.updateLocalAnno();
+          ic.annoLocalCls.setAnnoTabLocal();
 
-               // enable to show orhide
-               ic.annoLocalCls.clickLocalAnno();
-          });
+          // enable to show orhide
+          ic.annoLocalCls.clickLocalAnno();
 
           if(idName === '') $("#div" + i + "_wait").hide();
         }
@@ -277,9 +278,11 @@
 
         var showcommand = getValue(params.showcommand);
 
-        var simplemenu = getValue(params.simplemenu);
+        //var simplemenu = getValue(params.simplemenu);
 
         var mobilemenu = getValue(params.mobilemenu);
+
+        var imageonly = getValue(params.imageonly);
 
         var closepopup = getValue(params.closepopup);
 
@@ -319,8 +322,9 @@
           showanno: showanno,
           show2d: show2d,
           showsets: showsets,
-          simplemenu: simplemenu,
+          //simplemenu: simplemenu,
           mobilemenu: mobilemenu,
+          imageonly: imageonly,
           closepopup: closepopup,
           replay: replay,
           notebook: notebook,

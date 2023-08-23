@@ -433,7 +433,7 @@ class AddTrack {
         if(exonArray) {
             for(let j = 0, jl = exonArray.length; j < jl; ++j) {
                 let start = exonArray[j].resStart, end = exonArray[j].resEnd;
-                let genStart = exonArray[j].genomeRange.split('-')[0];
+                let genStart = parseInt(exonArray[j].genomeRange.split('-')[0]);
 
                 for(let k = 0, kl = end - start + 1; k < kl; ++k) {
                     let colorStr = this.getExonColor(start, end, cnt);

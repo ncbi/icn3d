@@ -51,7 +51,7 @@ pngfile = Path(f"{downdir}/{Path(pdbfile).stem}_icn3d_loadable.png")
 
 try:
     # send web request to icn3d
-    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mobilemenu=1&showcommand=0&type=pdb&url=https://files.rcsb.org/view/{pdbfile}&command=color+spectrum;+set+background+transparent;+export+canvas+1"
+    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mobilemenu=1&showcommand=0&type=pdb&url=https://files.rcsb.org/view/{pdbfile}&command=color+spectrum;+set+background+transparent;+export+canvas+1"
     browser.get(url)
 
     ok = False

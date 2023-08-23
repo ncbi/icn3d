@@ -9,6 +9,7 @@
 <meta name="ncbi_pdid" content="icn3d">
 <meta name="ncbi_page" content="full2">
 <meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<meta name="ncbi_pinger_click_ping_selector" content="button, a, input[type=submit], span[data-pinger], div[data-pinger], label[data-pinger]"/>
 <title>iCn3D: Web-based 3D Structure Viewer</title>
 <script type="text/javascript">
     window.ncbi_startTime = new Date();
@@ -19,11 +20,11 @@
   <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.28.0.css">
+  <link rel="stylesheet" href="icn3d_3.28.1.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.137.0.min.js"></script>
-  <script src="icn3d_3.28.0.min.js"></script>
+  <script src="icn3d_3.28.1.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(async function() {
@@ -40,7 +41,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.28.0.min.js', function() {
+          //$.getScript('icn3d_3.28.1.min.js', function() {
             var version = 3;
             await launchIcn3d(version);
           //});

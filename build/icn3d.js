@@ -6669,7 +6669,7 @@ var icn3d = (function (exports) {
                         continue;
                 }
 
-                if(id == 'mn1_searchstru') {
+                if(id == 'mn1_searchgrooup') {
                     html += "<td valign='top'>";
                 }
                 else if(id == 'mn2_definedsets') {
@@ -9431,12 +9431,12 @@ var icn3d = (function (exports) {
             //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
             html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
             html += "<ul>";
-            html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
-            html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
+            //html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+            html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
+            html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold' + me.htmlCls.wifiStr, undefined, 2);
             html += "</ul>";
 
             
-
             html += this.getMenuText('mn1_alignwrap', 'Align', undefined, 1, 1);
             html += "<ul>";
             
@@ -10675,7 +10675,7 @@ var icn3d = (function (exports) {
             html += this.getMenuUrl('abouticn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#about", "About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span>", 1, 1);
 
             html += this.getMenuUrl('gallery', me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery", "Live Gallery " + me.htmlCls.wifiStr, 1, 1);
-            html += this.getMenuUrl('video', me.htmlCls.baseUrl + "icn3d/icn3d.html#videos", "iCn3D Videos", 1, 1);
+            html += this.getMenuUrl('video', me.htmlCls.baseUrl + "icn3d/icn3d.html#videos", "Videos & Tutorials", 1, 1);
 
             html += this.getMenuText('mn6_faq', 'FAQ', undefined, 1, 1);
 
@@ -11492,7 +11492,7 @@ var icn3d = (function (exports) {
             html += 'Note: <b>VAST</b> identifies 3D domains (substructures) within each protein structure in the Molecular Modeling Database (MMDB), and then finds other protein structures that have one or more similar 3D domains, using purely geometric criteria. You have two ways to do a VAST search.<br><br>'; 
 
             html += '<b>Option 1</b>, search with your selection (all residues are selected by default) in the loaded structures:<br>'; 
-            html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
+            html += '<form data-ncbi-sg-search="true" method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs2" name="newvs2" target="_blank">';
             html += '<input type=hidden id="' + me.pre + 'pdbstr" name="pdbstr">';
             html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
             // the submit value has to be "Submit" in order to make the backend cgi works
@@ -11506,12 +11506,12 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "reload_vast'>VAST</button><br><br>";
 
             html += '<b>Option 3</b>, search with a PDB file:<br>'; 
-            html += '<form method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
+            html += '<form data-ncbi-sg-search="true" method=post enctype=multipart/form-data action="https://www.ncbi.nlm.nih.gov/Structure/vast/VSMmdb.cgi" id="' + me.pre + 'newvs" name="newvs" target="_blank">';
             html += "PDB File: " + me.htmlCls.inputFileStr + " name='pdbfile' size=8><br>";
             html += "Searching against: <input type='radio' name='dataset' value='Non-redundant subset' checked> Medium-redundancy Subset of PDB <a href='https://www.ncbi.nlm.nih.gov/Structure/VAST/vasthelp.html#VASTNR' title='Medium-redundancy Subset' target='_blank'>?</a> <input type='radio' name='dataset' value='All'>All of PDB <br>";
             // the submit value has to be "Submit" in order to make the backend cgi works
             //html += '<input type="submit" name="' + me.pre + 'cmdVSMmdb" value="VAST Search"></input>';
-            html += '<input type="submit" name="cmdVSMmdb" value="Submit"></input>';
+            html += '<input type="submit" id="' + me.pre + 'cmdVSMmdb" name="cmdVSMmdb" value="Submit"></input>';
             html += "</form><br>";
 
             html += "</div>";
@@ -11747,7 +11747,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
             html += this.addNotebookTitle('dl_mmdbid', 'Please input an MMDB ID');
             html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
-            html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+            html += me.htmlCls.buttonStr + "reload_mmdb'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdb_asym' style='margin-left:30px'>Load Asymmetric Unit (All Chains)</button><br/><br/><br/>";
             html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
               + me.pre + 'asu_bu_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
               + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
@@ -15707,7 +15707,7 @@ var icn3d = (function (exports) {
             if(selType) me.htmlCls.allMenusSel[id] = selType;
             if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
-            return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+            return "<li><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
         // a group of menus
@@ -15719,7 +15719,7 @@ var icn3d = (function (exports) {
             let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
 
             // no ending "</li>"" since this is usually the start of a group of menus
-            return "<li><span id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
+            return "<li><span data-pinger id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
         }
 
         getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
@@ -15740,7 +15740,7 @@ var icn3d = (function (exports) {
             if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
             let hideStr = (bHide) ? ' style="display:none"' : '';
-            return "<li id='" + me.pre + wrapper + "'" + hideStr + "><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+            return "<li id='" + me.pre + wrapper + "'" + hideStr + "><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
         }
 
         getLinkWrapper2(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
@@ -15748,7 +15748,7 @@ var icn3d = (function (exports) {
             if(selType) me.htmlCls.allMenusSel[id] = selType;
             if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
-            return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span>";
+            return "<li id='" + me.pre + wrapper + "'><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span>";
         }
 
         getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
@@ -15759,8 +15759,7 @@ var icn3d = (function (exports) {
             let checkedStr =(bChecked) ? ' checked' : '';
 
             //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-            //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
-            return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+            return "<li><label data-pinger id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
         }
 
         getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui; me.icn3d;
@@ -15771,8 +15770,7 @@ var icn3d = (function (exports) {
             let checkedStr =(bChecked) ? ' checked' : '';
 
             //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-            //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
-            return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+            return "<li><label data-pinger id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
         }
 
         setAdvanced(index) { let me = this.icn3dui; me.icn3d;
@@ -36826,7 +36824,7 @@ var icn3d = (function (exports) {
             //if(me.cfg.afid) {
 
             // use precalculated CDD annotation if
-            if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
+            if( (Object.keys(ic.structures).length == 1 && !me.cfg.afid && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
                 || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
                     let data = {};
                     try {
@@ -40663,7 +40661,7 @@ var icn3d = (function (exports) {
             if(exonArray) {
                 for(let j = 0, jl = exonArray.length; j < jl; ++j) {
                     let start = exonArray[j].resStart, end = exonArray[j].resEnd;
-                    let genStart = exonArray[j].genomeRange.split('-')[0];
+                    let genStart = parseInt(exonArray[j].genomeRange.split('-')[0]);
 
                     for(let k = 0, kl = end - start + 1; k < kl; ++k) {
                         let colorStr = this.getExonColor(start, end, cnt);
@@ -42928,7 +42926,7 @@ var icn3d = (function (exports) {
                     url = "https://rest.uniprot.org/uniprotkb/search?format=json&fields=xref_geneid,gene_names&query=" + structure;
                     let geneData = await me.getAjaxPromise(url, 'json');
                     let geneId = (geneData.results[0] && geneData.results[0].uniProtKBCrossReferences && geneData.results[0].uniProtKBCrossReferences[0]) ? geneData.results[0].uniProtKBCrossReferences[0].id : undefined;
-                    let geneSymbol = (geneData.results[0] && geneData.results[0].genes && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : undefined;
+                    let geneSymbol = (geneData.results[0] && geneData.results[0].genes && geneData.results[0].genes[0] && geneData.results[0].genes[0].geneName) ? geneData.results[0].genes[0].geneName.value : 'ID ' + geneId;
                     ic.chainsGene[chnid] = {geneId: geneId, geneSymbol: geneSymbol};
                 }
             }
@@ -51290,7 +51288,7 @@ var icn3d = (function (exports) {
             if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
                 // use mmtfid
                 let pdbid = data.pdbId;
-                ic.mmtfParserCls.downloadMmtf(pdbid);
+                await ic.mmtfParserCls.downloadMmtf(pdbid);
 
                 return;
             }
@@ -51682,7 +51680,7 @@ var icn3d = (function (exports) {
                 url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
             }
 
-            // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
+            // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
             if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
 
             //ic.bCid = undefined;
@@ -51714,57 +51712,31 @@ var icn3d = (function (exports) {
 
         //MMTF is a new binary data format besides the previous PDB and mmCIF formats for 3D structures.
         //The JavaScript Methods at http://mmtf.rcsb.org/ was used to load and parse the data.
-        downloadMmtf(mmtfid) { let ic = this.icn3d; ic.icn3dui;
+        async downloadMmtf(mmtfid) { let ic = this.icn3d, me = ic.icn3dui;
             ic.ParserUtilsCls.setYourNote(mmtfid.toUpperCase() + '(MMTF) in iCn3D');
             //ic.bCid = undefined;
 
-            MMTF.fetchReduced(
-                mmtfid,
-                // onLoad callback
-                async function( mmtfData ){
-                    if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
-                        let bFull = false;
-                        if(Object.keys(mmtfData).length == 0) {
-                            alert('This PDB structure is not found at RCSB...');
-                            return;
-                        }
-
-                        await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
-                    }
-                    else {
-                        mmtfData = null;
-
-                        MMTF.fetch(
-                            mmtfid,
-                            // onLoad callback
-                            async function( mmtfData2 ){
-                                let bFull = true;
-                                if(Object.keys(mmtfData2).length == 0) {
-                                    alert('This PDB structure is not found at RCSB...');
-                                    return;
-                                }
-                                // ic.deferredOpm = $.Deferred(function() {
-                                //     ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                                // });
-
-                                // return ic.deferredOpm.promise();
-
-                                await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                            },
-                            // onError callback
-                            function( error ){
-                                //alert('This PDB structure is not found at RCSB...');
-                                //console.error( error )
-                            }
-                        );
-                    }
-                },
-                // onError callback
-                function( error ){
-                    //alert('This PDB structure is not found at RCSB...');
-                    //console.error( error )
+            let mmtfData = await me.getMmtfReducedPromise(mmtfid);
+            if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
+                let bFull = false;
+                if(Object.keys(mmtfData).length == 0) {
+                    alert('This PDB structure is not found at RCSB...');
+                    return;
                 }
-            );
+
+                await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
+            }
+            else {
+                let mmtfData2 = await me.getMmtfPromise(mmtfid);
+
+                let bFull = true;
+                if(Object.keys(mmtfData2).length == 0) {
+                    alert('This PDB structure is not found at RCSB...');
+                    return;
+                }
+
+                await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
+            }
         }
 
         async parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
@@ -59649,7 +59621,6 @@ var icn3d = (function (exports) {
           let command = commandOri.toLowerCase();
 
         // exact match =============
-
           //var file_pref =(ic.inputid) ? ic.inputid : "custom";
           if(command == 'share link') {
             await ic.shareLinkCls.shareLink();
@@ -62563,6 +62534,7 @@ var icn3d = (function (exports) {
             ic.inputid = id;
             if(command.indexOf('load mmtf') !== -1) {
               me.cfg.mmtfid = id;
+              
               await ic.mmtfParserCls.downloadMmtf(id);
             }
             else if(command.indexOf('load pdb') !== -1) {
@@ -70309,7 +70281,8 @@ var icn3d = (function (exports) {
             let url = this.shareLinkUrl();
 
             let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+            //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+            
             //var inputid =(ic.inputid) ? ic.inputid : "custom";
             let inputid = Object.keys(ic.structures).join('_');
             if(inputid == ic.defaultPdbId) {
@@ -70417,7 +70390,7 @@ var icn3d = (function (exports) {
         }
 
         shareLinkUrl(bAllCommands, bOutputCmd) { let ic = this.icn3d, me = ic.icn3dui;
-               let url = me.htmlCls.baseUrl + "icn3d/full.html?";
+               let url = me.htmlCls.baseUrl + "icn3d/?";
                let outputCmd = '';
                if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
@@ -73482,7 +73455,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.28.0';
+        this.REVISION = '3.28.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -73967,6 +73940,40 @@ var icn3d = (function (exports) {
         me.icn3d.controlCls.setControl(); // rotation, translation, zoom, etc
 
         me.setDialogAjax();
+    };
+
+    iCn3DUI.prototype.getMmtfPromise = function(mmtfid) {    return new Promise(function(resolve, reject) {
+            MMTF.fetch(
+                mmtfid,
+                // onLoad callback
+                async function( mmtfData ){
+                    resolve(mmtfData);
+                },
+                // onError callback
+                function( error ){
+                    //alert('This PDB structure is not found at RCSB...');
+                    //console.error( error )
+                    reject('error');
+                }
+            );
+        });
+    };
+
+    iCn3DUI.prototype.getMmtfReducedPromise = function(mmtfid) {    return new Promise(function(resolve, reject) {
+            MMTF.fetchReduced(
+                mmtfid,
+                // onLoad callback
+                async function( mmtfData ){
+                    resolve(mmtfData);
+                },
+                // onError callback
+                function( error ){
+                    //alert('This PDB structure is not found at RCSB...');
+                    //console.error( error )
+                    reject('error');
+                }
+            );
+        });
     };
 
     iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess, logMess, complete, bNode) { let me = this;

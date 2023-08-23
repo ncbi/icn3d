@@ -13,57 +13,31 @@ class MmtfParser {
 
     //MMTF is a new binary data format besides the previous PDB and mmCIF formats for 3D structures.
     //The JavaScript Methods at http://mmtf.rcsb.org/ was used to load and parse the data.
-    downloadMmtf(mmtfid) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadMmtf(mmtfid) { let ic = this.icn3d, me = ic.icn3dui;
         ic.ParserUtilsCls.setYourNote(mmtfid.toUpperCase() + '(MMTF) in iCn3D');
         //ic.bCid = undefined;
 
-        MMTF.fetchReduced(
-            mmtfid,
-            // onLoad callback
-            async function( mmtfData ){
-                if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
-                    let bFull = false;
-                    if(Object.keys(mmtfData).length == 0) {
-                        alert('This PDB structure is not found at RCSB...');
-                        return;
-                    }
-
-                    await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
-                }
-                else {
-                    mmtfData = null;
-
-                    MMTF.fetch(
-                        mmtfid,
-                        // onLoad callback
-                        async function( mmtfData2 ){
-                            let bFull = true;
-                            if(Object.keys(mmtfData2).length == 0) {
-                                alert('This PDB structure is not found at RCSB...');
-                                return;
-                            }
-                            // ic.deferredOpm = $.Deferred(function() {
-                            //     ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                            // });
-
-                            // return ic.deferredOpm.promise();
-
-                            await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-                        },
-                        // onError callback
-                        function( error ){
-                            //alert('This PDB structure is not found at RCSB...');
-                            //console.error( error )
-                        }
-                    );
-                }
-            },
-            // onError callback
-            function( error ){
-                //alert('This PDB structure is not found at RCSB...');
-                //console.error( error )
+        let mmtfData = await me.getMmtfReducedPromise(mmtfid);
+        if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
+            let bFull = false;
+            if(Object.keys(mmtfData).length == 0) {
+                alert('This PDB structure is not found at RCSB...');
+                return;
             }
-        );
+
+            await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
+        }
+        else {
+            let mmtfData2 = await me.getMmtfPromise(mmtfid);
+
+            let bFull = true;
+            if(Object.keys(mmtfData2).length == 0) {
+                alert('This PDB structure is not found at RCSB...');
+                return;
+            }
+
+            await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
+        }
     }
 
     async parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
