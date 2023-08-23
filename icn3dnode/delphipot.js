@@ -68,7 +68,9 @@ https.get(urlMmdb, function(res1) {
       let contour = 3;
       let bSurface = true;
 
-      ic.phisurftype = 22;
+      ic.phisurftype = 22; // molecular surface
+      ic.phisurfop = 1.0; // opacity
+      ic.phisurfwf = 'no'; // wireframe
 
       let dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid, 'cube': 1, 'json': 1}
 

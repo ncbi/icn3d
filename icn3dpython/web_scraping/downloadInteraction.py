@@ -145,7 +145,7 @@ def click_download_file( driver, format, headless=True  ):
 # ------------------------------------------------------------------
 def load_molecule_icn3d( driver, ptn ):
 
-	driver.get('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=' + ptn.lower() )
+	driver.get('https://www.ncbi.nlm.nih.gov/Structure/icn3d/?pdbid=' + ptn.lower() )
 	
 	return
 

@@ -51,8 +51,8 @@ ssfile = Path(f"{downdir}/{Path(pdbid).stem}_icn3d_panel.txt")
 
 try:
     # send web request to icn3d
-    #url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid={pdbid}&command=export secondary structure"
-    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid={pdbid}&command=view annotations; set annotation cdd; set view detailed view; select .STI:2210 | name STI; line graph interaction pairs | STI 3GVU | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; save html div0_dl_linegraph"
+    #url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid={pdbid}&command=export secondary structure"
+    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid={pdbid}&command=view annotations; set annotation cdd; set view detailed view; select .STI:2210 | name STI; line graph interaction pairs | STI 3GVU | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; save html div0_dl_linegraph"
     browser.get(url)
 
     ok = False

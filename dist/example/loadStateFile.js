@@ -10,9 +10,9 @@
 
         // functions start with a lower-case letter
         // use "ic" to access the instance of iCn3D class
-        loadStateFile(fileStr) { var ic = this.icn3d;
+        async loadStateFile(fileStr) { var ic = this.icn3d;
             // "ic" has a lot of class instances such as "loadScriptCls"
-            ic.loadScriptCls.loadScript(fileStr, true);
+            await ic.loadScriptCls.loadScript(fileStr, true);
         }
     }
 

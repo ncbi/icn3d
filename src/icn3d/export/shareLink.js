@@ -13,7 +13,8 @@ class ShareLink {
         let url = this.shareLinkUrl();
 
         let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-        if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+        //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+        
         //var inputid =(ic.inputid) ? ic.inputid : "custom";
         let inputid = Object.keys(ic.structures).join('_');
         if(inputid == ic.defaultPdbId) {
@@ -121,7 +122,7 @@ class ShareLink {
     }
 
     shareLinkUrl(bAllCommands, bOutputCmd) { let ic = this.icn3d, me = ic.icn3dui;
-           let url = me.htmlCls.baseUrl + "icn3d/full.html?";
+           let url = me.htmlCls.baseUrl + "icn3d/?";
            let outputCmd = '';
            if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 

@@ -507,6 +507,7 @@ class LoadScript {
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
+          
           await ic.mmtfParserCls.downloadMmtf(id);
         }
         else if(command.indexOf('load pdb') !== -1) {

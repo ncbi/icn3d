@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.28.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.1.zip) was release on August 23, 2023. Added logs for menu usages, and updated iCn3D tutorials at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos.
+
 [icn3d-3.28.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.0.zip) was release on July 31, 2023. Added the feature to show isoforms and exons as tracks with the button "Add Track" in the "Sequences & Annotations" window via the menu "Analysis > Sequences & Annotations". Also displayed pathogenic ClinVars in red and the rest in green in the ClinVar track.
 
 [icn3d-3.27.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.27.0.zip) was release on July 13, 2023. Added the feature to search AlphaFold structures with protein/gene names directly in iCn3D via the menu "File > Search Structures > AlphaFold Structures".
@@ -387,7 +389,7 @@
 
 [icn3d-2.6.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.3.zip) was release on April 23, 2019. Showed SNP annotations for more 3D structures.
 
-[icn3d-2.6.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.2.zip) was release on April 15, 2019. Enabled to show large structure such as HIV-1 capsid (3J3Q): (https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=3j3q).
+[icn3d-2.6.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.2.zip) was release on April 15, 2019. Enabled to show large structure such as HIV-1 capsid (3J3Q): (https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmtfid=3j3q).
 
 [icn3d-2.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.1.zip) was release on April 1, 2019. Enabled to link from BLAST result page to iCn3D.
 
@@ -475,7 +477,7 @@
 
 [icn3d-1.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.4.zip) was release on March 1, 2017. The backend of structure alignment was updated.
 
-[icn3d-1.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.3.zip) was release on November 15, 2016. Now users can save the image with "transparent" background using a single url, e.g., [](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&command=set%20background%20transparent;%20export%20canvas)https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&command=set%20background%20transparent;%20export%20canvas.
+[icn3d-1.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.3.zip) was release on November 15, 2016. Now users can save the image with "transparent" background using a single url, e.g., [](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&width=300&height=300&command=set%20background%20transparent;%20export%20canvas)https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&width=300&height=300&command=set%20background%20transparent;%20export%20canvas.
 
 [icn3d-1.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip) was release on October 18, 2016. The atom specification in "Advanced set selection" was modified to use "$" instead of "#" in front of structure IDs. This modification avoids to the problem of showing multiple "#" in the urls of "Share Link".
 
@@ -491,7 +493,7 @@
 
 [icn3d-1.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip) was release on July 25, 2016. Some bugs were fixed.
 
-[icn3d-1.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip) was release on July 18, 2016. The new binary MMTF file format was supported. A new "Analysis" menu was added with an option to show disulfide bonds. Users can also input data from a url, either through the UI or through a encoded url parameter "?type=pdb&url=...", e.g., [](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb)https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb.
+[icn3d-1.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip) was release on July 18, 2016. The new binary MMTF file format was supported. A new "Analysis" menu was added with an option to show disulfide bonds. Users can also input data from a url, either through the UI or through a encoded url parameter "?type=pdb&url=...", e.g., [](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb)https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb.
 
 [icn3d-1.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.1.zip) was release on May 16, 2016.
 

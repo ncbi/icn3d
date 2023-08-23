@@ -24,7 +24,7 @@ class AnnoCddSite {
         //if(me.cfg.afid) {
 
         // use precalculated CDD annotation if
-        if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
+        if( (Object.keys(ic.structures).length == 1 && !me.cfg.afid && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
             || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
                 let data = {};
                 try {

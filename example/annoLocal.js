@@ -16,19 +16,17 @@
  
      //Show the local annotation
      showLocalAnno() { let ic = this.icn3d, me = ic.icn3dui;
-         let thisClass = this;
- 
-         let chainidArray = Object.keys(ic.protein_chainid);
+        let thisClass = this;
 
-         // show local annotation
-         let url = "[some_RESTful_API]?chainids=" + chainidArray;
+        let chainidArray = Object.keys(ic.protein_chainid);
 
-            $.ajax({
+        // show local annotation
+        let url = "[some_RESTful_API]?chainids=" + chainidArray;
+
+        $.ajax({
             url: url,
             dataType: 'jsonp',
             cache: true,
-            tryCount : 0,
-            retryLimit : 0, //1
             success: function(dataArray) {
                 thisClass.parseAnnoData(dataArray, chainidArray);
             },
@@ -39,7 +37,7 @@
 
                 return;
             }
-            });
+        });
      }
  
      parseAnnoData(dataArray, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -53,7 +51,7 @@
              //   and the value could be a list of "resid"
              // resid could be '1KQ2_A_2', where '1KQ2' is the PDB ID, 'A'is the chain, 
              //   '2' is the residue number
-             let data = dataArray[i]; 
+             let data = dataArray[i].value; 
              let chainid = chainidArray[i];
 
              let resid2resids = {}; // interaction of one residue with other residues

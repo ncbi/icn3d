@@ -12,7 +12,7 @@ class SetHtml {
         if(selType) me.htmlCls.allMenusSel[id] = selType;
         if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
-        return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+        return "<li><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
     // a group of menus
@@ -24,7 +24,7 @@ class SetHtml {
         let styleStr = (classname == 'icn3d-menupd') ? " style='padding-left:1.5em!important;'" : "";
 
         // no ending "</li>"" since this is usually the start of a group of menus
-        return "<li><span id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
+        return "<li><span data-pinger id='" + me.pre + id + "'" + styleStr + ">" + text + "</span>"; 
     }
 
     getMenuUrl(id, url, text, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
@@ -45,7 +45,7 @@ class SetHtml {
         if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
         let hideStr = (bHide) ? ' style="display:none"' : '';
-        return "<li id='" + me.pre + wrapper + "'" + hideStr + "><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+        return "<li id='" + me.pre + wrapper + "'" + hideStr + "><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
     getLinkWrapper2(id, text, wrapper, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
@@ -53,7 +53,7 @@ class SetHtml {
         if(selType) me.htmlCls.allMenusSel[id] = selType;
         if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
-        return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span>";
+        return "<li id='" + me.pre + wrapper + "'><span data-pinger id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span>";
     }
 
     getRadio(radioid, id, text, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
@@ -64,8 +64,7 @@ class SetHtml {
         let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-        //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
-        return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+        return "<li><label data-pinger id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
     }
 
     getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType) { let me = this.icn3dui, ic = me.icn3d;
@@ -76,8 +75,7 @@ class SetHtml {
         let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-        //return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
-        return "<li><label id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
+        return "<li><label data-pinger id='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
     }
 
     setAdvanced(index) { let me = this.icn3dui, ic = me.icn3d;

@@ -87,6 +87,7 @@ https.get(url, function(res1) {
                 let dataJson = JSON.parse(dataStr);
 
                 ic.chainid_seq = dataJson;
+
                 await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
                 await ic.showAnnoCls.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);

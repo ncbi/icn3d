@@ -578,12 +578,12 @@ class SetMenu {
         //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
         html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
-        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold', undefined, 2);
+        //html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";
 
         
-
         html += this.getMenuText('mn1_alignwrap', 'Align', undefined, 1, 1);
         html += "<ul>";
         
@@ -1826,7 +1826,7 @@ class SetMenu {
         html += this.getMenuUrl('abouticn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#about", "About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span>", 1, 1);
 
         html += this.getMenuUrl('gallery', me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery", "Live Gallery " + me.htmlCls.wifiStr, 1, 1);
-        html += this.getMenuUrl('video', me.htmlCls.baseUrl + "icn3d/icn3d.html#videos", "iCn3D Videos", 1, 1);
+        html += this.getMenuUrl('video', me.htmlCls.baseUrl + "icn3d/icn3d.html#videos", "Videos & Tutorials", 1, 1);
 
         html += this.getMenuText('mn6_faq', 'FAQ', undefined, 1, 1);
 

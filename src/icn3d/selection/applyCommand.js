@@ -20,7 +20,6 @@ class ApplyCommand {
       let bShowLog = true;
 
     // exact match =============
-
       //var file_pref =(ic.inputid) ? ic.inputid : "custom";
       if(command == 'share link') {
         await ic.shareLinkCls.shareLink();
