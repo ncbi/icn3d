@@ -831,7 +831,7 @@ class SetHtml {
         if(postfix == 'style') {
             if(bReset) {
                 $("#" + me.pre + "shininess").val('40');
-                $("#" + me.pre + "light1").val('0.6');
+                $("#" + me.pre + "light1").val('0.8');
                 $("#" + me.pre + "light2").val('0.4');
                 $("#" + me.pre + "light3").val('0.2');
                 $("#" + me.pre + "glycan").val('0');
