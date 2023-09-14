@@ -507,8 +507,8 @@ class SetMenu {
         
         html += this.getMenuText('mn1_searchgrooup', 'Search Structure ' + me.htmlCls.wifiStr, undefined, 1, 1);
         html += "<ul>";
-        html += this.getMenuUrl('mn1_searchstru', 'https://www.ncbi.nlm.nih.gov/structure', 'PDB Structures ' + me.htmlCls.wifiStr, undefined, 2);
-        html += this.getLink('mn1_proteinname', 'AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getMenuUrl('mn1_searchstru', 'https://www.ncbi.nlm.nih.gov/structure', 'PDB Structures ' + me.htmlCls.wifiStr, 1, 2);
+        html += this.getLink('mn1_proteinname', 'AlphaFold Structures ' + me.htmlCls.wifiStr, 1, 2);
         html += this.getMenuUrl('mn1_afdatabase', 'https://alphafold.ebi.ac.uk', 'AlphaFold UniProt Database ' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";
         html += "</li>";
@@ -578,8 +578,8 @@ class SetMenu {
         //html += this.getMenuText('mn1_fold', 'AlphaFold/ESM', undefined, undefined, 1);
         html += this.getMenuText('mn1_fold', 'Predict by Seq.', undefined, undefined, 1);
         html += "<ul>";
-        //html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
-        html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_esmfold', 'ESMFold', undefined, 2);
+        //html += this.getMenuUrl('mn1_esmfold_link', "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/ESMFold.ipynb", "ESMFold via ColabFold" + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_alphafold', 'AlphaFold2 via ColabFold' + me.htmlCls.wifiStr, undefined, 2);
         html += "</ul>";
 
@@ -922,7 +922,7 @@ class SetMenu {
         html += this.getRadio('mn6_showslab', 'mn6_showslabNo', 'Off', true, undefined, 2);
         html += "</ul>";
         html += "</li>";
-        html += this.getMenuText('mn2_axes', 'XYZ-axes', undefined, 1);
+        html += this.getMenuText('mn2_axes', 'XYZ-axes', undefined, undefined, 1);
         html += "<ul>";
         html += this.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Original', undefined, undefined, 2);
         html += this.getRadio('mn6_showaxis', 'mn6_showaxisSel', 'Prin. Axes on Sel.', undefined, undefined, 2);

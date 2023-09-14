@@ -624,26 +624,26 @@ class AddTrack {
                         endColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, to);
 
                         colorGradient = startColorStr + ' 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                        htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange);
+                        htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange, chnid, simpTitle);
                     }
                     else {
                         if(startExon) {
                             startColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, from);
 
                             colorGradient = startColorStr + ' 0%, #FFF 50%, #00F 100%';
-                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange);
+                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange, chnid, simpTitle);
                         }
 
                         if(startExon && endExon) {
                             for(let j = startExon.exonIndex + 1; j < endExon.exonIndex; ++j) {
                                 colorGradient = '#F00 0%, #FFF 50%, #00F 100%';
-                                htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange);
+                                htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange, chnid, simpTitle);
                             }
 
                             endColorStr = this.getExonColor(endExon.rangeStart, endExon.rangeEnd, to);
 
                             colorGradient = '#F00 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                            htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange);
+                            htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange, chnid, simpTitle);
                         }
                     }
 
@@ -677,8 +677,8 @@ class AddTrack {
         }
     }
 
-    getExonHtml(exonIndex, colorGradient, from, to, genomeRange) { let ic = this.icn3d, me = ic.icn3dui;
-        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" title="' + (exonIndex + 1) + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+    getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d, me = ic.icn3dui;
+        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
     }
 
     getExonColor(start, end, pos) { let ic = this.icn3d, me = ic.icn3dui;

@@ -339,22 +339,16 @@ class ViewInterPairs {
            }
 
            if(ic.bD3 === undefined) {
-                //var url = "https://d3js.org/d3.v4.min.js";
-                var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
-                let data = await me.getAjaxPromise(url, 'script');
+                //let url = "https://d3js.org/d3.v4.min.js";
+                let url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                await me.getAjaxPromise(url, 'script');
 
                 ic.bD3 = true;
+           }
 
-                $("#" + me.svgid).empty();
-                me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
-                /// if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
-           }
-           else {
-               $("#" + me.svgid).empty();
-               me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-               ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
-           }
+            $("#" + me.svgid).empty();
+            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+            ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
        }
 
        return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};

@@ -410,8 +410,11 @@ class Delphi {
           let salt = saltArray[1]; //parseFloat(saltArray[1]);
 
           // The values should be string
-          $("#" + ic.pre + "delphigsize").val(gsize);
-          $("#" + ic.pre + "delphisalt").val(salt);
+          $("#" + ic.pre + "delphi1gsize").val(gsize);
+          $("#" + ic.pre + "delphi1salt").val(salt);
+
+          $("#" + ic.pre + "delphi2gsize").val(gsize);
+          $("#" + ic.pre + "delphi2salt").val(salt);
 
           if(paraArray.length == 7) {
               let surfaceArray = paraArray[4].split(" ");
@@ -436,11 +439,11 @@ class Delphi {
     }
 
     async loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
-       let gsize = $("#" + ic.pre + "delphigsize").val();
-       let salt = $("#" + ic.pre + "delphisalt").val();
-       let contour =(type == 'delphi2') ? $("#" + ic.pre + "delphicontour2").val() : $("#" + ic.pre + "delphicontour").val();
+       let gsize = (type == 'delphi2') ? $("#" + ic.pre + "delphi2gsize").val() : $("#" + ic.pre + "delphi1gsize").val();
+       let salt = (type == 'delphi2') ? $("#" + ic.pre + "delphi2salt").val() : $("#" + ic.pre + "delphi1gsize").val();
+       let contour = (type == 'delphi2') ? $("#" + ic.pre + "delphicontour2").val() : $("#" + ic.pre + "delphicontour").val();
 
-       let bSurface =(type == 'delphi2') ? true: false;
+       let bSurface = (type == 'delphi2') ? true: false;
 
        await this.CalcPhi(gsize, salt, contour, bSurface);
 

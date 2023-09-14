@@ -67,7 +67,6 @@ class ChainalignParser {
                 let ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-                //let urltmalign = "https://test.ncbi.nlm.nih.gov/Structure/tmalign/tmalign.cgi";
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -861,7 +860,12 @@ class ChainalignParser {
                 targetAjax = me.getAjaxPromise(url_t, 'text');
             }
             else {
-                url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structure;
+                let structureTmp = structure;
+                if(structure.length == 5) {
+                    structureTmp = structure.substr(0,4);
+                }
+
+                url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + structureTmp;
                 if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
                 targetAjax = me.getAjaxPromise(url_t, 'jsonp');
@@ -939,7 +943,8 @@ class ChainalignParser {
             }
             else {
                 let bNoSeqalign = true;
-                hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign);
+                let pdbid = structArray[i];
+                hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign, pdbid);
             }
                     
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);

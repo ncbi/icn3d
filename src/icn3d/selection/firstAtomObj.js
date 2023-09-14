@@ -44,6 +44,15 @@ class FirstAtomObj {
             }
         }
 
+        if(!firstIndex) {
+            for(let i in atomsHash) {
+                if(ic.atoms[i].name == "O3'" || ic.atoms[i].name == "O3*") {
+                    firstIndex = i;
+                    break;
+                }
+            }
+        }
+
         return (firstIndex !== undefined) ? ic.atoms[firstIndex] : this.getFirstAtomObj(atomsHash);
     }
 
