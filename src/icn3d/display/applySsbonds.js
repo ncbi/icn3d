@@ -45,7 +45,7 @@ class ApplySsbonds {
 
                 let line = {};
                 line.color = color;
-                line.dashed = true;
+                line.dashed = false;
 
                 // each Cys has two S atoms
                 let serial1Array = [], serial2Array = [];
@@ -146,13 +146,16 @@ class ApplySsbonds {
                 //if(ic.lines['ssbond'] === undefined) ic.lines['ssbond'] = [];
                 ic.lines['ssbond'].push(line);
 
-                // create bonds for disulfide bonds
-                ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
-
                 // show ball and stick for these two residues
                 let residueAtoms;
                 residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[res1]);
                 residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[res2]);
+
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(residueAtoms);
+                let style = (atom.style == 'lines') ? 'lines' : 'stick';
+
+                // create bonds for disulfide bonds
+                if(atom.style != 'lines') ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
 
                 // show side chains for the selected atoms
                 let atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
@@ -162,7 +165,7 @@ class ApplySsbonds {
 
                 // draw sidec separatedly
                 for(let j in atoms) {
-                  ic.atoms[j].style2 = 'stick';
+                  ic.atoms[j].style2 = style;
                 }
               } // for(let i = 0,
           } // for(let s = 0,

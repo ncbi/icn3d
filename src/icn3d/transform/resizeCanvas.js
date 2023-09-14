@@ -20,7 +20,7 @@ class ResizeCanvas {
 
         ic.applyCenterCls.setWidthHeight(width, heightTmp);
 
-        if(bDraw === undefined || bDraw) {
+        if(ic.structures && Object.keys(ic.structures).length > 0 && (bDraw === undefined || bDraw)) {
             ic.drawCls.draw();
         }
       }

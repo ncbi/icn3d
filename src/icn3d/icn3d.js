@@ -32,6 +32,7 @@ import {Surface} from './surface/surface.js';
 
 import {ApplyCenter} from './display/applyCenter.js';
 import {ApplyClbonds} from './display/applyClbonds.js';
+import {ApplyMissingRes} from './display/applyMissingRes.js';
 import {ApplyDisplay} from './display/applyDisplay.js';
 import {ApplyOther} from './display/applyOther.js';
 import {ApplySsbonds} from './display/applySsbonds.js';
@@ -224,7 +225,7 @@ class iCn3D {
     this.shininess = 40; //30
     this.emissive = 0x111111; //0x000000
 
-    this.light1 = 0.6; //1
+    this.light1 = 0.8; //0.6; //1
     this.light2 = 0.4;
     this.light3 = 0.2;
 
@@ -538,6 +539,8 @@ class iCn3D {
 
     this.applyCenterCls = new ApplyCenter(this);
     this.applyClbondsCls = new ApplyClbonds(this);
+    this.applyMissingResCls = new ApplyMissingRes(this);
+    
     this.applyDisplayCls = new ApplyDisplay(this);
     this.applyMapCls = new ApplyMap(this);
     this.applyOtherCls = new ApplyOther(this);

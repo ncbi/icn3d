@@ -31,7 +31,7 @@
         let thisClass = this;
 
         // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1', '1CD28_1yjdC_human_V'];
 
         // round 2
         ic.refpdbHash = {};
@@ -50,52 +50,55 @@
         ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human'];
         ic.refpdbHash['1IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria'];
         ic.refpdbHash['1TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];         
+        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];  
+        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V']; 
 
         // use known ref structure
-        ic.refpdbHash['5ESV'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2', 'FAB-LIGHT_5esv_C1-n2'];
-        ic.refpdbHash['8GUY'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2'];
-        ic.refpdbHash['6JXR'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['1HNF'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
-        ic.refpdbHash['7TZG'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C2-n2'];
-        ic.refpdbHash['6PY8'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
-        ic.refpdbHash['1BQU'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
+        ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
+        ic.refpdbHash['5ESV_D'] = ['FAB-LIGHT_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2'];
+        ic.refpdbHash['8GUY_E'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2'];
+        ic.refpdbHash['6JXR_m'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['1HNF_A'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
+        ic.refpdbHash['7TZG_D'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C2-n2'];
+        ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+        ic.refpdbHash['1BQU_B'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
 
-        ic.refpdbHash['1R4X'] = ['CoAtomerGamma1_1r4xA_human'];
-        ic.refpdbHash['6OIL'] = ['VISTA_6oilA_human_V'];
-        ic.refpdbHash['2ZXE'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['1I8A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['2FWU'] = ['NaCaExchanger_2fwuA_dog_n2'];
-        ic.refpdbHash['4JQI'] = ['BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['1NBQ'] = ['JAM1_1nbqA_human_VorIset-n2'];
-        ic.refpdbHash['1O75'] = ['TP47_1o75A_bacteria'];
-        ic.refpdbHash['7PHR'] = ['MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['2IIJ'] = ['ASF1A_2iijA_human'];
-        ic.refpdbHash['4Z18'] = ['PDL1_4z18B_human_V-n1'];
-        ic.refpdbHash['1T6V'] = ['VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['2O6C'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['3KYS'] = ['TEAD1_3kysC_human'];
-        ic.refpdbHash['7PHR'] = ['B2Microglobulin_7phrL_human_C1'];
-        ic.refpdbHash['2AW2'] = ['BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['1HL5'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
-        ic.refpdbHash['1WF5'] = ['Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['5J0B'] = ['Siglec3_5j0bB_human_C2-n2'];
-        ic.refpdbHash['1IFR'] = ['LaminAC_1ifrA_human'];
-        ic.refpdbHash['Q7Z7D3'] = ['VTCN1_Q7Z7D3_human_V-n2'];
-        ic.refpdbHash['4ZQK'] = ['PD1_4zqkB_human_V'];
-        ic.refpdbHash['2DM3'] = ['Palladin_2dm3A_human_Iset-n1'];
-        ic.refpdbHash['2ITE'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1XAK'] = ['ORF7a_1xakA_virus'];
-        ic.refpdbHash['4ZT1'] = ['ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1LMI'] = ['MPT63_1lmiA_bacteria'];
-        ic.refpdbHash['1CD8'] = ['CD8a_1cd8A_human_V'];
-        ic.refpdbHash['3S97'] = ['Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1AXI'] = ['GHR_1axiB_human_FN3-n1'];
-        ic.refpdbHash['6X4G'] = ['ICOS_6x4gA_human_V'];
-        ic.refpdbHash['2EE2'] = ['Contactin1_2ee2A_human_FN3-n9'];
-        ic.refpdbHash['4UOW'] = ['Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['6A15'] = ['CD19_6al5A_human_C2orV-n1'];
-        ic.refpdbHash['2QKI'] = ['C3_2qkiD_human_n1'];
+        ic.refpdbHash['1R4X_A'] = ['CoAtomerGamma1_1r4xA_human'];
+        ic.refpdbHash['6OIL_A'] = ['VISTA_6oilA_human_V'];
+        ic.refpdbHash['2ZXE_B'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
+        ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
+        ic.refpdbHash['1NBQ_A'] = ['JAM1_1nbqA_human_VorIset-n2'];
+        ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
+        ic.refpdbHash['7PHR_H'] = ['MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
+        ic.refpdbHash['4Z18_B'] = ['PDL1_4z18B_human_V-n1'];
+        ic.refpdbHash['1T6V_N'] = ['VNAR_1t6vN_shark_V'];
+        ic.refpdbHash['2O6C_A'] = ['TP34_2o6cA_bacteria'];
+        ic.refpdbHash['3KYS_C'] = ['TEAD1_3kysC_human'];
+        ic.refpdbHash['7PHR_L'] = ['B2Microglobulin_7phrL_human_C1'];
+        ic.refpdbHash['2AW2_A'] = ['BTLA_2aw2A_human_Iset'];
+        ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
+        ic.refpdbHash['1WF5_A'] = ['Sidekick2_1wf5A_human_FN3-n7'];
+        ic.refpdbHash['5J0B_B'] = ['Siglec3_5j0bB_human_C2-n2'];
+        ic.refpdbHash['1IFR_A'] = ['LaminAC_1ifrA_human'];
+        ic.refpdbHash['Q7Z7D3_A'] = ['VTCN1_Q7Z7D3_human_V-n2'];
+        ic.refpdbHash['4ZQK_B'] = ['PD1_4zqkB_human_V'];
+        ic.refpdbHash['2DM3_A'] = ['Palladin_2dm3A_human_Iset-n1'];
+        ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
+        ic.refpdbHash['1XAK_A'] = ['ORF7a_1xakA_virus'];
+        ic.refpdbHash['4ZT1_A'] = ['ECadherin_4zt1A_human_n2'];
+        ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
+        ic.refpdbHash['1CD8_A'] = ['CD8a_1cd8A_human_V'];
+        ic.refpdbHash['3S97_C'] = ['Contactin1_3s97C_human_C2-n2'];
+        ic.refpdbHash['1AXI_B'] = ['GHR_1axiB_human_FN3-n1'];
+        ic.refpdbHash['6X4G_A'] = ['ICOS_6x4gA_human_V'];
+        ic.refpdbHash['2EE2_A'] = ['Contactin1_2ee2A_human_FN3-n9'];
+        ic.refpdbHash['4UOW_M'] = ['Titin_4uowM_human_Unk-n152'];
+        ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
+        ic.refpdbHash['1YJD_C'] = ['CD28_1yjdC_human_V'];
 
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
@@ -354,12 +357,12 @@
             let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
             let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
             //let chainid = domainid.split('-')[0];
-
+            
             if(!bRound1) {
                 if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
             }
             else {
-                if(!me.bNode) console.log("refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd);
+                if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd + ", num_res: " + queryData[0].num_res + ",  10/RMSD + num_res/5: " + (10 / queryData[0].super_rmsd + queryData[0].num_seg / 5).toFixed(1));
             }
 
             // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
@@ -389,11 +392,14 @@
                 //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
                 if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                     if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                    if(ic.domainid2refpdbname[domainid]) delete ic.domainid2refpdbname[domainid];
                     continue;
                 }
             }
 
             if(!bRound1) {
+                console.log("domainid: " + domainid);
+
                 if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
                     domainid2score[domainid] = queryData[0].score;  
         
@@ -404,8 +410,10 @@
                 }
             }
             else {
-                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].super_rmsd < domainid2score[domainid]) {
-                    domainid2score[domainid] = queryData[0].super_rmsd;  
+                let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
+
+                if(!domainid2score.hasOwnProperty(domainid) || mixScore > domainid2score[domainid]) {
+                    domainid2score[domainid] = mixScore;  
         
                     ic.domainid2refpdbname[domainid] = refpdbname;
                     domainid2segs[domainid] = queryData[0].segs;
@@ -425,11 +433,14 @@
             for(let domainid in ic.domainid2refpdbname) {
                 let pdbAjaxArray = [];
                 let refpdbname = ic.domainid2refpdbname[domainid];
-                let pdbid = domainid.substr(0, domainid.indexOf('_'));
+                //let pdbid = domainid.substr(0, domainid.indexOf('_'));
+                let chainid = domainid.substr(0, domainid.indexOf('-'));
 
-                if(ic.refpdbHash.hasOwnProperty(pdbid)) {
+                //if(ic.refpdbHash.hasOwnProperty(pdbid)) {
+                if(ic.refpdbHash.hasOwnProperty(chainid)) {
                     // use itself as the ref structure
-                    refpdbname = pdbid;
+                    //refpdbname = pdbid;
+                    refpdbname = chainid;
 
                     if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + refpdbname);   
                 }
@@ -471,11 +482,11 @@
             dataArray3 = await allPromise;
 
             await thisClass.parseAlignData(dataArray3, domainidpairArray3);
-
+            
             // end of round 2
             return;
         }
-
+        
         // combine domainid into chainid
         let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
@@ -583,17 +594,18 @@
 
         // A-: 10xx
         // A: 11xx
+        // A+ continue A
         // A': 12xx
-        // A+: 13xx
         // B: 21xx
         // C: 32xx
         // C': 42xx
         // C'': 51xx, 52xx
         // D: 61xx
         // E: 71xx
+        // E+: continue E
         // F: 82xx
         // G: 91xx, 92xx
-        // G+: 94xx
+        // G+: continue G
 
         // if(refnum < 100) return " " + oriRefnum;
         // else if(refnum >= 100 && refnum < 1000) {
@@ -603,11 +615,10 @@
         if(refnum < 900) return undefined;
         else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
         else if(refnum >= 1000 && refnum < 1100) return "A-" + oriRefnum;
-        else if(refnum >= 1100 && refnum < 1200) return "A" + oriRefnum;
+        else if(refnum >= 1100 && refnum < 1200) return "A" + oriRefnum; // could be A+
         else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
-        //else if(refnum >= 1300 && refnum < 1400) return "A*" + oriRefnum;
-        else if(refnum >= 1300 && refnum < 1400) return "A+" + oriRefnum;
-        else if(refnum >= 1400 && refnum < 2000) {
+        //else if(refnum >= 1300 && refnum < 1400) return "A+" + oriRefnum;
+        else if(refnum >= 1300 && refnum < 2000) {
             if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
                 return prevStrand + oriRefnum;
             }
@@ -620,12 +631,11 @@
         else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
         else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
         else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
-        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum;
+        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum; // could be E+
         else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-        else if(refnum >= 9000 && refnum < 9400) return "G" + oriRefnum;
-        //else if(refnum >= 9400 && refnum < 9500) return "G*" + oriRefnum;
-        else if(refnum >= 9400 && refnum < 9500) return "G+" + oriRefnum;
-        else if(refnum >= 9500) return "G" + oriRefnum;
+        else if(refnum >= 9000 && refnum < 9300) return "G" + oriRefnum; // could be G+
+        //else if(refnum >= 9400 && refnum < 9500) return "G+" + oriRefnum;
+        else if(refnum >= 9300) return "G" + oriRefnum;
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;
@@ -749,9 +759,8 @@
             let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
             if(ic.proteins.hasOwnProperty(atom.serial)) {
                 for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
-                const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
-    
-                refData += "'" + resid + "': '" + resid2refnum[resid] + "',\n";
+                    const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
+                    refData += '"' + resid + '": "' + resid2refnum[resid] + '",\n';
                 }
             }
             }

@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.1';
+    this.REVISION = '3.28.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -369,16 +369,16 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                     chainidArray.push(domainidArray[i]);
                 }
             }
-
-            let mmdbafid = '';
-            for(let i = 0, il = chainidArray.length; i < il; ++i) {
-                if(i > 0) mmdbafid += ',';
-                mmdbafid += chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
-            }
             
             // realign
             ic.chainidArray = [chain_t].concat(chainidArray);
             ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
+
+            let mmdbafid = '';
+            for(let i = 0, il = ic.chainidArray.length; i < il; ++i) {
+                if(i > 0) mmdbafid += ',';
+                mmdbafid += ic.chainidArray[i].substr(0, ic.chainidArray[i].indexOf('_'));
+            }
 
             me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 

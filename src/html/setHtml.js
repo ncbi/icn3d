@@ -168,7 +168,7 @@ class SetHtml {
         let nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
 
         let shininess = 40;
-        let light1 = 0.6;
+        let light1 = 0.8;
         let light2 = 0.4;
         let light3 = 0.2;
         let bGlycansCartoon = 0;
@@ -216,7 +216,7 @@ class SetHtml {
 
             html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
             html += "<b>2. Three directional lights</b>: <br>";
-            html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 0.6)<br/>";
+            html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 0.8)<br/>";
             html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 0.4)<br/>";
             html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 0.2)<br/><br/>";
             html += "<b>3. Thickness</b>: <br>";
@@ -430,7 +430,7 @@ class SetHtml {
         html += "</ul>";
 
         html += me.htmlCls.divStr + name1 + "tab1'>";
-        if(type == 'delphi') html += this.addGsizeSalt(name1) + "<br>";
+        if(type == 'delphi') html += this.addGsizeSalt(name1 + "1") + "<br>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
 
@@ -495,7 +495,7 @@ class SetHtml {
         html += "</div>";
 
         html += me.htmlCls.divStr + name1 + "tab2'>";
-        if(type == 'delphi') html += this.addGsizeSalt(name1) + "<br>";
+        if(type == 'delphi') html += this.addGsizeSalt(name1 + "2") + "<br>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Surface with max potential at: <select id='" + me.pre + name1 + "contour2'>";
 

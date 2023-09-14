@@ -248,6 +248,9 @@
         }
 
         if(ic.scene) {
+            // https://github.com/gkjohnson/three-gpu-pathtracer/blob/main/example/basic.js
+            ic.renderer.outputEncoding = THREE.sRGBEncoding;
+
             ic.renderer.render(ic.scene, cam);
         }
     }

@@ -777,7 +777,7 @@ class LoadScript {
     }
 
     //When reading a list of commands, apply transformation at the last step.
-    renderFinalStep(steps) { let ic = this.icn3d, me = ic.icn3dui;
+    async renderFinalStep(steps) { let ic = this.icn3d, me = ic.icn3dui;
         // enable ic.ParserUtilsCls.hideLoading
         ic.bCommandLoad = false;
 

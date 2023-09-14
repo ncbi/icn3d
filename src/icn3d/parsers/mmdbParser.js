@@ -197,9 +197,10 @@ class MmdbParser {
         }
     }
 
-    async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign, pdbidIn) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms;
-        let pdbid =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        let pdbid = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        if(pdbidIn) pdbid = pdbidIn;
 
         this.parseMmdbDataPart1(data, type);
 

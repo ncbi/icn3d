@@ -54,6 +54,9 @@ class Scene {
         // show cross-linkages, set side chains
         ic.applyClbondsCls.applyClbondsOptions();
 
+        // add dashed lines for missing residues
+        ic.applyMissingResCls.applyMissingResOptions();
+
         ic.applyDisplayCls.applyDisplayOptions(ic.opts, ic.dAtoms);
 
         ic.applyOtherCls.applyOtherOptions();
@@ -147,7 +150,7 @@ class Scene {
           ic.lightPos3 = new THREE.Vector3(1, 1, 1); //(0, 1, 1);
         }
 
-        let ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);
+        let ambientLight = new THREE.AmbientLight(0x404040); //(0x888888); //(0x404040);
 
         ic.scene.add(ic.directionalLight);
         ic.scene.add(ambientLight);
