@@ -167,14 +167,12 @@ class ParserUtils {
                 resObject.resi = i + 1;
             }
             else {
-                //let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                
-                if(type === 'mmdbid' || type === 'align') {
-                    resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
-                }
-                else {
+                //if(type === 'mmdbid' || type === 'align') {
+                //    resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+                //}
+                //else {
                     resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
-                }
+                //}
             }
 
             //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
