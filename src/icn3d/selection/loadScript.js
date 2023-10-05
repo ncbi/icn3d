@@ -89,10 +89,14 @@ class LoadScript {
           let bFinalStep =(i === steps - 1) ? true : false;
 
           if(!ic.commands[i].trim()) continue;
-          if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
+          let nAtoms = Object.keys(ic.atoms).length;
+
+          if(nAtoms == 0 && ic.commands[i].indexOf('load') == -1) continue;
 
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
+
+          if(ic.inputid) ic.bNotLoadStructure = true;
   
           if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
@@ -180,6 +184,10 @@ class LoadScript {
           }
           else if(command.indexOf('ig refnum on') == 0 ) { 
             await ic.refnumCls.showIgRefNum();
+          }
+          else if(command.indexOf('ig template') == 0 ) { 
+            let template = command.substr(command.lastIndexOf(' ') + 1);
+            await ic.refnumCls.showIgRefNum(template);
           }
           else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
               if(Object.keys(ic.proteins).length > 0) {
@@ -354,10 +362,10 @@ class LoadScript {
                         await thisClass.applyCommandLoad(lastCommand);
                     }
                     else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
-                        thisClass.applyCommandMap(lastCommand);
+                        await thisClass.applyCommandMap(lastCommand);
                     }
                     else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
-                        thisClass.applyCommandEmmap(lastCommand);
+                        await thisClass.applyCommandEmmap(lastCommand);
                     }
                     else if(lastCommand.indexOf('set phi') !== -1) {
                         await ic.delphiCls.applyCommandPhi(lastCommand);
@@ -628,7 +636,7 @@ class LoadScript {
     }
 
     //Apply the command to show electron density map.
-    applyCommandMap(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandMap(command) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       // chain functions together
@@ -645,10 +653,10 @@ class LoadScript {
               let type = paraArray[0];
 
               if(urlArray.length == 2) {
-                  ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
+                await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
               }
               else {
-                  ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
               }
           }
     //   }); // end of me.deferred = $.Deferred(function() {
@@ -657,7 +665,7 @@ class LoadScript {
     }
 
     //Apply the command to show EM density map.
-    applyCommandEmmap(command) { let ic = this.icn3d, me = ic.icn3dui;
+    async applyCommandEmmap(command) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       // chain functions together
@@ -669,7 +677,7 @@ class LoadScript {
               let percentage = paraArray[1];
               let type = 'em';
 
-              ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
+              await ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
           }
     //   }); // end of me.deferred = $.Deferred(function() {
 

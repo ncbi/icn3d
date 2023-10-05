@@ -76,7 +76,7 @@ class Line {
             }
             else {
                 line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial(
-                    { linewidth: ic.linewidth, vertexColors: true }));
+                    {linewidth: ic.linewidth, vertexColors: true }));
                 ic.mdl.add(line);
             }
 
@@ -209,7 +209,7 @@ class Line {
                let p2 = line.position2;
 
                let dashed = (line.dashed) ? line.dashed : false;
-               let dashSize = 0.3;
+               let dashSize = (name == 'missingres') ? 0.8 : 0.3;
 
                let radius = (line.radius) ? line.radius : ic.lineRadius;
                let opacity = (line.opacity) ? line.opacity : 1.0;

@@ -9,7 +9,7 @@ class DensityCifParser {
         this.icn3d = icn3d;
     }
 
-    densityCifParser(pdbid, type, sigma, emd) { let ic = this.icn3d, me = ic.icn3dui;
+    async densityCifParser(pdbid, type, sigma, emd) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let url;
@@ -39,46 +39,21 @@ class DensityCifParser {
             ic.setOptionCls.setOption('emmap', type);
         }
         else {
-            let oReq = new XMLHttpRequest();
-            oReq.open("GET", url, true);
-            oReq.responseType = "arraybuffer";
+            let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', type);
 
-            oReq.onreadystatechange = function() {
-                if (this.readyState == 4) {
-                   if(this.status == 200) {
-                       let arrayBuffer = oReq.response;
+            thisClass.parseChannels(arrayBuffer, type, sigma);
 
-                       thisClass.parseChannels(arrayBuffer, type, sigma);
+            if(type == '2fofc' || type == 'fofc') {
+                ic.bAjax2fofc = true;
+                ic.bAjaxfofc = true;
 
-                       if(type == '2fofc' || type == 'fofc') {
-                           ic.bAjax2fofc = true;
-                           ic.bAjaxfofc = true;
+                ic.setOptionCls.setOption('map', type);
+            }
+            else if(type == 'em') {
+                ic.bAjaxEm = true;
 
-                           ic.setOptionCls.setOption('map', type);
-                       }
-                       else if(type == 'em') {
-                           ic.bAjaxEm = true;
-
-                           ic.setOptionCls.setOption('emmap', type);
-                       }
-                    }
-                    else {
-                       if(type == '2fofc' || type == 'fofc') {
-                           alert("Density server at EBI has no corresponding electron density map for this structure.");
-                       }
-                       else if(type == 'em') {
-                           alert("Density server at EBI has no corresponding EM density map for this structure.");
-                       }
-                    }
-
-                    /// if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
-                }
-                else {
-                    ic.ParserUtilsCls.showLoading();
-                }
-            };
-
-            oReq.send();
+                ic.setOptionCls.setOption('emmap', type);
+            }
         }
     }
 

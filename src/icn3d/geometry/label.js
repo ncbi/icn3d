@@ -124,7 +124,8 @@ class TextSprite {
             map: texture,
             //useScreenCoordinates: false,
             depthTest: !frontOfTarget,
-            depthWrite: !frontOfTarget
+            depthWrite: !frontOfTarget,
+            //needsUpdate: true
         } );
 
         //https://stackoverflow.com/questions/29421702/threejs-texture

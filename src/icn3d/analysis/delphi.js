@@ -7,31 +7,12 @@ class Delphi {
         this.icn3d = icn3d;
     }
 
-    CalcPhiUrl(gsize, salt, contour, bSurface, url) { let ic = this.icn3d, me = ic.icn3dui;
+    async CalcPhiUrl(gsize, salt, contour, bSurface, url) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        let oReq = new XMLHttpRequest();
-        oReq.open("GET", url, true);
+        let data = await me.getXMLHttpRqstPromise(url, 'GET', 'text', 'PQR');
 
-        oReq.responseType = "text";
-
-        oReq.onreadystatechange = async function() {
-            if(this.readyState == 4) {
-               if(this.status == 200) {
-                   let data = oReq.response;
-
-                   await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
-                }
-                else {
-                    alert("The PQR file is unavailable...");
-                }
-            }
-            else {
-                ic.ParserUtilsCls.showLoading();
-            }
-        }
-
-        oReq.send();
+        await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
     }
 
     getPdbStr(bNode) { let ic = this.icn3d, me = ic.icn3dui;
@@ -118,7 +99,7 @@ class Delphi {
         }
 
         return new Promise(function(resolve, reject) {
-            // see full_ui.js for ajaxTransport
+            // see icn3dui.js for ajaxTransport
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -142,7 +123,7 @@ class Delphi {
         });
     }
 
-    PhiParser(url, type, contour, bSurface) { let ic = this.icn3d, me = ic.icn3dui;
+    async PhiParser(url, type, contour, bSurface) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //var dataType;
 
@@ -160,49 +141,32 @@ class Delphi {
         }
         else {
     */
-            let oReq = new XMLHttpRequest();
-            oReq.open("GET", url, true);
 
+            let responseType;
             if(type == 'phiurl' || type == 'phiurl2') {
-                oReq.responseType = "arraybuffer";
+                responseType = "arraybuffer";
             }
             else {
-                oReq.responseType = "text";
+                responseType = "text";
             }
 
-            oReq.onreadystatechange = function() {
-                if(this.readyState == 4) {
-                   if(this.status == 200) {
-                       let data = oReq.response;
+            let data = await me.getXMLHttpRqstPromise(url, 'GET', responseType, 'potential');
 
-                       if(type == 'phiurl' || type == 'phiurl2') {
-                           thisClass.loadPhiData(data, contour, bSurface);
-                       }
-                       else {
-                           thisClass.loadCubeData(data, contour, bSurface);
-                       }
-
-                       ic.bAjaxPhi = true;
-
-                       if(bSurface) {
-                         ic.setOptionCls.setOption('phisurface', 'phi');
-                       }
-                       else {
-                         ic.setOptionCls.setOption('phimap', 'phi');
-                       }
-                    }
-                    else {
-                        alert("The potential file is unavailable...");
-                    }
-
-                    /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
-                }
-                else {
-                    ic.ParserUtilsCls.showLoading();
-                }
+            if(type == 'phiurl' || type == 'phiurl2') {
+                thisClass.loadPhiData(data, contour, bSurface);
+            }
+            else {
+                thisClass.loadCubeData(data, contour, bSurface);
             }
 
-            oReq.send();
+            ic.bAjaxPhi = true;
+
+            if(bSurface) {
+              ic.setOptionCls.setOption('phisurface', 'phi');
+            }
+            else {
+              ic.setOptionCls.setOption('phimap', 'phi');
+            }
     //    }
     }
 
@@ -380,7 +344,7 @@ class Delphi {
               await thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
           }
           else {
-              thisClass.PhiParser(url, type, contour, bSurface);
+              await thisClass.PhiParser(url, type, contour, bSurface);
           }
     //   }); // end of me.deferred = $.Deferred(function() {
 
@@ -559,7 +523,7 @@ class Delphi {
                await this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
            }
            else {
-               this.PhiParser(url, type, contour, bSurface);
+               await this.PhiParser(url, type, contour, bSurface);
            }
 
            if(bSurface) {

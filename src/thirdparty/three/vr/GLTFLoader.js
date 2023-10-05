@@ -1986,7 +1986,8 @@ function createDefaultMaterial( cache ) {
             roughness: 1,
             transparent: false,
             depthTest: true,
-            side: FrontSide
+            side: FrontSide,
+            //needsUpdate: true 
         } );
 
     }

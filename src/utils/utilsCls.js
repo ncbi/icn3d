@@ -483,6 +483,17 @@ class UtilsCls {
 
       return this.getStructures(atoms);
     }
+
+    getDateDigitStr() { let me = this.icn3dui;
+      let date = new Date();
+      let monthStr =(date.getMonth() + 1).toString();
+      if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
+
+      let dateStr = date.getDate().toString();
+      if(date.getDate() < 10) dateStr = '0' + dateStr;
+
+      return date.getFullYear().toString() + monthStr + dateStr;
+    }
 }
 
 export {UtilsCls}

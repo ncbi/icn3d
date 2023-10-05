@@ -266,9 +266,15 @@ ProteinSurface.prototype.initparm = function(extent, btype, in_bCalcArea, atomli
 
     // 2. If size > 90, change scale
     //var threshbox = 180; // maximum possible boxsize
-    if(this.bCalcArea || this.defaultScaleFactor * maxLen > this.threshbox) {
+    //if(this.bCalcArea || this.defaultScaleFactor * maxLen > this.threshbox) {
+    if(this.defaultScaleFactor * maxLen > this.threshbox) {
         boxLength = Math.floor(this.threshbox);
         this.scaleFactor =(this.threshbox - 1.0) / maxLen;
+    }
+
+    // 3. use a fixed scaleFactor for surface area calculation
+    if(this.bCalcArea) {
+        this.scaleFactor = this.defaultScaleFactor;
     }
     // end of surface.js part
 
@@ -276,9 +282,9 @@ ProteinSurface.prototype.initparm = function(extent, btype, in_bCalcArea, atomli
     this.pWidth = Math.ceil(this.scaleFactor *(this.pmaxy - this.pminy)) + 1;
     this.pHeight = Math.ceil(this.scaleFactor *(this.pmaxz - this.pminz)) + 1;
 
-    this.finalScaleFactor.x =(this.pLength - 1.0) /(this.pmaxx - this.pminx);
-    this.finalScaleFactor.y =(this.pWidth - 1.0) /(this.pmaxy - this.pminy);
-    this.finalScaleFactor.z =(this.pHeight - 1.0) /(this.pmaxz - this.pminz);
+    // this.finalScaleFactor.x =(this.pLength - 1.0) /(this.pmaxx - this.pminx);
+    // this.finalScaleFactor.y =(this.pWidth - 1.0) /(this.pmaxy - this.pminy);
+    // this.finalScaleFactor.z =(this.pHeight - 1.0) /(this.pmaxz - this.pminz);
 
     this.boundingatom(btype);
     this.cutRadius = this.probeRadius * this.scaleFactor;
@@ -392,9 +398,13 @@ ProteinSurface.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit
         for(i = 0; i < this.pLength; ++i) {
             for(j = 0; j < this.pWidth; ++j) {
                 for(k = 0; k < this.pHeight; ++k) {
-                    let x = i / this.finalScaleFactor.x - this.ptranx;
-                    let y = j / this.finalScaleFactor.y - this.ptrany;
-                    let z = k / this.finalScaleFactor.z - this.ptranz;
+                    // let x = i / this.finalScaleFactor.x - this.ptranx;
+                    // let y = j / this.finalScaleFactor.y - this.ptrany;
+                    // let z = k / this.finalScaleFactor.z - this.ptranz;
+
+                    let x = i / this.scaleFactor - this.ptranx;
+                    let y = j / this.scaleFactor - this.ptrany;
+                    let z = k / this.scaleFactor - this.ptranz;
 
                     let r = new THREE.Vector3(x, y, z);
 
@@ -1099,14 +1109,15 @@ ProteinSurface.prototype.marchingcube = function(stype) {
             //}
         } // for loop
 
-        maxScaleFactor = Math.max(this.finalScaleFactor.x, this.finalScaleFactor.y, this.finalScaleFactor.z);
-        area = area / maxScaleFactor / maxScaleFactor;
-        //area = area / this.scaleFactor / this.scaleFactor;
+        //maxScaleFactor = Math.max(this.finalScaleFactor.x, this.finalScaleFactor.y, this.finalScaleFactor.z);
+        //area = area / maxScaleFactor / maxScaleFactor;
+        area = area / this.scaleFactor / this.scaleFactor;
     }
 
     if(!this.bCalcArea) this.marchingCube.laplacianSmooth(1, this.verts, this.faces);
 
-    return {"area": area, "serial2area": serial2area, "scaleFactor": maxScaleFactor};
+    //return {"area": area, "serial2area": serial2area, "scaleFactor": maxScaleFactor};
+    return {"area": area, "serial2area": serial2area, "scaleFactor": this.scaleFactor};
 };
 
 

@@ -1630,24 +1630,24 @@ class ClickMenu {
            thisClass.setLogCmd('setoption phisurface nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", function(e) { let ic = me.icn3d; 
+        me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", async function(e) { let ic = me.icn3d; 
            e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
            let type = '2fofc';
-           ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+           await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
            //ic.setOptionCls.setOption('map', '2fofc');
            thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", function(e) { let ic = me.icn3d; 
+        me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", async function(e) { let ic = me.icn3d; 
            e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
            let type = 'fofc';
-           ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+           await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
            //ic.setOptionCls.setOption('map', 'fofc');
            thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
@@ -1672,7 +1672,7 @@ class ClickMenu {
            thisClass.setLogCmd('setoption emmap nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", function(e) { let ic = me.icn3d; 
+        me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", async function(e) { let ic = me.icn3d; 
            e.preventDefault();
 
            //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1680,7 +1680,7 @@ class ClickMenu {
            let type = 'em';
            //ic.emd = 'emd-3906';
 
-           ic.densityCifParserCls.densityCifParser(ic.inputid, type, empercentage, ic.emd);
+           await ic.densityCifParserCls.densityCifParser(ic.inputid, type, empercentage, ic.emd);
            thisClass.setLogCmd('set emmap percentage ' + empercentage, true);
         });
 
@@ -1726,6 +1726,18 @@ class ClickMenu {
             //    ic.hlUpdateCls.updateHlAll();
             //    ic.drawCls.draw();
             // }
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_igrefTpl', 'Choose an Ig template');
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+                  
+            let template = $("#" + me.pre + "igrefTpl").val();
+            thisClass.setLogCmd('ig template ' + template, true);
+            await ic.refnumCls.showIgRefNum(template);
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();

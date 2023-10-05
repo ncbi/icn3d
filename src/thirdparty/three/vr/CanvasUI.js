@@ -208,7 +208,7 @@ class CanvasUI{
         if ( this.scene ){
             const radius = 0.015;
             const geometry = new THREE.IcosahedronBufferGeometry( radius );
-            const material = new THREE.MeshBasicMaterial( { color: 0x0000aa } );
+            const material = new THREE.MeshBasicMaterial( {color: 0x0000aa } );
 
             const mesh1 = new THREE.Mesh( geometry, material );
             mesh1.visible = false;

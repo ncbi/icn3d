@@ -217,14 +217,7 @@ class ShareLink {
            }
 
            // add time stamp
-           let date = new Date();
-           let monthStr =(date.getMonth() + 1).toString();
-           if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
-
-           let dateStr = date.getDate().toString();
-           if(date.getDate() < 10) dateStr = '0' + dateStr;
-
-           let dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
+           let dateAllStr = me.utilsCls.getDateDigitStr();
            if(!bPrevDate) url += 'date=' + dateAllStr + '&';
            url += 'v=' + me.REVISION + '&';
 

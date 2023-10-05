@@ -300,9 +300,9 @@
 
         const name2color = {
             //"A- Strand": "FF00FF", 
-            "A Strand": "663399",
-            //"A+ Strand": "663399", //"FFC0CB",
-            "A' Strand": "663399", //"9370db",
+            "A Strand": "9400D3", //"663399",
+            //"A+ Strand": "9400D3", //"663399",
+            "A' Strand": "9400D3", //"663399",
             "B Strand": "ba55d3",
             "C Strand": "0000FF",
             "C' Strand": "6495ED",

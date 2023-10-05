@@ -415,7 +415,8 @@ class Surface {
                 wireframe: wireframe,
                 opacity: opacity,
                 transparent: true,
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                //needsUpdate: true
             }));
 
             //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
@@ -484,7 +485,8 @@ class Surface {
                 opacity: opacity,
                 transparent: true,
                 depthWrite: (parseInt(10*opacity) != 10) ? false : true, // important to make the transparency work
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                //needsUpdate: true 
                 //depthTest: (ic.ic.transparentRenderOrder) ? false : true
             }));
 

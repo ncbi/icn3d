@@ -504,7 +504,7 @@ class Instancing {
           fragmentShader: ic.impostorCls.getShader(name + ".frag"),
           depthTest: true,
           depthWrite: true,
-          //needsUpdate: true,
+          //needsUpdate: true, 
           lights: true
        });
 
