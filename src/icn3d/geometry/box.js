@@ -44,7 +44,7 @@ class Box {
               specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
         // }
         // else {
-        //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
+        //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({needsUpdate: true,
         //       specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
         // }
 

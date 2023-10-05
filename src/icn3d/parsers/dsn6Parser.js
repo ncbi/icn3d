@@ -10,15 +10,15 @@ class Dsn6Parser {
         this.icn3d = icn3d;
     }
 
-    dsn6Parser(pdbid, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+    async dsn6Parser(pdbid, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
         // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
         // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
         let url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
-        this.dsn6ParserBase(url, type, sigma);
+        await this.dsn6ParserBase(url, type, sigma);
     }
 
-    dsn6ParserBase(url, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+    async dsn6ParserBase(url, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let dataType;
@@ -35,37 +35,17 @@ class Dsn6Parser {
             ic.setOptionCls.setOption('map', type);
         }
         else {
-            let oReq = new XMLHttpRequest();
-            oReq.open("GET", url, true);
-            oReq.responseType = "arraybuffer";
+            let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'rcsbEdmaps');
+            thisClass.loadDsn6Data(arrayBuffer, type, sigma);
 
-            oReq.onreadystatechange = function() {
-                if(this.readyState == 4) {
-                   if(this.status == 200) {
-                       let arrayBuffer = oReq.response;
-                       thisClass.loadDsn6Data(arrayBuffer, type, sigma);
-
-                       if(type == '2fofc') {
-                           ic.bAjax2fofc = true;
-                       }
-                       else if(type == 'fofc') {
-                           ic.bAjaxfofc = true;
-                       }
-
-                       ic.setOptionCls.setOption('map', type);
-                    }
-                    else {
-                        alert("RCSB server has no corresponding eletron density map for this structure.");
-                    }
-
-                    /// if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
-                }
-                else {
-                    ic.ParserUtilsCls.showLoading();
-                }
+            if(type == '2fofc') {
+                ic.bAjax2fofc = true;
+            }
+            else if(type == 'fofc') {
+                ic.bAjaxfofc = true;
             }
 
-            oReq.send();
+            ic.setOptionCls.setOption('map', type);
         }
     }
 

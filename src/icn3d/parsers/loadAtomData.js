@@ -121,6 +121,12 @@ class LoadAtomData {
                   if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
 
                   let chain = data.moleculeInfor[molid].chain.trim();
+
+                  // remove "_" in chain name
+                  if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                    chain = chain.replace(/_/g, '');
+                  }
+
                   let chainid = pdbidTmp + '_' + chain;
 
                   if(chainHash.hasOwnProperty(chain)) {
@@ -273,6 +279,11 @@ class LoadAtomData {
             }
 
             atm.chain = atm.chain.trim(); //.replace(/_/g, '');
+
+            // remove "_" in chain name
+            if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                atm.chain = atm.chain.replace(/_/g, '');
+            }
 
             // mmcif has pre-assigned structure in mmcifparser.cgi output
             if(type === 'mmdbid' || type === 'align') {

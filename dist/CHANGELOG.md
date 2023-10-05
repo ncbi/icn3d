@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-3.28.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.2.zip) was release on August 23, 2023. Upgraded three.js to version 151, and improved the image quality.
+[icn3d-3.28.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.3.zip) was release on October 5, 2023. Fixed the async/await issue for electron density maps and EM density maps.
+
+[icn3d-3.28.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.2.zip) was release on September 14, 2023. Upgraded three.js to version 151, and improved the image quality.
 
 [icn3d-3.28.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.1.zip) was release on August 23, 2023. Added logs for menu usages, and updated iCn3D tutorials at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos.
 

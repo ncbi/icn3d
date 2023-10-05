@@ -675,14 +675,14 @@ class SetMenu {
         }
 
         //!!!
-        /*
+/*
         html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
         html += "<ul>";
         html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
         html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
         html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
         html += "</ul>";
-        */
+*/
 
         html += "<li><br/></li>";
 
@@ -1751,10 +1751,11 @@ class SetMenu {
 //!!!
 /*
             html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
+            html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
-
-            html += this.getMenuSep();
 */
+            html += this.getMenuSep();
+
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
             html += "</li>";

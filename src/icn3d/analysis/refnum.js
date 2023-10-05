@@ -27,7 +27,7 @@
         ic.hlUpdateCls.updateHlAll();
     }
  
-    async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+    async showIgRefNum(template) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         // round 1, 16 templates
@@ -111,9 +111,14 @@
         }
 
         // try {
-            let allPromise = Promise.allSettled(pdbAjaxArray);
-            ic.pdbDataArray = await allPromise;
-            await thisClass.parseRefPdbData(ic.pdbDataArray);
+            if(!template) {
+                let allPromise = Promise.allSettled(pdbAjaxArray);
+                ic.pdbDataArray = await allPromise;
+                await thisClass.parseRefPdbData(ic.pdbDataArray, template);
+            }
+            else {
+                await thisClass.parseRefPdbData(undefined, template);
+            }
         // }
         // catch(err) {
         //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
@@ -121,7 +126,7 @@
         // }
     }
 
-    async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseRefPdbData(dataArray, template) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let struArray = Object.keys(ic.structures);
@@ -173,6 +178,11 @@
                     for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                         let resid = residueArray[n];
                         ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
+
+                        // clear previous refnum assignment if any
+                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                            delete ic.resid2refnum[resid];
+                        }
                     }
                 }
                 else {                 
@@ -187,6 +197,11 @@
                                 let resid = chainid + '_' + pos2resi[n];
                                 domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                                 //ic.resid2domainid[resid] = chainid + '-' + k;
+
+                                // clear previous refnum assignment if any
+                                if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                                    delete ic.resid2refnum[resid];
+                                }
                             }
                         }
 
@@ -208,6 +223,8 @@
                     }
                 }
 
+                if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
+
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     let bForceOneDomain = true;
@@ -221,56 +238,107 @@
                     let domainid = chainid + '-' + k + '_' + resiSum; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
-                    for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                        // let struct2 = ic.defaultPdbId + index;
-                        // let pdb_query = dataArray[index].value; //[0];
-                        // let header = 'HEADER                                                        ' + struct2 + '\n';
-                        // pdb_query = header + pdb_query;
-                        let jsonStr_q = dataArray[index].value; //[0];
+                    if(!template) {
+                        for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
+                            // let struct2 = ic.defaultPdbId + index;
+                            // let pdb_query = dataArray[index].value; //[0];
+                            // let header = 'HEADER                                                        ' + struct2 + '\n';
+                            // pdb_query = header + pdb_query;
+                            let jsonStr_q = dataArray[index].value; //[0];
 
-                        // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
-                        // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                        // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                            // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
+                            // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                            // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
 
-                        let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
-                        let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                            let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                            let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
 
-                        ajaxArray.push(alignAjax);
-                        
-                        domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
+                            ajaxArray.push(alignAjax);
+                            
+                            domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
+                        }
+                    }
+                    else {
+                        ic.domainid2refpdbname[domainid] = template;
+                        domainidpairArray.push(domainid + "|1" + template); // "1" was added for the first round strand-only template
                     }
                 }
             }
         }
 
         try {
-            let dataArray2 = [];
+            if(!template) {
+                let dataArray2 = [];
 
-            // let allPromise = Promise.allSettled(ajaxArray);
-            // dataArray2 = await allPromise;
+                // let allPromise = Promise.allSettled(ajaxArray);
+                // dataArray2 = await allPromise;
 
-            //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
-            let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+                //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+                let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
 
-            for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
-                let currAjaxArray = []
-                if(i == il - 1) { // last one 
-                    currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                    let currAjaxArray = []
+                    if(i == il - 1) { // last one 
+                        currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                    }
+                    else {
+                        currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                    }
+
+                    let currPromise = Promise.allSettled(currAjaxArray);
+                    let currDataArray = await currPromise;
+
+                    dataArray2 = dataArray2.concat(currDataArray);
                 }
-                else {
-                    currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
-                }
+            
+                let bRound1 = true;
+                await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
 
-                let currPromise = Promise.allSettled(currAjaxArray);
-                let currDataArray = await currPromise;
-
-                dataArray2 = dataArray2.concat(currDataArray);
+                /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
             }
-        
-            let bRound1 = true;
-            await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+            else {
+                if(!me.bNode) console.log("Start alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
 
-            /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
+                // start round2
+                let ajaxArray = [];
+                let domainidpairArray3 = [];
+                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+                let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + template;
+                let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
+                let pdbAjaxArray = [];
+                pdbAjaxArray.push(pdbAjax);
+
+                let allPromise2 = Promise.allSettled(pdbAjaxArray);
+                ic.pdbDataArray = await allPromise2;
+
+                for(let domainid in ic.domainid2refpdbname) {
+                    let refpdbname = ic.domainid2refpdbname[domainid];
+                    let chainid = domainid.substr(0, domainid.indexOf('-'));
+
+                    let pdb_target = ic.domainid2pdb[domainid];
+                    for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
+                        let struct2 = ic.defaultPdbId + index;
+                        let pdb_query = ic.pdbDataArray[index].value; //[0];
+
+                        let header = 'HEADER                                                        ' + struct2 + '\n';
+                        pdb_query = header + pdb_query;
+    
+                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": template};
+                        let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                        ajaxArray.push(alignAjax);
+                        
+                        //domainidpairArray3.push(domainid + "," + refpdbname);
+                        domainidpairArray3.push(domainid + "|" + template);
+                    }
+                }
+    
+                let dataArray3 = [];
+                let allPromise = Promise.allSettled(ajaxArray);
+                dataArray3 = await allPromise;
+    
+                await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+            }
         }
         catch(err) {
             let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
@@ -282,7 +350,7 @@
             }
             //console.log("Error in aligning with TM-align...");
             return;
-        }                       
+        }                   
     }
 
     getTemplateList(chainid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -392,7 +460,7 @@
                 //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
                 if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                     if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
-                    if(ic.domainid2refpdbname[domainid]) delete ic.domainid2refpdbname[domainid];
+                    if(ic.domainid2refpdbname[domainid] == refpdbname) delete ic.domainid2refpdbname[domainid];
                     continue;
                 }
             }
@@ -478,10 +546,28 @@
             }
 
             let dataArray3 = [];
-            let allPromise = Promise.allSettled(ajaxArray);
-            dataArray3 = await allPromise;
+            //let allPromise = Promise.allSettled(ajaxArray);
+            //dataArray3 = await allPromise;
 
-            await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+            //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+            let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+
+            for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                let currAjaxArray = []
+                if(i == il - 1) { // last one 
+                    currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                }
+                else {
+                    currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                }
+
+                let currPromise = Promise.allSettled(currAjaxArray);
+                let currDataArray = await currPromise;
+
+                dataArray3 = dataArray3.concat(currDataArray);
+            }
+
+            await thisClass.parseAlignData(dataArray3, domainidpairArray3, false);
             
             // end of round 2
             return;
@@ -512,6 +598,7 @@
         if(!ic.chainsMapping) ic.chainsMapping = {};
 
         if(!ic.refPdbList) ic.refPdbList = [];
+
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
 

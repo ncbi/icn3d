@@ -79,7 +79,7 @@ class SelectByCommand {
            // $1,2,3: Structure
            // .A,B,C: chain
            // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-           // :ref_1250,anchors,strands,loops: reference numbers 1250, anchor residues (e.g., 2250), residues in strands, residues in loops
+           // :ref_1250,ref_anchors,ref_strands,ref_loops: reference numbers 1250, anchor residues (e.g., 2250), residues in strands, residues in loops
            // @CA,C,C*: atoms
            // wild card * can be used to select all
            //var currHighlightAtoms = {}

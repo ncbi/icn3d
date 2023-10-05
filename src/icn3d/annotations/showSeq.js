@@ -461,12 +461,14 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }         
-            else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
+            
+            if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
                 let result = this.showAllRefNum(giSeq, chnid);
                 html += result.html;
                 html3 += result.html3;
             }
-            else if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
+            
+            if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
                 let bCustom = true;
                 let result = this.showRefNum(giSeq, chnid, undefined, bCustom);
                 html += result.html;
@@ -476,7 +478,8 @@ class ShowSeq {
 
         // highlight reference numbers
         if(ic.bShowRefnum) {
-            ic.hAtoms = ic.hAtomsRefnum;
+            // comment out so that this process didn't change the selection
+            //ic.hAtoms = ic.hAtomsRefnum;
             
             // commented out because it produced too many commands
             // let name = 'refnum_anchors';
@@ -515,6 +518,7 @@ class ShowSeq {
             ic.selectionCls.selectAll_base();
             ic.hlUpdateCls.updateHlAll();
             //ic.drawCls.draw();
+            ic.drawCls.draw();
         }
 
         return {'html': html, 'html3': html3};
@@ -594,7 +598,10 @@ class ShowSeq {
 
         if(!bCustom && !kabat_or_imgt && !me.bNode) { // do not overwrite loops in node  
             // reset ic.residIgLoop for the current selection, which could be the second round of ref num assignment
-            let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+            // just current chain
+            let atomHash = me.hashUtilsCls.intHash(ic.chains[chnid], ic.hAtoms);
+            let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
+            
             for(let resid in residHash) {
                 // not in loop any more if you assign ref numbers multiple times
                 delete ic.residIgLoop[resid];
@@ -1044,17 +1051,17 @@ class ShowSeq {
 
     getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
         if(currStrand == "A-") { 
-            return '#663399'; 
+            return '#9400D3'; //'#663399'; 
         }
         else if(currStrand == "A") { 
-            return '#663399'; 
+            return '#9400D3'; //'#663399'; 
         }
         //else if(currStrand == "A*") { 
         else if(currStrand == "A+") { 
-            return '#663399'; //'#FFC0CB'; 
+            return '#9400D3'; //'#663399'; 
         }
         else if(currStrand == "A'") { 
-            return '#663399'; 
+            return '#9400D3'; //'#663399'; 
         }
         else if(currStrand == "B") { 
             return '#ba55d3'; 

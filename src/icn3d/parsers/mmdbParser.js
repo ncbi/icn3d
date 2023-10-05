@@ -394,6 +394,11 @@ class MmdbParser {
 
           let color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
           let chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
+          // remove "_" in chain name
+          if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+            chainName = chainName.replace(/_/g, '');
+          }
+
           if(chainNameHash[chainName] === undefined) {
               chainNameHash[chainName] = 1;
           }

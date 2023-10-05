@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.2';
+    this.REVISION = '3.28.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -683,6 +683,44 @@ iCn3DUI.prototype.getMmtfReducedPromise = function(mmtfid) { let me = this;
                 reject('error');
             }
         );
+    });
+};
+
+iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, mapType) { let me = this;
+    return new Promise(function(resolve, reject) {
+        let oReq = new XMLHttpRequest();
+        oReq.open(dataType, url, true);
+        oReq.responseType = responseType;
+        
+        oReq.onreadystatechange = function() {
+            if (this.readyState == 4) {
+               if(this.status == 200) {
+                   let arrayBuffer = oReq.response;
+                   resolve(arrayBuffer);
+                }
+                else {
+                   if(mapType == '2fofc' || mapType == 'fofc') {
+                       alert("Density server at EBI has no corresponding electron density map for this structure.");
+                   }
+                   else if(mapType == 'em') {
+                       alert("Density server at EBI has no corresponding EM density map for this structure.");
+                   }
+                   else if(mapType == 'rcsbEdmaps') {
+                       alert("RCSB server has no corresponding eletron density map for this structure.");
+                   }
+                   else {
+                       alert("The " + mapType + " file is unavailable...");
+                   }
+
+                   reject('error');
+                }
+            }
+            else {
+                me.icn3d.ParserUtilsCls.showLoading();
+            }
+        };
+
+        oReq.send();
     });
 };
 

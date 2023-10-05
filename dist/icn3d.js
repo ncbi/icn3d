@@ -5065,6 +5065,17 @@ var icn3d = (function (exports) {
 
           return this.getStructures(atoms);
         }
+
+        getDateDigitStr() { this.icn3dui;
+          let date = new Date();
+          let monthStr =(date.getMonth() + 1).toString();
+          if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
+
+          let dateStr = date.getDate().toString();
+          if(date.getDate() < 10) dateStr = '0' + dateStr;
+
+          return date.getFullYear().toString() + monthStr + dateStr;
+        }
     }
 
     /**
@@ -8177,24 +8188,24 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd('setoption phisurface nothing', true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", function(e) { let ic = me.icn3d; 
+            me.myEventCls.onIds("#" + me.pre + "applymap2fofc", "click", async function(e) { let ic = me.icn3d; 
                e.preventDefault();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
                let type = '2fofc';
-               ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+               await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
                //ic.setOptionCls.setOption('map', '2fofc');
                thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", function(e) { let ic = me.icn3d; 
+            me.myEventCls.onIds("#" + me.pre + "applymapfofc", "click", async function(e) { let ic = me.icn3d; 
                e.preventDefault();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
                let type = 'fofc';
-               ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+               await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
                //ic.setOptionCls.setOption('map', 'fofc');
                thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
             });
@@ -8219,7 +8230,7 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd('setoption emmap nothing', true);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", function(e) { let ic = me.icn3d; 
+            me.myEventCls.onIds("#" + me.pre + "applyemmap", "click", async function(e) { let ic = me.icn3d; 
                e.preventDefault();
 
                //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -8227,7 +8238,7 @@ var icn3d = (function (exports) {
                let type = 'em';
                //ic.emd = 'emd-3906';
 
-               ic.densityCifParserCls.densityCifParser(ic.inputid, type, empercentage, ic.emd);
+               await ic.densityCifParserCls.densityCifParser(ic.inputid, type, empercentage, ic.emd);
                thisClass.setLogCmd('set emmap percentage ' + empercentage, true);
             });
 
@@ -8273,6 +8284,18 @@ var icn3d = (function (exports) {
                 //    ic.hlUpdateCls.updateHlAll();
                 //    ic.drawCls.draw();
                 // }
+             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { me.icn3d; //e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_igrefTpl', 'Choose an Ig template');
+             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                      
+                let template = $("#" + me.pre + "igrefTpl").val();
+                thisClass.setLogCmd('ig template ' + template, true);
+                await ic.refnumCls.showIgRefNum(template);
              });
 
              me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -9528,14 +9551,14 @@ var icn3d = (function (exports) {
             }
 
             //!!!
-            /*
+    /*
             html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
             html += "<ul>";
             html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
             html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
             html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
             html += "</ul>";
-            */
+    */
 
             html += "<li><br/></li>";
 
@@ -10602,10 +10625,11 @@ var icn3d = (function (exports) {
     //!!!
     /*
                 html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
+                html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
                 html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
-
-                html += this.getMenuSep();
     */
+                html += this.getMenuSep();
+
                 html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
                 html += "</ul>";
                 html += "</li>";
@@ -12705,6 +12729,31 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_disttable' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_igrefTpl' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_igrefTpl', 'Choose an Ig template');
+            html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "igrefTpl'>";
+
+            //html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
+            let group2tpl = {};
+            group2tpl['V'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V', 'ICOS_6x4gA_human_V', 'CD28_1yjdC_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
+            group2tpl['C1'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2'];
+            group2tpl['C2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2', 'LAG3_7tzgD_human_C2-n2', 'Contactin1_3s97C_human_C2-n2'];
+            group2tpl['Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'JAM1_1nbqA_human_VorIset-n2', 'CD19_6al5A_human_C2orV-n1'];
+            group2tpl['FN3'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
+            group2tpl['Other'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria', 'C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human', 'ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'LaminAC_1ifrA_human', 'IsdA_2iteA_bacteria'];  
+
+            for(let group in group2tpl) {
+                html += "<optgroup label='" + group + "'>";
+                for(let i = 0, il = group2tpl[group].length; i < il; ++i) {
+                    let template = group2tpl[group][i];
+                    html += me.htmlCls.optionStr + "'" + template + "'>" + template + "</option>";
+                }
+                html += "</optgroup>";
+            }
+
+            html += "</select><br><br><span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "mn6_igrefTpl_apply'>Show Ig Ref. Number</button></span>";
             html += "</div>";
 
             html += "</div>";
@@ -18753,7 +18802,8 @@ var icn3d = (function (exports) {
                 roughness: 1,
                 transparent: false,
                 depthTest: true,
-                side: FrontSide
+                side: FrontSide,
+                //needsUpdate: true 
             } );
 
         }
@@ -21680,7 +21730,7 @@ var icn3d = (function (exports) {
 
                     // Attach a touch dot to the touchpad.
                     const sphereGeometry = new SphereGeometry( 0.001 );
-                    const material = new MeshBasicMaterial( { color: 0x0000FF } );
+                    const material = new MeshBasicMaterial( {color: 0x0000FF } );
                     const sphere = new Mesh( sphereGeometry, material );
                     component.touchPointNode.add( sphere );
 
@@ -22302,7 +22352,7 @@ var icn3d = (function (exports) {
             if ( this.scene ){
                 const radius = 0.015;
                 const geometry = new THREE.IcosahedronBufferGeometry( radius );
-                const material = new THREE.MeshBasicMaterial( { color: 0x0000aa } );
+                const material = new THREE.MeshBasicMaterial( {color: 0x0000aa } );
 
                 const mesh1 = new THREE.Mesh( geometry, material );
                 mesh1.visible = false;
@@ -24109,7 +24159,7 @@ var icn3d = (function (exports) {
                   specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
             // }
             // else {
-            //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
+            //   mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({needsUpdate: true,
             //       specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
             // }
 
@@ -24570,18 +24620,18 @@ var icn3d = (function (exports) {
             else {
                 if(bHighlight === 2) {
                   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                      { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                      {transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
                   radius *= 1.5;
                 }
                 //else if(bGlycan) {
                 else {
                   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                      { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                      {transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
                 }
                 // else {
                 //   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                //       { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                //       {specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
                 // }
 
                 mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
@@ -24648,7 +24698,7 @@ var icn3d = (function (exports) {
             if(me.bNode) return;
 
             let mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                {specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
             mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
             mesh.matrixAutoUpdate = false;
@@ -24879,7 +24929,7 @@ var icn3d = (function (exports) {
                 if(bHighlight === 1) ;
                 else {
                     line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial(
-                        { linewidth: ic.linewidth, vertexColors: true }));
+                        {linewidth: ic.linewidth, vertexColors: true }));
                     ic.mdl.add(line);
                 }
 
@@ -25012,7 +25062,7 @@ var icn3d = (function (exports) {
                    let p2 = line.position2;
 
                    let dashed = (line.dashed) ? line.dashed : false;
-                   let dashSize = 0.3;
+                   let dashSize = (name == 'missingres') ? 0.8 : 0.3;
 
                    let radius = (line.radius) ? line.radius : ic.lineRadius;
                    let opacity = (line.opacity) ? line.opacity : 1.0;
@@ -27083,7 +27133,8 @@ var icn3d = (function (exports) {
                 map: texture,
                 //useScreenCoordinates: false,
                 depthTest: !frontOfTarget,
-                depthWrite: !frontOfTarget
+                depthWrite: !frontOfTarget,
+                //needsUpdate: true
             } );
 
             //https://stackoverflow.com/questions/29421702/threejs-texture
@@ -28382,9 +28433,15 @@ var icn3d = (function (exports) {
 
         // 2. If size > 90, change scale
         //var threshbox = 180; // maximum possible boxsize
-        if(this.bCalcArea || this.defaultScaleFactor * maxLen > this.threshbox) {
+        //if(this.bCalcArea || this.defaultScaleFactor * maxLen > this.threshbox) {
+        if(this.defaultScaleFactor * maxLen > this.threshbox) {
             boxLength = Math.floor(this.threshbox);
             this.scaleFactor =(this.threshbox - 1.0) / maxLen;
+        }
+
+        // 3. use a fixed scaleFactor for surface area calculation
+        if(this.bCalcArea) {
+            this.scaleFactor = this.defaultScaleFactor;
         }
         // end of surface.js part
 
@@ -28392,9 +28449,9 @@ var icn3d = (function (exports) {
         this.pWidth = Math.ceil(this.scaleFactor *(this.pmaxy - this.pminy)) + 1;
         this.pHeight = Math.ceil(this.scaleFactor *(this.pmaxz - this.pminz)) + 1;
 
-        this.finalScaleFactor.x =(this.pLength - 1.0) /(this.pmaxx - this.pminx);
-        this.finalScaleFactor.y =(this.pWidth - 1.0) /(this.pmaxy - this.pminy);
-        this.finalScaleFactor.z =(this.pHeight - 1.0) /(this.pmaxz - this.pminz);
+        // this.finalScaleFactor.x =(this.pLength - 1.0) /(this.pmaxx - this.pminx);
+        // this.finalScaleFactor.y =(this.pWidth - 1.0) /(this.pmaxy - this.pminy);
+        // this.finalScaleFactor.z =(this.pHeight - 1.0) /(this.pmaxz - this.pminz);
 
         this.boundingatom(btype);
         this.cutRadius = this.probeRadius * this.scaleFactor;
@@ -28508,9 +28565,13 @@ var icn3d = (function (exports) {
             for(i = 0; i < this.pLength; ++i) {
                 for(j = 0; j < this.pWidth; ++j) {
                     for(k = 0; k < this.pHeight; ++k) {
-                        let x = i / this.finalScaleFactor.x - this.ptranx;
-                        let y = j / this.finalScaleFactor.y - this.ptrany;
-                        let z = k / this.finalScaleFactor.z - this.ptranz;
+                        // let x = i / this.finalScaleFactor.x - this.ptranx;
+                        // let y = j / this.finalScaleFactor.y - this.ptrany;
+                        // let z = k / this.finalScaleFactor.z - this.ptranz;
+
+                        let x = i / this.scaleFactor - this.ptranx;
+                        let y = j / this.scaleFactor - this.ptrany;
+                        let z = k / this.scaleFactor - this.ptranz;
 
                         let r = new THREE.Vector3(x, y, z);
 
@@ -29140,7 +29201,7 @@ var icn3d = (function (exports) {
         }
 
         // calculate surface area
-        let serial2area, maxScaleFactor, area = 0;
+        let serial2area, area = 0;
         if(this.bCalcArea) {
             let faceHash = {};
             serial2area = {};
@@ -29210,14 +29271,15 @@ var icn3d = (function (exports) {
                 //}
             } // for loop
 
-            maxScaleFactor = Math.max(this.finalScaleFactor.x, this.finalScaleFactor.y, this.finalScaleFactor.z);
-            area = area / maxScaleFactor / maxScaleFactor;
-            //area = area / this.scaleFactor / this.scaleFactor;
+            //maxScaleFactor = Math.max(this.finalScaleFactor.x, this.finalScaleFactor.y, this.finalScaleFactor.z);
+            //area = area / maxScaleFactor / maxScaleFactor;
+            area = area / this.scaleFactor / this.scaleFactor;
         }
 
         if(!this.bCalcArea) this.marchingCube.laplacianSmooth(1, this.verts, this.faces);
 
-        return {"area": area, "serial2area": serial2area, "scaleFactor": maxScaleFactor};
+        //return {"area": area, "serial2area": serial2area, "scaleFactor": maxScaleFactor};
+        return {"area": area, "serial2area": serial2area, "scaleFactor": this.scaleFactor};
     };
 
     /* ProteinSurface4.js
@@ -30197,7 +30259,8 @@ var icn3d = (function (exports) {
                     wireframe: wireframe,
                     opacity: opacity,
                     transparent: true,
-                    side: THREE.DoubleSide
+                    side: THREE.DoubleSide,
+                    //needsUpdate: true
                 }));
 
                 //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
@@ -30266,7 +30329,8 @@ var icn3d = (function (exports) {
                     opacity: opacity,
                     transparent: true,
                     depthWrite: (parseInt(10*opacity) != 10) ? false : true, // important to make the transparency work
-                    side: THREE.DoubleSide
+                    side: THREE.DoubleSide,
+                    //needsUpdate: true 
                     //depthTest: (ic.ic.transparentRenderOrder) ? false : true
                 }));
 
@@ -32450,7 +32514,7 @@ var icn3d = (function (exports) {
               fragmentShader: this.getShader(shaderName + ".frag"),
               depthTest: true,
               depthWrite: true,
-              //needsUpdate: true,
+              //needsUpdate: true, 
               lights: true
           });
 
@@ -33217,7 +33281,7 @@ var icn3d = (function (exports) {
               fragmentShader: ic.impostorCls.getShader(name + ".frag"),
               depthTest: true,
               depthWrite: true,
-              //needsUpdate: true,
+              //needsUpdate: true, 
               lights: true
            });
 
@@ -33723,6 +33787,7 @@ var icn3d = (function (exports) {
             if(ic.scene) {
                 // https://github.com/gkjohnson/three-gpu-pathtracer/blob/main/example/basic.js
                 ic.renderer.outputEncoding = THREE.sRGBEncoding;
+                //ic.renderer.outputEncoding = THREE.LinearEncoding
 
                 ic.renderer.render(ic.scene, cam);
             }
@@ -36860,9 +36925,9 @@ var icn3d = (function (exports) {
 
             const name2color = {
                 //"A- Strand": "FF00FF", 
-                "A Strand": "663399",
-                //"A+ Strand": "663399", //"FFC0CB",
-                "A' Strand": "663399", //"9370db",
+                "A Strand": "9400D3", //"663399",
+                //"A+ Strand": "9400D3", //"663399",
+                "A' Strand": "9400D3", //"663399",
                 "B Strand": "ba55d3",
                 "C Strand": "0000FF",
                 "C' Strand": "6495ED",
@@ -44007,12 +44072,14 @@ var icn3d = (function (exports) {
                     html += '</div>';
                     html3 += '</div></div>';
                 }         
-                else if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
+                
+                if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
                     let result = this.showAllRefNum(giSeq, chnid);
                     html += result.html;
                     html3 += result.html3;
                 }
-                else if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
+                
+                if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
                     let bCustom = true;
                     let result = this.showRefNum(giSeq, chnid, undefined, bCustom);
                     html += result.html;
@@ -44022,7 +44089,8 @@ var icn3d = (function (exports) {
 
             // highlight reference numbers
             if(ic.bShowRefnum) {
-                ic.hAtoms = ic.hAtomsRefnum;
+                // comment out so that this process didn't change the selection
+                //ic.hAtoms = ic.hAtomsRefnum;
                 
                 // commented out because it produced too many commands
                 // let name = 'refnum_anchors';
@@ -44061,6 +44129,7 @@ var icn3d = (function (exports) {
                 ic.selectionCls.selectAll_base();
                 ic.hlUpdateCls.updateHlAll();
                 //ic.drawCls.draw();
+                ic.drawCls.draw();
             }
 
             return {'html': html, 'html3': html3};
@@ -44136,7 +44205,10 @@ var icn3d = (function (exports) {
 
             if(!bCustom && !kabat_or_imgt && !me.bNode) { // do not overwrite loops in node  
                 // reset ic.residIgLoop for the current selection, which could be the second round of ref num assignment
-                let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                // just current chain
+                let atomHash = me.hashUtilsCls.intHash(ic.chains[chnid], ic.hAtoms);
+                let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
+                
                 for(let resid in residHash) {
                     // not in loop any more if you assign ref numbers multiple times
                     delete ic.residIgLoop[resid];
@@ -44578,17 +44650,17 @@ var icn3d = (function (exports) {
 
         getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
             if(currStrand == "A-") { 
-                return '#663399'; 
+                return '#9400D3'; //'#663399'; 
             }
             else if(currStrand == "A") { 
-                return '#663399'; 
+                return '#9400D3'; //'#663399'; 
             }
             //else if(currStrand == "A*") { 
             else if(currStrand == "A+") { 
-                return '#663399'; //'#FFC0CB'; 
+                return '#9400D3'; //'#663399'; 
             }
             else if(currStrand == "A'") { 
-                return '#663399'; 
+                return '#9400D3'; //'#663399'; 
             }
             else if(currStrand == "B") { 
                 return '#ba55d3'; 
@@ -46329,7 +46401,7 @@ var icn3d = (function (exports) {
             ic.hlUpdateCls.updateHlAll();
         }
      
-        async showIgRefNum() { let ic = this.icn3d, me = ic.icn3dui;
+        async showIgRefNum(template) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             // round 1, 16 templates
@@ -46413,9 +46485,14 @@ var icn3d = (function (exports) {
             }
 
             // try {
-                let allPromise = Promise.allSettled(pdbAjaxArray);
-                ic.pdbDataArray = await allPromise;
-                await thisClass.parseRefPdbData(ic.pdbDataArray);
+                if(!template) {
+                    let allPromise = Promise.allSettled(pdbAjaxArray);
+                    ic.pdbDataArray = await allPromise;
+                    await thisClass.parseRefPdbData(ic.pdbDataArray, template);
+                }
+                else {
+                    await thisClass.parseRefPdbData(undefined, template);
+                }
             // }
             // catch(err) {
             //     if(!me.bNode) alert("Error in retrieveing reference PDB data...");
@@ -46423,7 +46500,7 @@ var icn3d = (function (exports) {
             // }
         }
 
-        async parseRefPdbData(dataArray) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseRefPdbData(dataArray, template) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             let struArray = Object.keys(ic.structures);
@@ -46475,6 +46552,11 @@ var icn3d = (function (exports) {
                         for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                             let resid = residueArray[n];
                             ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
+
+                            // clear previous refnum assignment if any
+                            if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                                delete ic.resid2refnum[resid];
+                            }
                         }
                     }
                     else {                 
@@ -46489,6 +46571,11 @@ var icn3d = (function (exports) {
                                     let resid = chainid + '_' + pos2resi[n];
                                     domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                                     //ic.resid2domainid[resid] = chainid + '-' + k;
+
+                                    // clear previous refnum assignment if any
+                                    if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                                        delete ic.resid2refnum[resid];
+                                    }
                                 }
                             }
 
@@ -46510,6 +46597,8 @@ var icn3d = (function (exports) {
                         }
                     }
 
+                    if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
+
                     for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                         let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                         let bForceOneDomain = true;
@@ -46523,56 +46612,107 @@ var icn3d = (function (exports) {
                         let domainid = chainid + '-' + k + '_' + resiSum; 
                         ic.domainid2pdb[domainid] = pdb_target;
 
-                        for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                            // let struct2 = ic.defaultPdbId + index;
-                            // let pdb_query = dataArray[index].value; //[0];
-                            // let header = 'HEADER                                                        ' + struct2 + '\n';
-                            // pdb_query = header + pdb_query;
-                            let jsonStr_q = dataArray[index].value; //[0];
+                        if(!template) {
+                            for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
+                                // let struct2 = ic.defaultPdbId + index;
+                                // let pdb_query = dataArray[index].value; //[0];
+                                // let header = 'HEADER                                                        ' + struct2 + '\n';
+                                // pdb_query = header + pdb_query;
+                                let jsonStr_q = dataArray[index].value; //[0];
 
-                            // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
-                            // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                            // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                                // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
+                                // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                                // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
 
-                            let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
-                            let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                                let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                                let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
 
-                            ajaxArray.push(alignAjax);
-                            
-                            domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
+                                ajaxArray.push(alignAjax);
+                                
+                                domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
+                            }
+                        }
+                        else {
+                            ic.domainid2refpdbname[domainid] = template;
+                            domainidpairArray.push(domainid + "|1" + template); // "1" was added for the first round strand-only template
                         }
                     }
                 }
             }
 
             try {
-                let dataArray2 = [];
+                if(!template) {
+                    let dataArray2 = [];
 
-                // let allPromise = Promise.allSettled(ajaxArray);
-                // dataArray2 = await allPromise;
+                    // let allPromise = Promise.allSettled(ajaxArray);
+                    // dataArray2 = await allPromise;
 
-                //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
-                let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+                    //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+                    let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
 
-                for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
-                    let currAjaxArray = [];
-                    if(i == il - 1) { // last one 
-                        currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                    for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                        let currAjaxArray = [];
+                        if(i == il - 1) { // last one 
+                            currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                        }
+                        else {
+                            currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                        }
+
+                        let currPromise = Promise.allSettled(currAjaxArray);
+                        let currDataArray = await currPromise;
+
+                        dataArray2 = dataArray2.concat(currDataArray);
                     }
-                    else {
-                        currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
-                    }
+                
+                    let bRound1 = true;
+                    await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
 
-                    let currPromise = Promise.allSettled(currAjaxArray);
-                    let currDataArray = await currPromise;
-
-                    dataArray2 = dataArray2.concat(currDataArray);
+                    /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
                 }
-            
-                let bRound1 = true;
-                await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+                else {
+                    if(!me.bNode) console.log("Start alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
 
-                /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
+                    // start round2
+                    let ajaxArray = [];
+                    let domainidpairArray3 = [];
+                    let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+                    let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + template;
+                    let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
+                    let pdbAjaxArray = [];
+                    pdbAjaxArray.push(pdbAjax);
+
+                    let allPromise2 = Promise.allSettled(pdbAjaxArray);
+                    ic.pdbDataArray = await allPromise2;
+
+                    for(let domainid in ic.domainid2refpdbname) {
+                        let refpdbname = ic.domainid2refpdbname[domainid];
+                        let chainid = domainid.substr(0, domainid.indexOf('-'));
+
+                        let pdb_target = ic.domainid2pdb[domainid];
+                        for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
+                            let struct2 = ic.defaultPdbId + index;
+                            let pdb_query = ic.pdbDataArray[index].value; //[0];
+
+                            let header = 'HEADER                                                        ' + struct2 + '\n';
+                            pdb_query = header + pdb_query;
+        
+                            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": template};
+                            let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                            ajaxArray.push(alignAjax);
+                            
+                            //domainidpairArray3.push(domainid + "," + refpdbname);
+                            domainidpairArray3.push(domainid + "|" + template);
+                        }
+                    }
+        
+                    let dataArray3 = [];
+                    let allPromise = Promise.allSettled(ajaxArray);
+                    dataArray3 = await allPromise;
+        
+                    await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+                }
             }
             catch(err) {
                 let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
@@ -46584,7 +46724,7 @@ var icn3d = (function (exports) {
                 }
                 //console.log("Error in aligning with TM-align...");
                 return;
-            }                       
+            }                   
         }
 
         getTemplateList(chainid) { let ic = this.icn3d; ic.icn3dui;
@@ -46694,7 +46834,7 @@ var icn3d = (function (exports) {
                     //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
                     if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                         if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
-                        if(ic.domainid2refpdbname[domainid]) delete ic.domainid2refpdbname[domainid];
+                        if(ic.domainid2refpdbname[domainid] == refpdbname) delete ic.domainid2refpdbname[domainid];
                         continue;
                     }
                 }
@@ -46780,10 +46920,28 @@ var icn3d = (function (exports) {
                 }
 
                 let dataArray3 = [];
-                let allPromise = Promise.allSettled(ajaxArray);
-                dataArray3 = await allPromise;
+                //let allPromise = Promise.allSettled(ajaxArray);
+                //dataArray3 = await allPromise;
 
-                await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+                //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
+                let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+
+                for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+                    let currAjaxArray = [];
+                    if(i == il - 1) { // last one 
+                        currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+                    }
+                    else {
+                        currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+                    }
+
+                    let currPromise = Promise.allSettled(currAjaxArray);
+                    let currDataArray = await currPromise;
+
+                    dataArray3 = dataArray3.concat(currDataArray);
+                }
+
+                await thisClass.parseAlignData(dataArray3, domainidpairArray3, false);
                 
                 // end of round 2
                 return;
@@ -46814,6 +46972,7 @@ var icn3d = (function (exports) {
             if(!ic.chainsMapping) ic.chainsMapping = {};
 
             if(!ic.refPdbList) ic.refPdbList = [];
+
             for(let chainid in chainid2segs) {
                 let segArray = chainid2segs[chainid];
 
@@ -50980,15 +51139,15 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        dsn6Parser(pdbid, type, sigma) { let ic = this.icn3d; ic.icn3dui;
+        async dsn6Parser(pdbid, type, sigma) { let ic = this.icn3d; ic.icn3dui;
             // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
             // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
             let url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
-            this.dsn6ParserBase(url, type, sigma);
+            await this.dsn6ParserBase(url, type, sigma);
         }
 
-        dsn6ParserBase(url, type, sigma) { let ic = this.icn3d; ic.icn3dui;
+        async dsn6ParserBase(url, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
@@ -51001,37 +51160,17 @@ var icn3d = (function (exports) {
                 ic.setOptionCls.setOption('map', type);
             }
             else {
-                let oReq = new XMLHttpRequest();
-                oReq.open("GET", url, true);
-                oReq.responseType = "arraybuffer";
+                let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'rcsbEdmaps');
+                thisClass.loadDsn6Data(arrayBuffer, type, sigma);
 
-                oReq.onreadystatechange = function() {
-                    if(this.readyState == 4) {
-                       if(this.status == 200) {
-                           let arrayBuffer = oReq.response;
-                           thisClass.loadDsn6Data(arrayBuffer, type, sigma);
+                if(type == '2fofc') {
+                    ic.bAjax2fofc = true;
+                }
+                else if(type == 'fofc') {
+                    ic.bAjaxfofc = true;
+                }
 
-                           if(type == '2fofc') {
-                               ic.bAjax2fofc = true;
-                           }
-                           else if(type == 'fofc') {
-                               ic.bAjaxfofc = true;
-                           }
-
-                           ic.setOptionCls.setOption('map', type);
-                        }
-                        else {
-                            alert("RCSB server has no corresponding eletron density map for this structure.");
-                        }
-
-                        /// if(ic.deferredMap !== undefined) ic.deferredMap.resolve();
-                    }
-                    else {
-                        ic.ParserUtilsCls.showLoading();
-                    }
-                };
-
-                oReq.send();
+                ic.setOptionCls.setOption('map', type);
             }
         }
 
@@ -51769,6 +51908,11 @@ var icn3d = (function (exports) {
 
               let color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
               let chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
+              // remove "_" in chain name
+              if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                chainName = chainName.replace(/_/g, '');
+              }
+
               if(chainNameHash[chainName] === undefined) {
                   chainNameHash[chainName] = 1;
               }
@@ -54025,7 +54169,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        densityCifParser(pdbid, type, sigma, emd) { let ic = this.icn3d, me = ic.icn3dui;
+        async densityCifParser(pdbid, type, sigma, emd) { let ic = this.icn3d, me = ic.icn3dui;
            let thisClass = this;
 
            let url;
@@ -54055,46 +54199,21 @@ var icn3d = (function (exports) {
                 ic.setOptionCls.setOption('emmap', type);
             }
             else {
-                let oReq = new XMLHttpRequest();
-                oReq.open("GET", url, true);
-                oReq.responseType = "arraybuffer";
+                let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', type);
 
-                oReq.onreadystatechange = function() {
-                    if (this.readyState == 4) {
-                       if(this.status == 200) {
-                           let arrayBuffer = oReq.response;
+                thisClass.parseChannels(arrayBuffer, type, sigma);
 
-                           thisClass.parseChannels(arrayBuffer, type, sigma);
+                if(type == '2fofc' || type == 'fofc') {
+                    ic.bAjax2fofc = true;
+                    ic.bAjaxfofc = true;
 
-                           if(type == '2fofc' || type == 'fofc') {
-                               ic.bAjax2fofc = true;
-                               ic.bAjaxfofc = true;
+                    ic.setOptionCls.setOption('map', type);
+                }
+                else if(type == 'em') {
+                    ic.bAjaxEm = true;
 
-                               ic.setOptionCls.setOption('map', type);
-                           }
-                           else if(type == 'em') {
-                               ic.bAjaxEm = true;
-
-                               ic.setOptionCls.setOption('emmap', type);
-                           }
-                        }
-                        else {
-                           if(type == '2fofc' || type == 'fofc') {
-                               alert("Density server at EBI has no corresponding electron density map for this structure.");
-                           }
-                           else if(type == 'em') {
-                               alert("Density server at EBI has no corresponding EM density map for this structure.");
-                           }
-                        }
-
-                        /// if(ic.deferredEmmap !== undefined) ic.deferredEmmap.resolve();
-                    }
-                    else {
-                        ic.ParserUtilsCls.showLoading();
-                    }
-                };
-
-                oReq.send();
+                    ic.setOptionCls.setOption('emmap', type);
+                }
             }
         }
 
@@ -55974,6 +56093,12 @@ var icn3d = (function (exports) {
                       if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
 
                       let chain = data.moleculeInfor[molid].chain.trim();
+
+                      // remove "_" in chain name
+                      if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                        chain = chain.replace(/_/g, '');
+                      }
+
                       let chainid = pdbidTmp + '_' + chain;
 
                       if(chainHash.hasOwnProperty(chain)) {
@@ -56118,6 +56243,11 @@ var icn3d = (function (exports) {
                 }
 
                 atm.chain = atm.chain.trim(); //.replace(/_/g, '');
+
+                // remove "_" in chain name
+                if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                    atm.chain = atm.chain.replace(/_/g, '');
+                }
 
                 // mmcif has pre-assigned structure in mmcifparser.cgi output
                 if(type === 'mmdbid' || type === 'align') {
@@ -62247,10 +62377,14 @@ var icn3d = (function (exports) {
               let bFinalStep =(i === steps - 1) ? true : false;
 
               if(!ic.commands[i].trim()) continue;
-              if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
+              let nAtoms = Object.keys(ic.atoms).length;
+
+              if(nAtoms == 0 && ic.commands[i].indexOf('load') == -1) continue;
 
               let strArray = ic.commands[i].split("|||");
               let command = strArray[0].trim();
+
+              if(ic.inputid) ic.bNotLoadStructure = true;
       
               if(command.indexOf('load') !== -1) {
                   if(end === 0 && start === end) {
@@ -62338,6 +62472,10 @@ var icn3d = (function (exports) {
               }
               else if(command.indexOf('ig refnum on') == 0 ) { 
                 await ic.refnumCls.showIgRefNum();
+              }
+              else if(command.indexOf('ig template') == 0 ) { 
+                let template = command.substr(command.lastIndexOf(' ') + 1);
+                await ic.refnumCls.showIgRefNum(template);
               }
               else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
                   if(Object.keys(ic.proteins).length > 0) {
@@ -62512,10 +62650,10 @@ var icn3d = (function (exports) {
                             await thisClass.applyCommandLoad(lastCommand);
                         }
                         else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
-                            thisClass.applyCommandMap(lastCommand);
+                            await thisClass.applyCommandMap(lastCommand);
                         }
                         else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
-                            thisClass.applyCommandEmmap(lastCommand);
+                            await thisClass.applyCommandEmmap(lastCommand);
                         }
                         else if(lastCommand.indexOf('set phi') !== -1) {
                             await ic.delphiCls.applyCommandPhi(lastCommand);
@@ -62785,7 +62923,7 @@ var icn3d = (function (exports) {
         }
 
         //Apply the command to show electron density map.
-        applyCommandMap(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandMap(command) { let ic = this.icn3d; ic.icn3dui;
 
           // chain functions together
         //   ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
@@ -62801,10 +62939,10 @@ var icn3d = (function (exports) {
                   let type = paraArray[0];
 
                   if(urlArray.length == 2) {
-                      ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
+                    await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
                   }
                   else {
-                      ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                    await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
                   }
               }
         //   }); // end of me.deferred = $.Deferred(function() {
@@ -62813,7 +62951,7 @@ var icn3d = (function (exports) {
         }
 
         //Apply the command to show EM density map.
-        applyCommandEmmap(command) { let ic = this.icn3d; ic.icn3dui;
+        async applyCommandEmmap(command) { let ic = this.icn3d; ic.icn3dui;
 
           // chain functions together
         //   ic.deferredEmmap = $.Deferred(function() { let ic = thisClass.icn3d;
@@ -62824,7 +62962,7 @@ var icn3d = (function (exports) {
                   let percentage = paraArray[1];
                   let type = 'em';
 
-                  ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
+                  await ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
               }
         //   }); // end of me.deferred = $.Deferred(function() {
 
@@ -63156,7 +63294,7 @@ var icn3d = (function (exports) {
                // $1,2,3: Structure
                // .A,B,C: chain
                // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-               // :ref_1250,anchors,strands,loops: reference numbers 1250, anchor residues (e.g., 2250), residues in strands, residues in loops
+               // :ref_1250,ref_anchors,ref_strands,ref_loops: reference numbers 1250, anchor residues (e.g., 2250), residues in strands, residues in loops
                // @CA,C,C*: atoms
                // wild card * can be used to select all
                //var currHighlightAtoms = {}
@@ -64761,31 +64899,12 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        CalcPhiUrl(gsize, salt, contour, bSurface, url) { let ic = this.icn3d; ic.icn3dui;
+        async CalcPhiUrl(gsize, salt, contour, bSurface, url) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            let oReq = new XMLHttpRequest();
-            oReq.open("GET", url, true);
+            let data = await me.getXMLHttpRqstPromise(url, 'GET', 'text', 'PQR');
 
-            oReq.responseType = "text";
-
-            oReq.onreadystatechange = async function() {
-                if(this.readyState == 4) {
-                   if(this.status == 200) {
-                       let data = oReq.response;
-
-                       await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
-                    }
-                    else {
-                        alert("The PQR file is unavailable...");
-                    }
-                }
-                else {
-                    ic.ParserUtilsCls.showLoading();
-                }
-            };
-
-            oReq.send();
+            await thisClass.CalcPhi(gsize, salt, contour, bSurface, data);
         }
 
         getPdbStr(bNode) { let ic = this.icn3d, me = ic.icn3dui;
@@ -64872,7 +64991,7 @@ var icn3d = (function (exports) {
             }
 
             return new Promise(function(resolve, reject) {
-                // see full_ui.js for ajaxTransport
+                // see icn3dui.js for ajaxTransport
                 $.ajax({
                     url: url,
                     type: 'POST',
@@ -64896,7 +65015,7 @@ var icn3d = (function (exports) {
             });
         }
 
-        PhiParser(url, type, contour, bSurface) { let ic = this.icn3d; ic.icn3dui;
+        async PhiParser(url, type, contour, bSurface) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
             //var dataType;
 
@@ -64914,49 +65033,32 @@ var icn3d = (function (exports) {
             }
             else {
         */
-                let oReq = new XMLHttpRequest();
-                oReq.open("GET", url, true);
 
+                let responseType;
                 if(type == 'phiurl' || type == 'phiurl2') {
-                    oReq.responseType = "arraybuffer";
+                    responseType = "arraybuffer";
                 }
                 else {
-                    oReq.responseType = "text";
+                    responseType = "text";
                 }
 
-                oReq.onreadystatechange = function() {
-                    if(this.readyState == 4) {
-                       if(this.status == 200) {
-                           let data = oReq.response;
+                let data = await me.getXMLHttpRqstPromise(url, 'GET', responseType, 'potential');
 
-                           if(type == 'phiurl' || type == 'phiurl2') {
-                               thisClass.loadPhiData(data, contour, bSurface);
-                           }
-                           else {
-                               thisClass.loadCubeData(data, contour, bSurface);
-                           }
+                if(type == 'phiurl' || type == 'phiurl2') {
+                    thisClass.loadPhiData(data, contour, bSurface);
+                }
+                else {
+                    thisClass.loadCubeData(data, contour, bSurface);
+                }
 
-                           ic.bAjaxPhi = true;
+                ic.bAjaxPhi = true;
 
-                           if(bSurface) {
-                             ic.setOptionCls.setOption('phisurface', 'phi');
-                           }
-                           else {
-                             ic.setOptionCls.setOption('phimap', 'phi');
-                           }
-                        }
-                        else {
-                            alert("The potential file is unavailable...");
-                        }
-
-                        /// if(ic.deferredPhi !== undefined) ic.deferredPhi.resolve();
-                    }
-                    else {
-                        ic.ParserUtilsCls.showLoading();
-                    }
-                };
-
-                oReq.send();
+                if(bSurface) {
+                  ic.setOptionCls.setOption('phisurface', 'phi');
+                }
+                else {
+                  ic.setOptionCls.setOption('phimap', 'phi');
+                }
         //    }
         }
 
@@ -65134,7 +65236,7 @@ var icn3d = (function (exports) {
                   await thisClass.CalcPhiUrl(gsize, salt, contour, bSurface, url);
               }
               else {
-                  thisClass.PhiParser(url, type, contour, bSurface);
+                  await thisClass.PhiParser(url, type, contour, bSurface);
               }
         //   }); // end of me.deferred = $.Deferred(function() {
 
@@ -65313,7 +65415,7 @@ var icn3d = (function (exports) {
                    await this.CalcPhiUrl(gsize, salt, contour, bSurface, url);
                }
                else {
-                   this.PhiParser(url, type, contour, bSurface);
+                   await this.PhiParser(url, type, contour, bSurface);
                }
 
                if(bSurface) {
@@ -70627,14 +70729,7 @@ var icn3d = (function (exports) {
                }
 
                // add time stamp
-               let date = new Date();
-               let monthStr =(date.getMonth() + 1).toString();
-               if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
-
-               let dateStr = date.getDate().toString();
-               if(date.getDate() < 10) dateStr = '0' + dateStr;
-
-               let dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
+               let dateAllStr = me.utilsCls.getDateDigitStr();
                if(!bPrevDate) url += 'date=' + dateAllStr + '&';
                url += 'v=' + me.REVISION + '&';
 
@@ -73599,7 +73694,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.28.2';
+        this.REVISION = '3.28.3';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -74117,6 +74212,44 @@ var icn3d = (function (exports) {
                     reject('error');
                 }
             );
+        });
+    };
+
+    iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, mapType) { let me = this;
+        return new Promise(function(resolve, reject) {
+            let oReq = new XMLHttpRequest();
+            oReq.open(dataType, url, true);
+            oReq.responseType = responseType;
+            
+            oReq.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                   if(this.status == 200) {
+                       let arrayBuffer = oReq.response;
+                       resolve(arrayBuffer);
+                    }
+                    else {
+                       if(mapType == '2fofc' || mapType == 'fofc') {
+                           alert("Density server at EBI has no corresponding electron density map for this structure.");
+                       }
+                       else if(mapType == 'em') {
+                           alert("Density server at EBI has no corresponding EM density map for this structure.");
+                       }
+                       else if(mapType == 'rcsbEdmaps') {
+                           alert("RCSB server has no corresponding eletron density map for this structure.");
+                       }
+                       else {
+                           alert("The " + mapType + " file is unavailable...");
+                       }
+
+                       reject('error');
+                    }
+                }
+                else {
+                    me.icn3d.ParserUtilsCls.showLoading();
+                }
+            };
+
+            oReq.send();
         });
     };
 

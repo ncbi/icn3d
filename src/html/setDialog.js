@@ -1348,6 +1348,31 @@ class SetDialog {
         html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_igrefTpl' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_igrefTpl', 'Choose an Ig template');
+        html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "igrefTpl'>";
+
+        //html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
+        let group2tpl = {};
+        group2tpl['V'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V', 'ICOS_6x4gA_human_V', 'CD28_1yjdC_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
+        group2tpl['C1'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2'];
+        group2tpl['C2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2', 'LAG3_7tzgD_human_C2-n2', 'Contactin1_3s97C_human_C2-n2'];
+        group2tpl['Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'JAM1_1nbqA_human_VorIset-n2', 'CD19_6al5A_human_C2orV-n1'];
+        group2tpl['FN3'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
+        group2tpl['Other'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria', 'C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human', 'ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'LaminAC_1ifrA_human', 'IsdA_2iteA_bacteria'];  
+
+        for(let group in group2tpl) {
+            html += "<optgroup label='" + group + "'>";
+            for(let i = 0, il = group2tpl[group].length; i < il; ++i) {
+                let template = group2tpl[group][i];
+                html += me.htmlCls.optionStr + "'" + template + "'>" + template + "</option>";
+            }
+            html += "</optgroup>";
+        }
+
+        html += "</select><br><br><span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "mn6_igrefTpl_apply'>Show Ig Ref. Number</button></span>";
+        html += "</div>";
+
         html += "</div>";
         html += "<!--/form-->";
 

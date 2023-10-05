@@ -34,18 +34,18 @@ class Cylinder {
         else {
             if(bHighlight === 2) {
               mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                  { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                  {transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
               radius *= 1.5;
             }
             //else if(bGlycan) {
             else {
               mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-                  { transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+                  {transparent: true, opacity: opacity, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
             }
             // else {
             //   mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-            //       { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            //       {specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
             // }
 
             mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
@@ -112,7 +112,7 @@ class Cylinder {
         if(me.bNode) return;
 
         let mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
-            { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
+            {specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
         mesh.matrixAutoUpdate = false;
