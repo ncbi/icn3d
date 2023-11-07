@@ -616,10 +616,11 @@ class SetHtml {
 
             let pdbstr = '';
 
-            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
+            let bMergeIntoOne = true;
+            pdbstr += ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne);
             pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
-            let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+            let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
 
             let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
 

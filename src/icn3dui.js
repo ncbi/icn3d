@@ -163,7 +163,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.3';
+    this.REVISION = '3.28.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -370,16 +370,17 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                 }
             }
             
-            // realign
-            ic.chainidArray = [chain_t].concat(chainidArray);
-            ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
-
+            // get the matched structures, do not include the template
             let mmdbafid = '';
-            for(let i = 0, il = ic.chainidArray.length; i < il; ++i) {
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
                 if(i > 0) mmdbafid += ',';
-                mmdbafid += ic.chainidArray[i].substr(0, ic.chainidArray[i].indexOf('_'));
+                mmdbafid += chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
             }
 
+            // realign, include the template
+            ic.chainidArray = [chain_t].concat(chainidArray);
+            ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
+            
             me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 
             ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
@@ -595,7 +596,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         // ic.bNCBI = true;
 
         // remove space
-        me.cfg.mmdbafid = me.cfg.mmdbafid.replace(/\s+/g, '');
+        me.cfg.mmdbafid = me.cfg.mmdbafid.replace(/\s+/g, '').toUpperCase();
 
         ic.bMmdbafid = true;
         ic.inputid = me.cfg.mmdbafid;

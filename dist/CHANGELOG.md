@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.28.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.4.zip) was release on November 7, 2023. Enabled to show DelPhi potential for multiple structures.
+
 [icn3d-3.28.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.3.zip) was release on October 5, 2023. Fixed the async/await issue for electron density maps and EM density maps.
 
 [icn3d-3.28.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.2.zip) was release on September 14, 2023. Upgraded three.js to version 151, and improved the image quality.

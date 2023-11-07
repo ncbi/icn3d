@@ -815,7 +815,7 @@ class ClickMenu {
            ic.resid2specCls.selectProperty('polar');
         });
         me.myEventCls.onIds("#" + me.pre + "mn2_propBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_propbybfactor', 'Select residue based on B-factor');
+           me.htmlCls.dialogCls.openDlg('dl_propbybfactor', 'Select residue based on B-factor/pLDDT');
         });
         me.myEventCls.onIds("#" + me.pre + "mn2_propSolAcc", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_propbypercentout', 'Select residue based on the percentage of solvent accessilbe surface area');
@@ -1944,7 +1944,8 @@ class ClickMenu {
            //    alert("The url is more than 4000 characters and may not work.");
            //}
            //else {
-               url = url.replace("full.html", "full2.html");
+               url = url.replace("icn3d/full.html?", "icn3d/full2.html?");
+               url = url.replace("icn3d/?", "icn3d/full2.html?");
                url += '&closepopup=1';
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(url, urlTarget);
@@ -2272,7 +2273,15 @@ class ClickMenu {
       if(str.trim() === '') return false;
       let pos = str.indexOf('|||');
       if(pos !== -1) str = str.substr(0, pos);
-      let transformation = {}
+      let transformation = {};
+
+      if(!ic.quaternion) {
+         // reset parameters
+         ic._zoomFactor = 1.0;
+         ic.mouseChange = new THREE.Vector2(0,0);
+         ic.quaternion = new THREE.Quaternion(0,0,0,1);
+      }
+
       transformation.factor = ic._zoomFactor;
       transformation.mouseChange = ic.mouseChange;
       transformation.quaternion = {}

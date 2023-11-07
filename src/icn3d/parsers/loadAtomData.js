@@ -199,6 +199,7 @@ class LoadAtomData {
         let CSerial, prevCSerial, OSerial, prevOSerial;
 
         let biopolymerChainsHash = {};
+
         for(let i in atoms) {
             ++serial;
 
@@ -228,21 +229,21 @@ class LoadAtomData {
                       atm.chain = ic.molid2chain[molid].substr(pos + 1);
                   }
                   else {
-                      let miscName = 'Misc';
+                        let miscName = 'Misc';
 
-                      //if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
-                      if((chainid2kind[chainNum] === 'protein' && chainid2kind[chainNum] === 'nucleotide' && atm.resi != prevResiOri)
-                        ||(chainid2kind[chainNum] !== 'protein' && chainid2kind[chainNum] !== 'nucleotide'
-                        &&(atm.resn.substr(0,3) != prevResn.substr(0,3) || atm.resi != prevResiOri || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH')) ) {
-                          ++miscCnt;
-                      }
+                        //if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
+                        if((chainid2kind[chainNum] === 'protein' && chainid2kind[chainNum] === 'nucleotide' && atm.resi != prevResiOri)
+                            ||(chainid2kind[chainNum] !== 'protein' && chainid2kind[chainNum] !== 'nucleotide'
+                            &&(atm.resn.substr(0,3) != prevResn.substr(0,3) || atm.resi != prevResiOri || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH')) ) {
+                            ++miscCnt;
+                        }
 
-                          atm.resi_ori = atm.resi;
-                          atm.resi = miscCnt;
-                          bSetResi = true;
+                        atm.resi_ori = atm.resi;
+                        atm.resi = miscCnt;
+                        bSetResi = true;
 
-                      //if all are defined in the chain section, no "Misc" should appear
-                      atm.chain = miscName;
+                        //if all are defined in the chain section, no "Misc" should appear
+                        atm.chain = miscName;
                   }
 
                   //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') {

@@ -307,7 +307,7 @@ class ChainalignParser {
             //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
             //hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
         }
-        
+
         // set up the view of sequence alignment for each pair
         for(let mmdbidpair in mmdbidpairFinalHash) {                 
             if(ic.q_rotation !== undefined) {
@@ -743,7 +743,11 @@ class ChainalignParser {
                 if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
                 me.htmlCls.clickMenuCls.setLogCmd(logStr, false);
                 let html = "<br><b>Alignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br>";
-                if(me.cfg.aligntool == 'tmalign') html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
+                if(me.cfg.aligntool == 'tmalign') {
+                    html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
+                    ic.tmscore = align[0].score.toPrecision(4);
+                }
+
                 $("#" + ic.pre + "dl_rmsd_html").html(html);
                 if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment');
 

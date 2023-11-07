@@ -381,7 +381,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -536,6 +536,7 @@ class SaveFile {
         let bMulStruc =(struArray.length > 1) ? true : false;
 
         let molNum = 1, prevStru = '', prevChain = '';
+        let chainIndex = 0, fakeChain = '', chainNameArray = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
         let addedChainResiHash = {};
         for(let i in atomHash) {
@@ -546,20 +547,22 @@ class SaveFile {
 
             //if(bMulStruc && atom.structure != prevStru) {
             if(atom.structure != prevStru) {
-                pdbStr += connStr;
-                connStr = '';
+                if(!bMergeIntoOne || !bMulStruc) {
+                    pdbStr += connStr;
+                    connStr = '';
 
-                if(molNum > 1)  pdbStr += '\nENDMDL\n';
+                    if(molNum > 1)  pdbStr += '\nENDMDL\n';
 
-                if(bMulStruc) pdbStr += 'MODEL        ' + molNum + '\n';
+                    if(bMulStruc) pdbStr += 'MODEL        ' + molNum + '\n';
+                }
 
                 // add header            
                 let mutantInfo = (chainResi2pdb) ? "Mutated chain_residue " + Object.keys(chainResi2pdb) + '; ' : '';
                 if(!bNoHeader) {
                     //pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, pdbid);
 
-                    // make sur ethe PDB ID is correct
-                    pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, atom.structure);
+                    // make sure the PDB ID is correct
+                    if(!bMergeIntoOne || !bMulStruc) pdbStr += this.getPDBHeader(molNum - 1, stru2header, mutantInfo, atom.structure);
 
                     //pdbStr += '\n'; // separate from incomplete secondary structures 
                 }
@@ -567,6 +570,7 @@ class SaveFile {
                 //prevStru = atom.structure;
                 ++molNum;
             }
+
             //else {
                 //if(atom.chain != prevChain) {
                 if(atom.chain != prevChain && atom.structure == prevStru) {
@@ -640,17 +644,28 @@ class SaveFile {
     */
 
             line +=(resn.length <= 3) ? resn.padStart(3, ' ') : resn.substr(0, 3);
-            //line += ' ';
-            //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
-            if(atom.chain.length >= 2) {
-                let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
-                line += chainTmp;
+
+            if(bMergeIntoOne && molNum > 2 && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+                if(atom.structure != prevStru || atom.chain != prevChain) {
+                    fakeChain = (chainIndex < 36) ? chainNameArray[chainIndex] : '?';
+                    ++chainIndex;
+                }
+
+                line += ' ' + fakeChain;
             }
-            else if(atom.chain.length == 1) {
-                line += ' ' + atom.chain.substr(0, 1);
-            }
-            else if(atom.chain.length == 0) {
-                line += ' A';
+            else {
+                //line += ' ';
+                //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
+                if(atom.chain.length >= 2) {
+                    let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
+                    line += chainTmp;
+                }
+                else if(atom.chain.length == 1) {
+                    line += ' ' + atom.chain.substr(0, 1);
+                }
+                else if(atom.chain.length == 0) {
+                    line += ' A';
+                }
             }
 
             let resi = atom.resi;
@@ -746,9 +761,11 @@ class SaveFile {
             prevChain = atom.chain;
         }
 
-        pdbStr += connStr;
-        
-        if(bMulStruc) pdbStr += '\nENDMDL\n';
+        if(!bMergeIntoOne || !bMulStruc) {
+            pdbStr += connStr;
+            
+            if(bMulStruc) pdbStr += '\nENDMDL\n';
+        }
 
         return pdbStr;
     }

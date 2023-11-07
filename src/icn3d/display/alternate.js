@@ -10,7 +10,7 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
-        ic.bAlernate = true;
+        ic.bAlternate = true;
 
         //ic.transformCls.zoominSelection();
         
@@ -107,14 +107,14 @@ class Alternate {
         ic.applyMapCls.removeEmmaps();
         ic.applyMapCls.applyEmmapOptions();
 
-    // disallow the alternation of DelPhi map
+    // allow the alternation of DelPhi map
         ic.applyMapCls.removePhimaps();
-    //    ic.applyMapCls.applyPhimapOptions();
+        ic.applyMapCls.applyPhimapOptions();
         // should recalculate the potential
         //ic.loadDelphiFileBase('delphi');
 
-    //    ic.applyMapCls.removeSurfaces();
-    //    ic.applyMapCls.applyphisurfaceOptions();
+        ic.applyMapCls.removeSurfaces();
+        ic.applyMapCls.applyphisurfaceOptions();
         // should recalculate the potential
         //ic.loadDelphiFileBase('delphi2');
 

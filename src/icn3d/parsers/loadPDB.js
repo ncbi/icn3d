@@ -467,7 +467,7 @@ class LoadPDB {
                 }
             } else if (record.substr(0,3) === 'TER') {
                 // Concatenation of two pdbs will have several atoms for the same serial
-                ++serial;
+                //++serial;
             }
         }
 

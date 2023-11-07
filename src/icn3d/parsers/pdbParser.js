@@ -195,7 +195,7 @@ class PdbParser {
 
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        if(bAppend) {
+        if(bAppend && !me.bNode) {
             // show all
             ic.definedSetsCls.setModeAndDisplay('all');
         }

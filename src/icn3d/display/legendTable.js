@@ -12,7 +12,7 @@
 
         let colorLabel = colorType.substr(0, 1).toUpperCase() + colorType.substr(1);
         if(colorType == 'confidence') {
-            colorLabel = 'AlphaFold Confidence (pLDDT)';
+            colorLabel = 'pLDDT';
         }
         else if(colorType == 'normalized hydrophobic') {
             colorLabel = 'Normalized Hydrophobicity';
@@ -308,7 +308,7 @@
             "C' Strand": "6495ED",
             "C'' Strand": "006400",
             "D Strand": "00FF00",
-            "E Strand": "FFFF00", //"F0E68C",
+            "E Strand": "F7DC6F", //"FFFF00", //"F0E68C",
             "F Strand": "FFA500",
             "G Strand": "FF0000",
             //"G+ Strand": "8B0000",
@@ -336,14 +336,14 @@
             "<b>Protodomain 1</b>": "",
             "A Strand": "0000FF",
             "B Strand": "006400",
-            "C Strand": "FFFF00", //"F0E68C",
+            "C Strand": "F7DC6F", //"FFFF00", //"F0E68C",
             "C' Strand": "FFA500",
             "<br><b>Linker</b>": "",
             "C'' Strand": "FF0000",
             "<br><b>Protodomain 2</b>": "",
             "D Strand": "0000FF",
             "E Strand": "006400",
-            "F Strand": "FFFF00", //"F0E68C",
+            "F Strand": "F7DC6F", //"FFFF00", //"F0E68C",
             "G Strand": "FFA500",
             "": "",
             "Loop": "CCCCCC"
