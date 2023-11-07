@@ -1333,10 +1333,10 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_propbybfactor' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_propbybfactor', 'Select residues basen on B-factor');
-        html += "<div style='width:400px'>Select residue based on B-factor. The values are in the range of 0-100.</div><br>";
-        html += "<b>Min B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
-        html += "<b>Max B-factor</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
+        html += this.addNotebookTitle('dl_propbybfactor', 'Select residues basen on B-factor/pLDDT');
+        html += "<div style='width:400px'>Select residue based on B-factor/pLDDT. The values are in the range of 0-100.</div><br>";
+        html += "<b>Min B-factor/pLDDT</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
+        html += "<b>Max B-factor/pLDDT</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
         html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbybfactor'>Apply</button><br/><br/>";
         html += "</div>";
 

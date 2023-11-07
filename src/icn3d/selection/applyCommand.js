@@ -375,24 +375,28 @@ class ApplyCommand {
       else if(command == 'rotate left') {
          ic.bStopRotate = false;
          ic.ROT_DIR = 'left';
+         ic.transformCls.rotateCountMax = 6000;
 
          ic.resizeCanvasCls.rotStruc('left');
       }
       else if(command == 'rotate right') {
          ic.bStopRotate = false;
          ic.ROT_DIR = 'right';
+         ic.transformCls.rotateCountMax = 6000;
 
          ic.resizeCanvasCls.rotStruc('right');
       }
       else if(command == 'rotate up') {
          ic.bStopRotate = false;
          ic.ROT_DIR = 'up';
+         ic.transformCls.rotateCountMax = 6000;
 
          ic.resizeCanvasCls.rotStruc('up');
       }
       else if(command == 'rotate down') {
          ic.bStopRotate = false;
          ic.ROT_DIR = 'down';
+         ic.transformCls.rotateCountMax = 6000;
 
          ic.resizeCanvasCls.rotStruc('down');
       }

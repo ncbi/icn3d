@@ -668,7 +668,9 @@ class SetMenu {
 
         html += this.getLink('mn1_exportPdbRes', 'PDB', 1, 2);
         html += this.getLink('profixpdb', 'PDB with Missing Atoms', undefined, 2);
-        html += this.getLink('profixpdbh', 'PDB with Hydrogens', undefined, 2);
+        
+        // the quality is not good to add hydrogen
+        //html += this.getLink('profixpdbh', 'PDB with Hydrogens', undefined, 2);
 
         if(me.cfg.cid === undefined) {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
@@ -1521,7 +1523,7 @@ class SetMenu {
 
             //if(me.cfg.afid) html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
             //if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
-                html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>', undefined, 1, 1);
+                html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'pLDDT', undefined, 1, 1);
             //}
 
             //!!!

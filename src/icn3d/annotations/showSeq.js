@@ -193,7 +193,7 @@ class ShowSeq {
             html += '<span>-</span>'; //'<span>-</span>';
           }
         }
-
+        
         if(ic.seqStartLen && ic.seqStartLen[chnid]) html += this.insertMulGap(ic.seqEndLen[chnid], '-');
 
         html += '<span class="icn3d-residueNum"></span>';
@@ -413,7 +413,7 @@ class ShowSeq {
         html += '</div>';
         html2 += '</div>';
         html3 += '</div>';
-
+        
         //if(Object.keys(ic.chains[chnid]).length > 10) {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
@@ -462,8 +462,9 @@ class ShowSeq {
                 html3 += '</div></div>';
             }         
             
-            if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                          
+            if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                                       
                 let result = this.showAllRefNum(giSeq, chnid);
+                
                 html += result.html;
                 html3 += result.html3;
             }
@@ -475,7 +476,7 @@ class ShowSeq {
                 html3 += result.html3;
             }
         }
-
+        
         // highlight reference numbers
         if(ic.bShowRefnum) {
             // comment out so that this process didn't change the selection
@@ -484,7 +485,7 @@ class ShowSeq {
             // commented out because it produced too many commands
             // let name = 'refnum_anchors';
             // ic.selectionCls.saveSelection(name, name);
-            
+
             ic.hlUpdateCls.updateHlAll();
         }
 
@@ -515,7 +516,7 @@ class ShowSeq {
             //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
             ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
-            ic.selectionCls.selectAll_base();
+            //ic.selectionCls.selectAll_base();
             ic.hlUpdateCls.updateHlAll();
             //ic.drawCls.draw();
             ic.drawCls.draw();
@@ -639,8 +640,10 @@ class ShowSeq {
 
                     postfix = strandPostfix + '_' + index;
 
+                    let firstTwo = parseInt(refnum.toString().substr(0, 2)); // A- strand
+
                     if(currStrand && currStrand != ' ') {
-                        if(refnum3c.substr(0,1) != '9') {
+                        if(refnum3c.substr(0,1) != '9' || firstTwo == 10) {
                             let lastTwo = parseInt(refnum.toString().substr(refnum.toString().length - 2, 2));
                             
                             if(currStrand != prevStrand) { // reset currCnt
@@ -667,6 +670,10 @@ class ShowSeq {
                                     resCntAtAnchor = 0;
                                 }
 
+                                if(firstTwo == 10) {
+                                    strandArray[strandCnt].anchorRefnum = 0;
+                                }
+
                                 strandArray[strandCnt].strandPostfix = strandPostfix; // a in A1250a
                                 strandArray[strandCnt].strand = currStrand; // A in A1250a
 
@@ -687,6 +694,10 @@ class ShowSeq {
                                         strandArray[strandCnt - 1].startRefnum = strandArray[strandCnt - 1].anchorRefnum - strandArray[strandCnt - 1].resCntBfAnchor;
 
                                         resCntAtAnchor = 0;
+                                    }
+
+                                    if(firstTwo == 10) {
+                                        strandArray[strandCnt - 1].anchorRefnum = 0;
                                     }
 
                                     strandArray[strandCnt - 1].endResi = currResi;
@@ -1031,13 +1042,13 @@ class ShowSeq {
 
         let html = '';
 
-        if(refnumLabel && lastTwo == 50 && !bLoop) {
+        if(refnumLabel && (lastTwo == 50 || refnum == 1094) && !bLoop) {
             // highlight the anchor residues
             ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
 
             html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
         }
-        else if(refnumLabel && lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
+        else if(refnumLabel && lastTwo % 2 == 0 && lastTwo != 52 && refnum != 1096 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
             // e.g., 2152a
             lastTwoStr = isNaN(refnumStr) ? lastTwoStr + refnumStr.substr(refnumStr.length - 1, 1) : lastTwoStr;
             html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -1079,7 +1090,8 @@ class ShowSeq {
             return '#00FF00'; 
         }
         else if(currStrand == "E") { 
-            return (bText) ? "#F7DC6F" : "#FFFF00"; 
+            //return (bText) ? "#F7DC6F" : "#FFFF00"; 
+            return "#F7DC6F"; 
         }
         else if(currStrand == "F") { 
             return '#FFA500'; 
@@ -1103,7 +1115,7 @@ class ShowSeq {
             return '#006400';
         }
         else if(currStrand == "C" || currStrand == "F") {
-            return "#FFFF00"; //'#F0E68C'; 
+            return "#F7DC6F"; //"#FFFF00"; //'#F0E68C'; 
         }
         else if(currStrand == "C'" || (currStrand && currStrand.substr(0, 1) == "G")) {
             return '#FFA500'; 

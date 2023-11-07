@@ -31,27 +31,27 @@
         let thisClass = this;
 
         // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1IsdA_2iteA_bacteria', '1TCRa_6jxrm_human_C1-n2', '1CD19_6al5A_human_C2orV-n1', '1CD28_1yjdC_human_V'];
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_Iset', '1CD28_1yjdC_human_V', '1CD19_6al5A_human_C2orV-n1'];
 
         // round 2
         ic.refpdbHash = {};
         ic.refpdbHash['1InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
         ic.refpdbHash['1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'ICOS_6x4gA_human_V'];
-        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
+        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria'];
         ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
         ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
-        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria'];
+        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
         ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
         ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
-        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2'];
+        ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
         ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
         ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
         ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human'];
-        ic.refpdbHash['1IsdA_2iteA_bacteria'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1TCRa_6jxrm_human_C1-n2'] = ['TCRa_6jxrm_human_C1-n2'];
-        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];  
-        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V']; 
+        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_Iset'];
+        ic.refpdbHash['1CD3g_6jxrg_human_Iset'] = ['CD3g_6jxrg_human_Iset', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
+        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_Iset'];
+        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1']; 
 
         // use known ref structure
         ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
@@ -99,11 +99,14 @@
         ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human_C2orV-n1'];
         ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
         ic.refpdbHash['1YJD_C'] = ['CD28_1yjdC_human_V'];
+        ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_Iset'];
+        ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_Iset'];
+        ic.refpdbHash['6JXR_g'] = ['CD3g_6jxrg_human_Iset'];
 
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
-            //let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
-            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refjsonid=" + ic.refpdbArray[k];
+            let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
+            //let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refjsonid=" + ic.refpdbArray[k];
 
             let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
 
@@ -173,7 +176,7 @@
 
                     let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
                     let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
-                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+                    let resiSum = atomFirst.resi + ':' + atomLast.resi;
 
                     for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                         let resid = residueArray[n];
@@ -209,7 +212,7 @@
 
                         let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
                         let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
-                        let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+                        let resiSum = atomFirst.resi + ':' + atomLast.resi;
 
                         for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                             let startResi = segArray[m];
@@ -227,31 +230,30 @@
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
-                    let bForceOneDomain = true;
-                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
+                    //let bForceOneDomain = true;
+                    //let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
 
                     // ig strand for any subset will have the same k, use the number of residue to separate them
                     let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtomsArray[k]);
                     let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtomsArray[k]);
-                    let resiSum = parseInt(atomFirst.resi) + parseInt(atomLast.resi);
+                    let resiSum = atomFirst.resi + ':' + atomLast.resi;
                     //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
                     let domainid = chainid + '-' + k + '_' + resiSum; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     if(!template) {
                         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
-                            // let struct2 = ic.defaultPdbId + index;
-                            // let pdb_query = dataArray[index].value; //[0];
-                            // let header = 'HEADER                                                        ' + struct2 + '\n';
-                            // pdb_query = header + pdb_query;
-                            let jsonStr_q = dataArray[index].value; //[0];
+                            let struct2 = ic.defaultPdbId + index;
+                            let pdb_query = dataArray[index].value; //[0];
+                            let header = 'HEADER                                                        ' + struct2 + '\n';
+                            pdb_query = header + pdb_query;
+                            //let jsonStr_q = dataArray[index].value; //[0];
 
-                            // TM-align is not good when you align a full structure with the strand-only structure. VAST is better in this case.
-                            // let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
-                            // let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
+                            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbArray[index]};
+                            let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
 
-                            let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
-                            let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                            // let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                            // let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
 
                             ajaxArray.push(alignAjax);
                             
@@ -273,8 +275,8 @@
                 // let allPromise = Promise.allSettled(ajaxArray);
                 // dataArray2 = await allPromise;
 
-                //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
-                let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+                //split arrays into chunks of 48 jobs or me.cfg.maxajax jobs
+                let n = (me.cfg.maxajax) ? me.cfg.maxajax : ic.refpdbArray.length * 6;
 
                 for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
                     let currAjaxArray = []
@@ -415,7 +417,10 @@
                 }
             }
             else {
-                if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
+                // if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
+                //     continue;
+                // }
+                if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
                     continue;
                 }
             }
@@ -430,7 +435,8 @@
                 if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
             }
             else {
-                if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd + ", num_res: " + queryData[0].num_res + ",  10/RMSD + num_res/5: " + (10 / queryData[0].super_rmsd + queryData[0].num_seg / 5).toFixed(1));
+                // if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd + ", num_seg: " + queryData[0].num_seg + ",  10/RMSD + num_seg/5: " + (10 / queryData[0].super_rmsd + queryData[0].num_seg / 5).toFixed(1));
+                if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
             }
 
             // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
@@ -478,7 +484,8 @@
                 }
             }
             else {
-                let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
+                //let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
+                let mixScore = queryData[0].score; 
 
                 if(!domainid2score.hasOwnProperty(domainid) || mixScore > domainid2score[domainid]) {
                     domainid2score[domainid] = mixScore;  
@@ -549,8 +556,8 @@
             //let allPromise = Promise.allSettled(ajaxArray);
             //dataArray3 = await allPromise;
 
-            //split arrays into chunks of 96 jobs or me.cfg.maxajax jobs
-            let n = (me.cfg.maxajax) ? me.cfg.maxajax : 96;
+            //split arrays into chunks of 48 jobs or me.cfg.maxajax jobs
+            let n = (me.cfg.maxajax) ? me.cfg.maxajax : ic.refpdbArray.length * 6;
 
             for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
                 let currAjaxArray = []
@@ -668,7 +675,7 @@
             else {
                 await ic.showAnnoCls.showAnnotations();
             }
-
+            
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else {

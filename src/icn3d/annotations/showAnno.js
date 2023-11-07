@@ -327,7 +327,7 @@ class ShowAnno {
             let proteinName = fullProteinName;
             //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
             let categoryStr =(index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
-            let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "?report=gene_table' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
+            let geneLink =(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneId && ic.chainsGene[chnid].geneDesc) ? "(Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + ic.chainsGene[chnid].geneId + "?report=gene_table' target='_blank' title='" + ic.chainsGene[chnid].geneDesc + "'>" + ic.chainsGene[chnid].geneSymbol + "</a>)" : '';
             let structure = chnid.substr(0, chnid.indexOf('_'));
             let chainLink = (structure.length > 5) ? '<a href="https://alphafold.ebi.ac.uk/entry/' + structure + '" target="_blank">' + chnid + '</a>' : chnid;
             let chainHtml = "<div id='" + ic.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr

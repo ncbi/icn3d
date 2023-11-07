@@ -138,7 +138,8 @@ class ParserUtils {
             }
         }
 
-        let prevResi = 0;
+        //let prevResi = 0;
+        let prevResi = offset;
         for(let i = 0, il = seqArray.length; i < il; ++i) {
             let seqName, resiPos;
             // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
