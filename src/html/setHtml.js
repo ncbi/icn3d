@@ -716,6 +716,7 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
+           ic.bInputPNGWithData = ic.bInputfile;
            let commandStr = (command) ? command.replace(/;/g, "\n") : '';
 
            let statefile;

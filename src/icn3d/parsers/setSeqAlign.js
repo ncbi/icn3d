@@ -469,7 +469,8 @@ class SetSeqAlign {
 
                       if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
-                      let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
+                      //let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
+                      let resi = this.getResiAferAlign(chainid1, bRealign, j);
                       //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
                       let resn = this.getResnFromResi(chainid1, resi).toLowerCase();
                       
@@ -490,10 +491,10 @@ class SetSeqAlign {
 
                       if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
-                      let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
+                      //let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
+                      let resi = this.getResiAferAlign(chainid2, bRealign, j);
                       //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
                       let resn = this.getResnFromResi(chainid2, resi).toLowerCase();
-
 
                       if(resn == '?') continue;
 
@@ -1041,7 +1042,6 @@ class SetSeqAlign {
                 start1Pos = start1;
                 end1Pos = end1;
             }
-
             //let range = resi2range_t[resiStart1];
   
             // if the mapping does not start from start_t, add gaps to the query seq
@@ -1065,7 +1065,7 @@ class SetSeqAlign {
                 pos2 = result.pos2;
                 let notAlnLen1 = pos2 - (pos1 + 1);
                 let notAlnLen2 = start2 - (prevIndex2 + 1);
-                
+
                 // insert non-aligned residues in query seq
                 this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
 

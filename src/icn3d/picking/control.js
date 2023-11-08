@@ -47,7 +47,7 @@ class Control {
             ic.typetext = false;
         });
 
-        $(document).bind('keydown', function (e) {
+        $(document).bind('keydown', async function (e) {
         //document.addEventListener('keydown', function (e) {
           if(e.shiftKey || e.keyCode === 16) {
               ic.bShift = true;
@@ -185,7 +185,7 @@ class Control {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(ic.structures).length > 1) {
-                 ic.alternateCls.alternateWrapper();
+                 await ic.alternateCls.alternateWrapper();
                }
             }
 

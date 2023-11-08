@@ -9,7 +9,7 @@ class Alternate {
 
     // change the display atom when alternating
     //Show structures one by one.
-    alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+    async alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
         ic.bAlternate = true;
 
         //ic.transformCls.zoominSelection();
@@ -107,16 +107,24 @@ class Alternate {
         ic.applyMapCls.removeEmmaps();
         ic.applyMapCls.applyEmmapOptions();
 
-    // allow the alternation of DelPhi map
+        // allow the alternation of DelPhi map
+        /*
+        // Option 1: recalculate =========
+        ic.applyMapCls.removePhimaps();
+        await ic.delphiCls.loadDelphiFile('delphi');
+
+        ic.applyMapCls.removeSurfaces();
+        await ic.delphiCls.loadDelphiFile('delphi2');
+        // ==============
+        */
+
+        // Option 2: NO recalculate, just show separately =========
         ic.applyMapCls.removePhimaps();
         ic.applyMapCls.applyPhimapOptions();
-        // should recalculate the potential
-        //ic.loadDelphiFileBase('delphi');
 
         ic.applyMapCls.removeSurfaces();
         ic.applyMapCls.applyphisurfaceOptions();
-        // should recalculate the potential
-        //ic.loadDelphiFileBase('delphi2');
+        // ==============
 
         // alternate the PCA axes
         ic.axes = [];
@@ -133,9 +141,9 @@ class Alternate {
         ic.bShowHighlight = true;
     }
 
-    alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;
+    async alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;
        ic.bAlternate = true;
-       this.alternateStructures();
+       await this.alternateStructures();
        ic.bAlternate = false;
     }
 

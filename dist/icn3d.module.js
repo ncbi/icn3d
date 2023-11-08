@@ -13187,9 +13187,9 @@ class Events {
             thisClass.setLogCmd("clear selection", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", async function(e) { let ic = me.icn3d;
            ic.bAlternate = true;
-           ic.alternateCls.alternateStructures();
+           await ic.alternateCls.alternateStructures();
            ic.bAlternate = false;
 
            thisClass.setLogCmd("alternate structures", false);
@@ -16468,6 +16468,7 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
+           ic.bInputPNGWithData = ic.bInputfile;
            let commandStr = (command) ? command.replace(/;/g, "\n") : '';
 
            let statefile;
@@ -33412,7 +33413,7 @@ class Alternate {
 
     // change the display atom when alternating
     //Show structures one by one.
-    alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+    async alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
         ic.bAlternate = true;
 
         //ic.transformCls.zoominSelection();
@@ -33510,16 +33511,24 @@ class Alternate {
         ic.applyMapCls.removeEmmaps();
         ic.applyMapCls.applyEmmapOptions();
 
-    // allow the alternation of DelPhi map
+        // allow the alternation of DelPhi map
+        /*
+        // Option 1: recalculate =========
+        ic.applyMapCls.removePhimaps();
+        await ic.delphiCls.loadDelphiFile('delphi');
+
+        ic.applyMapCls.removeSurfaces();
+        await ic.delphiCls.loadDelphiFile('delphi2');
+        // ==============
+        */
+
+        // Option 2: NO recalculate, just show separately =========
         ic.applyMapCls.removePhimaps();
         ic.applyMapCls.applyPhimapOptions();
-        // should recalculate the potential
-        //ic.loadDelphiFileBase('delphi');
 
         ic.applyMapCls.removeSurfaces();
         ic.applyMapCls.applyphisurfaceOptions();
-        // should recalculate the potential
-        //ic.loadDelphiFileBase('delphi2');
+        // ==============
 
         // alternate the PCA axes
         ic.axes = [];
@@ -33536,9 +33545,9 @@ class Alternate {
         ic.bShowHighlight = true;
     }
 
-    alternateWrapper() { let ic = this.icn3d; ic.icn3dui;
+    async alternateWrapper() { let ic = this.icn3d; ic.icn3dui;
        ic.bAlternate = true;
-       this.alternateStructures();
+       await this.alternateStructures();
        ic.bAlternate = false;
     }
 
@@ -57261,7 +57270,8 @@ class SetSeqAlign {
 
                       if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
-                      let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
+                      //let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
+                      let resi = this.getResiAferAlign(chainid1, bRealign, j);
                       //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid1, j).toLowerCase() : ic.chainsSeq[chainid1][j].name.toLowerCase();
                       let resn = this.getResnFromResi(chainid1, resi).toLowerCase();
                       
@@ -57282,10 +57292,10 @@ class SetSeqAlign {
 
                       if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
-                      let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
+                      //let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
+                      let resi = this.getResiAferAlign(chainid2, bRealign, j);
                       //   let resn = (bRealign && me.cfg.aligntool == 'tmalign') ? this.getResnFromResi(chainid2, j).toLowerCase() : ic.chainsSeq[chainid2][j].name.toLowerCase();
                       let resn = this.getResnFromResi(chainid2, resi).toLowerCase();
-
 
                       if(resn == '?') continue;
 
@@ -57827,7 +57837,6 @@ class SetSeqAlign {
                 start1Pos = start1;
                 end1Pos = end1;
             }
-
             //let range = resi2range_t[resiStart1];
   
             // if the mapping does not start from start_t, add gaps to the query seq
@@ -57851,7 +57860,7 @@ class SetSeqAlign {
                 pos2 = result.pos2;
                 let notAlnLen1 = pos2 - (pos1 + 1);
                 let notAlnLen2 = start2 - (prevIndex2 + 1);
-                
+
                 // insert non-aligned residues in query seq
                 this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
 
@@ -62833,8 +62842,10 @@ class LoadScript {
         let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
         if(id.length == 4) id = id.toUpperCase();
 
-        // skip loading the structure if it was loaded before
-        if(ic.structures && ic.structures.hasOwnProperty(id)) return;
+        // skip loading the structure if 
+        // 1. PDB was in the iCn3D PNG Image file
+        // 2. it was loaded before
+        if(ic.bInputPNGWithData || (ic.structures && ic.structures.hasOwnProperty(id))) return;
 
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
@@ -72000,7 +72011,7 @@ class Control {
             ic.typetext = false;
         });
 
-        $(document).bind('keydown', function (e) {
+        $(document).bind('keydown', async function (e) {
         //document.addEventListener('keydown', function (e) {
           if(e.shiftKey || e.keyCode === 16) {
               ic.bShift = true;
@@ -72138,7 +72149,7 @@ class Control {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(ic.structures).length > 1) {
-                 ic.alternateCls.alternateWrapper();
+                 await ic.alternateCls.alternateWrapper();
                }
             }
 
