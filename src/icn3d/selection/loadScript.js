@@ -509,8 +509,10 @@ class LoadScript {
         let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
         if(id.length == 4) id = id.toUpperCase();
 
-        // skip loading the structure if it was loaded before
-        if(ic.structures && ic.structures.hasOwnProperty(id)) return;
+        // skip loading the structure if 
+        // 1. PDB was in the iCn3D PNG Image file
+        // 2. it was loaded before
+        if(ic.bInputPNGWithData || (ic.structures && ic.structures.hasOwnProperty(id))) return;
 
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {

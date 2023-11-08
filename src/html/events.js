@@ -378,9 +378,9 @@ class Events {
             thisClass.setLogCmd("clear selection", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", async function(e) { let ic = me.icn3d;
            ic.bAlternate = true;
-           ic.alternateCls.alternateStructures();
+           await ic.alternateCls.alternateStructures();
            ic.bAlternate = false;
 
            thisClass.setLogCmd("alternate structures", false);
