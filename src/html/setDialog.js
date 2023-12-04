@@ -484,8 +484,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_dsn6', 'Load a DSN6 file');
-        html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
+        html += this.addNotebookTitle('dl_dsn6', 'Load a map file');
+        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
 
@@ -493,14 +493,16 @@ class SetDialog {
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
 
         html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmafofc'>";
 
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
 
         html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin-top: 6px;'>Load</button><br><br><br>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>"  + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
 
@@ -508,7 +510,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_dsn6url', 'Load a selection file via a URL');
-        html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
 

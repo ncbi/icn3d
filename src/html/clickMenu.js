@@ -305,7 +305,7 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the DSN6 file to display electron density map');
+           me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the map file to display electron density map');
         });
 
 
@@ -332,7 +332,7 @@ class ClickMenu {
 
 
         me.myEventCls.onIds("#" + me.pre + "mn1_dsn6url", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_dsn6url', 'Please input the DSN6 file to display electron density map');
+           me.htmlCls.dialogCls.openDlg('dl_dsn6url', 'Please input the map file to display electron density map');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; //e.preventDefault();

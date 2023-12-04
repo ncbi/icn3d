@@ -10,7 +10,8 @@ class Domain3d {
         //this.dcut = 8; // threshold for C-alpha interactions
 
 		// It seemed the threshold 7 angstrom works better
-		this.dcut = 7; // threshold for C-alpha interactions
+		//this.dcut = 7; // threshold for C-alpha interactions
+		this.dcut = 8; // threshold for C-alpha interactions
 
 		this.MAX_SSE = 512;
 

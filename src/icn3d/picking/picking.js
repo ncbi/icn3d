@@ -26,13 +26,25 @@ class Picking {
                 y += me.htmlCls.MENU_HEIGHT;
             }
             let text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+            let chainid = atom.structure + '_' + atom.chain;
+            let textWidth;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
-                text = atom.structure + '_' + atom.chain + ' ' + text;
-                $("#" + ic.pre + "popup").css("width", "160px");
+                text = chainid + ' ' + text;
+                textWidth = (ic.chainid2refpdbname && ic.chainid2refpdbname[chainid]) ? 160 + 80 : 160;
+                $("#" + ic.pre + "popup").css("width", textWidth + "px");
             }
             else {
-                $("#" + ic.pre + "popup").css("width", "80px");
+                textWidth = (ic.chainid2refpdbname && ic.chainid2refpdbname[chainid]) ? 80 + 80 : 80;
+                $("#" + ic.pre + "popup").css("width", textWidth + "px");
             }
+
+            
+            if(ic.chainid2refpdbname && ic.chainid2refpdbname[chainid]) {
+                let refnumLabel = ic.resid2refnum[chainid + '_' + atom.resi];
+
+                if(refnumLabel) text += ', Ig: ' + refnumLabel;
+            }
+
             $("#" + ic.pre + "popup").html(text);
             $("#" + ic.pre + "popup").css("top", y).css("left", x+20).show();
           }

@@ -98,6 +98,10 @@ class AnnoDomain {
         let domainArray, proteinname;
         let pos = chnid.indexOf('_');
         let chain = chnid.substr(pos + 1);
+        // MMDB symmetry chain has the form of 'A1'
+        if(chain.length > 1 && chain.substr(chain.length - 1) == '1') {
+            chain = chain.substr(0, chain.length - 1);
+        }
 
         if(bCalcDirect) {
             proteinname = chnid;

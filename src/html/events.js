@@ -1271,6 +1271,17 @@ class Events {
            ic.dsn6ParserCls.loadDsn6File('fofc');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4file2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.dsn6ParserCls.loadDsn6File('2fofc', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4filefofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.dsn6ParserCls.loadDsn6File('fofc', true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );

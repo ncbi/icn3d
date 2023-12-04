@@ -9,7 +9,7 @@ class DensityCifParser {
         this.icn3d = icn3d;
     }
 
-    async densityCifParser(pdbid, type, sigma, emd) { let ic = this.icn3d, me = ic.icn3dui;
+    async densityCifParser(pdbid, type, sigma, emd, bOutput) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let url;

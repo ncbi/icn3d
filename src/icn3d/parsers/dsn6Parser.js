@@ -237,7 +237,7 @@ class Dsn6Parser {
         return matrix;
     }
 
-    loadDsn6File(type) {var ic = this.icn3d, me = ic.icn3dui;
+    loadDsn6File(type, bCcp4) {var ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
@@ -250,7 +250,13 @@ class Dsn6Parser {
          let reader = new FileReader();
          reader.onload = function(e) { let ic = thisClass.icn3d;
            let arrayBuffer = e.target.result; // or = reader.result;
-           thisClass.loadDsn6Data(arrayBuffer, type, sigma);
+           if(bCcp4) {
+              ic.densityCifParserCls.parseChannels(arrayBuffer, type, sigma);
+           }
+           else {
+              thisClass.loadDsn6Data(arrayBuffer, type, sigma);
+           }
+
            if(type == '2fofc') {
                ic.bAjax2fofc = true;
            }
@@ -258,7 +264,7 @@ class Dsn6Parser {
                ic.bAjaxfofc = true;
            }
            ic.setOptionCls.setOption('map', type);
-           me.htmlCls.clickMenuCls.setLogCmd('load dsn6 file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
+           me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
          }
          reader.readAsArrayBuffer(file);
        }

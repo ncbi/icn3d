@@ -71,6 +71,10 @@ class ShowAnno {
                     chainLetter = chainLetter.substr(0, chainLetter.indexOf('_'));
                     chainidBase = chainArray[i].substr(0, chainArray[i].indexOf('_')) + '_' + chainLetter;
                 }
+                else if(chainLetter.length > 1 && chainLetter.substr(chainLetter.length - 1) == '1') { // NCBI modified chainid, e.g., A1
+                    chainLetter = chainLetter.substr(0, chainLetter.length - 1);
+                    chainidBase = chainArray[i].substr(0, chainArray[i].indexOf('_')) + '_' + chainLetter;
+                }
                 else {
                     chainidBase = chainArray[i];
                 }

@@ -461,7 +461,7 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }         
-            
+
             if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                                       
                 let result = this.showAllRefNum(giSeq, chnid);
                 
@@ -530,9 +530,11 @@ class ShowSeq {
 
         if(!ic.chainid2refpdbname[chnid]) return {html: html, html3: html3};
 
-        let chainList = ic.refnumCls.getTemplateList(chnid);
+        let result = ic.refnumCls.getTemplateList(chnid);
+        let refpdbnameList = result.refpdbnameList;
+        let scoreList = result.scoreList;
 
-        let refStruTitle = (chainList) ? "based on " + chainList : "";
+        let refStruTitle = (refpdbnameList) ? "based on " + refpdbnameList + ". The TM-scores are " + scoreList + "." : "";
 
         let htmlTmp = '<div class="icn3d-dl_sequence">';
         htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
@@ -588,7 +590,8 @@ class ShowSeq {
 
         // auto-generate ref numbers for loops 
         let bLoop = false, currStrand = '', prevStrand = '', currFirstDigit = '', currCnt =  1;
-        let refnumLabel, refnumStr_ori, refnumStr, postfix, strandPostfix, refnum, refnum3c;
+        let refnumLabel, refnumStr_ori, refnumStr, postfix, strandPostfix, refnum, refnum3c, refnum2c;
+        let bExtendedStrand = false, bSecThird9 = false;
 
         // set hash for the loops
         let strand2len_start_stop = {};
@@ -618,8 +621,8 @@ class ShowSeq {
 
                 refnumLabel = ic.resid2refnum[residueid];
 
-                let firstChar = (refnumLabel) ? refnumLabel.substr(0,1) : ' ';
-                if(!bStart && refnumLabel && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
+                let firstChar = (refnumLabel) ? refnumLabel.substr(0,1) : '';
+                if(!bStart && refnumLabel && (firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
                     bStart = true;
                     resCnt = 1; // the first oen is included
                 }
@@ -636,14 +639,21 @@ class ShowSeq {
                     refnumStr = refnumStr_ori;
                     refnum = parseInt(refnumStr);
                     refnum3c = (refnum - parseInt(refnum/1000) * 1000).toString();
+                    refnum2c = (refnum - parseInt(refnum/100) * 100).toString();
+
+                    // for extended strands, since A is 1550 and A+ is 1650, then the AA+ loop will be 1591, 1592, ... 1610, 1611, etc
+                    bSecThird9 = refnum3c.substr(0,1) == '9' || refnum2c.substr(0,1) == '9' || refnum2c.substr(0,1) == '0' || refnum2c.substr(0,1) == '1';
+                    if(bSecThird9) ic.residIgLoop[residueid] = 1;
+
                     strandPostfix = refnumStr.replace(refnum.toString(), '');
 
                     postfix = strandPostfix + '_' + index;
 
-                    let firstTwo = parseInt(refnum.toString().substr(0, 2)); // A- strand
+                    let firstTwo = parseInt(refnum.toString().substr(0, 2)); // check extended strands
+                    bExtendedStrand = refnum3c.substr(0,1) != '5' && firstTwo != '18'; // all strands and A' (18##)
 
                     if(currStrand && currStrand != ' ') {
-                        if(refnum3c.substr(0,1) != '9' || firstTwo == 10) {
+                        if(!bSecThird9 || (bExtendedStrand && !bSecThird9)) {
                             let lastTwo = parseInt(refnum.toString().substr(refnum.toString().length - 2, 2));
                             
                             if(currStrand != prevStrand) { // reset currCnt
@@ -670,7 +680,7 @@ class ShowSeq {
                                     resCntAtAnchor = 0;
                                 }
 
-                                if(firstTwo == 10) {
+                                if(bExtendedStrand) {
                                     strandArray[strandCnt].anchorRefnum = 0;
                                 }
 
@@ -696,7 +706,7 @@ class ShowSeq {
                                         resCntAtAnchor = 0;
                                     }
 
-                                    if(firstTwo == 10) {
+                                    if(bExtendedStrand) {
                                         strandArray[strandCnt - 1].anchorRefnum = 0;
                                     }
 
@@ -756,7 +766,7 @@ class ShowSeq {
                         currStrand = refnumLabel.replace(new RegExp(refnumStr,'g'), '');
                         
                         let firstChar = refnumLabel.substr(0,1);
-                        if(!bStart && (firstChar == ' ' || firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
+                        if(!bStart && (firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
                             bStart = true;
                             bBeforeAstrand = true;
                             loopCnt = 0;
@@ -1033,6 +1043,11 @@ class ShowSeq {
 
     getRefnumHtml(residueid, refnumStr, refnumStr_ori, refnumLabel, currStrand, bLoop, bHidelabel) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(refnumStr).toString();
+
+        let refnum3c = (refnum - parseInt(refnum/1000) * 1000).toString();
+        let firstTwo = parseInt(refnum.toString().substr(0, 2)); // check extended strands
+        let bExtendedStrand = refnum3c.substr(0,1) != '5' && firstTwo != '18'; // all strands and A' (18##)
+
         let color = this.getRefnumColor(currStrand, true);
         let colorStr = (!bLoop) ? 'style="color:' + color + '; text-decoration: underline overline;"' : 'style="color:' + color + '"';
 
@@ -1042,13 +1057,13 @@ class ShowSeq {
 
         let html = '';
 
-        if(refnumLabel && (lastTwo == 50 || refnum == 1094) && !bLoop) {
+        if(refnumLabel && lastTwo == 50 && !bExtendedStrand && !bLoop) {
             // highlight the anchor residues
             ic.hAtomsRefnum = me.hashUtilsCls.unionHash(ic.hAtomsRefnum, ic.residues[residueid]);
 
             html += '<span ' + colorStr + ' title="' + refnumLabel + '"><b>' + refnumLabel.substr(0, 1) + '</b>' + refnumLabel.substr(1) + '</span>';
         }
-        else if(refnumLabel && lastTwo % 2 == 0 && lastTwo != 52 && refnum != 1096 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
+        else if(refnumLabel && lastTwo % 2 == 0 && lastTwo != 52 && !bHidelabel) { // don't show label for the first, middle, and last loop residues
             // e.g., 2152a
             lastTwoStr = isNaN(refnumStr) ? lastTwoStr + refnumStr.substr(refnumStr.length - 1, 1) : lastTwoStr;
             html += '<span ' + colorStr + ' title="' + refnumLabel + '">' + lastTwoStr + '</span>';
@@ -1061,23 +1076,9 @@ class ShowSeq {
     }
 
     getRefnumColor(currStrand, bText) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(currStrand == "A-") { 
-            return '#9400D3'; //'#663399'; 
-        }
-        else if(currStrand == "A") { 
-            return '#9400D3'; //'#663399'; 
-        }
-        //else if(currStrand == "A*") { 
-        else if(currStrand == "A+") { 
-            return '#9400D3'; //'#663399'; 
-        }
-        else if(currStrand == "A'") { 
-            return '#9400D3'; //'#663399'; 
-        }
-        else if(currStrand == "B") { 
-            return '#ba55d3'; 
-        }
-        else if(currStrand == "C") { 
+        let strand = (currStrand) ? currStrand.substr(0,1) : '';
+        
+        if(currStrand == "C") { 
             return '#0000FF'; 
         }
         else if(currStrand == "C'") { 
@@ -1086,21 +1087,24 @@ class ShowSeq {
         else if(currStrand == "C''") { 
             return '#006400'; 
         }
-        else if(currStrand == "D") { 
+
+        else if(strand == "A") { 
+            return '#9400D3'; //'#663399'; 
+        }
+        else if(strand == "B") { 
+            return '#ba55d3'; 
+        }
+        else if(strand == "D") { 
             return '#00FF00'; 
         }
-        else if(currStrand == "E") { 
-            //return (bText) ? "#F7DC6F" : "#FFFF00"; 
-            return "#F7DC6F"; 
+        else if(strand == "E") {
+            return "#FFD700"; 
         }
-        else if(currStrand == "F") { 
-            return '#FFA500'; 
+        else if(strand == "F") { 
+            return '#FF8C00'; 
         }
-        else if(currStrand == "G") { 
+        else if(strand == "G") { 
             return '#FF0000'; 
-        }
-        else if(currStrand == "G+") { 
-            return '#8B0000'; 
         }
         else {
             return me.htmlCls.GREYB;
@@ -1108,17 +1112,19 @@ class ShowSeq {
     }
 
     getProtodomainColor(currStrand) {  let ic = this.icn3d, me = ic.icn3dui;
-        if((currStrand && currStrand.substr(0,1) == "A") || currStrand == "D") {
+        let strand = (currStrand) ? currStrand.substr(0,1) : '';
+
+        if(strand == "A" || strand == "D") {
             return '#0000FF';
         }
-        else if(currStrand == "B" || currStrand == "E") {
+        else if(strand == "B" || strand == "E") {
             return '#006400';
         }
-        else if(currStrand == "C" || currStrand == "F") {
-            return "#F7DC6F"; //"#FFFF00"; //'#F0E68C'; 
+        else if(currStrand == "C" || strand == "F") {
+            return "#FFD700"; //"#FFFF00"; //'#F0E68C'; 
         }
-        else if(currStrand == "C'" || (currStrand && currStrand.substr(0, 1) == "G")) {
-            return '#FFA500'; 
+        else if(currStrand == "C'" || strand == "G") {
+            return '#FF8C00'; 
         }
         else if(currStrand == "C''") { //linker
             return '#FF0000'; 
