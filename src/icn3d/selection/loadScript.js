@@ -89,7 +89,7 @@ class LoadScript {
           let bFinalStep =(i === steps - 1) ? true : false;
 
           if(!ic.commands[i].trim()) continue;
-          let nAtoms = Object.keys(ic.atoms).length;
+          let nAtoms = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
 
           if(nAtoms == 0 && ic.commands[i].indexOf('load') == -1) continue;
 

@@ -118,8 +118,8 @@ class HlUpdate {
     updateHlObjects(bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
        ic.hlObjectsCls.removeHlObjects();
 
-       if((ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
-          ic.hlObjectsCls.addHlObjects();
+       if((ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length < Object.keys(ic.dAtoms).length) || bForceHighlight) {
+          if(ic.bShowHighlight === undefined || ic.bShowHighlight) ic.hlObjectsCls.addHlObjects();
           ic.definedSetsCls.setMode('selection');
        }
     }

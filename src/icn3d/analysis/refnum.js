@@ -115,8 +115,11 @@
 
         // try {
             if(!template) {
-                let allPromise = Promise.allSettled(pdbAjaxArray);
-                ic.pdbDataArray = await allPromise;
+                //let allPromise = Promise.allSettled(pdbAjaxArray);
+                //ic.pdbDataArray = await allPromise;
+
+                ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
+
                 await thisClass.parseRefPdbData(ic.pdbDataArray, template);
             }
             else {
@@ -227,6 +230,7 @@
                 }
 
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
+                if(!ic.domainid2score) ic.domainid2score = {};
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
@@ -238,7 +242,7 @@
                     let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtomsArray[k]);
                     let resiSum = atomFirst.resi + ':' + atomLast.resi;
                     //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
-                    let domainid = chainid + '-' + k + '_' + resiSum; 
+                    let domainid = chainid + ',' + k + '_' + resiSum; 
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     if(!template) {
@@ -268,30 +272,14 @@
             }
         }
 
-        try {
+        //try {
             if(!template) {
                 let dataArray2 = [];
 
                 // let allPromise = Promise.allSettled(ajaxArray);
                 // dataArray2 = await allPromise;
 
-                //split arrays into chunks of 48 jobs or me.cfg.maxajax jobs
-                let n = (me.cfg.maxajax) ? me.cfg.maxajax : ic.refpdbArray.length * 6;
-
-                for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
-                    let currAjaxArray = []
-                    if(i == il - 1) { // last one 
-                        currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
-                    }
-                    else {
-                        currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
-                    }
-
-                    let currPromise = Promise.allSettled(currAjaxArray);
-                    let currDataArray = await currPromise;
-
-                    dataArray2 = dataArray2.concat(currDataArray);
-                }
+                dataArray2 = await this.promiseWithFixedJobs(ajaxArray);
             
                 let bRound1 = true;
                 await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
@@ -311,12 +299,14 @@
                 let pdbAjaxArray = [];
                 pdbAjaxArray.push(pdbAjax);
 
-                let allPromise2 = Promise.allSettled(pdbAjaxArray);
-                ic.pdbDataArray = await allPromise2;
+                //let allPromise2 = Promise.allSettled(pdbAjaxArray);
+                //ic.pdbDataArray = await allPromise2;
+
+                ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
                 for(let domainid in ic.domainid2refpdbname) {
                     let refpdbname = ic.domainid2refpdbname[domainid];
-                    let chainid = domainid.substr(0, domainid.indexOf('-'));
+                    let chainid = domainid.substr(0, domainid.indexOf(','));
 
                     let pdb_target = ic.domainid2pdb[domainid];
                     for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
@@ -336,11 +326,14 @@
                 }
     
                 let dataArray3 = [];
-                let allPromise = Promise.allSettled(ajaxArray);
-                dataArray3 = await allPromise;
+                //let allPromise = Promise.allSettled(ajaxArray);
+                //dataArray3 = await allPromise;
+
+                dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
     
                 await thisClass.parseAlignData(dataArray3, domainidpairArray3);
             }
+            /*
         }
         catch(err) {
             let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
@@ -352,15 +345,21 @@
             }
             //console.log("Error in aligning with TM-align...");
             return;
-        }                   
+        }        
+        */           
     }
 
     getTemplateList(chainid) { let ic = this.icn3d, me = ic.icn3dui;
-        let domainid2refpdbname = {};
+        let domainid2refpdbname = {}, domainid2score = {};
 
         for(let i = 0, il = ic.chainid2refpdbname[chainid].length; i < il; ++i) {
             let refpdbname_domainid = ic.chainid2refpdbname[chainid][i].split('|');
             domainid2refpdbname[refpdbname_domainid[1]] = refpdbname_domainid[0];
+        }
+
+        for(let i = 0, il = ic.chainid2score[chainid].length; i < il; ++i) {
+            let score_domainid = ic.chainid2score[chainid][i].split('|');
+            domainid2score[score_domainid[1]] = score_domainid[0];
         }
 
         let domainidArray = Object.keys(domainid2refpdbname);
@@ -370,13 +369,19 @@
             return resi1 - resi2;
         });
 
-        let chainList = '';
+        let refpdbnameList = '';
         for(let i = 0, il = domainidArray.length; i < il; ++i) {
-            chainList += domainid2refpdbname[domainidArray[i]];
-            if(i < il - 1) chainList += ", ";
+            refpdbnameList += domainid2refpdbname[domainidArray[i]];
+            if(i < il - 1) refpdbnameList += ", ";
         }
 
-        return chainList;
+        let scoreList = '';
+        for(let i = 0, il = domainidArray.length; i < il; ++i) {
+            scoreList += domainid2score[domainidArray[i]];
+            if(i < il - 1) scoreList += ", ";
+        }
+
+        return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList};
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
@@ -386,17 +391,14 @@
         let rmsdThreshold = 10;
 
         // find the best alignment for each chain
-        let domainid2score = {}, domainid2segs = {}, chainid2segs = {};
+        let domainid2segs = {}, chainid2segs = {};
 
         if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
+        if(!ic.chainid2score) ic.chainid2score = {};
         if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
+        if(!ic.domainid2score) ic.domainid2score = {};
         if(!ic.domainid2ig2kabat) ic.domainid2ig2kabat = {};
         if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
-
-        // ic.chainid2refpdbname = {};
-        // ic.domainid2refpdbname = {};
-        // ic.domainid2ig2kabat = {};
-        // ic.domainid2ig2imgt = {};
 
         let minResidues = 20;
 
@@ -404,15 +406,20 @@
             //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
             let queryData = dataArray[i].value; //[0];
 
-            if(!queryData) {
+            if(!queryData || queryData.length == 0) {
                 if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
                 continue;
             }
-
-            if(queryData.length == 0) continue;
             
+            //let domainid_index = domainidpairArray[i].split(',');
+            //let domainid = domainid_index[0];
+            let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
+            let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
+            //let chainid = domainid.split('-')[0];
+
             if(!bRound1) {
                 if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                    if(!me.bNode) console.log("domainid " + domainid + " and refpdbname " + refpdbname + " were skipped due to a TM-score less than " + tmscoreThreshold);
                     continue;
                 }
             }
@@ -424,12 +431,6 @@
                     continue;
                 }
             }
-
-            //let domainid_index = domainidpairArray[i].split(',');
-            //let domainid = domainid_index[0];
-            let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
-            let refpdbname = domainidpairArray[i].substr(domainidpairArray[i].indexOf('|') + 1);
-            //let chainid = domainid.split('-')[0];
             
             if(!bRound1) {
                 if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
@@ -446,16 +447,16 @@
                 for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
                     let seg = queryData[0].segs[i];
 
-                    if(seg.q_start.indexOf('2150') != -1 || seg.q_start.indexOf('2250') != -1) {
+                    if(seg.q_start.indexOf('2550') != -1) {
                         bBstrand = true;
                     }
-                    else if(seg.q_start.indexOf('3150') != -1 || seg.q_start.indexOf('3250') != -1) {
+                    else if(seg.q_start.indexOf('3550') != -1) {
                         bCstrand = true;
                     }
-                    else if(seg.q_start.indexOf('7150') != -1 || seg.q_start.indexOf('7250') != -1) {
+                    else if(seg.q_start.indexOf('7550') != -1) {
                         bEstrand = true;
                     }
-                    else if(seg.q_start.indexOf('8150') != -1 || seg.q_start.indexOf('8250') != -1) {
+                    else if(seg.q_start.indexOf('8550') != -1) {
                         bFstrand = true;
                     }
 
@@ -466,7 +467,10 @@
                 //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
                 if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                     if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
-                    if(ic.domainid2refpdbname[domainid] == refpdbname) delete ic.domainid2refpdbname[domainid];
+                    if(ic.domainid2refpdbname[domainid] == refpdbname) {
+                        delete ic.domainid2refpdbname[domainid];
+                        delete ic.domainid2score[domainid];
+                    }
                     continue;
                 }
             }
@@ -474,8 +478,8 @@
             if(!bRound1) {
                 console.log("domainid: " + domainid);
 
-                if(!domainid2score.hasOwnProperty(domainid) || queryData[0].score > domainid2score[domainid]) {
-                    domainid2score[domainid] = queryData[0].score;  
+                if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid]) {
+                    ic.domainid2score[domainid] = queryData[0].score;  
         
                     ic.domainid2refpdbname[domainid] = refpdbname;
                     domainid2segs[domainid] = queryData[0].segs;
@@ -487,8 +491,8 @@
                 //let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
                 let mixScore = queryData[0].score; 
 
-                if(!domainid2score.hasOwnProperty(domainid) || mixScore > domainid2score[domainid]) {
-                    domainid2score[domainid] = mixScore;  
+                if(!ic.domainid2score.hasOwnProperty(domainid) || mixScore > ic.domainid2score[domainid]) {
+                    ic.domainid2score[domainid] = mixScore;  
         
                     ic.domainid2refpdbname[domainid] = refpdbname;
                     domainid2segs[domainid] = queryData[0].segs;
@@ -509,7 +513,7 @@
                 let pdbAjaxArray = [];
                 let refpdbname = ic.domainid2refpdbname[domainid];
                 //let pdbid = domainid.substr(0, domainid.indexOf('_'));
-                let chainid = domainid.substr(0, domainid.indexOf('-'));
+                let chainid = domainid.substr(0, domainid.indexOf(','));
 
                 //if(ic.refpdbHash.hasOwnProperty(pdbid)) {
                 if(ic.refpdbHash.hasOwnProperty(chainid)) {
@@ -532,8 +536,10 @@
                     pdbAjaxArray.push(pdbAjax);
                 }
 
-                let allPromise2 = Promise.allSettled(pdbAjaxArray);
-                ic.pdbDataArray = await allPromise2;
+                //let allPromise2 = Promise.allSettled(pdbAjaxArray);
+                //ic.pdbDataArray = await allPromise2;
+
+                ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
                 let pdb_target = ic.domainid2pdb[domainid];
                 for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
@@ -556,23 +562,7 @@
             //let allPromise = Promise.allSettled(ajaxArray);
             //dataArray3 = await allPromise;
 
-            //split arrays into chunks of 48 jobs or me.cfg.maxajax jobs
-            let n = (me.cfg.maxajax) ? me.cfg.maxajax : ic.refpdbArray.length * 6;
-
-            for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
-                let currAjaxArray = []
-                if(i == il - 1) { // last one 
-                    currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
-                }
-                else {
-                    currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
-                }
-
-                let currPromise = Promise.allSettled(currAjaxArray);
-                let currDataArray = await currPromise;
-
-                dataArray3 = dataArray3.concat(currDataArray);
-            }
+            dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
             await thisClass.parseAlignData(dataArray3, domainidpairArray3, false);
             
@@ -583,22 +573,35 @@
         // combine domainid into chainid
         let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
-            let chainid = domainid.split('-')[0];
+            // remove the first round template
+            if(ic.domainid2refpdbname[domainid].substr(0,1) == '1') {
+                delete ic.domainid2refpdbname[domainid];
+                delete ic.domainid2score[domainid];
+                continue;
+            }
 
-            if(!processedChainid.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
+            let chainid = domainid.split(',')[0];
+
+            if(!processedChainid.hasOwnProperty(chainid)) {
+                ic.chainid2refpdbname[chainid] = [];
+                ic.chainid2score[chainid] = [];
+            }
             processedChainid[chainid] = 1;
 
             if(!ic.chainid2refpdbname.hasOwnProperty(chainid)) ic.chainid2refpdbname[chainid] = [];
             ic.chainid2refpdbname[chainid].push(ic.domainid2refpdbname[domainid] + '|' + domainid);
+
+            if(!ic.chainid2score.hasOwnProperty(chainid)) ic.chainid2score[chainid] = [];
+            ic.chainid2score[chainid].push(ic.domainid2score[domainid] + '|' + domainid);
         }
-        
+
         // combine domainid into chainid
         for(let domainid in domainid2segs) {
-            let chainid = domainid.split('-')[0];
+            let chainid = domainid.split(',')[0];
             if(!chainid2segs[chainid]) chainid2segs[chainid] = [];
             chainid2segs[chainid] = chainid2segs[chainid].concat(domainid2segs[domainid]);
         }
-        
+
         // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
         if(!ic.resid2refnum) ic.resid2refnum = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};
@@ -611,11 +614,16 @@
 
             let refpdbnameArray = ic.chainid2refpdbname[chainid];
 
-            let chainList = this.getTemplateList(chainid);
+            let result = this.getTemplateList(chainid);
+            let refpdbnameList = result.refpdbnameList;
+            let scoreList = result.scoreList;
 
-            //if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
-            if(!me.bNode) console.log("The reference PDB(s) for chain " + chainid + " are " + chainList);
-            ic.refPdbList.push("The reference PDB(s) for chain " + chainid + " are " + chainList);
+            let message = "The reference PDBs for chain " + chainid + " are " + refpdbnameList + ". The TM-scores are " + scoreList + ".";
+            if(!me.bNode) {
+                console.log(message);
+                me.htmlCls.clickMenuCls.setLogCmd(message, true);
+            }
+            ic.refPdbList.push(message);
 
             let prevStrand;
             let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human_C2orV-n1';
@@ -686,50 +694,52 @@
     getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
-        // A-: 10xx
-        // A: 11xx
-        // A+ continue A
-        // A': 12xx
-        // B: 21xx
-        // C: 32xx
-        // C': 42xx
-        // C'': 51xx, 52xx
-        // D: 61xx
-        // E: 71xx
-        // E+: continue E
-        // F: 82xx
-        // G: 91xx, 92xx
-        // G+: continue G
+        //N-terminus = 0999-0001
+        //A--- = 12xx
+        //A-- = 13xx
+        //A- = 14xx
+        //A = 15xx (anchor 1550)
+        //A+ = 16xx
+        //A' = 18xx (anchor 1850)
+        //B = 25xx (anchor 2550)
+        //C-- = 33xx
+        //C- = 34xx
+        //C = 35xx (anchor 3550)
+        //C' = 45xx (anchor 4550)
+        //C'' = 55xx (anchor 5550)
+        //D = 65xx (anchor 3550)
+        //E = 75xx (anchor 7550)
+        //E+ = 76xx
+        //F = 85xx (anchor 8550)
+        //G = 95xx (anchor 9550)
+        //G+ = 96xx
+        //G++ = 97xx
+        //C-terminus = 9901-9999 (no anchor, numbering going forward)
 
-        // if(refnum < 100) return " " + oriRefnum;
-        // else if(refnum >= 100 && refnum < 1000) {
-        //     if(bCd19) return " " + oriRefnum;
-        //     else return "A^" + oriRefnum;
-        // }
-        if(refnum < 900) return undefined;
-        else if(refnum >= 900 && refnum < 1000) return " " + oriRefnum;
-        else if(refnum >= 1000 && refnum < 1100) return "A-" + oriRefnum;
-        else if(refnum >= 1100 && refnum < 1200) return "A" + oriRefnum; // could be A+
-        else if(refnum >= 1200 && refnum < 1300) return "A'" + oriRefnum;
-        //else if(refnum >= 1300 && refnum < 1400) return "A+" + oriRefnum;
-        else if(refnum >= 1300 && refnum < 2000) {
-            if(prevStrand  && prevStrand.substr(0, 1) == 'A') {
-                return prevStrand + oriRefnum;
-            }
-            else {
-                return "A" + oriRefnum;
-            }
-        }
-        else if(refnum >= 2000 && refnum < 3000) return "B" + oriRefnum;
-        else if(refnum >= 3000 && refnum < 4000) return "C" + oriRefnum;
-        else if(refnum >= 4000 && refnum < 5000) return "C'" + oriRefnum;
-        else if(refnum >= 5000 && refnum < 6000) return "C''" + oriRefnum;
-        else if(refnum >= 6000 && refnum < 7000) return "D" + oriRefnum;
-        else if(refnum >= 7000 && refnum < 8000) return "E" + oriRefnum; // could be E+
-        else if(refnum >= 8000 && refnum < 9000) return "F" + oriRefnum;
-        else if(refnum >= 9000 && refnum < 9300) return "G" + oriRefnum; // could be G+
-        //else if(refnum >= 9400 && refnum < 9500) return "G+" + oriRefnum;
-        else if(refnum >= 9300) return "G" + oriRefnum;
+        // loops may have numbers such as 1310, 1410
+
+        if(refnum < 1000) return undefined;
+        else if(refnum >= 1200 && refnum < 1290) return "A---" + oriRefnum;
+        else if(refnum >= 1320 && refnum < 1390) return "A--" + oriRefnum;
+        else if(refnum >= 1420 && refnum < 1490) return "A-" + oriRefnum;
+        else if(refnum >= 1520 && refnum < 1590) return "A" + oriRefnum; 
+        else if(refnum >= 1620 && refnum < 1690) return "A+" + oriRefnum; 
+        else if(refnum >= 1820 && refnum < 1890) return "A'" + oriRefnum;
+        else if(refnum >= 2000 && refnum < 2900) return "B" + oriRefnum;
+        else if(refnum >= 3300 && refnum < 3390) return "C--" + oriRefnum;
+        else if(refnum >= 3420 && refnum < 3490) return "C-" + oriRefnum;
+        else if(refnum >= 3520 && refnum < 3590) return "C" + oriRefnum;
+        else if(refnum >= 4000 && refnum < 4900) return "C'" + oriRefnum;
+        else if(refnum >= 5000 && refnum < 5900) return "C''" + oriRefnum;
+        else if(refnum >= 6000 && refnum < 6900) return "D" + oriRefnum;
+        else if(refnum >= 7500 && refnum < 7590) return "E" + oriRefnum; 
+        else if(refnum >= 7620 && refnum < 7900) return "E+" + oriRefnum; 
+        else if(refnum >= 8000 && refnum < 8900) return "F" + oriRefnum;
+        else if(refnum >= 9500 && refnum < 9590) return "G" + oriRefnum;
+        else if(refnum >= 9620 && refnum < 9690) return "G+" + oriRefnum;
+        else if(refnum >= 9720 && refnum < 9790) return "G++" + oriRefnum;
+        else if(refnum > 9900) return undefined;
+        else return " " + oriRefnum;;
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;
@@ -911,6 +921,32 @@
         else {
             return refData;
         }
+    }
+
+    async promiseWithFixedJobs(ajaxArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let dataArray3 = [];
+        //let allPromise = Promise.allSettled(ajaxArray);
+        //dataArray3 = await allPromise;
+
+        //split arrays into chunks of 48 jobs or me.cfg.maxajax jobs
+        let n = (me.cfg.maxajax) ? me.cfg.maxajax : ic.refpdbArray.length * 6;
+
+        for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
+            let currAjaxArray = []
+            if(i == il - 1) { // last one 
+                currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
+            }
+            else {
+                currAjaxArray = ajaxArray.slice(i * n, (i + 1) * n);
+            }
+
+            let currPromise = Promise.allSettled(currAjaxArray);
+            let currDataArray = await currPromise;
+
+            dataArray3 = dataArray3.concat(currDataArray);
+        }
+
+        return dataArray3;
     }
  }
  

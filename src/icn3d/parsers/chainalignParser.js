@@ -126,6 +126,8 @@ class ChainalignParser {
 
             let queryData = {}; // check whether undefined
 
+            me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
+
             this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
         }
        
@@ -222,6 +224,8 @@ class ChainalignParser {
             if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
                 continue;
             }
+
+            me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid1 + " with " + mmdbid2, false);
 
             let bNoAlert = true;
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
@@ -678,6 +682,8 @@ class ChainalignParser {
                     let bEqualMmdbid = (mmdbid_q == mmdbid_t);
                     let bEqualChain = (chain_q == chain_t);
 
+                    me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
+
                     this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain);
                 }
             }
@@ -738,6 +744,7 @@ class ChainalignParser {
                 ic.qt_start_end[index] = align[0].segs;
 
                 let rmsd = align[0].super_rmsd;
+console.log()
 
                 let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
                 if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
