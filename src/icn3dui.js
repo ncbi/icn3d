@@ -105,6 +105,8 @@ import {ContactMap} from './icn3d/interaction/contactMap.js';
 import {AlignParser} from './icn3d/parsers/alignParser.js';
 import {ChainalignParser} from './icn3d/parsers/chainalignParser.js';
 import {Dsn6Parser} from './icn3d/parsers/dsn6Parser.js';
+import {Ccp4Parser} from './icn3d/parsers/ccp4Parser.js';
+import {MtzParser} from './icn3d/parsers/mtzParser.js';
 import {MmcifParser} from './icn3d/parsers/mmcifParser.js';
 import {MmdbParser} from './icn3d/parsers/mmdbParser.js';
 import {MmtfParser} from './icn3d/parsers/mmtfParser.js';
@@ -163,7 +165,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.4';
+    this.REVISION = '3.29.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

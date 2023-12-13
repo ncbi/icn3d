@@ -342,7 +342,7 @@ class SetColor {
 
                     for(let resid in residueHash) {
                         if(!ic.resid2refnum[resid]) {              
-                            color = me.parasCls.thr('#FFFFFF');
+                            color = me.parasCls.thr('#00FFFF'); //('#FFFFFF');
                         }
                         else {
                             let refnumLabel = ic.resid2refnum[resid];
@@ -377,7 +377,7 @@ class SetColor {
                     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
                     for(let resid in residueHash) {
                         if(!ic.resid2refnum[resid]) {
-                            color = me.parasCls.thr('#FFFFFF');
+                            color = me.parasCls.thr('#00FFFF'); //('#FFFFFF');
                         }
                         else {
                             let refnumLabel = ic.resid2refnum[resid];

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.29.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.0.zip) was release on December 13, 2023. Added the feature to load electron density maps from ccp4 or MTZ files either locally or via URLs.
+
 [icn3d-3.28.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.4.zip) was release on November 7, 2023. Enabled to show DelPhi potential for multiple structures.
 
 [icn3d-3.28.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.28.3.zip) was release on October 5, 2023. Fixed the async/await issue for electron density maps and EM density maps.
@@ -307,7 +309,7 @@
 
 [icn3d-2.15.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.0.zip) was release on April 21, 2020. Enabled to show the same structure "Side by Side" in two views in the "View" menu. Each view has the same orientation, but can have independent 3D display. Enabled to add multiple sequence alignments as tracks when clicking "Add Track" in the "Sequences & Annotations" window. Added "Hide Selection" in the "View" menu. Improved selection on "H-Bonds & Interactions". Improved the UI for "Realign Selection" in the "File" menu. The gallery shows COVID-19-related structures at the top. 
 
-[icn3d-2.14.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.14.0.zip) was release on April 15, 2020. Added the features to load Electron Density data in the menu "File > Open File > Electron Density (DSN6)", resize the 3D window, realign two structures in the menu "File > Realign", color residues with custom colors in the menu "Color > Residue > Custom", and add custom colors when aligning a sequence to a structure.
+[icn3d-2.14.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.14.0.zip) was release on April 15, 2020. Added the features to load Electron Density data in the menu "File > Open File > Electron Density", resize the 3D window, realign two structures in the menu "File > Realign", color residues with custom colors in the menu "Color > Residue > Custom", and add custom colors when aligning a sequence to a structure.
 
 [icn3d-2.13.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.13.1.zip) was release on March 26, 2020. Showed membranes for transmembrane proteins in VAST+ alignment.
 

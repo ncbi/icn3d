@@ -72,6 +72,14 @@ class DensityCifParser {
 
             ic.mapData.data2 = density.data;
 
+            
+            let minValue = 999, maxValue = -999;
+            for(let i = 0; i < density.data.length; ++i) {
+                let value = density.data[i];
+                if(value > maxValue) maxValue = value;
+                if(value < minValue) minValue = value;
+            }
+
             let origin = density.box.origin;
             let dimensions = density.box.dimensions;
             let basis = density.spacegroup.basis;
@@ -105,6 +113,7 @@ class DensityCifParser {
             origin = density.box.origin;
             dimensions = density.box.dimensions;
             basis = density.spacegroup.basis;
+
             scale = new THREE.Matrix4().makeScale(
                 dimensions[0] / (sampleCount[0] ),
                 dimensions[1] / (sampleCount[1] ),

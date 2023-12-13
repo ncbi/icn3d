@@ -13,6 +13,9 @@ class Domain3d {
 		//this.dcut = 7; // threshold for C-alpha interactions
 		this.dcut = 8; // threshold for C-alpha interactions
 
+		// added by Jiyao
+		this.min_contacts = 5; //3;			// minimum number of contacts to be considered as neighbors
+
 		this.MAX_SSE = 512;
 
         //let this.ctc_cnt[this.MAX_SSE][this.MAX_SSE];		// contact count matrix
@@ -44,9 +47,6 @@ class Domain3d {
         this.mean_cts = 0.0;				// mean number of contacts in a domain
         this.c_delta = 3;				// cut set parameter
         this.nc_fact = 0.0;				// size factor for internal contacts
-
-		// added by Jiyao
-		this.min_contacts = 3;			// minimum number of contacts to be considered as neighbors
 
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];

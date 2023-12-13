@@ -8192,6 +8192,8 @@ class ClickMenu {
            let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
            let type = '2fofc';
            await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+           //ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
+
            //ic.setOptionCls.setOption('map', '2fofc');
            thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
         });
@@ -9453,6 +9455,8 @@ class SetMenu {
         html += this.getLink('mn1_dsn6', 'Local File', undefined, 3);
         html += this.getLink('mn1_dsn6url', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
+
+        html += "<li><br/></li>";
 
         html += "</ul>";
         html += "</li>";
@@ -11876,24 +11880,18 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_dsn6', 'Load a map file');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: " 
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigma2fofc' value='' size=8> &sigma;</span><br/>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
 
-        let optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
+        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmafofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br/>";
-
-        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmafofc'>";
-
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
-
-        html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>"  + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
 
@@ -11901,21 +11899,17 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_dsn6url', 'Load a selection file via a URL');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: "
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurl2fofc' value='' size=8> &sigma;</span><br/>";
 
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
 
-        html += "</select> &sigma;</span><br/>";
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
+        + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurlfofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmaurlfofc'>";
-
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
-
-        html += "</select> &sigma;</span><br/>";
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo5'>Remove Map</button><br>";
 
@@ -12255,6 +12249,7 @@ class SetDialog {
         html += this.addNotebookTitle('dl_elecmap2fofc', 'Electron Density 2F0-Fc Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigma2fofc'>";
 
+        let optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
 
         html += "</select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'>" + me.htmlCls.buttonStr + "applymap2fofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'>" + me.htmlCls.buttonStr + "elecmapNo2'>Remove Map</button></span>";
@@ -12901,7 +12896,7 @@ class Events {
         }
     }
 
-    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
         
@@ -12938,7 +12933,20 @@ class Events {
                 await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
             }
             else {
-                thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+                await thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+            }
+
+            if(bAppend) {
+                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
+
+                ic.bResetAnno = true;
+
+                if(ic.bAnnoShown) {
+                    await ic.showAnnoCls.showAnnotations();
+
+                    ic.annotationCls.resetAnnoTabAll();
+                }
             }
         };
 
@@ -12973,13 +12981,7 @@ class Events {
 
             ic.dataStrAll = '';
 
-            this.readFile(bAppend, files, 0, '');
-
-            if(bAppend) {
-                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
-                if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
-            }
+            await this.readFile(bAppend, files, 0, '');
        }
     }
 
@@ -13063,7 +13065,10 @@ class Events {
 
                 if(bStructures) {
                     if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                    if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                    if(ic.bAnnoShown) {
+                        await ic.showAnnoCls.showAnnotations();
+                        ic.annotationCls.resetAnnoTabAll();
+                    }
                 }
             }
         }
@@ -14073,24 +14078,35 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6File('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6filefofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6File('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_ccp4file2fofc", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            ic.dsn6ParserCls.loadDsn6File('2fofc', true);
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4File('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_ccp4filefofc", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            ic.dsn6ParserCls.loadDsn6File('fofc', true);
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4File('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfile2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfilefofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
@@ -14182,13 +14198,35 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurl2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6FileUrl('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurlfofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6FileUrl('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4fileurl2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4FileUrl('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4fileurlfofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4FileUrl('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfileurl2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFileUrl('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfileurlfofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFileUrl('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { me.icn3d;
@@ -15578,7 +15616,7 @@ class AlignSeq {
         //  for(let i in ic.alnChains) {
         for (let m = 0, ml = alignChainArray.length; m < ml; ++m) {
             let i = alignChainArray[m];
-            
+          
             if (index == 0) firstChainid = i;
 
             if (bOnechain && index > 0) {
@@ -29353,8 +29391,8 @@ class ElectronMap {
         this.pLength = 0;
         this.cutRadius = 0;
         this.vpBits = null; // uint8 array of bitmasks
-        this.vpDistance = null; // floatarray of _squared_ distances
-        this.vpAtomID = null; // intarray
+        this.vpGridTrans = null; // array of translated number of grids
+        this.vpAtomID = null; // uint8 array
         this.vertnumber = 0;
         this.facenumber = 0;
         this.pminx = 0;
@@ -29404,12 +29442,27 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         atomsToShow[atomlist[i]] = 1;
     let vertices = this.verts;
 
+    let vertTrans = {};
     for(i = 0, il = vertices.length; i < il; i++) {
         let r;
         if(this.type == 'phi') {
             r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).multiplyScalar(1.0/this.header.scale).applyMatrix4(this.matrix);
         }
         else {
+            // ccp4 has no translation vector. Only translated vertices are used.
+            if(this.header.ccp4) {
+                let index = vertices[i].index;
+                let finalIndex;
+                if(this.vpGridTrans[index]) {
+                    finalIndex = index;
+
+                    vertices[i].x += this.vpGridTrans[finalIndex][0] * this.header.xExtent * this.scaleFactor;
+                    vertices[i].y += this.vpGridTrans[finalIndex][1] * this.header.xExtent * this.scaleFactor;
+                    vertices[i].z += this.vpGridTrans[finalIndex][2] * this.header.xExtent * this.scaleFactor;
+
+                    vertTrans[finalIndex] = 1;
+                }
+            }
             r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(this.matrix);
         }
 //            vertices[i].x = r.x / this.scaleFactor - this.ptranx;
@@ -29428,13 +29481,22 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         let fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
 
         if(fa !== fb && fb !== fc && fa !== fc){
-            finalfaces.push({"a":fa, "b":fb, "c":fc});
+            if(this.header.ccp4) {
+                // only transfered vertices will be used
+                if(vertTrans.hasOwnProperty(vertices[fa].index) && vertTrans.hasOwnProperty(vertices[fb].index) 
+                  && vertTrans.hasOwnProperty(vertices[fc].index)) {
+                    finalfaces.push({"a":fa, "b":fb, "c":fc});
+                }
+            }
+            else {
+                finalfaces.push({"a":fa, "b":fb, "c":fc});
+            }
         }
     }
 
     //try to help the garbage collector
     this.vpBits = null; // uint8 array of bitmasks
-    this.vpDistance = null; // floatarray
+    this.vpGridTrans = null; // uint8 array
     this.vpAtomID = null; // intarray
 
     return {
@@ -29493,6 +29555,8 @@ ElectronMap.prototype.initparm = function(inHeader, inData, inMatrix, inIsovalue
     this.cutRadius = this.probeRadius * this.scaleFactor;
 
     this.vpBits = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
+    if(this.header.ccp4) this.vpGridTrans = new Array(this.pLength * this.pWidth * this.pHeight);
+
     this.vpAtomID = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
 };
 
@@ -29518,7 +29582,6 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
     let i, j, k, il, jl, kl;
     for(i = 0, il = this.vpBits.length; i < il; i++) {
         this.vpBits[i] = 0;
-        //this.vpDistance[i] = -1.0;
         this.vpAtomID[i] = 0;
     }
 
@@ -29680,6 +29743,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
             }
         }
         else {
+            // let index2ori = {};
             for(let serial in atomlist) {
                 let atom = atoms[atomlist[serial]];
 
@@ -29710,6 +29774,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
 
             for(i = 0, il = indexArray.length; i < il; ++i) {
                 let index = indexArray[i];
+
                 if(this.type == '2fofc') {
                     this.vpBits[index] =(this.dataArray[index] >= this.isovalue) ? 1 : 0;
                     //this.vpAtomID[index] =(this.dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
@@ -29723,6 +29788,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                     //this.vpAtomID[index] =(this.dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
                 }
             }
+            
         }
     }
 
@@ -29946,7 +30012,18 @@ class Surface {
             cfg.isovalue = ic.mapData.sigma2;
             cfg.type = '2fofc';
 
-            ps = this.SetupMap(cfg);
+            //ccp4
+            cfg.ccp4 = ic.mapData.ccp4;
+            cfg.grid = ic.mapData.grid2;
+            cfg.unit_cell = ic.mapData.unit_cell2;
+
+            if(cfg.header || cfg.ccp4) ps = this.SetupMap(cfg);
+            else return;
+
+            if(cfg.ccp4) {
+                ic.mapData = {};
+                return;
+            }
         }
         else if(type == 12) { // fofc
             cfg.header = ic.mapData.header;
@@ -29955,7 +30032,18 @@ class Surface {
             cfg.isovalue = ic.mapData.sigma;
             cfg.type = 'fofc';
 
-            ps = this.SetupMap(cfg);
+            //ccp4
+            cfg.ccp4 = ic.mapData.ccp4;
+            cfg.grid = ic.mapData.grid;
+            cfg.unit_cell = ic.mapData.unit_cell;
+
+            if(cfg.header || cfg.ccp4) ps = this.SetupMap(cfg);
+            else return;
+
+            if(cfg.ccp4) {
+                ic.mapData = {};
+                return;
+            }
         }
         else if(type == 13) { // em
             cfg.maxdist = 3; // EM map has no unit cell. It could include more gird space.
@@ -30443,29 +30531,60 @@ class Surface {
     }
 
     SetupMap(data) { let ic = this.icn3d; ic.icn3dui;
-        let ps = new ElectronMap(ic);
-        
-        ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
-          data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
+        if(data.ccp4) {
+            let radius = 10; 
+            let center = (ic.center) ? [ic.center.x, ic.center.y, ic.center.z] : [0,0,0];
+    
+            let typeDetail;
+            if(data.type == '2fofc') {
+              typeDetail = '2fofc';
+              let result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              let iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
 
-        ps.fillvoxels(data.allatoms, data.extendedAtoms);
+              result = null;
+              iso = null;
+            }
+            else if(data.type == 'fofc') {
+              typeDetail = 'fofc_neg';
+              let result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              let iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
+    
+              typeDetail = 'fofc_pos';
+              result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
 
-        if(!data.header.bSurface) ps.buildboundary();
+              result = null;
+              iso = null;
+            }
+        }
+        else {
+            let ps = new ElectronMap(ic); 
+    
+            ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
+            data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
 
-        if(!data.header.bSurface) ps.marchingcube();
-        
-        ps.vpBits = null; // uint8 array of bitmasks
-        //ps.vpDistance = null; // floatarray of _squared_ distances
-        ps.vpAtomID = null; // intarray
+            ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
-        let result;
+            if(!data.header.bSurface) ps.buildboundary();
 
-        if(!data.header.bSurface) result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
+            if(!data.header.bSurface) ps.marchingcube();
+            
+            ps.vpBits = null; // uint8 array of bitmasks
+            //ps.vpDistance = null; // floatarray of _squared_ distances
+            ps.vpAtomID = null; // intarray
 
-        ps.faces = null;
-        ps.verts = null;
+            let result;
 
-        return result;
+            if(!data.header.bSurface) result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
+
+            ps.faces = null;
+            ps.verts = null;
+
+            return result;
+        }
     }
 }
 
@@ -35952,7 +36071,7 @@ class SetColor {
 
                     for(let resid in residueHash) {
                         if(!ic.resid2refnum[resid]) {              
-                            color = me.parasCls.thr('#FFFFFF');
+                            color = me.parasCls.thr('#00FFFF'); //('#FFFFFF');
                         }
                         else {
                             let refnumLabel = ic.resid2refnum[resid];
@@ -35987,7 +36106,7 @@ class SetColor {
                     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
                     for(let resid in residueHash) {
                         if(!ic.resid2refnum[resid]) {
-                            color = me.parasCls.thr('#FFFFFF');
+                            color = me.parasCls.thr('#00FFFF'); //('#FFFFFF');
                         }
                         else {
                             let refnumLabel = ic.resid2refnum[resid];
@@ -38200,14 +38319,14 @@ class AnnoDomain {
         let pdbid = pdbArray[index];
         //let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
-        if(index == 0 && ic.mmdb_data !== undefined) {      
+        if(!ic.bResetAnno && index == 0 && ic.mmdb_data !== undefined) {      
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
                     this.showDomainWithData(chnid, ic.mmdb_data);
                 }
             }
         }
-        else if(ic.mmdb_dataArray[index] !== undefined) {
+        else if(!ic.bResetAnno && ic.mmdb_dataArray[index] !== undefined) {
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
                    this.showDomainWithData(chnid, ic.mmdb_dataArray[index]);
@@ -39294,6 +39413,9 @@ class Domain3d {
 		//this.dcut = 7; // threshold for C-alpha interactions
 		this.dcut = 8; // threshold for C-alpha interactions
 
+		// added by Jiyao
+		this.min_contacts = 5; //3;			// minimum number of contacts to be considered as neighbors
+
 		this.MAX_SSE = 512;
 
         //let this.ctc_cnt[this.MAX_SSE][this.MAX_SSE];		// contact count matrix
@@ -39325,9 +39447,6 @@ class Domain3d {
         this.mean_cts = 0.0;				// mean number of contacts in a domain
         this.c_delta = 3;				// cut set parameter
         this.nc_fact = 0.0;				// size factor for internal contacts
-
-		// added by Jiyao
-		this.min_contacts = 3;			// minimum number of contacts to be considered as neighbors
 
         //let this.elements[2*this.MAX_SSE];			// sets of this.elements to be split
         this.elements = [];
@@ -44182,8 +44301,10 @@ class ShowSeq {
         let result = ic.refnumCls.getTemplateList(chnid);
         let refpdbnameList = result.refpdbnameList;
         let scoreList = result.scoreList;
+        let seqidList = result.seqidList;
+        let nresAlignList = result.nresAlignList;
 
-        let refStruTitle = (refpdbnameList) ? "based on " + refpdbnameList + ". The TM-scores are " + scoreList + "." : "";
+        let refStruTitle = (refpdbnameList) ? "based on " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + "." : "";
 
         let htmlTmp = '<div class="icn3d-dl_sequence">';
         htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
@@ -46805,13 +46926,22 @@ class LineGraph {
             if(i < il - 1) refpdbnameList += ", ";
         }
 
-        let scoreList = '';
+        let scoreList = '', seqidList = '', nresAlignList = '';
         for(let i = 0, il = domainidArray.length; i < il; ++i) {
-            scoreList += domainid2score[domainidArray[i]];
-            if(i < il - 1) scoreList += ", ";
+            let itemArray = domainid2score[domainidArray[i]].split('_');
+
+            scoreList += itemArray[0];
+            seqidList += itemArray[1];
+            nresAlignList += itemArray[2];
+
+            if(i < il - 1) {
+                scoreList += ", ";
+                seqidList += ", ";
+                nresAlignList += ", ";
+            }
         }
 
-        return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList};
+        return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList, 'seqidList': seqidList, 'nresAlignList': nresAlignList};
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
@@ -46906,28 +47036,15 @@ class LineGraph {
 
             if(!bRound1) {
                 console.log("domainid: " + domainid);
-
-                if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid]) {
-                    ic.domainid2score[domainid] = queryData[0].score;  
-        
-                    ic.domainid2refpdbname[domainid] = refpdbname;
-                    domainid2segs[domainid] = queryData[0].segs;
-                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-                }
             }
-            else {
-                //let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
-                let mixScore = queryData[0].score; 
 
-                if(!ic.domainid2score.hasOwnProperty(domainid) || mixScore > ic.domainid2score[domainid]) {
-                    ic.domainid2score[domainid] = mixScore;  
-        
-                    ic.domainid2refpdbname[domainid] = refpdbname;
-                    domainid2segs[domainid] = queryData[0].segs;
-                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-                }                
+            if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
+                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;  
+    
+                ic.domainid2refpdbname[domainid] = refpdbname;
+                domainid2segs[domainid] = queryData[0].segs;
+                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
             }
         }
 
@@ -46998,7 +47115,7 @@ class LineGraph {
             // end of round 2
             return;
         }
-        
+
         // combine domainid into chainid
         let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
@@ -47046,8 +47163,10 @@ class LineGraph {
             let result = this.getTemplateList(chainid);
             let refpdbnameList = result.refpdbnameList;
             let scoreList = result.scoreList;
+            let seqidList = result.seqidList;
+            let nresAlignList = result.nresAlignList;
 
-            let message = "The reference PDBs for chain " + chainid + " are " + refpdbnameList + ". The TM-scores are " + scoreList + ".";
+            let message = "The reference PDB(s) for chain " + chainid + " is(are) " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + ".";
             if(!me.bNode) {
                 console.log(message);
                 me.htmlCls.clickMenuCls.setLogCmd(message, true);
@@ -48683,7 +48802,7 @@ class ViewInterPairs {
 
            if(ic.bD3 === undefined) {
                 //let url = "https://d3js.org/d3.v4.min.js";
-                let url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                let url = "./script/d3v4-force-all.min.js";
                 await me.getAjaxPromise(url, 'script');
 
                 ic.bD3 = true;
@@ -49958,7 +50077,7 @@ class AlignParser {
             for(let j = 0, jl = mmdbTmp.molecules.length; j < jl; ++j) {
                 let molecule = mmdbTmp.molecules[j];
                 let molid = molecule.moleculeId;
-                let chainName = molecule.chain.trim();
+                let chainName = molecule.chain.trim().replace(/_/g, ''); // change "A_1" to "A1"
                 if(chainNameHash[chainName] === undefined) {
                     chainNameHash[chainName] = 1;
                 }
@@ -51252,10 +51371,10 @@ class Dsn6Parser {
         // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
         let url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
-        await this.dsn6ParserBase(url, type, sigma);
+        await this.dsn6ParserBase(url, type, sigma, 'url', true);
     }
 
-    async dsn6ParserBase(url, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+    async dsn6ParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
@@ -51269,7 +51388,7 @@ class Dsn6Parser {
         }
         else {
             let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'rcsbEdmaps');
-            thisClass.loadDsn6Data(arrayBuffer, type, sigma);
+            sigma = thisClass.loadDsn6Data(arrayBuffer, type, sigma, location, bInputSigma);
 
             if(type == '2fofc') {
                 ic.bAjax2fofc = true;
@@ -51280,9 +51399,11 @@ class Dsn6Parser {
 
             ic.setOptionCls.setOption('map', type);
         }
+
+        return sigma;
     }
 
-    loadDsn6Data(dsn6data, type, sigma) { let ic = this.icn3d; ic.icn3dui;
+    loadDsn6Data(dsn6data, type, sigma, location, bInputSigma) { let ic = this.icn3d; ic.icn3dui;
         // DSN6 http://www.uoxray.uoregon.edu/tnt/manual/node104.html
         // BRIX http://svn.cgl.ucsf.edu/svn/chimera/trunk/libs/VolumeData/dsn6/brix-1.html
 
@@ -51331,9 +51452,9 @@ class Dsn6Parser {
             }
           }
 
-          header.zStart = intView[ 2 ];
           header.xStart = intView[ 0 ]; // NXSTART
           header.yStart = intView[ 1 ];
+          header.zStart = intView[ 2 ];
 
           header.xExtent = intView[ 3 ]; // NX
           header.yExtent = intView[ 4 ];
@@ -51369,6 +51490,7 @@ class Dsn6Parser {
         let zBlocks = Math.ceil(header.zExtent / 8);
 
         // loop over blocks
+        let maxValue = -999;
         for(let zz = 0; zz < zBlocks; ++zz) {
           for(let yy = 0; yy < yBlocks; ++yy) {
             for(let xx = 0; xx < xBlocks; ++xx) {
@@ -51384,6 +51506,7 @@ class Dsn6Parser {
                     if(x < header.xExtent && y < header.yExtent && z < header.zExtent) {
                       let idx =((((x * header.yExtent) + y) * header.zExtent) + z);
                       data[ idx ] =(byteView[ offset ] - summand) / divisor;
+                      if(data[ idx ] > maxValue) maxValue = data[ idx ];
                       ++offset;
                     } else {
                       offset += 8 - i;
@@ -51394,6 +51517,10 @@ class Dsn6Parser {
               }
             }
           }
+        }
+
+        if(!bInputSigma) {
+          sigma = this.setSigma(maxValue, location, type, sigma);
         }
 
         if(type == '2fofc') {
@@ -51410,6 +51537,32 @@ class Dsn6Parser {
             ic.mapData.type = type;
             ic.mapData.sigma = sigma;
         }
+
+        return sigma;
+    }
+
+    setSigma(maxValue, location, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+      let inputId;
+      if(location == 'file') {
+        inputId = 'dsn6sigma' + type;
+      }
+      else if(location == 'url') {
+        inputId = 'dsn6sigmaurl' + type;
+      }
+
+      let factor = (type == '2fofc') ? 0.5 : 0.3;
+
+      if(inputId) {
+        if(!($("#" + me.pre + inputId).val())) {
+          sigma = (factor * maxValue).toFixed(2);
+          $("#" + me.pre + inputId).val(sigma);
+        }
+        else {
+          sigma = $("#" + me.pre + inputId).val();
+        }
+      }
+
+      return sigma;
     }
 
     getMatrix(header) { let ic = this.icn3d; ic.icn3dui;
@@ -51470,7 +51623,7 @@ class Dsn6Parser {
         return matrix;
     }
 
-    loadDsn6File(type, bCcp4) {var ic = this.icn3d, me = ic.icn3dui;
+    loadDsn6File(type) {var ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
@@ -51483,12 +51636,8 @@ class Dsn6Parser {
          let reader = new FileReader();
          reader.onload = function(e) { let ic = thisClass.icn3d;
            let arrayBuffer = e.target.result; // or = reader.result;
-           if(bCcp4) {
-              ic.densityCifParserCls.parseChannels(arrayBuffer, type, sigma);
-           }
-           else {
-              thisClass.loadDsn6Data(arrayBuffer, type, sigma);
-           }
+
+           sigma = thisClass.loadDsn6Data(arrayBuffer, type, sigma, 'file');
 
            if(type == '2fofc') {
                ic.bAjax2fofc = true;
@@ -51497,7 +51646,7 @@ class Dsn6Parser {
                ic.bAjaxfofc = true;
            }
            ic.setOptionCls.setOption('map', type);
-           me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
+           me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val() + ' with sigma ' + sigma, false);
          };
          reader.readAsArrayBuffer(file);
        }
@@ -51507,11 +51656,996 @@ class Dsn6Parser {
        let url = $("#" + ic.pre + "dsn6fileurl" + type).val();
        let sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
        if(!url) {
+          alert("Please input the file URL before clicking 'Load'");
+       }
+       else {
+          sigma = this.dsn6ParserBase(url, type, sigma, 'url');
+          me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file dsn6 | ' + encodeURIComponent(url), true);
+       }
+    }
+
+}
+
+/**
+ * @file Ccp4 Parser
+ * @author Marcin Wojdyr <wojdyr@gmail.com>
+ * @private
+ * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
+ */
+
+class Ccp4Parser {
+      constructor(icn3d) {
+          this.icn3d = icn3d;
+      }
+
+      async ccp4ParserBase(url, type, sigma, location) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
+        // if(type == '2fofc' && ic.bAjax2fofcccp4) {
+        //     ic.mapData.sigma2 = sigma;
+        //     ic.setOptionCls.setOption('map', type);
+        // }
+        // else if(type == 'fofc' && ic.bAjaxfofcccp4) {
+        //     ic.mapData.sigma = sigma;
+        //     ic.setOptionCls.setOption('map', type);
+        // }
+        // else {
+            let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', '');
+            let bInputSigma = true;
+            sigma = thisClass.load_map_from_buffer(arrayBuffer, type, sigma, location, bInputSigma);
+
+            // if(type == '2fofc') {
+            //     ic.bAjax2fofcccp4 = true;
+            // }
+            // else if(type == 'fofc') {
+            //     ic.bAjaxfofcccp4 = true;
+            // }
+
+            ic.setOptionCls.setOption('map', type);
+
+            return sigma;
+        // }
+    }
+
+    // modified from_ccp4() at https://github.com/uglymol/uglymol.github.io/blob/master/src/elmap.js
+    load_map_from_buffer(buf, type, sigma, location, bInputSigma) { let ic = this.icn3d; ic.icn3dui;
+        if (buf.byteLength < 1024) throw Error('File shorter than 1024 bytes.');
+
+        //console.log('buf type: ' + Object.prototype.toString.call(buf));
+        // for now we assume both file and host are little endian
+        const iview = new Int32Array(buf, 0, 256);
+        // word 53 - character string 'MAP ' to identify file type
+        if (iview[52] !== 0x2050414d) throw Error('not a CCP4 map');
+
+        // map has 3 dimensions referred to as columns (fastest changing), rows
+        // and sections (c-r-s)
+        const n_crs = [iview[0], iview[1], iview[2]]; // 108, 108, 108
+        const mode = iview[3]; //2
+        let nb;
+        if (mode === 2) nb = 4;
+        else if (mode === 0) nb = 1;
+        else throw Error('Only Mode 2 and Mode 0 of CCP4 map is supported.');
+
+        const start = [iview[4], iview[5], iview[6]]; // 0,0,0
+        const n_grid = [iview[7], iview[8], iview[9]]; // 108,108,108 
+        const nsymbt = iview[23]; // size of extended header in bytes
+                                  // nsymbt = 1920
+ 
+        if (1024 + nsymbt + nb*n_crs[0]*n_crs[1]*n_crs[2] !== buf.byteLength) {
+          throw Error('ccp4 file too short or too long');
+        }
+
+        const fview = new Float32Array(buf, 0, buf.byteLength / 4);
+        const grid = new GridArray(n_grid);
+        const unit_cell = new UnitCell(fview[10], fview[11], fview[12], fview[13], fview[14], fview[15]); // 79.1, 79.1, 79.1, 90, 90, 90
+                                      
+        // MAPC, MAPR, MAPS - axis corresp to cols, rows, sections (1,2,3 for X,Y,Z)
+        const map_crs = [iview[16], iview[17], iview[18]]; // 2,1,3
+        const ax = map_crs.indexOf(1);
+        const ay = map_crs.indexOf(2);
+        const az = map_crs.indexOf(3);
+    
+        const min = fview[19]; // -0.49
+        const max = fview[20]; // 0.94
+        //const sg_number = iview[22];
+        //const lskflg = iview[24];
+
+        if (nsymbt % 4 !== 0) {
+          throw Error('CCP4 map with NSYMBT not divisible by 4 is not supported.');
+        }
+        let data_view;
+        if (mode === 2) data_view = fview;
+        else /* mode === 0 */ data_view = new Int8Array(buf);
+        let idx = (1024 + nsymbt) / nb | 0; //736
+
+        // We assume that if DMEAN and RMS from the header are not clearly wrong
+        // they are what the user wants. Because the map can cover a small part
+        // of the asu and its rmsd may be different than the total rmsd.
+        // let stats = { mean: 0.0, rms: 1.0 };
+        // stats.mean = fview[21]; //0
+        // stats.rms = fview[54]; //0.15
+        // if (stats.mean < min || stats.mean > max || stats.rms <= 0) {
+        //   stats = this.calculate_stddev(data_view, idx);
+        // }
+
+        let b1 = 1;
+        let b0 = 0;
+        // if the file was converted by mapmode2to0 - scale the data
+        if (mode === 0 && iview[39] === -128 && iview[40] === 127) { //39:0, 40:0
+          // scaling f(x)=b1*x+b0 such that f(-128)=min and f(127)=max
+          b1 = (max - min) / 255.0;
+          b0 = 0.5 * (min + max + b1);
+        }
+    
+        const end = [start[0] + n_crs[0], start[1] + n_crs[1], start[2] + n_crs[2]];
+        let it = [0, 0, 0];
+        let maxValue = -999;
+        for (it[2] = start[2]; it[2] < end[2]; it[2]++) { // sections
+          for (it[1] = start[1]; it[1] < end[1]; it[1]++) { // rows
+            for (it[0] = start[0]; it[0] < end[0]; it[0]++) { // cols
+              let value = b1 * data_view[idx] + b0;
+              grid.set_grid_value(it[ax], it[ay], it[az], value);
+
+              if(value > maxValue) maxValue = value;
+              idx++;
+            }
+          }
+        }
+        
+/*
+        if (expand_symmetry && nsymbt > 0) {
+          const u8view = new Uint8Array(buf);
+          for (let i = 0; i+80 <= nsymbt; i += 80) {
+            let j;
+            let symop = '';
+            for (j = 0; j < 80; ++j) {
+              symop += String.fromCharCode(u8view[1024 + i + j]);
+            }
+            if (/^\s*x\s*,\s*y\s*,\s*z\s*$/i.test(symop)) continue;  // skip x,y,z
+            //console.log('sym ops', symop.trim());
+            let mat = this.parse_symop(symop);
+            // Note: we apply here symops to grid points instead of coordinates.
+            // In the cases we came across it is equivalent, but in general not.
+            for (j = 0; j < 3; ++j) {
+              mat[j][3] = Math.round(mat[j][3] * n_grid[j]) | 0;
+            }
+            idx = (1024 + nsymbt) / nb | 0;
+            let xyz = [0, 0, 0];
+            for (it[2] = start[2]; it[2] < end[2]; it[2]++) { // sections
+              for (it[1] = start[1]; it[1] < end[1]; it[1]++) { // rows
+                for (it[0] = start[0]; it[0] < end[0]; it[0]++) { // cols
+                  for (j = 0; j < 3; ++j) {
+                    xyz[j] = it[ax] * mat[j][0] + it[ay] * mat[j][1] +
+                             it[az] * mat[j][2] + mat[j][3];
+                  }
+                  let value = b1 * data_view[idx] + b0;
+                  grid.set_grid_value(xyz[0], xyz[1], xyz[2], value);
+
+                  if(value > maxValue) maxValue = value;
+                  idx++;
+                }
+              }
+            }
+          }
+        }
+*/
+
+        if(!bInputSigma) {
+          sigma = ic.dsn6ParserCls.setSigma(maxValue, location, type, sigma);
+        }
+
+        if(type == '2fofc') {
+          ic.mapData.ccp4 = 1;
+          ic.mapData.grid2 = grid;
+          ic.mapData.unit_cell2 = unit_cell;
+          ic.mapData.type2 = type;
+          ic.mapData.sigma2 = sigma;
+        }
+        else {
+          ic.mapData.ccp4 = 1;
+          ic.mapData.grid = grid;
+          ic.mapData.unit_cell = unit_cell;
+          ic.mapData.type = type;
+          ic.mapData.sigma = sigma;
+        }
+
+        return sigma;
+    }
+
+    load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma) { let ic = this.icn3d; ic.icn3dui;
+      let is_diff = (type == 'fofc'); // diff: fofc, non-diff: 2fofc
+      let dataArray = mtz.calculate_map(is_diff);
+
+      let mc = mtz.cell;
+      const unit_cell = new UnitCell(mc.a, mc.b, mc.c, mc.alpha, mc.beta, mc.gamma);
+
+      let maxValue = -999;
+      for(let i = 0, il = dataArray.length; i < il; ++i) {
+          if(dataArray[i] > maxValue) maxValue = dataArray[i];
+      }
+
+      if(!bInputSigma) {
+        sigma = ic.dsn6ParserCls.setSigma(maxValue, location, type, sigma);
+      }
+
+      const grid = new GridArray([mtz.nx, mtz.ny, mtz.nz]);
+      grid.values.set(dataArray);
+
+      if(type == '2fofc') {
+        ic.mapData.ccp4 = 1;
+        ic.mapData.grid2 = grid;
+        ic.mapData.unit_cell2 = unit_cell;
+        ic.mapData.type2 = type;
+        ic.mapData.sigma2 = sigma;
+      }
+      else {
+        ic.mapData.ccp4 = 1;
+        ic.mapData.grid = grid;
+        ic.mapData.unit_cell = unit_cell;
+        ic.mapData.type = type;
+        ic.mapData.sigma = sigma;
+      }
+
+      mtz.delete();
+
+      return sigma;
+    }
+
+    // calculate_stddev(a, offset) {
+    //   let sum = 0;
+    //   let sq_sum = 0;
+    //   const alen = a.length;
+    //   for (let i = offset; i < alen; i++) {
+    //     sum += a[i];
+    //     sq_sum += a[i] * a[i];
+    //   }
+    //   const mean = sum / (alen - offset);
+    //   const variance = sq_sum / (alen - offset) - mean * mean;
+    //   return {mean: mean, rms: Math.sqrt(variance)};
+    // }
+    
+    parse_symop(symop) {
+      const ops = symop.toLowerCase().replace(/\s+/g, '').split(',');
+      if (ops.length !== 3) throw Error('Unexpected symop: ' + symop);
+      let mat = [];
+      for (let i = 0; i < 3; i++) {
+        const terms = ops[i].split(/(?=[+-])/);
+        let row = [0, 0, 0, 0];
+        for (let j = 0; j < terms.length; j++) {
+          const term = terms[j];
+          const sign = (term[0] === '-' ? -1 : 1);
+          let m = terms[j].match(/^[+-]?([xyz])$/);
+          if (m) {
+            const pos = {x: 0, y: 1, z: 2}[m[1]];
+            row[pos] = sign;
+          } else {
+            m = terms[j].match(/^[+-]?(\d)\/(\d)$/);
+            if (!m) throw Error('What is ' + terms[j] + ' in ' + symop);
+            row[3] = sign * Number(m[1]) / Number(m[2]);
+          }
+        }
+        mat.push(row);
+      }
+      return mat;
+    }    
+
+    loadCcp4File(type) {let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
+
+       let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
+       let sigma = $("#" + ic.pre + "dsn6sigma" + type).val();
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         me.utilsCls.checkFileAPI();
+         let reader = new FileReader();
+         reader.onload = function(e) { let ic = thisClass.icn3d;
+            let arrayBuffer = e.target.result; // or = reader.result;
+            sigma = thisClass.load_map_from_buffer(arrayBuffer, type, sigma, 'file');
+
+            // if(type == '2fofc') {
+            //   ic.bAjax2fofcCcp4 = true;
+            // }
+            // else if(type == 'fofc') {
+            //     ic.bAjaxfofcCcp4 = true;
+            // }
+            ic.setOptionCls.setOption('map', type);
+            me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val() + ' with sigma ' + sigma, false);
+         };
+         reader.readAsArrayBuffer(file);
+       }
+    }
+
+    async loadCcp4FileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
+       let url = $("#" + ic.pre + "dsn6fileurl" + type).val();
+       let sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
+       if(!url) {
             alert("Please input the file URL before clicking 'Load'");
        }
        else {
-           this.dsn6ParserBase(url, type, sigma);
-           me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+           sigma = await this.ccp4ParserBase(url, type, sigma, 'file');
+
+           me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file ccp4 | ' + encodeURIComponent(url), true);
+       }
+    }
+
+    // Extract a block of density for calculating an isosurface using the
+    // separate marching cubes implementation.
+    extract_block(grid, unit_cell, radius, center, typeDetail) { let ic = this.icn3d; ic.icn3dui;
+      //     let grid = this.grid;
+      //     let unit_cell = this.unit_cell;
+      if (grid == null || unit_cell == null) { return; }
+      let fc = unit_cell.fractionalize(center);
+
+      let r = [radius / unit_cell.parameters[0],
+              radius / unit_cell.parameters[1],
+              radius / unit_cell.parameters[2]];
+      let grid_min = grid.frac2grid([fc[0] - r[0], fc[1] - r[1], fc[2] - r[2]]);
+      let grid_max = grid.frac2grid([fc[0] + r[0], fc[1] + r[1], fc[2] + r[2]]);
+
+      let size = [grid_max[0] - grid_min[0] + 1,
+                  grid_max[1] - grid_min[1] + 1,
+                  grid_max[2] - grid_min[2] + 1];
+      let points = [];
+      let values = [];
+      let threshold = 1;
+      let bAtoms = ic.hAtoms && Object.keys(ic.hAtoms).length > 0;
+      for (let i = grid_min[0]; i <= grid_max[0]; i++) {
+          for (let j = grid_min[1]; j <= grid_max[1]; j++) {
+              for (let k = grid_min[2]; k <= grid_max[2]; k++) {
+                let frac = grid.grid2frac(i, j, k);
+                let orth = unit_cell.orthogonalize(frac);
+                points.push(orth);
+
+                // get overlap between map and atoms
+                let positoin = new THREE.Vector3(orth[0], orth[1], orth[2]);
+                let atomsNear = ic.rayCls.getAtomsFromPosition(positoin, threshold, ic.hAtoms);
+
+                let map_value = (atomsNear || !bAtoms) ? grid.get_grid_value(i, j, k) : 0;
+
+                if(typeDetail == 'fofc_pos' && map_value < 0) map_value = 0;
+                if(typeDetail == 'fofc_neg') map_value = (map_value > 0) ? 0 : -map_value;
+
+                values.push(map_value);
+              }
+          }
+      }
+
+      return {size: size, values: values, points: points};
+  //     this.block.set(points, values, size);
+    };
+
+    marchingCubes(dims, values, points, isolevel, method) {  let ic = this.icn3d; ic.icn3dui;
+      const edgeTable = new Int32Array([
+        0x0  , 0x0  , 0x202, 0x302, 0x406, 0x406, 0x604, 0x704,
+        0x804, 0x805, 0xa06, 0xa06, 0xc0a, 0xd03, 0xe08, 0xf00,
+        0x90 , 0x98 , 0x292, 0x292, 0x496, 0x49e, 0x694, 0x694,
+        0x894, 0x894, 0xa96, 0xa96, 0xc9a, 0xc92, 0xe91, 0xe90,
+        0x230, 0x230, 0x33 , 0x13a, 0x636, 0x636, 0x434, 0x43c,
+        0xa34, 0xa35, 0x837, 0x936, 0xe3a, 0xf32, 0xc31, 0xd30,
+        0x2a0, 0x2a8, 0xa3 , 0xaa , 0x6a6, 0x6af, 0x5a4, 0x4ac,
+        0xaa4, 0xaa4, 0x9a6, 0x8a6, 0xfaa, 0xea3, 0xca1, 0xca0,
+        0x460, 0x460, 0x662, 0x762, 0x66 , 0x66 , 0x265, 0x364,
+        0xc64, 0xc65, 0xe66, 0xe66, 0x86a, 0x863, 0xa69, 0xa60,
+        0x4f0, 0x4f8, 0x6f2, 0x6f2, 0xf6 , 0xfe , 0x2f5, 0x2fc,
+        0xcf4, 0xcf4, 0xef6, 0xef6, 0x8fa, 0x8f3, 0xaf9, 0xaf0,
+        0x650, 0x650, 0x453, 0x552, 0x256, 0x256, 0x54 , 0x154,
+        0xe54, 0xf54, 0xc57, 0xd56, 0xa5a, 0xb52, 0x859, 0x950,
+        0x7c0, 0x6c1, 0x5c2, 0x4c2, 0x3c6, 0x2ce, 0xc5 , 0xc4 ,
+        0xfc4, 0xec5, 0xdc6, 0xcc6, 0xbca, 0xac2, 0x8c1, 0x8c0,
+        0x8c0, 0x8c0, 0xac2, 0xbc2, 0xcc6, 0xcc6, 0xec4, 0xfcc,
+        0xc4 , 0xc5 , 0x2c6, 0x3c6, 0x4c2, 0x5c2, 0x6c1, 0x7c0,
+        0x950, 0x859, 0xb52, 0xa5a, 0xd56, 0xc57, 0xe54, 0xe5c,
+        0x154, 0x54 , 0x25e, 0x256, 0x552, 0x453, 0x658, 0x650,
+        0xaf0, 0xaf0, 0x8f3, 0x8fa, 0xef6, 0xef6, 0xcf4, 0xcfc,
+        0x2f4, 0x3f5, 0xff , 0x1f6, 0x6f2, 0x6f3, 0x4f9, 0x5f0,
+        0xa60, 0xa69, 0x863, 0x86a, 0xe66, 0xe67, 0xd65, 0xc6c,
+        0x364, 0x265, 0x166, 0x66 , 0x76a, 0x663, 0x460, 0x460,
+        0xca0, 0xca0, 0xea2, 0xfa2, 0x8a6, 0x8a6, 0xaa4, 0xba4,
+        0x4ac, 0x5a4, 0x6ae, 0x7a6, 0xaa , 0xa3 , 0x2a8, 0x2a0,
+        0xd30, 0xc31, 0xf32, 0xe3a, 0x936, 0x837, 0xb35, 0xa34,
+        0x43c, 0x434, 0x73e, 0x636, 0x13a, 0x33 , 0x339, 0x230,
+        0xe90, 0xe90, 0xc92, 0xc9a, 0xa96, 0xa96, 0x894, 0x89c,
+        0x694, 0x695, 0x49f, 0x496, 0x292, 0x392, 0x98 , 0x90 ,
+        0xf00, 0xe08, 0xd03, 0xc0a, 0xa06, 0xa0e, 0x805, 0x804,
+        0x704, 0x604, 0x506, 0x406, 0x302, 0x202, 0x0  , 0x0]);
+
+      const segTable = [
+        [],
+        [],
+        [1, 9],
+        [1, 8, 1, 9],
+        [2, 10, 10, 1],
+        [2, 10, 10, 1],
+        [9, 2, 2, 10, 10, 9],
+        [2, 8, 2, 10, 10, 8, 10, 9],
+        [11, 2],
+        [0, 11, 11, 2],
+        [1, 9, 11, 2],
+        [1, 11, 11, 2, 1, 9, 9, 11],
+        [3, 10, 10, 1, 11, 10],
+        [0, 10, 10, 1, 8, 10, 11, 10],
+        [3, 9, 11, 9, 11, 10, 10, 9],
+        [8, 10, 10, 9, 11, 10],
+        [4, 7],
+        [4, 3, 4, 7],
+        [1, 9, 4, 7],
+        [4, 1, 1, 9, 4, 7, 7, 1],
+        [2, 10, 10, 1, 4, 7],
+        [3, 4, 4, 7, 2, 10, 10, 1],
+        [9, 2, 2, 10, 10, 9, 4, 7],
+        [2, 10, 10, 9, 9, 2, 9, 7, 7, 2, 4, 7],
+        [4, 7, 11, 2],
+        [11, 4, 4, 7, 11, 2, 2, 4],
+        [1, 9, 4, 7, 11, 2],
+        [4, 7, 11, 4, 11, 9, 11, 2, 2, 9, 1, 9],
+        [3, 10, 10, 1, 11, 10, 4, 7],
+        [1, 11, 11, 10, 10, 1, 1, 4, 4, 11, 4, 7],
+        [4, 7, 0, 11, 11, 9, 11, 10, 10, 9],
+        [4, 7, 11, 4, 11, 9, 11, 10, 10, 9],
+        [9, 5, 5, 4],
+        [9, 5, 5, 4],
+        [0, 5, 5, 4, 1, 5],
+        [8, 5, 5, 4, 3, 5, 1, 5],
+        [2, 10, 10, 1, 9, 5, 5, 4],
+        [2, 10, 10, 1, 9, 5, 5, 4],
+        [5, 2, 2, 10, 10, 5, 5, 4, 4, 2],
+        [2, 10, 10, 5, 5, 2, 5, 3, 5, 4, 4, 3],
+        [9, 5, 5, 4, 11, 2],
+        [0, 11, 11, 2, 9, 5, 5, 4],
+        [0, 5, 5, 4, 1, 5, 11, 2],
+        [1, 5, 5, 2, 5, 8, 8, 2, 11, 2, 5, 4],
+        [10, 3, 11, 10, 10, 1, 9, 5, 5, 4],
+        [9, 5, 5, 4, 8, 1, 8, 10, 10, 1, 11, 10],
+        [5, 4, 0, 5, 0, 11, 11, 5, 11, 10, 10, 5],
+        [5, 4, 8, 5, 8, 10, 10, 5, 11, 10],
+        [9, 7, 5, 7, 9, 5],
+        [9, 3, 9, 5, 5, 3, 5, 7],
+        [0, 7, 1, 7, 1, 5, 5, 7],
+        [1, 5, 5, 3, 5, 7],
+        [9, 7, 9, 5, 5, 7, 10, 1, 2, 10],
+        [10, 1, 2, 10, 9, 5, 5, 0, 5, 3, 5, 7],
+        [2, 8, 2, 5, 5, 8, 5, 7, 10, 5, 2, 10],
+        [2, 10, 10, 5, 5, 2, 5, 3, 5, 7],
+        [7, 9, 9, 5, 5, 7, 11, 2],
+        [9, 5, 5, 7, 7, 9, 7, 2, 2, 9, 11, 2],
+        [11, 2, 1, 8, 1, 7, 1, 5, 5, 7],
+        [11, 2, 1, 11, 1, 7, 1, 5, 5, 7],
+        [9, 5, 5, 8, 5, 7, 10, 1, 3, 10, 11, 10],
+        [5, 7, 7, 0, 0, 5, 9, 5, 11, 0, 0, 10, 10, 1, 11, 10],
+        [11, 10, 10, 0, 0, 11, 10, 5, 5, 0, 0, 7, 5, 7],
+        [11, 10, 10, 5, 5, 11, 5, 7],
+        [10, 6, 6, 5, 5, 10],
+        [5, 10, 10, 6, 6, 5],
+        [1, 9, 5, 10, 10, 6, 6, 5],
+        [1, 8, 1, 9, 5, 10, 10, 6, 6, 5],
+        [1, 6, 6, 5, 5, 1, 2, 6],
+        [1, 6, 6, 5, 5, 1, 2, 6],
+        [9, 6, 6, 5, 5, 9, 0, 6, 2, 6],
+        [5, 9, 8, 5, 8, 2, 2, 5, 2, 6, 6, 5],
+        [11, 2, 10, 6, 6, 5, 5, 10],
+        [11, 0, 11, 2, 10, 6, 6, 5, 5, 10],
+        [1, 9, 11, 2, 5, 10, 10, 6, 6, 5],
+        [5, 10, 10, 6, 6, 5, 1, 9, 9, 2, 9, 11, 11, 2],
+        [6, 3, 11, 6, 6, 5, 5, 3, 5, 1],
+        [11, 0, 11, 5, 5, 0, 5, 1, 11, 6, 6, 5],
+        [11, 6, 6, 3, 6, 0, 6, 5, 5, 0, 5, 9],
+        [6, 5, 5, 9, 9, 6, 9, 11, 11, 6],
+        [5, 10, 10, 6, 6, 5, 4, 7],
+        [4, 3, 4, 7, 6, 5, 5, 10, 10, 6],
+        [1, 9, 5, 10, 10, 6, 6, 5, 4, 7],
+        [10, 6, 6, 5, 5, 10, 1, 9, 9, 7, 7, 1, 4, 7],
+        [6, 1, 2, 6, 6, 5, 5, 1, 4, 7],
+        [2, 5, 5, 1, 2, 6, 6, 5, 4, 3, 4, 7],
+        [4, 7, 0, 5, 5, 9, 0, 6, 6, 5, 2, 6],
+        [3, 9, 9, 7, 4, 7, 2, 9, 5, 9, 9, 6, 6, 5, 2, 6],
+        [11, 2, 4, 7, 10, 6, 6, 5, 5, 10],
+        [5, 10, 10, 6, 6, 5, 4, 7, 7, 2, 2, 4, 11, 2],
+        [1, 9, 4, 7, 11, 2, 5, 10, 10, 6, 6, 5],
+        [9, 2, 1, 9, 9, 11, 11, 2, 4, 11, 4, 7, 5, 10, 10, 6, 6, 5],
+        [4, 7, 11, 5, 5, 3, 5, 1, 11, 6, 6, 5],
+        [5, 1, 1, 11, 11, 5, 11, 6, 6, 5, 0, 11, 11, 4, 4, 7],
+        [0, 5, 5, 9, 0, 6, 6, 5, 3, 6, 11, 6, 4, 7],
+        [6, 5, 5, 9, 9, 6, 9, 11, 11, 6, 4, 7, 7, 9],
+        [10, 4, 9, 10, 6, 4, 10, 6],
+        [4, 10, 10, 6, 6, 4, 9, 10],
+        [10, 0, 1, 10, 10, 6, 6, 0, 6, 4],
+        [1, 8, 1, 6, 6, 8, 6, 4, 1, 10, 10, 6],
+        [1, 4, 9, 1, 2, 4, 2, 6, 6, 4],
+        [2, 9, 9, 1, 2, 4, 2, 6, 6, 4],
+        [2, 4, 2, 6, 6, 4],
+        [2, 8, 2, 4, 2, 6, 6, 4],
+        [10, 4, 9, 10, 10, 6, 6, 4, 11, 2],
+        [8, 2, 11, 2, 9, 10, 10, 4, 10, 6, 6, 4],
+        [11, 2, 1, 6, 6, 0, 6, 4, 1, 10, 10, 6],
+        [6, 4, 4, 1, 1, 6, 1, 10, 10, 6, 8, 1, 1, 11, 11, 2],
+        [9, 6, 6, 4, 9, 3, 3, 6, 9, 1, 11, 6],
+        [11, 1, 1, 8, 11, 6, 6, 1, 9, 1, 1, 4, 6, 4],
+        [11, 6, 6, 3, 6, 0, 6, 4],
+        [6, 4, 8, 6, 11, 6],
+        [7, 10, 10, 6, 6, 7, 8, 10, 9, 10],
+        [0, 7, 0, 10, 10, 7, 9, 10, 6, 7, 10, 6],
+        [10, 6, 6, 7, 7, 10, 1, 10, 7, 1, 8, 1],
+        [10, 6, 6, 7, 7, 10, 7, 1, 1, 10],
+        [2, 6, 6, 1, 6, 8, 8, 1, 9, 1, 6, 7],
+        [2, 6, 6, 9, 9, 2, 9, 1, 6, 7, 7, 9, 9, 3],
+        [0, 7, 0, 6, 6, 7, 2, 6],
+        [2, 7, 6, 7, 2, 6],
+        [11, 2, 10, 6, 6, 8, 8, 10, 9, 10, 6, 7],
+        [0, 7, 7, 2, 11, 2, 9, 7, 6, 7, 7, 10, 10, 6, 9, 10],
+        [1, 8, 1, 7, 1, 10, 10, 7, 6, 7, 10, 6, 11, 2],
+        [11, 2, 1, 11, 1, 7, 10, 6, 6, 1, 1, 10, 6, 7],
+        [9, 6, 6, 8, 6, 7, 9, 1, 1, 6, 11, 6, 6, 3],
+        [9, 1, 11, 6, 6, 7],
+        [0, 7, 0, 6, 6, 7, 11, 0, 11, 6],
+        [11, 6, 6, 7],
+        [7, 6, 6, 11],
+        [7, 6, 6, 11],
+        [1, 9, 7, 6, 6, 11],
+        [8, 1, 1, 9, 7, 6, 6, 11],
+        [10, 1, 2, 10, 6, 11, 7, 6],
+        [2, 10, 10, 1, 6, 11, 7, 6],
+        [2, 9, 2, 10, 10, 9, 6, 11, 7, 6],
+        [6, 11, 7, 6, 2, 10, 10, 3, 10, 8, 10, 9],
+        [7, 2, 6, 2, 7, 6],
+        [7, 0, 7, 6, 6, 0, 6, 2],
+        [2, 7, 7, 6, 6, 2, 1, 9],
+        [1, 6, 6, 2, 1, 8, 8, 6, 1, 9, 7, 6],
+        [10, 7, 7, 6, 6, 10, 10, 1, 1, 7],
+        [10, 7, 7, 6, 6, 10, 1, 7, 10, 1, 1, 8],
+        [7, 0, 7, 10, 10, 0, 10, 9, 6, 10, 7, 6],
+        [7, 6, 6, 10, 10, 7, 10, 8, 10, 9],
+        [6, 8, 4, 6, 6, 11],
+        [3, 6, 6, 11, 0, 6, 4, 6],
+        [8, 6, 6, 11, 4, 6, 1, 9],
+        [4, 6, 6, 9, 6, 3, 3, 9, 1, 9, 6, 11],
+        [6, 8, 4, 6, 6, 11, 2, 10, 10, 1],
+        [2, 10, 10, 1, 0, 11, 0, 6, 6, 11, 4, 6],
+        [4, 11, 4, 6, 6, 11, 2, 9, 2, 10, 10, 9],
+        [10, 9, 9, 3, 3, 10, 2, 10, 4, 3, 3, 6, 6, 11, 4, 6],
+        [8, 2, 4, 2, 4, 6, 6, 2],
+        [4, 2, 4, 6, 6, 2],
+        [1, 9, 3, 4, 4, 2, 4, 6, 6, 2],
+        [1, 9, 4, 1, 4, 2, 4, 6, 6, 2],
+        [8, 1, 8, 6, 6, 1, 4, 6, 6, 10, 10, 1],
+        [10, 1, 0, 10, 0, 6, 6, 10, 4, 6],
+        [4, 6, 6, 3, 3, 4, 6, 10, 10, 3, 3, 9, 10, 9],
+        [10, 9, 4, 10, 6, 10, 4, 6],
+        [9, 5, 5, 4, 7, 6, 6, 11],
+        [9, 5, 5, 4, 7, 6, 6, 11],
+        [5, 0, 1, 5, 5, 4, 7, 6, 6, 11],
+        [7, 6, 6, 11, 3, 4, 3, 5, 5, 4, 1, 5],
+        [9, 5, 5, 4, 10, 1, 2, 10, 7, 6, 6, 11],
+        [6, 11, 7, 6, 2, 10, 10, 1, 9, 5, 5, 4],
+        [7, 6, 6, 11, 5, 4, 4, 10, 10, 5, 4, 2, 2, 10],
+        [3, 4, 3, 5, 5, 4, 2, 5, 10, 5, 2, 10, 7, 6, 6, 11],
+        [7, 2, 7, 6, 6, 2, 5, 4, 9, 5],
+        [9, 5, 5, 4, 8, 6, 6, 0, 6, 2, 7, 6],
+        [3, 6, 6, 2, 7, 6, 1, 5, 5, 0, 5, 4],
+        [6, 2, 2, 8, 8, 6, 7, 6, 1, 8, 8, 5, 5, 4, 1, 5],
+        [9, 5, 5, 4, 10, 1, 1, 6, 6, 10, 1, 7, 7, 6],
+        [1, 6, 6, 10, 10, 1, 1, 7, 7, 6, 0, 7, 9, 5, 5, 4],
+        [0, 10, 10, 4, 10, 5, 5, 4, 3, 10, 6, 10, 10, 7, 7, 6],
+        [7, 6, 6, 10, 10, 7, 10, 8, 5, 4, 4, 10, 10, 5],
+        [6, 9, 9, 5, 5, 6, 6, 11, 11, 9],
+        [3, 6, 6, 11, 0, 6, 0, 5, 5, 6, 9, 5],
+        [0, 11, 0, 5, 5, 11, 1, 5, 5, 6, 6, 11],
+        [6, 11, 3, 6, 3, 5, 5, 6, 1, 5],
+        [2, 10, 10, 1, 9, 5, 5, 11, 11, 9, 5, 6, 6, 11],
+        [0, 11, 0, 6, 6, 11, 9, 6, 5, 6, 9, 5, 2, 10, 10, 1],
+        [8, 5, 5, 11, 5, 6, 6, 11, 0, 5, 10, 5, 5, 2, 2, 10],
+        [6, 11, 3, 6, 3, 5, 5, 6, 2, 10, 10, 3, 10, 5],
+        [5, 8, 9, 5, 5, 2, 2, 8, 5, 6, 6, 2],
+        [9, 5, 5, 6, 6, 9, 6, 0, 6, 2],
+        [1, 5, 5, 8, 8, 1, 5, 6, 6, 8, 8, 2, 6, 2],
+        [1, 5, 5, 6, 6, 1, 6, 2],
+        [3, 6, 6, 1, 6, 10, 10, 1, 8, 6, 5, 6, 6, 9, 9, 5],
+        [10, 1, 0, 10, 0, 6, 6, 10, 9, 5, 5, 0, 5, 6],
+        [5, 6, 6, 10, 10, 5],
+        [10, 5, 5, 6, 6, 10],
+        [11, 5, 5, 10, 10, 11, 7, 5],
+        [11, 5, 5, 10, 10, 11, 7, 5],
+        [5, 11, 7, 5, 5, 10, 10, 11, 1, 9],
+        [10, 7, 7, 5, 5, 10, 10, 11, 8, 1, 1, 9],
+        [11, 1, 2, 11, 7, 1, 7, 5, 5, 1],
+        [2, 7, 7, 1, 7, 5, 5, 1, 2, 11],
+        [9, 7, 7, 5, 5, 9, 9, 2, 2, 7, 2, 11],
+        [7, 5, 5, 2, 2, 7, 2, 11, 5, 9, 9, 2, 2, 8],
+        [2, 5, 5, 10, 10, 2, 3, 5, 7, 5],
+        [8, 2, 8, 5, 5, 2, 7, 5, 10, 2, 5, 10],
+        [1, 9, 5, 10, 10, 3, 3, 5, 7, 5, 10, 2],
+        [8, 2, 2, 9, 1, 9, 7, 2, 10, 2, 2, 5, 5, 10, 7, 5],
+        [3, 5, 5, 1, 7, 5],
+        [7, 0, 7, 1, 7, 5, 5, 1],
+        [3, 9, 3, 5, 5, 9, 7, 5],
+        [7, 9, 5, 9, 7, 5],
+        [5, 8, 4, 5, 5, 10, 10, 8, 10, 11],
+        [5, 0, 4, 5, 5, 11, 11, 0, 5, 10, 10, 11],
+        [1, 9, 4, 10, 10, 8, 10, 11, 4, 5, 5, 10],
+        [10, 11, 11, 4, 4, 10, 4, 5, 5, 10, 3, 4, 4, 1, 1, 9],
+        [2, 5, 5, 1, 2, 8, 8, 5, 2, 11, 4, 5],
+        [4, 11, 11, 0, 4, 5, 5, 11, 2, 11, 11, 1, 5, 1],
+        [2, 5, 5, 0, 5, 9, 2, 11, 11, 5, 4, 5, 5, 8],
+        [4, 5, 5, 9, 2, 11],
+        [2, 5, 5, 10, 10, 2, 3, 5, 3, 4, 4, 5],
+        [5, 10, 10, 2, 2, 5, 2, 4, 4, 5],
+        [3, 10, 10, 2, 3, 5, 5, 10, 8, 5, 4, 5, 1, 9],
+        [5, 10, 10, 2, 2, 5, 2, 4, 4, 5, 1, 9, 9, 2],
+        [4, 5, 5, 8, 5, 3, 5, 1],
+        [4, 5, 5, 0, 5, 1],
+        [4, 5, 5, 8, 5, 3, 0, 5, 5, 9],
+        [4, 5, 5, 9],
+        [4, 11, 7, 4, 9, 11, 9, 10, 10, 11],
+        [9, 7, 7, 4, 9, 11, 9, 10, 10, 11],
+        [1, 10, 10, 11, 11, 1, 11, 4, 4, 1, 7, 4],
+        [1, 4, 4, 3, 1, 10, 10, 4, 7, 4, 4, 11, 10, 11],
+        [4, 11, 7, 4, 9, 11, 9, 2, 2, 11, 9, 1],
+        [9, 7, 7, 4, 9, 11, 9, 1, 1, 11, 2, 11],
+        [7, 4, 4, 11, 4, 2, 2, 11],
+        [7, 4, 4, 11, 4, 2, 2, 11, 3, 4],
+        [2, 9, 9, 10, 10, 2, 2, 7, 7, 9, 7, 4],
+        [9, 10, 10, 7, 7, 9, 7, 4, 10, 2, 2, 7, 7, 0],
+        [7, 10, 10, 3, 10, 2, 7, 4, 4, 10, 1, 10, 10, 0],
+        [1, 10, 10, 2, 7, 4],
+        [9, 1, 1, 4, 1, 7, 7, 4],
+        [9, 1, 1, 4, 1, 7, 7, 4, 8, 1],
+        [3, 4, 7, 4],
+        [7, 4],
+        [9, 10, 10, 8, 10, 11],
+        [9, 3, 9, 11, 9, 10, 10, 11],
+        [1, 10, 10, 0, 10, 8, 10, 11],
+        [1, 10, 10, 3, 10, 11],
+        [2, 11, 11, 1, 11, 9, 9, 1],
+        [9, 3, 9, 11, 2, 9, 9, 1, 2, 11],
+        [2, 11, 11, 0],
+        [2, 11],
+        [8, 2, 8, 10, 10, 2, 9, 10],
+        [9, 10, 10, 2, 2, 9],
+        [8, 2, 8, 10, 10, 2, 1, 8, 1, 10],
+        [1, 10, 10, 2],
+        [8, 1, 9, 1],
+        [9, 1],
+        [],
+        []];
+
+      const snap = (method === 'snapped MC');
+      // const seg_table = (method === 'squarish' ? segTable2 : segTable);
+      const seg_table = segTable;
+
+      let vlist = new Array(12);
+      const vert_offsets = this.calculateVertOffsets(dims);
+
+      const edgeIndex = [[0,1], [1,2], [2,3], [3,0], [4,5], [5,6],
+                [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]];  
+
+      let vertex_values = new Float32Array(8);
+      let p0 = [0, 0, 0]; // unused initial value - to make Flow happy
+      let vertex_points = [p0, p0, p0, p0, p0, p0, p0, p0];
+      const size_x = dims[0];
+      const size_y = dims[1];
+      const size_z = dims[2];
+      if (values == null || points == null) return;
+      let vertices = [];
+      let segments = [];
+      let vertex_count = 0;
+      for (let x = 0; x < size_x - 1; x++) {
+        for (let y = 0; y < size_y - 1; y++) {
+          for (let z = 0; z < size_z - 1; z++) {
+            const offset0 = z + size_z * (y + size_y * x);
+            let cubeindex = 0;
+            let i;
+            let j;
+            for (i = 0; i < 8; ++i) {
+              j = offset0 + vert_offsets[i];
+              cubeindex |= (values[j] < isolevel) ? 1 << i : 0;
+            }
+            if (cubeindex === 0 || cubeindex === 255) continue;
+            for (i = 0; i < 8; ++i) {
+              j = offset0 + vert_offsets[i];
+              vertex_values[i] = values[j];
+              vertex_points[i] = points[j];
+            }
+    
+            // 12 bit number, indicates which edges are crossed by the isosurface
+            const edge_mask = edgeTable[cubeindex];
+    
+            // check which edges are crossed, and estimate the point location
+            // using a weighted average of scalar values at edge endpoints.
+            for (i = 0; i < 12; ++i) {
+              if ((edge_mask & (1 << i)) !== 0) {
+                const e = edgeIndex[i];
+                let mu = (isolevel - vertex_values[e[0]]) /
+                        (vertex_values[e[1]] - vertex_values[e[0]]);
+                if (snap === true) {
+                  if (mu > 0.85) mu = 1;
+                  else if (mu < 0.15) mu = 0;
+                }
+                const p1 = vertex_points[e[0]];
+                const p2 = vertex_points[e[1]];
+                // The number of added vertices could be roughly halved
+                // if we avoided duplicates between neighbouring cells.
+                // Using a map for lookups is too slow, perhaps a big
+                // array would do?
+                vertices.push(p1[0] + (p2[0] - p1[0]) * mu,
+                              p1[1] + (p2[1] - p1[1]) * mu,
+                              p1[2] + (p2[2] - p1[2]) * mu);
+                vlist[i] = vertex_count++;
+              }
+            }
+            const t = seg_table[cubeindex];
+            for (i = 0; i < t.length; i++) {
+              segments.push(vlist[t[i]]);
+            }
+          }
+        }
+      }
+
+      return { vertices: vertices, segments: segments };
+    }
+
+    // return offsets relative to vertex [0,0,0]
+    calculateVertOffsets(dims) { let ic = this.icn3d; ic.icn3dui;
+      let vert_offsets = [];
+      const cubeVerts = [[0,0,0], [1,0,0], [1,1,0], [0,1,0],
+                [0,0,1], [1,0,1], [1,1,1], [0,1,1]];
+              
+      for (let i = 0; i < 8; ++i) {
+        const v = cubeVerts[i];
+        vert_offsets.push(v[0] + dims[2] * (v[1] + dims[1] * v[2]));
+      }
+      return vert_offsets;
+    }
+
+    makeChickenWire(data, typeDetail) { let ic = this.icn3d, me = ic.icn3dui;
+      let geom = new THREE.BufferGeometry();
+      let position = new Float32Array(data.vertices);
+      geom.setAttribute('position', new THREE.BufferAttribute(position, 3));
+
+      // Although almost all browsers support OES_element_index_uint nowadays,
+      // use Uint32 indexes only when needed.
+      let arr = (data.vertices.length < 3*65536 ? new Uint16Array(data.segments) : new Uint32Array(data.segments));
+      
+      geom.setIndex(new THREE.BufferAttribute(arr, 1));
+
+      let colorFor2fofc = me.parasCls.thr('#00FFFF');
+      let colorForfofcPos = me.parasCls.thr('#00FF00');
+      let colorForfofcNeg = me.parasCls.thr('#ff0000');
+
+      let color = (typeDetail == '2fofc') ? colorFor2fofc : ((typeDetail == 'fofc_pos') ? colorForfofcPos : colorForfofcNeg);
+      let material = new THREE.LineBasicMaterial({ linewidth: 1, color: color });
+      //return new THREE.LineSegments(geom, material);
+
+      let mesh = new THREE.LineSegments(geom, material);
+      ic.mdl.add(mesh);
+
+      ic.prevMaps.push(mesh);
+    }
+}
+
+
+class UnitCell {
+  /*::
+  parameters: number[]
+  orth: number[]
+  frac: number[]
+  */
+  // eslint-disable-next-line max-params
+  constructor(a /*:number*/, b /*:number*/, c /*:number*/,
+              alpha /*:number*/, beta /*:number*/, gamma /*:number*/) {
+    if (a <= 0 || b <= 0 || c <= 0 || alpha <= 0 || beta <= 0 || gamma <= 0) {
+      throw Error('Zero or negative unit cell parameter(s).');
+    }
+    this.parameters = [a, b, c, alpha, beta, gamma];
+    const deg2rad = Math.PI / 180.0;
+    const cos_alpha = Math.cos(deg2rad * alpha);
+    const cos_beta = Math.cos(deg2rad * beta);
+    const cos_gamma = Math.cos(deg2rad * gamma);
+    const sin_alpha = Math.sin(deg2rad * alpha);
+    const sin_beta = Math.sin(deg2rad * beta);
+    const sin_gamma = Math.sin(deg2rad * gamma);
+    if (sin_alpha === 0 || sin_beta === 0 || sin_gamma === 0) {
+      throw Error('Impossible angle - N*180deg.');
+    }
+    const cos_alpha_star_sin_beta = (cos_beta * cos_gamma - cos_alpha) /
+                                    sin_gamma;
+    const cos_alpha_star = cos_alpha_star_sin_beta / sin_beta;
+    const s1rca2 = Math.sqrt(1.0 - cos_alpha_star * cos_alpha_star);
+    // The orthogonalization matrix we use is described in ITfC B p.262:
+    // "An alternative mode of orthogonalization, used by the Protein
+    // Data Bank and most programs, is to align the a1 axis of the unit
+    // cell with the Cartesian X_1 axis, and to align the a*_3 axis with the
+    // Cartesian X_3 axis."
+    //
+    // Zeros in the matrices below are kept to make matrix multiplication
+    // faster: they make extract_block() 2x (!) faster on V8 4.5.103,
+    // no difference on FF 50.
+    /* eslint-disable no-multi-spaces, comma-spacing */
+    this.orth = [a,   b * cos_gamma,  c * cos_beta,
+                 0.0, b * sin_gamma, -c * cos_alpha_star_sin_beta,
+                 0.0, 0.0          ,  c * sin_beta * s1rca2];
+    // based on xtal.js which is based on cctbx.uctbx
+    this.frac = [
+      1.0 / a,
+      -cos_gamma / (sin_gamma * a),
+      -(cos_gamma * cos_alpha_star_sin_beta + cos_beta * sin_gamma) /
+          (sin_beta * s1rca2 * sin_gamma * a),
+      0.0,
+      1.0 / (sin_gamma * b),
+      cos_alpha_star / (s1rca2 * sin_gamma * b),
+      0.0,
+      0.0,
+      1.0 / (sin_beta * s1rca2 * c),
+    ];
+  }
+
+  // This function is only used with matrices frac and orth, which have 3 zeros.
+  // We skip these elements, but it doesn't affect performance (on FF50 and V8).
+  multiply(xyz, mat) {
+    /* eslint-disable indent */
+    return [mat[0] * xyz[0]  + mat[1] * xyz[1]  + mat[2] * xyz[2],
+          /*mat[3] * xyz[0]*/+ mat[4] * xyz[1]  + mat[5] * xyz[2],
+          /*mat[6] * xyz[0]  + mat[7] * xyz[1]*/+ mat[8] * xyz[2]];
+  }
+
+  fractionalize(xyz /*:[number,number,number]*/) {
+    return this.multiply(xyz, this.frac);
+  }
+
+  orthogonalize(xyz /*:[number,number,number]*/) {
+    return this.multiply(xyz, this.orth);
+  }
+}
+
+
+class GridArray {
+  /*::
+  dim: number[]
+  values: Float32Array
+  */
+  constructor(dim /*:number[]*/) {
+    this.dim = dim; // dimensions of the grid for the entire unit cell
+    this.values = new Float32Array(dim[0] * dim[1] * dim[2]);
+  }
+
+  modulo(a, b) {
+    const reminder = a % b;
+    return reminder >= 0 ? reminder : reminder + b;
+  }
+
+  grid2index(i/*:number*/, j/*:number*/, k/*:number*/) {
+    i = this.modulo(i, this.dim[0]);
+    j = this.modulo(j, this.dim[1]);
+    k = this.modulo(k, this.dim[2]);
+    return this.dim[2] * (this.dim[1] * i + j) + k;
+  }
+
+  grid2index_unchecked(i/*:number*/, j/*:number*/, k/*:number*/) {
+    return this.dim[2] * (this.dim[1] * i + j) + k;
+  }
+
+  grid2frac(i/*:number*/, j/*:number*/, k/*:number*/) {
+    return [i / this.dim[0], j / this.dim[1], k / this.dim[2]];
+  }
+
+  // return grid coordinates (rounded down) for the given fractional coordinates
+  frac2grid(xyz/*:number[]*/) {
+    // at one point "| 0" here made extract_block() 40% faster on V8 3.14,
+    // but I don't see any effect now
+    return [Math.floor(xyz[0] * this.dim[0]) | 0,
+            Math.floor(xyz[1] * this.dim[1]) | 0,
+            Math.floor(xyz[2] * this.dim[2]) | 0];
+  }
+
+  set_grid_value(i/*:number*/, j/*:number*/, k/*:number*/, value/*:number*/) {
+    const idx = this.grid2index(i, j, k);
+    this.values[idx] = value;
+  }
+
+  get_grid_value(i/*:number*/, j/*:number*/, k/*:number*/) {
+    const idx = this.grid2index(i, j, k);
+    return this.values[idx];
+  }
+}
+
+/**
+ * @file Mtz Parser
+ * @author Marcin Wojdyr <wojdyr@gmail.com>
+ * @private
+ * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
+ */
+
+class MtzParser {
+    constructor(icn3d) {
+        this.icn3d = icn3d;
+    }
+
+    async mtzParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
+        // if(type == '2fofc' && ic.bAjax2fofcccp4) {
+        //     ic.mapData.sigma2 = sigma;
+        //     ic.setOptionCls.setOption('map', type);
+        // }
+        // else if(type == 'fofc' && ic.bAjaxfofcccp4) {
+        //     ic.mapData.sigma = sigma;
+        //     ic.setOptionCls.setOption('map', type);
+        // }
+        // else {
+            let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', '');
+            sigma = await thisClass.loadMtzFileBase(arrayBuffer, type, sigma, location, bInputSigma, url);
+
+            // if(type == '2fofc') {
+            //     ic.bAjax2fofcccp4 = true;
+            // }
+            // else if(type == 'fofc') {
+            //     ic.bAjaxfofcccp4 = true;
+            // }
+
+            ic.setOptionCls.setOption('map', type);
+
+            return sigma;
+        // }
+    }
+
+    loadMtzFile(type) {var ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
+
+       let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
+       let sigma = $("#" + ic.pre + "dsn6sigma" + type).val();
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         me.utilsCls.checkFileAPI();
+         let reader = new FileReader();
+         reader.onload = async function(e) { let ic = thisClass.icn3d;
+            sigma = await thisClass.loadMtzFileBase(e.target.result, type, sigma, 'file');
+            me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val() + ' with sigma ' + sigma, false);
+         };
+         reader.readAsArrayBuffer(file);
+       }
+    }
+
+    async loadMtzFileBase(data, type, sigma, location, bInputSigma, url) {var ic = this.icn3d, me = ic.icn3dui;
+        if(ic.bMtz === undefined) {
+            let url = "./script/mtz.js";
+            await me.getAjaxPromise(url, 'script');
+
+            ic.bMtz = true;
+        }
+
+        GemmiMtz().then(function(Gemmi) {
+            let mtz = Gemmi.readMtz(data);
+
+            sigma = ic.ccp4ParserCls.load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma);
+
+            // if(type == '2fofc') {
+            //     ic.bAjax2fofcCcp4 = true;
+            // }
+            // else if(type == 'fofc') {
+            //     ic.bAjaxfofcCcp4 = true;
+            // }
+            ic.setOptionCls.setOption('map', type);
+            if(url) me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
+
+            return sigma;
+        });
+     }
+
+    async loadMtzFileUrl(type) {var ic = this.icn3d; ic.icn3dui;
+       let url = $("#" + ic.pre + "dsn6fileurl" + type).val();
+       let sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
+       if(!url) {
+            alert("Please input the file URL before clicking 'Load'");
+       }
+       else {
+           sigma = await this.mtzParserBase(url, type, sigma, 'url');
+
+           console.log("### sigma " + sigma);
+           //me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
        }
     }
 
@@ -54345,6 +55479,9 @@ class DensityCifParser {
             ic.mapData.header2 = header;
 
             ic.mapData.data2 = density.data;
+            for(let i = 0; i < density.data.length; ++i) {
+                density.data[i];
+            }
 
             let origin = density.box.origin;
             let dimensions = density.box.dimensions;
@@ -54379,6 +55516,7 @@ class DensityCifParser {
             origin = density.box.origin;
             dimensions = density.box.dimensions;
             basis = density.spacegroup.basis;
+
             scale = new THREE.Matrix4().makeScale(
                 dimensions[0] / (sampleCount[0] ),
                 dimensions[1] / (sampleCount[1] ),
@@ -56007,7 +57145,10 @@ class ParserUtils {
 
                     if(bAppend) {
                         if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                        if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                        if(ic.bAnnoShown) {
+                            await ic.showAnnoCls.showAnnotations();
+                            ic.annotationCls.resetAnnoTabAll();
+                        }
                     }
 
                     // Realign by sequence alignment with the residues in "segment", i.e., transmembrane helix
@@ -57337,12 +58478,12 @@ class SetSeqAlign {
 
               if(i > 0) {
                   let index1 = alignIndex;
-
+                  
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
-                      if(posChain1[j]) continue;
+                      //if(posChain1[j]) continue;
                       posChain1[j] = 1;
 
-                      if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
+                      //if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
                       //let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
                       let resi = this.getResiAferAlign(chainid1, bRealign, j);
@@ -57353,18 +58494,19 @@ class SetSeqAlign {
 
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
-
+                      
                       ic.nalignHash1[chainid1 + '_' + resi] = 1;
                       this.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1);
                       ++index1;
                   }
 
                   let index2 = alignIndex;
+
                   for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
-                      if(posChain2[j]) continue;
+                      //if(posChain2[j]) continue;
                       posChain2[j] = 1;
 
-                      if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
+                      //if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                       //let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
                       let resi = this.getResiAferAlign(chainid2, bRealign, j);
@@ -57410,7 +58552,7 @@ class SetSeqAlign {
               }
             
               for(let j = 0; j <= end1 - start1; ++j) {
-                  if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
+                  ///if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   let resi1, resi2, resn1, resn2;
 /*                 
@@ -57440,15 +58582,17 @@ class SetSeqAlign {
                     if(resn1 == '?' || resn2 == '?') continue;
                   }
                   else {
-                    if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+                    ///if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
 
                     // resi1 = ic.chainsSeq[chainid1][j + start1].resi;
                     // resi2 = ic.chainsSeq[chainid2][j + start2].resi;
                     // resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
                     // resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
 
-                    resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
-                    resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
+                    // resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
+                    // resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
+                    resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1);
+                    resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2);
                     resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
                     resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
                   }
@@ -62504,7 +63648,8 @@ class LoadScript {
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
 
-          if(ic.inputid) ic.bNotLoadStructure = true;
+          // sometimes URL has an ID input, then load a structure in commands
+          //if(ic.inputid) ic.bNotLoadStructure = true;
   
           if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
@@ -62540,18 +63685,7 @@ class LoadScript {
               }
           }
           else if(command.indexOf('set map') == 0 && command.indexOf('set map wireframe') == -1) {
-              //set map 2fofc sigma 1.5
-              let urlArray = strArray[0].trim().split(' | ');
-
-              let str = urlArray[0].substr(8);
-              let paraArray = str.split(" ");
-
-              if(paraArray.length == 3 && paraArray[1] == 'sigma') {
-                paraArray[2];
-                paraArray[0];
-
-                await thisClass.applyCommandMap(strArray[0].trim());
-              }
+              await thisClass.applyCommandMap(strArray[0].trim());
           }
           else if(command.indexOf('set emmap') == 0 && command.indexOf('set emmap wireframe') == -1) {
               //set emmap percentage 70
@@ -63051,17 +64185,34 @@ class LoadScript {
     //   ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
           //"set map 2fofc sigma 1.5"
           // or "set map 2fofc sigma 1.5 | [url]"
+
+          // added more para later
+          //"set map 2fofc sigma 1.5 file dsn6"
+          // or "set map 2fofc sigma 1.5 file dsn6 | [url]"
           let urlArray = command.split(" | ");
 
           let str = urlArray[0].substr(8);
           let paraArray = str.split(" ");
 
-          if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+          //if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+          if(paraArray[1] == 'sigma') {
               let sigma = paraArray[2];
               let type = paraArray[0];
 
+              let fileType = 'dsn6';
+              if(paraArray.length == 5) fileType = paraArray[4];
+
               if(urlArray.length == 2) {
-                await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
+                let bInputSigma = true;
+                if(fileType == 'dsn6') {
+                  await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
+                else if(fileType == 'ccp4') {
+                  await ic.ccp4ParserCls.ccp4ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
+                else if(fileType == 'mtz') {
+                  await ic.mtzParserCls.mtzParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
               }
               else {
                 await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
@@ -72005,7 +73156,7 @@ class Ray {
     }
 
      // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-     getAtomsFromPosition(point, threshold) { let ic = this.icn3d, me = ic.icn3dui;
+     getAtomsFromPosition(point, threshold, atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let i;
 
         if(threshold === undefined || threshold === null) {
@@ -72013,7 +73164,8 @@ class Ray {
         }
 
         //for (i in ic.atoms) {
-        for (i in ic.dAtoms) {
+        let atomHash = (atoms) ? atoms : ic.dAtoms;
+        for (i in atomHash) {
            let atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i) && ic.opts['ions'] === 'sphere') {
@@ -73585,6 +74737,8 @@ class iCn3D {
     this.alignParserCls = new AlignParser(this);
     this.chainalignParserCls = new ChainalignParser(this);
     this.dsn6ParserCls = new Dsn6Parser(this);
+    this.ccp4ParserCls = new Ccp4Parser(this);
+    this.mtzParserCls = new MtzParser(this);
     this.mmcifParserCls = new MmcifParser(this);
     this.mmdbParserCls = new MmdbParser(this);
     this.mmtfParserCls = new MmtfParser(this);
@@ -73847,7 +75001,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.28.4';
+    this.REVISION = '3.29.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

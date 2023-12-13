@@ -71,8 +71,8 @@ class ElectronMap {
         this.pLength = 0;
         this.cutRadius = 0;
         this.vpBits = null; // uint8 array of bitmasks
-        this.vpDistance = null; // floatarray of _squared_ distances
-        this.vpAtomID = null; // intarray
+        this.vpGridTrans = null; // array of translated number of grids
+        this.vpAtomID = null; // uint8 array
         this.vertnumber = 0;
         this.facenumber = 0;
         this.pminx = 0;
@@ -122,12 +122,27 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         atomsToShow[atomlist[i]] = 1;
     let vertices = this.verts;
 
+    let vertTrans = {};
     for(i = 0, il = vertices.length; i < il; i++) {
         let r;
         if(this.type == 'phi') {
             r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).multiplyScalar(1.0/this.header.scale).applyMatrix4(this.matrix);
         }
         else {
+            // ccp4 has no translation vector. Only translated vertices are used.
+            if(this.header.ccp4) {
+                let index = vertices[i].index;
+                let finalIndex;
+                if(this.vpGridTrans[index]) {
+                    finalIndex = index;
+
+                    vertices[i].x += this.vpGridTrans[finalIndex][0] * this.header.xExtent * this.scaleFactor;
+                    vertices[i].y += this.vpGridTrans[finalIndex][1] * this.header.xExtent * this.scaleFactor;
+                    vertices[i].z += this.vpGridTrans[finalIndex][2] * this.header.xExtent * this.scaleFactor;
+
+                    vertTrans[finalIndex] = 1;
+                }
+            }
             r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(this.matrix);
         }
 //            vertices[i].x = r.x / this.scaleFactor - this.ptranx;
@@ -146,13 +161,22 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         let fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
 
         if(fa !== fb && fb !== fc && fa !== fc){
-            finalfaces.push({"a":fa, "b":fb, "c":fc});
+            if(this.header.ccp4) {
+                // only transfered vertices will be used
+                if(vertTrans.hasOwnProperty(vertices[fa].index) && vertTrans.hasOwnProperty(vertices[fb].index) 
+                  && vertTrans.hasOwnProperty(vertices[fc].index)) {
+                    finalfaces.push({"a":fa, "b":fb, "c":fc});
+                }
+            }
+            else {
+                finalfaces.push({"a":fa, "b":fb, "c":fc});
+            }
         }
     }
 
     //try to help the garbage collector
     this.vpBits = null; // uint8 array of bitmasks
-    this.vpDistance = null; // floatarray
+    this.vpGridTrans = null; // uint8 array
     this.vpAtomID = null; // intarray
 
     return {
@@ -212,6 +236,8 @@ ElectronMap.prototype.initparm = function(inHeader, inData, inMatrix, inIsovalue
     this.cutRadius = this.probeRadius * this.scaleFactor;
 
     this.vpBits = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
+    if(this.header.ccp4) this.vpGridTrans = new Array(this.pLength * this.pWidth * this.pHeight);
+
     this.vpAtomID = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
 };
 
@@ -234,10 +260,9 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
     // seqterm,bool
     // atomthis.type,atom*
     // proseq,bool bcolor)
-    let i, j, k, il, jl, kl;
+    let i, j, k, il, jl, kl, i2, j2, k2;
     for(i = 0, il = this.vpBits.length; i < il; i++) {
         this.vpBits[i] = 0;
-        //this.vpDistance[i] = -1.0;
         this.vpAtomID[i] = 0;
     }
 
@@ -399,7 +424,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
             }
         }
         else {
-            let index2ori = {};
+            // let index2ori = {};
             for(let serial in atomlist) {
                 let atom = atoms[atomlist[serial]];
 
@@ -430,6 +455,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
 
             for(i = 0, il = indexArray.length; i < il; ++i) {
                 let index = indexArray[i];
+
                 if(this.type == '2fofc') {
                     this.vpBits[index] =(this.dataArray[index] >= this.isovalue) ? 1 : 0;
                     //this.vpAtomID[index] =(this.dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
@@ -443,6 +469,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                     //this.vpAtomID[index] =(this.dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
                 }
             }
+            
         }
     }
 

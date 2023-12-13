@@ -96,7 +96,8 @@ class LoadScript {
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
 
-          if(ic.inputid) ic.bNotLoadStructure = true;
+          // sometimes URL has an ID input, then load a structure in commands
+          //if(ic.inputid) ic.bNotLoadStructure = true;
   
           if(command.indexOf('load') !== -1) {
               if(end === 0 && start === end) {
@@ -132,18 +133,7 @@ class LoadScript {
               }
           }
           else if(command.indexOf('set map') == 0 && command.indexOf('set map wireframe') == -1) {
-              //set map 2fofc sigma 1.5
-              let urlArray = strArray[0].trim().split(' | ');
-
-              let str = urlArray[0].substr(8);
-              let paraArray = str.split(" ");
-
-              if(paraArray.length == 3 && paraArray[1] == 'sigma') {
-                let sigma = paraArray[2];
-                let type = paraArray[0];
-
-                await thisClass.applyCommandMap(strArray[0].trim());
-              }
+              await thisClass.applyCommandMap(strArray[0].trim());
           }
           else if(command.indexOf('set emmap') == 0 && command.indexOf('set emmap wireframe') == -1) {
               //set emmap percentage 70
@@ -645,17 +635,34 @@ class LoadScript {
     //   ic.deferredMap = $.Deferred(function() { let ic = thisClass.icn3d;
           //"set map 2fofc sigma 1.5"
           // or "set map 2fofc sigma 1.5 | [url]"
+
+          // added more para later
+          //"set map 2fofc sigma 1.5 file dsn6"
+          // or "set map 2fofc sigma 1.5 file dsn6 | [url]"
           let urlArray = command.split(" | ");
 
           let str = urlArray[0].substr(8);
           let paraArray = str.split(" ");
 
-          if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+          //if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+          if(paraArray[1] == 'sigma') {
               let sigma = paraArray[2];
               let type = paraArray[0];
 
+              let fileType = 'dsn6';
+              if(paraArray.length == 5) fileType = paraArray[4];
+
               if(urlArray.length == 2) {
-                await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma);
+                let bInputSigma = true;
+                if(fileType == 'dsn6') {
+                  await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
+                else if(fileType == 'ccp4') {
+                  await ic.ccp4ParserCls.ccp4ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
+                else if(fileType == 'mtz') {
+                  await ic.mtzParserCls.mtzParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
               }
               else {
                 await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);

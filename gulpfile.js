@@ -129,6 +129,24 @@ gulp.task('ssimages',
         .pipe(gulp.dest(dist + '/ssimages'));
   });
 
+gulp.task('script',
+  //gulp.series('clean'),
+  function() {
+    return gulp.src([
+            "script/**"
+        ])
+        .pipe(gulp.dest(dist + '/script'));
+});
+
+gulp.task('wasm',
+  //gulp.series('clean'),
+  function() {
+    return gulp.src([
+            "script/mtz.wasm"
+        ])
+        .pipe(gulp.dest(dist));
+});
+
 //  'Copies several files as-is into dist, including source css and various metadata files.',
 gulp.task('copy',
   //gulp.series('clean'),
@@ -373,7 +391,7 @@ gulp.task("html4",
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
-    'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
+    'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','script','wasm','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
     'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
     'html','html2','html3','html4')
 );

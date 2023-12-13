@@ -340,7 +340,7 @@ class ViewInterPairs {
 
            if(ic.bD3 === undefined) {
                 //let url = "https://d3js.org/d3.v4.min.js";
-                let url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                let url = "./script/d3v4-force-all.min.js";
                 await me.getAjaxPromise(url, 'script');
 
                 ic.bD3 = true;

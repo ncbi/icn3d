@@ -485,24 +485,18 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_dsn6', 'Load a map file');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: " 
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigma2fofc' value='' size=8> &sigma;</span><br/>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
 
-        let optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
+        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmafofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br/>";
-
-        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmafofc'>";
-
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
-
-        html += "</select> &sigma;</span><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>"  + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin-top: 6px;'>Load CCP4</button><br><br><br>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
 
@@ -510,21 +504,17 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_dsn6url', 'Load a selection file via a URL');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. <br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: "
+          + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurl2fofc' value='' size=8> &sigma;</span><br/>";
 
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
 
-        html += "</select> &sigma;</span><br/>";
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
+        + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurlfofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmaurlfofc'>";
-
-        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 5);
-
-        html += "</select> &sigma;</span><br/>";
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo5'>Remove Map</button><br>";
 
@@ -864,6 +854,7 @@ class SetDialog {
         html += this.addNotebookTitle('dl_elecmap2fofc', 'Electron Density 2F0-Fc Map');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigma2fofc'>";
 
+        let optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
 
         html += "</select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'>" + me.htmlCls.buttonStr + "applymap2fofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'>" + me.htmlCls.buttonStr + "elecmapNo2'>Remove Map</button></span>";

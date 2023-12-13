@@ -762,7 +762,10 @@ class ParserUtils {
 
                     if(bAppend) {
                         if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                        if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                        if(ic.bAnnoShown) {
+                            await ic.showAnnoCls.showAnnotations();
+                            ic.annotationCls.resetAnnoTabAll();
+                        }
                     }
 
                     // Realign by sequence alignment with the residues in "segment", i.e., transmembrane helix

@@ -78,7 +78,18 @@ class Surface {
             cfg.isovalue = ic.mapData.sigma2;
             cfg.type = '2fofc';
 
-            ps = this.SetupMap(cfg);
+            //ccp4
+            cfg.ccp4 = ic.mapData.ccp4;
+            cfg.grid = ic.mapData.grid2;
+            cfg.unit_cell = ic.mapData.unit_cell2;
+
+            if(cfg.header || cfg.ccp4) ps = this.SetupMap(cfg);
+            else return;
+
+            if(cfg.ccp4) {
+                ic.mapData = {};
+                return;
+            }
         }
         else if(type == 12) { // fofc
             cfg.header = ic.mapData.header;
@@ -87,7 +98,18 @@ class Surface {
             cfg.isovalue = ic.mapData.sigma;
             cfg.type = 'fofc';
 
-            ps = this.SetupMap(cfg);
+            //ccp4
+            cfg.ccp4 = ic.mapData.ccp4;
+            cfg.grid = ic.mapData.grid;
+            cfg.unit_cell = ic.mapData.unit_cell;
+
+            if(cfg.header || cfg.ccp4) ps = this.SetupMap(cfg);
+            else return;
+
+            if(cfg.ccp4) {
+                ic.mapData = {};
+                return;
+            }
         }
         else if(type == 13) { // em
             cfg.maxdist = 3; // EM map has no unit cell. It could include more gird space.
@@ -580,29 +602,60 @@ class Surface {
     }
 
     SetupMap(data) { let ic = this.icn3d, me = ic.icn3dui;
-        let ps = new ElectronMap(ic);
-        
-        ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
-          data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
+        if(data.ccp4) {
+            let radius = 10; 
+            let center = (ic.center) ? [ic.center.x, ic.center.y, ic.center.z] : [0,0,0];
+    
+            let typeDetail;
+            if(data.type == '2fofc') {
+              typeDetail = '2fofc';
+              let result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              let iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
 
-        ps.fillvoxels(data.allatoms, data.extendedAtoms);
+              result = null;
+              iso = null;
+            }
+            else if(data.type == 'fofc') {
+              typeDetail = 'fofc_neg';
+              let result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              let iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
+    
+              typeDetail = 'fofc_pos';
+              result = ic.ccp4ParserCls.extract_block(data.grid, data.unit_cell, radius, center, typeDetail); 
+              iso = ic.ccp4ParserCls.marchingCubes(result.size, result.values, result.points, data.isovalue, 'marching cubes');
+              ic.ccp4ParserCls.makeChickenWire(iso, typeDetail);
 
-        if(!data.header.bSurface) ps.buildboundary();
+              result = null;
+              iso = null;
+            }
+        }
+        else {
+            let ps = new ElectronMap(ic); 
+    
+            ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
+            data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
 
-        if(!data.header.bSurface) ps.marchingcube();
-        
-        ps.vpBits = null; // uint8 array of bitmasks
-        //ps.vpDistance = null; // floatarray of _squared_ distances
-        ps.vpAtomID = null; // intarray
+            ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
-        let result;
+            if(!data.header.bSurface) ps.buildboundary();
 
-        if(!data.header.bSurface) result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
+            if(!data.header.bSurface) ps.marchingcube();
+            
+            ps.vpBits = null; // uint8 array of bitmasks
+            //ps.vpDistance = null; // floatarray of _squared_ distances
+            ps.vpAtomID = null; // intarray
 
-        ps.faces = null;
-        ps.verts = null;
+            let result;
 
-        return result;
+            if(!data.header.bSurface) result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
+
+            ps.faces = null;
+            ps.verts = null;
+
+            return result;
+        }
     }
 }
 
