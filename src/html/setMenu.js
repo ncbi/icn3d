@@ -572,6 +572,8 @@ class SetMenu {
         html += this.getLink('mn1_dsn6url', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
+        html += "<li><br/></li>";
+
         html += "</ul>";
         html += "</li>";
 

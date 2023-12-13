@@ -67,7 +67,7 @@ class AlignParser {
             for(let j = 0, jl = mmdbTmp.molecules.length; j < jl; ++j) {
                 let molecule = mmdbTmp.molecules[j];
                 let molid = molecule.moleculeId;
-                let chainName = molecule.chain.trim();
+                let chainName = molecule.chain.trim().replace(/_/g, ''); // change "A_1" to "A1"
                 if(chainNameHash[chainName] === undefined) {
                     chainNameHash[chainName] = 1;
                 }

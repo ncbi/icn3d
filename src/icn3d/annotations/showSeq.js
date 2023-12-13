@@ -533,8 +533,10 @@ class ShowSeq {
         let result = ic.refnumCls.getTemplateList(chnid);
         let refpdbnameList = result.refpdbnameList;
         let scoreList = result.scoreList;
+        let seqidList = result.seqidList;
+        let nresAlignList = result.nresAlignList;
 
-        let refStruTitle = (refpdbnameList) ? "based on " + refpdbnameList + ". The TM-scores are " + scoreList + "." : "";
+        let refStruTitle = (refpdbnameList) ? "based on " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + "." : "";
 
         let htmlTmp = '<div class="icn3d-dl_sequence">';
         htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';

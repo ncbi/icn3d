@@ -462,12 +462,12 @@ class SetSeqAlign {
 
               if(i > 0) {
                   let index1 = alignIndex;
-
+                  
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
-                      if(posChain1[j]) continue;
+                      //if(posChain1[j]) continue;
                       posChain1[j] = 1;
 
-                      if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
+                      //if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
                       //let resi = this.getResiAferAlign(chainid1, bRealign, j + 1);
                       let resi = this.getResiAferAlign(chainid1, bRealign, j);
@@ -478,18 +478,19 @@ class SetSeqAlign {
 
                       color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
-
+                      
                       ic.nalignHash1[chainid1 + '_' + resi] = 1;
                       this.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1);
                       ++index1;
                   }
 
                   let index2 = alignIndex;
+
                   for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
-                      if(posChain2[j]) continue;
+                      //if(posChain2[j]) continue;
                       posChain2[j] = 1;
 
-                      if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
+                      //if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                       //let resi = this.getResiAferAlign(chainid2, bRealign, j + 1);
                       let resi = this.getResiAferAlign(chainid2, bRealign, j);
@@ -535,7 +536,7 @@ class SetSeqAlign {
               }
             
               for(let j = 0; j <= end1 - start1; ++j) {
-                  if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
+                  ///if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   let resi1, resi2, resn1, resn2;
 /*                 
@@ -565,15 +566,17 @@ class SetSeqAlign {
                     if(resn1 == '?' || resn2 == '?') continue;
                   }
                   else {
-                    if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+                    ///if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
 
                     // resi1 = ic.chainsSeq[chainid1][j + start1].resi;
                     // resi2 = ic.chainsSeq[chainid2][j + start2].resi;
                     // resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
                     // resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
 
-                    resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
-                    resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
+                    // resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
+                    // resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
+                    resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1);
+                    resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2);
                     resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
                     resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
                   }

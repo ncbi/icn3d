@@ -375,13 +375,22 @@
             if(i < il - 1) refpdbnameList += ", ";
         }
 
-        let scoreList = '';
+        let scoreList = '', seqidList = '', nresAlignList = '';
         for(let i = 0, il = domainidArray.length; i < il; ++i) {
-            scoreList += domainid2score[domainidArray[i]];
-            if(i < il - 1) scoreList += ", ";
+            let itemArray = domainid2score[domainidArray[i]].split('_');
+
+            scoreList += itemArray[0];
+            seqidList += itemArray[1];
+            nresAlignList += itemArray[2];
+
+            if(i < il - 1) {
+                scoreList += ", ";
+                seqidList += ", ";
+                nresAlignList += ", ";
+            }
         }
 
-        return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList};
+        return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList, 'seqidList': seqidList, 'nresAlignList': nresAlignList};
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
@@ -477,28 +486,15 @@
 
             if(!bRound1) {
                 console.log("domainid: " + domainid);
-
-                if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid]) {
-                    ic.domainid2score[domainid] = queryData[0].score;  
-        
-                    ic.domainid2refpdbname[domainid] = refpdbname;
-                    domainid2segs[domainid] = queryData[0].segs;
-                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-                }
             }
-            else {
-                //let mixScore = 10 / queryData[0].super_rmsd + queryData[0].num_seg / 5; 
-                let mixScore = queryData[0].score; 
 
-                if(!ic.domainid2score.hasOwnProperty(domainid) || mixScore > ic.domainid2score[domainid]) {
-                    ic.domainid2score[domainid] = mixScore;  
-        
-                    ic.domainid2refpdbname[domainid] = refpdbname;
-                    domainid2segs[domainid] = queryData[0].segs;
-                    ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
-                    ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-                }                
+            if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
+                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;  
+    
+                ic.domainid2refpdbname[domainid] = refpdbname;
+                domainid2segs[domainid] = queryData[0].segs;
+                ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
+                ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
             }
         }
 
@@ -569,7 +565,7 @@
             // end of round 2
             return;
         }
-        
+
         // combine domainid into chainid
         let processedChainid = {};
         for(let domainid in ic.domainid2refpdbname) {
@@ -617,8 +613,10 @@
             let result = this.getTemplateList(chainid);
             let refpdbnameList = result.refpdbnameList;
             let scoreList = result.scoreList;
+            let seqidList = result.seqidList;
+            let nresAlignList = result.nresAlignList;
 
-            let message = "The reference PDBs for chain " + chainid + " are " + refpdbnameList + ". The TM-scores are " + scoreList + ".";
+            let message = "The reference PDB(s) for chain " + chainid + " is(are) " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + ".";
             if(!me.bNode) {
                 console.log(message);
                 me.htmlCls.clickMenuCls.setLogCmd(message, true);

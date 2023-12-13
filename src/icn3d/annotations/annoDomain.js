@@ -16,14 +16,14 @@ class AnnoDomain {
         let pdbid = pdbArray[index];
         //let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
-        if(index == 0 && ic.mmdb_data !== undefined) {      
+        if(!ic.bResetAnno && index == 0 && ic.mmdb_data !== undefined) {      
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
                     this.showDomainWithData(chnid, ic.mmdb_data);
                 }
             }
         }
-        else if(ic.mmdb_dataArray[index] !== undefined) {
+        else if(!ic.bResetAnno && ic.mmdb_dataArray[index] !== undefined) {
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
                    this.showDomainWithData(chnid, ic.mmdb_dataArray[index]);

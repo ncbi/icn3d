@@ -90,7 +90,7 @@ class Events {
         }
     }
 
-    readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
         
@@ -127,7 +127,20 @@ class Events {
                 await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
             }
             else {
-                thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+                await thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+            }
+
+            if(bAppend) {
+                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
+
+                ic.bResetAnno = true;
+
+                if(ic.bAnnoShown) {
+                    await ic.showAnnoCls.showAnnotations();
+
+                    ic.annotationCls.resetAnnoTabAll();
+                }
             }
         }
 
@@ -162,13 +175,7 @@ class Events {
 
             ic.dataStrAll = '';
 
-            this.readFile(bAppend, files, 0, '');
-
-            if(bAppend) {
-                if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
-                if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
-            }
+            await this.readFile(bAppend, files, 0, '');
        }
     }
 
@@ -252,7 +259,10 @@ class Events {
 
                 if(bStructures) {
                     if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                    if(ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+                    if(ic.bAnnoShown) {
+                        await ic.showAnnoCls.showAnnotations();
+                        ic.annotationCls.resetAnnoTabAll();
+                    }
                 }
             }
         }
@@ -1262,24 +1272,35 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6File('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6filefofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6File('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_ccp4file2fofc", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            ic.dsn6ParserCls.loadDsn6File('2fofc', true);
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4File('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_ccp4filefofc", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            ic.dsn6ParserCls.loadDsn6File('fofc', true);
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4File('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfile2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfilefofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
@@ -1371,13 +1392,35 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurl2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6FileUrl('2fofc');
         });
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6fileurlfofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.dsn6ParserCls.loadDsn6FileUrl('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4fileurl2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4FileUrl('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_ccp4fileurlfofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.ccp4ParserCls.loadCcp4FileUrl('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfileurl2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFileUrl('2fofc');
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_mtzfileurlfofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFileUrl('fofc');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { let ic = me.icn3d;

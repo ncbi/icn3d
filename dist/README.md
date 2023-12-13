@@ -123,6 +123,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
 * **[Membranome](https://membranome.org)**: For AlphaFold Structures, the membrane data of single-spanning transmembrane proteins are from Membranome.
 * **[Post-Translational Modification (PTM)](https://www.ebi.ac.uk/proteins/api/doc/#/features)**: The PTM data are from UniProt.
+* **[UglyMol](https://github.com/uglymol/uglymol.github.io)**: The electron density maps from CCP4 map or MTZ format are based on UglyMol.
 
 ## Building
 

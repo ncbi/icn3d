@@ -135,7 +135,7 @@ class Ray {
     }
 
      // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-     getAtomsFromPosition(point, threshold) { let ic = this.icn3d, me = ic.icn3dui;
+     getAtomsFromPosition(point, threshold, atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let i, atom;
 
         if(threshold === undefined || threshold === null) {
@@ -143,7 +143,8 @@ class Ray {
         }
 
         //for (i in ic.atoms) {
-        for (i in ic.dAtoms) {
+        let atomHash = (atoms) ? atoms : ic.dAtoms;
+        for (i in atomHash) {
            let atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i) && ic.opts['ions'] === 'sphere') {

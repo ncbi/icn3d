@@ -15,15 +15,11 @@ class Dsn6Parser {
         // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
         let url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
-        await this.dsn6ParserBase(url, type, sigma);
+        await this.dsn6ParserBase(url, type, sigma, 'url', true);
     }
 
-    async dsn6ParserBase(url, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+    async dsn6ParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-
-        let dataType;
-
-        let bCid = undefined;
 
         //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
         if(type == '2fofc' && ic.bAjax2fofc) {
@@ -36,7 +32,7 @@ class Dsn6Parser {
         }
         else {
             let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'rcsbEdmaps');
-            thisClass.loadDsn6Data(arrayBuffer, type, sigma);
+            sigma = thisClass.loadDsn6Data(arrayBuffer, type, sigma, location, bInputSigma);
 
             if(type == '2fofc') {
                 ic.bAjax2fofc = true;
@@ -47,9 +43,11 @@ class Dsn6Parser {
 
             ic.setOptionCls.setOption('map', type);
         }
+
+        return sigma;
     }
 
-    loadDsn6Data(dsn6data, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+    loadDsn6Data(dsn6data, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
         // DSN6 http://www.uoxray.uoregon.edu/tnt/manual/node104.html
         // BRIX http://svn.cgl.ucsf.edu/svn/chimera/trunk/libs/VolumeData/dsn6/brix-1.html
 
@@ -98,9 +96,9 @@ class Dsn6Parser {
             }
           }
 
-          header.zStart = intView[ 2 ];
           header.xStart = intView[ 0 ]; // NXSTART
           header.yStart = intView[ 1 ];
+          header.zStart = intView[ 2 ];
 
           header.xExtent = intView[ 3 ]; // NX
           header.yExtent = intView[ 4 ];
@@ -136,6 +134,7 @@ class Dsn6Parser {
         let zBlocks = Math.ceil(header.zExtent / 8);
 
         // loop over blocks
+        let maxValue = -999;
         for(let zz = 0; zz < zBlocks; ++zz) {
           for(let yy = 0; yy < yBlocks; ++yy) {
             for(let xx = 0; xx < xBlocks; ++xx) {
@@ -151,6 +150,7 @@ class Dsn6Parser {
                     if(x < header.xExtent && y < header.yExtent && z < header.zExtent) {
                       let idx =((((x * header.yExtent) + y) * header.zExtent) + z);
                       data[ idx ] =(byteView[ offset ] - summand) / divisor;
+                      if(data[ idx ] > maxValue) maxValue = data[ idx ];
                       ++offset;
                     } else {
                       offset += 8 - i;
@@ -161,6 +161,10 @@ class Dsn6Parser {
               }
             }
           }
+        }
+
+        if(!bInputSigma) {
+          sigma = this.setSigma(maxValue, location, type, sigma);
         }
 
         if(type == '2fofc') {
@@ -177,6 +181,32 @@ class Dsn6Parser {
             ic.mapData.type = type;
             ic.mapData.sigma = sigma;
         }
+
+        return sigma;
+    }
+
+    setSigma(maxValue, location, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
+      let inputId;
+      if(location == 'file') {
+        inputId = 'dsn6sigma' + type;
+      }
+      else if(location == 'url') {
+        inputId = 'dsn6sigmaurl' + type;
+      }
+
+      let factor = (type == '2fofc') ? 0.5 : 0.3;
+
+      if(inputId) {
+        if(!($("#" + me.pre + inputId).val())) {
+          sigma = (factor * maxValue).toFixed(2);
+          $("#" + me.pre + inputId).val(sigma);
+        }
+        else {
+          sigma = $("#" + me.pre + inputId).val();
+        }
+      }
+
+      return sigma;
     }
 
     getMatrix(header) { let ic = this.icn3d, me = ic.icn3dui;
@@ -237,7 +267,7 @@ class Dsn6Parser {
         return matrix;
     }
 
-    loadDsn6File(type, bCcp4) {var ic = this.icn3d, me = ic.icn3dui;
+    loadDsn6File(type) {var ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
@@ -250,12 +280,8 @@ class Dsn6Parser {
          let reader = new FileReader();
          reader.onload = function(e) { let ic = thisClass.icn3d;
            let arrayBuffer = e.target.result; // or = reader.result;
-           if(bCcp4) {
-              ic.densityCifParserCls.parseChannels(arrayBuffer, type, sigma);
-           }
-           else {
-              thisClass.loadDsn6Data(arrayBuffer, type, sigma);
-           }
+
+           sigma = thisClass.loadDsn6Data(arrayBuffer, type, sigma, 'file');
 
            if(type == '2fofc') {
                ic.bAjax2fofc = true;
@@ -264,7 +290,7 @@ class Dsn6Parser {
                ic.bAjaxfofc = true;
            }
            ic.setOptionCls.setOption('map', type);
-           me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
+           me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val() + ' with sigma ' + sigma, false);
          }
          reader.readAsArrayBuffer(file);
        }
@@ -274,11 +300,11 @@ class Dsn6Parser {
        let url = $("#" + ic.pre + "dsn6fileurl" + type).val();
        let sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
        if(!url) {
-            alert("Please input the file URL before clicking 'Load'");
+          alert("Please input the file URL before clicking 'Load'");
        }
        else {
-           this.dsn6ParserBase(url, type, sigma);
-           me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+          sigma = this.dsn6ParserBase(url, type, sigma, 'url');
+          me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file dsn6 | ' + encodeURIComponent(url), true);
        }
     }
 

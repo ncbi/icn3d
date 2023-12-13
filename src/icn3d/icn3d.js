@@ -86,6 +86,8 @@ import {ContactMap} from './interaction/contactMap.js';
 import {AlignParser} from './parsers/alignParser.js';
 import {ChainalignParser} from './parsers/chainalignParser.js';
 import {Dsn6Parser} from './parsers/dsn6Parser.js';
+import {Ccp4Parser} from './parsers/ccp4Parser.js';
+import {MtzParser} from './parsers/mtzParser.js';
 import {MmcifParser} from './parsers/mmcifParser.js';
 import {MmdbParser} from './parsers/mmdbParser.js';
 import {MmtfParser} from './parsers/mmtfParser.js';
@@ -601,6 +603,8 @@ class iCn3D {
     this.alignParserCls = new AlignParser(this);
     this.chainalignParserCls = new ChainalignParser(this);
     this.dsn6ParserCls = new Dsn6Parser(this);
+    this.ccp4ParserCls = new Ccp4Parser(this);
+    this.mtzParserCls = new MtzParser(this);
     this.mmcifParserCls = new MmcifParser(this);
     this.mmdbParserCls = new MmdbParser(this);
     this.mmtfParserCls = new MmtfParser(this);

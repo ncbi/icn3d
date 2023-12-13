@@ -1637,6 +1637,8 @@ class ClickMenu {
            let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
            let type = '2fofc';
            await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+           //ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
+
            //ic.setOptionCls.setOption('map', '2fofc');
            thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
         });
