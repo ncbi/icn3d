@@ -6,7 +6,7 @@ class SelectCollections {
   //Set the menu of defined sets with an array of defined names "commandnameArray".
   setAtomMenu(nameArray, titleArray) {
     let ic = this.icn3d,
-      me = ic.icn3dui;
+    me = ic.icn3dui;
     let html = "";
     let commandnameArray = [nameArray[0]];
     //for(let i in ic.defNames2Atoms) {
@@ -89,14 +89,9 @@ class SelectCollections {
           }
         }
 
-        console.log(chainIdHash);
-
         ic.transformCls.zoominSelection();
-        console.log("-------------------------------------------------------");
         ic.definedSetsCls.showSets();
-        // $("#" + ic.pre + "atomsCustom")
-        //   .val(nameArray)
-        //   .change();
+
 
         await ic.drawCls.draw();
         ic.saveFileCls.showTitle();
