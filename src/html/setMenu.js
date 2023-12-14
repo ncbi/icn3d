@@ -563,6 +563,7 @@ class SetMenu {
         html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
         html += this.getLink('mn1_fixedversion', 'Share Link in Archived Ver. ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_selection', 'Selection File', undefined, 2);
+        html += this.getLink("mn1_collection", "Collection File", undefined, 2);
 
         html += this.getMenuSep();
 

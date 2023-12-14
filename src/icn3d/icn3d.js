@@ -105,7 +105,8 @@ import {LoadPDB} from './parsers/loadPDB.js';
 import {Vastplus} from './parsers/vastplus.js';
 
 import {ApplyCommand} from './selection/applyCommand.js';
-import {DefinedSets} from './selection/definedSets.js';
+import { DefinedSets } from './selection/definedSets.js';
+import { SelectCollections } from "./selection/selectCollections.js";
 import {LoadScript} from './selection/loadScript.js';
 import {SelectByCommand} from './selection/selectByCommand.js';
 import {Selection} from './selection/selection.js';
@@ -620,7 +621,8 @@ class iCn3D {
     this.setSeqAlignCls = new SetSeqAlign(this);
 
     this.applyCommandCls = new ApplyCommand(this);
-    this.definedSetsCls = new DefinedSets(this);
+      this.definedSetsCls = new DefinedSets(this);
+      this.selectCollectionsCls = new SelectCollections(this);
     this.legendTableCls = new LegendTable(this);
     this.loadScriptCls = new LoadScript(this);
     this.selByCommCls = new SelectByCommand(this);

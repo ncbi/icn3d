@@ -93,7 +93,6 @@ class MtzParser {
        else {
            sigma = await this.mtzParserBase(url, type, sigma, 'url');
 
-           console.log("### sigma " + sigma)
            //me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
        }
     }

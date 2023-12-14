@@ -477,6 +477,19 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_collection' class='" + dialogClass + "'>";
+        html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
+        html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_selectCollections' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_collectionsMenu'>";
+        html += "<b>Structures:</b> <br/>";
+        html += "<select id='" +  me.pre + "collections_menu' multiple size='6' style='min-width:130px;'>";
+        html += "</select>";
+        html += "</div>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_menuloadpref', 'Load a preference file');
         html += "Preference file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "menupreffile'><br/>";

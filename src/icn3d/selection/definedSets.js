@@ -127,12 +127,22 @@ class DefinedSets {
       let nameArrayTmp = nameArray1.concat(nameArray2).sort();
 
       let nameArray = [];
-    //  $.each(nameArrayTmp, function(i, el){
-    //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
-    //  });
-      nameArrayTmp.forEach(elem => {
-           if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
-      });
+        //  $.each(nameArrayTmp, function(i, el){
+        //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
+        //  });
+        //   nameArrayTmp.forEach(elem => {
+        //        if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
+        //   });
+        
+        let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
+
+        nameArrayTmp.forEach((elem) => {
+            structureArray.forEach((structure) => {
+                if (ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
+                    if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
+                }
+            });
+        });
 
       //for(let i in ic.defNames2Atoms) {
       for(let i = 0, il = nameArray.length; i < il; ++i) {

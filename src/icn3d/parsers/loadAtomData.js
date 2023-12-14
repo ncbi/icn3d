@@ -108,7 +108,7 @@ class LoadAtomData {
           if(!bTitle) ic.molTitle = '';
         }
         else { // mmdbid or mmcifid
-            if(data.descr !== undefined) ic.molTitle += data.descr.name;
+            if(data.descr !== undefined) ic.molTitle = data.descr.name;
             if(type === 'mmdbid') {
               let pdbidTmp = (isNaN(id)) ? id : data.pdbId;
               let chainHash = {};

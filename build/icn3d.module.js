@@ -6858,6 +6858,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_selection', 'Please input the selection file');
         });
+       
+        me.myEventCls.onIds("#" + me.pre + "mn1_collection", "click", function (e) { me.icn3d; //e.preventDefault();
+         me.htmlCls.dialogCls.openDlg('dl_collection', 'Please input the collection file');
+       });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the map file to display electron density map');
@@ -9447,6 +9451,7 @@ class SetMenu {
         html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
         html += this.getLink('mn1_fixedversion', 'Share Link in Archived Ver. ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_selection', 'Selection File', undefined, 2);
+        html += this.getLink("mn1_collection", "Collection File", undefined, 2);
 
         html += this.getMenuSep();
 
@@ -11872,6 +11877,19 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_collection' class='" + dialogClass + "'>";
+        html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
+        html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_selectCollections' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_collectionsMenu'>";
+        html += "<b>Structures:</b> <br/>";
+        html += "<select id='" +  me.pre + "collections_menu' multiple size='6' style='min-width:130px;'>";
+        html += "</select>";
+        html += "</div>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_menuloadpref', 'Load a preference file');
         html += "Preference file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "menupreffile'><br/>";
@@ -14074,6 +14092,45 @@ class Events {
              };
              reader.readAsText(file);
            }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_collectionfile", "click", function (e) { let ic = me.icn3d;
+            e.preventDefault();
+            let file = $("#" + me.pre + "collectionfile")[0].files[0];
+            if (!file) {
+                alert("Please select a file before clicking 'Load'");
+            } else {
+            if (!me.cfg.notebook) dialog.dialog("close");
+            if (!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            } else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
+            me.htmlCls.setHtmlCls.fileSupport();
+            let reader = new FileReader();
+            reader.onload = async function (e) {
+                let dataStr = JSON.parse(e.target.result);
+                let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
+                let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
+                await ic.chainalignParserCls.downloadMmdbAf(collection[0][0]);
+    
+                ic.opts["color"] = "structure";
+                ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+    
+                $("#" + ic.pre + "collections_menu").html(collectionHtml);
+                ic.selectCollectionsCls.clickStructure();
+    
+                $("#" + ic.pre + "collections_menu").trigger("change");
+    
+                me.htmlCls.clickMenuCls.setLogCmd(
+                "load collection file " +
+                    $("#" + me.pre + "collectionfile").val(),
+                false
+                );
+            };
+            reader.readAsText(file);
+            me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
+            }
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
@@ -52644,7 +52701,6 @@ class MtzParser {
        else {
            sigma = await this.mtzParserBase(url, type, sigma, 'url');
 
-           console.log("### sigma " + sigma);
            //me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
        }
     }
@@ -57339,7 +57395,7 @@ class LoadAtomData {
           if(!bTitle) ic.molTitle = '';
         }
         else { // mmdbid or mmcifid
-            if(data.descr !== undefined) ic.molTitle += data.descr.name;
+            if(data.descr !== undefined) ic.molTitle = data.descr.name;
             if(type === 'mmdbid') {
               let pdbidTmp = (isNaN(id)) ? id : data.pdbId;
               let chainHash = {};
@@ -62970,7 +63026,7 @@ class DefinedSets {
     }
 
     //Set the menu of defined sets with an array of defined names "commandnameArray".
-    setAtomMenu(commandnameArray) { let ic = this.icn3d; ic.icn3dui;
+    setAtomMenu(commandnameArray) { let ic = this.icn3d, me = ic.icn3dui;
       let html = "";
 
       let nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
@@ -62979,12 +63035,22 @@ class DefinedSets {
       let nameArrayTmp = nameArray1.concat(nameArray2).sort();
 
       let nameArray = [];
-    //  $.each(nameArrayTmp, function(i, el){
-    //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
-    //  });
-      nameArrayTmp.forEach(elem => {
-           if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
-      });
+        //  $.each(nameArrayTmp, function(i, el){
+        //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
+        //  });
+        //   nameArrayTmp.forEach(elem => {
+        //        if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
+        //   });
+        
+        let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
+
+        nameArrayTmp.forEach((elem) => {
+            structureArray.forEach((structure) => {
+                if (ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
+                    if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
+                }
+            });
+        });
 
       //for(let i in ic.defNames2Atoms) {
       for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -63548,6 +63614,124 @@ class DefinedSets {
         return selAtoms;
     }
 
+}
+
+class SelectCollections {
+  constructor(icn3d) {
+    this.icn3d = icn3d;
+  }
+
+  //Set the menu of defined sets with an array of defined names "commandnameArray".
+  setAtomMenu(nameArray, titleArray) {
+    let ic = this.icn3d;
+    ic.icn3dui;
+    let html = "";
+    let commandnameArray = [nameArray[0]];
+    //for(let i in ic.defNames2Atoms) {
+    for (let i = 0, il = nameArray.length; i < il; ++i) {
+      let name = nameArray[i];
+      let title = titleArray[i];
+
+      let atomHash;
+      if (
+        ic.defNames2Atoms !== undefined &&
+        ic.defNames2Atoms.hasOwnProperty(name)
+      ) {
+        let atomArray = ic.defNames2Atoms[name];
+
+        if (atomArray.length > 0) ic.atoms[atomArray[0]];
+      } else if (
+        ic.defNames2Residues !== undefined &&
+        ic.defNames2Residues.hasOwnProperty(name)
+      ) {
+        let residueArray = ic.defNames2Residues[name];
+        if (residueArray.length > 0) {
+          atomHash = ic.residues[residueArray[0]];
+          if (atomHash) {
+            ic.atoms[Object.keys(atomHash)[0]];
+          }
+        }
+      }
+
+      if (commandnameArray.indexOf(name) != -1) {
+        html +=
+          "<option value='" +
+          name +
+          "' selected='selected'>" +
+          title +
+          "</option>";
+      } else {
+        html += "<option value='" + name + "'>" + title + "</option>";
+      }
+    }
+
+    return html;
+  }
+
+  clickStructure() {
+    let ic = this.icn3d,
+      me = ic.icn3dui;
+    let thisClass = this;
+
+    //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let  ic = thisClass.icn3d;
+    $("#" + ic.pre + "collections_menu").change(async function (e) {
+      let ic = thisClass.icn3d;
+      //    ic.init()
+      let nameArray = $(this).val();
+      let nameStructure = $(this).find("option:selected").text();
+
+      ic.nameArray = nameArray;
+      if (nameArray !== null) {
+        ic.bShowHighlight = false;
+        await ic.chainalignParserCls.downloadMmdbAf(nameArray.toString());
+
+        ic.dAtoms = {};
+        ic.hAtoms = {};
+        //  ic.ssbondpnts = {};
+        let chainIdHash = {};
+
+        for (const name in nameArray) {
+          for (const key in ic.chains) {
+            if (key.includes(nameArray[name])) {
+              chainIdHash[key] = 1;
+              if (ic.chains.hasOwnProperty(key)) {
+                const innerDict = ic.chains[key];
+                for (const innerKey in innerDict) {
+                  if (innerDict.hasOwnProperty(innerKey)) {
+                    ic.dAtoms[innerKey] = innerDict[innerKey];
+                    ic.hAtoms[innerKey] = innerDict[innerKey];
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        ic.transformCls.zoominSelection();
+        ic.definedSetsCls.showSets();
+
+
+        await ic.drawCls.draw();
+        ic.saveFileCls.showTitle();
+
+        me.htmlCls.clickMenuCls.setLogCmd(
+          "select structure " + "[" + nameStructure + "]",
+          true
+        );
+        ic.bSelectResidue = false;
+      }
+    });
+
+    me.myEventCls.onIds(
+      "#" + ic.pre + "collections_menu",
+      "focus",
+      function (e) {
+        let ic = thisClass.icn3d;
+        if (me.utilsCls.isMobile())
+          $("#" + ic.pre + "collections_menu").val("");
+      }
+    );
+  }
 }
 
 /**
@@ -74754,7 +74938,8 @@ class iCn3D {
     this.setSeqAlignCls = new SetSeqAlign(this);
 
     this.applyCommandCls = new ApplyCommand(this);
-    this.definedSetsCls = new DefinedSets(this);
+      this.definedSetsCls = new DefinedSets(this);
+      this.selectCollectionsCls = new SelectCollections(this);
     this.legendTableCls = new LegendTable(this);
     this.loadScriptCls = new LoadScript(this);
     this.selByCommCls = new SelectByCommand(this);
@@ -75001,7 +75186,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.0';
+    this.REVISION = '3.29.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

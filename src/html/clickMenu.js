@@ -303,6 +303,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_selection', 'Please input the selection file');
         });
+       
+        me.myEventCls.onIds("#" + me.pre + "mn1_collection", "click", function (e) { let ic = me.icn3d; //e.preventDefault();
+         me.htmlCls.dialogCls.openDlg('dl_collection', 'Please input the collection file');
+       });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the map file to display electron density map');

@@ -1270,6 +1270,45 @@ class Events {
            }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_collectionfile", "click", function (e) { let ic = me.icn3d;
+            e.preventDefault();
+            let file = $("#" + me.pre + "collectionfile")[0].files[0];
+            if (!file) {
+                alert("Please select a file before clicking 'Load'");
+            } else {
+            if (!me.cfg.notebook) dialog.dialog("close");
+            if (!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            } else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
+            me.htmlCls.setHtmlCls.fileSupport();
+            let reader = new FileReader();
+            reader.onload = async function (e) {
+                let dataStr = JSON.parse(e.target.result);
+                let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
+                let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
+                await ic.chainalignParserCls.downloadMmdbAf(collection[0][0]);
+    
+                ic.opts["color"] = "structure";
+                ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+    
+                $("#" + ic.pre + "collections_menu").html(collectionHtml);
+                ic.selectCollectionsCls.clickStructure();
+    
+                $("#" + ic.pre + "collections_menu").trigger("change");
+    
+                me.htmlCls.clickMenuCls.setLogCmd(
+                "load collection file " +
+                    $("#" + me.pre + "collectionfile").val(),
+                false
+                );
+            };
+            reader.readAsText(file);
+            me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
+            }
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
