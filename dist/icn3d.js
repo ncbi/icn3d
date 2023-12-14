@@ -19690,7 +19690,7 @@ var icn3d = (function (exports) {
 
       convertUniProtInChains(alignment) {
         let me = this.icn3dui;
-          me.icn3d;
+          me.icn3d;
         let idArray = alignment.split(",");
         let alignment_final = "";
         for (let i = 0, il = idArray.length; i < il; ++i) {
@@ -19836,7 +19836,7 @@ var icn3d = (function (exports) {
 
       async loadPdbFile(bAppend) {
         let me = this.icn3dui,
-          ic = me.icn3d;
+          ic = me.icn3d;
         let fileId = bAppend ? "pdbfile_app" : "pdbfile";
 
         //me = ic.setIcn3dui(this.id);
@@ -19866,7 +19866,7 @@ var icn3d = (function (exports) {
 
       saveHtml(id) {
         let me = this.icn3dui,
-          ic = me.icn3d;
+          ic = me.icn3d;
         let html = "";
         html +=
           '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
@@ -19887,7 +19887,7 @@ var icn3d = (function (exports) {
 
       setPredefinedMenu(id) {
         let me = this.icn3dui,
-          ic = me.icn3d;
+          ic = me.icn3d;
         if (Object.keys(ic.chains).length < 2) {
           alert("At least two chains are required for alignment...");
           return;
@@ -66004,7 +66004,7 @@ var icn3d = (function (exports) {
         let bChainSeqSet = true;
         let bAddedNewSeq = false;
         let molid,
-          prevMolid = "";
+          prevMolid = "";
 
         let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(atoms, "P");
         let miscCnt = 0;
