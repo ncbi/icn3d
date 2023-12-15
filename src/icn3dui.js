@@ -393,7 +393,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             ic.bMmdbafid = true;
 
             let bQuery = true;
-            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery, undefined);
+            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
         }
     }
     else if(me.cfg.url !== undefined) {
