@@ -34,6 +34,7 @@ class ParserUtils {
               if(rmsd) {
                   me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
+
                   if(ic.bAfMem && !me.cfg.chainalign) {
                     //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
                     html += me.utilsCls.getMemDesc();

@@ -472,12 +472,14 @@ class SetDialog {
 
 
         html += me.htmlCls.divStr + "dl_selection' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_selection', 'Load a selection file');
+        html += this.addNotebookTitle('dl_selection', 'Please input the selection file');
         html += "Selection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "selectionfile'><br/>";
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_collection' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_collection', 'Please input the collection file');
+        html += "You can load a collection of structures via a file. Here is <a href='https://github.com/ncbi/icn3d/blob/master/example/collection.json' target='_blank'>one example file</a><br><br>";
         html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
         html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";

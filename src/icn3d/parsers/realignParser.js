@@ -94,6 +94,7 @@ class RealignParser {
       // reinitialize
       ic.qt_start_end = [];
 
+      let chainidHash = {};
       for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
           let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
@@ -102,6 +103,8 @@ class RealignParser {
 
           let chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
           let chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+          chainidHash[chainTo] = 1;
+          chainidHash[chainFrom] = 1;
 
           chainidArray[0] = chainTo;
           chainidArray[index + 1] = chainFrom;
@@ -137,13 +140,17 @@ class RealignParser {
           // set ic.qt_start_end in alignCoords()
 
           let result = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+
           hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
           rmsd = parseFloat(result.rmsd);
       }
 
       // If rmsd from vastsrv is too large, realign the chains
-      if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {      
-        let nameArray = me.cfg.chainalign.split(',');
+      //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {   
+      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {     
+        console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align.") 
+        //let nameArray = me.cfg.chainalign.split(',');
+        let nameArray = Object.keys(chainidHash);
         if(nameArray.length > 0) {
             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         }
@@ -593,7 +600,7 @@ class RealignParser {
                 struct2resid[chainid] = [];
             }
  
-            if(bPredefined) {
+            if(bPredefined) {             
                 //base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                 if(i == 0) { // master
@@ -611,6 +618,7 @@ class RealignParser {
 
                     // master
                     resiArray = predefinedResPair[0].split(",");        
+
                     result = thisClass.getSeqCoorResid(resiArray, chainid_t);
 
                     hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
@@ -625,6 +633,7 @@ class RealignParser {
 
                     // slave
                     resiArray = predefinedResPair[1].split(",");
+
                     result = thisClass.getSeqCoorResid(resiArray, chainid); 
                     hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 

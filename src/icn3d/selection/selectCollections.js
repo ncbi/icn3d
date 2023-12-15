@@ -1,3 +1,7 @@
+/**
+ * @author Jack Lin <th3linja@yahoo.com> / https://github.com/ncbi/icn3d
+ */
+
 class SelectCollections {
   constructor(icn3d) {
     this.icn3d = icn3d;
@@ -65,7 +69,8 @@ class SelectCollections {
       ic.nameArray = nameArray;
       if (nameArray !== null) {
         ic.bShowHighlight = false;
-        await ic.chainalignParserCls.downloadMmdbAf(nameArray.toString());
+        let bNoDuplicate = true;
+        await ic.chainalignParserCls.downloadMmdbAf(nameArray.toString(), undefined, undefined, bNoDuplicate);
 
         ic.dAtoms = {};
         ic.hAtoms = {};

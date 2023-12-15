@@ -391,9 +391,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             // load multiple PDBs
             // ic.bNCBI = true;
             ic.bMmdbafid = true;
-            
+
             let bQuery = true;
-            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery, undefined);
         }
     }
     else if(me.cfg.url !== undefined) {

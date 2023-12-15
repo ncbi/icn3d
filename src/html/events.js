@@ -1288,7 +1288,8 @@ class Events {
                 let dataStr = JSON.parse(e.target.result);
                 let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
                 let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
-                await ic.chainalignParserCls.downloadMmdbAf(collection[0][0]);
+                let bNoDuplicate = true;
+                await ic.chainalignParserCls.downloadMmdbAf(collection[0][0], undefined, undefined, bNoDuplicate);
     
                 ic.opts["color"] = "structure";
                 ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);

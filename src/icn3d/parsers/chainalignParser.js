@@ -228,6 +228,7 @@ class ChainalignParser {
             me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid1 + " with " + mmdbid2, false);
 
             let bNoAlert = true;
+
             let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
@@ -744,7 +745,6 @@ class ChainalignParser {
                 ic.qt_start_end[index] = align[0].segs;
 
                 let rmsd = align[0].super_rmsd;
-console.log()
 
                 let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
                 if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
@@ -829,7 +829,7 @@ console.log()
         }
     }
 
-    async downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadMmdbAf(idlist, bQuery, vastplusAtype, bNoDuplicate) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         ic.structArray = (ic.structures) ? Object.keys(ic.structures) : [];
@@ -848,10 +848,16 @@ console.log()
         let structArrayTmp = idlist.split(',');
 
         let structArray = [];
-        // remove redundant structures
+
         for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-            if(!ic.structures.hasOwnProperty(structArrayTmp[i].toUpperCase())) {
+            let id = structArrayTmp[i].toUpperCase();
+            // sometimes we want to load same structure multiple times
+            if(!ic.structures.hasOwnProperty(id) && structArray.indexOf(id) == -1) {
                 structArray.push(structArrayTmp[i]);
+            }
+            else {
+                // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
+                if(!bNoDuplicate) structArray.push(structArrayTmp[i] + me.htmlCls.postfix);
             }
         }
         
