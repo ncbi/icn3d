@@ -138,7 +138,7 @@ class LoadAtomData {
                   }
 
                   if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                      //chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
+                      //chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain; 
                   }
 
                   //if(chainidInput && chainidInput.substr(chainidInput.indexOf('_') + 1) == chain) chainid = chainidInput;
@@ -625,7 +625,6 @@ class LoadAtomData {
                     let chainid = id + '_' + chain;
 
                     if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                        //chainid += me.htmlCls.postfix;
                         //chainid = id + me.htmlCls.postfix + '_' + chain;
                     }
 

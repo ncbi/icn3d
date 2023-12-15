@@ -11875,12 +11875,14 @@ var icn3d = (function (exports) {
 
 
             html += me.htmlCls.divStr + "dl_selection' class='" + dialogClass + "'>";
-            html += this.addNotebookTitle('dl_selection', 'Load a selection file');
+            html += this.addNotebookTitle('dl_selection', 'Please input the selection file');
             html += "Selection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "selectionfile'><br/>";
             html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_collection' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_collection', 'Please input the collection file');
+            html += "You can load a collection of structures via a file. Here is <a href='https://github.com/ncbi/icn3d/blob/master/example/collection.json' target='_blank'>one example file</a><br><br>";
             html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
             html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
             html += "</div>";
@@ -14115,7 +14117,8 @@ var icn3d = (function (exports) {
                     let dataStr = JSON.parse(e.target.result);
                     let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
                     let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
-                    await ic.chainalignParserCls.downloadMmdbAf(collection[0][0]);
+                    let bNoDuplicate = true;
+                    await ic.chainalignParserCls.downloadMmdbAf(collection[0][0], undefined, undefined, bNoDuplicate);
         
                     ic.opts["color"] = "structure";
                     ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
@@ -50650,6 +50653,7 @@ var icn3d = (function (exports) {
                 me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid1 + " with " + mmdbid2, false);
 
                 let bNoAlert = true;
+
                 let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
                 if(bAligned) {
@@ -51161,7 +51165,6 @@ var icn3d = (function (exports) {
                     ic.qt_start_end[index] = align[0].segs;
 
                     let rmsd = align[0].super_rmsd;
-    console.log();
 
                     let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
                     if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
@@ -51246,7 +51249,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        async downloadMmdbAf(idlist, bQuery, vastplusAtype) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadMmdbAf(idlist, bQuery, vastplusAtype, bNoDuplicate) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.structArray = (ic.structures) ? Object.keys(ic.structures) : [];
@@ -51265,10 +51268,16 @@ var icn3d = (function (exports) {
             let structArrayTmp = idlist.split(',');
 
             let structArray = [];
-            // remove redundant structures
+
             for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-                if(!ic.structures.hasOwnProperty(structArrayTmp[i].toUpperCase())) {
+                let id = structArrayTmp[i].toUpperCase();
+                // sometimes we want to load same structure multiple times
+                if(!ic.structures.hasOwnProperty(id) && structArray.indexOf(id) == -1) {
                     structArray.push(structArrayTmp[i]);
+                }
+                else {
+                    // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
+                    if(!bNoDuplicate) structArray.push(structArrayTmp[i] + me.htmlCls.postfix);
                 }
             }
             
@@ -54743,6 +54752,7 @@ var icn3d = (function (exports) {
           // reinitialize
           ic.qt_start_end = [];
 
+          let chainidHash = {};
           for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {         
               let fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
 
@@ -54750,6 +54760,8 @@ var icn3d = (function (exports) {
 
               let chainTo = toStruct + chainidArray[0].substr(chainidArray[0].indexOf('_'));
               let chainFrom = fromStruct + chainidArray[index + 1].substr(chainidArray[index + 1].indexOf('_'));
+              chainidHash[chainTo] = 1;
+              chainidHash[chainFrom] = 1;
 
               chainidArray[0] = chainTo;
               chainidArray[index + 1] = chainFrom;
@@ -54779,13 +54791,17 @@ var icn3d = (function (exports) {
               // set ic.qt_start_end in alignCoords()
 
               let result = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+
               hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
               rmsd = parseFloat(result.rmsd);
           }
 
           // If rmsd from vastsrv is too large, realign the chains
-          if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {      
-            let nameArray = me.cfg.chainalign.split(',');
+          //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {   
+          if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {     
+            console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align."); 
+            //let nameArray = me.cfg.chainalign.split(',');
+            let nameArray = Object.keys(chainidHash);
             if(nameArray.length > 0) {
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
             }
@@ -55229,7 +55245,7 @@ var icn3d = (function (exports) {
                     struct2resid[chainid] = [];
                 }
      
-                if(bPredefined) {
+                if(bPredefined) {             
                     //base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                     if(i == 0) ;
@@ -55245,6 +55261,7 @@ var icn3d = (function (exports) {
 
                         // master
                         resiArray = predefinedResPair[0].split(",");        
+
                         result = thisClass.getSeqCoorResid(resiArray, chainid_t);
 
                         hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
@@ -55259,6 +55276,7 @@ var icn3d = (function (exports) {
 
                         // slave
                         resiArray = predefinedResPair[1].split(",");
+
                         result = thisClass.getSeqCoorResid(resiArray, chainid); 
                         hAtoms = me.hashUtilsCls.unionHash(hAtoms, result.hAtoms);
 
@@ -56484,6 +56502,7 @@ var icn3d = (function (exports) {
                   if(rmsd) {
                       me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                       let html = "<br><b>Realignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br><br>";
+
                       if(ic.bAfMem && !me.cfg.chainalign) {
                         //if(window.dialog && window.dialog.hasClass('ui-dialog-content')) window.dialog.dialog( "close" );
                         html += me.utilsCls.getMemDesc();
@@ -63619,6 +63638,10 @@ var icn3d = (function (exports) {
 
     }
 
+    /**
+     * @author Jack Lin <th3linja@yahoo.com> / https://github.com/ncbi/icn3d
+     */
+
     class SelectCollections {
       constructor(icn3d) {
         this.icn3d = icn3d;
@@ -63686,7 +63709,8 @@ var icn3d = (function (exports) {
           ic.nameArray = nameArray;
           if (nameArray !== null) {
             ic.bShowHighlight = false;
-            await ic.chainalignParserCls.downloadMmdbAf(nameArray.toString());
+            let bNoDuplicate = true;
+            await ic.chainalignParserCls.downloadMmdbAf(nameArray.toString(), undefined, undefined, bNoDuplicate);
 
             ic.dAtoms = {};
             ic.hAtoms = {};
@@ -75415,9 +75439,9 @@ var icn3d = (function (exports) {
                 // load multiple PDBs
                 // ic.bNCBI = true;
                 ic.bMmdbafid = true;
-                
+
                 let bQuery = true;
-                await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
+                await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery, undefined);
             }
         }
         else if(me.cfg.url !== undefined) {
