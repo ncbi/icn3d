@@ -349,7 +349,7 @@ class ShowAnno {
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
                 if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {
-                    chainHtml += "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
+                    chainHtml += "&nbsp;&nbsp;&nbsp;" + this.addButton(chnid, "icn3d-iganchorsets", "Ig Anchor Set", "Define the set for all Ig anchors in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
                     + this.addButton(chnid, "icn3d-igloopsets", "Ig Loop Sets", "Define sets for each Ig loop in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle);
                 }
             $("#" + ic.pre + "dl_annotations").append(chainHtml);

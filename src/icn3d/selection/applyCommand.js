@@ -576,6 +576,12 @@ class ApplyCommand {
 
          ic.addTrackCls.defineSecondary(chainid, 'coil');
       }
+      else if(commandOri.indexOf('define iganchor sets') == 0) {
+        let chainStr = commandOri.split(' | ')[1];
+        let chainid = chainStr.split(' ')[1];
+
+        ic.addTrackCls.defineIgstrand(chainid, 'iganchor');
+      }
       else if(commandOri.indexOf('define igstrand sets') == 0) {
         let chainStr = commandOri.split(' | ')[1];
         let chainid = chainStr.split(' ')[1];

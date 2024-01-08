@@ -2320,7 +2320,7 @@ class ClickMenu {
               }
           }
       }
-      if(ic.bAddLogs && me.cfg.showcommand) {
+      if((ic.bAddLogs || bAddLogs) && me.cfg.showcommand) {
           let finalStr = (bSetCommand) ? str : '[comment] ' + str;
           ic.logs.push(finalStr);
           // move cursor to the end, and scroll to the end

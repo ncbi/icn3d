@@ -272,11 +272,19 @@ class ShareLink {
                //statefile += ic.commands[i] + "\n";
 
                // only output the most recent 'select saved atoms...' without " | name ..."
-               if(((prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
-                 &&(commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
-                 && prevCommandStr.indexOf(' name ') === -1)
-                 ||(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
-                 ) {
+               // or those select without names
+            //    if(((prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
+            //      &&(commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
+            //      && prevCommandStr.indexOf(' name ') === -1)
+            //      ||(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
+            //      ) {
+
+               if(prevCommandStr.indexOf('select') == 0 && prevCommandStr.indexOf('select prop') === -1
+                 && commandStr.indexOf('select') === 0 && commandStr.indexOf('select prop') === -1
+                 && prevCommandStr.indexOf(' name ') === -1) {
+                    // do nothing
+                }
+               else if(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1) {
                    // do nothing
                }
                // remove all "show selection" except the last one

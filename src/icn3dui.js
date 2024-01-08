@@ -165,7 +165,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.1';
+    this.REVISION = '3.29.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -786,10 +786,13 @@ iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, ale
                     resolve(data);
                 },
                 error : function() {
-                    if(alertMess) alert(alertMess);
+                    //if(alertMess) alert(alertMess);
+                    if(alertMess) console.log(alertMess);
                     if(logMess) console.log(logMess);
                     
-                    reject('error');
+                    // reject('error');
+                    // keep running the program
+                    resolve('error');
                 }
             });
         });

@@ -8873,7 +8873,7 @@ class ClickMenu {
               }
           }
       }
-      if(ic.bAddLogs && me.cfg.showcommand) {
+      if((ic.bAddLogs || bAddLogs) && me.cfg.showcommand) {
           let finalStr = (bSetCommand) ? str : '[comment] ' + str;
           ic.logs.push(finalStr);
           // move cursor to the end, and scroll to the end
@@ -9568,14 +9568,14 @@ class SetMenu {
         }
 
         //!!!
-
+/*
         html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
         html += "<ul>";
         html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
         html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
         html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
         html += "</ul>";
-
+*/
 
         html += "<li><br/></li>";
 
@@ -10416,8 +10416,8 @@ class SetMenu {
             //}
 
             //!!!
-            html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-            html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+            //html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            //html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -10548,7 +10548,7 @@ class SetMenu {
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
             //!!!
-            html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+            //html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
         }
@@ -10640,13 +10640,13 @@ class SetMenu {
 
             html += "<ul>";
 //!!!
-
+/*
             html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
             html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
 
             html += this.getMenuSep();
-
+*/
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
             html += "</li>";
@@ -15469,6 +15469,14 @@ class Events {
           thisClass.setLogCmd('define coil sets | chain ' + chainid, true);
         });
 
+        $(document).on("click", ".icn3d-iganchorsets", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            //e.preventDefault();
+            let chainid = $(this).attr('chainid');
+            ic.addTrackCls.defineIgstrand(chainid, 'iganchor');
+            thisClass.setLogCmd('define iganchor sets | chain ' + chainid, true);
+        });
+
         $(document).on("click", ".icn3d-igstrandsets", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             //e.preventDefault();
@@ -16906,6 +16914,9 @@ class Html {
     //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
     this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
         ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
+
+    this.tmalignUrl = this.baseUrl + "tmalign/tmalign.cgi";
+    
     this.divStr = "<div id='" + this.icn3dui.pre;
     this.divNowrapStr = "<div style='white-space:nowrap'>";
     this.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -38538,7 +38549,8 @@ class AnnoDomain {
                     for(let j = from; j <= to; ++j) {
                         // 0-based
                         let obj = {};
-                        obj[chnid + '_' + (j+1).toString()] = domainName;
+                        let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                        obj[chnid + '_' + resi] = domainName;
                         ic.resid2domain[chnid].push(obj);
                     }
                 }
@@ -41520,64 +41532,78 @@ class AddTrack {
 
             if(!ic.residues.hasOwnProperty(resid) ) continue;
           
-            let refnumLabel, refnumStr;
+            let refnumLabel, refnumStr, refnum;
             refnumLabel = ic.resid2refnum[resid];
             if(!refnumLabel) continue;
 
             refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
             currStrand = refnumLabel.replace(refnumStr, '');
+            refnum = parseInt(refnumStr);
 
-            if(ic.residIgLoop.hasOwnProperty(resid)) {
-                currType = 'igloop';
-            }
+            if(type == 'iganchor') {
+                if(refnum > 1000 && refnumStr.substr(refnumStr.length - 2, 2) == '50') {
+                    selectedResidues[resid] = 1;
+                }
+            } 
             else {
-                currType = 'igstrand';
-            }
-
-            if(bStart && currType != prevType && Object.keys(selectedResidues).length > 0) {
-                if(prevType == 'igstrand') {
-                    ++strandCnt;
-                    setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
-                    setName = setName.replace(/'/g, '`');
-                    if(type == 'igstrand') {
-                        ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
-                        if(!bUnion) bUnion = true;
-                    }
-                    prevStrandReal = prevStrand;
+                if(ic.residIgLoop.hasOwnProperty(resid)) {
+                    currType = 'igloop';
                 }
-                else if(prevType == 'igloop') {
-                    ++loopCnt;
-                    setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
-                    setName = setName.replace(/'/g, '`');
-                    if(type == 'igloop') {
-                        ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
-                        if(!bUnion) bUnion = true;
-                    }
+                else {
+                    currType = 'igstrand';
                 }
 
-                selectedResidues = {};
+                if(bStart && currType != prevType && Object.keys(selectedResidues).length > 0) {
+                    if(prevType == 'igstrand') {
+                        ++strandCnt;
+                        setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+                        setName = setName.replace(/'/g, '`');
+                        if(type == 'igstrand') {
+                            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                            if(!bUnion) bUnion = true;
+                        }
+                        prevStrandReal = prevStrand;
+                    }
+                    else if(prevType == 'igloop') {
+                        ++loopCnt;
+                        setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+                        setName = setName.replace(/'/g, '`');
+                        if(type == 'igloop') {
+                            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                            if(!bUnion) bUnion = true;
+                        }
+                    }
+
+                    selectedResidues = {};
+                }
+
+                selectedResidues[resid] = 1;
+
+                prevStrand = currStrand;
+                prevType = currType;
+
+                bStart = true;
             }
-
-            selectedResidues[resid] = 1;
-
-            prevStrand = currStrand;
-            prevType = currType;
-
-            bStart = true;
         } // for loop
 
-        if(prevType == 'igstrand') {
-            ++strandCnt;
-            setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
-            setName = setName.replace(/'/g, '`');
-            if(type == 'igstrand') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+        if(type == 'iganchor') {
+            setName = 'Anchor-' + chainid;
+            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
         }
-        else if(prevType == 'igloop') {
-            ++loopCnt;
-            currStrand = 'CT';
-            setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
-            setName = setName.replace(/'/g, '`');
-            if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+        else {
+            if(prevType == 'igstrand') {
+                ++strandCnt;
+                setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+                setName = setName.replace(/'/g, '`');
+                if(type == 'igstrand') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+            }
+            else if(prevType == 'igloop') {
+                ++loopCnt;
+                currStrand = 'CT';
+                setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+                setName = setName.replace(/'/g, '`');
+                if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+            }
         }
     }
 
@@ -43363,7 +43389,7 @@ class ShowAnno {
                 + this.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
                 if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {
-                    chainHtml += "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
+                    chainHtml += "&nbsp;&nbsp;&nbsp;" + this.addButton(chnid, "icn3d-iganchorsets", "Ig Anchor Set", "Define the set for all Ig anchors in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;" + this.addButton(chnid, "icn3d-igstrandsets", "Ig Strand Sets", "Define sets for each Ig strand in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle) + "&nbsp;"
                     + this.addButton(chnid, "icn3d-igloopsets", "Ig Loop Sets", "Define sets for each Ig loop in this chain and add them to the menu of \"Defined Sets\"", 80, buttonStyle);
                 }
             $("#" + ic.pre + "dl_annotations").append(chainHtml);
@@ -45068,6 +45094,9 @@ class HlSeq {
                  }
               });
 
+              ic.selectionCls.saveSelectionPrep(true);
+              ic.selectionCls.saveSelection(undefined, undefined, true);
+
               //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);
               ic.hlObjectsCls.addHlObjects();  // render() is called
 
@@ -45151,7 +45180,10 @@ class HlSeq {
 
               if(id !== undefined) {
                    thisClass.selectResidues(id, this);
-             }
+
+                   ic.selectionCls.saveSelectionPrep(true);
+                   ic.selectionCls.saveSelection(undefined, undefined, true);
+              }
           //});
 
           //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);
@@ -46638,9 +46670,7 @@ class LineGraph {
         ic.hlUpdateCls.updateHlAll();
     }
  
-    async showIgRefNum(template) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
+    setRefPdbs() { let ic = this.icn3d; ic.icn3dui;
         // round 1, 16 templates
         ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_Iset', '1CD28_1yjdC_human_V', '1CD19_6al5A_human_C2orV-n1'];
 
@@ -46713,7 +46743,9 @@ class LineGraph {
         ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_Iset'];
         ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_Iset'];
         ic.refpdbHash['6JXR_g'] = ['CD3g_6jxrg_human_Iset'];
+    }
 
+    getPdbAjaxArray() {  let ic = this.icn3d, me = ic.icn3dui;
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
             let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
@@ -46723,6 +46755,16 @@ class LineGraph {
 
             pdbAjaxArray.push(pdbAjax);
         }
+
+        return pdbAjaxArray;
+    }
+
+    async showIgRefNum(template) { let ic = this.icn3d; ic.icn3dui;
+        let thisClass = this;
+
+        this.setRefPdbs();
+
+        let pdbAjaxArray = this.getPdbAjaxArray();
 
         // try {
             if(!template) {
@@ -46751,14 +46793,12 @@ class LineGraph {
         let ajaxArray = [];
         let domainidpairArray = [];
 
-        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-        me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+        let urltmalign = me.htmlCls.tmalignUrl;
+        // let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
 
         if(!ic.resid2domainid) ic.resid2domainid = {};
         //ic.resid2domainid = {};
         ic.domainid2pdb = {};
-
-        let minResidues = 20;
 
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
@@ -46767,79 +46807,8 @@ class LineGraph {
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
 
-                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
-                && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
-                if(ic.chainsSeq[chainid].length < minResidues) continue; // peptide
-
-                let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
-                if(Object.keys(currAtoms).length == 0) continue;
-
-                // align each 3D domain with reference structure
-                //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
-                // assign ref numbers to selected residues
-                let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
-                let subdomains = result.subdomains;  
-                let pos2resi = result.pos2resi;
-
-                let domainAtomsArray = [];
-                if(subdomains.length <= 1) {
-                    //domainAtomsArray.push(ic.chains[chainid]);
-                    domainAtomsArray.push(currAtoms);
-
-                    let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
-
-                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
-                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
-                    let resiSum = atomFirst.resi + ':' + atomLast.resi;
-
-                    for(let n = 0, nl = residueArray.length; n < nl; ++n) {
-                        let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
-
-                        // clear previous refnum assignment if any
-                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
-                            delete ic.resid2refnum[resid];
-                        }
-                    }
-                }
-                else {                 
-                    for(let k = 0, kl = subdomains.length; k < kl; ++k) {
-                        let domainAtoms = {};
-                        let segArray = subdomains[k];
-
-                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                            let startResi = segArray[m];
-                            let endResi = segArray[m+1];
-                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + pos2resi[n];
-                                domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                //ic.resid2domainid[resid] = chainid + '-' + k;
-
-                                // clear previous refnum assignment if any
-                                if(ic.resid2refnum && ic.resid2refnum[resid]) {
-                                    delete ic.resid2refnum[resid];
-                                }
-                            }
-                        }
-
-                        domainAtomsArray.push(domainAtoms);
-
-                        let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
-                        let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
-                        let resiSum = atomFirst.resi + ':' + atomLast.resi;
-
-                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                            let startResi = segArray[m];
-                            let endResi = segArray[m+1];
-                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + pos2resi[n];
-                                //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
-                            }
-                        }
-                    }
-                }
-
+                let domainAtomsArray = this.getDomainAtomsArray(chainid);
+                    
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
                 if(!ic.domainid2score) ic.domainid2score = {};
 
@@ -46903,7 +46872,7 @@ class LineGraph {
                 // start round2
                 let ajaxArray = [];
                 let domainidpairArray3 = [];
-                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+                let urltmalign = me.htmlCls.tmalignUrl;
 
                 let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + template;
                 let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
@@ -46960,6 +46929,86 @@ class LineGraph {
         */           
     }
 
+    getDomainAtomsArray(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let domainAtomsArray = [];
+
+        let minResidues = 20;
+
+        if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
+        && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) return domainAtomsArray;
+        if(ic.chainsSeq[chainid].length < minResidues) return domainAtomsArray; // peptide
+
+        let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
+        if(Object.keys(currAtoms).length == 0) return domainAtomsArray;
+
+        // align each 3D domain with reference structure
+        //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
+        // assign ref numbers to selected residues
+        let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
+        let subdomains = result.subdomains;  
+        let pos2resi = result.pos2resi;
+
+        if(subdomains.length <= 1) {
+            //domainAtomsArray.push(ic.chains[chainid]);
+            domainAtomsArray.push(currAtoms);
+
+            let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+
+            let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
+            let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
+            let resiSum = atomFirst.resi + ':' + atomLast.resi;
+
+            for(let n = 0, nl = residueArray.length; n < nl; ++n) {
+                let resid = residueArray[n];
+                ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
+
+                // clear previous refnum assignment if any
+                if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                    delete ic.resid2refnum[resid];
+                }
+            }
+        }
+        else {                 
+            for(let k = 0, kl = subdomains.length; k < kl; ++k) {
+                let domainAtoms = {};
+                let segArray = subdomains[k];
+
+                for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                    let startResi = segArray[m];
+                    let endResi = segArray[m+1];
+                    for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                        let resid = chainid + '_' + pos2resi[n];
+                        domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                        //ic.resid2domainid[resid] = chainid + '-' + k;
+
+                        // clear previous refnum assignment if any
+                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                            delete ic.resid2refnum[resid];
+                        }
+                    }
+                }
+
+                domainAtomsArray.push(domainAtoms);
+
+                let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
+                let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
+                let resiSum = atomFirst.resi + ':' + atomLast.resi;
+
+                for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                    let startResi = segArray[m];
+                    let endResi = segArray[m+1];
+                    for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                        let resid = chainid + '_' + pos2resi[n];
+                        //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                        ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
+                    }
+                }
+            }
+        }
+
+        return domainAtomsArray;
+    }
+
     getTemplateList(chainid) { let ic = this.icn3d; ic.icn3dui;
         let domainid2refpdbname = {}, domainid2score = {};
 
@@ -47004,13 +47053,13 @@ class LineGraph {
         return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList, 'seqidList': seqidList, 'nresAlignList': nresAlignList};
     }
 
-    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
+    parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+    // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
         let tmscoreThreshold = 0.4; // 0.4; //0.5;
+        //let rmsdThreshold = 10;
 
         // find the best alignment for each chain
-        let domainid2segs = {}, chainid2segs = {};
+        let domainid2segs = {};
 
         if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
         if(!ic.chainid2score) ic.chainid2score = {};
@@ -47095,12 +47144,11 @@ class LineGraph {
             }
 
             if(!bRound1) {
-                console.log("domainid: " + domainid);
+                if(!me.bNode) console.log("domainid: " + domainid);
             }
 
-            if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
+            if(!domainid2segs.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
                 ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;  
-    
                 ic.domainid2refpdbname[domainid] = refpdbname;
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
@@ -47108,13 +47156,19 @@ class LineGraph {
             }
         }
 
+        return domainid2segs;
+    }
+
+    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+        let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
+
         if(bRound1) {
             if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
 
             // start round2
             let ajaxArray = [];
             let domainidpairArray3 = [];
-            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+            let urltmalign = me.htmlCls.tmalignUrl;
             for(let domainid in ic.domainid2refpdbname) {
                 let pdbAjaxArray = [];
                 let refpdbname = ic.domainid2refpdbname[domainid];
@@ -47170,14 +47224,21 @@ class LineGraph {
 
             dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-            await thisClass.parseAlignData(dataArray3, domainidpairArray3, false);
+            await this.parseAlignData(dataArray3, domainidpairArray3, false);
             
             // end of round 2
             return;
         }
 
+        await this.parseAlignData_part3(domainid2segs);
+    }
+
+    async parseAlignData_part3(domainid2segs) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid2segs = {};
+
         // combine domainid into chainid
         let processedChainid = {};
+
         for(let domainid in ic.domainid2refpdbname) {
             // remove the first round template
             if(ic.domainid2refpdbname[domainid].substr(0,1) == '1') {
@@ -47229,7 +47290,7 @@ class LineGraph {
             let message = "The reference PDB(s) for chain " + chainid + " is(are) " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + ".";
             if(!me.bNode) {
                 console.log(message);
-                me.htmlCls.clickMenuCls.setLogCmd(message, true);
+                me.htmlCls.clickMenuCls.setLogCmd(message, false, true);
             }
             ic.refPdbList.push(message);
 
@@ -47253,7 +47314,7 @@ class LineGraph {
                     //let refnum = qStart + postfix;
                     let refnum = qStart;
 
-                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
+                    let refnumLabel = this.getLabelFromRefnum(refnum, prevStrand, bCd19);
                     prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                     ic.resid2refnum[resid] = refnumLabel;
@@ -47418,7 +47479,7 @@ class LineGraph {
         return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
     }
 
-    exportRefnum(type) { let ic = this.icn3d, me = ic.icn3dui;
+    exportRefnum(type, bCalcRef) { let ic = this.icn3d, me = ic.icn3dui;
         let refData = '';
 
         // 1. show IgStrand ref numbers
@@ -47462,19 +47523,32 @@ class LineGraph {
                 }
             }
 
-            refData += '{"ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n";
+            let bIgDomain = (ic.refPdbList.length > 0) ? 1 : 0;
+
+            refData += '{"Ig domain" : ' + bIgDomain + ', "ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n";
     
-            refData += '"data": {\n';
-            for(let chnid in ic.chains) {
-            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
-            if(ic.proteins.hasOwnProperty(atom.serial)) {
-                for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
-                    const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
-                    refData += '"' + resid + '": "' + resid2refnum[resid] + '",\n';
+            if(bIgDomain) {
+                refData += '"data": {\n';
+                for(let chnid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        let bIgChain = false;
+                        let chainRefData = '"' + chnid + '": [\n';
+                        for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                            const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
+                            chainRefData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                            if(resid2refnum[resid]) bIgChain = true;
+                        }
+                        chainRefData += '],\n';
+
+                        if(bIgChain) {
+                            refData += chainRefData;
+                        }
+                    }
                 }
+                refData += '}\n';
             }
-            }
-            refData += '}\n';
+
             refData += '}\n';
         }
         // 2. show Kabat ref numbers
@@ -52744,7 +52818,6 @@ class MmcifParser {
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
         // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
-        //let url = (me.bNode) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
         let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
@@ -52752,6 +52825,7 @@ class MmcifParser {
 
         url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         let dataObj = {'mmcifheader': data1};
+
         let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
 
         if(data.emd !== undefined) ic.emd = data.emd;
@@ -54668,7 +54742,7 @@ class RealignParser {
     realign() { let ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
-        let index = Object.keys(ic.defNames2Atoms).length;
+        let index = Object.keys(ic.defNames2Atoms).length + Object.keys(ic.defNames2Residues).length + 1;
         let name = 'alseq_' + index;
 
         ic.selectionCls.saveSelection(name, name);
@@ -61770,6 +61844,12 @@ class ApplyCommand {
 
          ic.addTrackCls.defineSecondary(chainid, 'coil');
       }
+      else if(commandOri.indexOf('define iganchor sets') == 0) {
+        let chainStr = commandOri.split(' | ')[1];
+        let chainid = chainStr.split(' ')[1];
+
+        ic.addTrackCls.defineIgstrand(chainid, 'iganchor');
+      }
       else if(commandOri.indexOf('define igstrand sets') == 0) {
         let chainStr = commandOri.split(' | ')[1];
         let chainid = chainStr.split(' ')[1];
@@ -63065,7 +63145,7 @@ class DefinedSets {
 
         nameArrayTmp.forEach((elem) => {
             structureArray.forEach((structure) => {
-                if (ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
+                if (ic.defNames2Residues[elem] && ic.defNames2Residues[elem][0] && ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
                     if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
                 }
             });
@@ -65475,28 +65555,46 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
     }
 
-    saveSelection(name, description) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.selectedResidues = {};
+    saveSelection(name, description, bDragSeq) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!bDragSeq) {
+            ic.selectedResidues = {};
 
-        ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+            ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+        }
+
+        if(!name) {
+            let index = Object.keys(ic.defNames2Atoms).length + Object.keys(ic.defNames2Residues).length + 1;
+            name = 'seq_' + index;
+            description = name;
+        }
 
         if(Object.keys(ic.selectedResidues).length > 0) {
             if(ic.pk == 1) {
                 let bAtom = true;
-                this.selectResidueList(ic.hAtoms, name, description,undefined, undefined, bAtom);
+                this.selectResidueList(ic.hAtoms, name, description, undefined, undefined, bAtom);
                 //ic.hlUpdateCls.updateHlAll();
 
                 this.updateSelectionNameDesc();
 
-                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                if(!bDragSeq) {
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                }
+                else { // no names for temp selections
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms), true);
+                }
             }
             else {
-                this.selectResidueList(ic.selectedResidues, name, description);
+                this.selectResidueList(ic.selectedResidues, name, description, undefined, undefined, undefined);
                 //ic.hlUpdateCls.updateHlAll();
 
                 this.updateSelectionNameDesc();
 
-                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                if(!bDragSeq) {
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                }
+                else { // no names for temp selections
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)), true);
+                }
             }
         }
     }
@@ -65634,7 +65732,7 @@ class Selection {
       }
     }
 
-    saveSelectionPrep() {var ic = this.icn3d, me = ic.icn3dui;
+    saveSelectionPrep(bDragSeq) {var ic = this.icn3d, me = ic.icn3dui;
            if(!me.cfg.notebook) {
                if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
                  me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
@@ -65645,8 +65743,11 @@ class Selection {
                $('#' + ic.pre + 'dl_definedsets').show();
                $("#" + ic.pre + "atomsCustom").resizable();
            }
-           ic.bSelectResidue = false;
-           ic.bSelectAlignResidue = false;
+
+           if(!bDragSeq) {
+                ic.bSelectResidue = false;
+                ic.bSelectAlignResidue = false;
+           }
     }
     selectOneResid(idStr, bUnchecked) {var ic = this.icn3d; ic.icn3dui;
       //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP
@@ -72283,11 +72384,17 @@ class ShareLink {
                //statefile += ic.commands[i] + "\n";
 
                // only output the most recent 'select saved atoms...' without " | name ..."
-               if(((prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
-                 &&(commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
-                 && prevCommandStr.indexOf(' name ') === -1)
-                 ||(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
-                 ) ;
+               // or those select without names
+            //    if(((prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
+            //      &&(commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
+            //      && prevCommandStr.indexOf(' name ') === -1)
+            //      ||(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
+            //      ) {
+
+               if(prevCommandStr.indexOf('select') == 0 && prevCommandStr.indexOf('select prop') === -1
+                 && commandStr.indexOf('select') === 0 && commandStr.indexOf('select prop') === -1
+                 && prevCommandStr.indexOf(' name ') === -1) ;
+               else if(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1) ;
                // remove all "show selection" except the last one
                else if(prevCommandStr == 'show selection' && ic.commands.slice(i).toString().indexOf('show selection') != -1) ;
                else if(prevCommandStr.indexOf(toggleStr) !== -1) {
@@ -75210,7 +75317,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.1';
+    this.REVISION = '3.29.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -75438,7 +75545,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             ic.bMmdbafid = true;
 
             let bQuery = true;
-            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery, undefined);
+            await ic.chainalignParserCls.downloadMmdbAf(mmdbafid, bQuery);
         }
     }
     else if(me.cfg.url !== undefined) {
@@ -75829,10 +75936,13 @@ iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, ale
                     resolve(data);
                 },
                 error : function() {
-                    if(alertMess) alert(alertMess);
+                    //if(alertMess) alert(alertMess);
+                    if(alertMess) console.log(alertMess);
                     if(logMess) console.log(logMess);
                     
-                    reject('error');
+                    // reject('error');
+                    // keep running the program
+                    resolve('error');
                 }
             });
         });

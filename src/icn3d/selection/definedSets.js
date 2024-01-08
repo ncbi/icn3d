@@ -138,7 +138,7 @@ class DefinedSets {
 
         nameArrayTmp.forEach((elem) => {
             structureArray.forEach((structure) => {
-                if (ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
+                if (ic.defNames2Residues[elem] && ic.defNames2Residues[elem][0] && ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
                     if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
                 }
             });
