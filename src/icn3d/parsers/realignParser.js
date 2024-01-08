@@ -11,7 +11,7 @@ class RealignParser {
     realign() { let ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
-        let index = Object.keys(ic.defNames2Atoms).length;
+        let index = Object.keys(ic.defNames2Atoms).length + Object.keys(ic.defNames2Residues).length + 1;
         let name = 'alseq_' + index;
 
         ic.selectionCls.saveSelection(name, name);

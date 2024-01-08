@@ -2645,6 +2645,14 @@ class Events {
           thisClass.setLogCmd('define coil sets | chain ' + chainid, true);
         });
 
+        $(document).on("click", ".icn3d-iganchorsets", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            //e.preventDefault();
+            let chainid = $(this).attr('chainid');
+            ic.addTrackCls.defineIgstrand(chainid, 'iganchor');
+            thisClass.setLogCmd('define iganchor sets | chain ' + chainid, true);
+        });
+
         $(document).on("click", ".icn3d-igstrandsets", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
             //e.preventDefault();

@@ -341,28 +341,46 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
     }
 
-    saveSelection(name, description) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.selectedResidues = {}
+    saveSelection(name, description, bDragSeq) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!bDragSeq) {
+            ic.selectedResidues = {}
 
-        ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+            ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+        }
+
+        if(!name) {
+            let index = Object.keys(ic.defNames2Atoms).length + Object.keys(ic.defNames2Residues).length + 1;
+            name = 'seq_' + index;
+            description = name;
+        }
 
         if(Object.keys(ic.selectedResidues).length > 0) {
             if(ic.pk == 1) {
                 let bAtom = true;
-                this.selectResidueList(ic.hAtoms, name, description,undefined, undefined, bAtom);
+                this.selectResidueList(ic.hAtoms, name, description, undefined, undefined, bAtom);
                 //ic.hlUpdateCls.updateHlAll();
 
                 this.updateSelectionNameDesc();
 
-                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                if(!bDragSeq) {
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                }
+                else { // no names for temp selections
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms), true);
+                }
             }
             else {
-                this.selectResidueList(ic.selectedResidues, name, description);
+                this.selectResidueList(ic.selectedResidues, name, description, undefined, undefined, undefined);
                 //ic.hlUpdateCls.updateHlAll();
 
                 this.updateSelectionNameDesc();
 
-                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                if(!bDragSeq) {
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                }
+                else { // no names for temp selections
+                    me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)), true);
+                }
             }
         }
     }
@@ -500,7 +518,7 @@ class Selection {
       }
     }
 
-    saveSelectionPrep() {var ic = this.icn3d, me = ic.icn3dui;
+    saveSelectionPrep(bDragSeq) {var ic = this.icn3d, me = ic.icn3dui;
            if(!me.cfg.notebook) {
                if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
                  me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
@@ -511,8 +529,11 @@ class Selection {
                $('#' + ic.pre + 'dl_definedsets').show();
                $("#" + ic.pre + "atomsCustom").resizable();
            }
-           ic.bSelectResidue = false;
-           ic.bSelectAlignResidue = false;
+
+           if(!bDragSeq) {
+                ic.bSelectResidue = false;
+                ic.bSelectAlignResidue = false;
+           }
     }
     selectOneResid(idStr, bUnchecked) {var ic = this.icn3d, me = ic.icn3dui;
       //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP

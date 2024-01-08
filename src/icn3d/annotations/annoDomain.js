@@ -175,7 +175,8 @@ class AnnoDomain {
                     for(let j = from; j <= to; ++j) {
                         // 0-based
                         let obj = {};
-                        obj[chnid + '_' + (j+1).toString()] = domainName;
+                        let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                        obj[chnid + '_' + resi] = domainName;
                         ic.resid2domain[chnid].push(obj);
                     }
                 }

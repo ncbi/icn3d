@@ -39,6 +39,9 @@ class HlSeq {
                  }
               });
 
+              ic.selectionCls.saveSelectionPrep(true);
+              ic.selectionCls.saveSelection(undefined, undefined, true);
+
               //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);
               ic.hlObjectsCls.addHlObjects();  // render() is called
 
@@ -122,7 +125,10 @@ class HlSeq {
 
               if(id !== undefined) {
                    thisClass.selectResidues(id, this);
-             }
+
+                   ic.selectionCls.saveSelectionPrep(true);
+                   ic.selectionCls.saveSelection(undefined, undefined, true);
+              }
           //});
 
           //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);

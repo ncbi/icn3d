@@ -27,9 +27,7 @@
         ic.hlUpdateCls.updateHlAll();
     }
  
-    async showIgRefNum(template) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
+    setRefPdbs() { let ic = this.icn3d, me = ic.icn3dui;
         // round 1, 16 templates
         ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_Iset', '1CD28_1yjdC_human_V', '1CD19_6al5A_human_C2orV-n1'];
 
@@ -102,7 +100,9 @@
         ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_Iset'];
         ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_Iset'];
         ic.refpdbHash['6JXR_g'] = ['CD3g_6jxrg_human_Iset'];
+    }
 
+    getPdbAjaxArray() {  let ic = this.icn3d, me = ic.icn3dui;
         let pdbAjaxArray = [];
         for(let k = 0, kl = ic.refpdbArray.length; k < kl; ++k) {
             let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + ic.refpdbArray[k];
@@ -112,6 +112,16 @@
 
             pdbAjaxArray.push(pdbAjax);
         }
+
+        return pdbAjaxArray;
+    }
+
+    async showIgRefNum(template) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        this.setRefPdbs();
+
+        let pdbAjaxArray = this.getPdbAjaxArray();
 
         // try {
             if(!template) {
@@ -140,14 +150,12 @@
         let ajaxArray = [];
         let domainidpairArray = [];
 
-        let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
-        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+        let urltmalign = me.htmlCls.tmalignUrl;
+        // let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
 
         if(!ic.resid2domainid) ic.resid2domainid = {};
         //ic.resid2domainid = {};
         ic.domainid2pdb = {};
-
-        let minResidues = 20;
 
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
@@ -156,79 +164,8 @@
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
 
-                if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
-                && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) continue;
-                if(ic.chainsSeq[chainid].length < minResidues) continue; // peptide
-
-                let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
-                if(Object.keys(currAtoms).length == 0) continue;
-
-                // align each 3D domain with reference structure
-                //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
-                // assign ref numbers to selected residues
-                let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
-                let subdomains = result.subdomains;  
-                let pos2resi = result.pos2resi;
-
-                let domainAtomsArray = [];
-                if(subdomains.length <= 1) {
-                    //domainAtomsArray.push(ic.chains[chainid]);
-                    domainAtomsArray.push(currAtoms);
-
-                    let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
-
-                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
-                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
-                    let resiSum = atomFirst.resi + ':' + atomLast.resi;
-
-                    for(let n = 0, nl = residueArray.length; n < nl; ++n) {
-                        let resid = residueArray[n];
-                        ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
-
-                        // clear previous refnum assignment if any
-                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
-                            delete ic.resid2refnum[resid];
-                        }
-                    }
-                }
-                else {                 
-                    for(let k = 0, kl = subdomains.length; k < kl; ++k) {
-                        let domainAtoms = {};
-                        let segArray = subdomains[k];
-
-                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                            let startResi = segArray[m];
-                            let endResi = segArray[m+1];
-                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + pos2resi[n];
-                                domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                //ic.resid2domainid[resid] = chainid + '-' + k;
-
-                                // clear previous refnum assignment if any
-                                if(ic.resid2refnum && ic.resid2refnum[resid]) {
-                                    delete ic.resid2refnum[resid];
-                                }
-                            }
-                        }
-
-                        domainAtomsArray.push(domainAtoms);
-
-                        let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
-                        let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
-                        let resiSum = atomFirst.resi + ':' + atomLast.resi;
-
-                        for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                            let startResi = segArray[m];
-                            let endResi = segArray[m+1];
-                            for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                                let resid = chainid + '_' + pos2resi[n];
-                                //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                                ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
-                            }
-                        }
-                    }
-                }
-
+                let domainAtomsArray = this.getDomainAtomsArray(chainid);
+                    
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
                 if(!ic.domainid2score) ic.domainid2score = {};
 
@@ -292,7 +229,7 @@
                 // start round2
                 let ajaxArray = [];
                 let domainidpairArray3 = [];
-                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+                let urltmalign = me.htmlCls.tmalignUrl;
 
                 let urlpdb = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi?refpdbid=" + template;
                 let pdbAjax = me.getAjaxPromise(urlpdb, 'text');
@@ -349,6 +286,86 @@
         */           
     }
 
+    getDomainAtomsArray(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let domainAtomsArray = [];
+
+        let minResidues = 20;
+
+        if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
+        && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) return domainAtomsArray;
+        if(ic.chainsSeq[chainid].length < minResidues) return domainAtomsArray; // peptide
+
+        let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
+        if(Object.keys(currAtoms).length == 0) return domainAtomsArray;
+
+        // align each 3D domain with reference structure
+        //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
+        // assign ref numbers to selected residues
+        let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
+        let subdomains = result.subdomains;  
+        let pos2resi = result.pos2resi;
+
+        if(subdomains.length <= 1) {
+            //domainAtomsArray.push(ic.chains[chainid]);
+            domainAtomsArray.push(currAtoms);
+
+            let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+
+            let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
+            let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
+            let resiSum = atomFirst.resi + ':' + atomLast.resi;
+
+            for(let n = 0, nl = residueArray.length; n < nl; ++n) {
+                let resid = residueArray[n];
+                ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
+
+                // clear previous refnum assignment if any
+                if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                    delete ic.resid2refnum[resid];
+                }
+            }
+        }
+        else {                 
+            for(let k = 0, kl = subdomains.length; k < kl; ++k) {
+                let domainAtoms = {};
+                let segArray = subdomains[k];
+
+                for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                    let startResi = segArray[m];
+                    let endResi = segArray[m+1];
+                    for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                        let resid = chainid + '_' + pos2resi[n];
+                        domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                        //ic.resid2domainid[resid] = chainid + '-' + k;
+
+                        // clear previous refnum assignment if any
+                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                            delete ic.resid2refnum[resid];
+                        }
+                    }
+                }
+
+                domainAtomsArray.push(domainAtoms);
+
+                let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
+                let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
+                let resiSum = atomFirst.resi + ':' + atomLast.resi;
+
+                for(let m = 0, ml = segArray.length; m < ml; m += 2) {
+                    let startResi = segArray[m];
+                    let endResi = segArray[m+1];
+                    for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
+                        let resid = chainid + '_' + pos2resi[n];
+                        //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
+                        ic.resid2domainid[resid] = chainid + '-' + k + '_' + resiSum; 
+                    }
+                }
+            }
+        }
+
+        return domainAtomsArray;
+    }
+
     getTemplateList(chainid) { let ic = this.icn3d, me = ic.icn3dui;
         let domainid2refpdbname = {}, domainid2score = {};
 
@@ -393,14 +410,13 @@
         return {'refpdbnameList': refpdbnameList, 'scoreList': scoreList, 'seqidList': seqidList, 'nresAlignList': nresAlignList};
     }
 
-    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
+    parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+    // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
         let tmscoreThreshold = 0.4; // 0.4; //0.5;
-        let rmsdThreshold = 10;
+        //let rmsdThreshold = 10;
 
         // find the best alignment for each chain
-        let domainid2segs = {}, chainid2segs = {};
+        let domainid2segs = {};
 
         if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
         if(!ic.chainid2score) ic.chainid2score = {};
@@ -485,12 +501,11 @@
             }
 
             if(!bRound1) {
-                console.log("domainid: " + domainid);
+                if(!me.bNode) console.log("domainid: " + domainid);
             }
 
-            if(!ic.domainid2score.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
+            if(!domainid2segs.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
                 ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;  
-    
                 ic.domainid2refpdbname[domainid] = refpdbname;
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
@@ -498,13 +513,19 @@
             }
         }
 
+        return domainid2segs;
+    }
+
+    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+        let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
+
         if(bRound1) {
             if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
 
             // start round2
             let ajaxArray = [];
             let domainidpairArray3 = [];
-            let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+            let urltmalign = me.htmlCls.tmalignUrl;
             for(let domainid in ic.domainid2refpdbname) {
                 let pdbAjaxArray = [];
                 let refpdbname = ic.domainid2refpdbname[domainid];
@@ -560,14 +581,21 @@
 
             dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-            await thisClass.parseAlignData(dataArray3, domainidpairArray3, false);
+            await this.parseAlignData(dataArray3, domainidpairArray3, false);
             
             // end of round 2
             return;
         }
 
+        await this.parseAlignData_part3(domainid2segs);
+    }
+
+    async parseAlignData_part3(domainid2segs) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid2segs = {};
+
         // combine domainid into chainid
         let processedChainid = {};
+
         for(let domainid in ic.domainid2refpdbname) {
             // remove the first round template
             if(ic.domainid2refpdbname[domainid].substr(0,1) == '1') {
@@ -619,7 +647,7 @@
             let message = "The reference PDB(s) for chain " + chainid + " is(are) " + refpdbnameList + ". The TM-score(s) is(are) " + scoreList  + ". The sequence identitie(s) is(are) " + seqidList  + ". The number of aligned residue(s) is(are) " + nresAlignList + ".";
             if(!me.bNode) {
                 console.log(message);
-                me.htmlCls.clickMenuCls.setLogCmd(message, true);
+                me.htmlCls.clickMenuCls.setLogCmd(message, false, true);
             }
             ic.refPdbList.push(message);
 
@@ -644,7 +672,7 @@
                     //let refnum = qStart + postfix;
                     let refnum = qStart;
 
-                    let refnumLabel = thisClass.getLabelFromRefnum(refnum, prevStrand, bCd19);
+                    let refnumLabel = this.getLabelFromRefnum(refnum, prevStrand, bCd19);
                     prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                     ic.resid2refnum[resid] = refnumLabel;
@@ -810,7 +838,7 @@
         return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
     }
 
-    exportRefnum(type) { let ic = this.icn3d, me = ic.icn3dui;
+    exportRefnum(type, bCalcRef) { let ic = this.icn3d, me = ic.icn3dui;
         let refData = '';
 
         // 1. show IgStrand ref numbers
@@ -854,19 +882,32 @@
                 }
             }
 
-            refData += '{"ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n"
+            let bIgDomain = (ic.refPdbList.length > 0) ? 1 : 0;
+
+            refData += '{"Ig domain" : ' + bIgDomain + ', "ref PDB" : ' + JSON.stringify(ic.refPdbList) + ",\n"
     
-            refData += '"data": {\n';
-            for(let chnid in ic.chains) {
-            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
-            if(ic.proteins.hasOwnProperty(atom.serial)) {
-                for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
-                    const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
-                    refData += '"' + resid + '": "' + resid2refnum[resid] + '",\n';
+            if(bIgDomain) {
+                refData += '"data": {\n';
+                for(let chnid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        let bIgChain = false;
+                        let chainRefData = '"' + chnid + '": [\n';
+                        for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
+                            const resid = chnid + '_' + ic.chainsSeq[chnid][i].resi + '_' + ic.chainsSeq[chnid][i].name;
+                            chainRefData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                            if(resid2refnum[resid]) bIgChain = true;
+                        }
+                        chainRefData += '],\n';
+
+                        if(bIgChain) {
+                            refData += chainRefData;
+                        }
+                    }
                 }
+                refData += '}\n';
             }
-            }
-            refData += '}\n';
+
             refData += '}\n';
         }
         // 2. show Kabat ref numbers
