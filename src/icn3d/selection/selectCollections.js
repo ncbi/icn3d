@@ -97,6 +97,14 @@ class SelectCollections {
         ic.transformCls.zoominSelection();
         ic.definedSetsCls.showSets();
 
+        ic.bResetAnno = true;
+        if(ic.bAnnoShown) {
+          await ic.showAnnoCls.showAnnotations();
+
+          ic.hlUpdateCls.updateHlAll(nameArray);
+          // show selected chains in annotation window
+          ic.annotationCls.showAnnoSelectedChains();
+        }
 
         await ic.drawCls.draw();
         ic.saveFileCls.showTitle();

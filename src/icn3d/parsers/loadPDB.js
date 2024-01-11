@@ -82,6 +82,8 @@ class LoadPDB {
         
         let bHeader = false, bFirstAtom = true;
 
+        let segId, prevSegId;
+
         for (let i in lines) {
             let line = lines[i];
             let record = line.substr(0, 6);
@@ -246,11 +248,36 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
+                //73 - 76 LString(4) segID Segment identifier, left-justified.
+                // deal with PDBs from MD trajectories
+                segId = line.substr(72, 4).trim();
+
                 if(bFirstAtom) {
                     structure = this.getStructureId(id, moleculeNum, bMutation);
 
                     bFirstAtom = false;
                 }
+                else if(segId != prevSegId) {
+                    ++moleculeNum;
+                    id = ic.defaultPdbId;
+    
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
+    
+                    //helices = [];
+                    //sheets = [];
+                    if(!bNMR) {
+                        sheetArray = [];
+                        sheetStart = [];
+                        sheetEnd = [];
+                        helixArray = [];
+                        helixStart = [];
+                        helixEnd = [];
+                    }
+    
+                    bHeader = false; // reinitialize to read structure name from the header
+                }
+
+                prevSegId = segId;
 
                 let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
