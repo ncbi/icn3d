@@ -195,7 +195,7 @@ class ViewInterPairs {
                         if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
                         let len = ssAtomsArray.length;
                         let interStr = '';
-                        select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
+                        let select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
                         ic.opts['contact'] = "yes";
 
                         for(let i = 0; i < len; ++i) {

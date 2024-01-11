@@ -26,7 +26,9 @@ class MmcifParser {
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
         // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
-        let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+        // Some header files are in the wrong format. So we use the full mmCIF file
+        //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+        let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
         let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");

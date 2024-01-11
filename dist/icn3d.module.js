@@ -48794,7 +48794,7 @@ class ViewInterPairs {
                         // last ss
                         if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
                         let len = ssAtomsArray.length;
-                        select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
+                        let select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
                         ic.opts['contact'] = "yes";
 
                         for(let i = 0; i < len; ++i) {
@@ -52818,7 +52818,9 @@ class MmcifParser {
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
         // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
-        let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+        // Some header files are in the wrong format. So we use the full mmCIF file
+        //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
+        let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
         let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
@@ -59701,6 +59703,8 @@ class LoadPDB {
         
         let bHeader = false, bFirstAtom = true;
 
+        let segId, prevSegId;
+
         for (let i in lines) {
             let line = lines[i];
             let record = line.substr(0, 6);
@@ -59860,11 +59864,36 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
+                //73 - 76 LString(4) segID Segment identifier, left-justified.
+                // deal with PDBs from MD trajectories
+                segId = line.substr(72, 4).trim();
+
                 if(bFirstAtom) {
                     structure = this.getStructureId(id, moleculeNum, bMutation);
 
                     bFirstAtom = false;
                 }
+                else if(segId != prevSegId) {
+                    ++moleculeNum;
+                    id = ic.defaultPdbId;
+    
+                    structure = this.getStructureId(id, moleculeNum, bMutation);
+    
+                    //helices = [];
+                    //sheets = [];
+                    if(!bNMR) {
+                        sheetArray = [];
+                        sheetStart = [];
+                        sheetEnd = [];
+                        helixArray = [];
+                        helixStart = [];
+                        helixEnd = [];
+                    }
+    
+                    bHeader = false; // reinitialize to read structure name from the header
+                }
+
+                prevSegId = segId;
 
                 let alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
@@ -63814,6 +63843,14 @@ class SelectCollections {
         ic.transformCls.zoominSelection();
         ic.definedSetsCls.showSets();
 
+        ic.bResetAnno = true;
+        if(ic.bAnnoShown) {
+          await ic.showAnnoCls.showAnnotations();
+
+          ic.hlUpdateCls.updateHlAll(nameArray);
+          // show selected chains in annotation window
+          ic.annotationCls.showAnnoSelectedChains();
+        }
 
         await ic.drawCls.draw();
         ic.saveFileCls.showTitle();
@@ -75317,7 +75354,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.2';
+    this.REVISION = '3.29.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

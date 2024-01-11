@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.29.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.3.zip) was release on January 11, 2024. Fixed the "Sequences & Annotations" view when a collection of structure is loaded.
+
 [icn3d-3.29.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.2.zip) was release on January 8, 2024. Simplified code to make icn3dnode calls simpler.
 
 [icn3d-3.29.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.1.zip) was release on December 14, 2023. Allowed users to load a collection of structures via the menu "File > Open File > Collection File". The example collection file is at https://github.com/ncbi/icn3d/blob/master/example/collection.json.
