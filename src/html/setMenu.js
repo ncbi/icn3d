@@ -909,6 +909,9 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += this.getLink('mn2_translate', 'Translate XYZ', undefined, 1);
+        html += this.getLink('mn2_matrix', 'Rotate with Matrix', undefined, 1);
+
         html += this.getMenuText('mn2_camera', 'Camera', undefined, undefined, 1);
         html += "<ul>";
         html += this.getRadio('mn6_camera', 'mn6_cameraPers', 'Perspective', true, undefined, 2);

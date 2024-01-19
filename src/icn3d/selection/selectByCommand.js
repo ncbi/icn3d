@@ -124,6 +124,9 @@ class SelectByCommand {
            }
            else {
              chainStr = testStr.substr(periodPos + 1);
+             //replace "A_1" with "A"
+             chainStr = chainStr.replace(/_/g, '');
+
              testStr = testStr.substr(0, periodPos);
            }
 

@@ -25,6 +25,7 @@ class MmcifParser {
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
+      try {
         // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
         // Some header files are in the wrong format. So we use the full mmCIF file
         //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
@@ -90,6 +91,11 @@ class MmcifParser {
         }
 
         ///// if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
+      }
+      catch (err) {
+        if(!me.bNode) console.log("mmcifparser.cgi issues: " + err);
+        return;
+      }
     }
 
     //Atom "data" from mmCIF file was parsed to set up parameters for the 3D viewer by calling the function

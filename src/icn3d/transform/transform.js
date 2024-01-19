@@ -145,6 +145,8 @@ class Transform {
     }
 
     setRotation(axis, angle) { let ic = this.icn3d, me = ic.icn3dui;
+      if(!axis) return;
+
       if(ic.bControlGl && !me.bNode && window.cam) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
@@ -207,6 +209,25 @@ class Transform {
       }
 
       if(ic.bRender) ic.drawCls.render();
+    }
+
+    translateCoord(atoms, dx, dy, dz) { let ic = this.icn3d, me = ic.icn3dui;
+        for(let i in atoms) {
+            let atom = ic.atoms[i];
+            atom.coord.x += dx;
+            atom.coord.y += dy;
+            atom.coord.z += dz;
+        }
+    }
+
+    rotateCoord(atoms, mArray) { let ic = this.icn3d, me = ic.icn3dui;
+        const m = new THREE.Matrix4(); 
+        m.elements = mArray;
+
+        for(let i in atoms) {
+            let atom = ic.atoms[i];
+            atom.coord = atom.coord.applyMatrix4(m);
+        }
     }
 
     //Center on the selected atoms and zoom in.

@@ -165,7 +165,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.3';
+    this.REVISION = '3.29.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -787,8 +787,8 @@ iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, ale
                 },
                 error : function() {
                     //if(alertMess) alert(alertMess);
-                    if(alertMess) console.log(alertMess);
-                    if(logMess) console.log(logMess);
+                    if(!me.bNode && alertMess) console.log(alertMess);
+                    if(!me.bNode && logMess) console.log(logMess);
                     
                     // reject('error');
                     // keep running the program

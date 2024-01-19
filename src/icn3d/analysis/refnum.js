@@ -130,7 +130,15 @@
 
                 ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
-                await thisClass.parseRefPdbData(ic.pdbDataArray, template);
+                let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template);
+                let numRound = 0;
+
+                //while(!bNoMoreIg) {
+                while(!bNoMoreIg && numRound < 10) {
+                    let bRerun = true;
+                    bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun);
+                    ++numRound
+                }
             }
             else {
                 await thisClass.parseRefPdbData(undefined, template);
@@ -142,7 +150,7 @@
         // }
     }
 
-    async parseRefPdbData(dataArray, template) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseRefPdbData(dataArray, template, bRerun) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let struArray = Object.keys(ic.structures);
@@ -157,6 +165,7 @@
         //ic.resid2domainid = {};
         ic.domainid2pdb = {};
 
+        let bNoMoreIg = true;
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
             let chainidArray = ic.structures[struct];
@@ -164,12 +173,14 @@
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
 
-                let domainAtomsArray = this.getDomainAtomsArray(chainid);
-                    
+                let domainAtomsArray = this.getDomainAtomsArray(chainid, bRerun);
+
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
                 if(!ic.domainid2score) ic.domainid2score = {};
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
+                    bNoMoreIg = false;
+
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
                     //let bForceOneDomain = true;
                     //let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
@@ -270,6 +281,8 @@
     
                 await thisClass.parseAlignData(dataArray3, domainidpairArray3);
             }
+
+            return bNoMoreIg;
             /*
         }
         catch(err) {
@@ -286,10 +299,12 @@
         */           
     }
 
-    getDomainAtomsArray(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+    getDomainAtomsArray(chainid, bRerunDomain) { let ic = this.icn3d, me = ic.icn3dui;
         let domainAtomsArray = [];
 
-        let minResidues = 20;
+        let minResidues = 20, minAtoms = 200;
+
+        if(!ic.chainid2atomsLeft) ic.chainid2atomsLeft = {};
 
         if(!ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]).serial)
         && !ic.proteins.hasOwnProperty(ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainid]).serial)) return domainAtomsArray;
@@ -298,18 +313,37 @@
         let currAtoms = me.hashUtilsCls.intHash(ic.chains[chainid], ic.hAtoms);
         if(Object.keys(currAtoms).length == 0) return domainAtomsArray;
 
+        if(bRerunDomain) {
+            let atomsAssigned = {};
+            for(let resid in ic.resid2refnum_ori) {
+                atomsAssigned = me.hashUtilsCls.unionHash(atomsAssigned, ic.residues[resid]);
+            }
+            // for(let resid in ic.resid2refnum) {
+            //     if(ic.resid2refnum[resid]) atomsAssigned = me.hashUtilsCls.unionHash(atomsAssigned, ic.residues[resid]);
+            // }
+
+            currAtoms = me.hashUtilsCls.exclHash(currAtoms, atomsAssigned);
+
+            // no need to rerun the rest residues any more
+            if(ic.chainid2atomsLeft[chainid] == Object.keys(currAtoms).length) {
+                return domainAtomsArray;
+            }
+
+            ic.chainid2atomsLeft[chainid] = Object.keys(currAtoms).length;
+
+            if(Object.keys(currAtoms).length < minAtoms) return domainAtomsArray;
+        }
+
         // align each 3D domain with reference structure
         //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
         // assign ref numbers to selected residues
-        let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms);
+        let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms, undefined);
         let subdomains = result.subdomains;  
         let pos2resi = result.pos2resi;
 
         if(subdomains.length <= 1) {
-            //domainAtomsArray.push(ic.chains[chainid]);
-            domainAtomsArray.push(currAtoms);
-
             let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
+            if(residueArray.length < minResidues) return domainAtomsArray;
 
             let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
             let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
@@ -320,30 +354,40 @@
                 ic.resid2domainid[resid] = chainid + '-0' + '_' + resiSum; 
 
                 // clear previous refnum assignment if any
-                if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                // if(!bRerunDomain && ic.resid2refnum && ic.resid2refnum[resid]) {
+                // if(ic.resid2refnum && ic.resid2refnum[resid]) {
                     delete ic.resid2refnum[resid];
-                }
+                    delete ic.residIgLoop[resid];
+                // }
             }
+
+            domainAtomsArray.push(currAtoms);
         }
         else {                 
             for(let k = 0, kl = subdomains.length; k < kl; ++k) {
                 let domainAtoms = {};
                 let segArray = subdomains[k];
 
+                let resCnt = 0;
                 for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                     let startResi = segArray[m];
                     let endResi = segArray[m+1];
                     for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
                         let resid = chainid + '_' + pos2resi[n];
+                        ++resCnt;
                         domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                         //ic.resid2domainid[resid] = chainid + '-' + k;
 
                         // clear previous refnum assignment if any
-                        if(ic.resid2refnum && ic.resid2refnum[resid]) {
+                        // if(!bRerunDomain && ic.resid2refnum && ic.resid2refnum[resid]) {
+                        // if(ic.resid2refnum && ic.resid2refnum[resid]) {
                             delete ic.resid2refnum[resid];
-                        }
+                            delete ic.residIgLoop[resid];
+                        // }
                     }
                 }
+
+                if(resCnt < minResidues) continue;
 
                 domainAtomsArray.push(domainAtoms);
 
@@ -429,12 +473,14 @@
 
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
-            let queryData = dataArray[i].value; //[0];
+            let queryData = (dataArray[i]) ? dataArray[i].value : undefined; //[0];
 
             if(!queryData || queryData.length == 0) {
                 if(!me.bNode) console.log("The alignment data for " + domainidpairArray[i] + " is unavailable...");
                 continue;
             }
+
+            if(queryData[0].score === undefined) continue;
             
             //let domainid_index = domainidpairArray[i].split(',');
             //let domainid = domainid_index[0];
@@ -467,31 +513,45 @@
 
             // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
             // Ig domain may require G (7050). But we'll leave that out for now.
-            if(!bRound1) {
+            if(!bRound1 && queryData[0].segs) {
                 let bBstrand = false, bCstrand = false, bEstrand = false, bFstrand = false, bGstrand = false;
-                for(let i = 0, il = queryData[0].segs.length; i < il; ++i) {
-                    let seg = queryData[0].segs[i];
+                let bBSheet = true, bCSheet = true, bESheet = true, bFSheet = true;
+                let chainid = domainid.split(',')[0];
+
+                for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
+                    let seg = queryData[0].segs[j];
+                    let resi = seg.t_start;
+                    let resid = chainid + '_' + resi;
 
                     if(seg.q_start.indexOf('2550') != -1) {
                         bBstrand = true;
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        bBSheet = (atom.ss == 'sheet');
                     }
                     else if(seg.q_start.indexOf('3550') != -1) {
                         bCstrand = true;
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        bBSheet = (atom.ss == 'sheet');
                     }
                     else if(seg.q_start.indexOf('7550') != -1) {
                         bEstrand = true;
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        bBSheet = (atom.ss == 'sheet');
                     }
                     else if(seg.q_start.indexOf('8550') != -1) {
                         bFstrand = true;
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        bBSheet = (atom.ss == 'sheet');
                     }
 
                     //if(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand) break;
                     if(bBstrand && bCstrand && bEstrand && bFstrand) break;
                 }
 
-                //if(!(bBstrand && bCstrand && bEstrand && bFstrand && bGstrand)) continue;
-                if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
-                    if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                if(!(bBstrand && bCstrand && bEstrand && bFstrand) || !(bBSheet && bCSheet && bESheet && bFSheet)) {
+                //if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
+                    if(!me.bNode && !(bBstrand && bCstrand && bEstrand && bFstrand)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                    if(!me.bNode && !(bBSheet && bCSheet && bESheet && bFSheet)) console.log("Some of the Ig strands B, C, E, F are not beta sheets...");
                     if(ic.domainid2refpdbname[domainid] == refpdbname) {
                         delete ic.domainid2refpdbname[domainid];
                         delete ic.domainid2score[domainid];
@@ -628,11 +688,12 @@
 
         // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
         if(!ic.resid2refnum) ic.resid2refnum = {};
+        if(!ic.resid2refnum_ori) ic.resid2refnum_ori = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};
         if(!ic.chainsMapping) ic.chainsMapping = {};
 
         if(!ic.refPdbList) ic.refPdbList = [];
-
+        
         for(let chainid in chainid2segs) {
             let segArray = chainid2segs[chainid];
 
@@ -651,10 +712,79 @@
             }
             ic.refPdbList.push(message);
 
-            let prevStrand;
+            // adjust C' and D strands ======start
+            let bCstrand = false, bCpstrand = false, bCppstrand = false, bDstrand = false, bEstrand = false;
+            let CAtom, CpAtom, CppAtom, DAtom, EAtom;
+            //let chainid = domainid.split(',')[0];
+
+            let cntBtwCE;
+            let CpToDResi = [], DToCpResi = [];
+            for(let i = 0, il = segArray.length; i < il; ++i) {
+                let seg = segArray[i];
+                if(!seg) continue;
+
+                let resi = seg.t_start;
+                let resid = chainid + '_' + resi;
+
+                if(seg.q_start.indexOf('3550') != -1) {
+                    bCstrand = true;
+                    CAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+                    // a chain could have multiple Ig domains
+                    cntBtwCE = 0;
+                }
+                else if(seg.q_start.indexOf('4550') != -1) {
+                    bCpstrand = true;
+                    CpAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                    ++cntBtwCE;
+                }
+                // else if(seg.q_start.indexOf('5550') != -1) {
+                //     bCppstrand = true;
+                //     CppAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                //     ++cntBtwCE;
+                // }
+                else if(seg.q_start.indexOf('6550') != -1) {
+                    bDstrand = true;
+                    DAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                    ++cntBtwCE;
+                }
+                else if(seg.q_start.indexOf('7550') != -1) {
+                    bEstrand = true;
+                    EAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+                    // check C' and D strands
+                    if(cntBtwCE == 1) {
+                        let distToC = (bCpstrand) ? CpAtom.coord.distanceTo(CAtom.coord) : DAtom.coord.distanceTo(CAtom.coord);
+                        let distToE = (bCpstrand) ? CpAtom.coord.distanceTo(EAtom.coord) : DAtom.coord.distanceTo(EAtom.coord);
+                        distToC = parseInt(distToC);
+                        distToE = parseInt(distToE);
+
+                        let resiDistToC = (bCpstrand) ? parseInt(CpAtom.resi) - parseInt(CAtom.resi) : parseInt(DAtom.resi) - parseInt(CAtom.resi);
+                        let resiDistToE = (bCpstrand) ? parseInt(EAtom.resi) - parseInt(CpAtom.resi) : parseInt(EAtom.resi) - parseInt(DAtom.resi);
+
+                        if(bCpstrand) {
+                            if(distToC > distToE || (distToC == distToE && resiDistToC > resiDistToE)) { // rename C' to D
+                                CpToDResi.push(CpAtom.resi);
+                            }
+                        }
+                        else if(bDstrand) {
+                            if(distToC < distToE || (distToC == distToE && resiDistToC < resiDistToE)) { // rename D to C'
+                                DToCpResi.push(DAtom.resi);
+                            }
+                        }
+                    }
+                }
+
+                if(bCstrand && bCpstrand && bCppstrand && bDstrand && bEstrand) break;
+            }
+
+
+            let currStrand;
             let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human_C2orV-n1';
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
+                if(!seg) continue;
+                
                 let qStart = seg.q_start;
                 let qStartInt = parseInt(seg.q_start);
                 let postfix = '';
@@ -672,10 +802,33 @@
                     //let refnum = qStart + postfix;
                     let refnum = qStart;
 
-                    let refnumLabel = this.getLabelFromRefnum(refnum, prevStrand, bCd19);
-                    prevStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
+                    let refnumLabel = this.getLabelFromRefnum(refnum);
+                    currStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
-                    ic.resid2refnum[resid] = refnumLabel;
+                    let currStrandFinal = currStrand;
+                    if(currStrand == "C'" && CpToDResi.length > 0) {
+                        for(let j = 0, jl = CpToDResi.length; j < jl; ++j) {
+                            if(parseInt(seg.t_start) < parseInt(CpToDResi[j]) + 10 && parseInt(seg.t_start) > parseInt(CpToDResi[j]) - 10 ) {
+                                currStrandFinal = "D";
+                                break;
+                            }
+                        }
+                    }
+                    else if(currStrand == "D" && DToCpResi.length > 0) {
+                        for(let j = 0, jl = DToCpResi.length; j < jl; ++j) {
+                            if(parseInt(seg.t_start) < parseInt(DToCpResi[j]) + 10 && parseInt(seg.t_start) > parseInt(DToCpResi[j]) - 10 ) {
+                                currStrandFinal = "C'";
+                                break;
+                            }
+                        }
+                    }
+
+                    if(currStrand != currStrandFinal) {
+                        refnumLabel = this.getLabelFromRefnum(refnum, currStrandFinal);
+                    }
+                   
+                    ic.resid2refnum[resid] = refnumLabel;                
+                    ic.resid2refnum_ori[resid] = refnumLabel;
 
                     // final reference numbers will be assign in ic.showSeqCls.showRefNum()
 
@@ -717,7 +870,7 @@
         }
     }
 
-    getLabelFromRefnum(oriRefnum, prevStrand, bCd19) { let ic = this.icn3d, me = ic.icn3dui;
+    getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
         //N-terminus = 0999-0001
@@ -744,28 +897,34 @@
 
         // loops may have numbers such as 1310, 1410
 
-        if(refnum < 1000) return undefined;
-        else if(refnum >= 1200 && refnum < 1290) return "A---" + oriRefnum;
-        else if(refnum >= 1320 && refnum < 1390) return "A--" + oriRefnum;
-        else if(refnum >= 1420 && refnum < 1490) return "A-" + oriRefnum;
-        else if(refnum >= 1520 && refnum < 1590) return "A" + oriRefnum; 
-        else if(refnum >= 1620 && refnum < 1690) return "A+" + oriRefnum; 
-        else if(refnum >= 1820 && refnum < 1890) return "A'" + oriRefnum;
-        else if(refnum >= 2000 && refnum < 2900) return "B" + oriRefnum;
-        else if(refnum >= 3300 && refnum < 3390) return "C--" + oriRefnum;
-        else if(refnum >= 3420 && refnum < 3490) return "C-" + oriRefnum;
-        else if(refnum >= 3520 && refnum < 3590) return "C" + oriRefnum;
-        else if(refnum >= 4000 && refnum < 4900) return "C'" + oriRefnum;
-        else if(refnum >= 5000 && refnum < 5900) return "C''" + oriRefnum;
-        else if(refnum >= 6000 && refnum < 6900) return "D" + oriRefnum;
-        else if(refnum >= 7500 && refnum < 7590) return "E" + oriRefnum; 
-        else if(refnum >= 7620 && refnum < 7900) return "E+" + oriRefnum; 
-        else if(refnum >= 8000 && refnum < 8900) return "F" + oriRefnum;
-        else if(refnum >= 9500 && refnum < 9590) return "G" + oriRefnum;
-        else if(refnum >= 9620 && refnum < 9690) return "G+" + oriRefnum;
-        else if(refnum >= 9720 && refnum < 9790) return "G++" + oriRefnum;
-        else if(refnum > 9900) return undefined;
-        else return " " + oriRefnum;;
+        let refnumLabel;
+        
+        if(refnum < 1000) refnumLabel = undefined;
+        else if(refnum >= 1200 && refnum < 1290) refnumLabel = "A---" + oriRefnum;
+        else if(refnum >= 1320 && refnum < 1390) refnumLabel = "A--" + oriRefnum;
+        else if(refnum >= 1420 && refnum < 1490) refnumLabel = "A-" + oriRefnum;
+        else if(refnum >= 1520 && refnum < 1590) refnumLabel = "A" + oriRefnum; 
+        else if(refnum >= 1620 && refnum < 1690) refnumLabel = "A+" + oriRefnum; 
+        else if(refnum >= 1820 && refnum < 1890) refnumLabel = "A'" + oriRefnum;
+        else if(refnum >= 2000 && refnum < 2900) refnumLabel = "B" + oriRefnum;
+        else if(refnum >= 3300 && refnum < 3390) refnumLabel = "C--" + oriRefnum;
+        else if(refnum >= 3420 && refnum < 3490) refnumLabel = "C-" + oriRefnum;
+        else if(refnum >= 3520 && refnum < 3590) refnumLabel = "C" + oriRefnum;
+        else if(refnum >= 4000 && refnum < 4900) refnumLabel = "C'" + oriRefnum;
+        else if(refnum >= 5000 && refnum < 5900) refnumLabel = "C''" + oriRefnum;
+        else if(refnum >= 6000 && refnum < 6900) refnumLabel = "D" + oriRefnum;
+        else if(refnum >= 7500 && refnum < 7590) refnumLabel = "E" + oriRefnum; 
+        else if(refnum >= 7620 && refnum < 7900) refnumLabel = "E+" + oriRefnum; 
+        else if(refnum >= 8000 && refnum < 8900) refnumLabel = "F" + oriRefnum;
+        else if(refnum >= 9500 && refnum < 9590) refnumLabel = "G" + oriRefnum;
+        else if(refnum >= 9620 && refnum < 9690) refnumLabel = "G+" + oriRefnum;
+        else if(refnum >= 9720 && refnum < 9790) refnumLabel = "G++" + oriRefnum;
+        else if(refnum > 9900) refnumLabel = undefined;
+        else refnumLabel = " " + oriRefnum;;
+
+        if(prevStrand) refnumLabel = prevStrand + oriRefnum;
+
+        return refnumLabel
     }
 
     async parseCustomRefFile(data) { let ic = this.icn3d, me = ic.icn3dui;

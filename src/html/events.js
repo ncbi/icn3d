@@ -655,6 +655,33 @@ class Events {
            window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), urlTarget);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "translate_pdb", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let dx = $("#" + me.pre + "translateX").val();
+            let dy = $("#" + me.pre + "translateY").val();
+            let dz = $("#" + me.pre + "translateZ").val();
+
+            ic.transformCls.translateCoord(ic.hAtoms, parseFloat(dx), parseFloat(dy), parseFloat(dz));
+            ic.drawCls.draw();
+
+            thisClass.setLogCmd("translate pdb " + dx + " " + dy + " "  + dz, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "matrix_pdb", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let mArray = [];
+            for(let i = 0; i< 16; ++i) {
+                mArray.push(parseFloat($("#" + me.pre + "matrix" + i).val()));
+            }
+
+            ic.transformCls.rotateCoord(ic.hAtoms, mArray);
+            ic.drawCls.draw();
+
+            thisClass.setLogCmd("rotate pdb " + mArray, true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();

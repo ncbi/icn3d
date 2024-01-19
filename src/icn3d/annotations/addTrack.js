@@ -502,14 +502,16 @@ class AddTrack {
 
               html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" ' + tmpStr + '>' + c + '</span>';
 
-              let tmpStrExon = 'style="background-color:' + pos2exonColor[cnt] + '"';
-              htmlExon += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + ', Exon ' + (pos2exonIndex[cnt] + 1) + ': ' + pos2genome[cnt] + '" class="icn3d-residue" ' + tmpStrExon + '>&nbsp;</span>';
+              if(exonArray) {
+                let tmpStrExon = 'style="background-color:' + pos2exonColor[cnt] + '"';
+                htmlExon += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + ', Exon ' + (pos2exonIndex[cnt] + 1) + ': ' + pos2genome[cnt] + '" class="icn3d-residue" ' + tmpStrExon + '>&nbsp;</span>';
 
-              // set atom color
-              for(let serial in ic.residues[chnid + '_' + pos]) {
-                let atom = ic.atoms[serial];
-                atom.color = me.parasCls.thr(pos2exonColor[cnt]);
-                ic.atomPrevColors[serial] = atom.color;
+                // set atom color
+                for(let serial in ic.residues[chnid + '_' + pos]) {
+                    let atom = ic.atoms[serial];
+                    atom.color = me.parasCls.thr(pos2exonColor[cnt]);
+                    ic.atomPrevColors[serial] = atom.color;
+                }
               }
 
               htmlTmp2 += ic.showSeqCls.insertGapOverview(chnid, i);

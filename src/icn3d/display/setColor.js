@@ -239,6 +239,7 @@ class SetColor {
                 break;
 
             case 'secondary structure green':
+            case 'secondary structure':
                 ic.sheetcolor = 'green';
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
@@ -251,7 +252,7 @@ class SetColor {
                 break;
 
             case 'secondary structure yellow':
-            case 'secondary structure':
+            //case 'secondary structure':
                 ic.sheetcolor = 'yellow';
                 for (let i in atoms) {
                     let atom = ic.atoms[i];
