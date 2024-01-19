@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.29.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.4.zip) was release on January 19, 2024. Added the options to translate the coordinates (View > Translate XYZ) and rotate the coordinates with a matrix (View > Rotate with Matrix).
+
 [icn3d-3.29.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.3.zip) was release on January 11, 2024. Fixed the "Sequences & Annotations" view when a collection of structure is loaded.
 
 [icn3d-3.29.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.2.zip) was release on January 8, 2024. Simplified code to make icn3dnode calls simpler.

@@ -124,6 +124,8 @@ class Dsn6Parser {
           summand = intView[ 16 ];
         }
 
+        if(!me.bNode) console.log("header: " + JSON.stringify(header));
+
         let data = new Float32Array(
           header.xExtent * header.yExtent * header.zExtent
         );

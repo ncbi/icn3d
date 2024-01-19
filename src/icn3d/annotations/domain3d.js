@@ -697,6 +697,7 @@ class Domain3d {
 				substructItem.z2 = atom.coord.z;
 
 				substructItem.Sheet = (atom.ss == 'sheet') ? true : false;
+
 				substruct.push(substructItem);
 				substructItem = {};		
 			}

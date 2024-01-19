@@ -22,6 +22,8 @@ class ShowSeq {
             giSeq = ic.giSeq[chnid];
         }
 
+        if(!giSeq) return;
+
         // remove null giSeq[i]
         let giSeqTmp = [];
         for(let i = 0, il = giSeq.length; i < il; ++i) {
@@ -31,8 +33,8 @@ class ShowSeq {
         }
         giSeq = giSeqTmp;
 
-        //let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
-        let divLength = me.htmlCls.RESIDUE_WIDTH * (ic.giSeq[chnid].length + ic.nTotalGap) + 200;
+        //let divLength = me.htmlCls.RESIDUE_WIDTH * (ic.giSeq[chnid].length + ic.nTotalGap) + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * (giSeq.length + ic.nTotalGap) + 200;
 
         // let seqLength = ic.giSeq[chnid].length
         // if(seqLength > ic.maxAnnoLength) {
@@ -52,7 +54,7 @@ class ShowSeq {
         // html to display protein positions(10, 20, etc)
         //if(Object.keys(ic.chains[chnid]).length > 10) {
 
-        if(ic.giSeq[chnid].length > 10) {
+        if(giSeq.length > 10) {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
@@ -415,7 +417,7 @@ class ShowSeq {
         html3 += '</div>';
         
         //if(Object.keys(ic.chains[chnid]).length > 10) {
-        if(ic.giSeq[chnid].length > 10) {
+        if(giSeq.length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
             //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
             if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
@@ -608,10 +610,10 @@ class ShowSeq {
             let atomHash = me.hashUtilsCls.intHash(ic.chains[chnid], ic.hAtoms);
             let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomHash);
             
-            for(let resid in residHash) {
-                // not in loop any more if you assign ref numbers multiple times
-                delete ic.residIgLoop[resid];
-            }
+            // for(let resid in residHash) {
+            //     // not in loop any more if you assign ref numbers multiple times
+            //     delete ic.residIgLoop[resid];
+            // }
         }
 
         // 1. get the range of each strand excluding loops
@@ -745,6 +747,76 @@ class ShowSeq {
                 }
             }
 
+            // 2b. extend the strand to end of sheet
+            let maxExtend = 8;
+            for(let i = 0, il = strandArray.length; i < il; ++i) {
+                let startAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chnid + '_' + strandArray[i].startResi]);
+                let endAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chnid + '_' + strandArray[i].endResi]);
+
+                let startPos = ic.setSeqAlignCls.getPosFromResi(chnid, strandArray[i].startResi);
+                let endPos = ic.setSeqAlignCls.getPosFromResi(chnid, strandArray[i].endResi);
+
+                if(startAtom.ss == 'sheet' && !startAtom.ssbegin) {
+                    for(let j = 1; j <= maxExtend; ++j) {
+                        let currPos = startPos - j;
+                        let currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
+                        if(i > 0 && parseInt(currResi) <= parseInt(strandArray[i-1].endResi)) break;
+
+                        let currResid = chnid + '_' + currResi;
+                        let currAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[currResid]);
+                        if(currAtom.ssbegin) { // find the start of the sheet
+                            // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                            strandArray[i].startResi = currResi;
+                            strandArray[i].startRefnum -= j;
+                            strandArray[i].loopResCnt -= j;
+                            if(strandArray[i].loopResCnt < 0) strandArray[i].loopResCnt = 0;
+                            strandArray[i].resCntBfAnchor += j;
+
+                            // update ic.resid2refnum
+                            for(let k = 1; k <= j; ++k) {
+                                currPos = startPos - k;
+                                currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
+                                let currResid = chnid + '_' + currResi;
+                                delete ic.residIgLoop[currResid];
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if(endAtom.ss == 'sheet' && !endAtom.ssend) {
+                    for(let j = 1; j <= maxExtend; ++j) {
+                        let currPos = endPos + j;
+                        let currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
+                        if(i < il - 1 && parseInt(currResi) >= parseInt(strandArray[i+1].startResi)) break; 
+
+                        let currResid = chnid + '_' + currResi;
+                        let currAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[currResid]);
+                        if(currAtom.ssend) { // find the end of the sheet
+                            // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                            strandArray[i].endResi = currResi;
+                            strandArray[i].endRefnum += j;
+                            if(i < il - 1) {
+                                strandArray[i + 1].loopResCnt -= j;
+                                if(strandArray[i + 1].loopResCnt < 0) strandArray[i + 1].loopResCnt = 0;
+                            }
+                            strandArray[i].resCntAtAnchor += j;
+
+                            // update ic.residIgLoop[resid];
+                            for(let k = 1; k <= j; ++k) {
+                                currPos = endPos + k;
+                                currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
+                                let currResid = chnid + '_' + currResi;
+                                delete ic.residIgLoop[currResid];
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+            
             // 3. assign refnumLabel for each resid
             strandCnt = 0;
             let loopCnt = 0;

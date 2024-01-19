@@ -1366,6 +1366,22 @@ class ApplyCommand {
       else if(command.indexOf('hide ref number') == 0) {
         ic.bShownRefnum = false;
       }
+      else if(command.indexOf('translate pdb') == 0) {
+        let xyz = command.substr(14 + 1).split(' ');
+
+        ic.transformCls.translateCoord(ic.hAtoms, parseFloat(xyz[0]), parseFloat(xyz[1]), parseFloat(xyz[2]));
+        ic.drawCls.draw();
+      }
+      else if(command.indexOf('rotate pdb') == 0) {
+        let mArray = command.substr(10 + 1).split(',');
+        let mArrayFloat = [];
+        for(let i = 0, il = mArray.length; i < il; ++i) {
+          mArrayFloat.push(parseFloat(mArray[i]));
+        }
+
+        ic.transformCls.rotateCoord(ic.hAtoms, mArrayFloat);
+        ic.drawCls.draw();
+      }
 
     // special, select ==========
 

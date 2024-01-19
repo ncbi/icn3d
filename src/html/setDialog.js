@@ -1356,6 +1356,39 @@ class SetDialog {
         html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_translate' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
+        html += "X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "translateX' value='' size=4> ";
+        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "translateY' value='' size=4> ";
+        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "translateZ' value='' size=4> ";
+        html += me.htmlCls.buttonStr + "translate_pdb'>Translate</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
+        html += "0: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix0' value='1' size=2> ";
+        html += "4: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix4' value='0' size=2> ";
+        html += "8: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix8' value='0' size=2> ";
+        html += "12: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix12' value='0' size=2><br>";
+
+        html += "1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix1' value='0' size=2> ";
+        html += "5: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix5' value='1' size=2> ";
+        html += "9: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix9' value='0' size=2> ";
+        html += "13: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix13' value='0' size=2><br>";
+
+        html += "2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix2' value='0' size=2> ";
+        html += "6: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix6' value='0' size=2> ";
+        html += "10: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix10' value='1' size=2> ";
+        html += "14: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix14' value='0' size=2><br>";
+
+        html += "3: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix3' value='0' size=2> ";
+        html += "7: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix7' value='0' size=2> ";
+        html += "11: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix11' value='0' size=2> ";
+        html += "15: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix15' value='1' size=2><br>";
+
+        html += me.htmlCls.buttonStr + "matrix_pdb'>Rotate with Matrix</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_igrefTpl' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_igrefTpl', 'Choose an Ig template');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "igrefTpl'>";

@@ -1959,6 +1959,13 @@ class ClickMenu {
            //}
         });
 
+        $(document).on("click", "#" + me.pre + "mn2_translate", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
+        });
+
+        $(document).on("click", "#" + me.pre + "mn2_matrix", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
+        });
 
         $(document).on("click", "." + me.pre + "mn6_rotate", function(e) { let ic = me.icn3d; //e.preventDefault();
            let value = $(this).attr('v').toLowerCase();
@@ -1974,7 +1981,7 @@ class ClickMenu {
 
         $(document).on("click", "." + me.pre + "mn6_rotate90", function(e) { let ic = me.icn3d; //e.preventDefault();
           let value = $(this).attr('v').toLowerCase();
-          let direction = value.split('-')[0];
+          let direction = value.split(' ')[1];
 
           thisClass.setLogCmd(value, true);
           let axis;

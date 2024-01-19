@@ -502,7 +502,7 @@ class SaveFile {
 //        }
 
         // export assembly symmetry matrix "BIOMT"
-        if(ic.biomtMatrices) {
+        if(ic.biomtMatrices && Object.keys(atomHash).length == Object.keys(ic.atoms).length) {
             let stru = Object.keys(ic.structures)[0];
             for(let m = 0, ml = ic.biomtMatrices.length; m < ml; ++m) {
                 let mNum = m + 1;
