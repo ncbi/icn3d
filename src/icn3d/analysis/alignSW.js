@@ -103,7 +103,7 @@ class AlignSW {
      * @param a     match score, positive
      * @param b     mismatch score, negative
      *
-     * @return sqaure scoring matrix. The last row and column are zero, for
+     * @return square scoring matrix. The last row and column are zero, for
      * matching an ambiguous residue.
      */
     bsa_gen_score_matrix(n, a, b) { let ic = this.icn3d, me = ic.icn3dui;
@@ -149,7 +149,7 @@ class AlignSW {
     }
 
     /**
-     * Local or global pairwise alignemnt
+     * Local or global pairwise alignment
      *
      * @param is_local  perform local alignment
      * @param target    target string
@@ -273,7 +273,7 @@ class AlignSW {
             i, k, start_i = 0;
         if (is_local) {
             i = end_i, k = end_j;
-            if (end_j != qlen - 1) // then add soft cliping
+            if (end_j != qlen - 1) // then add soft clipping
                 this.push_cigar(cigar, 4, qlen - 1 - end_j);
         } else i = t.length - 1, k = (i + w + 1 < qlen ? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
         while (i >= 0 && k >= 0) {

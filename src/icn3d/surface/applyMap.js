@@ -193,7 +193,7 @@ class ApplyMap {
 
     //Remove previously drawn surfaces.
     removeSurfaces() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        for(let i = 0, il = ic.prevSurfaces.length; i < il; ++i) {
            ic.mdl.remove(ic.prevSurfaces[i]);
        }
@@ -202,7 +202,7 @@ class ApplyMap {
     }
 
     removeLastSurface() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        if(ic.prevSurfaces.length > 0) {
            ic.mdl.remove(ic.prevSurfaces[ic.prevSurfaces.length - 1]);
            ic.prevSurfaces.slice(ic.prevSurfaces.length - 1, 1);
@@ -210,7 +210,7 @@ class ApplyMap {
     }
 
     removeMaps() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        for(let i = 0, il = ic.prevMaps.length; i < il; ++i) {
            ic.mdl.remove(ic.prevMaps[i]);
        }
@@ -219,7 +219,7 @@ class ApplyMap {
     }
 
     removeEmmaps() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        for(let i = 0, il = ic.prevEmmaps.length; i < il; ++i) {
            ic.mdl.remove(ic.prevEmmaps[i]);
        }
@@ -228,7 +228,7 @@ class ApplyMap {
     }
 
     removePhimaps() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
 
        for(let i = 0, il = ic.prevPhimaps.length; i < il; ++i) {
            ic.mdl.remove(ic.prevPhimaps[i]);
@@ -238,7 +238,7 @@ class ApplyMap {
     }
 
     removeLastMap() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        if(ic.prevMaps.length > 0) {
            ic.mdl.remove(ic.prevMaps[ic.prevMaps.length - 1]);
            ic.prevMaps.slice(ic.prevMaps.length - 1, 1);
@@ -246,7 +246,7 @@ class ApplyMap {
     }
 
     removeLastEmmap() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        if(ic.prevEmmaps.length > 0) {
            ic.mdl.remove(ic.prevEmmaps[ic.prevEmmaps.length - 1]);
            ic.prevEmmaps.slice(ic.prevEmmaps.length - 1, 1);
@@ -254,7 +254,7 @@ class ApplyMap {
     }
 
     removeLastPhimap() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        if(ic.prevPhimaps.length > 0) {
            ic.mdl.remove(ic.prevPhimaps[ic.prevPhimaps.length - 1]);
            ic.prevPhimaps.slice(ic.prevPhimaps.length - 1, 1);

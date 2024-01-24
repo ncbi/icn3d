@@ -378,7 +378,7 @@ class DefinedSets {
        // show selected chains in annotation window
        ic.annotationCls.showAnnoSelectedChains();
 
-       // clear commmand
+       // clear command
        $("#" + ic.pre + "command").val("");
        $("#" + ic.pre + "command_name").val("");
        //$("#" + ic.pre + "command_desc").val("");
@@ -499,7 +499,7 @@ class DefinedSets {
        // show selected chains in annotation window
        ic.annotationCls.showAnnoSelectedChains();
 
-       // clear commmand
+       // clear command
        $("#" + ic.pre + "command").val("");
        $("#" + ic.pre + "command_name").val("");
 

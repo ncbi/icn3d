@@ -288,7 +288,7 @@ class AnnoCddSite {
             let domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
             // convert double quote
             domain = domain.replace(/\"/g, "``");
-            // convert singe quote
+            // convert single quote
             domain = domain.replace(/'/g, "`");
 
             if(bDomain) acc2domain[acc] = domain;
@@ -307,7 +307,7 @@ class AnnoCddSite {
             if(!domainRepeatArray) continue;
 
             for(let r = 0, rl = domainRepeatArray.length; r < rl; ++r) {
-                // each domain repeat or domain may have several segments, i.e., a domain may not be continous
+                // each domain repeat or domain may have several segments, i.e., a domain may not be continuous
                 let fromArray = [], toArray = [];
                 let resiHash = {}
                 let resCnt = 0;

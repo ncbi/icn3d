@@ -69,7 +69,7 @@ class SetSeqAlign {
               let chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
               let chainid2 = mmdbid2 + '_' + chain2;
 
-              // annoation title for the master seq only
+              // annotation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
               if(ic.alnChainsAnTtl[chainid1][0] === undefined ) ic.alnChainsAnTtl[chainid1][0] = [];
               if(ic.alnChainsAnTtl[chainid1][1] === undefined ) ic.alnChainsAnTtl[chainid1][1] = [];
@@ -782,7 +782,7 @@ class SetSeqAlign {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }      
           
-        // 3. assign the varaible ic.alnChainsAnno
+        // 3. assign the variable ic.alnChainsAnno
         for(let i = 0; i < 3 + 2*n; ++i) {
             if(ic.alnChainsAnno[chainid1][i] === undefined ) ic.alnChainsAnno[chainid1][i] = [];
         }
@@ -1328,7 +1328,7 @@ class SetSeqAlign {
                   ic.atoms[j].color = me.parasCls.thr(color);
               }
 
-              // annoation title for the master seq only
+              // annotation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
               for(let j = 0; j < 3; ++j) {

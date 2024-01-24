@@ -247,7 +247,7 @@ class iCn3D {
     //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
     this.sphereRadius = 1.5; // style sphere
     //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
-    this.cylinderHelixRadius = 1.6; // style sylinder and plate
+    this.cylinderHelixRadius = 1.6; // style cylinder and plate
 
     //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
     this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
@@ -381,7 +381,7 @@ class iCn3D {
     // these variables will not be cleared for each structure
     this.commands = []; // a list of commands, ordered by the operation steps. Each operation will be converted into a command. this command list can be used to go backward and forward.
     this.optsHistory = []; // a list of options corresponding to this.commands.
-    this.logs = []; // a list of comands and other logs, ordered by the operation steps.
+    this.logs = []; // a list of commands and other logs, ordered by the operation steps.
 
     //This is a flag to turn off the rendering part if a sequence of commands are executed. It's true by default.
     this.bRender = true; // a flag to turn off rendering when loading state file
@@ -706,7 +706,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
 
     //this.dAtoms = {}; // show selected atoms
-    //this.hAtoms = {}; // used to change color or dislay type for certain atoms
+    //this.hAtoms = {}; // used to change color or display type for certain atoms
 
     this.pickedAtomList = {}; // used to switch among different highlight levels
 
@@ -763,7 +763,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
 
     this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
     this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                        // label name could be custom, residue, schmatic, distance
+                        // label name could be custom, residue, schematic, distance
     this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 
@@ -796,7 +796,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
     ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // show selected atoms
-    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or dislay type for certain atoms
+    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or display type for certain atoms
 
     ic.prevHighlightObjects = [];
     ic.prevHighlightObjects_ghost = [];
@@ -809,7 +809,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.prevOtherMesh = [];
 
     ic.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                        // label name could be custom, residue, schmatic, distance
+                        // label name could be custom, residue, schematic, distance
     ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 

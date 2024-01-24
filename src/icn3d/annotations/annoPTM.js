@@ -178,7 +178,7 @@ class AnnoPTM {
         html += '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
         html2 += html;
         html3 += html;
-        let stucture = chnid.substr(0, chnid.indexOf('_'));
+        let structure = chnid.substr(0, chnid.indexOf('_'));
 
         for(let ptm in ptmHash) {
             let ptmArray = ptmHash[ptm];
@@ -190,7 +190,7 @@ class AnnoPTM {
                 let end = parseInt(ptmArray[i].end);
 
                 for(let j = begin; j <= end; ++j) {
-                    if(stucture.length > 5) { // UniProt
+                    if(structure.length > 5) { // UniProt
                         resPosArray.push(j - 1); // 0-based
                     } 
                     else { // PDB                       

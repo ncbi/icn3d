@@ -16,7 +16,7 @@ class ThreeDPrint {
         ic.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
 
         ic.sphereRadius = 1.5; // style sphere
-        //ic.cylinderHelixRadius = 1.6; // style sylinder and plate
+        //ic.cylinderHelixRadius = 1.6; // style cylinder and plate
 
         ic.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
@@ -27,7 +27,7 @@ class ThreeDPrint {
 
     //Prepare for 3D printing by changing dashed lines to solid lines, changing the thickness of the model.
     prepareFor3Dprint(  ){ let ic = this.icn3d, me = ic.icn3dui;
-        // turn off hilight
+        // turn off highlight
         ic.bShowHighlight = false;
         ic.hlObjectsCls.removeHlObjects();
 
@@ -84,7 +84,7 @@ class ThreeDPrint {
           ic.traceRadius = 0.4; // style c alpha trace, nucleotide stick
           ic.dotSphereScale = 0.3; // style ball and stick, dot
           ic.sphereRadius = 1.5; // style sphere
-          ic.cylinderHelixRadius = 1.6; // style sylinder and plate
+          ic.cylinderHelixRadius = 1.6; // style cylinder and plate
 
           ic.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
           ic.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness

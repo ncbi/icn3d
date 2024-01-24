@@ -218,7 +218,7 @@ As mentioned in the menu "Help > Transformation Hints", you can use Left mouse b
 The most important point about using iCn3D is the current selection. Any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.<br/>
 <br/>
 <li><b>VR and AR views in iCn3D</b><br/> 
-The Virtual Reality (VR) and Augmented Reality (AR) views are shown in this <a href="hhttps://youtu.be/hX8IAkYRiyA">video</a>.<br/>
+The Virtual Reality (VR) and Augmented Reality (AR) views are shown in this <a href="https://youtu.be/hX8IAkYRiyA">video</a>.<br/>
 <br/>
 You can open a bowser in your Virtual Reality (VR) headset and view a 3D structure in iCn3D. Then click the button "ENTER VR" at the bottom center of your browser to enter the VR view. You can select residues with the trigger button, open the menu with the squeeze button and click menus with the trigger, navigate with the thumbstick pressed forward/backward and press the trigger. There are menus for Select, Style, Color, and Analysis. You need to make one selection before clicking the Interaction button and make two selections before clicking the  Distance button.<br/>
 <br/>
@@ -252,7 +252,7 @@ For any custom structures such as AlphaFold structures, you can show <a href="ht
 <br/>
 
 <li><b>Align AlphaFold structures</b>: 
-You can align <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0">AlphaFold structures or PDB structures</a> with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". You can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the meu "File > Realign Selection > by Structure Alignment".<br/>
+You can align <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0">AlphaFold structures or PDB structures</a> with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". You can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the menu "File > Realign Selection > by Structure Alignment".<br/>
 <br/>
 
 <li><b>Alternate SNPs in 3D</b><br/>
@@ -741,7 +741,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
     <br>
     To view in a web browser, you can open the link <a href="https://structure.ncbi.nlm.nih.gov/icn3d">https://structure.ncbi.nlm.nih.gov/icn3d</a> and input PDB ID(s) or AlphaFold UniProt ID(s) with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". You can also open several PDB files with the menu "File > Open File > PDB Files (appendable)".<br>
     <br>
-    To view 3D structures in Jupyter Notebook, you can follow the instructions at <a href="https://pypi.org/project/icn3dpy/" taget="_blank">icn3dpy</a>.<br>
+    To view 3D structures in Jupyter Notebook, you can follow the instructions at <a href="https://pypi.org/project/icn3dpy/" target="_blank">icn3dpy</a>.<br>
     <br>
     <span class="anchor" id="vr"></span><a name="vr"></a><b>Virtual Reality (VR) view in iCn3D:</b><br>
     You need a VR headset to view 3D structures in VR using iCn3D. In your VR browser, load a 3D structure in iCn3D and click the button "ENTER VR" at the bottom center of the page to enter the VR view.<br>
@@ -2851,7 +2851,7 @@ To contribute new classes to iCn3D, you can follow the example of <a href="https
 <li>Script type should be "module": &lt;script type="module"&gt; </li>
 <li>Import iCn3D module: "import * as icn3d from './icn3d.module.js';"</li>
 <li>Import your custom class (e.g., "LoadStateFile"): "import {LoadStateFile} from './loadStateFile.js';"</li>
-<li>Remove "$( document ).ready(async function() {" and the coresponding "//});" since module will always be run after the document is ready.</li>
+<li>Remove "$( document ).ready(async function() {" and the corresponding "//});" since module will always be run after the document is ready.</li>
 <li>Call your class after the function "await icn3dui.show3DStructure()". You first define the class instance "loadStateFileCls" and pass the iCn3D instance "icn3dui.icn3d". Then call the functions of your class.<br>
 <pre>
     var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
@@ -2990,7 +2990,7 @@ The "cdannots.fcgi" backend returns conserved domains and binding sites informat
         <li><a href="https://github.com/hackathonismb/differential-analysis-of-residue-interactions-of-a-SNP-based-on-side-chain-prediction"><b>Differential analysis of residue interactions of a SNP based on side chain prediction</b></a>:<br> Zachery Mielko, Kailash Adhikari, David Bell, Jiyao Wang, Marina Herrera Sarrias, and Ravinder Abrol<br><br></li>
         <li><a href="https://github.com/hackathonismb/VizSNP-St"><b>Visualizing the effect of SNPs extracted from genomic data on protein structure using iCn3D</b></a>:<br> Bonface Onyango, Manoj M Wagle, Michael Sierk, and Pranavathiyani G<br><br></li>
         <li><a href="https://github.com/hackathonismb/Standardization-of-Ig-datasets-using-universal-numbering-system-and-auto-generating-Bridged-1D-maps"><b>Standardization of Ig datasets using universal numbering system and auto generating Bridged 1D maps</b></a>:<br> Umesh Khaniya, Chirag Patel, Caesar Tawfeeq, Siddhi Jani, Sujitkumar, Prasanthkumar, and Philippe Youkharibache<br><br></li>
-        <li><a href="https://github.com/hackathonismb/ImmunoZoo"><b>ImmunoZoo - Making iCn3D accessble for many audiences</b></a>:<br> Sandra Porter, Todd Smith, Sheela Vemu, Carsten Fortmann-Grote, Yagoub Adam, Shikha Kathrani, and Jack Lin<br><br></li>
+        <li><a href="https://github.com/hackathonismb/ImmunoZoo"><b>ImmunoZoo - Making iCn3D accessible for many audiences</b></a>:<br> Sandra Porter, Todd Smith, Sheela Vemu, Carsten Fortmann-Grote, Yagoub Adam, Shikha Kathrani, and Jack Lin<br><br></li>
         <li><a href="https://github.com/hackathonismb/Analysis-of-multiple-structures-for-automatic-capture-of-conformational-changes"><b>Analysis of multiple structures for automatic capture of conformational changes</b></a>:<br> Tom Madej, David Bell, Chase Freschlin, Gabby Vent, and Lianna Khachikyan<br><br></li>
     </ul>
 </li>

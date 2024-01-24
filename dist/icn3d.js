@@ -8906,7 +8906,7 @@ var icn3d = (function (exports) {
             //this.sh = this.icn3dui.htmlCls.setHtmlCls;
         }
 
-        // simpify the calls of the following functions from setHtmlCls
+        // simplify the calls of the following functions from setHtmlCls
         getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui;
             return me.htmlCls.setHtmlCls.getLink(id, text, bSimpleMenu, selType);
         }
@@ -9336,7 +9336,7 @@ var icn3d = (function (exports) {
 
             let bCmdWindow, html = "";
 
-            // check comand window 
+            // check command window 
             let value = me.htmlCls.setHtmlCls.getCookie('cmdwindow');
             if(value != '') {
                 bCmdWindow = (bCmdWindowInput !== undefined) ? bCmdWindowInput : parseInt(value);
@@ -11708,7 +11708,7 @@ var icn3d = (function (exports) {
             html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
             html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids2' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
 
-            html += "The sequence alignment (followed by structure alignemnt) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
+            html += "The sequence alignment (followed by structure alignment) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
             html += me.htmlCls.buttonStr + "reload_chainalign_asym2' style='margin-top:3px;'><b>Align by Sequence Alignment</b></button><br/><br/>";
 
             html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
@@ -21125,7 +21125,7 @@ var icn3d = (function (exports) {
 
         } ).then( function ( node ) {
 
-            // build node hierachy
+            // build node hierarchy
 
             parentObject.add( node );
 
@@ -23108,7 +23108,7 @@ var icn3d = (function (exports) {
                 config[`btn${i+20}`] = btn;
                 x += ( w + padding );
             }
-            //4rd row
+            //4th row
             y += (height + padding);
             x = padding;
             for (let i=0; i<5; i++){
@@ -29626,7 +29626,7 @@ var icn3d = (function (exports) {
 
             if(fa !== fb && fb !== fc && fa !== fc){
                 if(this.header.ccp4) {
-                    // only transfered vertices will be used
+                    // only transferred vertices will be used
                     if(vertTrans.hasOwnProperty(vertices[fa].index) && vertTrans.hasOwnProperty(vertices[fb].index) 
                       && vertTrans.hasOwnProperty(vertices[fc].index)) {
                         finalfaces.push({"a":fa, "b":fb, "c":fc});
@@ -29820,7 +29820,7 @@ var icn3d = (function (exports) {
                     let r = atom.coord.clone();
                     if(this.loadPhiFrom != 'delphi') { // transform to the original position if the potential file is imported
                         if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                            // revert to the orginal coord
+                            // revert to the original coord
                             let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                             r = coord.applyMatrix4(inverseMatrix);
                         }
@@ -29895,7 +29895,7 @@ var icn3d = (function (exports) {
 
                     let r;
                     if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                        // revert to the orginal coord
+                        // revert to the original coord
                         let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                         r = coord.applyMatrix4(inverseMatrix);
                     }
@@ -30190,7 +30190,7 @@ var icn3d = (function (exports) {
                 }
             }
             else if(type == 13) { // em
-                cfg.maxdist = 3; // EM map has no unit cell. It could include more gird space.
+                cfg.maxdist = 3; // EM map has no unit cell. It could include more grid space.
 
                 cfg.header = ic.mapData.headerEm;
                 cfg.data = ic.mapData.dataEm;
@@ -30929,7 +30929,7 @@ var icn3d = (function (exports) {
                         // show side chains for the selected atoms
                         let atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
 
-                        // draw sidec separatedly
+                        // draw sidec separately
                         for(let k in atoms) {
                           ic.atoms[k].style2 = 'stick';
                         }
@@ -31848,7 +31848,7 @@ var icn3d = (function (exports) {
                     // include calphas
         //            atoms = me.hashUtilsCls.unionHash(atoms, calpha_atoms);
 
-                    // draw sidec separatedly
+                    // draw sidec separately
                     for(let j in atoms) {
                       ic.atoms[j].style2 = style;
                     }
@@ -32338,7 +32338,7 @@ var icn3d = (function (exports) {
 
         //Remove previously drawn surfaces.
         removeSurfaces() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            for(let i = 0, il = ic.prevSurfaces.length; i < il; ++i) {
                ic.mdl.remove(ic.prevSurfaces[i]);
            }
@@ -32347,7 +32347,7 @@ var icn3d = (function (exports) {
         }
 
         removeLastSurface() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            if(ic.prevSurfaces.length > 0) {
                ic.mdl.remove(ic.prevSurfaces[ic.prevSurfaces.length - 1]);
                ic.prevSurfaces.slice(ic.prevSurfaces.length - 1, 1);
@@ -32355,7 +32355,7 @@ var icn3d = (function (exports) {
         }
 
         removeMaps() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            for(let i = 0, il = ic.prevMaps.length; i < il; ++i) {
                ic.mdl.remove(ic.prevMaps[i]);
            }
@@ -32364,7 +32364,7 @@ var icn3d = (function (exports) {
         }
 
         removeEmmaps() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            for(let i = 0, il = ic.prevEmmaps.length; i < il; ++i) {
                ic.mdl.remove(ic.prevEmmaps[i]);
            }
@@ -32373,7 +32373,7 @@ var icn3d = (function (exports) {
         }
 
         removePhimaps() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
 
            for(let i = 0, il = ic.prevPhimaps.length; i < il; ++i) {
                ic.mdl.remove(ic.prevPhimaps[i]);
@@ -32383,7 +32383,7 @@ var icn3d = (function (exports) {
         }
 
         removeLastMap() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            if(ic.prevMaps.length > 0) {
                ic.mdl.remove(ic.prevMaps[ic.prevMaps.length - 1]);
                ic.prevMaps.slice(ic.prevMaps.length - 1, 1);
@@ -32391,7 +32391,7 @@ var icn3d = (function (exports) {
         }
 
         removeLastEmmap() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            if(ic.prevEmmaps.length > 0) {
                ic.mdl.remove(ic.prevEmmaps[ic.prevEmmaps.length - 1]);
                ic.prevEmmaps.slice(ic.prevEmmaps.length - 1, 1);
@@ -32399,7 +32399,7 @@ var icn3d = (function (exports) {
         }
 
         removeLastPhimap() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            if(ic.prevPhimaps.length > 0) {
                ic.mdl.remove(ic.prevPhimaps[ic.prevPhimaps.length - 1]);
                ic.prevPhimaps.slice(ic.prevPhimaps.length - 1, 1);
@@ -33981,7 +33981,7 @@ var icn3d = (function (exports) {
                     if (intersects.length>0){
                         controller.children[0].scale.z = intersects[0].distance; // stop on the object
 
-                        intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+                        intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be subtracted.
 
                         let threshold = ic.rayThreshold; //0.5;
                     
@@ -34977,7 +34977,7 @@ var icn3d = (function (exports) {
                   // only parallel or perpendicular
                   if(interactionType == 'pi-stacking' && atom1.normal !== undefined && atom2.normal !== undefined) {
                       Math.abs(atom1.normal.dot(atom2.normal));
-                      // perpendicular 30 degree || parellel, 30 degree
+                      // perpendicular 30 degree || parallel, 30 degree
                       // remove this condition on Nov 19, 2021
                       //if(dotResult > 0.5 && dotResult < 0.866) continue;
                   }
@@ -35354,7 +35354,7 @@ var icn3d = (function (exports) {
                 ic.ring_mark[cur] = cyclenumber;
 
                 // backtrack the vertex which are
-                // in the current cycle thats found
+                // in the current cycle that's found
                 while (cur != u) {
                     cur = ic.ring_par[cur];
                     ic.ring_mark[cur] = cyclenumber;
@@ -35703,7 +35703,7 @@ var icn3d = (function (exports) {
               ic.style2atoms = {};
 
               for(let i in atoms) {
-                // do not show water in assemly
+                // do not show water in assembly
                 //if(ic.bAssembly && ic.water.hasOwnProperty(i)) {
                 //    ic.atoms[i].style = 'nothing';
                 //}
@@ -36858,7 +36858,7 @@ var icn3d = (function (exports) {
                   atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.water);
                   break;
           }
-          // draw sidec separatedly
+          // draw sidec separately
           if(selectionType === 'sidec' || selectionType === 'ntbase') {
               for(let i in atoms) {
                 ic.atoms[i].style2 = style;
@@ -37571,7 +37571,7 @@ var icn3d = (function (exports) {
                 let domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
                 // convert double quote
                 domain = domain.replace(/\"/g, "``");
-                // convert singe quote
+                // convert single quote
                 domain = domain.replace(/'/g, "`");
 
                 if(bDomain) acc2domain[acc] = domain;
@@ -37590,7 +37590,7 @@ var icn3d = (function (exports) {
                 if(!domainRepeatArray) continue;
 
                 for(let r = 0, rl = domainRepeatArray.length; r < rl; ++r) {
-                    // each domain repeat or domain may have several segments, i.e., a domain may not be continous
+                    // each domain repeat or domain may have several segments, i.e., a domain may not be continuous
                     let fromArray = [], toArray = [];
                     let resiHash = {};
                     let resCnt = 0;
@@ -38267,7 +38267,7 @@ var icn3d = (function (exports) {
             html += '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
             html2 += html;
             html3 += html;
-            let stucture = chnid.substr(0, chnid.indexOf('_'));
+            let structure = chnid.substr(0, chnid.indexOf('_'));
 
             for(let ptm in ptmHash) {
                 let ptmArray = ptmHash[ptm];
@@ -38279,7 +38279,7 @@ var icn3d = (function (exports) {
                     let end = parseInt(ptmArray[i].end);
 
                     for(let j = begin; j <= end; ++j) {
-                        if(stucture.length > 5) { // UniProt
+                        if(structure.length > 5) { // UniProt
                             resPosArray.push(j - 1); // 0-based
                         } 
                         else { // PDB                       
@@ -39039,7 +39039,7 @@ var icn3d = (function (exports) {
                                 snpTitle += pos + c + '>' + resi2snp[i][j];
 
                                 if(!bSnpOnly) {
-                                    // disease and significace
+                                    // disease and significance
                                     let diseaseArray = resi2disease[i][j].split('; ');
                                     let sigArray = resi2sig[i][j].split('; ');
                                     let diseaseTitle = '';
@@ -39119,7 +39119,7 @@ var icn3d = (function (exports) {
                                     bCoord = false;
                                 }
 
-                                // disease and significace
+                                // disease and significance
                                 let diseaseArray = resi2disease[i][j].split('; ');
                                 let sigArray = resi2sig[i][j].split('; ');
                                 let diseaseTitle = '';
@@ -40598,7 +40598,7 @@ var icn3d = (function (exports) {
     				}
     			}
 
-    			// extract the continguous segments
+    			// extract the contiguous segments
     			let inseg = false;
     			let startseg;
     			//vector<int> segments;
@@ -42531,12 +42531,12 @@ var icn3d = (function (exports) {
             while (i < A.length && j < B.length) {
                 if(A[i] != B[j]) {
                     if(A[i] == '-') { 
-                        // inser "-" in B
+                        // insert "-" in B
                         B = B.substr(0, j) + '-' + B.substr(j);
                         seqFirst = seqFirst.substr(0, j) + '-' + seqFirst.substr(j);
                     }
                     else { //if(B[j] == '-') { 
-                        // inser "-" in A
+                        // insert "-" in A
                         for(let k = 0; k < ALen; ++k) {
                             trackSeqArray[k] = trackSeqArray[k].substr(0, i) + '-' + trackSeqArray[k].substr(i);
                         }
@@ -44555,7 +44555,7 @@ var icn3d = (function (exports) {
                     let firstChar = (refnumLabel) ? refnumLabel.substr(0,1) : '';
                     if(!bStart && refnumLabel && (firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
                         bStart = true;
-                        resCnt = 1; // the first oen is included
+                        resCnt = 1; // the first one is included
                     }
 
                     if(prevStrand.substr(0,1) == 'G' && !refnumLabel) { // indicate the end of an IG domain
@@ -46148,14 +46148,14 @@ var icn3d = (function (exports) {
 
         //Remove the highlight. The atom selection does not change.
         removeHlObjects() { let ic = this.icn3d; ic.icn3dui;
-           // remove prevous highlight
+           // remove previous highlight
            for(let i in ic.prevHighlightObjects) {
                if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects[i]);
            }
 
            ic.prevHighlightObjects = [];
 
-           // remove prevous highlight
+           // remove previous highlight
            for(let i in ic.prevHighlightObjects_ghost) {
             if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects_ghost[i]);
            }
@@ -47078,7 +47078,7 @@ var icn3d = (function (exports) {
                 /*
             }
             catch(err) {
-                let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
+                let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assign reference numbers to avoid overloading the server...";
                 if(!me.bNode) {
                     alert(mess);
                 }
@@ -50867,7 +50867,7 @@ var icn3d = (function (exports) {
                         thisClass.transformStructure(mmdbid_q, index-1, 'query');                
                     }
 
-                    // dynamicly align pairs in ic.afChainIndexHash
+                    // dynamically align pairs in ic.afChainIndexHash
                     let ajaxArray = [], indexArray = [], struArray = [];
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                     let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
@@ -51095,7 +51095,7 @@ var icn3d = (function (exports) {
                 }
 
                 // If all chains align to the same target, just check the query.
-                // If there are different targets, also just check the query. The taget should not appear again in the query.
+                // If there are different targets, also just check the query. The target should not appear again in the query.
                 alignMMdbids[target] = 1;
                   
                 if(alignMMdbids.hasOwnProperty(query)) continue;
@@ -52450,8 +52450,8 @@ var icn3d = (function (exports) {
                     points.push(orth);
 
                     // get overlap between map and atoms
-                    let positoin = new THREE.Vector3(orth[0], orth[1], orth[2]);
-                    let atomsNear = ic.rayCls.getAtomsFromPosition(positoin, threshold, ic.hAtoms);
+                    let position = new THREE.Vector3(orth[0], orth[1], orth[2]);
+                    let atomsNear = ic.rayCls.getAtomsFromPosition(position, threshold, ic.hAtoms);
 
                     let map_value = (atomsNear || !bAtoms) ? grid.get_grid_value(i, j, k) : 0;
 
@@ -54592,7 +54592,7 @@ var icn3d = (function (exports) {
             }
 
             // calculate secondary structures if not available
-            // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
+            // DSSP only works for structures with all atoms. The Calpha only structures didn't work
             //if(!ic.bSecondaryStructure && !bCalphaOnly) {
             let bCalcSecondary = false;
             if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
@@ -54681,7 +54681,7 @@ var icn3d = (function (exports) {
 
             // get parent CID
             let urlParent = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/cids/JSONP?cids_type=parent";
-            let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parant CID...");
+            let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parent CID...");
 
             let cidParent = dataParent.IdentifierList.CID[0];
 
@@ -58563,7 +58563,7 @@ var icn3d = (function (exports) {
                   let chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
                   let chainid2 = mmdbid2 + '_' + chain2;
 
-                  // annoation title for the master seq only
+                  // annotation title for the master seq only
                   if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
                   if(ic.alnChainsAnTtl[chainid1][0] === undefined ) ic.alnChainsAnTtl[chainid1][0] = [];
                   if(ic.alnChainsAnTtl[chainid1][1] === undefined ) ic.alnChainsAnTtl[chainid1][1] = [];
@@ -59265,7 +59265,7 @@ var icn3d = (function (exports) {
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }      
               
-            // 3. assign the varaible ic.alnChainsAnno
+            // 3. assign the variable ic.alnChainsAnno
             for(let i = 0; i < 3 + 2*n; ++i) {
                 if(ic.alnChainsAnno[chainid1][i] === undefined ) ic.alnChainsAnno[chainid1][i] = [];
             }
@@ -59803,7 +59803,7 @@ var icn3d = (function (exports) {
                       ic.atoms[j].color = me.parasCls.thr(color);
                   }
 
-                  // annoation title for the master seq only
+                  // annotation title for the master seq only
                   if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
                   for(let j = 0; j < 3; ++j) {
@@ -61392,7 +61392,7 @@ var icn3d = (function (exports) {
                 }
             }
 
-            // for each curernt nodes, assign its nearest neighbor and the distance
+            // for each current nodes, assign its nearest neighbor and the distance
             let mNearestNB = {}, mNearestNBCopy = {}, mNearestNBDist = {};
         
             selI = n;
@@ -63746,7 +63746,7 @@ var icn3d = (function (exports) {
            // show selected chains in annotation window
            ic.annotationCls.showAnnoSelectedChains();
 
-           // clear commmand
+           // clear command
            $("#" + ic.pre + "command").val("");
            $("#" + ic.pre + "command_name").val("");
            //$("#" + ic.pre + "command_desc").val("");
@@ -63867,7 +63867,7 @@ var icn3d = (function (exports) {
            // show selected chains in annotation window
            ic.annotationCls.showAnnoSelectedChains();
 
-           // clear commmand
+           // clear command
            $("#" + ic.pre + "command").val("");
            $("#" + ic.pre + "command_name").val("");
 
@@ -65067,7 +65067,7 @@ var icn3d = (function (exports) {
 
                     ic.hlUpdateCls.updateHlAll();
 
-                    // caused some problem witht the following line
+                    // caused some problem with the following line
         //            $.extend(ic.opts, ic.optsHistory[steps - 1]);
                     ic.drawCls.draw();
                 }
@@ -68218,8 +68218,8 @@ var icn3d = (function (exports) {
                   let chainid2 = chainid2Ori;
                   // if one chain, separate it into two chains to show seq alignment
                   if(bOnechain) {
-                      let stucture = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
-                      chainid2 = stucture + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
+                      let structure = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
+                      chainid2 = structure + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
                   }
 
                   residuesHash[resObject1.resid] = 1;
@@ -68249,7 +68249,7 @@ var icn3d = (function (exports) {
                       ic.atomPrevColors[j] = me.parasCls.thr(color);
                   }
 
-                  // annoation title for the master seq only
+                  // annotation title for the master seq only
                   if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
                   for(let j = 0; j < 3; ++j) {
@@ -68579,7 +68579,7 @@ var icn3d = (function (exports) {
          * @param a     match score, positive
          * @param b     mismatch score, negative
          *
-         * @return sqaure scoring matrix. The last row and column are zero, for
+         * @return square scoring matrix. The last row and column are zero, for
          * matching an ambiguous residue.
          */
         bsa_gen_score_matrix(n, a, b) { let ic = this.icn3d; ic.icn3dui;
@@ -68625,7 +68625,7 @@ var icn3d = (function (exports) {
         }
 
         /**
-         * Local or global pairwise alignemnt
+         * Local or global pairwise alignment
          *
          * @param is_local  perform local alignment
          * @param target    target string
@@ -68749,7 +68749,7 @@ var icn3d = (function (exports) {
                 i, k, start_i = 0;
             if (is_local) {
                 i = end_i, k = end_j;
-                if (end_j != qlen - 1) // then add soft cliping
+                if (end_j != qlen - 1) // then add soft clipping
                     this.push_cigar(cigar, 4, qlen - 1 - end_j);
             } else i = t.length - 1, k = (i + w + 1 < qlen ? i + w + 1 : qlen) - 1; // (i,k) points to the last cell
             while (i >= 0 && k >= 0) {
@@ -69092,7 +69092,7 @@ var icn3d = (function (exports) {
             }
             ic.hlObjectsCls.removeHlObjects();
         }
-        //Display the terminal labels for the atoms in "atomHash". The termini of proteins are labeld
+        //Display the terminal labels for the atoms in "atomHash". The termini of proteins are labelled
         //as "N-" and "C-". The termini of nucleotides are labeled as "5'" and "3'".
         addTerminiLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
             let size = 18;
@@ -72514,12 +72514,12 @@ var icn3d = (function (exports) {
         }
 
         //Generate a URL to capture the current state and open it in a new window. Basically the state
-        //file (the comand history) is concatenated in the URL to show the current state.
+        //file (the command history) is concatenated in the URL to show the current state.
         async shareLink(bPngHtml, bPngOnly) { let ic = this.icn3d, me = ic.icn3dui;
             let url = this.shareLinkUrl();
 
             let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-            //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+            //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name every time
             
             //var inputid =(ic.inputid) ? ic.inputid : "custom";
             let inputid = Object.keys(ic.structures).join('_');
@@ -72837,7 +72837,7 @@ var icn3d = (function (exports) {
         }
 
         getPngText() { let ic = this.icn3d; ic.icn3dui;
-            let url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+            let url; // output state file if ic.bInputfile is true or the URL is more than 4000 chars
             let bAllCommands = true;
 
             let text = "";
@@ -72868,7 +72868,7 @@ var icn3d = (function (exports) {
                 url = this.shareLinkUrl();
                 let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
                 if(bTooLong) {
-                    url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+                    url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
 
                     text += "\nStart of state file======\n";
 
@@ -72904,7 +72904,7 @@ var icn3d = (function (exports) {
             ic.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
 
             ic.sphereRadius = 1.5; // style sphere
-            //ic.cylinderHelixRadius = 1.6; // style sylinder and plate
+            //ic.cylinderHelixRadius = 1.6; // style cylinder and plate
 
             ic.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
             ic.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
@@ -72915,7 +72915,7 @@ var icn3d = (function (exports) {
 
         //Prepare for 3D printing by changing dashed lines to solid lines, changing the thickness of the model.
         prepareFor3Dprint(  ){ let ic = this.icn3d, me = ic.icn3dui;
-            // turn off hilight
+            // turn off highlight
             ic.bShowHighlight = false;
             ic.hlObjectsCls.removeHlObjects();
 
@@ -72972,7 +72972,7 @@ var icn3d = (function (exports) {
               ic.traceRadius = 0.4; // style c alpha trace, nucleotide stick
               ic.dotSphereScale = 0.3; // style ball and stick, dot
               ic.sphereRadius = 1.5; // style sphere
-              ic.cylinderHelixRadius = 1.6; // style sylinder and plate
+              ic.cylinderHelixRadius = 1.6; // style cylinder and plate
 
               ic.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
               ic.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
@@ -73820,7 +73820,7 @@ var icn3d = (function (exports) {
             let position = mdl.position;
             if ( intersects.length > 0 ) {
                 // the intersections are sorted so that the closest point is the first one.
-                intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+                intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be subtracted.
 
                 let threshold = ic.rayThreshold; //0.5;
                 let atom = this.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
@@ -75088,7 +75088,7 @@ var icn3d = (function (exports) {
         //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
         this.sphereRadius = 1.5; // style sphere
         //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
-        this.cylinderHelixRadius = 1.6; // style sylinder and plate
+        this.cylinderHelixRadius = 1.6; // style cylinder and plate
 
         //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
         this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
@@ -75222,7 +75222,7 @@ var icn3d = (function (exports) {
         // these variables will not be cleared for each structure
         this.commands = []; // a list of commands, ordered by the operation steps. Each operation will be converted into a command. this command list can be used to go backward and forward.
         this.optsHistory = []; // a list of options corresponding to this.commands.
-        this.logs = []; // a list of comands and other logs, ordered by the operation steps.
+        this.logs = []; // a list of commands and other logs, ordered by the operation steps.
 
         //This is a flag to turn off the rendering part if a sequence of commands are executed. It's true by default.
         this.bRender = true; // a flag to turn off rendering when loading state file
@@ -75546,7 +75546,7 @@ var icn3d = (function (exports) {
         this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
 
         //this.dAtoms = {}; // show selected atoms
-        //this.hAtoms = {}; // used to change color or dislay type for certain atoms
+        //this.hAtoms = {}; // used to change color or display type for certain atoms
 
         this.pickedAtomList = {}; // used to switch among different highlight levels
 
@@ -75603,7 +75603,7 @@ var icn3d = (function (exports) {
 
         this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                            // label name could be custom, residue, schmatic, distance
+                            // label name could be custom, residue, schematic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
@@ -75636,7 +75636,7 @@ var icn3d = (function (exports) {
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // show selected atoms
-        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or dislay type for certain atoms
+        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or display type for certain atoms
 
         ic.prevHighlightObjects = [];
         ic.prevHighlightObjects_ghost = [];
@@ -75649,7 +75649,7 @@ var icn3d = (function (exports) {
         ic.prevOtherMesh = [];
 
         ic.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                            // label name could be custom, residue, schmatic, distance
+                            // label name could be custom, residue, schematic, distance
         ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
@@ -76252,7 +76252,7 @@ var icn3d = (function (exports) {
                            alert("Density server at EBI has no corresponding EM density map for this structure.");
                        }
                        else if(mapType == 'rcsbEdmaps') {
-                           alert("RCSB server has no corresponding eletron density map for this structure.");
+                           alert("RCSB server has no corresponding electron density map for this structure.");
                        }
                        else {
                            alert("The " + mapType + " file is unavailable...");

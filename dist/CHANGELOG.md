@@ -107,7 +107,7 @@
 
 [icn3d-3.13.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.13.0.zip) was release on July 21, 2022. In addition to "VAST" alignment, users can also use "TM-align" to align two chains. The feature is available in the menus "File > Align > Multiple Chains" and "File > Realign Selection > by Structure Alignment".
 
-[icn3d-3.12.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.8.zip) was release on July 15, 2022. Expanded Python scripts to download any output in iCn3D; Added a new Node.js script to retrieve all annotations (e.g., SNP, ClinVar, domain, etc) from iCn3D; added an exmaple to add users' own annotation and hide default annotations at https://github.com/ncbi/icn3d/tree/master/example/addAnnoLocal.html.
+[icn3d-3.12.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.8.zip) was release on July 15, 2022. Expanded Python scripts to download any output in iCn3D; Added a new Node.js script to retrieve all annotations (e.g., SNP, ClinVar, domain, etc) from iCn3D; added an example to add users' own annotation and hide default annotations at https://github.com/ncbi/icn3d/tree/master/example/addAnnoLocal.html.
 
 [icn3d-3.12.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.12.7.zip) was release on July 7, 2022. Fixed the iCn3D view from VAST search.
 
@@ -137,7 +137,7 @@
 
 [icn3d-3.11.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.3.zip) was release on April 22, 2022. Added the menu "Style > Nucl. Bases" to display the bases of nucleotides.
 
-[icn3d-3.11.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.2.zip) was release on April 18, 2022. Added "[comment]" in front of logs to diferentiate from commands in the command window. If "mmdbid" is the input and the parameter "bu" is not defined, set "bu" as 1 (biological unit).
+[icn3d-3.11.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.2.zip) was release on April 18, 2022. Added "[comment]" in front of logs to differentiate from commands in the command window. If "mmdbid" is the input and the parameter "bu" is not defined, set "bu" as 1 (biological unit).
 
 [icn3d-3.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.1.zip) was release on April 13, 2022. Users can input multiple PDB, MMDB, or AlphaFold IDs with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". Users can also load multiple PDB files at the same time with the menu "File > Open File > PDB Files (appendable)". The color legend became draggable.
 
@@ -165,7 +165,7 @@
 
 [icn3d-3.7.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.0.zip) was release on January 18, 2022. Now users can see the common interactions in several structures when they are aligned and their interactions are shown. iCn3D now shows asymmetric unit instead of biological unit since asymmetric unit contains all chains. Added the menu "File > Search Structure".
 
-[icn3d-3.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.1.zip) was release on January 11, 2022. Enabled users to change the color for all lables in the menu "Analysis > Label > Change Label Color".
+[icn3d-3.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.1.zip) was release on January 11, 2022. Enabled users to change the color for all labels in the menu "Analysis > Label > Change Label Color".
 
 [icn3d-3.6.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.0.zip) was release on January 7, 2022. Added some example Python scripts in the directory "icn3dpython" to export secondary structures or PNG images. Changed the background color from "transparent/white" to "black".
 
@@ -191,7 +191,7 @@
 
 [icn3d-3.4.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.5.zip) was release on September 28, 2021. Showed Conserved Domains for all structures in the Sequences & Annotations window.
 
-[icn3d-3.4.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.4.zip) was release on September 16, 2021. Users can load multiple structures by appending PDB files with the menu "File > Open File > PDB File (appendable)" to othe PDB files or other structures, which are retrieved by IDs such as "mmdbid" or "mmmtfid". A new color method "Color > Hydrophobicity > Normalized" was added to show hydrophobicity for any residues with different green color.
+[icn3d-3.4.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.4.zip) was release on September 16, 2021. Users can load multiple structures by appending PDB files with the menu "File > Open File > PDB File (appendable)" to other PDB files or other structures, which are retrieved by IDs such as "mmdbid" or "mmmtfid". A new color method "Color > Hydrophobicity > Normalized" was added to show hydrophobicity for any residues with different green color.
 
 [icn3d-3.4.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.3.zip) was release on September 10, 2021. Replaced delphi.fcgi with delphi.cgi.
 
@@ -497,7 +497,7 @@
 
 [icn3d-1.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip) was release on October 18, 2016. The atom specification in "Advanced set selection" was modified to use "$" instead of "#" in front of structure IDs. This modification avoids to the problem of showing multiple "#" in the urls of "Share Link".
 
-[icn3d-1.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip) was release on October 4, 2016. Partial diplay of helices or beta-sheets are enabled. The side chains, if displayed, are connected to C-alphas.
+[icn3d-1.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip) was release on October 4, 2016. Partial display of helices or beta-sheets are enabled. The side chains, if displayed, are connected to C-alphas.
 
 [icn3d-1.2.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.3.zip) was release on September 13, 2016. The MMTF format started to support https.
 

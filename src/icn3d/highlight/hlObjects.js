@@ -22,14 +22,14 @@ class HlObjects {
 
     //Remove the highlight. The atom selection does not change.
     removeHlObjects() { let ic = this.icn3d, me = ic.icn3dui;
-       // remove prevous highlight
+       // remove previous highlight
        for(let i in ic.prevHighlightObjects) {
            if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects[i]);
        }
 
        ic.prevHighlightObjects = [];
 
-       // remove prevous highlight
+       // remove previous highlight
        for(let i in ic.prevHighlightObjects_ghost) {
         if(ic.mdl) ic.mdl.remove(ic.prevHighlightObjects_ghost[i]);
        }

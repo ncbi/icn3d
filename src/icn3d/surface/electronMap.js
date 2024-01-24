@@ -162,7 +162,7 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
 
         if(fa !== fb && fb !== fc && fa !== fc){
             if(this.header.ccp4) {
-                // only transfered vertices will be used
+                // only transferred vertices will be used
                 if(vertTrans.hasOwnProperty(vertices[fa].index) && vertTrans.hasOwnProperty(vertices[fb].index) 
                   && vertTrans.hasOwnProperty(vertices[fc].index)) {
                     finalfaces.push({"a":fa, "b":fb, "c":fc});
@@ -357,7 +357,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                 let r = atom.coord.clone();
                 if(this.loadPhiFrom != 'delphi') { // transform to the original position if the potential file is imported
                     if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                        // revert to the orginal coord
+                        // revert to the original coord
                         let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                         r = coord.applyMatrix4(inverseMatrix);
                     }
@@ -432,7 +432,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
 
                 let r;
                 if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                    // revert to the orginal coord
+                    // revert to the original coord
                     let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                     r = coord.applyMatrix4(inverseMatrix);
                 }

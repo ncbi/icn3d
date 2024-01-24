@@ -63,7 +63,7 @@ class ChainalignParser {
                     thisClass.transformStructure(mmdbid_q, index-1, 'query');                
                 }
 
-                // dynamicly align pairs in ic.afChainIndexHash
+                // dynamically align pairs in ic.afChainIndexHash
                 let ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
@@ -291,7 +291,7 @@ class ChainalignParser {
             }
 
             // If all chains align to the same target, just check the query.
-            // If there are different targets, also just check the query. The taget should not appear again in the query.
+            // If there are different targets, also just check the query. The target should not appear again in the query.
             alignMMdbids[target] = 1;
               
             if(alignMMdbids.hasOwnProperty(query)) continue;
