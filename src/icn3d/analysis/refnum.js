@@ -286,7 +286,7 @@
             /*
         }
         catch(err) {
-            let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assing reference numbers to avoid overloading the server...";
+            let mess = "Some of " + ajaxArray.length + " TM-align alignments failed. Please select a chain or a subset to assign reference numbers to avoid overloading the server...";
             if(!me.bNode) {
                 alert(mess);
             }

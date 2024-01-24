@@ -861,7 +861,7 @@ class LoadScript {
 
                 ic.hlUpdateCls.updateHlAll();
 
-                // caused some problem witht the following line
+                // caused some problem with the following line
     //            $.extend(ic.opts, ic.optsHistory[steps - 1]);
                 ic.drawCls.draw();
             }

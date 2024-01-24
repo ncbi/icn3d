@@ -4,7 +4,7 @@ icn3dpy
 icn3dpy is a simple [IPython/Jupyter](http://jupyter.org/) widget to
 embed an interactive [iCn3D](https://github.com/ncbi/icn3d) viewer in a notebook. Its source code is at [PyPI](https://pypi.org/project/icn3dpy/), and is also included at [iCn3D GitHub](https://github.com/ncbi/icn3d/tree/master/jupyternotebook).
 
-The 3D view of icn3dpy in Jupyter Notebook is interactive, just like in any browser. The popup windows will appear under the 3D view. If you have a predefined cutom view, you can use the predefined commands in icn3dpy as shown below.
+The 3D view of icn3dpy in Jupyter Notebook is interactive, just like in any browser. The popup windows will appear under the 3D view. If you have a predefined custom view, you can use the predefined commands in icn3dpy as shown below.
 
 If you experience problems, please file an [issue](https://github.com/ncbi/icn3d/issues).
 
@@ -73,7 +73,7 @@ Use predefined commands (The Jupyter Notebook commands can be copied from the "C
     view = icn3dpy.view(q='mmdbid=6m0j',command='scatterplot interaction pairs | !A !E | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 6; show selection; add residue number labels')
     view
 
-Embed a static image instead of an interactive 3D view to improve the performace of a page with multiple structures. The image is clickable to launch an interactive 3D view. The parameters are separated with the symbol "&" (e.g., "imageonly=1&showanno=1"). All parameters are described in the ["URL parameters" section](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters):
+Embed a static image instead of an interactive 3D view to improve the performance of a page with multiple structures. The image is clickable to launch an interactive 3D view. The parameters are separated with the symbol "&" (e.g., "imageonly=1&showanno=1"). All parameters are described in the ["URL parameters" section](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters):
 
     view = icn3dpy.view(q='mmdbid=6hjr', para='imageonly=1')
     view

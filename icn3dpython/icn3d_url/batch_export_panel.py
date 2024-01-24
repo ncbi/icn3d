@@ -39,7 +39,7 @@ options.add_argument("--disable-extensions") # disable extensions
 options.add_argument("--window-size=320,320") # start with specific window size (300x300 viewport/image size)
 options.binary_location = "/usr/local/chrome/114.0.5735.106/bin/chrome" # chrome binary location (required if chrome is not in the default path)
 
-# start a broser
+# start a browser
 #browser = webdriver.Chrome(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver', options=options)
 #service = ChromeService(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver')
 service = ChromeService(ChromeDriverManager().install())

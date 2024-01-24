@@ -709,7 +709,7 @@ iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, 
                        alert("Density server at EBI has no corresponding EM density map for this structure.");
                    }
                    else if(mapType == 'rcsbEdmaps') {
-                       alert("RCSB server has no corresponding eletron density map for this structure.");
+                       alert("RCSB server has no corresponding electron density map for this structure.");
                    }
                    else {
                        alert("The " + mapType + " file is unavailable...");

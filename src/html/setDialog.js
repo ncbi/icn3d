@@ -295,7 +295,7 @@ class SetDialog {
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids2' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
 
-        html += "The sequence alignment (followed by structure alignemnt) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
+        html += "The sequence alignment (followed by structure alignment) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
         html += me.htmlCls.buttonStr + "reload_chainalign_asym2' style='margin-top:3px;'><b>Align by Sequence Alignment</b></button><br/><br/>";
 
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";

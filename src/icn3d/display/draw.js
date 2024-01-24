@@ -150,7 +150,7 @@
                 if (intersects.length>0){
                     controller.children[0].scale.z = intersects[0].distance; // stop on the object
 
-                    intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+                    intersects[ 0 ].point.sub(ic.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be subtracted.
 
                     let threshold = ic.rayThreshold; //0.5;
                 

@@ -271,7 +271,7 @@ class Analysis {
         }
         ic.hlObjectsCls.removeHlObjects();
     }
-    //Display the terminal labels for the atoms in "atomHash". The termini of proteins are labeld
+    //Display the terminal labels for the atoms in "atomHash". The termini of proteins are labelled
     //as "N-" and "C-". The termini of nucleotides are labeled as "5'" and "3'".
     addTerminiLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
         let size = 18;

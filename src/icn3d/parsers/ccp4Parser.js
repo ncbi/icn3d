@@ -333,8 +333,8 @@ class Ccp4Parser {
                 points.push(orth);
 
                 // get overlap between map and atoms
-                let positoin = new THREE.Vector3(orth[0], orth[1], orth[2]);
-                let atomsNear = ic.rayCls.getAtomsFromPosition(positoin, threshold, ic.hAtoms);
+                let position = new THREE.Vector3(orth[0], orth[1], orth[2]);
+                let atomsNear = ic.rayCls.getAtomsFromPosition(position, threshold, ic.hAtoms);
 
                 let map_value = (atomsNear || !bAtoms) ? grid.get_grid_value(i, j, k) : 0;
 

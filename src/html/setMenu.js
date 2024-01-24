@@ -8,7 +8,7 @@ class SetMenu {
         //this.sh = this.icn3dui.htmlCls.setHtmlCls;
     }
 
-    // simpify the calls of the following functions from setHtmlCls
+    // simplify the calls of the following functions from setHtmlCls
     getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui;
         return me.htmlCls.setHtmlCls.getLink(id, text, bSimpleMenu, selType);
     }
@@ -438,7 +438,7 @@ class SetMenu {
 
         let bCmdWindow, html = "";
 
-        // check comand window 
+        // check command window 
         let value = me.htmlCls.setHtmlCls.getCookie('cmdwindow');
         if(value != '') {
             bCmdWindow = (bCmdWindowInput !== undefined) ? bCmdWindowInput : parseInt(value);

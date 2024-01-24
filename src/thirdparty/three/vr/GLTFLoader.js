@@ -4104,7 +4104,7 @@ function buildNodeHierarchy( nodeId, parentObject, json, parser ) {
 
     } ).then( function ( node ) {
 
-        // build node hierachy
+        // build node hierarchy
 
         parentObject.add( node );
 

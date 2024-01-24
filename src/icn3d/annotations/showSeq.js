@@ -628,7 +628,7 @@ class ShowSeq {
                 let firstChar = (refnumLabel) ? refnumLabel.substr(0,1) : '';
                 if(!bStart && refnumLabel && (firstChar == 'A' || firstChar == 'B')) { // start of a new IG domain
                     bStart = true;
-                    resCnt = 1; // the first oen is included
+                    resCnt = 1; // the first one is included
                 }
 
                 if(prevStrand.substr(0,1) == 'G' && !refnumLabel) { // indicate the end of an IG domain

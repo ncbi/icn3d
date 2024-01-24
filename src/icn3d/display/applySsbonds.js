@@ -163,7 +163,7 @@ class ApplySsbonds {
                 // include calphas
     //            atoms = me.hashUtilsCls.unionHash(atoms, calpha_atoms);
 
-                // draw sidec separatedly
+                // draw sidec separately
                 for(let j in atoms) {
                   ic.atoms[j].style2 = style;
                 }

@@ -1060,7 +1060,7 @@ class Domain3d {
 				}
 			}
 
-			// extract the continguous segments
+			// extract the contiguous segments
 			let inseg = false;
 			let startseg;
 			//vector<int> segments;

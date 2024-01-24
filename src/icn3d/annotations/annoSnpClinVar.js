@@ -329,7 +329,7 @@ class AnnoSnpClinVar {
                             snpTitle += pos + c + '>' + resi2snp[i][j];
 
                             if(!bSnpOnly) {
-                                // disease and significace
+                                // disease and significance
                                 let diseaseArray = resi2disease[i][j].split('; ');
                                 let sigArray = resi2sig[i][j].split('; ');
                                 let diseaseTitle = '';
@@ -412,7 +412,7 @@ class AnnoSnpClinVar {
                                 bCoord = false;
                             }
 
-                            // disease and significace
+                            // disease and significance
                             let diseaseArray = resi2disease[i][j].split('; ');
                             let sigArray = resi2sig[i][j].split('; ');
                             let diseaseTitle = '';

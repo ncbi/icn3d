@@ -18,7 +18,7 @@ class SdfParser {
 
         // get parent CID
         let urlParent = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/cids/JSONP?cids_type=parent";
-        let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parant CID...");
+        let dataParent = await me.getAjaxPromise(urlParent, 'jsonp', true, "Can not retrieve the parent CID...");
 
         let cidParent = dataParent.IdentifierList.CID[0];
 

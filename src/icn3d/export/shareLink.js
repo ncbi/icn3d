@@ -8,12 +8,12 @@ class ShareLink {
     }
 
     //Generate a URL to capture the current state and open it in a new window. Basically the state
-    //file (the comand history) is concatenated in the URL to show the current state.
+    //file (the command history) is concatenated in the URL to show the current state.
     async shareLink(bPngHtml, bPngOnly) { let ic = this.icn3d, me = ic.icn3dui;
         let url = this.shareLinkUrl();
 
         let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
-        //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+        //if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name every time
         
         //var inputid =(ic.inputid) ? ic.inputid : "custom";
         let inputid = Object.keys(ic.structures).join('_');
@@ -338,7 +338,7 @@ class ShareLink {
     }
 
     getPngText() { let ic = this.icn3d, me = ic.icn3dui;
-        let url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+        let url; // output state file if ic.bInputfile is true or the URL is more than 4000 chars
         let bAllCommands = true;
 
         let text = "";
@@ -369,7 +369,7 @@ class ShareLink {
             url = this.shareLinkUrl();
             let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
             if(bTooLong) {
-                url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+                url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
 
                 text += "\nStart of state file======\n";
 
