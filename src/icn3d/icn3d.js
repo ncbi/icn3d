@@ -405,7 +405,7 @@ class iCn3D {
     //this.curveWidth = 3;
 
     this.threshbox = 180; // maximum possible boxsize, default 180
-    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
+    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files will be output for 3D printing
 
     this.tsHbond = 3.8;
     this.tsIonic = 6;

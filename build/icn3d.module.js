@@ -53177,7 +53177,7 @@ class MmcifParser {
                     maxMissingResi = 0;
                 }
 
-                // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
+                // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the first four residues are considered missing
                 if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
                     ic.chainMissingResidueArray[chainNum].push(resObject);
 
@@ -57012,7 +57012,7 @@ class ParserUtils {
                 resiPos = 0;
             }
 
-            // fixe some missing residue names such as residue 6 in 5C1M_A
+            // fix some missing residue names such as residue 6 in 5C1M_A
             if(seqName === '') {
                 seqName = 'x';
             }
@@ -60138,7 +60138,7 @@ class LoadPDB {
                     resObject.resi = resi;
                     resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
 
-                    // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
+                    // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the first four residues are considered missing
                     //if(!isNaN(resi) && (prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain && resi > maxMissingResi)) ) {
                     if(prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain) ) {
                         ic.chainMissingResidueArray[chainNum].push(resObject);
@@ -75243,7 +75243,7 @@ class iCn3D {
     //this.curveWidth = 3;
 
     this.threshbox = 180; // maximum possible boxsize, default 180
-    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
+    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files will be output for 3D printing
 
     this.tsHbond = 3.8;
     this.tsIonic = 6;
