@@ -1370,6 +1370,17 @@ class Events {
             ic.mtzParserCls.loadMtzFile('fofc');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_rcsbmtzfile2fofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('2fofc', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_rcsbmtzfilefofc", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.mtzParserCls.loadMtzFile('fofc', true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_delphifile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1488,6 +1499,17 @@ class Events {
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.mtzParserCls.loadMtzFileUrl('fofc');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_rcsbmtzfileurl2fofc", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            await ic.mtzParserCls.loadMtzFileUrl('2fofc', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_rcsbmtzfileurlfofc", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            await ic.mtzParserCls.loadMtzFileUrl('fofc', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { let ic = me.icn3d;

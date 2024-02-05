@@ -60,6 +60,7 @@ import {LegendTable} from './display/legendTable.js';
 import {AnnoCddSite} from './annotations/annoCddSite.js';
 import {AnnoContact} from './annotations/annoContact.js';
 import {AnnoPTM} from './annotations/annoPTM.js';
+import {AnnoIg} from './annotations/annoIg.js';
 import {AnnoCrossLink} from './annotations/annoCrossLink.js';
 import {AnnoDomain} from './annotations/annoDomain.js';
 import {AnnoSnpClinVar} from './annotations/annoSnpClinVar.js';
@@ -115,7 +116,7 @@ import {FirstAtomObj} from './selection/firstAtomObj.js';
 
 import {Delphi} from './analysis/delphi.js';
 import {Dssp} from './analysis/dssp.js';
-import {Refnum} from './analysis/refnum.js';
+import {Refnum} from './annotations/refnum.js';
 import {Scap} from './analysis/scap.js';
 import {Symd} from './analysis/symd.js';
 import {AlignSW} from './analysis/alignSW.js';
@@ -247,7 +248,7 @@ class iCn3D {
     //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
     this.sphereRadius = 1.5; // style sphere
     //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
-    this.cylinderHelixRadius = 1.6; // style sylinder and plate
+    this.cylinderHelixRadius = 1.6; // style cylinder and plate
 
     //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
     this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
@@ -405,7 +406,7 @@ class iCn3D {
     //this.curveWidth = 3;
 
     this.threshbox = 180; // maximum possible boxsize, default 180
-    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
+    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files will be output for 3D printing
 
     this.tsHbond = 3.8;
     this.tsIonic = 6;
@@ -579,6 +580,7 @@ class iCn3D {
     this.annoCddSiteCls = new AnnoCddSite(this);
     this.annoContactCls = new AnnoContact(this);
     this.annoPTMCls = new AnnoPTM(this);
+    this.annoIgCls = new AnnoIg(this);
     this.annoCrossLinkCls = new AnnoCrossLink(this);
     this.annoDomainCls = new AnnoDomain(this);
     this.annoSnpClinVarCls = new AnnoSnpClinVar(this);
@@ -706,7 +708,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
 
     //this.dAtoms = {}; // show selected atoms
-    //this.hAtoms = {}; // used to change color or dislay type for certain atoms
+    //this.hAtoms = {}; // used to change color or display type for certain atoms
 
     this.pickedAtomList = {}; // used to switch among different highlight levels
 
@@ -763,7 +765,7 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
 
     this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
     this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                        // label name could be custom, residue, schmatic, distance
+                        // label name could be custom, residue, schematic, distance
     this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 
@@ -796,7 +798,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
     ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // show selected atoms
-    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or dislay type for certain atoms
+    ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms); // used to change color or display type for certain atoms
 
     ic.prevHighlightObjects = [];
     ic.prevHighlightObjects_ghost = [];
@@ -809,7 +811,7 @@ iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.prevOtherMesh = [];
 
     ic.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-                        // label name could be custom, residue, schmatic, distance
+                        // label name could be custom, residue, schematic, distance
     ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                         // line name could be custom, hbond, ssbond, distance
 

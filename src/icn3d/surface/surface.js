@@ -112,7 +112,7 @@ class Surface {
             }
         }
         else if(type == 13) { // em
-            cfg.maxdist = 3; // EM map has no unit cell. It could include more gird space.
+            cfg.maxdist = 3; // EM map has no unit cell. It could include more grid space.
 
             cfg.header = ic.mapData.headerEm;
             cfg.data = ic.mapData.dataEm;

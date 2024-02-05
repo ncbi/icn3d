@@ -309,8 +309,8 @@ class Symd {
               let chainid2 = chainid2Ori;
               // if one chain, separate it into two chains to show seq alignment
               if(bOnechain) {
-                  let stucture = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
-                  chainid2 = stucture + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
+                  let structure = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
+                  chainid2 = structure + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
               }
 
               residuesHash[resObject1.resid] = 1;
@@ -340,7 +340,7 @@ class Symd {
                   ic.atomPrevColors[j] = me.parasCls.thr(color);
               }
 
-              // annoation title for the master seq only
+              // annotation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
               for(let j = 0; j < 3; ++j) {

@@ -11,8 +11,8 @@ class HlSeq {
       if(me.bNode) return;
 
       let thisClass = this;
-      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
-      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]").add("[id^=" + ic.pre + "dt_ig]")
+      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]").add("[id^=" + ic.pre + "tt_ig]")
       .selectable({
           distance: 1, //Tolerance, in pixels, for when selecting should start. If specified, selecting will not start until the mouse has been dragged beyond the specified distance.
           stop: function() { let ic = thisClass.icn3d;
@@ -68,11 +68,11 @@ class HlSeq {
           }
       });
 
-      $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_ptm]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]")
-      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+      $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_ptm]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]").add("[id^=" + ic.pre + "ov_ig]")
+      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]").add("[id^=" + ic.pre + "tt_ig]")
 
-      .add("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
-      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+      .add("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_ptm]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]").add("[id^=" + ic.pre + "dt_ig]")
+      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_ptm]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]").add("[id^=" + ic.pre + "tt_ig]")
 
       .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
@@ -116,7 +116,7 @@ class HlSeq {
 
       let thisClass = this;
 
-      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
+      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").add("[id^=" + ic.pre + "ig]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
           // select residues
@@ -157,7 +157,7 @@ class HlSeq {
 
       let thisClass = this;
 
-      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
+      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "ptm]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").add("[id^=" + ic.pre + "ig]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
           //if($(this).attr('id') === ic.pre + "dl_sequence2") {
@@ -294,7 +294,7 @@ class HlSeq {
                     }
                     else {
                         let residueidHash = {};
-                        if($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
+                        if($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined || $(that).attr('ig') !== undefined) {
                             ic.hlUpdateCls.hlSummaryDomain3ddomain(that);
 
                             let fromArray = $(that).attr('from').split(',');
@@ -326,7 +326,7 @@ class HlSeq {
                                     }
                                     */
                                     
-                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined) {
+                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined || $(that).attr('ig') !== undefined) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         residueid = ic.ncbi2resid[residNCBI];
                                     }

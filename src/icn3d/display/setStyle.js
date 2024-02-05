@@ -12,7 +12,7 @@ class SetStyle {
           ic.style2atoms = {};
 
           for(let i in atoms) {
-            // do not show water in assemly
+            // do not show water in assembly
             //if(ic.bAssembly && ic.water.hasOwnProperty(i)) {
             //    ic.atoms[i].style = 'nothing';
             //}

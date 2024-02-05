@@ -13,7 +13,7 @@ class Annotation {
     }
     setAnnoSeqBase(bShow) {  let ic = this.icn3d, me = ic.icn3dui;
         //let itemArray = ['site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
-        let itemArray = ['cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'interaction'];
+        let itemArray = ['cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'interaction', 'ig'];
         for(let i in itemArray) {
             let item = itemArray[i];
             if(bShow) {
@@ -26,7 +26,7 @@ class Annotation {
     }
     setAnnoTabBase(bChecked) {  let ic = this.icn3d, me = ic.icn3dui;
         //let itemArray = ['all', 'binding', 'ptm', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
-        let itemArray = ['all', 'cdd', 'clinvar', 'snp', 'binding', 'ptm', 'ssbond', 'crosslink', 'transmem', '3dd', 'custom', 'interact'];
+        let itemArray = ['all', 'cdd', 'clinvar', 'snp', 'binding', 'ptm', 'ssbond', 'crosslink', 'transmem', '3dd', 'custom', 'interact', 'ig'];
         for(let i in itemArray) {
             let item = itemArray[i];
             if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
@@ -42,6 +42,7 @@ class Annotation {
         this.updateSsbond();
         this.updateCrosslink();
         await this.updateTransmem();
+        await this.updateIg();
         this.updateInteraction();
     }
     hideAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -73,14 +74,16 @@ class Annotation {
             $("[id^=" + ic.pre + "site]").show();
         }
         if($("#" + ic.pre + "anno_snp").length && $("#" + ic.pre + "anno_snp")[0].checked) {
-            $("[id^=" + ic.pre + "snp]").show();
             ic.bSnpShown = false;
             await this.updateSnp();
+
+            $("[id^=" + ic.pre + "snp]").show();
         }
         if($("#" + ic.pre + "anno_clinvar").length && $("#" + ic.pre + "anno_clinvar")[0].checked) {
-            $("[id^=" + ic.pre + "clinvar]").show();
             ic.bClinvarShown = false;
             await this.updateClinvar();
+
+            $("[id^=" + ic.pre + "clinvar]").show();
         }
         if($("#" + ic.pre + "anno_cdd").length && $("#" + ic.pre + "anno_cdd")[0].checked) {
             $("[id^=" + ic.pre + "cdd]").show();
@@ -96,9 +99,10 @@ class Annotation {
             this.updateInteraction();
         }
         if($("#" + ic.pre + "anno_ptm").length && $("#" + ic.pre + "anno_ptm")[0].checked) {
-            $("[id^=" + ic.pre + "ptm]").show();
             ic.bPTMShown = false;
             await this.updatePTM();
+
+            $("[id^=" + ic.pre + "ptm]").show();
         }
         if($("#" + ic.pre + "anno_custom").length && $("#" + ic.pre + "anno_custom")[0].checked) {
             $("[id^=" + ic.pre + "custom]").show();
@@ -114,9 +118,16 @@ class Annotation {
             this.updateCrosslink();
         }
         if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
-            $("[id^=" + ic.pre + "transmem]").show();
             ic.bTranememShown = false;
             await this.updateTransmem();
+
+            $("[id^=" + ic.pre + "transmem]").show();
+        }
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
+            ic.bRunRefnum = false;
+            await this.updateIg();
+
+            $("[id^=" + ic.pre + "ig]").show();
         }
     }
     setAnnoTabCustom() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -128,18 +139,20 @@ class Annotation {
         if($("#" + ic.pre + "anno_custom").length) $("#" + ic.pre + "anno_custom")[0].checked = false;
     }
     async setAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
+        await this.updateClinvar();
+
         $("[id^=" + ic.pre + "clinvar]").show();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = true;
-        await this.updateClinvar();
     }
     hideAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "clinvar]").hide();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = false;
     }
     async setAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
+        await this.updateSnp();
+
         $("[id^=" + ic.pre + "snp]").show();
         if($("#" + ic.pre + "anno_snp").length) $("#" + ic.pre + "anno_snp")[0].checked = true;
-        await this.updateSnp();
     }
     hideAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "snp]").hide();
@@ -154,9 +167,10 @@ class Annotation {
         if($("#" + ic.pre + "anno_cdd").length) $("#" + ic.pre + "anno_cdd")[0].checked = false;
     }
     setAnnoTab3ddomain() {  let ic = this.icn3d, me = ic.icn3dui;
+        this.updateDomain();
+
         $("[id^=" + ic.pre + "domain]").show();
         if($("#" + ic.pre + "anno_3dd").length) $("#" + ic.pre + "anno_3dd")[0].checked = true;
-        this.updateDomain();
     }
     hideAnnoTab3ddomain() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "domain]").hide();
@@ -182,9 +196,10 @@ class Annotation {
         if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
     }
     async setAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
+        await this.updatePTM();
+
         $("[id^=" + ic.pre + "ptm]").show();
         if($("#" + ic.pre + "anno_ptm").length) $("#" + ic.pre + "anno_ptm")[0].checked = true;
-        await this.updatePTM();
     }
     hideAnnoTabPTM() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ptm]").hide();
@@ -209,13 +224,24 @@ class Annotation {
         if($("#" + ic.pre + "anno_crosslink").length) $("#" + ic.pre + "anno_crosslink")[0].checked = false;
     }
     async setAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
+        await this.updateTransmem();
+
         $("[id^=" + ic.pre + "transmem]").show();
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = true;
-        await this.updateTransmem();
     }
     hideAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "transmem]").hide();
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
+    }
+    async setAnnoTabIg(bSelection, template) {  let ic = this.icn3d, me = ic.icn3dui;
+        await this.updateIg(bSelection, template);
+
+        $("[id^=" + ic.pre + "ig]").show();
+        if($("#" + ic.pre + "anno_ig").length) $("#" + ic.pre + "anno_ig")[0].checked = true;
+    }
+    hideAnnoTabIg() {  let ic = this.icn3d, me = ic.icn3dui;
+        $("[id^=" + ic.pre + "ig]").hide();
+        if($("#" + ic.pre + "anno_ig").length) $("#" + ic.pre + "anno_ig")[0].checked = false;
     }
     setTabs() {  let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
@@ -359,6 +385,21 @@ class Annotation {
             me.htmlCls.clickMenuCls.setLogCmd("hide annotation transmembrane", true);
         }
         });
+
+        me.myEventCls.onIds("#" + ic.pre + "anno_ig", "click", async function(e) {
+            if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
+                if(Object.keys(ic.atoms).length > Object.keys(ic.hAtoms).length) {
+                    ic.bRunRefnum = false;
+                }
+
+                await thisClass.setAnnoTabIg();
+                me.htmlCls.clickMenuCls.setLogCmd("set annotation ig", true);
+            }
+            else{
+                thisClass.hideAnnoTabIg();
+                me.htmlCls.clickMenuCls.setLogCmd("hide annotation ig", true);
+            }
+            });
     }
     clickCdd() { let ic = this.icn3d, me = ic.icn3dui;
       if($("[id^=" + ic.pre + "cdd]").length > 0) {
@@ -409,7 +450,7 @@ class Annotation {
         }
     }
     setAnnoDisplay(display, prefix) { let ic = this.icn3d, me = ic.icn3dui;
-        let itemArray = ['giseq', 'custom', 'site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        let itemArray = ['giseq', 'custom', 'site', 'ptm', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem', 'ig'];
         for(let i in itemArray) {
             let item = itemArray[i];
             $("[id^=" + ic.pre + prefix + "_" + item + "]").attr('style', display);
@@ -526,6 +567,31 @@ class Annotation {
             }
         }
         ic.bTranememShown = true;
+    }
+
+    async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
+        // if(!ic.bIgShown) {
+            if(!bSelection && !template) {
+                // select all protein chains
+                ic.hAtoms = {};
+                for(let chainid in ic.protein_chainid) {
+                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
+                }
+            }
+
+            for(let chainid in ic.protein_chainid) {
+                await ic.annoIgCls.showIg(chainid, template);
+            }
+        // }
+        // ic.bIgShown = true;
+
+        if(ic.bShowRefnum) {
+            ic.opts.color = 'ig strand';
+            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+
+            ic.hlUpdateCls.updateHlAll();
+            ic.drawCls.draw();
+        }    
     }
 }
 

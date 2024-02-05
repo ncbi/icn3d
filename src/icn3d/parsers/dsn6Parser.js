@@ -196,7 +196,7 @@ class Dsn6Parser {
         inputId = 'dsn6sigmaurl' + type;
       }
 
-      let factor = (type == '2fofc') ? 0.5 : 0.3;
+      let factor = (type == '2fofc') ? 0.2 : 0.2;
 
       if(inputId) {
         if(!($("#" + me.pre + inputId).val())) {

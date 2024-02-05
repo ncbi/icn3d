@@ -117,7 +117,7 @@ class SetOption {
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.water);
               break;
       }
-      // draw sidec separatedly
+      // draw sidec separately
       if(selectionType === 'sidec' || selectionType === 'ntbase') {
           for(let i in atoms) {
             ic.atoms[i].style2 = style;

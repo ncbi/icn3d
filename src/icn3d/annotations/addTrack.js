@@ -1824,12 +1824,12 @@ class AddTrack {
         while (i < A.length && j < B.length) {
             if(A[i] != B[j]) {
                 if(A[i] == '-') { 
-                    // inser "-" in B
+                    // insert "-" in B
                     B = B.substr(0, j) + '-' + B.substr(j);
                     seqFirst = seqFirst.substr(0, j) + '-' + seqFirst.substr(j);
                 }
                 else { //if(B[j] == '-') { 
-                    // inser "-" in A
+                    // insert "-" in A
                     for(let k = 0; k < ALen; ++k) {
                         trackSeqArray[k] = trackSeqArray[k].substr(0, i) + '-' + trackSeqArray[k].substr(i);
                     }

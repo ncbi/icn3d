@@ -95,7 +95,7 @@ class PiHalogen {
               // only parallel or perpendicular
               if(interactionType == 'pi-stacking' && atom1.normal !== undefined && atom2.normal !== undefined) {
                   let dotResult = Math.abs(atom1.normal.dot(atom2.normal));
-                  // perpendicular 30 degree || parellel, 30 degree
+                  // perpendicular 30 degree || parallel, 30 degree
                   // remove this condition on Nov 19, 2021
                   //if(dotResult > 0.5 && dotResult < 0.866) continue;
               }
@@ -472,7 +472,7 @@ class PiHalogen {
             ic.ring_mark[cur] = cyclenumber;
 
             // backtrack the vertex which are
-            // in the current cycle thats found
+            // in the current cycle that's found
             while (cur != u) {
                 cur = ic.ring_par[cur];
                 ic.ring_mark[cur] = cyclenumber;

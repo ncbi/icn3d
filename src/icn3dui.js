@@ -79,6 +79,7 @@ import {SetOption} from './icn3d/display/setOption.js';
 import {AnnoCddSite} from './icn3d/annotations/annoCddSite.js';
 import {AnnoContact} from './icn3d/annotations/annoContact.js';
 import {AnnoPTM} from './icn3d/annotations/annoPTM.js';
+import {AnnoIg} from './icn3d/annotations/annoIg.js';
 import {AnnoCrossLink} from './icn3d/annotations/annoCrossLink.js';
 import {AnnoDomain} from './icn3d/annotations/annoDomain.js';
 import {AnnoSnpClinVar} from './icn3d/annotations/annoSnpClinVar.js';
@@ -133,7 +134,7 @@ import {FirstAtomObj} from './icn3d/selection/firstAtomObj.js';
 
 import {Delphi} from './icn3d/analysis/delphi.js';
 import {Dssp} from './icn3d/analysis/dssp.js';
-import {Refnum} from './icn3d/analysis/refnum.js';
+import {Refnum} from './icn3d/annotations/refnum.js';
 import {Scap} from './icn3d/analysis/scap.js';
 import {Symd} from './icn3d/analysis/symd.js';
 import {AlignSW} from './icn3d/analysis/alignSW.js';
@@ -165,7 +166,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.29.4';
+    this.REVISION = '3.29.5';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -709,7 +710,7 @@ iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, 
                        alert("Density server at EBI has no corresponding EM density map for this structure.");
                    }
                    else if(mapType == 'rcsbEdmaps') {
-                       alert("RCSB server has no corresponding eletron density map for this structure.");
+                       alert("RCSB server has no corresponding electron density map for this structure.");
                    }
                    else {
                        alert("The " + mapType + " file is unavailable...");

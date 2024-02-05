@@ -10,7 +10,7 @@ class MtzParser {
         this.icn3d = icn3d;
     }
 
-    async mtzParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
+    async mtzParserBase(url, type, sigma, location, bInputSigma, bRcsb) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
@@ -24,7 +24,7 @@ class MtzParser {
         // }
         // else {
             let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', '');
-            sigma = await thisClass.loadMtzFileBase(arrayBuffer, type, sigma, location, bInputSigma, url);
+            sigma = await thisClass.loadMtzFileBase(arrayBuffer, type, sigma, location, bInputSigma, url, bRcsb);
 
             // if(type == '2fofc') {
             //     ic.bAjax2fofcccp4 = true;
@@ -39,7 +39,7 @@ class MtzParser {
         // }
     }
 
-    loadMtzFile(type) {var ic = this.icn3d, me = ic.icn3dui;
+    loadMtzFile(type, bRcsb) {var ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        let file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
@@ -51,14 +51,14 @@ class MtzParser {
          me.utilsCls.checkFileAPI();
          let reader = new FileReader();
          reader.onload = async function(e) { let ic = thisClass.icn3d;
-            sigma = await thisClass.loadMtzFileBase(e.target.result, type, sigma, 'file');
+            sigma = await thisClass.loadMtzFileBase(e.target.result, type, sigma, 'file', undefined, undefined, bRcsb);
             me.htmlCls.clickMenuCls.setLogCmd('load map file ' + $("#" + ic.pre + "dsn6file" + type).val() + ' with sigma ' + sigma, false);
          }
          reader.readAsArrayBuffer(file);
        }
     }
 
-    async loadMtzFileBase(data, type, sigma, location, bInputSigma, url) {var ic = this.icn3d, me = ic.icn3dui;
+    async loadMtzFileBase(data, type, sigma, location, bInputSigma, url, bRcsb) {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.bMtz === undefined) {
             let url = "./script/mtz.js";
             await me.getAjaxPromise(url, 'script');
@@ -69,7 +69,7 @@ class MtzParser {
         GemmiMtz().then(function(Gemmi) {
             let mtz = Gemmi.readMtz(data);
 
-            sigma = ic.ccp4ParserCls.load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma);
+            sigma = ic.ccp4ParserCls.load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma, bRcsb);
 
             // if(type == '2fofc') {
             //     ic.bAjax2fofcCcp4 = true;
@@ -78,20 +78,21 @@ class MtzParser {
             //     ic.bAjaxfofcCcp4 = true;
             // }
             ic.setOptionCls.setOption('map', type);
-            if(url) me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
+            let mtzType = (bRcsb) ? 'rcsbmtz' : 'mtz';
+            if(url) me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file ' + mtzType + ' | ' + encodeURIComponent(url), true);
 
             return sigma;
         });
      }
 
-    async loadMtzFileUrl(type) {var ic = this.icn3d, me = ic.icn3dui;
+    async loadMtzFileUrl(type, bRcsb) {var ic = this.icn3d, me = ic.icn3dui;
        let url = $("#" + ic.pre + "dsn6fileurl" + type).val();
        let sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
        if(!url) {
             alert("Please input the file URL before clicking 'Load'");
        }
        else {
-           sigma = await this.mtzParserBase(url, type, sigma, 'url');
+           sigma = await this.mtzParserBase(url, type, sigma, 'url', undefined, bRcsb);
 
            //me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' file mtz | ' + encodeURIComponent(url), true);
        }

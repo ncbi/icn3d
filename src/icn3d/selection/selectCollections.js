@@ -97,18 +97,20 @@ class SelectCollections {
         ic.transformCls.zoominSelection();
         ic.definedSetsCls.showSets();
 
+        await ic.drawCls.draw();
+        ic.saveFileCls.showTitle();
+
         ic.bResetAnno = true;
         if(ic.bAnnoShown) {
+          // show annotations just fo the displayed atoms
+          // await ic.showAnnoCls.showAnnotations(ic.dAtoms);
           await ic.showAnnoCls.showAnnotations();
 
           ic.hlUpdateCls.updateHlAll(nameArray);
           // show selected chains in annotation window
           ic.annotationCls.showAnnoSelectedChains();
         }
-
-        await ic.drawCls.draw();
-        ic.saveFileCls.showTitle();
-
+        
         me.htmlCls.clickMenuCls.setLogCmd(
           "select structure " + "[" + nameStructure + "]",
           true

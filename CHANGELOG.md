@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.29.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.5.zip) was release on February 5, 2024. Added an option to load  MTZ files from RCSB to show electrondensity maps; fixed a bug in saving sets; fixed a bug in the replay of rotating structures with a matrix.
+
 [icn3d-3.29.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.4.zip) was release on January 19, 2024. Added the options to translate the coordinates (View > Translate XYZ) and rotate the coordinates with a matrix (View > Rotate with Matrix).
 
 [icn3d-3.29.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.3.zip) was release on January 11, 2024. Fixed the "Sequences & Annotations" view when a collection of structure is loaded.
@@ -141,7 +143,7 @@
 
 [icn3d-3.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.1.zip) was release on April 13, 2022. Users can input multiple PDB, MMDB, or AlphaFold IDs with the menu "File > Retrieve by ID > MMDB or AlphaFold IDs". Users can also load multiple PDB files at the same time with the menu "File > Open File > PDB Files (appendable)". The color legend became draggable.
 
-[icn3d-3.11.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.0.zip) was release on March 28, 2022. Users can align AlphaFold structures or PDB structures with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". Users can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the meu "File > Realign Selection > by Structure Alignment".
+[icn3d-3.11.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.0.zip) was release on March 28, 2022. Users can align AlphaFold structures or PDB structures with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". Users can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the menu "File > Realign Selection > by Structure Alignment".
 
 [icn3d-3.10.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.1.zip) was release on March 9, 2022. Added the color option "Structure" and the style option "Hydrogens". Fixed some bugs on loading PDB files without headers.
 
