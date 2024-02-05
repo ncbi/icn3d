@@ -669,6 +669,8 @@ class AnnoIg {
         igElem.endPos = prevPos;
         ic.chain2igArray[chnid].push(igElem);
 
+        if(me.bNode) return {html: '', html2: '', html3: ''};
+
         let maxTextLen = 19;
         let titleSpace = 120;
 
@@ -726,10 +728,13 @@ class AnnoIg {
         html += '</div>';
 
         let igArray = ic.chain2igArray[chnid];
+        if(igArray.length == 0) return {html: '', html2: '', html3: ''};
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             let info = ic.domainid2info[domainid];
+            if(!info) continue;
+
             let tmscore = info.score;
             let igType = ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
@@ -740,6 +745,7 @@ class AnnoIg {
             range.locs = [{"from":igArray[i].startPos, "to":igArray[i].endPos}];
             rangeArray.push(range);
         }
+        if(titleArray.length == 0) return {html: '', html2: '', html3: ''};
 
         // add tracks for the summary view
         for(let i = 0, il = fromArray.length; i < il; ++i) {

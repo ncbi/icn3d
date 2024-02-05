@@ -1075,7 +1075,7 @@
         if(type == 'igstrand' || type == 'IgStrand') {
             // iGStrand reference numbers were adjusted when showing in sequences
             if(me.bNode) {
-                for(let chnid in ic.chains) {
+                for(let chnid in ic.chains) {                 
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
                     if(ic.proteins.hasOwnProperty(atom.serial)) {
                         let giSeq = [];
@@ -1139,21 +1139,22 @@
                 refData += '}\n';
             }
 */
+
             if(bIgDomain) {
                 refData += '"igs": [\n';
-
                 for(let chnid in ic.chains) {
                     let igArray = ic.chain2igArray[chnid];
 
-                    if(igArray.length > 0) {
+                    if(igArray && igArray.length > 0) {
                         refData += '{"' + chnid + '": {\n';
 
                         for(let i = 0, il = igArray.length; i < il; ++i) {
                             let startPos = igArray[i].startPos;
                             let endPos = igArray[i].endPos;
                             let domainid = igArray[i].domainid;
-
                             let info = ic.domainid2info[domainid];
+                            if(!info) continue;
+
                             refData += '"' + domainid + '": {\n';
 
                             refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": ['

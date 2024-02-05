@@ -39078,6 +39078,8 @@ class AnnoIg {
 
         igElem.endPos = prevPos;
         ic.chain2igArray[chnid].push(igElem);
+
+        if(me.bNode) return {html: '', html2: '', html3: ''};
         let titleSpace = 120;
 
         let linkStr = 'icn3d-link icn3d-blue';
@@ -39134,10 +39136,13 @@ class AnnoIg {
         html += '</div>';
 
         let igArray = ic.chain2igArray[chnid];
+        if(igArray.length == 0) return {html: '', html2: '', html3: ''};
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             let info = ic.domainid2info[domainid];
+            if(!info) continue;
+
             let tmscore = info.score;
             let igType = ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
@@ -39148,6 +39153,7 @@ class AnnoIg {
             range.locs = [{"from":igArray[i].startPos, "to":igArray[i].endPos}];
             rangeArray.push(range);
         }
+        if(titleArray.length == 0) return {html: '', html2: '', html3: ''};
 
         // add tracks for the summary view
         for(let i = 0, il = fromArray.length; i < il; ++i) {
@@ -67825,7 +67831,7 @@ class Dssp {
         if(type == 'igstrand' || type == 'IgStrand') {
             // iGStrand reference numbers were adjusted when showing in sequences
             if(me.bNode) {
-                for(let chnid in ic.chains) {
+                for(let chnid in ic.chains) {                 
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
                     if(ic.proteins.hasOwnProperty(atom.serial)) {
                         let giSeq = [];
@@ -67889,21 +67895,22 @@ class Dssp {
                 refData += '}\n';
             }
 */
+
             if(bIgDomain) {
                 refData += '"igs": [\n';
-
                 for(let chnid in ic.chains) {
                     let igArray = ic.chain2igArray[chnid];
 
-                    if(igArray.length > 0) {
+                    if(igArray && igArray.length > 0) {
                         refData += '{"' + chnid + '": {\n';
 
                         for(let i = 0, il = igArray.length; i < il; ++i) {
                             let startPos = igArray[i].startPos;
                             let endPos = igArray[i].endPos;
                             let domainid = igArray[i].domainid;
-
                             let info = ic.domainid2info[domainid];
+                            if(!info) continue;
+
                             refData += '"' + domainid + '": {\n';
 
                             refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
