@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-import { Refnum } from "../analysis/refnum";
+// import { Refnum } from "../annotations/refnum";
 
 class GetGraph {
     constructor(icn3d) {

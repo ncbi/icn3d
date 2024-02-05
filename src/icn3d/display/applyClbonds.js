@@ -66,7 +66,7 @@ class ApplyClbonds {
                     // show side chains for the selected atoms
                     let atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
 
-                    // draw sidec separatedly
+                    // draw sidec separately
                     for(let k in atoms) {
                       ic.atoms[k].style2 = 'stick';
                     }

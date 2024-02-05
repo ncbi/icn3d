@@ -8,7 +8,7 @@ class ShowAnno {
     }
 
     //show annotations such as SNPs, ClinVar, domains, binding sites, etc.
-    showAnnotations_part1() { let ic = this.icn3d, me = ic.icn3dui;
+    showAnnotations_part1(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         me.htmlCls.dialogCls.openDlg('dl_selectannotations', 'Sequences and Annotations');
         // add note about assembly
@@ -38,6 +38,13 @@ class ShowAnno {
             ic.protein_chainid = {};
 
             let chainArray = Object.keys(ic.chains);
+            if(atoms) { // show annot just for the atoms
+                let structureArray = ic.resid2specCls.atoms2structureArray(atoms);
+                chainArray = [];
+                for(let i = 0, il = structureArray.length; i < il; ++i) {
+                    chainArray = chainArray.concat(ic.structures[structureArray[i]])
+                }
+            }
 
             if(ic.giSeq === undefined) ic.giSeq = {};
             if(ic.currClin === undefined) ic.currClin = {};
@@ -133,10 +140,10 @@ class ShowAnno {
         return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
     }
 
-    async showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
+    async showAnnotations(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        let result = this.showAnnotations_part1();
+        let result = this.showAnnotations_part1(atoms);
 
         let nucleotide_chainid = result.nucleotide_chainid;
         let chemical_chainid = result.chemical_chainid;
@@ -354,7 +361,7 @@ class ShowAnno {
                 }
             $("#" + ic.pre + "dl_annotations").append(chainHtml);
             //let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'domain', 'site', 'ptm', 'interaction', 'custom', 'ssbond', 'crosslink', 'transmem'];
-            let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction'];
+            let itemArray = ['giseq', 'cdd', 'clinvar', 'snp', 'site', 'ptm', 'ssbond', 'crosslink', 'transmem', 'domain', 'custom', 'interaction', 'ig'];
             // dt: detailed view, hide by default; ov: overview, show by default
             for(let i in itemArray) {
                 let item = itemArray[i];

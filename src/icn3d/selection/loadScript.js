@@ -172,12 +172,13 @@ class LoadScript {
                 await thisClass.applyCommandPTM(strArray[0].trim());
             }
           }
-          else if(command.indexOf('ig refnum on') == 0 ) { 
-            await ic.refnumCls.showIgRefNum();
-          }
+          // else if(command.indexOf('ig refnum on') == 0 ) { 
+          //   await ic.refnumCls.showIgRefNum();
+          // }
           else if(command.indexOf('ig template') == 0 ) { 
             let template = command.substr(command.lastIndexOf(' ') + 1);
-            await ic.refnumCls.showIgRefNum(template);
+            // await ic.refnumCls.showIgRefNum(template);
+            await ic.annotationCls.setAnnoTabIg(true, template);
           }
           else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
               if(Object.keys(ic.proteins).length > 0) {
@@ -379,7 +380,8 @@ class LoadScript {
                         await thisClass.applyCommandPTM(lastCommand);
                     }
                     else if(lastCommand.indexOf('ig refnum on') == 0) {
-                        await ic.refnumCls.showIgRefNum();
+                        // await ic.refnumCls.showIgRefNum();
+                        await ic.annotationCls.setAnnoTabIg(true);
                     }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
@@ -502,7 +504,16 @@ class LoadScript {
         // skip loading the structure if 
         // 1. PDB was in the iCn3D PNG Image file
         // 2. it was loaded before
-        if(ic.bInputPNGWithData || (ic.structures && ic.structures.hasOwnProperty(id))) return;
+        let idArray = id.split(',');
+        let idNew = '';
+        for(let i = 0, il = idArray.length; i < il; ++i) {
+          if(!(ic.structures && ic.structures.hasOwnProperty(idArray[i]))) {
+            if(!idNew) idNew += ',';
+            idNew += idArray[i];
+          }
+        }
+        id = idNew;
+        if(ic.bInputPNGWithData || !id) return;
 
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
@@ -662,6 +673,9 @@ class LoadScript {
                 }
                 else if(fileType == 'mtz') {
                   await ic.mtzParserCls.mtzParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                }
+                else if(fileType == 'rcsbmtz') {
+                  await ic.mtzParserCls.mtzParserBase(urlArray[1], type, sigma, 'url', bInputSigma, true);
                 }
               }
               else {
@@ -861,7 +875,7 @@ class LoadScript {
 
                 ic.hlUpdateCls.updateHlAll();
 
-                // caused some problem witht the following line
+                // caused some problem with the following line
     //            $.extend(ic.opts, ic.optsHistory[steps - 1]);
                 ic.drawCls.draw();
             }

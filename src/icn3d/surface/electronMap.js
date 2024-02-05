@@ -130,7 +130,7 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         }
         else {
             // ccp4 has no translation vector. Only translated vertices are used.
-            if(this.header.ccp4) {
+            if(this.ccp4) {
                 let index = vertices[i].index;
                 let finalIndex;
                 if(this.vpGridTrans[index]) {
@@ -161,8 +161,8 @@ ElectronMap.prototype.getFacesAndVertices = function(allatoms, atomlist) {
         let fa = this.faces[i], fb = this.faces[i+1], fc = this.faces[i+2];
 
         if(fa !== fb && fb !== fc && fa !== fc){
-            if(this.header.ccp4) {
-                // only transfered vertices will be used
+            if(this.ccp4) {
+                // only transferred vertices will be used
                 if(vertTrans.hasOwnProperty(vertices[fa].index) && vertTrans.hasOwnProperty(vertices[fb].index) 
                   && vertTrans.hasOwnProperty(vertices[fc].index)) {
                     finalfaces.push({"a":fa, "b":fb, "c":fc});
@@ -236,7 +236,7 @@ ElectronMap.prototype.initparm = function(inHeader, inData, inMatrix, inIsovalue
     this.cutRadius = this.probeRadius * this.scaleFactor;
 
     this.vpBits = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
-    if(this.header.ccp4) this.vpGridTrans = new Array(this.pLength * this.pWidth * this.pHeight);
+    if(this.ccp4) this.vpGridTrans = new Array(this.pLength * this.pWidth * this.pHeight);
 
     this.vpAtomID = new Uint8Array(this.pLength * this.pWidth * this.pHeight);
 };
@@ -357,7 +357,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                 let r = atom.coord.clone();
                 if(this.loadPhiFrom != 'delphi') { // transform to the original position if the potential file is imported
                     if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                        // revert to the orginal coord
+                        // revert to the original coord
                         let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                         r = coord.applyMatrix4(inverseMatrix);
                     }
@@ -432,7 +432,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
 
                 let r;
                 if(this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
-                    // revert to the orginal coord
+                    // revert to the original coord
                     let coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                     r = coord.applyMatrix4(inverseMatrix);
                 }
@@ -440,6 +440,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                     r = atom.coord.clone().applyMatrix4(inverseMatrix);
                 }
 
+                // show map near the structure
                 for(i = Math.floor(r.x) - this.maxdist, il = Math.ceil(r.x) + this.maxdist; i <= il; ++i) {
                     if(i < 0 || i > this.header.xExtent*this.scaleFactor - 1) continue;
                     for(j = Math.floor(r.y) - this.maxdist, jl = Math.ceil(r.y) + this.maxdist; j<= jl; ++j) {

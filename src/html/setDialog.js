@@ -295,7 +295,7 @@ class SetDialog {
         html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID (e.g., P69905 for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids2' value='P69905,P01942,1HHO_A' size=50><br/><br/>";
 
-        html += "The sequence alignment (followed by structure alignemnt) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
+        html += "The sequence alignment (followed by structure alignment) is based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' value='1,5,10-50' size=50><br/>";
         html += me.htmlCls.buttonStr + "reload_chainalign_asym2' style='margin-top:3px;'><b>Align by Sequence Alignment</b></button><br/><br/>";
 
         html += "(Note: To align chains in custom PDB files, you could load them in \"File > Open File > PDB Files (appendable)\" and click \"Analysis > Defined Sets\". Finally select multiple chains in Defined Sets and click \"File > Realign Selection\".)<br><br>";
@@ -498,38 +498,39 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_menupreffile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_dsn6' class='" + dialogClass + "' style='max-width:600px'>";
         html += this.addNotebookTitle('dl_dsn6', 'Load a map file');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold below, a default one will be chosen.<br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: " 
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigma2fofc' value='' size=8> &sigma;</span><br/>";
         //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmafofc' value='' size=8> &sigma;</span><br/>";
 
         //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+
 
         html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
 
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_dsn6url' class='" + dialogClass + "' style='max-width:600px'>";
         html += this.addNotebookTitle('dl_dsn6url', 'Load a selection file via a URL');
-        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold <br>below, a default one will be chosen.<br/><br/><br/>";
+        html += "<b>Note</b>: Always load a PDB file before loading map files. If you don't specify the threshold below, a default one will be chosen.<br/><br/><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: "
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurl2fofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br/>";
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
         + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurlfofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin-top: 6px;'>Load MTZ</button><br><br><br>";
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo5'>Remove Map</button><br>";
 
@@ -1391,7 +1392,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_igrefTpl' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_igrefTpl', 'Choose an Ig template');
-        html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "igrefTpl'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "refTpl'>";
 
         //html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
         let group2tpl = {};
@@ -1449,7 +1450,12 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-
+//!!!
+/*
+        html += "<td></td>";
+        html += "</tr><tr>";
+        html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ig'>Ig Domains" + me.htmlCls.space2 + "</span></td>";
+*/
         html += "<td></td>";
         html += "</tr></table></div></div>";
 

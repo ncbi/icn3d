@@ -548,7 +548,7 @@ class Vastplus {
             }
         }
 
-        // for each curernt nodes, assign its nearest neighbor and the distance
+        // for each current nodes, assign its nearest neighbor and the distance
         let mNearestNB = {}, mNearestNBCopy = {}, mNearestNBDist = {};
     
         selI = n;

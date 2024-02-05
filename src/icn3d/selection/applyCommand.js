@@ -290,6 +290,12 @@ class ApplyCommand {
       else if(command == 'set annotation transmembrane') {
           await ic.annotationCls.setAnnoTabTransmem();
       }
+      else if(command == 'set annotation ig') {
+          await ic.annotationCls.setAnnoTabIg();
+      }
+      else if(command == 'ig refnum on') {
+        await ic.annotationCls.setAnnoTabIg(true);
+    }
       else if(command == 'highlight level up') {
           ic.resid2specCls.switchHighlightLevelUp();
       }
@@ -1367,7 +1373,7 @@ class ApplyCommand {
         ic.bShownRefnum = false;
       }
       else if(command.indexOf('translate pdb') == 0) {
-        let xyz = command.substr(14 + 1).split(' ');
+        let xyz = command.substr(13 + 1).split(' ');
 
         ic.transformCls.translateCoord(ic.hAtoms, parseFloat(xyz[0]), parseFloat(xyz[1]), parseFloat(xyz[2]));
         ic.drawCls.draw();
@@ -1653,6 +1659,7 @@ class ApplyCommand {
         else if(cmd == 'set annotation ssbond') return seqAnnoStr + ': "Disulfide Bonds" checkbox';
         else if(cmd == 'set annotation crosslink') return seqAnnoStr + ': "Cross-Linkages" checkbox';
         else if(cmd == 'set annotation transmembrane') return seqAnnoStr + ': "Transmembrane" checkbox';
+        else if(cmd == 'set annotation ig') return seqAnnoStr + ': "Ig Domains" checkbox';
         else if(cmd == 'highlight level up') return 'Keyboard Arrow Up';
         else if(cmd == 'highlight level down') return 'Keyboard Arrow Down';
         else if(cmd.indexOf('hide annotation') == 0) return seqAnnoStr + ': checkboxes off';

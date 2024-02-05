@@ -73,7 +73,7 @@ class CanvasKeyboard{
             config[`btn${i+20}`] = btn;
             x += ( w + padding );
         }
-        //4rd row
+        //4th row
         y += (height + padding);
         x = padding;
         for (let i=0; i<5; i++){

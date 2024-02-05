@@ -1722,7 +1722,10 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum on', true);
-            await ic.refnumCls.showIgRefNum();
+            // await ic.refnumCls.showIgRefNum();
+            // thisClass.setLogCmd('set annotation ig', true);
+            let bSelection = true;
+            await ic.annotationCls.setAnnoTabIg(bSelection);
 
             // if(ic.bShowRefnum) {
             //    ic.opts.color = 'ig strand';
@@ -1741,23 +1744,22 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
                   
-            let template = $("#" + me.pre + "igrefTpl").val();
+            let template = $("#" + me.pre + "refTpl").val();
             thisClass.setLogCmd('ig template ' + template, true);
-            await ic.refnumCls.showIgRefNum(template);
+            let bSelection = true;
+            // await ic.refnumCls.showIgRefNum(template);
+            await ic.annotationCls.setAnnoTabIg(bSelection, template);
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
             await ic.refnumCls.hideIgRefNum();
 
-            ic.opts.color = 'chain';
-            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-
-            ic.selectionCls.selectAll_base();
-            ic.hlUpdateCls.updateHlAll();
-            ic.drawCls.draw();
+            // ic.selectionCls.selectAll_base();
+            // ic.hlUpdateCls.updateHlAll();
+            
+            // ic.drawCls.draw();
          });
-
 
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelAtoms", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addAtomLabels(ic.hAtoms);

@@ -158,7 +158,7 @@ class ParserUtils {
                 resiPos = 0;
             }
 
-            // fixe some missing residue names such as residue 6 in 5C1M_A
+            // fix some missing residue names such as residue 6 in 5C1M_A
             if(seqName === '') {
                 seqName = 'x';
             }

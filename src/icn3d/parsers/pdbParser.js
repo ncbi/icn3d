@@ -135,7 +135,7 @@ class PdbParser {
         }
 
         // calculate secondary structures if not available
-        // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
+        // DSSP only works for structures with all atoms. The Calpha only structures didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
         let bCalcSecondary = false;
         if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {

@@ -186,7 +186,7 @@ class Ccp4Parser {
         return sigma;
     }
 
-    load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
+    load_maps_from_mtz_buffer(mtz, type, sigma, location, bInputSigma, bRcsb) { let ic = this.icn3d, me = ic.icn3dui;
       let is_diff = (type == 'fofc'); // diff: fofc, non-diff: 2fofc
       let dataArray = mtz.calculate_map(is_diff);
 
@@ -202,22 +202,62 @@ class Ccp4Parser {
         sigma = ic.dsn6ParserCls.setSigma(maxValue, location, type, sigma);
       }
 
-      const grid = new GridArray([mtz.nx, mtz.ny, mtz.nz]);
-      grid.values.set(dataArray);
+      if(!bRcsb) {
+        const grid = new GridArray([mtz.nx, mtz.ny, mtz.nz]);
+        grid.values.set(dataArray);
 
-      if(type == '2fofc') {
-        ic.mapData.ccp4 = 1;
-        ic.mapData.grid2 = grid;
-        ic.mapData.unit_cell2 = unit_cell;
-        ic.mapData.type2 = type;
-        ic.mapData.sigma2 = sigma;
+        if(type == '2fofc') {
+          ic.mapData.ccp4 = 1;
+          ic.mapData.grid2 = grid;
+          ic.mapData.unit_cell2 = unit_cell;
+          ic.mapData.type2 = type;
+          ic.mapData.sigma2 = sigma;
+        }
+        else {
+          ic.mapData.ccp4 = 1;
+          ic.mapData.grid = grid;
+          ic.mapData.unit_cell = unit_cell;
+          ic.mapData.type = type;
+          ic.mapData.sigma = sigma;
+        }
       }
       else {
-        ic.mapData.ccp4 = 1;
-        ic.mapData.grid = grid;
-        ic.mapData.unit_cell = unit_cell;
-        ic.mapData.type = type;
-        ic.mapData.sigma = sigma;
+        ic.mapData.ccp4 = 0;
+
+        let header = {xExtent: mtz.nx, yExtent: mtz.ny, zExtent: mtz.nz, mean: undefined, sigma: sigma, ccp4: 1};
+        
+        header.xStart = 0; //start[ 0 ];
+        header.yStart = 0; //start[ 1 ];
+        header.zStart = 0; //start[ 2 ];
+
+        header.xRate = mtz.nx;
+        header.yRate = mtz.ny;
+        header.zRate = mtz.nz;
+
+        header.xlen = mc.a;
+        header.ylen = mc.b;
+        header.zlen = mc.c;
+
+        header.alpha = mc.alpha;
+        header.beta = mc.beta;
+        header.gamma = mc.gamma;
+
+        if(type == '2fofc') {
+            ic.mapData.header2 = header;
+            ic.mapData.data2 = dataArray;
+
+            ic.mapData.matrix2 = ic.dsn6ParserCls.getMatrix(header);
+            ic.mapData.type2 = type;
+            ic.mapData.sigma2 = sigma;
+        }
+        else {
+            ic.mapData.header = header;
+            ic.mapData.data = dataArray;
+
+            ic.mapData.matrix = ic.dsn6ParserCls.getMatrix(header);
+            ic.mapData.type = type;
+            ic.mapData.sigma = sigma;
+        }
       }
 
       mtz.delete();
@@ -333,8 +373,8 @@ class Ccp4Parser {
                 points.push(orth);
 
                 // get overlap between map and atoms
-                let positoin = new THREE.Vector3(orth[0], orth[1], orth[2]);
-                let atomsNear = ic.rayCls.getAtomsFromPosition(positoin, threshold, ic.hAtoms);
+                let position = new THREE.Vector3(orth[0], orth[1], orth[2]);
+                let atomsNear = ic.rayCls.getAtomsFromPosition(position, threshold, ic.hAtoms);
 
                 let map_value = (atomsNear || !bAtoms) ? grid.get_grid_value(i, j, k) : 0;
 

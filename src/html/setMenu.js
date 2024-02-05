@@ -8,7 +8,7 @@ class SetMenu {
         //this.sh = this.icn3dui.htmlCls.setHtmlCls;
     }
 
-    // simpify the calls of the following functions from setHtmlCls
+    // simplify the calls of the following functions from setHtmlCls
     getLink(id, text, bSimpleMenu, selType) { let me = this.icn3dui;
         return me.htmlCls.setHtmlCls.getLink(id, text, bSimpleMenu, selType);
     }
@@ -438,7 +438,7 @@ class SetMenu {
 
         let bCmdWindow, html = "";
 
-        // check comand window 
+        // check command window 
         let value = me.htmlCls.setHtmlCls.getCookie('cmdwindow');
         if(value != '') {
             bCmdWindow = (bCmdWindowInput !== undefined) ? bCmdWindowInput : parseInt(value);
@@ -1684,12 +1684,14 @@ class SetMenu {
             html += this.getRadio('mn6_labelscale', 'mn6_labelscale0' + twoi, '0.' + twoi, undefined, 1, 2);
         }
 
-        for(let i = 1; i <= 5; ++i) {
-            if(i == 1) {
-                html += this.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true, 1, 2);
+        for(let i = 2; i <= 10; ++i) {
+            let value = (i / 2.0).toFixed(1);
+
+            if(i == 2) {
+                html += this.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', value, true, 1, 2);
             }
             else {
-                html += this.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', undefined, 1, 2);
+                html += this.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', value, undefined, 1, 2);
             }
         }
 
@@ -1758,12 +1760,12 @@ class SetMenu {
             html += "<ul>";
 //!!!
 /*
-            html += this.getLink('mn6_igrefYes', 'Show Ig Ref. Number', undefined, 2);
+            html += this.getLink('mn6_igrefYes', 'Show Ig for Selection', undefined, 2);
             html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
-            html += this.getLink('mn6_igrefNo', 'Hide Ig Ref. Number', undefined, 2);
-
-            html += this.getMenuSep();
+            html += this.getLink('mn6_igrefNo', 'Reset Ig Ref. Number', undefined, 2);
 */
+            html += this.getMenuSep();
+
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
             html += "</li>";

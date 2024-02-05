@@ -109,7 +109,7 @@ class AnnoCddSite {
                 let html3 = html;
                 let domainArray = cddData.doms;
                 if(me.bNode && !ic.resid2cdd[chnid]) ic.resid2cdd[chnid] = [];
-                let result = thisClass.setDomainFeature(domainArray, chnid, true, html, html2, html3);
+                let result = thisClass.setDomainFeature(domainArray, chnid, 'domain', html, html2, html3);
 
                 ic.chainid2pssmid[chnid] = {pssmid2name: result.pssmid2name, pssmid2fromArray: result.pssmid2fromArray, pssmid2toArray: result.pssmid2toArray};
 
@@ -128,7 +128,7 @@ class AnnoCddSite {
                 // features
                 let featuteArray = cddData.motifs;
                 if(me.bNode && !ic.resid2site[chnid]) ic.resid2site[chnid] = [];
-                result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3, acc2domain);
+                result = thisClass.setDomainFeature(featuteArray, chnid, 'feat', html, html2, html3, acc2domain);
 
                 html = result.html; // + '</div>';
                 html2 = result.html2; // + '</div>';
@@ -265,11 +265,13 @@ class AnnoCddSite {
         ic.bAjaxCddSite = true;
     }
 
-    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;
+    setDomainFeature(domainArray, chnid, type, html, html2, html3, acc2domain, titleArray, fullTitleArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
+        let bNonDomainFeat = (type != 'domain' && type != 'feat') ? true : false;
+
         let pssmid2name, pssmid2fromArray, pssmid2toArray;
-        if(bDomain) {
+        if(type == 'domain') {
             acc2domain = {};
             pssmid2name = {};
             pssmid2fromArray = {};
@@ -277,29 +279,29 @@ class AnnoCddSite {
         }
 
         let indexl =(domainArray !== undefined) ? domainArray.length : 0;
-        let maxTextLen =(bDomain) ? 14 : 19;
-        let titleSpace =(bDomain) ? 100 : 120;
+        let maxTextLen =(type == 'domain') ? 14 : 19;
+        let titleSpace =(type == 'domain') ? 100 : 120;
         for(let index = 0; index < indexl; ++index) {
-            let pssmid = (bDomain) ? domainArray[index].pssmid : 0;
+            let pssmid = (type == 'domain') ? domainArray[index].pssmid : 0;
 
-            let acc =(bDomain) ? domainArray[index].acc : domainArray[index].srcdom;
-            let type = domainArray[index].type;
-            type =(bDomain) ? 'domain' : 'feat';
-            let domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
+            let acc =(type == 'domain') ? domainArray[index].acc : (type == 'feat' ? domainArray[index].srcdom : '');
+            // let type = domainArray[index].type;
+            // type = (type == 'domain') ? 'domain' : 'feat';
+            let domain =(type == 'domain') ? domainArray[index].title.split(':')[0] : (type == 'feat' ? domainArray[index].title : titleArray[index]);
             // convert double quote
             domain = domain.replace(/\"/g, "``");
-            // convert singe quote
+            // convert single quote
             domain = domain.replace(/'/g, "`");
 
-            if(bDomain) acc2domain[acc] = domain;
+            if(type == 'domain') acc2domain[acc] = domain;
 
-            let defline =(bDomain) ? domainArray[index].defline : '';
-            let title = type + ': ' + domain;
+            let defline =(type == 'domain') ? domainArray[index].defline : '';
+            let title = (bNonDomainFeat) ? titleArray[index] : type + ': ' + domain;
 
             if(title.length > maxTextLen) title = title.substr(0, maxTextLen) + '...';
-            let fulltitle = type + ": " + domain;
+            let fulltitle = (bNonDomainFeat) ? fullTitleArray[index] : type + ": " + domain;
 
-            if(bDomain) pssmid2name[pssmid] = domain;
+            if(type == 'domain') pssmid2name[pssmid] = domain;
 
             // each domain may have several repeat. Treat each repeat as a domain
             let domainRepeatArray = domainArray[index].locs;
@@ -307,11 +309,11 @@ class AnnoCddSite {
             if(!domainRepeatArray) continue;
 
             for(let r = 0, rl = domainRepeatArray.length; r < rl; ++r) {
-                // each domain repeat or domain may have several segments, i.e., a domain may not be continous
+                // each domain repeat or domain may have several segments, i.e., a domain may not be continuous
                 let fromArray = [], toArray = [];
                 let resiHash = {}
                 let resCnt = 0;
-                let segArray =(bDomain) ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
+                let segArray =(type == 'domain') ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
                 for(let s = 0, sl = segArray.length; s < sl; ++s) {
                     let domainFrom = Math.round(segArray[s].from);
                     let domainTo = Math.round(segArray[s].to);
@@ -339,10 +341,10 @@ class AnnoCddSite {
 
                 //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
                 let setname = chnid + "_" + domain;
-                if(!bDomain) setname += "_" + index + "_" + r; // + acc2domain[acc];
+                if(type != 'domain') setname += "_" + index + "_" + r; // + acc2domain[acc];
 
-                if(bDomain) pssmid2fromArray[pssmid] = fromArray;
-                if(bDomain) pssmid2toArray[pssmid] = toArray;
+                if(type == 'domain') pssmid2fromArray[pssmid] = fromArray;
+                if(type == 'domain') pssmid2toArray[pssmid] = toArray;
 
                 let bCoordinates = false;
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
@@ -371,7 +373,7 @@ class AnnoCddSite {
                 html3 += htmlTmp2 + htmlTmp3 + '<br>';
                 let htmlTmp = '<span class="icn3d-seqLine">';
                 html += htmlTmp2 + htmlTmp3 + htmlTmp;
-                if(bDomain) {
+                if(type == 'domain') {
                     html2 += '<div style="width:20px; display:inline-block;"><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
                 }
                 html2 += '<div style="width:' + titleSpace + 'px!important;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
@@ -395,7 +397,7 @@ class AnnoCddSite {
                       if(me.bNode) {
                         let obj = {};
                         obj[chnid + '_' + pos] = fulltitle;
-                        if(bDomain) {
+                        if(type == 'domain') {
                             ic.resid2cdd[chnid].push(obj);
                         }
                         else {
@@ -419,8 +421,9 @@ class AnnoCddSite {
                 if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" domain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
                 }
                 else { // with potential gaps
@@ -439,7 +442,7 @@ class AnnoCddSite {
                         html2 += ic.showSeqCls.insertGapOverview(chnid, fromArray2[i]);
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray2[i] - ic.baseResi[chnid] - 1) /(ic.maxAnnoLength + ic.nTotalGap)) : Math.round(ic.seqAnnWidth *(fromArray2[i] - toArray2[i-1] - 1) /(ic.maxAnnoLength + ic.nTotalGap));
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle ' + linkStr + '" domain="' +(index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' +(index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
                 }
                 htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
@@ -447,7 +450,7 @@ class AnnoCddSite {
                 htmlTmp += '<br>';
                 html += htmlTmp;
                 html2 += htmlTmp;
-                if(bDomain) {
+                if(type == 'domain') {
                     html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + me.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
                 }
             } // for(let r = 0,
