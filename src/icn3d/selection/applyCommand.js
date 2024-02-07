@@ -294,6 +294,7 @@ class ApplyCommand {
           await ic.annotationCls.setAnnoTabIg();
       }
       else if(command == 'ig refnum on') {
+        if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
         await ic.annotationCls.setAnnoTabIg(true);
     }
       else if(command == 'highlight level up') {

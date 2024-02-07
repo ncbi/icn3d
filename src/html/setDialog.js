@@ -1451,11 +1451,11 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
 //!!!
-/*
+
         html += "<td></td>";
         html += "</tr><tr>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ig'>Ig Domains" + me.htmlCls.space2 + "</span></td>";
-*/
+
         html += "<td></td>";
         html += "</tr></table></div></div>";
 

@@ -1724,6 +1724,8 @@ class ClickMenu {
             thisClass.setLogCmd('ig refnum on', true);
             // await ic.refnumCls.showIgRefNum();
             // thisClass.setLogCmd('set annotation ig', true);
+            if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+
             let bSelection = true;
             await ic.annotationCls.setAnnoTabIg(bSelection);
 
@@ -1748,6 +1750,7 @@ class ClickMenu {
             thisClass.setLogCmd('ig template ' + template, true);
             let bSelection = true;
             // await ic.refnumCls.showIgRefNum(template);
+            if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
             await ic.annotationCls.setAnnoTabIg(bSelection, template);
          });
 

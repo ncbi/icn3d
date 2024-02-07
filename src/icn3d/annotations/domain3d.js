@@ -274,17 +274,88 @@ class Domain3d {
 	//  * location in this.elements[].
 	//  //
 
-	process_set() { let ic = this.icn3d, me = ic.icn3dui;
-		let i, il, k, n, t, k0, elts = []; //int
+	/*
+static void process_set()
+{
+	int i, k, n, t, k0, *elts;
 
-		// count the this.elements //
-		//elts = &this.elements[this.stack[this.top - 1]];
-		for(i = this.stack[this.top - 1], il = this.elements.length; i < il; ++i) {
-			elts.push(this.elements[i]);
+	elts = &elements[stack[top - 1]];
+	for (n = 0; *elts > -1; n++, elts++);
+
+	k0 = min(n - 1, max_csz);
+	curr_ne0 = curr_ne1 = 0;
+	curr_ratio = 100.0;
+
+	for (k = 1; k <= k0; k++)
+		cut_size(k, n);
+
+	top--;
+
+	if (curr_ne0 == 0) {
+		t = stack[top];
+
+		for (elts = &elements[t]; *elts > -1; elts++)
+			parts[np++] = *elts;
+
+		parts[np++] = -1;
+		n_doms++;
+	}
+	else {
+		save_ratios[saved++] = curr_ratio;
+
+		if (curr_ne0 > min_sse) {
+			t = stack[top];
+
+			for (i = 0; i < curr_ne0; i++)
+				elements[t++] = curr_prt0[i];
+
+			elements[t++] = -1;
+			stack[++top] = t;
+		}
+		else {
+			for (i = 0; i < curr_ne0; i++)
+				parts[np++] = curr_prt0[i];
+
+			parts[np++] = -1;
+			n_doms++;
 		}
 
+		if (curr_ne1 > min_sse) {
+			t = stack[top];
+
+			for (i = 0; i < curr_ne1; i++)
+				elements[t++] = curr_prt1[i];
+
+			elements[t++] = -1;
+			stack[++top] = t;
+		}
+		else {
+			for (i = 0; i < curr_ne1; i++)
+				parts[np++] = curr_prt1[i];
+
+			parts[np++] = -1;
+			n_doms++;
+		}
+	}
+
+} 
+	*/
+
+	process_set() { let ic = this.icn3d, me = ic.icn3dui;
+		let i, il, k, n, t, k0, elts = []; //int
+console.log("###!!! =============")
+		// count the this.elements //
+		//elts = &this.elements[this.stack[this.top - 1]];
+
+		let eltsPos = this.stack[this.top - 1];
+		// for(i = eltsPos, il = this.elements.length; i < il; ++i) {
+		// 	elts.push(this.elements[i]);
+		// }
+		elts = this.elements;
+
 		//for (n = 0; *elts > -1; n++, elts++);
-		for (n = 0; n < elts.length && elts[n] > -1; n++);
+		//for (n = 0; n < elts.length && elts[n] > -1; n++);
+		for (n = 0; n < elts.length && elts[eltsPos] > -1; n++, eltsPos++);
 
 		// try various cut sizes //
 		k0 = Math.min(n - 1, this.max_csz);
@@ -351,6 +422,9 @@ class Domain3d {
 				this.n_doms++;
 			}
 		}
+
+		console.log("### === this.n_doms " + this.n_doms)
+		console.log("### === this.parts " + JSON.stringify(this.parts))
 	} // end process_set //
 
 
@@ -731,7 +805,7 @@ class Domain3d {
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
 		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
-		
+console.log("###1 cts " + JSON.stringify(cts))		
 		//
 		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
 		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE
@@ -760,7 +834,7 @@ class Domain3d {
 			if (sserec.Sheet)
 				hasSheets = true;
 		}
-
+		console.log("###2 substruct " + JSON.stringify(substruct))	
 		// produce the SSE contact lists
 		let vec_cts1 = [], vec_cts2 = [], vec_cts1a = [], vec_cts2a = [], ctsit = [];
 
@@ -796,6 +870,7 @@ class Domain3d {
 		// create contact counts from the contacts/interactions
 		//map< pair< int, let >, let > ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
 		let ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
+		console.log("###3 ctable " + JSON.stringify(ctable))	
 
 		// neighbor list of each sheet
 		let sheetNeighbor = {};
@@ -814,7 +889,7 @@ class Domain3d {
 				sheetNeighbor[ss2][ss1] = 1;
 			}
 		}
-
+		console.log("###4 sheetNeighbor " + JSON.stringify(sheetNeighbor))	
 		//https://www.geeksforgeeks.org/number-groups-formed-graph-friends/
 		let existing_groups = 0;
 		let sheet2sheetnum = {};
@@ -833,16 +908,18 @@ class Domain3d {
 				this.countUtil(ss1, sheetNeighbor, existing_groups);
 			}
 		}
+		console.log("###5 this.groupnum2sheet " + JSON.stringify(this.groupnum2sheet))	
 
 		// get sheet2sheetnum
 		// each neighboring sheet will be represented by the sheet with the smallest sse 
 		for(let groupnum in this.groupnum2sheet) {
-			let ssArray = this.groupnum2sheet[groupnum].sort();
+			let ssArray = this.groupnum2sheet[groupnum].sort(function(a, b){return a-b});
 			for(let i = 0, il = ssArray.length; i < il; ++i) {
 				sheet2sheetnum[ssArray[i]] = ssArray[0];
 			}
 		}
 
+		console.log("###6 sheet2sheetnum " + JSON.stringify(sheet2sheetnum))	
 		for (let i = 0; i < nsse; i++) {
 			if(substruct[i].Sheet) {				
 				let sheetsItem = {};
@@ -860,7 +937,7 @@ class Domain3d {
 				sheets.push(sheetsItem);
 			}
 		}
-
+		console.log("###7 sheets " + JSON.stringify(sheets))	
 		//
 		// Correct for dummy contacts; they're present to ensure that the
 		// table gives the right result in the possible case there is an
@@ -885,7 +962,7 @@ class Domain3d {
 				}
 			}
 		}
-
+		console.log("###8 this.ctc_cnt " + JSON.stringify(this.ctc_cnt))	
 		let minStrand = 6;
 
 		if (hasSheets) {
@@ -918,6 +995,7 @@ class Domain3d {
 			for (let i = 0; i < nsse; i++)
 				this.group_num[i] = i + 1;
 		}
+		console.log("###9 this.group_num " + JSON.stringify(this.group_num))
 
 		let sratio = 0.25;
 		let minSize = 25;
@@ -966,11 +1044,11 @@ class Domain3d {
 				}
 			}
 		}
-		
+		console.log("###10 a list_parts " + JSON.stringify(list_parts))	
 		list_parts.sort(function(v1, v2) {
 				return v1[0] - v2[0];
 			});
-
+			console.log("###10 b list_parts " + JSON.stringify(list_parts))	
 		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
 		for (let index = 0, indexl = list_parts.length; index < indexl; ++index) {
 			//vector<int> prts = *lpint;
