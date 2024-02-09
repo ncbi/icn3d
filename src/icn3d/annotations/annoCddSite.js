@@ -341,7 +341,8 @@ class AnnoCddSite {
 
                 //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
                 let setname = chnid + "_" + domain;
-                if(type != 'domain') setname += "_" + index + "_" + r; // + acc2domain[acc];
+                // if(type != 'domain') setname += "_" + index + "_" + r; 
+                if(type != 'domain') setname = chnid + "_" + index + "_" + r  + "_" + domain; 
 
                 if(type == 'domain') pssmid2fromArray[pssmid] = fromArray;
                 if(type == 'domain') pssmid2toArray[pssmid] = toArray;

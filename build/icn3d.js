@@ -9583,14 +9583,14 @@ var icn3d = (function (exports) {
             }
 
             //!!!
-
+    /*
             html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
             html += "<ul>";
             html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
             html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
             html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
             html += "</ul>";
-
+    */
 
             html += "<li><br/></li>";
 
@@ -10434,8 +10434,8 @@ var icn3d = (function (exports) {
                 //}
 
                 //!!!
-                html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-                html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+                // html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+                // html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
             }
             else {
                 //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -10566,7 +10566,7 @@ var icn3d = (function (exports) {
                 html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
                 html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
                 //!!!
-                html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+                // html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
                 html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
                 html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
             }
@@ -10660,13 +10660,13 @@ var icn3d = (function (exports) {
 
                 html += "<ul>";
     //!!!
-
+    /*
                 html += this.getLink('mn6_igrefYes', 'Show Ig for Selection', undefined, 2);
                 html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
                 html += this.getLink('mn6_igrefNo', 'Reset Ig Ref. Number', undefined, 2);
 
                 html += this.getMenuSep();
-
+    */
 
                 html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
                 html += "</ul>";
@@ -12817,12 +12817,17 @@ var icn3d = (function (exports) {
 
             //html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
             let group2tpl = {};
-            group2tpl['V'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V', 'ICOS_6x4gA_human_V', 'CD28_1yjdC_human_V', 'PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
-            group2tpl['C1'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2'];
-            group2tpl['C2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2', 'LAG3_7tzgD_human_C2-n2', 'Contactin1_3s97C_human_C2-n2'];
-            group2tpl['Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'JAM1_1nbqA_human_VorIset-n2', 'CD19_6al5A_human_C2orV-n1'];
-            group2tpl['FN3'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
-            group2tpl['Other'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria', 'C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human', 'ASF1A_2iijA_human', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'LaminAC_1ifrA_human', 'IsdA_2iteA_bacteria'];  
+            group2tpl['V'] = ['CD28_1yjdC_human_V', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'ICOS_6x4gA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V'];
+            group2tpl['C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-HEAVY_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2', 'VTCN1_Q7Z7D3_human_V-n2'];
+            group2tpl['C2'] = ['CD2_1hnfA_human_C2-n2', 'Contactin1_3s97C_human_C2-n2', 'LAG3_7tzgD_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
+            group2tpl['I'] = ['BTLA_2aw2A_human_Iset', 'CD19_6al5A_human_C2orV-n1', 'JAM1_1nbqA_human_VorIset-n2', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
+            group2tpl['E'] = ['ASF1A_2iijA_human', 'CoAtomerGamma1_1r4xA_human', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'IsdA_2iteA_bacteria', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'TEAD1_3kysC_human'];
+
+            group2tpl['FN3'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'Sidekick2_1wf5A_human_FN3-n7'];
+
+            group2tpl['FN3-like'] = ['BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+
+            group2tpl['Other'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
 
             for(let group in group2tpl) {
                 html += "<optgroup label='" + group + "'>";
@@ -12872,14 +12877,14 @@ var icn3d = (function (exports) {
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
     //!!!
-
+    /*
             html += "<td></td>";
             html += "</tr><tr>";
             html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ig'>Ig Domains" + me.htmlCls.space2 + "</span></td>";
 
             html += "<td></td>";
             html += "</tr></table></div></div>";
-
+    */
             return html;
         }
     }
@@ -37669,7 +37674,8 @@ var icn3d = (function (exports) {
 
                     //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
                     let setname = chnid + "_" + domain;
-                    if(type != 'domain') setname += "_" + index + "_" + r; // + acc2domain[acc];
+                    // if(type != 'domain') setname += "_" + index + "_" + r; 
+                    if(type != 'domain') setname = chnid + "_" + index + "_" + r  + "_" + domain; 
 
                     if(type == 'domain') pssmid2fromArray[pssmid] = fromArray;
                     if(type == 'domain') pssmid2toArray[pssmid] = toArray;
@@ -39161,8 +39167,6 @@ var icn3d = (function (exports) {
             if(igArray.length == 0) return {html: '', html2: '', html3: ''};
             let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
 
-    console.log("###igArray " + JSON.stringify(igArray));     
-    console.log("###ic.domainid2info " + JSON.stringify(ic.domainid2info));   
             for(let i = 0, il = igArray.length; i < il; ++i) {
                 let domainid = igArray[i].domainid;
                 let info = ic.domainid2info[domainid];
@@ -40564,12 +40568,16 @@ var icn3d = (function (exports) {
 
     		// this.elements from the this.top of the this.stack 
     		//elts = &this.elements[this.stack[this.top - 1]];
+    		
     		for(i = this.stack[this.top - 1], il = this.elements.length; i < il; ++i) {
     			elts.push(this.elements[i]);
     		}
 
     		// generate the partition based on the cut //
-    		for (i = ne = ne0 = ne1 = 0, prt = prt0, t = -1; i < k; i++) {
+    		// for (i = ne = ne0 = ne1 = 0, prt = prt0, t = -1; i < k; i++) {
+    		let bAtZero = true;
+    		prt = prt0;
+    		for (i = ne = ne0 = ne1 = 0, t = -1; i < k; i++) {
     			// write the this.elements into prt //
     			for (j = t + 1; j <= cut[i]; j++)
     				prt[ne++] = elts[j];
@@ -40577,15 +40585,20 @@ var icn3d = (function (exports) {
     			t = cut[i];
 
     			// switch the partition //
-    			if (prt == prt0) {
+    			// if (prt == prt0) {
+    			if (bAtZero) {
     				ne0 = ne;
     				prt = prt1;
     				ne = ne1;
+
+    				bAtZero = false;
     			}
     			else {
     				ne1 = ne;
     				prt = prt0;
     				ne = ne0;
+
+    				bAtZero = true;
     			}
     		}
 
@@ -40593,7 +40606,8 @@ var icn3d = (function (exports) {
     		for (j = t + 1; j < n; j++)
     			prt[ne++] = elts[j];
 
-    		if (prt == prt0)
+    		// if (prt == prt0)
+    		if (bAtZero)
     			ne0 = ne;
     		else
     			ne1 = ne;
@@ -40740,88 +40754,17 @@ var icn3d = (function (exports) {
     	//  * location in this.elements[].
     	//  //
 
-    	/*
-    static void process_set()
-    {
-    	int i, k, n, t, k0, *elts;
-
-    	elts = &elements[stack[top - 1]];
-    	for (n = 0; *elts > -1; n++, elts++);
-
-    	k0 = min(n - 1, max_csz);
-    	curr_ne0 = curr_ne1 = 0;
-    	curr_ratio = 100.0;
-
-    	for (k = 1; k <= k0; k++)
-    		cut_size(k, n);
-
-    	top--;
-
-    	if (curr_ne0 == 0) {
-    		t = stack[top];
-
-    		for (elts = &elements[t]; *elts > -1; elts++)
-    			parts[np++] = *elts;
-
-    		parts[np++] = -1;
-    		n_doms++;
-    	}
-    	else {
-    		save_ratios[saved++] = curr_ratio;
-
-    		if (curr_ne0 > min_sse) {
-    			t = stack[top];
-
-    			for (i = 0; i < curr_ne0; i++)
-    				elements[t++] = curr_prt0[i];
-
-    			elements[t++] = -1;
-    			stack[++top] = t;
-    		}
-    		else {
-    			for (i = 0; i < curr_ne0; i++)
-    				parts[np++] = curr_prt0[i];
-
-    			parts[np++] = -1;
-    			n_doms++;
-    		}
-
-    		if (curr_ne1 > min_sse) {
-    			t = stack[top];
-
-    			for (i = 0; i < curr_ne1; i++)
-    				elements[t++] = curr_prt1[i];
-
-    			elements[t++] = -1;
-    			stack[++top] = t;
-    		}
-    		else {
-    			for (i = 0; i < curr_ne1; i++)
-    				parts[np++] = curr_prt1[i];
-
-    			parts[np++] = -1;
-    			n_doms++;
-    		}
-    	}
-
-    } 
-    	*/
-
     	process_set() { let ic = this.icn3d; ic.icn3dui;
-    		let i, k, n, t, k0, elts = []; //int
-    console.log("###!!! =============");
+    		let i, il, k, n, t, k0, elts = []; //int
+
     		// count the this.elements //
     		//elts = &this.elements[this.stack[this.top - 1]];
-
-    		let eltsPos = this.stack[this.top - 1];
-    		// for(i = eltsPos, il = this.elements.length; i < il; ++i) {
-    		// 	elts.push(this.elements[i]);
-    		// }
-    		elts = this.elements;
+    		for(i = this.stack[this.top - 1], il = this.elements.length; i < il; ++i) {
+    			elts.push(this.elements[i]);
+    		}
 
     		//for (n = 0; *elts > -1; n++, elts++);
-    		//for (n = 0; n < elts.length && elts[n] > -1; n++);
-    		for (n = 0; n < elts.length && elts[eltsPos] > -1; n++, eltsPos++);
+    		for (n = 0; n < elts.length && elts[n] > -1; n++);
 
     		// try various cut sizes //
     		k0 = Math.min(n - 1, this.max_csz);
@@ -40888,9 +40831,6 @@ var icn3d = (function (exports) {
     				this.n_doms++;
     			}
     		}
-
-    		console.log("### === this.n_doms " + this.n_doms);
-    		console.log("### === this.parts " + JSON.stringify(this.parts));
     	} // end process_set //
 
 
@@ -41263,7 +41203,7 @@ var icn3d = (function (exports) {
     		// get a list of Calpha-Calpha contacts
     		///list< pair< pair< int, let >, let > >
     		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
-    console.log("###1 cts " + JSON.stringify(cts));		
+    		
     		//
     		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
     		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE
@@ -41292,7 +41232,7 @@ var icn3d = (function (exports) {
     			if (sserec.Sheet)
     				hasSheets = true;
     		}
-    		console.log("###2 substruct " + JSON.stringify(substruct));	
+
     		// produce the SSE contact lists
     		let vec_cts1 = [], vec_cts2 = [], vec_cts1a = [], vec_cts2a = [];
 
@@ -41328,7 +41268,6 @@ var icn3d = (function (exports) {
     		// create contact counts from the contacts/interactions
     		//map< pair< int, let >, let > ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
     		let ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
-    		console.log("###3 ctable " + JSON.stringify(ctable));	
 
     		// neighbor list of each sheet
     		let sheetNeighbor = {};
@@ -41336,6 +41275,8 @@ var icn3d = (function (exports) {
     			let ssPair = pair.split('_'); // 1-based
     			let ss1 = parseInt(ssPair[0]);
     			let ss2 = parseInt(ssPair[1]);
+
+    			if(ctable[pair] < this.min_contacts) ctable[pair] = 0;
 
     			// both are sheets
     			// min number of contacts: this.min_contacts
@@ -41347,7 +41288,7 @@ var icn3d = (function (exports) {
     				sheetNeighbor[ss2][ss1] = 1;
     			}
     		}
-    		console.log("###4 sheetNeighbor " + JSON.stringify(sheetNeighbor));	
+    	
     		//https://www.geeksforgeeks.org/number-groups-formed-graph-friends/
     		let existing_groups = 0;
     		let sheet2sheetnum = {};
@@ -41366,7 +41307,6 @@ var icn3d = (function (exports) {
     				this.countUtil(ss1, sheetNeighbor, existing_groups);
     			}
     		}
-    		console.log("###5 this.groupnum2sheet " + JSON.stringify(this.groupnum2sheet));	
 
     		// get sheet2sheetnum
     		// each neighboring sheet will be represented by the sheet with the smallest sse 
@@ -41377,7 +41317,7 @@ var icn3d = (function (exports) {
     			}
     		}
 
-    		console.log("###6 sheet2sheetnum " + JSON.stringify(sheet2sheetnum));	
+    		let invalidSheethash = {};	
     		for (let i = 0; i < nsse; i++) {
     			if(substruct[i].Sheet) {				
     				let sheetsItem = {};
@@ -41390,12 +41330,14 @@ var icn3d = (function (exports) {
     					sheetsItem.sheet_num = 0;
     					sheetsItem.adj_strand2 = 0; 
     					sheetsItem.sse = i + 1; 
+
+    					invalidSheethash[sheetsItem.sse] = 1;
     				}
 
     				sheets.push(sheetsItem);
     			}
     		}
-    		console.log("###7 sheets " + JSON.stringify(sheets));	
+
     		//
     		// Correct for dummy contacts; they're present to ensure that the
     		// table gives the right result in the possible case there is an
@@ -41420,8 +41362,8 @@ var icn3d = (function (exports) {
     				}
     			}
     		}
-    		console.log("###8 this.ctc_cnt " + JSON.stringify(this.ctc_cnt));	
-    		let minStrand = 6;
+
+    		let minStrand = 6; // number of residues in a strand
 
     		if (hasSheets) {
     			//sheets: array of sheets, each of which has the key: sheet_num (number of strands), adj_strand1, adj_strand2
@@ -41445,7 +41387,8 @@ var icn3d = (function (exports) {
     			if (cnt> 0) {
     				for (let i = 0; i < sheets.length; i++) {
     					let bsrec = sheets[i];
-    					this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
+    					// this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
+    					if(bsrec.sheet_num != 0) this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
     				}
     			}
     		}
@@ -41453,7 +41396,6 @@ var icn3d = (function (exports) {
     			for (let i = 0; i < nsse; i++)
     				this.group_num[i] = i + 1;
     		}
-    		console.log("###9 this.group_num " + JSON.stringify(this.group_num));
 
     		let sratio = 0.25;
     		let minSize = 25;
@@ -41502,11 +41444,25 @@ var icn3d = (function (exports) {
     				}
     			}
     		}
-    		console.log("###10 a list_parts " + JSON.stringify(list_parts));	
+
     		list_parts.sort(function(v1, v2) {
     				return v1[0] - v2[0];
     			});
-    			console.log("###10 b list_parts " + JSON.stringify(list_parts));	
+
+    		// remove sheets less than 3 residues
+    		let list_partsTmp = [];
+    		for(let i = 0, il = list_parts.length; i < il; ++i) {
+    			let list_parts_item = [];
+    			for(let j = 0, jl = list_parts[i].length; j < jl; ++j) {
+    				let sse = list_parts[i][j];
+    				if(!invalidSheethash.hasOwnProperty(sse)) {
+    					list_parts_item.push(sse);
+    				}
+    			}
+    			if(list_parts_item.length >= this.min_sse) list_partsTmp.push(list_parts[i]);
+    		}
+    		list_parts = list_partsTmp;
+
     		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
     		for (let index = 0, indexl = list_parts.length; index < indexl; ++index) {
     			//vector<int> prts = *lpint;

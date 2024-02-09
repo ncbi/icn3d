@@ -732,8 +732,6 @@ class AnnoIg {
         if(igArray.length == 0) return {html: '', html2: '', html3: ''};
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
 
-console.log("###igArray " + JSON.stringify(igArray));     
-console.log("###ic.domainid2info " + JSON.stringify(ic.domainid2info));   
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             let info = ic.domainid2info[domainid];
