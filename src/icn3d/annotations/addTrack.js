@@ -886,91 +886,115 @@ class AddTrack {
         let selectedResidues = {};
         let bUnion = false, bUpdateHighlight = true;
 
-        let strandCnt = 0, loopCnt = 0;
-        let setName, currStrand, prevStrand, prevStrandReal = 'NT', currType, prevType;
-
         // clear selection
         ic.hAtoms = {};
 
-        let bStart = false;
+        if(type == 'igdomain') {
+            let igArray = ic.chain2igArray[chainid];
 
-        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
-            let currResi = ic.chainsSeq[chainid][i].resi;
-            let resid = chainid + '_' + currResi;
-
-            if(!ic.residues.hasOwnProperty(resid) ) continue;
-          
-            let refnumLabel, refnumStr, refnum;
-            refnumLabel = ic.resid2refnum[resid];
-            if(!refnumLabel) continue;
-
-            refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-            currStrand = refnumLabel.replace(refnumStr, '');
-            refnum = parseInt(refnumStr);
-
-            if(type == 'iganchor') {
-                if(refnum > 1000 && refnumStr.substr(refnumStr.length - 2, 2) == '50') {
-                    selectedResidues[resid] = 1;
-                }
-            } 
-            else {
-                if(ic.residIgLoop.hasOwnProperty(resid)) {
-                    currType = 'igloop';
-                }
-                else {
-                    currType = 'igstrand';
-                }
-
-                if(bStart && currType != prevType && Object.keys(selectedResidues).length > 0) {
-                    if(prevType == 'igstrand') {
-                        ++strandCnt;
-                        setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
-                        setName = setName.replace(/'/g, '`');
-                        if(type == 'igstrand') {
-                            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
-                            if(!bUnion) bUnion = true;
-                        }
-                        prevStrandReal = prevStrand;
-                    }
-                    else if(prevType == 'igloop') {
-                        ++loopCnt;
-                        setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
-                        setName = setName.replace(/'/g, '`');
-                        if(type == 'igloop') {
-                            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
-                            if(!bUnion) bUnion = true;
-                        }
-                    }
+            if(igArray && igArray.length > 0) {
+                
+                for(let i = 0, il = igArray.length; i < il; ++i) {
+                    let startPos = igArray[i].startPos;
+                    let endPos = igArray[i].endPos;
+                    let domainid = igArray[i].domainid;
 
                     selectedResidues = {};
+                    for(let j = parseInt(startPos); j <= parseInt(endPos); ++j) {
+                        let currResi = ic.chainsSeq[chainid][j].resi;
+                        let resid = chainid + '_' + currResi;
+                        selectedResidues[resid] = 1;
+                    }
+
+                    let setName = domainid;
+                    ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
                 }
-
-                selectedResidues[resid] = 1;
-
-                prevStrand = currStrand;
-                prevType = currType;
-
-                bStart = true;
             }
-        } // for loop
-
-        if(type == 'iganchor') {
-            setName = 'Anchor-' + chainid;
-            ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
         }
         else {
-            if(prevType == 'igstrand') {
-                ++strandCnt;
-                setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
-                setName = setName.replace(/'/g, '`');
-                if(type == 'igstrand') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+            let strandCnt = 0, loopCnt = 0;
+            let setName, currStrand, prevStrand, prevStrandReal = 'NT', currType, prevType;
+
+            let bStart = false;
+
+            for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                let currResi = ic.chainsSeq[chainid][i].resi;
+                let resid = chainid + '_' + currResi;
+
+                if(!ic.residues.hasOwnProperty(resid) ) continue;
+            
+                let refnumLabel, refnumStr, refnum;
+                refnumLabel = ic.resid2refnum[resid];
+                if(!refnumLabel) continue;
+
+                refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                currStrand = refnumLabel.replace(refnumStr, '');
+                refnum = parseInt(refnumStr);
+
+                if(type == 'iganchor') {
+                    if(refnum > 1000 && refnumStr.substr(refnumStr.length - 2, 2) == '50') {
+                        selectedResidues[resid] = 1;
+                    }
+                } 
+                else {
+                    if(ic.residIgLoop.hasOwnProperty(resid)) {
+                        currType = 'igloop';
+                    }
+                    else {
+                        currType = 'igstrand';
+                    }
+
+                    if(bStart && currType != prevType && Object.keys(selectedResidues).length > 0) {
+                        if(prevType == 'igstrand') {
+                            ++strandCnt;
+                            setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+                            setName = setName.replace(/'/g, '`');
+                            if(type == 'igstrand') {
+                                ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                                if(!bUnion) bUnion = true;
+                            }
+                            prevStrandReal = prevStrand;
+                        }
+                        else if(prevType == 'igloop') {
+                            ++loopCnt;
+                            setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+                            setName = setName.replace(/'/g, '`');
+                            if(type == 'igloop') {
+                                ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                                if(!bUnion) bUnion = true;
+                            }
+                        }
+
+                        selectedResidues = {};
+                    }
+
+                    selectedResidues[resid] = 1;
+
+                    prevStrand = currStrand;
+                    prevType = currType;
+
+                    bStart = true;
+                }
+            } // for loop
+
+            if(type == 'iganchor') {
+                setName = 'Anchor-' + chainid;
+                ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
             }
-            else if(prevType == 'igloop') {
-                ++loopCnt;
-                currStrand = 'CT';
-                setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
-                setName = setName.replace(/'/g, '`');
-                if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+            else {
+                if(prevType == 'igstrand') {
+                    ++strandCnt;
+                    setName = 'Strand-' + prevStrand + '-' + chainid + '-' + strandCnt.toString().padStart(3, '0');
+                    setName = setName.replace(/'/g, '`');
+                    if(type == 'igstrand') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                }
+                else if(prevType == 'igloop') {
+                    ++loopCnt;
+                    currStrand = 'CT';
+                    setName = 'Loop-' + prevStrandReal + '_' + currStrand + '-' + chainid + '-' + loopCnt.toString().padStart(3, '0');
+                    setName = setName.replace(/'/g, '`');
+                    if(type == 'igloop') ic.selectionCls.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                }
             }
         }
     }

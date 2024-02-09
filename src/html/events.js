@@ -2718,6 +2718,14 @@ class Events {
             thisClass.setLogCmd('define igloop sets | chain ' + chainid, true);
         });
 
+        $(document).on("click", ".icn3d-igdomainsets", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            //e.preventDefault();
+            let chainid = $(this).attr('chainid');
+            ic.addTrackCls.defineIgstrand(chainid, 'igdomain');
+            thisClass.setLogCmd('define igdomain sets | chain ' + chainid, true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "deletesets", "click", function(e) { let ic = me.icn3d;
              ic.definedSetsCls.deleteSelectedSets();
              thisClass.setLogCmd("delete selected sets", true);

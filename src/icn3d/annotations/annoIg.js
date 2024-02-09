@@ -575,7 +575,7 @@ class AnnoIg {
                 refnumLabel = ic.resid2refnum[residueid];
                 let bHidelabel = false;
 
-                if(refnumLabel) {                        
+                if(refnumLabel) {               
                     refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                     currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
                     currStrand_ori = currStrand;
@@ -609,8 +609,9 @@ class AnnoIg {
 
                         igElem = {};
                         igElem.startPos = i;
-                        igElem.domainid = domainid;
                     }
+
+                    if(domainid) igElem.domainid = domainid;
                 
                     if(bCustom) {
                         if(!refnumStr) {                               
@@ -699,11 +700,11 @@ class AnnoIg {
             htmlTmp += '<span class="icn3d-residueNum"></span>';
         }
         else if(kabat_or_imgt == 1) {
-            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers ' + refStruTitle + '">Kabat Ref. No.</div>';
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="Kabat Reference Numbers">Kabat Ref. No.</div>';
             htmlTmp += '<span class="icn3d-residueNum"></span>';
         }
         else if(kabat_or_imgt == 2) {
-            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IMGT Reference Numbers ' + refStruTitle + '">IMGT Ref. No.</div>';
+            htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="IMGT Reference Numbers">IMGT Ref. No.</div>';
             htmlTmp += '<span class="icn3d-residueNum"></span>';
         }
         else {
@@ -727,9 +728,10 @@ class AnnoIg {
         html += '</div>';
         html += '</div>';
 
-        let igArray = ic.chain2igArray[chnid];
+        let igArray = ic.chain2igArray[chnid];      
         if(igArray.length == 0) return {html: '', html2: '', html3: ''};
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
+
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             let info = ic.domainid2info[domainid];
@@ -755,10 +757,10 @@ class AnnoIg {
             let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
             let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
 
-            let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : 
+            let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i]) / ic.maxAnnoLength) : 
                 Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
             html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" ig="0" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + domainArray[i] + '" index="0" setname="' + chnid + '_igs" id="' + chnid + '_igs" anno="sequence" chain="' + chnid + '" title="' + domainArray[i] + '">' + domainArray[i] + ' </div>';
+            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" ig="0" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + domainArray[i] + '" index="0" setname="' + chnid + '_igs" id="' + chnid + '_igs" anno="sequence" chain="' + chnid + '" title="' + domainArray[i] + '">' +  domainArray[i] + ' </div>';
         }
 
         html2 += htmlCnt;

@@ -59,7 +59,9 @@
         ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_Iset'];
         ic.refpdbHash['1CD3g_6jxrg_human_Iset'] = ['CD3g_6jxrg_human_Iset', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
         ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_Iset'];
-        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1']; 
+        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
+
+        ic.refpdbHash['all_templates'] = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_Iset', 'CD3e_6jxrf_human_Iset', 'CD3g_6jxrg_human_Iset', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
 
         // use known ref structure
         ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
@@ -116,9 +118,9 @@
 
         ic.ref2igtype['ASF1A_2iijA_human'] = 'IgE';
         ic.ref2igtype['B2Microglobulin_7phrL_human_C1'] = 'IgC1';
-        ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFn3-like';
+        ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
         ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
-        ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFn3-like';
+        ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
         ic.ref2igtype['CD19_6al5A_human_C2orV-n1'] = 'other Ig'; //'CD19';
         ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
         ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
@@ -128,7 +130,7 @@
         ic.ref2igtype['CD3g_6jxrg_human_Iset'] = 'IgI';
         ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
         ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
-        ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFn3';
+        ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
         ic.ref2igtype['Contactin1_3s97C_human_C2-n2'] = 'IgC2';
         ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'other Ig'; //'SOD';
         ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'other Ig'; //'Cadherin';
@@ -137,12 +139,12 @@
         ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
         ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
         ic.ref2igtype['FAB-LIGHT_5esv_V-n1'] = 'IgV';
-        ic.ref2igtype['GHR_1axiB_human_FN3-n1'] = 'IgFn3';
+        ic.ref2igtype['GHR_1axiB_human_FN3-n1'] = 'IgFN3';
         ic.ref2igtype['ICOS_6x4gA_human_V'] = 'IgV';
-        ic.ref2igtype['IL6Rb_1bquB_human_FN3-n2'] = 'IgFn3';
-        ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFn3';
-        ic.ref2igtype['InsulinR_8guyE_human_FN3-n1'] = 'IgFn3';
-        ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFn3';
+        ic.ref2igtype['IL6Rb_1bquB_human_FN3-n2'] = 'IgFN3';
+        ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
+        ic.ref2igtype['InsulinR_8guyE_human_FN3-n1'] = 'IgFN3';
+        ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
         ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
         ic.ref2igtype['JAM1_1nbqA_human_VorIset-n2'] = 'IgI';
         ic.ref2igtype['LAG3_7tzgD_human_C2-n2'] = 'IgC2';
@@ -156,9 +158,9 @@
         ic.ref2igtype['PD1_4zqkB_human_V'] = 'IgV';
         ic.ref2igtype['PDL1_4z18B_human_V-n1'] = 'IgV';
         ic.ref2igtype['Palladin_2dm3A_human_Iset-n1'] = 'IgI';
-        ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFn3-like';
-        ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFn3-like';
-        ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFn3';
+        ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
+        ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
+        ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
         ic.ref2igtype['Siglec3_5j0bB_human_C2-n2'] = 'IgC2';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
@@ -206,7 +208,7 @@
                 while(!bNoMoreIg && numRound < 10) {
                     let bRerun = true;
                     bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun);
-                    ++numRound
+                    ++numRound;
                 }
             }
             else {
@@ -223,7 +225,7 @@
         let thisClass = this;
 
         let struArray = Object.keys(ic.structures);
- 
+
         let ajaxArray = [];
         let domainidpairArray = [];
 
@@ -242,7 +244,7 @@
             for(let j = 0, jl = chainidArray.length; j < jl; ++j) {
                 let chainid = chainidArray[j];
 
-                // for selected atoms only
+                // for selected atoms only, assign ic.resid2domainid[resid]
                 let domainAtomsArray = this.getDomainAtomsArray(chainid, bRerun);
 
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
@@ -259,8 +261,8 @@
                     let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtomsArray[k]);
                     let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtomsArray[k]);
                     let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtomsArray[k]).length;
-                    //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length; 
-                    let domainid = chainid + ',' + k + '_' + resiSum; 
+                    //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length;
+                    let domainid = chainid + ',' + k + '_' + resiSum;
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     if(!template) {
@@ -278,7 +280,7 @@
                             // let alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
 
                             ajaxArray.push(alignAjax);
-                            
+
                             domainidpairArray.push(domainid + "|" + ic.refpdbArray[index]);
                         }
                     }
@@ -298,14 +300,14 @@
                 // dataArray2 = await allPromise;
 
                 dataArray2 = await this.promiseWithFixedJobs(ajaxArray);
-            
+
                 let bRound1 = true;
-                await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+                bNoMoreIg = await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
 
                 /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
             }
             else {
-                if(!me.bNode) console.log("Start alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
+                if(!me.bNode) console.log("Start alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));
 
                 // start round2
                 let ajaxArray = [];
@@ -320,36 +322,36 @@
                 //let allPromise2 = Promise.allSettled(pdbAjaxArray);
                 //ic.pdbDataArray = await allPromise2;
 
-                ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
+                let pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
                 for(let domainid in ic.domainid2refpdbname) {
                     let refpdbname = ic.domainid2refpdbname[domainid];
                     let chainid = domainid.substr(0, domainid.indexOf(','));
 
                     let pdb_target = ic.domainid2pdb[domainid];
-                    for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
+                    for(let index = 0, indexl = pdbDataArray.length; index < indexl; ++index) {
                         let struct2 = ic.defaultPdbId + index;
-                        let pdb_query = ic.pdbDataArray[index].value; //[0];
+                        let pdb_query = pdbDataArray[index].value; //[0];
 
                         let header = 'HEADER                                                        ' + struct2 + '\n';
                         pdb_query = header + pdb_query;
-    
+
                         let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": template};
                         let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
                         ajaxArray.push(alignAjax);
-                        
+
                         //domainidpairArray3.push(domainid + "," + refpdbname);
                         domainidpairArray3.push(domainid + "|" + template);
                     }
                 }
-    
+
                 let dataArray3 = [];
                 //let allPromise = Promise.allSettled(ajaxArray);
                 //dataArray3 = await allPromise;
 
                 dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
-    
-                await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+
+                bNoMoreIg = await thisClass.parseAlignData(dataArray3, domainidpairArray3);
             }
 
             return bNoMoreIg;
@@ -365,8 +367,8 @@
             }
             //console.log("Error in aligning with TM-align...");
             return;
-        }        
-        */           
+        }
+        */
     }
 
     getDomainAtomsArray(chainid, bRerunDomain) { let ic = this.icn3d, me = ic.icn3dui;
@@ -409,21 +411,22 @@
         //let result = ic.domain3dCls.c2b_NewSplitChain(ic.chains[chainid]);
         // assign ref numbers to selected residues
         let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms, undefined);
-        let subdomains = result.subdomains;  
+        let subdomains = result.subdomains;
         let pos2resi = result.pos2resi;
 
         if(subdomains.length <= 1) {
             let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
             if(residueArray.length < minResidues) return domainAtomsArray;
-
+/*
             let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(currAtoms);
             let atomLast = ic.firstAtomObjCls.getLastAtomObj(currAtoms);
             let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(currAtoms).length;
-
+*/
             for(let n = 0, nl = residueArray.length; n < nl; ++n) {
                 let resid = residueArray[n];
-                ic.resid2domainid[resid] = chainid + ',0' + '_' + resiSum; 
-
+/*
+                ic.resid2domainid[resid] = chainid + ',0' + '_' + resiSum;
+*/
                 // clear previous refnum assignment if any
                 // if(!bRerunDomain && ic.resid2refnum && ic.resid2refnum[resid]) {
                 // if(ic.resid2refnum && ic.resid2refnum[resid]) {
@@ -434,7 +437,7 @@
 
             domainAtomsArray.push(currAtoms);
         }
-        else {                 
+        else {
             for(let k = 0, kl = subdomains.length; k < kl; ++k) {
                 let domainAtoms = {};
                 let segArray = subdomains[k];
@@ -461,7 +464,7 @@
                 if(resCnt < minResidues) continue;
 
                 domainAtomsArray.push(domainAtoms);
-
+/*
                 let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
                 let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
                 let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtoms).length;
@@ -472,15 +475,16 @@
                     for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
                         let resid = chainid + '_' + pos2resi[n];
                         //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                        ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum; 
+                        ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum;
                     }
                 }
+*/
             }
         }
 
         return domainAtomsArray;
     }
-    
+
     getTemplateList(domainid) { let ic = this.icn3d, me = ic.icn3dui;
         let refpdbname = '', score = '', seqid = '', nresAlign = '';
 
@@ -513,7 +517,6 @@
         if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
 
         let minResidues = 20;
-
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
             let queryData = (dataArray[i]) ? dataArray[i].value : undefined; //[0];
@@ -524,7 +527,7 @@
             }
 
             if(queryData[0].score === undefined) continue;
-            
+
             //let domainid_index = domainidpairArray[i].split(',');
             //let domainid = domainid_index[0];
             let domainid = domainidpairArray[i].substr(0, domainidpairArray[i].indexOf('|'));
@@ -545,7 +548,7 @@
                     continue;
                 }
             }
-            
+
             if(!bRound1) {
                 if(!me.bNode) console.log("refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
             }
@@ -608,8 +611,13 @@
             }
 
             if(!domainid2segs.hasOwnProperty(domainid) || queryData[0].score >= ic.domainid2score[domainid].split('_')[0]) {
-                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;  
-                ic.domainid2refpdbname[domainid] = refpdbname;
+                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;
+                if(bRound1) {
+                    ic.domainid2refpdbname[domainid] = parseFloat(queryData[0].score) > 0.75 ? refpdbname : 'all_templates';
+                }
+                else {
+                    ic.domainid2refpdbname[domainid] = refpdbname;
+                }
                 domainid2segs[domainid] = queryData[0].segs;
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
                 ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
@@ -620,10 +628,17 @@
     }
 
     async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+        let bNoMoreIg = false;
+
         let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
 
+        if(Object.keys(domainid2segs).length == 0) {
+            bNoMoreIg = true;
+            return bNoMoreIg;
+        }
+
         if(bRound1) {
-            if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));   
+            if(!me.bNode) console.log("Start round 2 alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));
 
             // start round2
             let ajaxArray = [];
@@ -641,7 +656,7 @@
                     //refpdbname = pdbid;
                     refpdbname = chainid;
 
-                    if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + refpdbname);   
+                    if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + refpdbname);
                 }
 
                 if(!ic.refpdbHash[refpdbname]) {
@@ -659,20 +674,20 @@
                 //let allPromise2 = Promise.allSettled(pdbAjaxArray);
                 //ic.pdbDataArray = await allPromise2;
 
-                ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
+                let pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
                 let pdb_target = ic.domainid2pdb[domainid];
-                for(let index = 0, indexl = ic.pdbDataArray.length; index < indexl; ++index) {
+                for(let index = 0, indexl = pdbDataArray.length; index < indexl; ++index) {
                     let struct2 = ic.defaultPdbId + index;
-                    //let pdb_query = (me.bNode) ? ic.pdbDataArray[index] : ic.pdbDataArray[index].value; //[0];
-                    let pdb_query = ic.pdbDataArray[index].value; //[0];
+                    //let pdb_query = (me.bNode) ? pdbDataArray[index] : pdbDataArray[index].value; //[0];
+                    let pdb_query = pdbDataArray[index].value; //[0];
                     let header = 'HEADER                                                        ' + struct2 + '\n';
                     pdb_query = header + pdb_query;
 
                     let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target, "queryid": ic.refpdbHash[refpdbname][index]};
                     let alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);
                     ajaxArray.push(alignAjax);
-                    
+
                     //domainidpairArray3.push(domainid + "," + refpdbname);
                     domainidpairArray3.push(domainid + "|" + ic.refpdbHash[refpdbname][index]);
                 }
@@ -685,12 +700,14 @@
             dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
             await this.parseAlignData(dataArray3, domainidpairArray3, false);
-            
+
             // end of round 2
-            return;
+            return bNoMoreIg;
         }
 
         await this.parseAlignData_part3(domainid2segs);
+
+        return bNoMoreIg;
     }
 
     async parseAlignData_part3(domainid2segs) { let ic = this.icn3d, me = ic.icn3dui;
@@ -837,7 +854,7 @@
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
                 if(!seg) continue;
-                
+
                 let qStart = seg.q_start;
                 let qStartInt = parseInt(seg.q_start);
                 let postfix = '';
@@ -879,9 +896,10 @@
                     if(currStrand != currStrandFinal) {
                         refnumLabel = this.getLabelFromRefnum(refnum, currStrandFinal);
                     }
-                   
-                    ic.resid2refnum[resid] = refnumLabel;                
+
+                    ic.resid2refnum[resid] = refnumLabel;
                     ic.resid2refnum_ori[resid] = refnumLabel;
+                    ic.resid2domainid[resid] = domainid;
 
                     // final reference numbers will be assign in ic.annoIgCls.showRefNum()
 
@@ -928,7 +946,7 @@
             else {
                 await ic.showAnnoCls.showAnnotations();
             }
-            
+
             ic.annotationCls.setAnnoViewAndDisplay('detailed view');
         }
         else if(!me.bNode) {
@@ -969,13 +987,13 @@
         // loops may have numbers such as 1310, 1410
 
         let refnumLabel;
-        
+
         if(refnum < 1000) refnumLabel = undefined;
         else if(refnum >= 1200 && refnum < 1290) refnumLabel = "A---" + oriRefnum;
         else if(refnum >= 1320 && refnum < 1390) refnumLabel = "A--" + oriRefnum;
         else if(refnum >= 1420 && refnum < 1490) refnumLabel = "A-" + oriRefnum;
-        else if(refnum >= 1520 && refnum < 1590) refnumLabel = "A" + oriRefnum; 
-        else if(refnum >= 1620 && refnum < 1690) refnumLabel = "A+" + oriRefnum; 
+        else if(refnum >= 1520 && refnum < 1590) refnumLabel = "A" + oriRefnum;
+        else if(refnum >= 1620 && refnum < 1690) refnumLabel = "A+" + oriRefnum;
         else if(refnum >= 1820 && refnum < 1890) refnumLabel = "A'" + oriRefnum;
         else if(refnum >= 2000 && refnum < 2900) refnumLabel = "B" + oriRefnum;
         else if(refnum >= 3300 && refnum < 3390) refnumLabel = "C--" + oriRefnum;
@@ -984,8 +1002,8 @@
         else if(refnum >= 4000 && refnum < 4900) refnumLabel = "C'" + oriRefnum;
         else if(refnum >= 5000 && refnum < 5900) refnumLabel = "C''" + oriRefnum;
         else if(refnum >= 6000 && refnum < 6900) refnumLabel = "D" + oriRefnum;
-        else if(refnum >= 7500 && refnum < 7590) refnumLabel = "E" + oriRefnum; 
-        else if(refnum >= 7620 && refnum < 7900) refnumLabel = "E+" + oriRefnum; 
+        else if(refnum >= 7500 && refnum < 7590) refnumLabel = "E" + oriRefnum;
+        else if(refnum >= 7620 && refnum < 7900) refnumLabel = "E+" + oriRefnum;
         else if(refnum >= 8000 && refnum < 8900) refnumLabel = "F" + oriRefnum;
         else if(refnum >= 9500 && refnum < 9590) refnumLabel = "G" + oriRefnum;
         else if(refnum >= 9620 && refnum < 9690) refnumLabel = "G+" + oriRefnum;
@@ -1075,7 +1093,7 @@
         if(type == 'igstrand' || type == 'IgStrand') {
             // iGStrand reference numbers were adjusted when showing in sequences
             if(me.bNode) {
-                for(let chnid in ic.chains) {                 
+                for(let chnid in ic.chains) {
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
                     if(ic.proteins.hasOwnProperty(atom.serial)) {
                         let giSeq = [];
@@ -1086,22 +1104,22 @@
                     }
                 }
             }
-    
+
             let resid2refnum = {};
             for(let resid in ic.resid2refnum) {
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                 if(!atom) continue;
-                
+
                 let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
-        
+
                 let domainid = ic.resid2domainid[resid];
                 let refnumStr, refnumLabel = ic.resid2refnum[resid];
-        
+
                 if(refnumLabel) {
                     let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                     refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
                 }
-        
+
                 if(ic.resid2refnum[resid]) {
                     if(ic.residIgLoop.hasOwnProperty(resid)) { // loop
                     resid2refnum[resid + '_' + resn] = ic.resid2refnum[resid] + '_loop';
@@ -1182,18 +1200,18 @@
             for(let resid in ic.resid2refnum) {
             let domainid = ic.resid2domainid[resid];
             let refnumStr, refnumLabel = ic.resid2refnum[resid];
-    
+
             let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
             let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
-    
+
             if(refnumLabel) {
                 let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                 refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
             }
-    
+
             resid2kabat[resid + '_' + resn] = refnumStr;
             }
-            
+
             refData += JSON.stringify(resid2kabat);
         }
         // 3. show IMGT ref numbers
@@ -1202,25 +1220,25 @@
             for(let resid in ic.resid2refnum) {
             let domainid = ic.resid2domainid[resid];
             let refnumStr, refnumLabel = ic.resid2refnum[resid];
-    
+
             let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
             let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
-    
+
             if(refnumLabel) {
                 let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                 refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
             }
-    
+
             resid2imgt[resid + '_' + resn] = refnumStr;
             }
-            
+
             refData += JSON.stringify(resid2imgt);
         }
 
 
         if(!me.bNode) {
             let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
-    
+
             ic.saveFileCls.saveFile(file_pref + '_refnum_' + type + '.txt', 'text', [refData]);
         }
         else {
@@ -1238,7 +1256,7 @@
 
         for(let i = 0, il = parseInt((ajaxArray.length - 1) / n + 1); i < il; ++i) {
             let currAjaxArray = []
-            if(i == il - 1) { // last one 
+            if(i == il - 1) { // last one
                 currAjaxArray = ajaxArray.slice(i * n, ajaxArray.length);
             }
             else {
@@ -1254,6 +1272,5 @@
         return dataArray3;
     }
  }
- 
+
  export {Refnum}
- 

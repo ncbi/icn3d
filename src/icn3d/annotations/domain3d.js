@@ -98,12 +98,16 @@ class Domain3d {
 
 		// this.elements from the this.top of the this.stack 
 		//elts = &this.elements[this.stack[this.top - 1]];
+		
 		for(i = this.stack[this.top - 1], il = this.elements.length; i < il; ++i) {
 			elts.push(this.elements[i]);
 		}
 
 		// generate the partition based on the cut //
-		for (i = ne = ne0 = ne1 = 0, prt = prt0, t = -1; i < k; i++) {
+		// for (i = ne = ne0 = ne1 = 0, prt = prt0, t = -1; i < k; i++) {
+		let bAtZero = true;
+		prt = prt0;
+		for (i = ne = ne0 = ne1 = 0, t = -1; i < k; i++) {
 			// write the this.elements into prt //
 			for (j = t + 1; j <= cut[i]; j++)
 				prt[ne++] = elts[j];
@@ -111,15 +115,20 @@ class Domain3d {
 			t = cut[i];
 
 			// switch the partition //
-			if (prt == prt0) {
+			// if (prt == prt0) {
+			if (bAtZero) {
 				ne0 = ne;
 				prt = prt1;
 				ne = ne1;
+
+				bAtZero = false;
 			}
 			else {
 				ne1 = ne;
 				prt = prt0;
 				ne = ne0;
+
+				bAtZero = true;
 			}
 		}
 
@@ -127,7 +136,8 @@ class Domain3d {
 		for (j = t + 1; j < n; j++)
 			prt[ne++] = elts[j];
 
-		if (prt == prt0)
+		// if (prt == prt0)
+		if (bAtZero)
 			ne0 = ne;
 		else
 			ne1 = ne;
@@ -804,6 +814,8 @@ class Domain3d {
 			let ss1 = parseInt(ssPair[0]);
 			let ss2 = parseInt(ssPair[1]);
 
+			if(ctable[pair] < this.min_contacts) ctable[pair] = 0;
+
 			// both are sheets
 			// min number of contacts: this.min_contacts
 			if(substruct[ss1 - 1].Sheet && substruct[ss2 - 1].Sheet && ctable[pair] >= this.min_contacts ) {
@@ -814,7 +826,7 @@ class Domain3d {
 				sheetNeighbor[ss2][ss1] = 1;
 			}
 		}
-
+	
 		//https://www.geeksforgeeks.org/number-groups-formed-graph-friends/
 		let existing_groups = 0;
 		let sheet2sheetnum = {};
@@ -837,12 +849,13 @@ class Domain3d {
 		// get sheet2sheetnum
 		// each neighboring sheet will be represented by the sheet with the smallest sse 
 		for(let groupnum in this.groupnum2sheet) {
-			let ssArray = this.groupnum2sheet[groupnum].sort();
+			let ssArray = this.groupnum2sheet[groupnum].sort(function(a, b){return a-b});
 			for(let i = 0, il = ssArray.length; i < il; ++i) {
 				sheet2sheetnum[ssArray[i]] = ssArray[0];
 			}
 		}
 
+		let invalidSheethash = {};	
 		for (let i = 0; i < nsse; i++) {
 			if(substruct[i].Sheet) {				
 				let sheetsItem = {};
@@ -855,6 +868,8 @@ class Domain3d {
 					sheetsItem.sheet_num = 0;
 					sheetsItem.adj_strand2 = 0; 
 					sheetsItem.sse = i + 1; 
+
+					invalidSheethash[sheetsItem.sse] = 1;
 				}
 
 				sheets.push(sheetsItem);
@@ -886,7 +901,7 @@ class Domain3d {
 			}
 		}
 
-		let minStrand = 6;
+		let minStrand = 6; // number of residues in a strand
 
 		if (hasSheets) {
 			//sheets: array of sheets, each of which has the key: sheet_num (number of strands), adj_strand1, adj_strand2
@@ -910,7 +925,8 @@ class Domain3d {
 			if (cnt> 0) {
 				for (let i = 0; i < sheets.length; i++) {
 					let bsrec = sheets[i];
-					this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
+					// this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
+					if(bsrec.sheet_num != 0) this.group_num[bsrec.sse - 1] = bsrec.sheet_num;
 				}
 			}
 		}
@@ -966,10 +982,25 @@ class Domain3d {
 				}
 			}
 		}
-		
+
 		list_parts.sort(function(v1, v2) {
 				return v1[0] - v2[0];
 			});
+
+		// remove sheets less than 3 residues
+		let list_partsTmp = [];
+		for(let i = 0, il = list_parts.length; i < il; ++i) {
+			let list_parts_item = [];
+			for(let j = 0, jl = list_parts[i].length; j < jl; ++j) {
+				let sse = list_parts[i][j];
+				if(!invalidSheethash.hasOwnProperty(sse)) {
+					list_parts_item.push(sse);
+				}
+			}
+			if(list_parts_item.length >= this.min_sse) list_partsTmp.push(list_parts[i]);
+		}
+		
+		list_parts = list_partsTmp;
 
 		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
 		for (let index = 0, indexl = list_parts.length; index < indexl; ++index) {

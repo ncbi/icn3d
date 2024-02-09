@@ -281,7 +281,7 @@ class Instancing {
           }
 
           if(ic.mdlImpostor !== undefined) {
-              // after three.js version 128, the cylinder impostor seemed to have a problem in cloning!!!
+              // after three.js version 128, the cylinder impostor seemed to have a problem in cloning
               symmetryMate = ic.mdlImpostor.clone();
               //symmetryMate.applyMatrix(mat);
               this.applyMat(symmetryMate, mat);
