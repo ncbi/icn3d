@@ -999,6 +999,7 @@ class Domain3d {
 			}
 			if(list_parts_item.length >= this.min_sse) list_partsTmp.push(list_parts[i]);
 		}
+		
 		list_parts = list_partsTmp;
 
 		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
