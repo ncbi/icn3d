@@ -16,6 +16,7 @@ class AnnoDomain {
         let pdbid = pdbArray[index];
         //let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
+/*
         if(!ic.bResetAnno && index == 0 && ic.mmdb_data !== undefined) {      
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
@@ -31,6 +32,7 @@ class AnnoDomain {
             }
         }
         else {
+*/
             // calculate 3D domains on-the-fly
             //ic.protein_chainid[chainArray[i]] 
             let data = {};
@@ -72,7 +74,7 @@ class AnnoDomain {
 
             ic.bAjax3ddomain = true;
             ic.bAjaxDoneArray[index] = true;          
-        }
+        // }
     }
 
     //Show the annotations of 3D domains.
@@ -222,7 +224,9 @@ class AnnoDomain {
 
             if(me.cfg.blast_rep_id != chnid) { // regular
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
-                    let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+                    // let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+                    let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                     html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' +(index+1).toString() + '</div>';
                 }

@@ -156,6 +156,26 @@ class ClickMenu {
         $("#" + me.pre + "menulist").html(html);
     }
 
+    async setIgTemplate(template) { let me = this.icn3dui, ic = me.icn3d;
+      ic.bRunRefnumAgain = true;
+
+      // reset for the selection
+      let residueArray = ic.resid2specCls.atoms2residues(Object.keys(ic.hAtoms));
+      for(let i = 0, il = residueArray.length; i < il; ++i) {
+         let resid = residueArray[i];
+
+         if(ic.resid2refnum) delete ic.resid2refnum[resid];
+         if(ic.resid2refnum_ori) delete ic.resid2refnum_ori[resid];
+         if(ic.resid2domainid) delete ic.resid2domainid[resid];
+      }
+
+      let bSelection = true;
+      // await ic.refnumCls.showIgRefNum(template);
+      if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+      await ic.annotationCls.setAnnoTabIg(bSelection, template);
+
+      // ic.bRunRefnumAgain = false;
+    }
 
     clickMenu1() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
@@ -1721,6 +1741,8 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            ic.bRunRefnumAgain = true;
+
             thisClass.setLogCmd('ig refnum on', true);
             // await ic.refnumCls.showIgRefNum();
             // thisClass.setLogCmd('set annotation ig', true);
@@ -1737,6 +1759,8 @@ class ClickMenu {
             //    ic.hlUpdateCls.updateHlAll();
             //    ic.drawCls.draw();
             // }
+
+            // ic.bRunRefnumAgain = false;
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -1745,13 +1769,40 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-                  
+
             let template = $("#" + me.pre + "refTpl").val();
+
+            await thisClass.setIgTemplate(template);
+
             thisClass.setLogCmd('ig template ' + template, true);
-            let bSelection = true;
-            // await ic.refnumCls.showIgRefNum(template);
-            if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
-            await ic.annotationCls.setAnnoTabIg(bSelection, template);
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_alignrefTpl', 'Align with an Ig template');
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+   
+            let template = $("#" + me.pre + "refTpl2").val();
+
+            let selAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+            // load the template
+            let url = me.htmlCls.baseUrl + "icn3d/refpdb/" + template + ".pdb";
+            await ic.pdbParserCls.downloadUrl(url, 'pdb', undefined, template);
+            thisClass.setLogCmd('load url ' + url + ' | type pdb', true);
+   
+            let structure = template.replace(/_/g, '').substr(0,4);
+
+            let chainid = ic.structures[structure][0];
+
+            ic.hAtoms = me.hashUtilsCls.unionHash(selAtoms, ic.chains[chainid]);
+
+            // align the template with the selection
+            me.cfg.aligntool = 'tmalign';
+            await ic.realignParserCls.realignOnStructAlign();
+            thisClass.setLogCmd('realign on tmalign', true);   
          });
 
          me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();

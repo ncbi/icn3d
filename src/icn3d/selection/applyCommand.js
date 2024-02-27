@@ -291,11 +291,17 @@ class ApplyCommand {
           await ic.annotationCls.setAnnoTabTransmem();
       }
       else if(command == 'set annotation ig') {
+          ic.bRunRefnumAgain = true;
           await ic.annotationCls.setAnnoTabIg();
+          // ic.bRunRefnumAgain = false;
       }
       else if(command == 'ig refnum on') {
+        ic.bRunRefnumAgain = true;
+
         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
         await ic.annotationCls.setAnnoTabIg(true);
+
+        // ic.bRunRefnumAgain = false;
     }
       else if(command == 'highlight level up') {
           ic.resid2specCls.switchHighlightLevelUp();
