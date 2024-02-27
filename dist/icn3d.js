@@ -39100,6 +39100,7 @@ var icn3d = (function (exports) {
 
                         let result = ic.domain3dCls.c2b_NewSplitChain(atoms);
                         let subdomains = result.subdomains;
+                        let pos2resi = result.pos2resi;
                         //let substruct = result.substruct;
                         //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
 
@@ -39114,6 +39115,8 @@ var icn3d = (function (exports) {
 
                             data.domains[chainid].domains.push(domain);
                         }
+
+                        data.domains[chainid].pos2resi = pos2resi;
                     }
                 }
 
@@ -39150,7 +39153,7 @@ var icn3d = (function (exports) {
             let html = '<div id="' + ic.pre + chnid + '_domainseq_sequence" class="icn3d-dl_sequence">';
             let html2 = html;
             let html3 = html;
-            let domainArray, proteinname;
+            let domainArray, pos2resi, proteinname;
             let pos = chnid.indexOf('_');
             let chain = chnid.substr(pos + 1);
             // MMDB symmetry chain has the form of 'A1'
@@ -39158,9 +39161,11 @@ var icn3d = (function (exports) {
                 chain = chain.substr(0, chain.length - 1);
             }
 
-            if(bCalcDirect) {
+            // if(bCalcDirect) {
                 proteinname = chnid;
                 domainArray = (data.domains[chnid]) ? data.domains[chnid].domains : [];
+                pos2resi = data.domains[chnid].pos2resi;
+    /*            
             }
             else {
                 let molinfo = data.moleculeInfor;
@@ -39179,6 +39184,7 @@ var icn3d = (function (exports) {
                     domainArray = [];
                 }
             }
+    */        
 
             for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
                 //var fulltitle = '3D domain ' +(index+1).toString() + ' of ' + proteinname + '(PDB ID: ' + data.pdbId + ')';
@@ -39192,8 +39198,11 @@ var icn3d = (function (exports) {
                 let resCnt = 0;
 
                 for(let i = 0, il = subdomainArray.length; i < il; ++i) {
-                    let domainFrom = Math.round(subdomainArray[i][0]) - 1; // convert 1-based to 0-based
-                    let domainTo = Math.round(subdomainArray[i][1]) - 1;
+                    // let domainFrom = Math.round(subdomainArray[i][0]) - 1; // convert 1-based to 0-based
+                    // let domainTo = Math.round(subdomainArray[i][1]) - 1;
+                    let domainFrom = Math.round(subdomainArray[i][0]); // convert 1-based to 0-based
+                    let domainTo = Math.round(subdomainArray[i][1]);
+
                     if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
                         continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
                     }
@@ -39204,8 +39213,8 @@ var icn3d = (function (exports) {
 
                     // use the NCBI residue number, and convert to PDB residue number during selection
                     // if(ic.bNCBI || bCalcDirect) {
-                        fromArray.push(domainFrom);
-                        toArray.push(domainTo);
+                        fromArray.push(pos2resi[domainFrom]);
+                        toArray.push(pos2resi[domainTo]);
                     // }
                     // else {
                     //     fromArray.push(domainFrom + ic.baseResi[chnid]);
@@ -39214,7 +39223,9 @@ var icn3d = (function (exports) {
 
                     resCnt += domainTo - domainFrom + 1;
                     for(let j = domainFrom; j <= domainTo; ++j) {
-                        resiHash[j+1] = 1;
+                        // resiHash[j+1] = 1;
+                        let resi = pos2resi[j];
+                        resiHash[resi] = 1;
                     }
                 }
 
@@ -39230,7 +39241,8 @@ var icn3d = (function (exports) {
                         for(let j = from; j <= to; ++j) {
                             // 0-based
                             let obj = {};
-                            let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                            // let resi = ic.ParserUtilsCls.getResi(chnid, j);
+                            let resi = pos2resi[j];
                             obj[chnid + '_' + resi] = domainName;
                             ic.resid2domain[chnid].push(obj);
                         }
@@ -39251,7 +39263,8 @@ var icn3d = (function (exports) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
                   //if(i >= domainFrom && i <= domainTo) {
                   let resi = ic.ParserUtilsCls.getResi(chnid, i);
-                  if(resiHash.hasOwnProperty(i+1)) {
+                //   if(resiHash.hasOwnProperty(i+1)) {
+                  if(resiHash.hasOwnProperty(resi)) {
                       let cFull = ic.giSeq[chnid][i];
                       let c = cFull;
                       if(cFull.length > 1) {
@@ -40896,7 +40909,7 @@ var icn3d = (function (exports) {
     		// get a list of Calpha-Calpha contacts
     		///list< pair< pair< int, let >, let > >
     		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
-    	
+
     		//
     		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
     		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE

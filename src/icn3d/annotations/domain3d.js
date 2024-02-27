@@ -749,7 +749,7 @@ class Domain3d {
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
 		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
-	
+
 		//
 		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
 		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE
