@@ -1393,8 +1393,24 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_igrefTpl' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_igrefTpl', 'Choose an Ig template');
         html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template for selected residues:</span> <br><br><select id='" + me.pre + "refTpl'>";
+        html += this.setTemplateMenu();
+        html += "</select><br><br><span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "mn6_igrefTpl_apply'>Show Ig Ref. Number</button></span>";
+        html += "</div>";
 
-        //html += me.htmlCls.setHtmlCls.getOptionHtml(['0', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100'], 3);
+        html += me.htmlCls.divStr + "dl_alignrefTpl' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_alignrefTpl', 'Align with an Ig template');
+        html += "<span style='white-space:nowrap;font-weight:bold;'>Choose an Ig template to align with selected residues:</span> <br><br><select id='" + me.pre + "refTpl2'>";
+        html += this.setTemplateMenu();
+        html += "</select><br><br><span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "mn6_alignrefTpl_apply'>Align Template with Selection</button></span>";
+        html += "</div>";
+
+        html += "</div>";
+        html += "<!--/form-->";
+
+        return html;
+    }
+
+    setTemplateMenu()  { let me = this.icn3dui, ic = me.icn3d;
         let group2tpl = {};
         group2tpl['V'] = ['CD28_1yjdC_human_V', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'ICOS_6x4gA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V'];
         group2tpl['C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-HEAVY_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2', 'VTCN1_Q7Z7D3_human_V-n2'];
@@ -1408,6 +1424,7 @@ class SetDialog {
 
         group2tpl['Other'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
 
+        let html = '';
         for(let group in group2tpl) {
             html += "<optgroup label='" + group + "'>";
             for(let i = 0, il = group2tpl[group].length; i < il; ++i) {
@@ -1416,12 +1433,6 @@ class SetDialog {
             }
             html += "</optgroup>";
         }
-
-        html += "</select><br><br><span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "mn6_igrefTpl_apply'>Show Ig Ref. Number</button></span>";
-        html += "</div>";
-
-        html += "</div>";
-        html += "<!--/form-->";
 
         return html;
     }
@@ -1460,10 +1471,12 @@ class SetDialog {
         html += "<td></td>";
         html += "</tr><tr>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ig'>Ig Domains" + me.htmlCls.space2 + "</span></td>";
+*/
+
 
         html += "<td></td>";
         html += "</tr></table></div></div>";
-*/
+
         return html;
     }
 }

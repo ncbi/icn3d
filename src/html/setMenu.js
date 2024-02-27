@@ -1762,10 +1762,13 @@ class SetMenu {
 /*
             html += this.getLink('mn6_igrefYes', 'Show Ig for Selection', undefined, 2);
             html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
+            html += this.getLink('mn6_alignrefTpl', 'Align w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Reset Ig Ref. Number', undefined, 2);
 
             html += this.getMenuSep();
 */
+
+
 
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";

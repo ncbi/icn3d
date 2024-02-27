@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.30.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.5.zip) was release on February 27, 2024. Calculate 3D domains on-the-fly and show 3D domains even when only one domain is available.
+
 [icn3d-3.29.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.5.zip) was release on February 5, 2024. Added an option to load  MTZ files from RCSB to show electrondensity maps; fixed a bug in saving sets; fixed a bug in the replay of rotating structures with a matrix.
 
 [icn3d-3.29.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.29.4.zip) was release on January 19, 2024. Added the options to translate the coordinates (View > Translate XYZ) and rotate the coordinates with a matrix (View > Rotate with Matrix).

@@ -42,7 +42,11 @@ class Annotation {
         this.updateSsbond();
         this.updateCrosslink();
         await this.updateTransmem();
+
+        ic.bRunRefnumAgain = true;
         await this.updateIg();
+        // ic.bRunRefnumAgain = false;
+
         this.updateInteraction();
     }
     hideAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -124,10 +128,13 @@ class Annotation {
             $("[id^=" + ic.pre + "transmem]").show();
         }
         if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
-            ic.bRunRefnum = false;
+            // ic.bRunRefnumAgain = true;
+
             await this.updateIg();
 
             $("[id^=" + ic.pre + "ig]").show();
+
+            // ic.bRunRefnumAgain = false;
         }
     }
     setAnnoTabCustom() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -388,12 +395,15 @@ class Annotation {
 
         me.myEventCls.onIds("#" + ic.pre + "anno_ig", "click", async function(e) {
             if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
-                if(Object.keys(ic.atoms).length > Object.keys(ic.hAtoms).length) {
-                    ic.bRunRefnum = false;
-                }
+                // if(Object.keys(ic.atoms).length > Object.keys(ic.hAtoms).length) {
+                //     ic.bRunRefnum = false;
+                // }
 
+                ic.bRunRefnumAgain = true;
                 await thisClass.setAnnoTabIg();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation ig", true);
+
+                // ic.bRunRefnumAgain = false;
             }
             else{
                 thisClass.hideAnnoTabIg();
@@ -586,12 +596,13 @@ class Annotation {
         // ic.bIgShown = true;
 
         if(ic.bShowRefnum) {
-            ic.opts.color = 'ig strand';
-            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+            // ic.opts.color = 'ig strand';
+            // ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
             ic.hlUpdateCls.updateHlAll();
             ic.drawCls.draw();
-        }    
+        } 
+  
     }
 }
 

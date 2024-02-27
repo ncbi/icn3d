@@ -313,7 +313,7 @@ class AnnoCddSite {
                 let fromArray = [], toArray = [];
                 let resiHash = {}
                 let resCnt = 0;
-                let segArray =(type == 'domain') ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
+                let segArray =(type == 'domain' || type == 'ig') ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
                 for(let s = 0, sl = segArray.length; s < sl; ++s) {
                     let domainFrom = Math.round(segArray[s].from);
                     let domainTo = Math.round(segArray[s].to);
@@ -413,21 +413,20 @@ class AnnoCddSite {
 
                 if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
 
-                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-                let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-                let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
-
                 if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
 
                 if(me.cfg.blast_rep_id != chnid) { // regular
+                    let color;
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
+                        if(i == 0) color = this.getColorFromPos(chnid, fromArray[i], titleArray);
+        
                         let emptyWidth;
-                        if(titleArray) {
+                        // if(titleArray) {
                             emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
-                        }
-                        else {
-                            emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
-                        }
+                        // }
+                        // else {
+                        //     emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+                        // }
 
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                         html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle ' + linkStr + '" ' + type + '="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
@@ -446,6 +445,8 @@ class AnnoCddSite {
                         toArray2.push(toArray[i]);
                     }
                     for(let i = 0, il = fromArray2.length; i < il; ++i) {
+                        let color = this.getColorFromPos(chnid, fromArray2[i], titleArray);
+        
                         html2 += ic.showSeqCls.insertGapOverview(chnid, fromArray2[i]);
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray2[i] - ic.baseResi[chnid] - 1) /(ic.maxAnnoLength + ic.nTotalGap)) : Math.round(ic.seqAnnWidth *(fromArray2[i] - toArray2[i-1] - 1) /(ic.maxAnnoLength + ic.nTotalGap));
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -470,6 +471,24 @@ class AnnoCddSite {
     // getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
     //     return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
     // }
+    getColorFromPos(chainid, pos, bIg) { let ic = this.icn3d, me = ic.icn3dui;
+        let color;
+
+        let resid =  chainid + '_' + ic.ParserUtilsCls.getResi(chainid, pos);
+        // if(!bIg) {
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            let colorStr =(!atom || atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+            color =(atom && atom.color !== undefined) ? colorStr : "CCCCCC";
+        // }
+        // else {
+            // let refnumLabel = ic.resid2refnum[resid];
+            // let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+            // let currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
+            // color = ic.annoIgCls.getRefnumColor(currStrand, true).substr(1);
+        // }
+
+        return color;
+    }
 
     showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';

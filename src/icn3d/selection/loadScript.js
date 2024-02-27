@@ -177,9 +177,7 @@ class LoadScript {
           // }
           else if(command.indexOf('ig template') == 0 ) { 
             let template = command.substr(command.lastIndexOf(' ') + 1);
-            // await ic.refnumCls.showIgRefNum(template);
-            if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
-            await ic.annotationCls.setAnnoTabIg(true, template);
+            await me.htmlCls.clickMenuCls.setIgTemplate(template);
           }
           else if(command.indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
               if(Object.keys(ic.proteins).length > 0) {
@@ -382,8 +380,12 @@ class LoadScript {
                     }
                     else if(lastCommand.indexOf('ig refnum on') == 0) {
                         // await ic.refnumCls.showIgRefNum();
+                        ic.bRunRefnumAgain = true;
+
                         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                         await ic.annotationCls.setAnnoTabIg(true);
+
+                        // ic.bRunRefnumAgain = false;
                     }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);

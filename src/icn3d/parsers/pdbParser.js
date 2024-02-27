@@ -49,7 +49,7 @@ class PdbParser {
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", "xyz", "icn3dpng", or "pae" 
     //for pdb file, mol2file, sdf file, xyz file, iCn3D PNG image, and ALphaFold PAE file, respectively.
-    async downloadUrl(url, type, command) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadUrl(url, type, command, template) { let ic = this.icn3d, me = ic.icn3dui;
         let pos = url.lastIndexOf('/');
         if(pos != -1) {
             let posDot = url.lastIndexOf('.');
@@ -67,9 +67,19 @@ class PdbParser {
         ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
         ic.InputfileType = type;
 
+        // append
+        ic.hAtoms = {};
+        ic.dAtoms = {};
+
+        ic.resetConfig();
+        ic.bResetAnno = true;
+        ic.bResetSets = true;
+
         if(type === 'pdb') {
-            await this.loadPdbData(data);
-            //await ic.loadScriptCls.loadScript(command, undefined, true);
+            // await this.loadPdbData(data);
+            let bAppend = true;
+            let id = (template) ? template.replace(/_/g, '').substr(0, 4) : undefined;
+            await this.loadPdbData(data, id, undefined, bAppend);
         }
         else if(type === 'mmcif') {
             let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
@@ -96,6 +106,17 @@ class PdbParser {
             me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
             let bFull = true;
             ic.contactMapCls.processAfErrorMap(JSON.parse(data), bFull);
+        }
+
+        //append
+        if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+
+        ic.bResetAnno = true;
+
+        if(ic.bAnnoShown) {
+            await ic.showAnnoCls.showAnnotations();
+
+            ic.annotationCls.resetAnnoTabAll();
         }
     }
 

@@ -23,7 +23,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.29.0',
+    version='3.30.0',
 
     description='An IPython interface for embedding iCn3D viewer',
     long_description=long_description,

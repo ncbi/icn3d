@@ -7,6 +7,10 @@ class Domain3d {
     constructor(icn3d) {
 		this.icn3d = icn3d;
 
+		this.init3ddomain();
+	}
+
+	init3ddomain() { let ic = this.icn3d, me = ic.icn3dui;
         //this.dcut = 8; // threshold for C-alpha interactions
 
 		// It seemed the threshold 7 angstrom works better
@@ -14,7 +18,8 @@ class Domain3d {
 		this.dcut = 8; // threshold for C-alpha interactions
 
 		// added by Jiyao
-		this.min_contacts = 5; //3;			// minimum number of contacts to be considered as neighbors
+		// pdbid 1CD8 requires a min contact 4, not 5
+		this.min_contacts = 4; //5; //3;			// minimum number of contacts to be considered as neighbors
 
 		this.MAX_SSE = 512;
 
@@ -26,6 +31,7 @@ class Domain3d {
 
         //let this.elt_size[this.MAX_SSE];			// element sizes in residues
         this.elt_size = [];
+
         this.elt_size.length = this.MAX_SSE;
 
         //let this.group_num[this.MAX_SSE];			// indicates required element groupings
@@ -639,6 +645,8 @@ class Domain3d {
 	// x0, y0, z0: array of x,y,z coordinates of C-alpha atoms
 	//c2b_NewSplitChain(chnid, dcut) { let ic = this.icn3d, me = ic.icn3dui;
 	c2b_NewSplitChain(atoms, dcut) { let ic = this.icn3d, me = ic.icn3dui;
+		this.init3ddomain();
+
 		let x0 = [], y0 = [], z0 = [], resiArray = [];
 
 		//substruct: array of secondary structures, each of which has the keys: From (1-based), To (1-based), Sheet (0 or 1), also add these paras: x1, y1, z1, x2, y2, z2
@@ -741,7 +749,7 @@ class Domain3d {
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
 		let cts = this.c2b_AlphaContacts(seqLen, x0, y0, z0, dcut, resiArray);
-		
+	
 		//
 		// Produce a "map" of the SSEs, i.e. vec_sse[i] = 0 means residue i + 1
 		// is in a loop, and vec_sse[i] = k means residue i + 1 belongs to SSE
@@ -802,7 +810,7 @@ class Domain3d {
 			vec_cts1.push(i + 1);
 			vec_cts2.push(i + 1);
 		}
-		
+
 		// create contact counts from the contacts/interactions
 		//map< pair< int, let >, let > ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
 		let ctable = this.c2b_ContactTable(vec_cts1, vec_cts2);
@@ -826,7 +834,7 @@ class Domain3d {
 				sheetNeighbor[ss2][ss1] = 1;
 			}
 		}
-	
+
 		//https://www.geeksforgeeks.org/number-groups-formed-graph-friends/
 		let existing_groups = 0;
 		let sheet2sheetnum = {};
@@ -954,7 +962,7 @@ class Domain3d {
 			this.parts[2*i] = this.parts[2*i + 1] = 0;
 			ratios[i] = 0.0;
 		}
-		
+
 		n_saved = this.new_split_chain(nsse, sratio, minSize, minSSE, maxCsz, avgCts, cDelta, ncFact, this.parts, n_saved, ratios);
 
 		// save domain data
@@ -1001,6 +1009,36 @@ class Domain3d {
 		}
 		
 		list_parts = list_partsTmp;
+
+		// if there is only one domain, add all
+		if(list_parts.length == 0) {
+			let groupnum2cnt = {}, groupnum2sseList = {}, chosenGroupnum = 0;
+			for(let i = 0, il = this.group_num.length; i < il; ++i) {
+				let groupnum = this.group_num[i];
+				let sse = i + 1;
+				if(groupnum && groupnum != i + 1) {
+					if(!groupnum2sseList[groupnum]) groupnum2sseList[groupnum] = [];
+					// collect all sse for this groupnum
+					groupnum2sseList[groupnum].push(sse);
+
+					if(!groupnum2cnt[groupnum]) {
+						groupnum2cnt[groupnum] = 1;
+					}
+					else {
+						++groupnum2cnt[groupnum];
+						if(groupnum2cnt[groupnum] >= 3) { // minimum 3 sse
+							chosenGroupnum = groupnum;
+						}
+					}
+				}
+			}
+
+			if(chosenGroupnum != 0) { // found a domain
+				let sseArray = [chosenGroupnum].concat(groupnum2sseList[chosenGroupnum])
+
+				list_parts.push(sseArray);
+			}
+		}
 
 		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
 		for (let index = 0, indexl = list_parts.length; index < indexl; ++index) {
@@ -1139,7 +1177,7 @@ class Domain3d {
 					ic.tddomains[domainName][resid] = 1;
 				}
 			}
-		}			
+		}
 
 		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
 	} // end c2b_NewSplitChain
