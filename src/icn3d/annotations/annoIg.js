@@ -317,10 +317,15 @@ class AnnoIg {
             if(!info) continue;
 
             let tmscore = info.score;
-            let igType = ic.ref2igtype[info.refpdbname];
-            let confidance = (parseFloat(tmscore) < 0.75 ) ? '?' : '';
-            titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+            // let igType = ic.ref2igtype[info.refpdbname];
+            // let confidance = (parseFloat(tmscore) < 0.75 ) ? '?' : '';
+            // titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
+            // fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+
+            let igType = (parseFloat(tmscore) < 0.75 ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+            titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+
             domainArray.push(igType);
 
             let segs = [];

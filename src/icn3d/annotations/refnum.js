@@ -441,7 +441,7 @@
                     if(endResi > maxResi) maxResi = endResi;
 
                     for(let n = startResi; n <= endResi; ++n) {
-                        let resid = chainid + '_' + pos2resi[n];
+                        let resid = chainid + '_' + pos2resi[n - 1];
                         ++resCnt;
                         domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
 
@@ -463,7 +463,7 @@
                     let startResi = segArray[m];
                     let endResi = segArray[m+1];
                     for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                        let resid = chainid + '_' + pos2resi[n];
+                        let resid = chainid + '_' + pos2resi[n - 1];
                         //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                         ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum;
                     }
@@ -1585,19 +1585,25 @@
         }
 
         // 2b. remove strands with less than 3 residues except G strand
+        let removeDomainidHash = {};
         for(let il = strandArray.length, i = il - 1; i >= 0; --i) {
-            let strandTmp = strandArray[i].strand.substr(0, 1);
+            // let strandTmp = strandArray[i].strand.substr(0, 1);
+            let strandTmp = strandArray[i].strand;
             if(strandTmp != 'G' && strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
-                if(strandTmp == 'B' || strandTmp == 'C' || strandTmp == 'E' || strandTmp == 'F') {
-                    if(!me.bNode) console.log("Some of the Ig strands B, C, E, F are removed since they are too short...");
-                    return false;
-                }
-
                 if(i != il - 1) { // modify 
                     strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + parseInt(strandArray[i].endResi) - parseInt(strandArray[i].startResi) + 1;
                 }
 
                 strandArray.splice(i, 1);
+
+                if(strandTmp == 'B' || strandTmp == 'C' || strandTmp == 'E' || strandTmp == 'F') {
+                    if(!me.bNode) console.log("Ig strand " + strandTmp + " is removed since it is too short...");
+                    
+                    let resid = chnid + '_' + strandArray[i].startResi;
+                    let domainid = ic.resid2domainid[resid];
+                    removeDomainidHash[domainid] = 1;
+                    continue;
+                }
             }
         }
 
@@ -1786,6 +1792,14 @@
 
                 prevStrand = currStrand;
                 prevStrandCnt = strandCnt - 1;
+
+                // remove domians without B,C,E,F strands
+                if(removeDomainidHash.hasOwnProperty(domainid)) {
+                    delete ic.resid2refnum[residueid];
+                    delete ic.resid2domainid[residueid];
+
+                    continue;
+                }
 
                 // assign the adjusted reference numbers
                 ic.resid2refnum[residueid] = refnumLabel;

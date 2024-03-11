@@ -1424,12 +1424,69 @@ class SetDialog {
 
         group2tpl['Other'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
 
+        let tpl2strandsig = {};
+        tpl2strandsig['ASF1A_2iijA_human']                          = "A A' B C C' E F G G+";
+        tpl2strandsig['B2Microglobulin_7phrL_human_C1']             = "A B C C' D E F G";
+        tpl2strandsig['BArrestin1_4jqiA_rat_n1']                    = "A- A A' B C C' E F G";
+        tpl2strandsig['BTLA_2aw2A_human_Iset']                      = "A A' B C C' D E F G";
+        tpl2strandsig['C3_2qkiD_human_n1']                          = "A A' B C C' E F G";
+        tpl2strandsig['CD19_6al5A_human_C2orV-n1']                  = "A' B C C' D E F G";
+        tpl2strandsig['CD28_1yjdC_human_V']                         = "A A' B C C' C'' D E F G";
+        tpl2strandsig['CD2_1hnfA_human_C2-n2']                      = "A B C C' E F G";
+        tpl2strandsig['CD2_1hnfA_human_V-n1']                       = "A' B C C' C'' D E F G";
+        tpl2strandsig['CD3d_6jxrd_human_Iset']                      = "A B C D E F G";
+        tpl2strandsig['CD3e_6jxrf_human_Iset']                      = "A B C C' D E F G";
+        tpl2strandsig['CD3g_6jxrg_human_Iset']                      = "A B C C' E F G G+";
+        tpl2strandsig['CD8a_1cd8A_human_V']                         = "A A' B C C' C'' D E F G";
+        tpl2strandsig['CoAtomerGamma1_1r4xA_human']                 = "A- A B C D E F G";
+        tpl2strandsig['Contactin1_2ee2A_human_FN3-n9']              = "A A' B C C' E F G";
+        tpl2strandsig['Contactin1_3s97C_human_C2-n2']               = "A A' B C D E F G";
+        tpl2strandsig['CuZnSuperoxideDismutase_1hl5C_human']        = "A- A B C C' E F G";
+        tpl2strandsig['ECadherin_4zt1A_human_n2']                   = "A' B C D E F G";
+        tpl2strandsig['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = "A--- A-- A- A B C C' C'' D E F G";
+        tpl2strandsig['FAB-HEAVY_5esv_C1-n2']                       = "A B C D E F G";
+        tpl2strandsig['FAB-HEAVY_5esv_V-n1']                        = "A B C C' C'' D E F G";
+        tpl2strandsig['FAB-LIGHT_5esv_C1-n2']                       = "A B C C' E F G";
+        tpl2strandsig['FAB-LIGHT_5esv_V-n1']                        = "A A' B C C' C'' D E F G";
+        tpl2strandsig['GHR_1axiB_human_FN3-n1']                     = "A B C C' D E F G";
+        tpl2strandsig['ICOS_6x4gA_human_V']                         = "A B C C' C'' D E F G";
+        tpl2strandsig['IL6Rb_1bquB_human_FN3-n2']                   = "A B C C' E F G";
+        tpl2strandsig['IL6Rb_1bquB_human_FN3-n3']                   = "A B C C' E F G";
+        tpl2strandsig['InsulinR_8guyE_human_FN3-n1']                = "A B C C' E F G";
+        tpl2strandsig['InsulinR_8guyE_human_FN3-n2']                = "A B C C' E F G";
+        tpl2strandsig['IsdA_2iteA_bacteria']                        = "A- A B C C' D E F G";
+        tpl2strandsig['JAM1_1nbqA_human_VorIset-n2']                = "A A' B C C' D E F G";
+        tpl2strandsig['LAG3_7tzgD_human_C2-n2']                     = "A A' B C C' D E F G";
+        tpl2strandsig['LAG3_7tzgD_human_V-n1']                      = "A' B C C' D E F G";
+        tpl2strandsig['LaminAC_1ifrA_human']                        = "A- A B C C' E E+ F G";
+        tpl2strandsig['MHCIa_7phrH_human_C1']                       = "A B C C' D E F G";
+        tpl2strandsig['MPT63_1lmiA_bacteria']                       = "A-- A- A BC C' E F G";
+        tpl2strandsig['NaCaExchanger_2fwuA_dog_n2']                 = "A A' B C C' E F G";
+        tpl2strandsig['NaKATPaseTransporterBeta_2zxeB_spurdogshark']= "A A' B C D E F G";
+        tpl2strandsig['ORF7a_1xakA_virus']                          = "A' B C D E F G";
+        tpl2strandsig['PD1_4zqkB_human_V']                          = "A A' B C C' D E F G";
+        tpl2strandsig['PDL1_4z18B_human_V-n1']                      = "A A' B C C' C'' D E F G";
+        tpl2strandsig['Palladin_2dm3A_human_Iset-n1']               = "A A' B C C' D E F G";
+        tpl2strandsig['RBPJ_6py8C_human_Unk-n1']                    = "A A' B C C' E F G";
+        tpl2strandsig['RBPJ_6py8C_human_Unk-n2']                    = "A B C D E F G";
+        tpl2strandsig['Sidekick2_1wf5A_human_FN3-n7']               = "A B C C' E F G";
+        tpl2strandsig['Siglec3_5j0bB_human_C2-n2']                  = "A A' B C D E F G";
+        tpl2strandsig['TCRa_6jxrm_human_C1-n2']                     = "A B C D E F G";
+        tpl2strandsig['TCRa_6jxrm_human_V-n1']                      = "A A' B C C' C'' D E F G";
+        tpl2strandsig['TEAD1_3kysC_human']                          = "A A+ A' B C C' E F G G+";
+        tpl2strandsig['TP34_2o6cA_bacteria']                        = "A- A B C C' D E F G";
+        tpl2strandsig['TP47_1o75A_bacteria']                        = "A B C C' D E F G";
+        tpl2strandsig['Titin_4uowM_human_Unk-n152']                 = "A A' B C C' D E F G";
+        tpl2strandsig['VISTA_6oilA_human_V']                        = "A A' B C C' C'' D E F G G+";
+        tpl2strandsig['VNAR_1t6vN_shark_V']                         = "A A' B C C' D E F G";
+        tpl2strandsig['VTCN1_Q7Z7D3_human_V-n2']                    = "A B C C' D E F G G+";
+
         let html = '';
         for(let group in group2tpl) {
             html += "<optgroup label='" + group + "'>";
             for(let i = 0, il = group2tpl[group].length; i < il; ++i) {
                 let template = group2tpl[group][i];
-                html += me.htmlCls.optionStr + "'" + template + "'>" + template + "</option>";
+                html += me.htmlCls.optionStr + "'" + template + "'>" + template  + ", Strands: " + tpl2strandsig[template] + "</option>";
             }
             html += "</optgroup>";
         }

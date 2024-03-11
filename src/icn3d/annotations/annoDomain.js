@@ -139,16 +139,14 @@ class AnnoDomain {
             let title =(fulltitle.length > 17) ? fulltitle.substr(0,17) + '...' : fulltitle;
             let subdomainArray = domainArray[index].intervals;
             // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-            let domainFromHash = {}, domainToHash = {}
-            let fromArray = [], toArray = [];
-            let resiHash = {}
-            let resCnt = 0
+            let domainFromHash = {}, domainToHash = {};
+            let fromArray = [], toArray = [], posFromArray = [], posToArray = [];
+            let resiHash = {};
+            let resCnt = 0;
 
             for(let i = 0, il = subdomainArray.length; i < il; ++i) {
-                // let domainFrom = Math.round(subdomainArray[i][0]) - 1; // convert 1-based to 0-based
-                // let domainTo = Math.round(subdomainArray[i][1]) - 1;
-                let domainFrom = Math.round(subdomainArray[i][0]); // convert 1-based to 0-based
-                let domainTo = Math.round(subdomainArray[i][1]);
+                let domainFrom = Math.round(subdomainArray[i][0]) - 1; // convert 1-based to 0-based
+                let domainTo = Math.round(subdomainArray[i][1]) - 1;
 
                 if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
                     continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
@@ -162,6 +160,9 @@ class AnnoDomain {
                 // if(ic.bNCBI || bCalcDirect) {
                     fromArray.push(pos2resi[domainFrom]);
                     toArray.push(pos2resi[domainTo]);
+
+                    posFromArray.push(domainFrom);
+                    posToArray.push(domainTo);
                 // }
                 // else {
                 //     fromArray.push(domainFrom + ic.baseResi[chnid]);
@@ -182,9 +183,9 @@ class AnnoDomain {
                             
                 if(!ic.resid2domain) ic.resid2domain = {};
                 if(!ic.resid2domain[chnid]) ic.resid2domain[chnid] = [];
-                for(let i = 0, il = fromArray.length; i < il; ++i) {
-                    let from = parseInt(fromArray[i]);
-                    let to = parseInt(toArray[i]);
+                for(let i = 0, il = posFromArray.length; i < il; ++i) {
+                    let from = parseInt(posFromArray[i]);
+                    let to = parseInt(posToArray[i]);
                     for(let j = from; j <= to; ++j) {
                         // 0-based
                         let obj = {};
@@ -196,7 +197,7 @@ class AnnoDomain {
                 }
             }
 
-            let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+            let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + posFromArray + '" to="' + posToArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
             let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
             html3 += htmlTmp2 + htmlTmp3 + '<br>';
             let htmlTmp = '<span class="icn3d-seqLine">';
@@ -236,12 +237,12 @@ class AnnoDomain {
             if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
 
             if(me.cfg.blast_rep_id != chnid) { // regular
-                for(let i = 0, il = fromArray.length; i < il; ++i) {
+                for(let i = 0, il = posFromArray.length; i < il; ++i) {
                     // let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
-                    let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+                    let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(posFromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(posFromArray[i] - posToArray[i-1] - 1) / ic.maxAnnoLength);
 
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' +(index+1).toString() + '</div>';
+                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(posToArray[i] - posFromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + posFromArray + '" to="' + posToArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' +(index+1).toString() + '</div>';
                 }
             }
             else { // with potential gaps

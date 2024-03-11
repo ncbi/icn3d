@@ -667,7 +667,7 @@ class Domain3d {
 
 		let substructItem = {};
 		let resiOffset = 0;
-		let pos2resi = {};
+		let pos2resi = {}; // 0-based
 		let dummyCoord = -100000;
 		for(let i = 0; i < residueArray.length; ++i) {
 			let resid = residueArray[i];
@@ -700,7 +700,8 @@ class Domain3d {
 
 			//resiArray.push(resi);
 			resiArray.push(i+1);
-			pos2resi[i+1] = resi;
+			// pos2resi[i+1] = resi;
+			pos2resi[i] = resi;
 
 			ic.posid2resid[atom.structure + '_' + atom.chain + '_' + (i+1).toString()]  = resid;
 			// let residNCBI = ic.resid2ncbi[resid];
@@ -1222,8 +1223,8 @@ class Domain3d {
 					//ss: sstype	ss_start	ss_end	x1	y1	z1	x2	y2	z2
 						//sstype: 1 (helix), 2 (sheet)
 					let sstype = (substruct[k].Sheet) ? 2 : 1;
-					let from = pos2resi[substruct[k].From];
-					let to = pos2resi[substruct[k].To];
+					let from = pos2resi[substruct[k].From - 1]; // 1-based to 0-based
+					let to = pos2resi[substruct[k].To - 1];
 
 					// 1-based residue numbers
 					let fromPos = substruct[k].From;

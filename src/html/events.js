@@ -334,6 +334,7 @@ class Events {
            me.htmlCls.HEIGHT = $( window ).height();
            ic.applyCenterCls.setWidthHeight(me.htmlCls.WIDTH, me.htmlCls.HEIGHT);
            ic.drawCls.draw();
+
            ic.resizeCanvasCls.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
 
