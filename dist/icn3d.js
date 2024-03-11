@@ -67156,7 +67156,7 @@ var icn3d = (function (exports) {
                         let endResi = parseInt(segArray[m+1]);
 
                         for(let n = startResi; n <= endResi; ++n) {
-                            let resid = chainid + '_' + pos2resi[n];
+                            let resid = chainid + '_' + pos2resi[n - 1];
                             ++resCnt;
                             domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
 
@@ -67178,7 +67178,7 @@ var icn3d = (function (exports) {
                         let startResi = segArray[m];
                         let endResi = segArray[m+1];
                         for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                            let resid = chainid + '_' + pos2resi[n];
+                            let resid = chainid + '_' + pos2resi[n - 1];
                             //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
                             ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum;
                         }
