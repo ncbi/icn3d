@@ -50,14 +50,14 @@ class ResizeCanvas {
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
           if(elem.requestFullscreen) {
             elem.requestFullscreen();
-          } else if(elem.mozRequestFullScreen) { /* Firefox */
+          } else if(elem.mozRequestFullScreen) { // Firefox
             elem.mozRequestFullScreen();
-          } else if(elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+          } else if(elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
             elem.webkitRequestFullscreen();
-          } else if(elem.msRequestFullscreen) { /* IE/Edge */
+          } else if(elem.msRequestFullscreen) { // IE/Edge
             elem.msRequestFullscreen();
           }
-      }
+      }    
     }
 
     //Rotate the structure in one of the directions: "left", "right", "up", and "down".

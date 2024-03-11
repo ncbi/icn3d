@@ -100,7 +100,8 @@ class Axes {
     createArrow(dir, origin, axisLen, color, headLength, headWidth, bGlycan) {  let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
-        let coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
+        // let coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
+        let coneGeometry = new THREE.CylinderGeometry( 0, 0.5, 1, 32, 1 );
         //coneGeometry.translate( 0, - 0.5, 0 );
         coneGeometry.translate( 0, 0.5, 0 );
         let material;

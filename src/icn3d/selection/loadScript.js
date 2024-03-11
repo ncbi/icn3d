@@ -81,6 +81,27 @@ class LoadScript {
         return nameArray;
     }
 
+    updateTransformation(steps) { let ic = this.icn3d, me = ic.icn3dui;
+      let commandTransformation = (ic.commands[steps-1]) ? ic.commands[steps-1].split('|||') : [];
+
+      if(commandTransformation.length == 2) {
+          let transformation = JSON.parse(commandTransformation[1]);
+
+          ic._zoomFactor = transformation.factor;
+
+          ic.mouseChange.x = transformation.mouseChange.x;
+          ic.mouseChange.y = transformation.mouseChange.y;
+
+          ic.quaternion._x = transformation.quaternion._x;
+          ic.quaternion._y = transformation.quaternion._y;
+          ic.quaternion._z = transformation.quaternion._z;
+          ic.quaternion._w = transformation.quaternion._w;
+      }
+
+      // ic.bRender = true;
+      ic.drawCls.draw();
+    }
+
     async execCommandsBase(start, end, steps, bFinalStep) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
       let i;
@@ -260,7 +281,10 @@ class LoadScript {
             await thisClass.applyCommandGraphinteraction(command);
           }
           else if(command.indexOf('cartoon 2d domain') == 0) {
+            ic.bRender = true;
+            thisClass.updateTransformation(steps);
             await thisClass.applyCommandCartoon2d(command);
+            ic.bRender = false;
           }
           else if(command.indexOf('set half pae map') == 0) {
             await thisClass.applyCommandAfmap(command);
@@ -275,7 +299,10 @@ class LoadScript {
             let pos = command.lastIndexOf(' ');
             let type = command.substr(pos + 1);
     
+            ic.bRender = true;
+            thisClass.updateTransformation(steps);
             await ic.cartoon2dCls.draw2Dcartoon(type);
+            ic.bRender = false;
           }
           else if(command.indexOf('add msa track') == 0) {
             //add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList 
@@ -313,7 +340,7 @@ class LoadScript {
             await ic.applyCommandCls.applyCommand(ic.commands[i]);
           }
       }
-      
+
       //if(i === steps - 1) {
       if(i === steps || bFinalStep) {
           this.renderFinalStep(i);

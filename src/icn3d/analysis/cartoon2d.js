@@ -268,7 +268,7 @@ class Cartoon2d {
             idStr = idStr.substr(0, idStr.indexOf('-'));
         }
         else {
-            idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
+            idStr = idStr; //idStr.substr(idStr.lastIndexOf('_') + 1);
         }
 
         return idStr;
