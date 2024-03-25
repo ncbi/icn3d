@@ -51,7 +51,10 @@
           var cfg = getConfig();
           cfg.version = version;
 
-          if(cfg.mmtfid !== undefined) {
+          if(cfg.bcifid !== undefined) {
+              await setupViewer('bcifid', cfg.bcifid, cfg);
+          }
+          else if(cfg.mmtfid !== undefined) {
               await setupViewer('mmtfid', cfg.mmtfid, cfg);
           }
           else if(cfg.pdbid !== undefined) {

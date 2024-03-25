@@ -30,8 +30,6 @@ class AnnoIg {
         $("#" + ic.pre + "dt_" + type + "_" + chnid).html(html);
         $("#" + ic.pre + "ov_" + type + "_" + chnid).html(html2);
         $("#" + ic.pre + "tt_" + type + "_" + chnid).html(html3);
-
-        ic.bRunRefnumAgain = false;
     }
 
     showAllRefNum(giSeq, chnid) {  let ic = this.icn3d, me = ic.icn3dui;
@@ -322,7 +320,7 @@ class AnnoIg {
             // titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
             // fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
-            let igType = (parseFloat(tmscore) < 0.75 ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+            let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
             fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 

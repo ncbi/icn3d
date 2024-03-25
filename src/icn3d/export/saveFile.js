@@ -509,10 +509,10 @@ class SaveFile {
                 for(let n = 0; n < 3; ++n) {
                     let nNum = n + 1;
                     stru2header[stru] += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 0].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 4].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 8].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 12].toString().padStart(14, ' ') + "\n";
+                        + " " + ic.biomtMatrices[m].elements[n + 0].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 4].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 8].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 12].toFixed(6).toString().padStart(14, ' ') + "\n";
                 }
             }
         }

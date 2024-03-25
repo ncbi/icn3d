@@ -26,7 +26,8 @@ class PdbParser {
             }
         }
         else {
-            url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+            // url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+            url = "https://files.rcsb.org/download/" + pdbid + ".pdb";
             pdbid = pdbid.toUpperCase();
             ic.ParserUtilsCls.setYourNote(pdbid + '(PDB) in iCn3D');
         }
@@ -82,10 +83,17 @@ class PdbParser {
             await this.loadPdbData(data, id, undefined, bAppend);
         }
         else if(type === 'mmcif') {
-            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-            let dataObj = {'mmciffile': data};
-            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-            await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+            // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            // let dataObj = {'mmciffile': data};
+            // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+            // await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+
+            let bText = true;
+            // let bcifData = ic.bcifParserCls.getBcifJson(data, undefined, bText);
+            // let bcifJson = JSON.parse(bcifData);
+
+            // await ic.mmcifParserCls.loadMmcifData(bcifJson, undefined);
+            await ic.opmParserCls.loadOpmData(data, undefined, undefined, 'mmcif', undefined, bText);
         }
         else if(type === 'mol2') {
             await ic.mol2ParserCls.loadMol2Data(data);

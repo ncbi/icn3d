@@ -963,9 +963,9 @@ To find icn3d commands and functions, you can first generate a custom view in iC
             <td valign='top'>ic.mmdbParserCls.downloadMmdb</td>
         </tr>
         <tr>
-            <td width="240"><span class="indent">MMTF ID:</span></td>
-            <td valign='top'>load mmtf [1GPK]</td>
-            <td valign='top'>ic.mmtfParserCls.downloadMmtf</td>
+            <td width="240"><span class="indent">Binary CIF ID:</span></td>
+            <td valign='top'>load bcif [1GPK]</td>
+            <td valign='top'>ic.bcifParserCls.downloadBcif</td>
         </tr>
         <tr>
             <td valign='top'><span class="indent">PDB ID:</span></td>
@@ -1018,7 +1018,7 @@ To find icn3d commands and functions, you can first generate a custom view in iC
         </tr>
         <tr>
             <td valign='top'><span class="indent">URL (CORS):</span></td>
-            <td valign='top'>load url [https://files.rcsb.org/view/1gpk.pdb]</td>
+            <td valign='top'>load url [https://files.rcsb.org/download/1gpk.pdb]</td>
             <td valign='top'>ic.pdbParserCls.downloadUrl</td>
         </tr>
         <tr>
@@ -2810,7 +2810,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadPDBCls (parsers)</td><td>loadPDB, adjustSeq, setSsbond, getChainCalpha</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td><td>downloadMmcif, downloadMmcifSymmetry, loadMmcifData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td><td>parseMmdbData, downloadMmdb, downloadBlast_rep_id, loadMmdbOpmData</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td><td>downloadMmtf, parseMmtfData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>bcifParserCls (parsers)</td><td>downloadBcif, parseBcifData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td><td>loadMol2Data, loadMol2AtomData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td><td>downloadOpm, loadOpmData, setOpmData, parseAtomData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>ParserUtilsCls (parsers)</td><td>alignCoords, getMissingResidues, set2DDiagramsForAlign, set2DDiagramsForChainalign, parse2DDiagramsData, set2DDiagrams, showLoading, hideLoading, setYourNote, transformToOpmOri, transformToOpmOriForAlign, addOneDumAtom, addMemAtoms, setMaxD, renderStructure</td></tr>

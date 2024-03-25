@@ -28,7 +28,7 @@ class OpmParser {
     }
 
 
-    async loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadOpmData(data, pdbid, bFull, type, pdbid2, bText) { let ic = this.icn3d, me = ic.icn3dui;
         try {
              if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
@@ -36,10 +36,10 @@ class OpmParser {
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
     
             this.setOpmData(opmdata); // set ic.bOpm
-            await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
         catch(err) {
-            await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
     }
 
@@ -65,14 +65,31 @@ class OpmParser {
         }
     }
 
-    async parseAtomData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseAtomData(data, pdbid, bFull, type, pdbid2, bText) { let ic = this.icn3d, me = ic.icn3dui;
+        /*
         if(type === 'mmtf') {
-            await ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
-
-            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
         }
-        else if(type === 'mmcif') {
-            ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+        else if(type === 'bcif') {
+            await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
+        }
+        else 
+        */
+
+        if(type === 'mmcif') {
+            // ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+            ic.loadCIFCls.loadCIF(data, pdbid, bText);
+
+            if(ic.emd !== undefined) {
+              $("#" + ic.pre + "mapWrapper1").hide();
+              $("#" + ic.pre + "mapWrapper2").hide();
+              $("#" + ic.pre + "mapWrapper3").hide();
+            }
+            else {
+              $("#" + ic.pre + "emmapWrapper1").hide();
+              $("#" + ic.pre + "emmapWrapper2").hide();
+              $("#" + ic.pre + "emmapWrapper3").hide();
+            }
 
             if(Object.keys(ic.structures).length == 1) {
                 $("#" + ic.pre + "alternateWrapper").hide();
@@ -101,7 +118,7 @@ class OpmParser {
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
     
             await ic.ParserUtilsCls.renderStructure();
-    
+
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();

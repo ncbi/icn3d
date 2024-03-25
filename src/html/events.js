@@ -1730,18 +1730,24 @@ class Events {
                 let dataStr = e.target.result; // or = reader.result;
                 thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                 ic.molTitle = "";
-                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                //ic.bCid = undefined;
 
-                let dataObj = {'mmciffile': dataStr};
-                let data = await me.getAjaxPostPromise(url, dataObj, true);
+                // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+                // //ic.bCid = undefined;
+
+                // let dataObj = {'mmciffile': dataStr};
+                // let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                let bText = true;
+                // let bcifData = ic.bcifParserCls.getBcifJson(dataStr, undefined, bText);
+                // let data = JSON.parse(bcifData);
 
                 //ic.initUI();
                 ic.init();
                 ic.bInputfile = true;
                 ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
                 ic.InputfileType = 'mmcif';
-                await ic.mmcifParserCls.loadMmcifData(data); //await 
+                // await ic.mmcifParserCls.loadMmcifData(data); 
+                await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
              }
              reader.readAsText(file);
            }

@@ -645,7 +645,8 @@ class ParserUtils {
  
       // display the structure right away. load the mns and sequences later
       setTimeout(async function(){
-          if(ic.bInitial) {
+            if(ic.bInitial) {
+        //   if(!ic.bAnnoShown || ic.bResetAnno) {
             //   if(me.cfg.showsets) {
             //        ic.definedSetsCls.showSets();
             //   }
