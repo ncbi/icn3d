@@ -156,16 +156,16 @@ class LoadPDB {
                 //SSBOND   1 CYS E   48    CYS E   51                          2555
                 let chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
                 let resi1 = line.substr(17, 4).trim();
-                let resid1 = id + '_' + chain1 + '_' + resi1;
+                let resid1 = structure + '_' + chain1 + '_' + resi1;
 
                 let chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
                 let resi2 = line.substr(31, 4).trim();
-                let resid2 = id + '_' + chain2 + '_' + resi2;
+                let resid2 = structure + '_' + chain2 + '_' + resi2;
 
-                if(ic.ssbondpnts[id] === undefined) ic.ssbondpnts[id] = [];
+                if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
 
-                ic.ssbondpnts[id].push(resid1);
-                ic.ssbondpnts[id].push(resid2);
+                ic.ssbondpnts[structure].push(resid1);
+                ic.ssbondpnts[structure].push(resid2);
             } else if (record === 'REMARK') {
                  let remarkType = parseInt(line.substr(7, 3));
 
@@ -305,10 +305,9 @@ class LoadPDB {
                 let oriResi = line.substr(22, 5).trim();
 
                 let resi = oriResi; //parseInt(oriResi);
-                if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
-                  bModifyResi = true;
-                  //resi = (prevResi == 0) ? resi : prevResi + 1;
-                }
+                // if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
+                //   bModifyResi = true;
+                // }
 
                 if(bOpm && resn === 'DUM') {
                     elem = atom;
@@ -323,7 +322,7 @@ class LoadPDB {
                 oriResidueNum = chainNum + "_" + oriResi;
                 if(chainNum !== prevChainNum) {
                     prevResi = 0;
-                    bModifyResi = false;
+                    // bModifyResi = false;
                 }
 
                 residueNum = chainNum + "_" + resi;
@@ -542,8 +541,7 @@ class LoadPDB {
         // remove the reference
         lines = null;
 
-        let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.hAtoms);
-        let curChain = firstAtom.chain, curResi = firstAtom.resi, curInsc, curResAtoms = [];
+        let curChain, curResi, curInsc, curResAtoms = [];
       
         let pmin = new THREE.Vector3( 9999, 9999, 9999);
         let pmax = new THREE.Vector3(-9999,-9999,-9999);
@@ -551,10 +549,10 @@ class LoadPDB {
         let cnt = 0;
 
         // lipids may be considered as protein if "ATOM" instead of "HETATM" was used
-        let lipidResidHash = {}
+        let lipidResidHash = {};
 
         // assign atoms
-        let prevCarbonArray = [firstAtom]; // add a dummy atom
+        let prevCarbonArray = []; 
         //for (let i in ic.atoms) {
         for (let i in ic.hAtoms) {    
             let atom = ic.atoms[i];
@@ -563,6 +561,12 @@ class LoadPDB {
             pmin.min(coord);
             pmax.max(coord);
             ++cnt;
+
+            if(cnt == 1) {
+                curChain = atom.chain;
+                curResi = atom.resi;
+                prevCarbonArray.push(atom);
+            }
 
             if(!atom.het) {
               if($.inArray(atom.resn, me.parasCls.nucleotidesArray) !== -1) {
@@ -910,7 +914,9 @@ class LoadPDB {
         return {'chainresiCalphaHash': chainCalphaHash, 'center': ic.center.clone()}
     }
 
-    isSecondary(resid, residArray, bNMR) { let ic = this.icn3d, me = ic.icn3dui;
+    isSecondary(resid, residArray, bNMR, bNonFull) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bNonFull) return false;
+
         if(!bNMR) {
             return $.inArray(resid, residArray) != -1;
         }

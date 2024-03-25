@@ -91,7 +91,7 @@ import {Ccp4Parser} from './parsers/ccp4Parser.js';
 import {MtzParser} from './parsers/mtzParser.js';
 import {MmcifParser} from './parsers/mmcifParser.js';
 import {MmdbParser} from './parsers/mmdbParser.js';
-import {MmtfParser} from './parsers/mmtfParser.js';
+import {BcifParser} from './parsers/bcifParser.js';
 import {Mol2Parser} from './parsers/mol2Parser.js';
 import {OpmParser} from './parsers/opmParser.js';
 import {PdbParser} from './parsers/pdbParser.js';
@@ -103,6 +103,7 @@ import {ParserUtils} from './parsers/parserUtils.js';
 import {LoadAtomData} from './parsers/loadAtomData.js';
 import {SetSeqAlign} from './parsers/setSeqAlign.js';
 import {LoadPDB} from './parsers/loadPDB.js';
+import {LoadCIF} from './parsers/loadCIF.js';
 import {Vastplus} from './parsers/vastplus.js';
 
 import {ApplyCommand} from './selection/applyCommand.js';
@@ -567,6 +568,7 @@ class iCn3D {
     this.saltbridgeCls = new Saltbridge(this);
 
     this.loadPDBCls = new LoadPDB(this);
+    this.loadCIFCls = new LoadCIF(this);
     this.vastplusCls = new Vastplus(this);
     this.transformCls = new Transform(this);
 
@@ -610,7 +612,7 @@ class iCn3D {
     this.mtzParserCls = new MtzParser(this);
     this.mmcifParserCls = new MmcifParser(this);
     this.mmdbParserCls = new MmdbParser(this);
-    this.mmtfParserCls = new MmtfParser(this);
+    this.bcifParserCls = new BcifParser(this);
     this.mol2ParserCls = new Mol2Parser(this);
     this.opmParserCls = new OpmParser(this);
     this.pdbParserCls = new PdbParser(this);

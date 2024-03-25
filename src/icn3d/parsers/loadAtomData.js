@@ -370,15 +370,16 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            let bNonMmcif = (me.cfg.mmcifid === undefined && me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined && ic.InputfileType != 'mmcif');
+            let bProtein = (bNonMmcif) ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
+            let bNucleotide = (bNonMmcif) ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
+            let bSolvent = (bNonMmcif) ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
             //var bChemicalIons =(me.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
             // kind: other, otherPolymer, etc
-            let bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            let bChemicalIons = (bNonMmcif) ? (chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
             if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
                 if(atm.name === 'CA' && atm.elem === 'C') {
@@ -531,7 +532,7 @@ class LoadAtomData {
               }
 
               // ic.chainsSeq[chainid][atm.resi - 1] should have been defined for major chains
-              if(!isNaN(atm.resi)) {
+              if(!isNaN(atm.resi) && atm.resi !== null) {
                   if( bChainSeqSet && !bAddedNewSeq && ic.chainsSeq[chainid][atm.resi - 1] !== undefined) {
                       ic.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
                   }

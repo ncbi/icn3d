@@ -18,7 +18,7 @@ class AlignSeq {
         alignChainArray = Object.keys(ic.alnChains);
 
         if (bReverse) alignChainArray = alignChainArray.reverse();
-
+        
         let maxSeqCnt = 0;
 
         let chainHash = {}

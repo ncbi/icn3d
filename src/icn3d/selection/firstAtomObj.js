@@ -19,13 +19,14 @@ class FirstAtomObj {
         return ic.atoms[firstIndex];
     }
 
-    getMiddleAtomObj(atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
+    // n is the position of the selected atom
+    getMiddleAtomObj(atomsHash, n) { let ic = this.icn3d, me = ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return undefined;
         }
 
         let atomKeys = Object.keys(atomsHash);
-        let middleIndex = atomKeys[parseInt(atomKeys.length / 2)];
+        let middleIndex = (n && n < atomKeys.length) ? atomKeys[n] : atomKeys[parseInt(atomKeys.length / 2)];
 
         return ic.atoms[middleIndex];
     }

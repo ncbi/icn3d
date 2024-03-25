@@ -66,7 +66,8 @@ class ShowAnno {
                 // let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
 
                 // the first residue of 6AL5_H is non-standard residue and treated as chemical
-                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+                // choose the 100th atom, around the 5th residue
+                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]], 100);
 
                 if(atom === undefined) atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainArray[i]]);
                 if(atom === undefined) continue;
@@ -104,6 +105,7 @@ class ShowAnno {
                         chemical_set[name].push(resid);
                     }
                 }
+
                 //}
                 // protein and nucleotide chain may have chemicals/ions attached at the end
                 if((me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)

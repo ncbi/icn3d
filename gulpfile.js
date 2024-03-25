@@ -201,7 +201,8 @@ var common_js = [
     "src/thirdparty/three/TrackballControls.js",
     "src/thirdparty/three/OrthographicTrackballControls.js",
 
-    "src/thirdparty/mmtfRcsbMod.js"
+    //"src/thirdparty/mmtfRcsbMod.js"
+    "src/thirdparty/CIFTools.js"
 ];
 
 var third_node_js = ["src/thirdparty/defineWindow.js"].concat(common_js);

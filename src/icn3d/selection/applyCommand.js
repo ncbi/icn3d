@@ -293,7 +293,7 @@ class ApplyCommand {
       else if(command == 'set annotation ig') {
           ic.bRunRefnumAgain = true;
           await ic.annotationCls.setAnnoTabIg();
-          // ic.bRunRefnumAgain = false;
+          ic.bRunRefnumAgain = false;
       }
       else if(command == 'ig refnum on') {
         ic.bRunRefnumAgain = true;
@@ -301,7 +301,7 @@ class ApplyCommand {
         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
         await ic.annotationCls.setAnnoTabIg(true);
 
-        // ic.bRunRefnumAgain = false;
+        ic.bRunRefnumAgain = false;
     }
       else if(command == 'highlight level up') {
           ic.resid2specCls.switchHighlightLevelUp();
@@ -620,6 +620,9 @@ class ApplyCommand {
       else if(commandOri.indexOf('select saved atoms') == 0 || commandOri.indexOf('select sets') == 0) {
         // backward compatible: convert previous aligned_protein to protein_aligned
         commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
+
+        // define chains
+        ic.definedSetsCls.setChainsInMenu();
 
         let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 

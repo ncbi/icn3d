@@ -3569,35 +3569,3118 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 THREE.OrthographicTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
 THREE.OrthographicTrackballControls.prototype.constructor = THREE.OrthographicTrackballControls;
 
+
+; var __CIFTools = function () {
+  'use strict';
 /*
-! function(r, t) {
-    "object" == typeof exports && "undefined" != typeof module ? t(exports) : "function" == typeof define && define.amd ? define(["exports"], t) : t(r.MMTF = r.MMTF || {})
-}(this, function(r) {
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    CIFTools.VERSION = { number: "1.1.7", date: "Oct 30 2018" };
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Utils;
+    (function (Utils) {
+        var ChunkedArray;
+        (function (ChunkedArray) {
+            function is(x) {
+                return x.creator && x.chunkSize;
+            }
+            ChunkedArray.is = is;
+            function add4(array, x, y, z, w) {
+                if (array.currentIndex >= array.chunkSize) {
+                    array.currentIndex = 0;
+                    array.current = array.creator(array.chunkSize);
+                    array.parts[array.parts.length] = array.current;
+                }
+                array.current[array.currentIndex++] = x;
+                array.current[array.currentIndex++] = y;
+                array.current[array.currentIndex++] = z;
+                array.current[array.currentIndex++] = w;
+                return array.elementCount++;
+            }
+            ChunkedArray.add4 = add4;
+            function add3(array, x, y, z) {
+                if (array.currentIndex >= array.chunkSize) {
+                    array.currentIndex = 0;
+                    array.current = array.creator(array.chunkSize);
+                    array.parts[array.parts.length] = array.current;
+                }
+                array.current[array.currentIndex++] = x;
+                array.current[array.currentIndex++] = y;
+                array.current[array.currentIndex++] = z;
+                return array.elementCount++;
+            }
+            ChunkedArray.add3 = add3;
+            function add2(array, x, y) {
+                if (array.currentIndex >= array.chunkSize) {
+                    array.currentIndex = 0;
+                    array.current = array.creator(array.chunkSize);
+                    array.parts[array.parts.length] = array.current;
+                }
+                array.current[array.currentIndex++] = x;
+                array.current[array.currentIndex++] = y;
+                return array.elementCount++;
+            }
+            ChunkedArray.add2 = add2;
+            function add(array, x) {
+                if (array.currentIndex >= array.chunkSize) {
+                    array.currentIndex = 0;
+                    array.current = array.creator(array.chunkSize);
+                    array.parts[array.parts.length] = array.current;
+                }
+                array.current[array.currentIndex++] = x;
+                return array.elementCount++;
+            }
+            ChunkedArray.add = add;
+            function compact(array) {
+                var ret = array.creator(array.elementSize * array.elementCount), offset = (array.parts.length - 1) * array.chunkSize, offsetInner = 0, part;
+                if (array.parts.length > 1) {
+                    if (array.parts[0].buffer) {
+                        for (var i = 0; i < array.parts.length - 1; i++) {
+                            ret.set(array.parts[i], array.chunkSize * i);
+                        }
+                    }
+                    else {
+                        for (var i = 0; i < array.parts.length - 1; i++) {
+                            offsetInner = array.chunkSize * i;
+                            part = array.parts[i];
+                            for (var j = 0; j < array.chunkSize; j++) {
+                                ret[offsetInner + j] = part[j];
+                            }
+                        }
+                    }
+                }
+                if (array.current.buffer && array.currentIndex >= array.chunkSize) {
+                    ret.set(array.current, array.chunkSize * (array.parts.length - 1));
+                }
+                else {
+                    for (var i = 0; i < array.currentIndex; i++) {
+                        ret[offset + i] = array.current[i];
+                    }
+                }
+                return ret;
+            }
+            ChunkedArray.compact = compact;
+            function forVertex3D(chunkVertexCount) {
+                if (chunkVertexCount === void 0) { chunkVertexCount = 262144; }
+                return create(function (size) { return new Float32Array(size); }, chunkVertexCount, 3);
+            }
+            ChunkedArray.forVertex3D = forVertex3D;
+            function forIndexBuffer(chunkIndexCount) {
+                if (chunkIndexCount === void 0) { chunkIndexCount = 262144; }
+                return create(function (size) { return new Uint32Array(size); }, chunkIndexCount, 3);
+            }
+            ChunkedArray.forIndexBuffer = forIndexBuffer;
+            function forTokenIndices(chunkTokenCount) {
+                if (chunkTokenCount === void 0) { chunkTokenCount = 131072; }
+                return create(function (size) { return new Int32Array(size); }, chunkTokenCount, 2);
+            }
+            ChunkedArray.forTokenIndices = forTokenIndices;
+            function forIndices(chunkTokenCount) {
+                if (chunkTokenCount === void 0) { chunkTokenCount = 131072; }
+                return create(function (size) { return new Int32Array(size); }, chunkTokenCount, 1);
+            }
+            ChunkedArray.forIndices = forIndices;
+            function forInt32(chunkSize) {
+                if (chunkSize === void 0) { chunkSize = 131072; }
+                return create(function (size) { return new Int32Array(size); }, chunkSize, 1);
+            }
+            ChunkedArray.forInt32 = forInt32;
+            function forFloat32(chunkSize) {
+                if (chunkSize === void 0) { chunkSize = 131072; }
+                return create(function (size) { return new Float32Array(size); }, chunkSize, 1);
+            }
+            ChunkedArray.forFloat32 = forFloat32;
+            function forArray(chunkSize) {
+                if (chunkSize === void 0) { chunkSize = 131072; }
+                return create(function (size) { return []; }, chunkSize, 1);
+            }
+            ChunkedArray.forArray = forArray;
+            function create(creator, chunkElementCount, elementSize) {
+                chunkElementCount = chunkElementCount | 0;
+                if (chunkElementCount <= 0)
+                    chunkElementCount = 1;
+                var chunkSize = chunkElementCount * elementSize;
+                var current = creator(chunkSize);
+                return {
+                    elementSize: elementSize,
+                    chunkSize: chunkSize,
+                    creator: creator,
+                    current: current,
+                    parts: [current],
+                    currentIndex: 0,
+                    elementCount: 0
+                };
+            }
+            ChunkedArray.create = create;
+        })(ChunkedArray = Utils.ChunkedArray || (Utils.ChunkedArray = {}));
+    })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+/**
+ * Efficient integer and float parsers.
+ *
+ * For the purposes of parsing numbers from the mmCIF data representations,
+ * up to 4 times faster than JS parseInt/parseFloat.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Utils;
+    (function (Utils) {
+        var FastNumberParsers;
+        (function (FastNumberParsers) {
+            "use strict";
+            function parseIntSkipTrailingWhitespace(str, start, end) {
+                while (start < end && str.charCodeAt(start) === 32)
+                    start++;
+                return parseInt(str, start, end);
+            }
+            FastNumberParsers.parseIntSkipTrailingWhitespace = parseIntSkipTrailingWhitespace;
+            function parseInt(str, start, end) {
+                var ret = 0, neg = 1;
+                if (str.charCodeAt(start) === 45 /* - */) {
+                    neg = -1;
+                    start++;
+                }
+                for (; start < end; start++) {
+                    var c = str.charCodeAt(start) - 48;
+                    if (c > 9 || c < 0)
+                        return (neg * ret) | 0;
+                    else
+                        ret = (10 * ret + c) | 0;
+                }
+                return neg * ret;
+            }
+            FastNumberParsers.parseInt = parseInt;
+            function parseScientific(main, str, start, end) {
+                // handle + in '1e+1' separately.
+                if (str.charCodeAt(start) === 43 /* + */)
+                    start++;
+                return main * Math.pow(10.0, parseInt(str, start, end));
+            }
+            function parseFloatSkipTrailingWhitespace(str, start, end) {
+                while (start < end && str.charCodeAt(start) === 32)
+                    start++;
+                return parseFloat(str, start, end);
+            }
+            FastNumberParsers.parseFloatSkipTrailingWhitespace = parseFloatSkipTrailingWhitespace;
+            function parseFloat(str, start, end) {
+                var neg = 1.0, ret = 0.0, point = 0.0, div = 1.0;
+                if (str.charCodeAt(start) === 45) {
+                    neg = -1.0;
+                    ++start;
+                }
+                while (start < end) {
+                    var c = str.charCodeAt(start) - 48;
+                    if (c >= 0 && c < 10) {
+                        ret = ret * 10 + c;
+                        ++start;
+                    }
+                    else if (c === -2) { // .
+                        ++start;
+                        while (start < end) {
+                            c = str.charCodeAt(start) - 48;
+                            if (c >= 0 && c < 10) {
+                                point = 10.0 * point + c;
+                                div = 10.0 * div;
+                                ++start;
+                            }
+                            else if (c === 53 || c === 21) { // 'e'/'E'
+                                return parseScientific(neg * (ret + point / div), str, start + 1, end);
+                            }
+                            else {
+                                return neg * (ret + point / div);
+                            }
+                        }
+                        return neg * (ret + point / div);
+                    }
+                    else if (c === 53 || c === 21) { // 'e'/'E'
+                        return parseScientific(neg * ret, str, start + 1, end);
+                    }
+                    else
+                        break;
+                }
+                return neg * ret;
+            }
+            FastNumberParsers.parseFloat = parseFloat;
+        })(FastNumberParsers = Utils.FastNumberParsers || (Utils.FastNumberParsers = {}));
+    })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Utils;
+    (function (Utils) {
+        var __paddingSpaces = [];
+        (function () {
+            var s = '';
+            for (var i = 0; i < 512; i++) {
+                __paddingSpaces[i] = s;
+                s = s + ' ';
+            }
+        })();
+        var StringWriter;
+        (function (StringWriter) {
+            function create(chunkCapacity) {
+                if (chunkCapacity === void 0) { chunkCapacity = 512; }
+                return {
+                    chunkData: [],
+                    chunkOffset: 0,
+                    chunkCapacity: chunkCapacity,
+                    data: []
+                };
+            }
+            StringWriter.create = create;
+            function asString(writer) {
+                if (!writer.data.length) {
+                    if (writer.chunkData.length === writer.chunkOffset)
+                        return writer.chunkData.join('');
+                    return writer.chunkData.splice(0, writer.chunkOffset).join('');
+                }
+                if (writer.chunkOffset > 0) {
+                    writer.data[writer.data.length] = writer.chunkData.splice(0, writer.chunkOffset).join('');
+                }
+                return writer.data.join('');
+            }
+            StringWriter.asString = asString;
+            function writeTo(writer, stream) {
+                finalize(writer);
+                for (var _i = 0, _a = writer.data; _i < _a.length; _i++) {
+                    var s = _a[_i];
+                    stream.writeString(s);
+                }
+            }
+            StringWriter.writeTo = writeTo;
+            function finalize(writer) {
+                if (writer.chunkOffset > 0) {
+                    if (writer.chunkData.length === writer.chunkOffset)
+                        writer.data[writer.data.length] = writer.chunkData.join('');
+                    else
+                        writer.data[writer.data.length] = writer.chunkData.splice(0, writer.chunkOffset).join('');
+                    writer.chunkOffset = 0;
+                }
+            }
+            function newline(writer) {
+                write(writer, '\n');
+            }
+            StringWriter.newline = newline;
+            function whitespace(writer, len) {
+                write(writer, __paddingSpaces[len]);
+            }
+            StringWriter.whitespace = whitespace;
+            function write(writer, val) {
+                if (val === undefined || val === null) {
+                    return;
+                }
+                if (writer.chunkOffset === writer.chunkCapacity) {
+                    writer.data[writer.data.length] = writer.chunkData.join('');
+                    writer.chunkOffset = 0;
+                }
+                writer.chunkData[writer.chunkOffset++] = val;
+            }
+            StringWriter.write = write;
+            function writeSafe(writer, val) {
+                if (writer.chunkOffset === writer.chunkCapacity) {
+                    writer.data[writer.data.length] = writer.chunkData.join('');
+                    writer.chunkOffset = 0;
+                }
+                writer.chunkData[writer.chunkOffset++] = val;
+            }
+            StringWriter.writeSafe = writeSafe;
+            function writePadLeft(writer, val, totalWidth) {
+                if (val === undefined || val === null) {
+                    write(writer, __paddingSpaces[totalWidth]);
+                }
+                var padding = totalWidth - val.length;
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+                write(writer, val);
+            }
+            StringWriter.writePadLeft = writePadLeft;
+            function writePadRight(writer, val, totalWidth) {
+                if (val === undefined || val === null) {
+                    write(writer, __paddingSpaces[totalWidth]);
+                }
+                var padding = totalWidth - val.length;
+                write(writer, val);
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+            }
+            StringWriter.writePadRight = writePadRight;
+            function writeInteger(writer, val) {
+                write(writer, '' + val);
+            }
+            StringWriter.writeInteger = writeInteger;
+            function writeIntegerPadLeft(writer, val, totalWidth) {
+                var s = '' + val;
+                var padding = totalWidth - s.length;
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+                write(writer, s);
+            }
+            StringWriter.writeIntegerPadLeft = writeIntegerPadLeft;
+            function writeIntegerPadRight(writer, val, totalWidth) {
+                var s = '' + val;
+                var padding = totalWidth - s.length;
+                write(writer, s);
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+            }
+            StringWriter.writeIntegerPadRight = writeIntegerPadRight;
+            /**
+             * @example writeFloat(123.2123, 100) -- 2 decim
+             */
+            function writeFloat(writer, val, precisionMultiplier) {
+                write(writer, '' + Math.round(precisionMultiplier * val) / precisionMultiplier);
+            }
+            StringWriter.writeFloat = writeFloat;
+            function writeFloatPadLeft(writer, val, precisionMultiplier, totalWidth) {
+                var s = '' + Math.round(precisionMultiplier * val) / precisionMultiplier;
+                var padding = totalWidth - s.length;
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+                write(writer, s);
+            }
+            StringWriter.writeFloatPadLeft = writeFloatPadLeft;
+            function writeFloatPadRight(writer, val, precisionMultiplier, totalWidth) {
+                var s = '' + Math.round(precisionMultiplier * val) / precisionMultiplier;
+                var padding = totalWidth - s.length;
+                write(writer, s);
+                if (padding > 0)
+                    write(writer, __paddingSpaces[padding]);
+            }
+            StringWriter.writeFloatPadRight = writeFloatPadRight;
+        })(StringWriter = Utils.StringWriter || (Utils.StringWriter = {}));
+    })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
     "use strict";
-*/
+    /**
+     * Represents a column that is not present.
+     */
+    var _UndefinedColumn = /** @class */ (function () {
+        function _UndefinedColumn() {
+            this.isDefined = false;
+        }
+        _UndefinedColumn.prototype.getString = function (row) { return null; };
+        ;
+        _UndefinedColumn.prototype.getInteger = function (row) { return 0; };
+        _UndefinedColumn.prototype.getFloat = function (row) { return 0.0; };
+        _UndefinedColumn.prototype.getValuePresence = function (row) { return 1 /* NotSpecified */; };
+        _UndefinedColumn.prototype.areValuesEqual = function (rowA, rowB) { return true; };
+        _UndefinedColumn.prototype.stringEquals = function (row, value) { return value === null; };
+        return _UndefinedColumn;
+    }());
+    CIFTools.UndefinedColumn = new _UndefinedColumn();
+    /**
+     * Helper functions for categoies.
+     */
+    var Category;
+    (function (Category) {
+        /**
+         * Extracts a matrix from a category from a specified rowIndex.
+         *
+         * _category.matrix[1][1] v11
+         * ....
+         * ....
+         * _category.matrix[rows][cols] vRowsCols
+         */
+        function getMatrix(category, field, rows, cols, rowIndex) {
+            var ret = [];
+            for (var i = 1; i <= rows; i++) {
+                var row = [];
+                for (var j = 1; j <= cols; j++) {
+                    row[j - 1] = category.getColumn(field + "[" + i + "][" + j + "]").getFloat(rowIndex);
+                }
+                ret[i - 1] = row;
+            }
+            return ret;
+        }
+        Category.getMatrix = getMatrix;
+        /**
+         * Extracts a vector from a category from a specified rowIndex.
+         *
+         * _category.matrix[1][1] v11
+         * ....
+         * ....
+         * _category.matrix[rows][cols] vRowsCols
+         */
+        function getVector(category, field, rows, cols, rowIndex) {
+            var ret = [];
+            for (var i = 1; i <= rows; i++) {
+                ret[i - 1] = category.getColumn(field + "[" + i + "]").getFloat(rowIndex);
+            }
+            return ret;
+        }
+        Category.getVector = getVector;
+    })(Category = CIFTools.Category || (CIFTools.Category = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    "use strict";
+    var ParserResult;
+    (function (ParserResult) {
+        function error(message, line) {
+            if (line === void 0) { line = -1; }
+            return new ParserError(message, line);
+        }
+        ParserResult.error = error;
+        function success(result, warnings) {
+            if (warnings === void 0) { warnings = []; }
+            return new ParserSuccess(result, warnings);
+        }
+        ParserResult.success = success;
+    })(ParserResult = CIFTools.ParserResult || (CIFTools.ParserResult = {}));
+    var ParserError = /** @class */ (function () {
+        function ParserError(message, line) {
+            this.message = message;
+            this.line = line;
+            this.isError = true;
+        }
+        ParserError.prototype.toString = function () {
+            if (this.line >= 0) {
+                return "[Line " + this.line + "] " + this.message;
+            }
+            return this.message;
+        };
+        return ParserError;
+    }());
+    CIFTools.ParserError = ParserError;
+    var ParserSuccess = /** @class */ (function () {
+        function ParserSuccess(result, warnings) {
+            this.result = result;
+            this.warnings = warnings;
+            this.isError = false;
+        }
+        return ParserSuccess;
+    }());
+    CIFTools.ParserSuccess = ParserSuccess;
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+/*
+    On data representation of molecular files
 
-var MMTF = {};
+    Consider an mmCIF file that stores a molecule with 100k atoms. For the sake of simplicity,
+    lets ignore things like symmetry or assemblies, and assume, that the file only stores the
+    _atom_site records. The atom site "table" in the standard mmCIF from PDB database currently
+    has 26 columns.
 
-MMTF = initIcn3dpyMMTF(MMTF);
+    So the data looks something like this:
 
-function initIcn3dpyMMTF(r) {
-function t(r,t,n){for(var e=(r.byteLength,0),i=n.length;i>e;e++){var o=n.charCodeAt(e);if(128>o)r.setUint8(t++,o>>>0&127|0);else if(2048>o)r.setUint8(t++,o>>>6&31|192),r.setUint8(t++,o>>>0&63|128);else if(65536>o)r.setUint8(t++,o>>>12&15|224),r.setUint8(t++,o>>>6&63|128),r.setUint8(t++,o>>>0&63|128);else{if(!(1114112>o))throw new Error("bad codepoint "+o);r.setUint8(t++,o>>>18&7|240),r.setUint8(t++,o>>>12&63|128),r.setUint8(t++,o>>>6&63|128),r.setUint8(t++,o>>>0&63|128)}}}function n(r){for(var t=0,n=0,e=r.length;e>n;n++){var i=r.charCodeAt(n);if(128>i)t+=1;else if(2048>i)t+=2;else if(65536>i)t+=3;else{if(!(1114112>i))throw new Error("bad codepoint "+i);t+=4}}return t}function e(r,i,o){var a=typeof r;if("string"===a){var u=n(r);if(32>u)return i.setUint8(o,160|u),t(i,o+1,r),1+u;if(256>u)return i.setUint8(o,217),i.setUint8(o+1,u),t(i,o+2,r),2+u;if(65536>u)return i.setUint8(o,218),i.setUint16(o+1,u),t(i,o+3,r),3+u;if(4294967296>u)return i.setUint8(o,219),i.setUint32(o+1,u),t(i,o+5,r),5+u}if(r instanceof Uint8Array){var u=r.byteLength,s=new Uint8Array(i.buffer);if(256>u)return i.setUint8(o,196),i.setUint8(o+1,u),s.set(r,o+2),2+u;if(65536>u)return i.setUint8(o,197),i.setUint16(o+1,u),s.set(r,o+3),3+u;if(4294967296>u)return i.setUint8(o,198),i.setUint32(o+1,u),s.set(r,o+5),5+u}if("number"===a){if(!isFinite(r))throw new Error("Number not finite: "+r);if(Math.floor(r)!==r)return i.setUint8(o,203),i.setFloat64(o+1,r),9;if(r>=0){if(128>r)return i.setUint8(o,r),1;if(256>r)return i.setUint8(o,204),i.setUint8(o+1,r),2;if(65536>r)return i.setUint8(o,205),i.setUint16(o+1,r),3;if(4294967296>r)return i.setUint8(o,206),i.setUint32(o+1,r),5;throw new Error("Number too big 0x"+r.toString(16))}if(r>=-32)return i.setInt8(o,r),1;if(r>=-128)return i.setUint8(o,208),i.setInt8(o+1,r),2;if(r>=-32768)return i.setUint8(o,209),i.setInt16(o+1,r),3;if(r>=-2147483648)return i.setUint8(o,210),i.setInt32(o+1,r),5;throw new Error("Number too small -0x"+(-r).toString(16).substr(1))}if(null===r)return i.setUint8(o,192),1;if("boolean"===a)return i.setUint8(o,r?195:194),1;if("object"===a){var u,f=0,c=Array.isArray(r);if(c)u=r.length;else{var d=Object.keys(r);u=d.length}if(16>u?(i.setUint8(o,u|(c?144:128)),f=1):65536>u?(i.setUint8(o,c?220:222),i.setUint16(o+1,u),f=3):4294967296>u&&(i.setUint8(o,c?221:223),i.setUint32(o+1,u),f=5),c)for(var l=0;u>l;l++)f+=e(r[l],i,o+f);else for(var l=0;u>l;l++){var g=d[l];f+=e(g,i,o+f),f+=e(r[g],i,o+f)}return f}throw new Error("Unknown type "+a)}function i(r){var t=typeof r;if("string"===t){var e=n(r);if(32>e)return 1+e;if(256>e)return 2+e;if(65536>e)return 3+e;if(4294967296>e)return 5+e}if(r instanceof Uint8Array){var e=r.byteLength;if(256>e)return 2+e;if(65536>e)return 3+e;if(4294967296>e)return 5+e}if("number"===t){if(Math.floor(r)!==r)return 9;if(r>=0){if(128>r)return 1;if(256>r)return 2;if(65536>r)return 3;if(4294967296>r)return 5;throw new Error("Number too big 0x"+r.toString(16))}if(r>=-32)return 1;if(r>=-128)return 2;if(r>=-32768)return 3;if(r>=-2147483648)return 5;throw new Error("Number too small -0x"+r.toString(16).substr(1))}if("boolean"===t||null===r)return 1;if("object"===t){var e,o=0;if(Array.isArray(r)){e=r.length;for(var a=0;e>a;a++)o+=i(r[a])}else{var u=Object.keys(r);e=u.length;for(var a=0;e>a;a++){var s=u[a];o+=i(s)+i(r[s])}}if(16>e)return 1+o;if(65536>e)return 3+o;if(4294967296>e)return 5+o;throw new Error("Array or object too long 0x"+e.toString(16))}throw new Error("Unknown type "+t)}function o(r){var t=new ArrayBuffer(i(r)),n=new DataView(t);return e(r,n,0),new Uint8Array(t)}function a(r,t,n){return t?new r(t.buffer,t.byteOffset,t.byteLength/(n||1)):void 0}function u(r){return a(DataView,r)}function s(r){return a(Uint8Array,r)}function f(r){return a(Int8Array,r)}function c(r){return a(Int32Array,r,4)}function d(r){return a(Float32Array,r,4)}function l(r,t){var n=r.length/2;t||(t=new Int16Array(n));for(var e=0,i=0;n>e;++e,i+=2)t[e]=r[i]<<8^r[i+1]<<0;return t}function g(r,t){var n=r.length;t||(t=new Uint8Array(2*n));for(var e=u(t),i=0;n>i;++i)e.setInt16(2*i,r[i]);return s(t)}function v(r,t){var n=r.length/4;t||(t=new Int32Array(n));for(var e=0,i=0;n>e;++e,i+=4)t[e]=r[i]<<24^r[i+1]<<16^r[i+2]<<8^r[i+3]<<0;return t}function L(r,t){var n=r.length;t||(t=new Uint8Array(4*n));for(var e=u(t),i=0;n>i;++i)e.setInt32(4*i,r[i]);return s(t)}function h(r,t){var n=r.length;t||(t=new Float32Array(n/4));for(var e=u(t),i=u(r),o=0,a=0,s=n/4;s>o;++o,a+=4)e.setFloat32(a,i.getFloat32(a),!0);return t}function y(r,t,n){var e=r.length,i=1/t;n||(n=new Float32Array(e));for(var o=0;e>o;++o)n[o]=r[o]*i;return n}function m(r,t,n){var e=r.length;n||(n=new Int32Array(e));for(var i=0;e>i;++i)n[i]=Math.round(r[i]*t);return n}function p(r,t){var n,e;if(!t){var i=0;for(n=0,e=r.length;e>n;n+=2)i+=r[n+1];t=new r.constructor(i)}var o=0;for(n=0,e=r.length;e>n;n+=2)for(var a=r[n],u=r[n+1],s=0;u>s;++s)t[o]=a,++o;return t}function U(r){if(0===r.length)return new Int32Array;var t,n,e=2;for(t=1,n=r.length;n>t;++t)r[t-1]!==r[t]&&(e+=2);var i=new Int32Array(e),o=0,a=1;for(t=1,n=r.length;n>t;++t)r[t-1]!==r[t]?(i[o]=r[t-1],i[o+1]=a,a=1,o+=2):++a;return i[o]=r[r.length-1],i[o+1]=a,i}function b(r,t){var n=r.length;t||(t=new r.constructor(n)),n&&(t[0]=r[0]);for(var e=1;n>e;++e)t[e]=r[e]+t[e-1];return t}function I(r,t){var n=r.length;t||(t=new r.constructor(n)),t[0]=r[0];for(var e=1;n>e;++e)t[e]=r[e]-r[e-1];return t}function w(r,t){var n,e,i=r instanceof Int8Array?127:32767,o=-i-1,a=r.length;if(!t){var u=0;for(n=0;a>n;++n)r[n]<i&&r[n]>o&&++u;t=new Int32Array(u)}for(n=0,e=0;a>n;){for(var s=0;r[n]===i||r[n]===o;)s+=r[n],++n;s+=r[n],++n,t[e]=s,++e}return t}function C(r,t){var n,e=t?127:32767,i=-e-1,o=r.length,a=0;for(n=0;o>n;++n){var u=r[n];0===u?++a:u>0?(a+=Math.ceil(u/e),u%e===0&&(a+=1)):(a+=Math.ceil(u/i),u%i===0&&(a+=1))}var s=t?new Int8Array(a):new Int16Array(a),f=0;for(n=0;o>n;++n){var u=r[n];if(u>=0)for(;u>=e;)s[f]=e,++f,u-=e;else for(;i>=u;)s[f]=i,++f,u-=i;s[f]=u,++f}return s}function A(r,t){return b(p(r),t)}function x(r){return U(I(r))}function M(r,t,n){return y(p(r,c(n)),t,n)}function F(r,t){return U(m(r,t))}function S(r,t,n){return y(b(r,c(n)),t,n)}function E(r,t,n){return I(m(r,t),n)}function N(r,t,n){return y(w(r,c(n)),t,n)}function O(r,t,n){var e=w(r,c(n));return S(e,t,d(e))}function T(r,t,n){return C(E(r,t),n)}function k(r){var t=u(r),n=t.getInt32(0),e=t.getInt32(4),i=r.subarray(8,12),r=r.subarray(12);return[n,r,e,i]}function j(r,t,n,e){var i=new ArrayBuffer(12+e.byteLength),o=new Uint8Array(i),a=new DataView(i);return a.setInt32(0,r),a.setInt32(4,t),n&&o.set(n,8),o.set(e,12),o}function q(r){var t=r.length,n=s(r);return j(2,t,void 0,n)}function D(r){var t=r.length,n=L(r);return j(4,t,void 0,n)}function P(r,t){var n=r.length/t,e=L([t]),i=s(r);return j(5,n,e,i)}function z(r){var t=r.length,n=L(U(r));return j(6,t,void 0,n)}function B(r){var t=r.length,n=L(x(r));return j(8,t,void 0,n)}function V(r,t){var n=r.length,e=L([t]),i=L(F(r,t));return j(9,n,e,i)}function G(r,t){var n=r.length,e=L([t]),i=g(T(r,t));return j(10,n,e,i)}function R(r){var t={};return rr.forEach(function(n){void 0!==r[n]&&(t[n]=r[n])}),r.bondAtomList&&(t.bondAtomList=D(r.bondAtomList)),r.bondOrderList&&(t.bondOrderList=q(r.bondOrderList)),t.xCoordList=G(r.xCoordList,1e3),t.yCoordList=G(r.yCoordList,1e3),t.zCoordList=G(r.zCoordList,1e3),r.bFactorList&&(t.bFactorList=G(r.bFactorList,100)),r.atomIdList&&(t.atomIdList=B(r.atomIdList)),r.altLocList&&(t.altLocList=z(r.altLocList)),r.occupancyList&&(t.occupancyList=V(r.occupancyList,100)),t.groupIdList=B(r.groupIdList),t.groupTypeList=D(r.groupTypeList),r.secStructList&&(t.secStructList=q(r.secStructList)),r.insCodeList&&(t.insCodeList=z(r.insCodeList)),r.sequenceIndexList&&(t.sequenceIndexList=B(r.sequenceIndexList)),t.chainIdList=P(r.chainIdList,4),r.chainNameList&&(t.chainNameList=P(r.chainNameList,4)),t}function H(r){function t(r){for(var t={},n=0;r>n;n++){var e=o();t[e]=o()}return t}function n(t){var n=r.subarray(a,a+t);return a+=t,n}function e(t){var n=r.subarray(a,a+t);a+=t;var e=65535;if(t>e){for(var i=[],o=0;o<n.length;o+=e)i.push(String.fromCharCode.apply(null,n.subarray(o,o+e)));return i.join("")}return String.fromCharCode.apply(null,n)}function i(r){for(var t=new Array(r),n=0;r>n;n++)t[n]=o();return t}function o(){var o,s,f=r[a];if(0===(128&f))return a++,f;if(128===(240&f))return s=15&f,a++,t(s);if(144===(240&f))return s=15&f,a++,i(s);if(160===(224&f))return s=31&f,a++,e(s);if(224===(224&f))return o=u.getInt8(a),a++,o;switch(f){case 192:return a++,null;case 194:return a++,!1;case 195:return a++,!0;case 196:return s=u.getUint8(a+1),a+=2,n(s);case 197:return s=u.getUint16(a+1),a+=3,n(s);case 198:return s=u.getUint32(a+1),a+=5,n(s);case 202:return o=u.getFloat32(a+1),a+=5,o;case 203:return o=u.getFloat64(a+1),a+=9,o;case 204:return o=r[a+1],a+=2,o;case 205:return o=u.getUint16(a+1),a+=3,o;case 206:return o=u.getUint32(a+1),a+=5,o;case 208:return o=u.getInt8(a+1),a+=2,o;case 209:return o=u.getInt16(a+1),a+=3,o;case 210:return o=u.getInt32(a+1),a+=5,o;case 217:return s=u.getUint8(a+1),a+=2,e(s);case 218:return s=u.getUint16(a+1),a+=3,e(s);case 219:return s=u.getUint32(a+1),a+=5,e(s);case 220:return s=u.getUint16(a+1),a+=3,i(s);case 221:return s=u.getUint32(a+1),a+=5,i(s);case 222:return s=u.getUint16(a+1),a+=3,t(s);case 223:return s=u.getUint32(a+1),a+=5,t(s)}throw new Error("Unknown type 0x"+f.toString(16))}var a=0,u=new DataView(r.buffer);return o()}function W(r,t,n,e){switch(r){case 1:return h(t);case 2:return f(t);case 3:return l(t);case 4:return v(t);case 5:return s(t);case 6:return p(v(t),new Uint8Array(n));case 7:return p(v(t));case 8:return A(v(t));case 9:return M(v(t),v(e)[0]);case 10:return O(l(t),v(e)[0]);case 11:return y(l(t),v(e)[0]);case 12:return N(l(t),v(e)[0]);case 13:return N(f(t),v(e)[0]);case 14:return w(l(t));case 15:return w(f(t))}}function X(r,t){t=t||{};var n=t.ignoreFields,e={};return nr.forEach(function(t){var i=n?-1!==n.indexOf(t):!1,o=r[t];i||void 0===o||(o instanceof Uint8Array?e[t]=W.apply(null,k(o)):e[t]=o)}),e}function J(r){return String.fromCharCode.apply(null,r).replace(/\0/g,"")}function K(r,t,n){n=n||{};var e,i,o,a,u,s,f=n.firstModelOnly,c=t.onModel,d=t.onChain,l=t.onGroup,g=t.onAtom,v=t.onBond,L=0,h=0,y=0,m=0,p=0,U=-1,b=r.chainNameList,I=r.secStructList,w=r.insCodeList,C=r.sequenceIndexList,A=r.atomIdList,x=r.bFactorList,M=r.altLocList,F=r.occupancyList,S=r.bondAtomList,E=r.bondOrderList;for(e=0,i=r.chainsPerModel.length;i>e&&!(f&&L>0);++e){var N=r.chainsPerModel[L];for(c&&c({chainCount:N,modelIndex:L}),o=0;N>o;++o){var O=r.groupsPerChain[h];if(d){var T=J(r.chainIdList.subarray(4*h,4*h+4)),k=null;b&&(k=J(b.subarray(4*h,4*h+4))),d({groupCount:O,chainIndex:h,modelIndex:L,chainId:T,chainName:k})}for(a=0;O>a;++a){var j=r.groupList[r.groupTypeList[y]],q=j.atomNameList.length;if(l){var D=null;I&&(D=I[y]);var P=null;r.insCodeList&&(P=String.fromCharCode(w[y]));var z=null;C&&(z=C[y]),l({atomCount:q,groupIndex:y,chainIndex:h,modelIndex:L,groupId:r.groupIdList[y],groupType:r.groupTypeList[y],groupName:j.groupName,singleLetterCode:j.singleLetterCode,chemCompType:j.chemCompType,secStruct:D,insCode:P,sequenceIndex:z})}for(u=0;q>u;++u){if(g){var B=null;A&&(B=A[m]);var V=null;x&&(V=x[m]);var G=null;M&&(G=String.fromCharCode(M[m]));var R=null;F&&(R=F[m]),g({atomIndex:m,groupIndex:y,chainIndex:h,modelIndex:L,atomId:B,element:j.elementList[u],atomName:j.atomNameList[u],formalCharge:j.formalChargeList[u],xCoord:r.xCoordList[m],yCoord:r.yCoordList[m],zCoord:r.zCoordList[m],bFactor:V,altLoc:G,occupancy:R})}m+=1}if(v){var H=j.bondAtomList;for(u=0,s=j.bondOrderList.length;s>u;++u)v({atomIndex1:m-q+H[2*u],atomIndex2:m-q+H[2*u+1],bondOrder:j.bondOrderList[u]})}y+=1}h+=1}if(p=U+1,U=m-1,v&&S)for(u=0,s=S.length;s>u;u+=2){var W=S[u],X=S[u+1];(W>=p&&U>=W||X>=p&&U>=X)&&v({atomIndex1:W,atomIndex2:X,bondOrder:E?E[u/2]:null})}L+=1}}function Q(r){return o(R(r))}function Y(r,t){r instanceof ArrayBuffer&&(r=new Uint8Array(r));var n;return n=r instanceof Uint8Array?H(r):r,X(n,t)}function Z(r,t,n,e){function i(){try{var r=Y(o.response);n(r)}catch(t){e(t)}}var o=new XMLHttpRequest;o.addEventListener("load",i,!0),o.addEventListener("error",e,!0),o.responseType="arraybuffer",o.open("GET",t+r.toUpperCase()),o.send()}function $(r,t,n){Z(r,or,t,n)}function _(r,t,n){Z(r,ar,t,n)}
+        loop_
+        _atom_site.column1
+        ....
+        _atom_site.column26
+        t1,1 .... t1,26
+        t100000,1 .... t100000,26
 
-//var rr=["mmtfVersion","mmtfProducer","unitCell","spaceGroup","structureId","title","depositionDate","releaseDate","experimentalMethods","resolution","rFree","rWork","bioAssemblyList","ncsOperatorList","entityList","groupList","numBonds","numAtoms","numGroups","numChains","numModels","groupsPerChain","chainsPerModel"],tr=["xCoordList","yCoordList","zCoordList","groupIdList","groupTypeList","chainIdList","bFactorList","atomIdList","altLocList","occupancyList","secStructList","insCodeList","sequenceIndexList","chainNameList","bondAtomList","bondOrderList"],nr=rr.concat(tr),er="v1.0.1",ir="//mmtf.rcsb.org/v1.0/",or=ir+"full/",ar=ir+"reduced/";r.encode=Q,r.decode=Y,r.traverse=K,r.fetch=$,r.fetchReduced=_,r.version=er,r.fetchUrl=or,r.fetchReducedUrl=ar,r.encodeMsgpack=o,r.encodeMmtf=R,r.decodeMsgpack=H,r.decodeMmtf=X
+    The straightforward way to represent this data in JavaScript is to have an array of objects
+    with properties named "column1" ..., "column26":
 
-    var rr = ["mmtfVersion", "mmtfProducer", "unitCell", "spaceGroup", "structureId", "title", "depositionDate", "releaseDate", "experimentalMethods", "resolution", "rFree", "rWork", "bioAssemblyList", "ncsOperatorList", "entityList", "groupList", "numBonds", "numAtoms", "numGroups", "numChains", "numModels", "groupsPerChain", "chainsPerModel"],
-        tr = ["xCoordList", "yCoordList", "zCoordList", "groupIdList", "groupTypeList", "chainIdList", "bFactorList", "atomIdList", "altLocList", "occupancyList", "secStructList", "insCodeList", "sequenceIndexList", "chainNameList", "bondAtomList", "bondOrderList"],
-        nr = rr.concat(tr),
-        er = "v1.0.1",
-        ir = "//mmtf.rcsb.org/v1.0/",
-        or = ir + "full/",
-        ar = ir + "reduced/";
-    r.encode = Q, r.decode = Y, r.traverse = K, r.fetch = $, r.fetchReduced = _, r.version = er, r.fetchUrl = or, r.fetchReducedUrl = ar, r.encodeMsgpack = o, r.encodeMmtf = R, r.decodeMsgpack = H, r.decodeMmtf = X
+        [{ column1: "t1,1", ..., column26: "t1,26" },
+          ...,
+         { column1: "t100000,1", ..., column26: "t100000,26" }]
 
-    return r;
+    So in order to represent the atoms sites, we would need 100k objects and 2.6 million strings.
+    Is this bad? well, sort of. It would not be so bad if this representation would be the only
+    thing we need to keep in memory and/or the life time of the object was short. But usually
+    we would need to keep the object around for the entire lifetime of the app. This alone
+    adds a very non-significant overhead for the garbage collector (which increases the app's
+    latency). What's worse is that we usually only need a fraction of this data, but this can
+    vary application for application. For just 100k atoms, the overhead is not "that bad", but
+    consider 1M atoms and suddenly we have a problem.
+
+    The following data model shows an alternative way of storing molecular file s
+    in memory that is very efficient, fast and introduces a very minimal overhead.
+
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Text;
+    (function (Text) {
+        "use strict";
+        var ShortStringPool;
+        (function (ShortStringPool) {
+            function create() { return Object.create(null); }
+            ShortStringPool.create = create;
+            function get(pool, str) {
+                if (str.length > 6)
+                    return str;
+                var value = pool[str];
+                if (value !== void 0)
+                    return value;
+                pool[str] = str;
+                return str;
+            }
+            ShortStringPool.get = get;
+        })(ShortStringPool || (ShortStringPool = {}));
+        /**
+         * Represents the input file.
+         */
+        var File = /** @class */ (function () {
+            function File(data) {
+                /**
+                 * Data blocks inside the file. If no data block is present, a "default" one is created.
+                 */
+                this.dataBlocks = [];
+                this.data = data;
+            }
+            File.prototype.toJSON = function () {
+                return this.dataBlocks.map(function (b) { return b.toJSON(); });
+            };
+            return File;
+        }());
+        Text.File = File;
+        /**
+         * Represents a single data block.
+         */
+        var DataBlock = /** @class */ (function () {
+            function DataBlock(data, header) {
+                this.header = header;
+                this.data = data;
+                this.categoryList = [];
+                this.additionalData = {};
+                this.categoryMap = new Map();
+            }
+            Object.defineProperty(DataBlock.prototype, "categories", {
+                /**
+                 * Categories of the block.
+                 * block.categories._atom_site / ['_atom_site']
+                 */
+                get: function () {
+                    return this.categoryList;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            /**
+             * Gets a category by its name.
+             */
+            DataBlock.prototype.getCategory = function (name) {
+                return this.categoryMap.get(name);
+            };
+            /**
+             * Adds a category.
+             */
+            DataBlock.prototype.addCategory = function (category) {
+                this.categoryList[this.categoryList.length] = category;
+                this.categoryMap.set(category.name, category);
+            };
+            DataBlock.prototype.toJSON = function () {
+                return {
+                    id: this.header,
+                    categories: this.categoryList.map(function (c) { return c.toJSON(); }),
+                    additionalData: this.additionalData
+                };
+            };
+            return DataBlock;
+        }());
+        Text.DataBlock = DataBlock;
+        /**
+         * Represents a single CIF category.
+         */
+        var Category = /** @class */ (function () {
+            function Category(data, name, startIndex, endIndex, columns, tokens, tokenCount) {
+                this.name = name;
+                this.tokens = tokens;
+                this.data = data;
+                this.startIndex = startIndex;
+                this.endIndex = endIndex;
+                this.columnCount = columns.length;
+                this.rowCount = (tokenCount / columns.length) | 0;
+                this.columnIndices = new Map();
+                this.columnNameList = [];
+                for (var i = 0; i < columns.length; i++) {
+                    var colName = columns[i].substr(name.length + 1);
+                    this.columnIndices.set(colName, i);
+                    this.columnNameList.push(colName);
+                }
+            }
+            Object.defineProperty(Category.prototype, "columnNames", {
+                /**
+                 * The array of columns.
+                 */
+                get: function () {
+                    return this.columnNameList;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            /**
+             * Get a column object that makes accessing data easier.
+             * @returns undefined if the column isn't present, the Column object otherwise.
+             */
+            Category.prototype.getColumn = function (name) {
+                var i = this.columnIndices.get(name);
+                if (i !== void 0)
+                    return new Column(this, this.data, name, i);
+                return CIFTools.UndefinedColumn;
+            };
+            Category.prototype.toJSON = function () {
+                var rows = [], data = this.data, tokens = this.tokens;
+                var colNames = this.columnNameList;
+                var strings = ShortStringPool.create();
+                for (var i = 0; i < this.rowCount; i++) {
+                    var item = {};
+                    for (var j = 0; j < this.columnCount; j++) {
+                        var tk = (i * this.columnCount + j) * 2;
+                        item[colNames[j]] = ShortStringPool.get(strings, data.substring(tokens[tk], tokens[tk + 1]));
+                    }
+                    rows[i] = item;
+                }
+                return { name: this.name, columns: colNames, rows: rows };
+            };
+            return Category;
+        }());
+        Text.Category = Category;
+        var fastParseInt = CIFTools.Utils.FastNumberParsers.parseInt;
+        var fastParseFloat = CIFTools.Utils.FastNumberParsers.parseFloat;
+        /**
+         * Represents a single column of a CIF category.
+         */
+        var Column = /** @class */ (function () {
+            function Column(category, data, name, index) {
+                this.data = data;
+                this.name = name;
+                this.index = index;
+                this.stringPool = ShortStringPool.create();
+                this.isDefined = true;
+                this.tokens = category.tokens;
+                this.columnCount = category.columnCount;
+            }
+            /**
+             * Returns the string value at given row.
+             */
+            Column.prototype.getString = function (row) {
+                var i = (row * this.columnCount + this.index) * 2;
+                var ret = ShortStringPool.get(this.stringPool, this.data.substring(this.tokens[i], this.tokens[i + 1]));
+                if (ret === "." || ret === "?")
+                    return null;
+                return ret;
+            };
+            /**
+             * Returns the integer value at given row.
+             */
+            Column.prototype.getInteger = function (row) {
+                var i = (row * this.columnCount + this.index) * 2;
+                return fastParseInt(this.data, this.tokens[i], this.tokens[i + 1]);
+            };
+            /**
+             * Returns the float value at given row.
+             */
+            Column.prototype.getFloat = function (row) {
+                var i = (row * this.columnCount + this.index) * 2;
+                return fastParseFloat(this.data, this.tokens[i], this.tokens[i + 1]);
+            };
+            /**
+             * Returns true if the token has the specified string value.
+             */
+            Column.prototype.stringEquals = function (row, value) {
+                var aIndex = (row * this.columnCount + this.index) * 2, s = this.tokens[aIndex], len = value.length;
+                if (len !== this.tokens[aIndex + 1] - s)
+                    return false;
+                for (var i = 0; i < len; i++) {
+                    if (this.data.charCodeAt(i + s) !== value.charCodeAt(i))
+                        return false;
+                }
+                return true;
+            };
+            /**
+             * Determines if values at the given rows are equal.
+             */
+            Column.prototype.areValuesEqual = function (rowA, rowB) {
+                var aIndex = (rowA * this.columnCount + this.index) * 2, bIndex = (rowB * this.columnCount + this.index) * 2;
+                var aS = this.tokens[aIndex], bS = this.tokens[bIndex], len = this.tokens[aIndex + 1] - aS;
+                if (len !== this.tokens[bIndex + 1] - bS)
+                    return false;
+                for (var i = 0; i < len; i++) {
+                    if (this.data.charCodeAt(i + aS) !== this.data.charCodeAt(i + bS)) {
+                        return false;
+                    }
+                }
+                return true;
+            };
+            /**
+             * Returns true if the value is not defined (. or ? token).
+             */
+            Column.prototype.getValuePresence = function (row) {
+                var index = row * this.columnCount + this.index;
+                var s = this.tokens[2 * index];
+                if (this.tokens[2 * index + 1] - s !== 1)
+                    return 0 /* Present */;
+                var v = this.data.charCodeAt(s);
+                if (v === 46 /* . */)
+                    return 1 /* NotSpecified */;
+                if (v === 63 /* ? */)
+                    return 2 /* Unknown */;
+                return 0 /* Present */;
+            };
+            return Column;
+        }());
+        Text.Column = Column;
+    })(Text = CIFTools.Text || (CIFTools.Text = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Text;
+    (function (Text) {
+        "use strict";
+        var TokenIndexBuilder;
+        (function (TokenIndexBuilder) {
+            function resize(builder) {
+                // scale the size using golden ratio, because why not.
+                var newBuffer = new Int32Array((1.61 * builder.tokens.length) | 0);
+                newBuffer.set(builder.tokens);
+                builder.tokens = newBuffer;
+                builder.tokensLenMinus2 = (newBuffer.length - 2) | 0;
+            }
+            function addToken(builder, start, end) {
+                if (builder.count >= builder.tokensLenMinus2) {
+                    resize(builder);
+                }
+                builder.tokens[builder.count++] = start;
+                builder.tokens[builder.count++] = end;
+            }
+            TokenIndexBuilder.addToken = addToken;
+            function create(size) {
+                return {
+                    tokensLenMinus2: (size - 2) | 0,
+                    count: 0,
+                    tokens: new Int32Array(size)
+                };
+            }
+            TokenIndexBuilder.create = create;
+        })(TokenIndexBuilder || (TokenIndexBuilder = {}));
+        /**
+         * Eat everything until a whitespace/newline occurs.
+         */
+        function eatValue(state) {
+            while (state.position < state.length) {
+                switch (state.data.charCodeAt(state.position)) {
+                    case 9: // \t
+                    case 10: // \n
+                    case 13: // \r
+                    case 32: // ' '
+                        state.currentTokenEnd = state.position;
+                        return;
+                    default:
+                        ++state.position;
+                        break;
+                }
+            }
+            state.currentTokenEnd = state.position;
+        }
+        /**
+         * Eats an escaped values. Handles the "degenerate" cases as well.
+         *
+         * "Degenerate" cases:
+         * - 'xx'x' => xx'x
+         * - 'xxxNEWLINE => 'xxx
+         *
+         */
+        function eatEscaped(state, esc) {
+            var next, c;
+            ++state.position;
+            while (state.position < state.length) {
+                c = state.data.charCodeAt(state.position);
+                if (c === esc) {
+                    next = state.data.charCodeAt(state.position + 1);
+                    switch (next) {
+                        case 9: // \t
+                        case 10: // \n
+                        case 13: // \r
+                        case 32: // ' '
+                            // get rid of the quotes.
+                            state.currentTokenStart++;
+                            state.currentTokenEnd = state.position;
+                            state.isEscaped = true;
+                            ++state.position;
+                            return;
+                        default:
+                            if (next === void 0) { // = "end of stream"
+                                // get rid of the quotes.
+                                state.currentTokenStart++;
+                                state.currentTokenEnd = state.position;
+                                state.isEscaped = true;
+                                ++state.position;
+                                return;
+                            }
+                            ++state.position;
+                            break;
+                    }
+                }
+                else {
+                    // handle 'xxxNEWLINE => 'xxx
+                    if (c === 10 || c === 13) {
+                        state.currentTokenEnd = state.position;
+                        return;
+                    }
+                    ++state.position;
+                }
+            }
+            state.currentTokenEnd = state.position;
+        }
+        /**
+         * Eats a multiline token of the form NL;....NL;
+         */
+        function eatMultiline(state) {
+            var prev = 59, pos = state.position + 1, c;
+            while (pos < state.length) {
+                c = state.data.charCodeAt(pos);
+                if (c === 59 && (prev === 10 || prev === 13)) { // ;, \n \r
+                    state.position = pos + 1;
+                    // get rid of the ;
+                    state.currentTokenStart++;
+                    // remove trailing newlines
+                    pos--;
+                    c = state.data.charCodeAt(pos);
+                    while (c === 10 || c === 13) {
+                        pos--;
+                        c = state.data.charCodeAt(pos);
+                    }
+                    state.currentTokenEnd = pos + 1;
+                    state.isEscaped = true;
+                    return;
+                }
+                else {
+                    // handle line numbers
+                    if (c === 13) { // \r
+                        state.currentLineNumber++;
+                    }
+                    else if (c === 10 && prev !== 13) { // \r\n
+                        state.currentLineNumber++;
+                    }
+                    prev = c;
+                    ++pos;
+                }
+            }
+            state.position = pos;
+            return prev;
+        }
+        /**
+         * Skips until \n or \r occurs -- therefore the newlines get handled by the "skipWhitespace" function.
+         */
+        function skipCommentLine(state) {
+            while (state.position < state.length) {
+                var c = state.data.charCodeAt(state.position);
+                if (c === 10 || c === 13) {
+                    return;
+                }
+                ++state.position;
+            }
+        }
+        /**
+         * Skips all the whitespace - space, tab, newline, CR
+         * Handles incrementing line count.
+         */
+        function skipWhitespace(state) {
+            var prev = 10;
+            while (state.position < state.length) {
+                var c = state.data.charCodeAt(state.position);
+                switch (c) {
+                    case 9: // '\t'
+                    case 32: // ' '
+                        prev = c;
+                        ++state.position;
+                        break;
+                    case 10: // \n
+                        // handle \r\n
+                        if (prev !== 13) {
+                            ++state.currentLineNumber;
+                        }
+                        prev = c;
+                        ++state.position;
+                        break;
+                    case 13: // \r
+                        prev = c;
+                        ++state.position;
+                        ++state.currentLineNumber;
+                        break;
+                    default:
+                        return prev;
+                }
+            }
+            return prev;
+        }
+        function isData(state) {
+            // here we already assume the 5th char is _ and that the length >= 5
+            // d/D
+            var c = state.data.charCodeAt(state.currentTokenStart);
+            if (c !== 68 && c !== 100)
+                return false;
+            // a/A
+            c = state.data.charCodeAt(state.currentTokenStart + 1);
+            if (c !== 65 && c !== 97)
+                return false;
+            // t/t
+            c = state.data.charCodeAt(state.currentTokenStart + 2);
+            if (c !== 84 && c !== 116)
+                return false;
+            // a/A
+            c = state.data.charCodeAt(state.currentTokenStart + 3);
+            if (c !== 65 && c !== 97)
+                return false;
+            return true;
+        }
+        function isSave(state) {
+            // here we already assume the 5th char is _ and that the length >= 5
+            // s/S
+            var c = state.data.charCodeAt(state.currentTokenStart);
+            if (c !== 83 && c !== 115)
+                return false;
+            // a/A
+            c = state.data.charCodeAt(state.currentTokenStart + 1);
+            if (c !== 65 && c !== 97)
+                return false;
+            // v/V
+            c = state.data.charCodeAt(state.currentTokenStart + 2);
+            if (c !== 86 && c !== 118)
+                return false;
+            // e/E
+            c = state.data.charCodeAt(state.currentTokenStart + 3);
+            if (c !== 69 && c !== 101)
+                return false;
+            return true;
+        }
+        function isLoop(state) {
+            // here we already assume the 5th char is _ and that the length >= 5
+            if (state.currentTokenEnd - state.currentTokenStart !== 5)
+                return false;
+            // l/L
+            var c = state.data.charCodeAt(state.currentTokenStart);
+            if (c !== 76 && c !== 108)
+                return false;
+            // o/O
+            c = state.data.charCodeAt(state.currentTokenStart + 1);
+            if (c !== 79 && c !== 111)
+                return false;
+            // o/O
+            c = state.data.charCodeAt(state.currentTokenStart + 2);
+            if (c !== 79 && c !== 111)
+                return false;
+            // p/P
+            c = state.data.charCodeAt(state.currentTokenStart + 3);
+            if (c !== 80 && c !== 112)
+                return false;
+            return true;
+        }
+        /**
+         * Checks if the current token shares the namespace with string at <start,end).
+         */
+        function isNamespace(state, start, end) {
+            var i, nsLen = end - start, offset = state.currentTokenStart - start, tokenLen = state.currentTokenEnd - state.currentTokenStart;
+            if (tokenLen < nsLen)
+                return false;
+            for (i = start; i < end; ++i) {
+                if (state.data.charCodeAt(i) !== state.data.charCodeAt(i + offset))
+                    return false;
+            }
+            if (nsLen === tokenLen)
+                return true;
+            if (state.data.charCodeAt(i + offset) === 46) { // .
+                return true;
+            }
+            return false;
+        }
+        /**
+         * Returns the index of '.' in the current token. If no '.' is present, returns currentTokenEnd.
+         */
+        function getNamespaceEnd(state) {
+            var i;
+            for (i = state.currentTokenStart; i < state.currentTokenEnd; ++i) {
+                if (state.data.charCodeAt(i) === 46)
+                    return i;
+            }
+            return i;
+        }
+        /**
+         * Get the namespace string. endIndex is obtained by the getNamespaceEnd() function.
+         */
+        function getNamespace(state, endIndex) {
+            return state.data.substring(state.currentTokenStart, endIndex);
+        }
+        /**
+         * String representation of the current token.
+         */
+        function getTokenString(state) {
+            return state.data.substring(state.currentTokenStart, state.currentTokenEnd);
+        }
+        /**
+         * Move to the next token.
+         */
+        function moveNextInternal(state) {
+            var prev = skipWhitespace(state);
+            if (state.position >= state.length) {
+                state.currentTokenType = 6 /* End */;
+                return;
+            }
+            state.currentTokenStart = state.position;
+            state.currentTokenEnd = state.position;
+            state.isEscaped = false;
+            var c = state.data.charCodeAt(state.position);
+            switch (c) {
+                case 35: // #, comment
+                    skipCommentLine(state);
+                    state.currentTokenType = 5 /* Comment */;
+                    break;
+                case 34: // ", escaped value
+                case 39: // ', escaped value
+                    eatEscaped(state, c);
+                    state.currentTokenType = 3 /* Value */;
+                    break;
+                case 59: // ;, possible multiline value
+                    // multiline value must start at the beginning of the line.
+                    if (prev === 10 || prev === 13) { // /n or /r
+                        eatMultiline(state);
+                    }
+                    else {
+                        eatValue(state);
+                    }
+                    state.currentTokenType = 3 /* Value */;
+                    break;
+                default:
+                    eatValue(state);
+                    // escaped is always Value
+                    if (state.isEscaped) {
+                        state.currentTokenType = 3 /* Value */;
+                        // _ always means column name
+                    }
+                    else if (state.data.charCodeAt(state.currentTokenStart) === 95) { // _
+                        state.currentTokenType = 4 /* ColumnName */;
+                        // 5th char needs to be _ for data_ or loop_
+                    }
+                    else if (state.currentTokenEnd - state.currentTokenStart >= 5 && state.data.charCodeAt(state.currentTokenStart + 4) === 95) {
+                        if (isData(state))
+                            state.currentTokenType = 0 /* Data */;
+                        else if (isSave(state))
+                            state.currentTokenType = 1 /* Save */;
+                        else if (isLoop(state))
+                            state.currentTokenType = 2 /* Loop */;
+                        else
+                            state.currentTokenType = 3 /* Value */;
+                        // all other tests failed, we are at Value token.
+                    }
+                    else {
+                        state.currentTokenType = 3 /* Value */;
+                    }
+                    break;
+            }
+        }
+        /**
+         * Moves to the next non-comment token.
+         */
+        function moveNext(state) {
+            moveNextInternal(state);
+            while (state.currentTokenType === 5 /* Comment */)
+                moveNextInternal(state);
+        }
+        function createTokenizer(data) {
+            return {
+                data: data,
+                length: data.length,
+                position: 0,
+                currentTokenStart: 0,
+                currentTokenEnd: 0,
+                currentTokenType: 6 /* End */,
+                currentLineNumber: 1,
+                isEscaped: false
+            };
+        }
+        /**
+         * Reads a category containing a single row.
+         */
+        function handleSingle(tokenizer, block) {
+            var nsStart = tokenizer.currentTokenStart, nsEnd = getNamespaceEnd(tokenizer), name = getNamespace(tokenizer, nsEnd), column, columns = [], tokens = TokenIndexBuilder.create(512), tokenCount = 0, readingNames = true;
+            while (readingNames) {
+                if (tokenizer.currentTokenType !== 4 /* ColumnName */ || !isNamespace(tokenizer, nsStart, nsEnd)) {
+                    readingNames = false;
+                    break;
+                }
+                column = getTokenString(tokenizer);
+                moveNext(tokenizer);
+                if (tokenizer.currentTokenType !== 3 /* Value */) {
+                    return {
+                        hasError: true,
+                        errorLine: tokenizer.currentLineNumber,
+                        errorMessage: "Expected value."
+                    };
+                }
+                columns[columns.length] = column;
+                TokenIndexBuilder.addToken(tokens, tokenizer.currentTokenStart, tokenizer.currentTokenEnd);
+                tokenCount++;
+                moveNext(tokenizer);
+            }
+            block.addCategory(new Text.Category(block.data, name, nsStart, tokenizer.currentTokenStart, columns, tokens.tokens, tokenCount));
+            return {
+                hasError: false,
+                errorLine: 0,
+                errorMessage: ""
+            };
+        }
+        /**
+         * Reads a loop.
+         */
+        function handleLoop(tokenizer, block) {
+            var start = tokenizer.currentTokenStart, loopLine = tokenizer.currentLineNumber;
+            moveNext(tokenizer);
+            var name = getNamespace(tokenizer, getNamespaceEnd(tokenizer)), columns = [], tokens = TokenIndexBuilder.create(name === "_atom_site" ? (block.data.length / 1.85) | 0 : 1024), tokenCount = 0;
+            while (tokenizer.currentTokenType === 4 /* ColumnName */) {
+                columns[columns.length] = getTokenString(tokenizer);
+                moveNext(tokenizer);
+            }
+            while (tokenizer.currentTokenType === 3 /* Value */) {
+                TokenIndexBuilder.addToken(tokens, tokenizer.currentTokenStart, tokenizer.currentTokenEnd);
+                tokenCount++;
+                moveNext(tokenizer);
+            }
+            if (tokenCount % columns.length !== 0) {
+                return {
+                    hasError: true,
+                    errorLine: tokenizer.currentLineNumber,
+                    errorMessage: "The number of values for loop starting at line " + loopLine + " is not a multiple of the number of columns."
+                };
+            }
+            block.addCategory(new Text.Category(block.data, name, start, tokenizer.currentTokenStart, columns, tokens.tokens, tokenCount));
+            return {
+                hasError: false,
+                errorLine: 0,
+                errorMessage: ""
+            };
+        }
+        /**
+         * Creates an error result.
+         */
+        function error(line, message) {
+            return CIFTools.ParserResult.error(message, line);
+        }
+        /**
+         * Creates a data result.
+         */
+        function result(data) {
+            return CIFTools.ParserResult.success(data);
+        }
+        /**
+         * Parses an mmCIF file.
+         *
+         * @returns CifParserResult wrapper of the result.
+         */
+        function parseInternal(data) {
+            var tokenizer = createTokenizer(data), cat, id, file = new Text.File(data), block = new Text.DataBlock(data, "default"), saveFrame = new Text.DataBlock(data, "empty"), inSaveFrame = false, blockSaveFrames;
+            moveNext(tokenizer);
+            while (tokenizer.currentTokenType !== 6 /* End */) {
+                var token = tokenizer.currentTokenType;
+                // Data block
+                if (token === 0 /* Data */) {
+                    if (inSaveFrame) {
+                        return error(tokenizer.currentLineNumber, "Unexpected data block inside a save frame.");
+                    }
+                    if (block.categories.length > 0) {
+                        file.dataBlocks.push(block);
+                    }
+                    block = new Text.DataBlock(data, data.substring(tokenizer.currentTokenStart + 5, tokenizer.currentTokenEnd));
+                    moveNext(tokenizer);
+                    // Save frame
+                }
+                else if (token === 1 /* Save */) {
+                    id = data.substring(tokenizer.currentTokenStart + 5, tokenizer.currentTokenEnd);
+                    if (id.length === 0) {
+                        if (saveFrame.categories.length > 0) {
+                            blockSaveFrames = block.additionalData["saveFrames"];
+                            if (!blockSaveFrames) {
+                                blockSaveFrames = [];
+                                block.additionalData["saveFrames"] = blockSaveFrames;
+                            }
+                            blockSaveFrames[blockSaveFrames.length] = saveFrame;
+                        }
+                        inSaveFrame = false;
+                    }
+                    else {
+                        if (inSaveFrame) {
+                            return error(tokenizer.currentLineNumber, "Save frames cannot be nested.");
+                        }
+                        inSaveFrame = true;
+                        saveFrame = new Text.DataBlock(data, id);
+                    }
+                    moveNext(tokenizer);
+                    // Loop
+                }
+                else if (token === 2 /* Loop */) {
+                    cat = handleLoop(tokenizer, inSaveFrame ? saveFrame : block);
+                    if (cat.hasError) {
+                        return error(cat.errorLine, cat.errorMessage);
+                    }
+                    // Single row
+                }
+                else if (token === 4 /* ColumnName */) {
+                    cat = handleSingle(tokenizer, inSaveFrame ? saveFrame : block);
+                    if (cat.hasError) {
+                        return error(cat.errorLine, cat.errorMessage);
+                    }
+                    // Out of options
+                }
+                else {
+                    return error(tokenizer.currentLineNumber, "Unexpected token. Expected data_, loop_, or data name.");
+                }
+            }
+            // Check if the latest save frame was closed.
+            if (inSaveFrame) {
+                return error(tokenizer.currentLineNumber, "Unfinished save frame (`" + saveFrame.header + "`).");
+            }
+            if (block.categories.length > 0) {
+                file.dataBlocks.push(block);
+            }
+            return result(file);
+        }
+        function parse(data) {
+            return parseInternal(data);
+        }
+        Text.parse = parse;
+    })(Text = CIFTools.Text || (CIFTools.Text = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Text;
+    (function (Text) {
+        "use strict";
+        var StringWriter = CIFTools.Utils.StringWriter;
+        var Writer = /** @class */ (function () {
+            function Writer() {
+                this.writer = StringWriter.create();
+                this.encoded = false;
+                this.dataBlockCreated = false;
+            }
+            Writer.prototype.startDataBlock = function (header) {
+                this.dataBlockCreated = true;
+                StringWriter.write(this.writer, "data_" + (header || '').replace(/[ \n\t]/g, '').toUpperCase() + "\n#\n");
+            };
+            Writer.prototype.writeCategory = function (category, contexts) {
+                if (this.encoded) {
+                    throw new Error('The writer contents have already been encoded, no more writing.');
+                }
+                if (!this.dataBlockCreated) {
+                    throw new Error('No data block created.');
+                }
+                var src = !contexts || !contexts.length ? [category(void 0)] : contexts.map(function (c) { return category(c); });
+                var data = src.filter(function (c) { return c && c.count > 0; });
+                if (!data.length)
+                    return;
+                var count = data.reduce(function (a, c) { return a + (c.count === void 0 ? 1 : c.count); }, 0);
+                if (!count)
+                    return;
+                else if (count === 1) {
+                    writeCifSingleRecord(data[0], this.writer);
+                }
+                else {
+                    writeCifLoop(data, this.writer);
+                }
+            };
+            Writer.prototype.encode = function () {
+                this.encoded = true;
+            };
+            Writer.prototype.flush = function (stream) {
+                StringWriter.writeTo(this.writer, stream);
+            };
+            return Writer;
+        }());
+        Text.Writer = Writer;
+        function isMultiline(value) {
+            return !!value && value.indexOf('\n') >= 0;
+        }
+        function writeCifSingleRecord(category, writer) {
+            var fields = category.desc.fields;
+            var data = category.data;
+            var width = fields.reduce(function (w, s) { return Math.max(w, s.name.length); }, 0) + category.desc.name.length + 5;
+            for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
+                var f = fields_1[_i];
+                StringWriter.writePadRight(writer, category.desc.name + "." + f.name, width);
+                var presence = f.presence;
+                var p = presence ? presence(data, 0) : 0 /* Present */;
+                if (p !== 0 /* Present */) {
+                    if (p === 1 /* NotSpecified */)
+                        writeNotSpecified(writer);
+                    else
+                        writeUnknown(writer);
+                }
+                else {
+                    var val = f.string(data, 0);
+                    if (isMultiline(val)) {
+                        writeMultiline(writer, val);
+                        StringWriter.newline(writer);
+                    }
+                    else {
+                        writeChecked(writer, val);
+                    }
+                }
+                StringWriter.newline(writer);
+            }
+            StringWriter.write(writer, '#\n');
+        }
+        function writeCifLoop(categories, writer) {
+            writeLine(writer, 'loop_');
+            var first = categories[0];
+            var fields = first.desc.fields;
+            for (var _i = 0, fields_2 = fields; _i < fields_2.length; _i++) {
+                var f = fields_2[_i];
+                writeLine(writer, first.desc.name + "." + f.name);
+            }
+            for (var _a = 0, categories_1 = categories; _a < categories_1.length; _a++) {
+                var category = categories_1[_a];
+                var data = category.data;
+                var count = category.count;
+                for (var i = 0; i < count; i++) {
+                    for (var _b = 0, fields_3 = fields; _b < fields_3.length; _b++) {
+                        var f = fields_3[_b];
+                        var presence = f.presence;
+                        var p = presence ? presence(data, i) : 0 /* Present */;
+                        if (p !== 0 /* Present */) {
+                            if (p === 1 /* NotSpecified */)
+                                writeNotSpecified(writer);
+                            else
+                                writeUnknown(writer);
+                        }
+                        else {
+                            var val = f.string(data, i);
+                            if (isMultiline(val)) {
+                                writeMultiline(writer, val);
+                                StringWriter.newline(writer);
+                            }
+                            else {
+                                writeChecked(writer, val);
+                            }
+                        }
+                    }
+                    StringWriter.newline(writer);
+                }
+            }
+            StringWriter.write(writer, '#\n');
+        }
+        function writeLine(writer, val) {
+            StringWriter.write(writer, val);
+            StringWriter.newline(writer);
+        }
+        function writeInteger(writer, val) {
+            StringWriter.writeSafe(writer, '' + val + ' ');
+        }
+        /**
+            * eg writeFloat(123.2123, 100) -- 2 decim
+            */
+        function writeFloat(writer, val, precisionMultiplier) {
+            StringWriter.writeSafe(writer, '' + Math.round(precisionMultiplier * val) / precisionMultiplier + ' ');
+        }
+        /**
+            * Writes '. '
+            */
+        function writeNotSpecified(writer) {
+            StringWriter.writeSafe(writer, '. ');
+        }
+        /**
+            * Writes '? '
+            */
+        function writeUnknown(writer) {
+            StringWriter.writeSafe(writer, '? ');
+        }
+        function writeChecked(writer, val) {
+            if (!val) {
+                StringWriter.writeSafe(writer, '. ');
+                return;
+            }
+            var escape = false, escapeCharStart = '\'', escapeCharEnd = '\' ';
+            var hasWhitespace = false;
+            var hasSingle = false;
+            var hasDouble = false;
+            for (var i = 0, _l = val.length - 1; i < _l; i++) {
+                var c = val.charCodeAt(i);
+                switch (c) {
+                    case 9:
+                        hasWhitespace = true;
+                        break; // \t
+                    case 10: // \n
+                        StringWriter.writeSafe(writer, '\n;' + val);
+                        StringWriter.writeSafe(writer, '\n; ');
+                        return;
+                    case 32:
+                        hasWhitespace = true;
+                        break; // ' '
+                    case 34: // "
+                        if (hasSingle) {
+                            StringWriter.writeSafe(writer, '\n;' + val);
+                            StringWriter.writeSafe(writer, '\n; ');
+                            return;
+                        }
+                        hasDouble = true;
+                        escape = true;
+                        escapeCharStart = '\'';
+                        escapeCharEnd = '\' ';
+                        break;
+                    case 39: // '
+                        if (hasDouble) {
+                            StringWriter.writeSafe(writer, '\n;' + val);
+                            StringWriter.writeSafe(writer, '\n; ');
+                            return;
+                        }
+                        escape = true;
+                        hasSingle = true;
+                        escapeCharStart = '"';
+                        escapeCharEnd = '" ';
+                        break;
+                }
+            }
+            var fst = val.charCodeAt(0);
+            if (!escape && (fst === 35 /* # */ || fst === 36 /* $ */ || fst === 59 /* ; */ || fst === 91 /* [ */ || fst === 93 /* ] */ || hasWhitespace)) {
+                escapeCharStart = '\'';
+                escapeCharEnd = '\' ';
+                escape = true;
+            }
+            if (escape) {
+                StringWriter.writeSafe(writer, escapeCharStart + val + escapeCharEnd);
+            }
+            else {
+                StringWriter.write(writer, val);
+                StringWriter.writeSafe(writer, ' ');
+            }
+        }
+        function writeMultiline(writer, val) {
+            StringWriter.writeSafe(writer, '\n;' + val);
+            StringWriter.writeSafe(writer, '\n; ');
+        }
+        function writeToken(writer, data, start, end) {
+            var escape = false, escapeCharStart = '\'', escapeCharEnd = '\' ';
+            for (var i = start; i < end - 1; i++) {
+                var c = data.charCodeAt(i);
+                switch (c) {
+                    case 10: // \n
+                        StringWriter.writeSafe(writer, '\n;' + data.substring(start, end));
+                        StringWriter.writeSafe(writer, '\n; ');
+                        return;
+                    case 34: // "
+                        escape = true;
+                        escapeCharStart = '\'';
+                        escapeCharEnd = '\' ';
+                        break;
+                    case 39: // '
+                        escape = true;
+                        escapeCharStart = '"';
+                        escapeCharEnd = '" ';
+                        break;
+                }
+            }
+            if (!escape && data.charCodeAt(start) === 59 /* ; */) {
+                escapeCharStart = '\'';
+                escapeCharEnd = '\' ';
+                escape = true;
+            }
+            if (escape) {
+                StringWriter.writeSafe(writer, escapeCharStart + data.substring(start, end));
+                StringWriter.writeSafe(writer, escapeCharStart);
+            }
+            else {
+                StringWriter.write(writer, data.substring(start, end));
+                StringWriter.writeSafe(writer, ' ');
+            }
+        }
+    })(Text = CIFTools.Text || (CIFTools.Text = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        var MessagePack;
+        (function (MessagePack) {
+            /*
+             * Adapted from https://github.com/rcsb/mmtf-javascript
+             * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
+             */
+            /**
+             * decode all key-value pairs of a map into an object
+             * @param  {Integer} length - number of key-value pairs
+             * @return {Object} decoded map
+             */
+            function map(state, length) {
+                var value = {};
+                for (var i = 0; i < length; i++) {
+                    var key = parse(state);
+                    value[key] = parse(state);
+                }
+                return value;
+            }
+            /**
+             * decode binary array
+             * @param  {Integer} length - number of elements in the array
+             * @return {Uint8Array} decoded array
+             */
+            function bin(state, length) {
+                // This approach to binary parsing wastes a bit of memory to trade for speed compared to:
+                //
+                //   let value = buffer.subarray(offset, offset + length); //new Uint8Array(buffer.buffer, offset, length);
+                // 
+                // It turns out that using the view created by subarray probably uses DataView
+                // in the background, which causes the element access to be several times slower
+                // than creating the new byte array.
+                var value = new Uint8Array(length);
+                var o = state.offset;
+                for (var i = 0; i < length; i++)
+                    value[i] = state.buffer[i + o];
+                state.offset += length;
+                return value;
+            }
+            /**
+             * decode string
+             * @param  {Integer} length - number string characters
+             * @return {String} decoded string
+             */
+            function str(state, length) {
+                var value = MessagePack.utf8Read(state.buffer, state.offset, length);
+                state.offset += length;
+                return value;
+            }
+            /**
+                 * decode array
+                 * @param  {Integer} length - number of array elements
+                 * @return {Array} decoded array
+                 */
+            function array(state, length) {
+                var value = new Array(length);
+                for (var i = 0; i < length; i++) {
+                    value[i] = parse(state);
+                }
+                return value;
+            }
+            /**
+             * recursively parse the MessagePack data
+             * @return {Object|Array|String|Number|Boolean|null} decoded MessagePack data
+             */
+            function parse(state) {
+                var type = state.buffer[state.offset];
+                var value, length;
+                // Positive FixInt
+                if ((type & 0x80) === 0x00) {
+                    state.offset++;
+                    return type;
+                }
+                // FixMap
+                if ((type & 0xf0) === 0x80) {
+                    length = type & 0x0f;
+                    state.offset++;
+                    return map(state, length);
+                }
+                // FixArray
+                if ((type & 0xf0) === 0x90) {
+                    length = type & 0x0f;
+                    state.offset++;
+                    return array(state, length);
+                }
+                // FixStr
+                if ((type & 0xe0) === 0xa0) {
+                    length = type & 0x1f;
+                    state.offset++;
+                    return str(state, length);
+                }
+                // Negative FixInt
+                if ((type & 0xe0) === 0xe0) {
+                    value = state.dataView.getInt8(state.offset);
+                    state.offset++;
+                    return value;
+                }
+                switch (type) {
+                    // nil
+                    case 0xc0:
+                        state.offset++;
+                        return null;
+                    // false
+                    case 0xc2:
+                        state.offset++;
+                        return false;
+                    // true
+                    case 0xc3:
+                        state.offset++;
+                        return true;
+                    // bin 8
+                    case 0xc4:
+                        length = state.dataView.getUint8(state.offset + 1);
+                        state.offset += 2;
+                        return bin(state, length);
+                    // bin 16
+                    case 0xc5:
+                        length = state.dataView.getUint16(state.offset + 1);
+                        state.offset += 3;
+                        return bin(state, length);
+                    // bin 32
+                    case 0xc6:
+                        length = state.dataView.getUint32(state.offset + 1);
+                        state.offset += 5;
+                        return bin(state, length);
+                    // float 32
+                    case 0xca:
+                        value = state.dataView.getFloat32(state.offset + 1);
+                        state.offset += 5;
+                        return value;
+                    // float 64
+                    case 0xcb:
+                        value = state.dataView.getFloat64(state.offset + 1);
+                        state.offset += 9;
+                        return value;
+                    // uint8
+                    case 0xcc:
+                        value = state.buffer[state.offset + 1];
+                        state.offset += 2;
+                        return value;
+                    // uint 16
+                    case 0xcd:
+                        value = state.dataView.getUint16(state.offset + 1);
+                        state.offset += 3;
+                        return value;
+                    // uint 32
+                    case 0xce:
+                        value = state.dataView.getUint32(state.offset + 1);
+                        state.offset += 5;
+                        return value;
+                    // int 8
+                    case 0xd0:
+                        value = state.dataView.getInt8(state.offset + 1);
+                        state.offset += 2;
+                        return value;
+                    // int 16
+                    case 0xd1:
+                        value = state.dataView.getInt16(state.offset + 1);
+                        state.offset += 3;
+                        return value;
+                    // int 32
+                    case 0xd2:
+                        value = state.dataView.getInt32(state.offset + 1);
+                        state.offset += 5;
+                        return value;
+                    // str 8
+                    case 0xd9:
+                        length = state.dataView.getUint8(state.offset + 1);
+                        state.offset += 2;
+                        return str(state, length);
+                    // str 16
+                    case 0xda:
+                        length = state.dataView.getUint16(state.offset + 1);
+                        state.offset += 3;
+                        return str(state, length);
+                    // str 32
+                    case 0xdb:
+                        length = state.dataView.getUint32(state.offset + 1);
+                        state.offset += 5;
+                        return str(state, length);
+                    // array 16
+                    case 0xdc:
+                        length = state.dataView.getUint16(state.offset + 1);
+                        state.offset += 3;
+                        return array(state, length);
+                    // array 32
+                    case 0xdd:
+                        length = state.dataView.getUint32(state.offset + 1);
+                        state.offset += 5;
+                        return array(state, length);
+                    // map 16:
+                    case 0xde:
+                        length = state.dataView.getUint16(state.offset + 1);
+                        state.offset += 3;
+                        return map(state, length);
+                    // map 32
+                    case 0xdf:
+                        length = state.dataView.getUint32(state.offset + 1);
+                        state.offset += 5;
+                        return map(state, length);
+                }
+                throw new Error("Unknown type 0x" + type.toString(16));
+            }
+            function decode(buffer) {
+                return parse({
+                    buffer: buffer,
+                    offset: 0,
+                    dataView: new DataView(buffer.buffer)
+                });
+            }
+            MessagePack.decode = decode;
+        })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        var MessagePack;
+        (function (MessagePack) {
+            /*
+             * Adapted from https://github.com/rcsb/mmtf-javascript
+             * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
+             */
+            function encode(value) {
+                var buffer = new ArrayBuffer(encodedSize(value));
+                var view = new DataView(buffer);
+                var bytes = new Uint8Array(buffer);
+                encodeInternal(value, view, bytes, 0);
+                return bytes;
+            }
+            MessagePack.encode = encode;
+            function encodedSize(value) {
+                var type = typeof value;
+                // Raw Bytes
+                if (type === "string") {
+                    var length_1 = MessagePack.utf8ByteCount(value);
+                    if (length_1 < 0x20) {
+                        return 1 + length_1;
+                    }
+                    if (length_1 < 0x100) {
+                        return 2 + length_1;
+                    }
+                    if (length_1 < 0x10000) {
+                        return 3 + length_1;
+                    }
+                    if (length_1 < 0x100000000) {
+                        return 5 + length_1;
+                    }
+                }
+                if (value instanceof Uint8Array) {
+                    var length_2 = value.byteLength;
+                    if (length_2 < 0x100) {
+                        return 2 + length_2;
+                    }
+                    if (length_2 < 0x10000) {
+                        return 3 + length_2;
+                    }
+                    if (length_2 < 0x100000000) {
+                        return 5 + length_2;
+                    }
+                }
+                if (type === "number") {
+                    // Floating Point
+                    // double
+                    if (Math.floor(value) !== value)
+                        return 9;
+                    // Integers
+                    if (value >= 0) {
+                        // positive fixnum
+                        if (value < 0x80)
+                            return 1;
+                        // uint 8
+                        if (value < 0x100)
+                            return 2;
+                        // uint 16
+                        if (value < 0x10000)
+                            return 3;
+                        // uint 32
+                        if (value < 0x100000000)
+                            return 5;
+                        throw new Error("Number too big 0x" + value.toString(16));
+                    }
+                    // negative fixnum
+                    if (value >= -0x20)
+                        return 1;
+                    // int 8
+                    if (value >= -0x80)
+                        return 2;
+                    // int 16
+                    if (value >= -0x8000)
+                        return 3;
+                    // int 32
+                    if (value >= -0x80000000)
+                        return 5;
+                    throw new Error("Number too small -0x" + value.toString(16).substr(1));
+                }
+                // Boolean, null
+                if (type === "boolean" || value === null || value === void 0)
+                    return 1;
+                // Container Types
+                if (type === "object") {
+                    var length_3, size = 0;
+                    if (Array.isArray(value)) {
+                        length_3 = value.length;
+                        for (var i = 0; i < length_3; i++) {
+                            size += encodedSize(value[i]);
+                        }
+                    }
+                    else {
+                        var keys = Object.keys(value);
+                        length_3 = keys.length;
+                        for (var i = 0; i < length_3; i++) {
+                            var key = keys[i];
+                            size += encodedSize(key) + encodedSize(value[key]);
+                        }
+                    }
+                    if (length_3 < 0x10) {
+                        return 1 + size;
+                    }
+                    if (length_3 < 0x10000) {
+                        return 3 + size;
+                    }
+                    if (length_3 < 0x100000000) {
+                        return 5 + size;
+                    }
+                    throw new Error("Array or object too long 0x" + length_3.toString(16));
+                }
+                throw new Error("Unknown type " + type);
+            }
+            function encodeInternal(value, view, bytes, offset) {
+                var type = typeof value;
+                // Strings Bytes
+                if (type === "string") {
+                    var length_4 = MessagePack.utf8ByteCount(value);
+                    // fix str
+                    if (length_4 < 0x20) {
+                        view.setUint8(offset, length_4 | 0xa0);
+                        MessagePack.utf8Write(bytes, offset + 1, value);
+                        return 1 + length_4;
+                    }
+                    // str 8
+                    if (length_4 < 0x100) {
+                        view.setUint8(offset, 0xd9);
+                        view.setUint8(offset + 1, length_4);
+                        MessagePack.utf8Write(bytes, offset + 2, value);
+                        return 2 + length_4;
+                    }
+                    // str 16
+                    if (length_4 < 0x10000) {
+                        view.setUint8(offset, 0xda);
+                        view.setUint16(offset + 1, length_4);
+                        MessagePack.utf8Write(bytes, offset + 3, value);
+                        return 3 + length_4;
+                    }
+                    // str 32
+                    if (length_4 < 0x100000000) {
+                        view.setUint8(offset, 0xdb);
+                        view.setUint32(offset + 1, length_4);
+                        MessagePack.utf8Write(bytes, offset + 5, value);
+                        return 5 + length_4;
+                    }
+                }
+                if (value instanceof Uint8Array) {
+                    var length_5 = value.byteLength;
+                    var bytes_1 = new Uint8Array(view.buffer);
+                    // bin 8
+                    if (length_5 < 0x100) {
+                        view.setUint8(offset, 0xc4);
+                        view.setUint8(offset + 1, length_5);
+                        bytes_1.set(value, offset + 2);
+                        return 2 + length_5;
+                    }
+                    // bin 16
+                    if (length_5 < 0x10000) {
+                        view.setUint8(offset, 0xc5);
+                        view.setUint16(offset + 1, length_5);
+                        bytes_1.set(value, offset + 3);
+                        return 3 + length_5;
+                    }
+                    // bin 32
+                    if (length_5 < 0x100000000) {
+                        view.setUint8(offset, 0xc6);
+                        view.setUint32(offset + 1, length_5);
+                        bytes_1.set(value, offset + 5);
+                        return 5 + length_5;
+                    }
+                }
+                if (type === "number") {
+                    if (!isFinite(value)) {
+                        throw new Error("Number not finite: " + value);
+                    }
+                    // Floating point
+                    if (Math.floor(value) !== value) {
+                        view.setUint8(offset, 0xcb);
+                        view.setFloat64(offset + 1, value);
+                        return 9;
+                    }
+                    // Integers
+                    if (value >= 0) {
+                        // positive fixnum
+                        if (value < 0x80) {
+                            view.setUint8(offset, value);
+                            return 1;
+                        }
+                        // uint 8
+                        if (value < 0x100) {
+                            view.setUint8(offset, 0xcc);
+                            view.setUint8(offset + 1, value);
+                            return 2;
+                        }
+                        // uint 16
+                        if (value < 0x10000) {
+                            view.setUint8(offset, 0xcd);
+                            view.setUint16(offset + 1, value);
+                            return 3;
+                        }
+                        // uint 32
+                        if (value < 0x100000000) {
+                            view.setUint8(offset, 0xce);
+                            view.setUint32(offset + 1, value);
+                            return 5;
+                        }
+                        throw new Error("Number too big 0x" + value.toString(16));
+                    }
+                    // negative fixnum
+                    if (value >= -0x20) {
+                        view.setInt8(offset, value);
+                        return 1;
+                    }
+                    // int 8
+                    if (value >= -0x80) {
+                        view.setUint8(offset, 0xd0);
+                        view.setInt8(offset + 1, value);
+                        return 2;
+                    }
+                    // int 16
+                    if (value >= -0x8000) {
+                        view.setUint8(offset, 0xd1);
+                        view.setInt16(offset + 1, value);
+                        return 3;
+                    }
+                    // int 32
+                    if (value >= -0x80000000) {
+                        view.setUint8(offset, 0xd2);
+                        view.setInt32(offset + 1, value);
+                        return 5;
+                    }
+                    throw new Error("Number too small -0x" + (-value).toString(16).substr(1));
+                }
+                // null
+                if (value === null || value === undefined) {
+                    view.setUint8(offset, 0xc0);
+                    return 1;
+                }
+                // Boolean
+                if (type === "boolean") {
+                    view.setUint8(offset, value ? 0xc3 : 0xc2);
+                    return 1;
+                }
+                // Container Types
+                if (type === "object") {
+                    var length_6, size = 0;
+                    var isArray = Array.isArray(value);
+                    var keys = void 0;
+                    if (isArray) {
+                        length_6 = value.length;
+                    }
+                    else {
+                        keys = Object.keys(value);
+                        length_6 = keys.length;
+                    }
+                    if (length_6 < 0x10) {
+                        view.setUint8(offset, length_6 | (isArray ? 0x90 : 0x80));
+                        size = 1;
+                    }
+                    else if (length_6 < 0x10000) {
+                        view.setUint8(offset, isArray ? 0xdc : 0xde);
+                        view.setUint16(offset + 1, length_6);
+                        size = 3;
+                    }
+                    else if (length_6 < 0x100000000) {
+                        view.setUint8(offset, isArray ? 0xdd : 0xdf);
+                        view.setUint32(offset + 1, length_6);
+                        size = 5;
+                    }
+                    if (isArray) {
+                        for (var i = 0; i < length_6; i++) {
+                            size += encodeInternal(value[i], view, bytes, offset + size);
+                        }
+                    }
+                    else {
+                        for (var _i = 0, _a = keys; _i < _a.length; _i++) {
+                            var key = _a[_i];
+                            size += encodeInternal(key, view, bytes, offset + size);
+                            size += encodeInternal(value[key], view, bytes, offset + size);
+                        }
+                    }
+                    return size;
+                }
+                throw new Error("Unknown type " + type);
+            }
+        })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        var MessagePack;
+        (function (MessagePack) {
+            /*
+             * Adapted from https://github.com/rcsb/mmtf-javascript
+             * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
+             */
+            function utf8Write(data, offset, str) {
+                var byteLength = data.byteLength;
+                for (var i = 0, l = str.length; i < l; i++) {
+                    var codePoint = str.charCodeAt(i);
+                    // One byte of UTF-8
+                    if (codePoint < 0x80) {
+                        data[offset++] = codePoint >>> 0 & 0x7f | 0x00;
+                        continue;
+                    }
+                    // Two bytes of UTF-8
+                    if (codePoint < 0x800) {
+                        data[offset++] = codePoint >>> 6 & 0x1f | 0xc0;
+                        data[offset++] = codePoint >>> 0 & 0x3f | 0x80;
+                        continue;
+                    }
+                    // Three bytes of UTF-8.
+                    if (codePoint < 0x10000) {
+                        data[offset++] = codePoint >>> 12 & 0x0f | 0xe0;
+                        data[offset++] = codePoint >>> 6 & 0x3f | 0x80;
+                        data[offset++] = codePoint >>> 0 & 0x3f | 0x80;
+                        continue;
+                    }
+                    // Four bytes of UTF-8
+                    if (codePoint < 0x110000) {
+                        data[offset++] = codePoint >>> 18 & 0x07 | 0xf0;
+                        data[offset++] = codePoint >>> 12 & 0x3f | 0x80;
+                        data[offset++] = codePoint >>> 6 & 0x3f | 0x80;
+                        data[offset++] = codePoint >>> 0 & 0x3f | 0x80;
+                        continue;
+                    }
+                    throw new Error("bad codepoint " + codePoint);
+                }
+            }
+            MessagePack.utf8Write = utf8Write;
+            var __chars = function () {
+                var data = [];
+                for (var i = 0; i < 1024; i++)
+                    data[i] = String.fromCharCode(i);
+                return data;
+            }();
+            function throwError(err) {
+                throw new Error(err);
+            }
+            function utf8Read(data, offset, length) {
+                var chars = __chars;
+                var str = void 0, chunk = [], chunkSize = 512, chunkOffset = 0;
+                for (var i = offset, end = offset + length; i < end; i++) {
+                    var byte = data[i];
+                    // One byte character
+                    if ((byte & 0x80) === 0x00) {
+                        chunk[chunkOffset++] = chars[byte];
+                    }
+                    // Two byte character
+                    else if ((byte & 0xe0) === 0xc0) {
+                        chunk[chunkOffset++] = chars[((byte & 0x0f) << 6) | (data[++i] & 0x3f)];
+                    }
+                    // Three byte character
+                    else if ((byte & 0xf0) === 0xe0) {
+                        chunk[chunkOffset++] = String.fromCharCode(((byte & 0x0f) << 12) |
+                            ((data[++i] & 0x3f) << 6) |
+                            ((data[++i] & 0x3f) << 0));
+                    }
+                    // Four byte character
+                    else if ((byte & 0xf8) === 0xf0) {
+                        chunk[chunkOffset++] = String.fromCharCode(((byte & 0x07) << 18) |
+                            ((data[++i] & 0x3f) << 12) |
+                            ((data[++i] & 0x3f) << 6) |
+                            ((data[++i] & 0x3f) << 0));
+                    }
+                    else
+                        throwError("Invalid byte " + byte.toString(16));
+                    if (chunkOffset === chunkSize) {
+                        str = str || [];
+                        str[str.length] = chunk.join('');
+                        chunkOffset = 0;
+                    }
+                }
+                if (!str)
+                    return chunk.slice(0, chunkOffset).join('');
+                if (chunkOffset > 0) {
+                    str[str.length] = chunk.slice(0, chunkOffset).join('');
+                }
+                return str.join('');
+            }
+            MessagePack.utf8Read = utf8Read;
+            function utf8ByteCount(str) {
+                var count = 0;
+                for (var i = 0, l = str.length; i < l; i++) {
+                    var codePoint = str.charCodeAt(i);
+                    if (codePoint < 0x80) {
+                        count += 1;
+                        continue;
+                    }
+                    if (codePoint < 0x800) {
+                        count += 2;
+                        continue;
+                    }
+                    if (codePoint < 0x10000) {
+                        count += 3;
+                        continue;
+                    }
+                    if (codePoint < 0x110000) {
+                        count += 4;
+                        continue;
+                    }
+                    throwError("bad codepoint " + codePoint);
+                }
+                return count;
+            }
+            MessagePack.utf8ByteCount = utf8ByteCount;
+        })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        /**
+         * Fixed point, delta, RLE, integer packing adopted from https://github.com/rcsb/mmtf-javascript/
+         * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
+         */
+        function decode(data) {
+            var current = data.data;
+            for (var i = data.encoding.length - 1; i >= 0; i--) {
+                current = Decoder.decodeStep(current, data.encoding[i]);
+            }
+            return current;
+        }
+        Binary.decode = decode;
+        var Decoder;
+        (function (Decoder) {
+            function decodeStep(data, encoding) {
+                switch (encoding.kind) {
+                    case 'ByteArray': {
+                        switch (encoding.type) {
+                            case 4 /* Uint8 */: return data;
+                            case 1 /* Int8 */: return int8(data);
+                            case 2 /* Int16 */: return int16(data);
+                            case 5 /* Uint16 */: return uint16(data);
+                            case 3 /* Int32 */: return int32(data);
+                            case 6 /* Uint32 */: return uint32(data);
+                            case 32 /* Float32 */: return float32(data);
+                            case 33 /* Float64 */: return float64(data);
+                            default: throw new Error('Unsupported ByteArray type.');
+                        }
+                    }
+                    case 'FixedPoint': return fixedPoint(data, encoding);
+                    case 'IntervalQuantization': return intervalQuantization(data, encoding);
+                    case 'RunLength': return runLength(data, encoding);
+                    case 'Delta': return delta(data, encoding);
+                    case 'IntegerPacking': return integerPacking(data, encoding);
+                    case 'StringArray': return stringArray(data, encoding);
+                }
+            }
+            Decoder.decodeStep = decodeStep;
+            function getIntArray(type, size) {
+                switch (type) {
+                    case 1 /* Int8 */: return new Int8Array(size);
+                    case 2 /* Int16 */: return new Int16Array(size);
+                    case 3 /* Int32 */: return new Int32Array(size);
+                    case 4 /* Uint8 */: return new Uint8Array(size);
+                    case 5 /* Uint16 */: return new Uint16Array(size);
+                    case 6 /* Uint32 */: return new Uint32Array(size);
+                    default: throw new Error('Unsupported integer data type.');
+                }
+            }
+            function getFloatArray(type, size) {
+                switch (type) {
+                    case 32 /* Float32 */: return new Float32Array(size);
+                    case 33 /* Float64 */: return new Float64Array(size);
+                    default: throw new Error('Unsupported floating data type.');
+                }
+            }
+            /* http://stackoverflow.com/questions/7869752/javascript-typed-arrays-and-endianness */
+            var isLittleEndian = (function () {
+                var arrayBuffer = new ArrayBuffer(2);
+                var uint8Array = new Uint8Array(arrayBuffer);
+                var uint16array = new Uint16Array(arrayBuffer);
+                uint8Array[0] = 0xAA;
+                uint8Array[1] = 0xBB;
+                if (uint16array[0] === 0xBBAA)
+                    return true;
+                return false;
+            })();
+            function int8(data) { return new Int8Array(data.buffer, data.byteOffset); }
+            function flipByteOrder(data, bytes) {
+                var buffer = new ArrayBuffer(data.length);
+                var ret = new Uint8Array(buffer);
+                for (var i = 0, n = data.length; i < n; i += bytes) {
+                    for (var j = 0; j < bytes; j++) {
+                        ret[i + bytes - j - 1] = data[i + j];
+                    }
+                }
+                return buffer;
+            }
+            function view(data, byteSize, c) {
+                if (isLittleEndian)
+                    return new c(data.buffer);
+                return new c(flipByteOrder(data, byteSize));
+            }
+            function int16(data) { return view(data, 2, Int16Array); }
+            function uint16(data) { return view(data, 2, Uint16Array); }
+            function int32(data) { return view(data, 4, Int32Array); }
+            function uint32(data) { return view(data, 4, Uint32Array); }
+            function float32(data) { return view(data, 4, Float32Array); }
+            function float64(data) { return view(data, 8, Float64Array); }
+            function fixedPoint(data, encoding) {
+                var n = data.length;
+                var output = getFloatArray(encoding.srcType, n);
+                var f = 1 / encoding.factor;
+                for (var i = 0; i < n; i++) {
+                    output[i] = f * data[i];
+                }
+                return output;
+            }
+            function intervalQuantization(data, encoding) {
+                var n = data.length;
+                var output = getFloatArray(encoding.srcType, n);
+                var delta = (encoding.max - encoding.min) / (encoding.numSteps - 1);
+                var min = encoding.min;
+                for (var i = 0; i < n; i++) {
+                    output[i] = min + delta * data[i];
+                }
+                return output;
+            }
+            function runLength(data, encoding) {
+                var output = getIntArray(encoding.srcType, encoding.srcSize);
+                var dataOffset = 0;
+                for (var i = 0, il = data.length; i < il; i += 2) {
+                    var value = data[i]; // value to be repeated
+                    var length_7 = data[i + 1]; // number of repeats
+                    for (var j = 0; j < length_7; ++j) {
+                        output[dataOffset++] = value;
+                    }
+                }
+                return output;
+            }
+            function delta(data, encoding) {
+                var n = data.length;
+                var output = getIntArray(encoding.srcType, n);
+                if (!n)
+                    return output;
+                output[0] = data[0] + (encoding.origin | 0);
+                for (var i = 1; i < n; ++i) {
+                    output[i] = data[i] + output[i - 1];
+                }
+                return output;
+            }
+            function integerPackingSigned(data, encoding) {
+                var upperLimit = encoding.byteCount === 1 ? 0x7F : 0x7FFF;
+                var lowerLimit = -upperLimit - 1;
+                var n = data.length;
+                var output = new Int32Array(encoding.srcSize);
+                var i = 0;
+                var j = 0;
+                while (i < n) {
+                    var value = 0, t = data[i];
+                    while (t === upperLimit || t === lowerLimit) {
+                        value += t;
+                        i++;
+                        t = data[i];
+                    }
+                    value += t;
+                    output[j] = value;
+                    i++;
+                    j++;
+                }
+                return output;
+            }
+            function integerPackingUnsigned(data, encoding) {
+                var upperLimit = encoding.byteCount === 1 ? 0xFF : 0xFFFF;
+                var n = data.length;
+                var output = new Int32Array(encoding.srcSize);
+                var i = 0;
+                var j = 0;
+                while (i < n) {
+                    var value = 0, t = data[i];
+                    while (t === upperLimit) {
+                        value += t;
+                        i++;
+                        t = data[i];
+                    }
+                    value += t;
+                    output[j] = value;
+                    i++;
+                    j++;
+                }
+                return output;
+            }
+            function integerPacking(data, encoding) {
+                return encoding.isUnsigned ? integerPackingUnsigned(data, encoding) : integerPackingSigned(data, encoding);
+            }
+            function stringArray(data, encoding) {
+                var str = encoding.stringData;
+                var offsets = decode({ encoding: encoding.offsetEncoding, data: encoding.offsets });
+                var indices = decode({ encoding: encoding.dataEncoding, data: data });
+                var cache = Object.create(null);
+                var result = new Array(indices.length);
+                var offset = 0;
+                for (var _i = 0, indices_1 = indices; _i < indices_1.length; _i++) {
+                    var i = indices_1[_i];
+                    if (i < 0) {
+                        result[offset++] = null;
+                        continue;
+                    }
+                    var v = cache[i];
+                    if (v === void 0) {
+                        v = str.substring(offsets[i], offsets[i + 1]);
+                        cache[i] = v;
+                    }
+                    result[offset++] = v;
+                }
+                return result;
+            }
+        })(Decoder || (Decoder = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        var File = /** @class */ (function () {
+            function File(data) {
+                this.dataBlocks = data.dataBlocks.map(function (b) { return new DataBlock(b); });
+            }
+            File.prototype.toJSON = function () {
+                return this.dataBlocks.map(function (b) { return b.toJSON(); });
+            };
+            return File;
+        }());
+        Binary.File = File;
+        var DataBlock = /** @class */ (function () {
+            function DataBlock(data) {
+                this.additionalData = {};
+                this.header = data.header;
+                this.categoryList = data.categories.map(function (c) { return new Category(c); });
+                this.categoryMap = new Map();
+                for (var _i = 0, _a = this.categoryList; _i < _a.length; _i++) {
+                    var c = _a[_i];
+                    this.categoryMap.set(c.name, c);
+                }
+            }
+            Object.defineProperty(DataBlock.prototype, "categories", {
+                get: function () { return this.categoryList; },
+                enumerable: true,
+                configurable: true
+            });
+            DataBlock.prototype.getCategory = function (name) { return this.categoryMap.get(name); };
+            DataBlock.prototype.toJSON = function () {
+                return {
+                    id: this.header,
+                    categories: this.categoryList.map(function (c) { return c.toJSON(); }),
+                    additionalData: this.additionalData
+                };
+            };
+            return DataBlock;
+        }());
+        Binary.DataBlock = DataBlock;
+        var Category = /** @class */ (function () {
+            function Category(data) {
+                this.name = data.name;
+                this.columnCount = data.columns.length;
+                this.rowCount = data.rowCount;
+                this.columnNameList = [];
+                this.encodedColumns = new Map();
+                for (var _i = 0, _a = data.columns; _i < _a.length; _i++) {
+                    var c = _a[_i];
+                    this.encodedColumns.set(c.name, c);
+                    this.columnNameList.push(c.name);
+                }
+            }
+            Object.defineProperty(Category.prototype, "columnNames", {
+                get: function () { return this.columnNameList; },
+                enumerable: true,
+                configurable: true
+            });
+            Category.prototype.getColumn = function (name) {
+                var w = this.encodedColumns.get(name);
+                if (w)
+                    return wrapColumn(w);
+                return CIFTools.UndefinedColumn;
+            };
+            Category.prototype.toJSON = function () {
+                var _this = this;
+                var rows = [];
+                var columns = this.columnNameList.map(function (name) { return ({ name: name, column: _this.getColumn(name) }); });
+                for (var i = 0; i < this.rowCount; i++) {
+                    var item = {};
+                    for (var _i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
+                        var c = columns_1[_i];
+                        var d = c.column.getValuePresence(i);
+                        if (d === 0 /* Present */)
+                            item[c.name] = c.column.getString(i);
+                        else if (d === 1 /* NotSpecified */)
+                            item[c.name] = '.';
+                        else
+                            item[c.name] = '?';
+                    }
+                    rows[i] = item;
+                }
+                return { name: this.name, columns: this.columnNames, rows: rows };
+            };
+            return Category;
+        }());
+        Binary.Category = Category;
+        function wrapColumn(column) {
+            if (!column.data.data)
+                return CIFTools.UndefinedColumn;
+            var data = Binary.decode(column.data);
+            var mask = void 0;
+            if (column.mask)
+                mask = Binary.decode(column.mask);
+            if (data.buffer && data.byteLength && data.BYTES_PER_ELEMENT) {
+                return mask ? new MaskedNumericColumn(data, mask) : new NumericColumn(data);
+            }
+            return mask ? new MaskedStringColumn(data, mask) : new StringColumn(data);
+        }
+        var fastParseInt = CIFTools.Utils.FastNumberParsers.parseInt;
+        var fastParseFloat = CIFTools.Utils.FastNumberParsers.parseFloat;
+        var NumericColumn = /** @class */ (function () {
+            function NumericColumn(data) {
+                this.data = data;
+                this.isDefined = true;
+            }
+            NumericColumn.prototype.getString = function (row) { return "" + this.data[row]; };
+            NumericColumn.prototype.getInteger = function (row) { return this.data[row] | 0; };
+            NumericColumn.prototype.getFloat = function (row) { return 1.0 * this.data[row]; };
+            NumericColumn.prototype.stringEquals = function (row, value) { return this.data[row] === fastParseFloat(value, 0, value.length); };
+            NumericColumn.prototype.areValuesEqual = function (rowA, rowB) { return this.data[rowA] === this.data[rowB]; };
+            NumericColumn.prototype.getValuePresence = function (row) { return 0 /* Present */; };
+            return NumericColumn;
+        }());
+        var MaskedNumericColumn = /** @class */ (function () {
+            function MaskedNumericColumn(data, mask) {
+                this.data = data;
+                this.mask = mask;
+                this.isDefined = true;
+            }
+            MaskedNumericColumn.prototype.getString = function (row) { return this.mask[row] === 0 /* Present */ ? "" + this.data[row] : null; };
+            MaskedNumericColumn.prototype.getInteger = function (row) { return this.mask[row] === 0 /* Present */ ? this.data[row] : 0; };
+            MaskedNumericColumn.prototype.getFloat = function (row) { return this.mask[row] === 0 /* Present */ ? this.data[row] : 0; };
+            MaskedNumericColumn.prototype.stringEquals = function (row, value) { return this.mask[row] === 0 /* Present */ ? this.data[row] === fastParseFloat(value, 0, value.length) : value === null || value === void 0; };
+            MaskedNumericColumn.prototype.areValuesEqual = function (rowA, rowB) { return this.data[rowA] === this.data[rowB]; };
+            MaskedNumericColumn.prototype.getValuePresence = function (row) { return this.mask[row]; };
+            return MaskedNumericColumn;
+        }());
+        var StringColumn = /** @class */ (function () {
+            function StringColumn(data) {
+                this.data = data;
+                this.isDefined = true;
+            }
+            StringColumn.prototype.getString = function (row) { return this.data[row]; };
+            StringColumn.prototype.getInteger = function (row) { var v = this.data[row]; return fastParseInt(v, 0, v.length); };
+            StringColumn.prototype.getFloat = function (row) { var v = this.data[row]; return fastParseFloat(v, 0, v.length); };
+            StringColumn.prototype.stringEquals = function (row, value) { return this.data[row] === value; };
+            StringColumn.prototype.areValuesEqual = function (rowA, rowB) { return this.data[rowA] === this.data[rowB]; };
+            StringColumn.prototype.getValuePresence = function (row) { return 0 /* Present */; };
+            return StringColumn;
+        }());
+        var MaskedStringColumn = /** @class */ (function () {
+            function MaskedStringColumn(data, mask) {
+                this.data = data;
+                this.mask = mask;
+                this.isDefined = true;
+            }
+            MaskedStringColumn.prototype.getString = function (row) { return this.mask[row] === 0 /* Present */ ? this.data[row] : null; };
+            MaskedStringColumn.prototype.getInteger = function (row) { if (this.mask[row] !== 0 /* Present */)
+                return 0; var v = this.data[row]; return fastParseInt(v || '', 0, (v || '').length); };
+            MaskedStringColumn.prototype.getFloat = function (row) { if (this.mask[row] !== 0 /* Present */)
+                return 0; var v = this.data[row]; return fastParseFloat(v || '', 0, (v || '').length); };
+            MaskedStringColumn.prototype.stringEquals = function (row, value) { return this.data[row] === value; };
+            MaskedStringColumn.prototype.areValuesEqual = function (rowA, rowB) { return this.data[rowA] === this.data[rowB]; };
+            MaskedStringColumn.prototype.getValuePresence = function (row) { return this.mask[row]; };
+            return MaskedStringColumn;
+        }());
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        /**
+         * Fixed point, delta, RLE, integer packing adopted from https://github.com/rcsb/mmtf-javascript/
+         * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
+         */
+        var Encoder = /** @class */ (function () {
+            function Encoder(providers) {
+                this.providers = providers;
+            }
+            Encoder.prototype.and = function (f) {
+                return new Encoder(this.providers.concat([f]));
+            };
+            Encoder.prototype.encode = function (data) {
+                var encoding = [];
+                for (var _i = 0, _a = this.providers; _i < _a.length; _i++) {
+                    var p = _a[_i];
+                    var t = p(data);
+                    if (!t.encodings.length) {
+                        throw new Error('Encodings must be non-empty.');
+                    }
+                    data = t.data;
+                    for (var _b = 0, _c = t.encodings; _b < _c.length; _b++) {
+                        var e = _c[_b];
+                        encoding.push(e);
+                    }
+                }
+                if (!(data instanceof Uint8Array)) {
+                    throw new Error('The encoding must result in a Uint8Array. Fix your encoding chain.');
+                }
+                return {
+                    encoding: encoding,
+                    data: data
+                };
+            };
+            return Encoder;
+        }());
+        Binary.Encoder = Encoder;
+        (function (Encoder) {
+            var _a, _b;
+            function by(f) {
+                return new Encoder([f]);
+            }
+            Encoder.by = by;
+            function uint8(data) {
+                return {
+                    encodings: [{ kind: 'ByteArray', type: 4 /* Uint8 */ }],
+                    data: data
+                };
+            }
+            function int8(data) {
+                return {
+                    encodings: [{ kind: 'ByteArray', type: 1 /* Int8 */ }],
+                    data: new Uint8Array(data.buffer, data.byteOffset)
+                };
+            }
+            var writers = (_a = {},
+                _a[2 /* Int16 */] = function (v, i, a) { v.setInt16(2 * i, a, true); },
+                _a[5 /* Uint16 */] = function (v, i, a) { v.setUint16(2 * i, a, true); },
+                _a[3 /* Int32 */] = function (v, i, a) { v.setInt32(4 * i, a, true); },
+                _a[6 /* Uint32 */] = function (v, i, a) { v.setUint32(4 * i, a, true); },
+                _a[32 /* Float32 */] = function (v, i, a) { v.setFloat32(4 * i, a, true); },
+                _a[33 /* Float64 */] = function (v, i, a) { v.setFloat64(8 * i, a, true); },
+                _a);
+            var byteSizes = (_b = {},
+                _b[2 /* Int16 */] = 2,
+                _b[5 /* Uint16 */] = 2,
+                _b[3 /* Int32 */] = 4,
+                _b[6 /* Uint32 */] = 4,
+                _b[32 /* Float32 */] = 4,
+                _b[33 /* Float64 */] = 8,
+                _b);
+            function byteArray(data) {
+                var type = Binary.Encoding.getDataType(data);
+                if (type === 1 /* Int8 */)
+                    return int8(data);
+                else if (type === 4 /* Uint8 */)
+                    return uint8(data);
+                var result = new Uint8Array(data.length * byteSizes[type]);
+                var w = writers[type];
+                var view = new DataView(result.buffer);
+                for (var i = 0, n = data.length; i < n; i++) {
+                    w(view, i, data[i]);
+                }
+                return {
+                    encodings: [{ kind: 'ByteArray', type: type }],
+                    data: result
+                };
+            }
+            Encoder.byteArray = byteArray;
+            function _fixedPoint(data, factor) {
+                var srcType = Binary.Encoding.getDataType(data);
+                var result = new Int32Array(data.length);
+                for (var i = 0, n = data.length; i < n; i++) {
+                    result[i] = Math.round(data[i] * factor);
+                }
+                return {
+                    encodings: [{ kind: 'FixedPoint', factor: factor, srcType: srcType }],
+                    data: result
+                };
+            }
+            function fixedPoint(factor) { return function (data) { return _fixedPoint(data, factor); }; }
+            Encoder.fixedPoint = fixedPoint;
+            function _intervalQuantizaiton(data, min, max, numSteps, arrayType) {
+                var srcType = Binary.Encoding.getDataType(data);
+                if (!data.length) {
+                    return {
+                        encodings: [{ kind: 'IntervalQuantization', min: min, max: max, numSteps: numSteps, srcType: srcType }],
+                        data: new Int32Array(0)
+                    };
+                }
+                if (max < min) {
+                    var t = min;
+                    min = max;
+                    max = t;
+                }
+                var delta = (max - min) / (numSteps - 1);
+                var output = new arrayType(data.length);
+                for (var i = 0, n = data.length; i < n; i++) {
+                    var v = data[i];
+                    if (v <= min)
+                        output[i] = 0;
+                    else if (v >= max)
+                        output[i] = numSteps;
+                    else
+                        output[i] = (Math.round((v - min) / delta)) | 0;
+                }
+                return {
+                    encodings: [{ kind: 'IntervalQuantization', min: min, max: max, numSteps: numSteps, srcType: srcType }],
+                    data: output
+                };
+            }
+            function intervalQuantizaiton(min, max, numSteps, arrayType) {
+                if (arrayType === void 0) { arrayType = Int32Array; }
+                return function (data) { return _intervalQuantizaiton(data, min, max, numSteps, arrayType); };
+            }
+            Encoder.intervalQuantizaiton = intervalQuantizaiton;
+            function runLength(data) {
+                var srcType = Binary.Encoding.getDataType(data);
+                if (srcType === void 0) {
+                    data = new Int32Array(data);
+                    srcType = 3 /* Int32 */;
+                }
+                if (!data.length) {
+                    return {
+                        encodings: [{ kind: 'RunLength', srcType: srcType, srcSize: 0 }],
+                        data: new Int32Array(0)
+                    };
+                }
+                // calculate output size
+                var fullLength = 2;
+                for (var i = 1, il = data.length; i < il; i++) {
+                    if (data[i - 1] !== data[i]) {
+                        fullLength += 2;
+                    }
+                }
+                var output = new Int32Array(fullLength);
+                var offset = 0;
+                var runLength = 1;
+                for (var i = 1, il = data.length; i < il; i++) {
+                    if (data[i - 1] !== data[i]) {
+                        output[offset] = data[i - 1];
+                        output[offset + 1] = runLength;
+                        runLength = 1;
+                        offset += 2;
+                    }
+                    else {
+                        ++runLength;
+                    }
+                }
+                output[offset] = data[data.length - 1];
+                output[offset + 1] = runLength;
+                return {
+                    encodings: [{ kind: 'RunLength', srcType: srcType, srcSize: data.length }],
+                    data: output
+                };
+            }
+            Encoder.runLength = runLength;
+            function delta(data) {
+                if (!Binary.Encoding.isSignedIntegerDataType(data)) {
+                    throw new Error('Only signed integer types can be encoded using delta encoding.');
+                }
+                var srcType = Binary.Encoding.getDataType(data);
+                if (srcType === void 0) {
+                    data = new Int32Array(data);
+                    srcType = 3 /* Int32 */;
+                }
+                if (!data.length) {
+                    return {
+                        encodings: [{ kind: 'Delta', origin: 0, srcType: srcType }],
+                        data: new data.constructor(0)
+                    };
+                }
+                var output = new data.constructor(data.length);
+                var origin = data[0];
+                output[0] = data[0];
+                for (var i = 1, n = data.length; i < n; i++) {
+                    output[i] = data[i] - data[i - 1];
+                }
+                output[0] = 0;
+                return {
+                    encodings: [{ kind: 'Delta', origin: origin, srcType: srcType }],
+                    data: output
+                };
+            }
+            Encoder.delta = delta;
+            function isSigned(data) {
+                for (var i = 0, n = data.length; i < n; i++) {
+                    if (data[i] < 0)
+                        return true;
+                }
+                return false;
+            }
+            function packingSize(data, upperLimit) {
+                var lowerLimit = -upperLimit - 1;
+                var size = 0;
+                for (var i = 0, n = data.length; i < n; i++) {
+                    var value = data[i];
+                    if (value === 0) {
+                        size += 1;
+                    }
+                    else if (value > 0) {
+                        size += Math.ceil(value / upperLimit);
+                        if (value % upperLimit === 0)
+                            size += 1;
+                    }
+                    else {
+                        size += Math.ceil(value / lowerLimit);
+                        if (value % lowerLimit === 0)
+                            size += 1;
+                    }
+                }
+                return size;
+            }
+            function determinePacking(data) {
+                var signed = isSigned(data);
+                var size8 = signed ? packingSize(data, 0x7F) : packingSize(data, 0xFF);
+                var size16 = signed ? packingSize(data, 0x7FFF) : packingSize(data, 0xFFFF);
+                if (data.length * 4 < size16 * 2) {
+                    // 4 byte packing is the most effective
+                    return {
+                        isSigned: signed,
+                        size: data.length,
+                        bytesPerElement: 4
+                    };
+                }
+                else if (size16 * 2 < size8) {
+                    // 2 byte packing is the most effective
+                    return {
+                        isSigned: signed,
+                        size: size16,
+                        bytesPerElement: 2
+                    };
+                }
+                else {
+                    // 1 byte packing is the most effective
+                    return {
+                        isSigned: signed,
+                        size: size8,
+                        bytesPerElement: 1
+                    };
+                }
+                ;
+            }
+            function _integerPacking(data, packing) {
+                var upperLimit = packing.isSigned
+                    ? (packing.bytesPerElement === 1 ? 0x7F : 0x7FFF)
+                    : (packing.bytesPerElement === 1 ? 0xFF : 0xFFFF);
+                var lowerLimit = -upperLimit - 1;
+                var n = data.length;
+                var packed = packing.isSigned
+                    ? packing.bytesPerElement === 1 ? new Int8Array(packing.size) : new Int16Array(packing.size)
+                    : packing.bytesPerElement === 1 ? new Uint8Array(packing.size) : new Uint16Array(packing.size);
+                var j = 0;
+                for (var i = 0; i < n; i++) {
+                    var value = data[i];
+                    if (value >= 0) {
+                        while (value >= upperLimit) {
+                            packed[j] = upperLimit;
+                            ++j;
+                            value -= upperLimit;
+                        }
+                    }
+                    else {
+                        while (value <= lowerLimit) {
+                            packed[j] = lowerLimit;
+                            ++j;
+                            value -= lowerLimit;
+                        }
+                    }
+                    packed[j] = value;
+                    ++j;
+                }
+                var result = byteArray(packed);
+                return {
+                    encodings: [{
+                            kind: 'IntegerPacking',
+                            byteCount: packing.bytesPerElement,
+                            isUnsigned: !packing.isSigned,
+                            srcSize: n
+                        },
+                        result.encodings[0]
+                    ],
+                    data: result.data
+                };
+            }
+            /**
+             * Packs Int32 array. The packing level is determined automatically to either 1-, 2-, or 4-byte words.
+             */
+            function integerPacking(data) {
+                if (!(data instanceof Int32Array)) {
+                    throw new Error('Integer packing can only be applied to Int32 data.');
+                }
+                var packing = determinePacking(data);
+                if (packing.bytesPerElement === 4) {
+                    // no packing done, Int32 encoding will be used
+                    return byteArray(data);
+                }
+                return _integerPacking(data, packing);
+            }
+            Encoder.integerPacking = integerPacking;
+            function stringArray(data) {
+                var map = Object.create(null);
+                var strings = [];
+                var accLength = 0;
+                var offsets = CIFTools.Utils.ChunkedArray.create(function (s) { return new Int32Array(s); }, 1024, 1);
+                var output = new Int32Array(data.length);
+                CIFTools.Utils.ChunkedArray.add(offsets, 0);
+                var i = 0;
+                for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
+                    var s = data_1[_i];
+                    // handle null strings.
+                    if (s === null || s === void 0) {
+                        output[i++] = -1;
+                        continue;
+                    }
+                    var index = map[s];
+                    if (index === void 0) {
+                        // increment the length
+                        accLength += s.length;
+                        // store the string and index                   
+                        index = strings.length;
+                        strings[index] = s;
+                        map[s] = index;
+                        // write the offset
+                        CIFTools.Utils.ChunkedArray.add(offsets, accLength);
+                    }
+                    output[i++] = index;
+                }
+                var encOffsets = Encoder.by(delta).and(integerPacking).encode(CIFTools.Utils.ChunkedArray.compact(offsets));
+                var encOutput = Encoder.by(delta).and(runLength).and(integerPacking).encode(output);
+                return {
+                    encodings: [{ kind: 'StringArray', dataEncoding: encOutput.encoding, stringData: strings.join(''), offsetEncoding: encOffsets.encoding, offsets: encOffsets.data }],
+                    data: encOutput.data
+                };
+            }
+            Encoder.stringArray = stringArray;
+        })(Encoder = Binary.Encoder || (Binary.Encoder = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        Binary.VERSION = '0.3.0';
+        var Encoding;
+        (function (Encoding) {
+            function getDataType(data) {
+                var srcType;
+                if (data instanceof Int8Array)
+                    srcType = 1 /* Int8 */;
+                else if (data instanceof Int16Array)
+                    srcType = 2 /* Int16 */;
+                else if (data instanceof Int32Array)
+                    srcType = 3 /* Int32 */;
+                else if (data instanceof Uint8Array)
+                    srcType = 4 /* Uint8 */;
+                else if (data instanceof Uint16Array)
+                    srcType = 5 /* Uint16 */;
+                else if (data instanceof Uint32Array)
+                    srcType = 6 /* Uint32 */;
+                else if (data instanceof Float32Array)
+                    srcType = 32 /* Float32 */;
+                else if (data instanceof Float64Array)
+                    srcType = 33 /* Float64 */;
+                else
+                    throw new Error('Unsupported integer data type.');
+                return srcType;
+            }
+            Encoding.getDataType = getDataType;
+            function isSignedIntegerDataType(data) {
+                return data instanceof Int8Array || data instanceof Int16Array || data instanceof Int32Array;
+            }
+            Encoding.isSignedIntegerDataType = isSignedIntegerDataType;
+        })(Encoding = Binary.Encoding || (Binary.Encoding = {}));
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        function checkVersions(min, current) {
+            for (var i = 0; i < 2; i++) {
+                if (min[i] > current[i])
+                    return false;
+            }
+            return true;
+        }
+        function parse(data) {
+            var minVersion = [0, 3];
+            try {
+                var array = new Uint8Array(data);
+                var unpacked = Binary.MessagePack.decode(array);
+                if (!checkVersions(minVersion, unpacked.version.match(/(\d)\.(\d)\.\d/).slice(1))) {
+                    return CIFTools.ParserResult.error("Unsupported format version. Current " + unpacked.version + ", required " + minVersion.join('.') + ".");
+                }
+                var file = new Binary.File(unpacked);
+                return CIFTools.ParserResult.success(file);
+            }
+            catch (e) {
+                return CIFTools.ParserResult.error('' + e);
+            }
+        }
+        Binary.parse = parse;
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+/*
+ * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
+ */
+var CIFTools;
+(function (CIFTools) {
+    var Binary;
+    (function (Binary) {
+        "use strict";
+        function encodeField(field, data, totalCount) {
+            var array, isNative = false;
+            if (field.typedArray) {
+                array = new field.typedArray(totalCount);
+            }
+            else {
+                isNative = true;
+                array = new Array(totalCount);
+            }
+            var mask = new Uint8Array(totalCount);
+            var presence = field.presence;
+            var getter = field.number ? field.number : field.string;
+            var allPresent = true;
+            var offset = 0;
+            for (var _i = 0, data_2 = data; _i < data_2.length; _i++) {
+                var _d = data_2[_i];
+                var d = _d.data;
+                for (var i = 0, _b = _d.count; i < _b; i++) {
+                    var p = presence ? presence(d, i) : 0 /* Present */;
+                    if (p !== 0 /* Present */) {
+                        mask[offset] = p;
+                        if (isNative)
+                            array[offset] = null;
+                        allPresent = false;
+                    }
+                    else {
+                        mask[offset] = 0 /* Present */;
+                        array[offset] = getter(d, i);
+                    }
+                    offset++;
+                }
+            }
+            var encoder = field.encoder ? field.encoder : Binary.Encoder.by(Binary.Encoder.stringArray);
+            var encoded = encoder.encode(array);
+            var maskData = void 0;
+            if (!allPresent) {
+                var maskRLE = Binary.Encoder.by(Binary.Encoder.runLength).and(Binary.Encoder.byteArray).encode(mask);
+                if (maskRLE.data.length < mask.length) {
+                    maskData = maskRLE;
+                }
+                else {
+                    maskData = Binary.Encoder.by(Binary.Encoder.byteArray).encode(mask);
+                }
+            }
+            return {
+                name: field.name,
+                data: encoded,
+                mask: maskData
+            };
+        }
+        var Writer = /** @class */ (function () {
+            function Writer(encoder) {
+                this.dataBlocks = [];
+                this.data = {
+                    encoder: encoder,
+                    version: Binary.VERSION,
+                    dataBlocks: this.dataBlocks
+                };
+            }
+            Writer.prototype.startDataBlock = function (header) {
+                this.dataBlocks.push({
+                    header: (header || '').replace(/[ \n\t]/g, '').toUpperCase(),
+                    categories: []
+                });
+            };
+            Writer.prototype.writeCategory = function (category, contexts) {
+                if (!this.data) {
+                    throw new Error('The writer contents have already been encoded, no more writing.');
+                }
+                if (!this.dataBlocks.length) {
+                    throw new Error('No data block created.');
+                }
+                var src = !contexts || !contexts.length ? [category(void 0)] : contexts.map(function (c) { return category(c); });
+                var categories = src.filter(function (c) { return c && c.count > 0; });
+                if (!categories.length)
+                    return;
+                var count = categories.reduce(function (a, c) { return a + c.count; }, 0);
+                if (!count)
+                    return;
+                var first = categories[0];
+                var cat = { name: first.desc.name, columns: [], rowCount: count };
+                var data = categories.map(function (c) { return ({ data: c.data, count: c.count }); });
+                for (var _i = 0, _a = first.desc.fields; _i < _a.length; _i++) {
+                    var f = _a[_i];
+                    cat.columns.push(encodeField(f, data, count));
+                }
+                this.dataBlocks[this.dataBlocks.length - 1].categories.push(cat);
+            };
+            Writer.prototype.encode = function () {
+                this.encodedData = Binary.MessagePack.encode(this.data);
+                this.data = null;
+                this.dataBlocks = null;
+            };
+            Writer.prototype.flush = function (stream) {
+                stream.writeBinary(this.encodedData);
+            };
+            return Writer;
+        }());
+        Binary.Writer = Writer;
+    })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
+})(CIFTools || (CIFTools = {}));
+  return CIFTools;
+}
+if (typeof module === 'object' && typeof module.exports === 'object') {
+  module.exports = __CIFTools();
+} else if (typeof define === 'function' && define.amd) {
+  define(['require'], function(require) { return __CIFTools(); })
+} else {
+  var __target = !!window ? window : this;
+  __target.CIFTools = __CIFTools();
 }
 
-//});
 
 /*
  * ==========================================================
@@ -6729,7 +9812,7 @@ class ClickMenu {
       if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
       await ic.annotationCls.setAnnoTabIg(bSelection, template);
 
-      // ic.bRunRefnumAgain = false;
+      ic.bRunRefnumAgain = false;
     }
 
     clickMenu1() { let me = this.icn3dui; me.icn3d;
@@ -8315,7 +11398,7 @@ class ClickMenu {
             //    ic.drawCls.draw();
             // }
 
-            // ic.bRunRefnumAgain = false;
+            ic.bRunRefnumAgain = false;
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { me.icn3d; //e.preventDefault();
@@ -12884,17 +15967,17 @@ class SetDialog {
 
     setTemplateMenu()  { let me = this.icn3dui; me.icn3d;
         let group2tpl = {};
-        group2tpl['V'] = ['CD28_1yjdC_human_V', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'ICOS_6x4gA_human_V', 'LAG3_7tzgD_human_V-n1', 'PDL1_4z18B_human_V-n1', 'PD1_4zqkB_human_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V'];
-        group2tpl['C1'] = ['B2Microglobulin_7phrL_human_C1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-HEAVY_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'MHCIa_7phrH_human_C1', 'TCRa_6jxrm_human_C1-n2', 'VTCN1_Q7Z7D3_human_V-n2'];
-        group2tpl['C2'] = ['CD2_1hnfA_human_C2-n2', 'Contactin1_3s97C_human_C2-n2', 'LAG3_7tzgD_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
-        group2tpl['I'] = ['BTLA_2aw2A_human_Iset', 'CD19_6al5A_human_C2orV-n1', 'JAM1_1nbqA_human_VorIset-n2', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152'];
-        group2tpl['E'] = ['ASF1A_2iijA_human', 'CoAtomerGamma1_1r4xA_human', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'IsdA_2iteA_bacteria', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'TEAD1_3kysC_human'];
+        group2tpl['IgV'] = ['CD28_1yjdC_human_V', 'CD2_1hnfA_human_V-n1', 'CD8a_1cd8A_human_V', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'ICOS_6x4gA_human_V', 'LAG3_7tzgD_human_V-n1', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V'];
+        group2tpl['IgC1'] = ['B2Microglobulin_7phrL_human_C1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-HEAVY_5esv_C1-n2', 'GHR_1axiB_human_C1-n1', 'LAG3_7tzgD_human_C1-n2', 'MHCIa_7phrH_human_C1', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'VTCN1_Q7Z7D3_human_C1-n2'];
+        group2tpl['IgC2'] = ['CD2_1hnfA_human_C2-n2', 'CD3g_6jxrg_human_C2'];
+        group2tpl['IgI'] = ['BTLA_2aw2A_human_Iset', 'Contactin1_3s97C_human_Iset-n2', 'JAM1_1nbqA_human_Iset-n2', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Iset-n152'];
+        group2tpl['IgE'] = ['CoAtomerGamma1_1r4xA_human', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'IsdA_2iteA_bacteria', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria'];
 
-        group2tpl['FN3'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'Sidekick2_1wf5A_human_FN3-n7'];
+        group2tpl['IgFN3'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'Sidekick2_1wf5A_human_FN3-n7'];
 
-        group2tpl['FN3-like'] = ['BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+        group2tpl['IgFN3-like'] = ['ASF1A_2iijA_human', 'BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'TEAD1_3kysC_human'];
 
-        group2tpl['Other'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
+        group2tpl['Other Ig'] = ['CD19_6al5A_human-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
 
         let tpl2strandsig = {};
         tpl2strandsig['ASF1A_2iijA_human']                          = "A A' B C C' E F G G+";
@@ -12902,33 +15985,33 @@ class SetDialog {
         tpl2strandsig['BArrestin1_4jqiA_rat_n1']                    = "A- A A' B C C' E F G";
         tpl2strandsig['BTLA_2aw2A_human_Iset']                      = "A A' B C C' D E F G";
         tpl2strandsig['C3_2qkiD_human_n1']                          = "A A' B C C' E F G";
-        tpl2strandsig['CD19_6al5A_human_C2orV-n1']                  = "A' B C C' D E F G";
+        tpl2strandsig['CD19_6al5A_human-n1']                  = "A' B C C' D E F G";
         tpl2strandsig['CD28_1yjdC_human_V']                         = "A A' B C C' C'' D E F G";
         tpl2strandsig['CD2_1hnfA_human_C2-n2']                      = "A B C C' E F G";
         tpl2strandsig['CD2_1hnfA_human_V-n1']                       = "A' B C C' C'' D E F G";
-        tpl2strandsig['CD3d_6jxrd_human_Iset']                      = "A B C D E F G";
-        tpl2strandsig['CD3e_6jxrf_human_Iset']                      = "A B C C' D E F G";
-        tpl2strandsig['CD3g_6jxrg_human_Iset']                      = "A B C C' E F G G+";
+        tpl2strandsig['CD3d_6jxrd_human_C1']                      = "A B C D E F G";
+        tpl2strandsig['CD3e_6jxrf_human_C1']                      = "A B C C' D E F G";
+        tpl2strandsig['CD3g_6jxrg_human_C2']                      = "A B C C' E F G G+";
         tpl2strandsig['CD8a_1cd8A_human_V']                         = "A A' B C C' C'' D E F G";
         tpl2strandsig['CoAtomerGamma1_1r4xA_human']                 = "A- A B C D E F G";
         tpl2strandsig['Contactin1_2ee2A_human_FN3-n9']              = "A A' B C C' E F G";
-        tpl2strandsig['Contactin1_3s97C_human_C2-n2']               = "A A' B C D E F G";
+        tpl2strandsig['Contactin1_3s97C_human_Iset-n2']               = "A A' B C D E F G";
         tpl2strandsig['CuZnSuperoxideDismutase_1hl5C_human']        = "A- A B C C' E F G";
         tpl2strandsig['ECadherin_4zt1A_human_n2']                   = "A' B C D E F G";
         tpl2strandsig['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = "A--- A-- A- A B C C' C'' D E F G";
         tpl2strandsig['FAB-HEAVY_5esv_C1-n2']                       = "A B C D E F G";
         tpl2strandsig['FAB-HEAVY_5esv_V-n1']                        = "A B C C' C'' D E F G";
-        tpl2strandsig['FAB-LIGHT_5esv_C1-n2']                       = "A B C C' E F G";
+        tpl2strandsig['FAB-LIGHT_5esv_C1-n2']                       = "A B C C' D E F G";
         tpl2strandsig['FAB-LIGHT_5esv_V-n1']                        = "A A' B C C' C'' D E F G";
-        tpl2strandsig['GHR_1axiB_human_FN3-n1']                     = "A B C C' D E F G";
+        tpl2strandsig['GHR_1axiB_human_C1-n1']                     = "A B C C' D E F G";
         tpl2strandsig['ICOS_6x4gA_human_V']                         = "A B C C' C'' D E F G";
         tpl2strandsig['IL6Rb_1bquB_human_FN3-n2']                   = "A B C C' E F G";
         tpl2strandsig['IL6Rb_1bquB_human_FN3-n3']                   = "A B C C' E F G";
         tpl2strandsig['InsulinR_8guyE_human_FN3-n1']                = "A B C C' E F G";
         tpl2strandsig['InsulinR_8guyE_human_FN3-n2']                = "A B C C' E F G";
         tpl2strandsig['IsdA_2iteA_bacteria']                        = "A- A B C C' D E F G";
-        tpl2strandsig['JAM1_1nbqA_human_VorIset-n2']                = "A A' B C C' D E F G";
-        tpl2strandsig['LAG3_7tzgD_human_C2-n2']                     = "A A' B C C' D E F G";
+        tpl2strandsig['JAM1_1nbqA_human_Iset-n2']                = "A A' B C C' D E F G";
+        tpl2strandsig['LAG3_7tzgD_human_C1-n2']                     = "A A' B C C' D E F G";
         tpl2strandsig['LAG3_7tzgD_human_V-n1']                      = "A' B C C' D E F G";
         tpl2strandsig['LaminAC_1ifrA_human']                        = "A- A B C C' E E+ F G";
         tpl2strandsig['MHCIa_7phrH_human_C1']                       = "A B C C' D E F G";
@@ -12942,16 +16025,16 @@ class SetDialog {
         tpl2strandsig['RBPJ_6py8C_human_Unk-n1']                    = "A A' B C C' E F G";
         tpl2strandsig['RBPJ_6py8C_human_Unk-n2']                    = "A B C D E F G";
         tpl2strandsig['Sidekick2_1wf5A_human_FN3-n7']               = "A B C C' E F G";
-        tpl2strandsig['Siglec3_5j0bB_human_C2-n2']                  = "A A' B C D E F G";
+        tpl2strandsig['Siglec3_5j0bB_human_C1-n2']                  = "A A' B C D E F G";
         tpl2strandsig['TCRa_6jxrm_human_C1-n2']                     = "A B C D E F G";
         tpl2strandsig['TCRa_6jxrm_human_V-n1']                      = "A A' B C C' C'' D E F G";
         tpl2strandsig['TEAD1_3kysC_human']                          = "A A+ A' B C C' E F G G+";
         tpl2strandsig['TP34_2o6cA_bacteria']                        = "A- A B C C' D E F G";
         tpl2strandsig['TP47_1o75A_bacteria']                        = "A B C C' D E F G";
-        tpl2strandsig['Titin_4uowM_human_Unk-n152']                 = "A A' B C C' D E F G";
+        tpl2strandsig['Titin_4uowM_human_Iset-n152']                 = "A A' B C C' D E F G";
         tpl2strandsig['VISTA_6oilA_human_V']                        = "A A' B C C' C'' D E F G G+";
         tpl2strandsig['VNAR_1t6vN_shark_V']                         = "A A' B C C' D E F G";
-        tpl2strandsig['VTCN1_Q7Z7D3_human_V-n2']                    = "A B C C' D E F G G+";
+        tpl2strandsig['VTCN1_Q7Z7D3_human_C1-n2']                    = "A B C C' D E F G G+";
 
         let html = '';
         for(let group in group2tpl) {
@@ -14742,18 +17825,24 @@ class Events {
                 let dataStr = e.target.result; // or = reader.result;
                 thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                 ic.molTitle = "";
-                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                //ic.bCid = undefined;
 
-                let dataObj = {'mmciffile': dataStr};
-                let data = await me.getAjaxPostPromise(url, dataObj, true);
+                // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+                // //ic.bCid = undefined;
+
+                // let dataObj = {'mmciffile': dataStr};
+                // let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                let bText = true;
+                // let bcifData = ic.bcifParserCls.getBcifJson(dataStr, undefined, bText);
+                // let data = JSON.parse(bcifData);
 
                 //ic.initUI();
                 ic.init();
                 ic.bInputfile = true;
                 ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
                 ic.InputfileType = 'mmcif';
-                await ic.mmcifParserCls.loadMmcifData(data); //await 
+                // await ic.mmcifParserCls.loadMmcifData(data); 
+                await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
              };
              reader.readAsText(file);
            }
@@ -15894,7 +18983,7 @@ class AlignSeq {
         alignChainArray = Object.keys(ic.alnChains);
 
         if (bReverse) alignChainArray = alignChainArray.reverse();
-
+        
         let maxSeqCnt = 0;
 
         let chainHash = {};
@@ -38621,8 +41710,6 @@ class AnnoIg {
         $("#" + ic.pre + "dt_" + type + "_" + chnid).html(html);
         $("#" + ic.pre + "ov_" + type + "_" + chnid).html(html2);
         $("#" + ic.pre + "tt_" + type + "_" + chnid).html(html3);
-
-        ic.bRunRefnumAgain = false;
     }
 
     showAllRefNum(giSeq, chnid) {  let ic = this.icn3d; ic.icn3dui;
@@ -38896,7 +41983,7 @@ class AnnoIg {
             // titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
             // fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
-            let igType = (parseFloat(tmscore) < 0.75 ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+            let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
             fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
@@ -43410,7 +46497,7 @@ class Annotation {
 
         ic.bRunRefnumAgain = true;
         await this.updateIg();
-        // ic.bRunRefnumAgain = false;
+        ic.bRunRefnumAgain = false;
 
         this.updateInteraction();
     }
@@ -43492,8 +46579,9 @@ class Annotation {
 
             $("[id^=" + ic.pre + "transmem]").show();
         }
-        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
-            // ic.bRunRefnumAgain = true;
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked || ic.bShowRefnum) {
+            // no need to redo ref num calculation
+            ic.bRunRefnumAgain = false;
 
             await this.updateIg();
 
@@ -43606,6 +46694,7 @@ class Annotation {
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
     }
     async setAnnoTabIg(bSelection, template) {  let ic = this.icn3d; ic.icn3dui;
+
         await this.updateIg(bSelection, template);
 
         $("[id^=" + ic.pre + "ig]").show();
@@ -43768,7 +46857,7 @@ class Annotation {
                 await thisClass.setAnnoTabIg();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation ig", true);
 
-                // ic.bRunRefnumAgain = false;
+                ic.bRunRefnumAgain = false;
             }
             else {
                 thisClass.hideAnnoTabIg();
@@ -44038,7 +47127,8 @@ class ShowAnno {
                 // let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
 
                 // the first residue of 6AL5_H is non-standard residue and treated as chemical
-                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]]);
+                // choose the 100th atom, around the 5th residue
+                let atom = ic.firstAtomObjCls.getMiddleAtomObj(ic.chains[chainArray[i]], 100);
 
                 if(atom === undefined) atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainArray[i]]);
                 if(atom === undefined) continue;
@@ -44076,6 +47166,7 @@ class ShowAnno {
                         chemical_set[name].push(resid);
                     }
                 }
+
                 //}
                 // protein and nucleotide chain may have chemicals/ions attached at the end
                 if((me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
@@ -49992,7 +53083,7 @@ class ChainalignParser {
         await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
-    setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+    setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;        
         // get aligned length for each pair
         let index_alignLen = [];
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
@@ -50815,6 +53906,7 @@ class ChainalignParser {
             // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
             // VAST+ on the fly
             let structArray = Object.keys(ic.structures);
+            if(vastplusAtype == 2) me.cfg.aligntool = 'tmalign';
             await ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
         }
 
@@ -52184,14 +55276,22 @@ class MmcifParser {
 
         ic.ParserUtilsCls.setYourNote(mmcifid.toUpperCase() + '(MMCIF) in iCn3D');
 
-        let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+        // let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+        let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
         let data = await me.getAjaxPromise(url, 'text', true);
 
-        url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-        let dataObj = {'mmciffile': data};
-        let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+        // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        // let dataObj = {'mmciffile': data};
+        // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
 
-        await this.loadMmcifData(data2, mmcifid);
+        // await this.loadMmcifData(data2, mmcifid);
+
+        let bText = true;
+        // let bcifData = ic.bcifParserCls.getBcifJson(data, mmcifid, bText);
+        // let bcifJson = JSON.parse(bcifData);
+
+        // await this.loadMmcifData(bcifJson, mmcifid);
+        await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -52199,15 +55299,21 @@ class MmcifParser {
         // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
         // Some header files are in the wrong format. So we use the full mmCIF file
         //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
-        let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+        // let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+        let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
 
         //ic.bCid = undefined;
         let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
 
-        url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-        let dataObj = {'mmcifheader': data1};
+        // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        // let dataObj = {'mmcifheader': data1};
 
-        let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
+        // let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
+
+        let bText = true;
+        let bNoCoord = true;
+        let bcifData = ic.bcifParserCls.getBcifJson(data1, mmcifid, bText, bNoCoord);
+        let data = JSON.parse(bcifData);
 
         if(data.emd !== undefined) ic.emd = data.emd;
         if(data.organism !== undefined) ic.organism = data.organism;
@@ -52334,7 +55440,7 @@ class MmdbParser {
         if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;
-            await ic.mmtfParserCls.downloadMmtf(pdbid);
+            await ic.bciffParserCls.downloadBcif(pdbid);
 
             return;
         }
@@ -52753,434 +55859,867 @@ class MmdbParser {
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-class MmtfParser {
+class BcifParser {
     constructor(icn3d) {
         this.icn3d = icn3d;
+
+        this.mElem2Radius = {};
+
+        // http://en.wikipedia.org/wiki/Covalent_radius
+        this.mElem2Radius["H"] = 0.31;
+        this.mElem2Radius["HE"] = 0.28;
+        this.mElem2Radius["LI"] = 1.28;
+        this.mElem2Radius["BE"] = 0.96;
+        this.mElem2Radius["B"] = 0.84;
+        this.mElem2Radius["C"] = 0.76;
+        this.mElem2Radius["N"] = 0.71;
+        this.mElem2Radius["O"] = 0.66;
+        this.mElem2Radius["F"] = 0.57;
+        this.mElem2Radius["NE"] = 0.58;
+        this.mElem2Radius["NA"] = 1.66;
+        this.mElem2Radius["MG"] = 1.41;
+        this.mElem2Radius["AL"] = 1.21;
+        this.mElem2Radius["SI"] = 1.11;
+        this.mElem2Radius["P"] = 1.07;
+        this.mElem2Radius["S"] = 1.05;
+        this.mElem2Radius["CL"] = 1.02;
+        this.mElem2Radius["AR"] = 1.06;
+        this.mElem2Radius["K"] = 2.03;
+        this.mElem2Radius["CA"] = 1.76;
+        this.mElem2Radius["SC"] = 1.70;
+        this.mElem2Radius["TI"] = 1.60;
+        this.mElem2Radius["V"] = 1.53;
+        this.mElem2Radius["CR"] = 1.39;
+        this.mElem2Radius["MN"] = 1.39;
+        this.mElem2Radius["FE"] = 1.32;
+        this.mElem2Radius["CO"] = 1.26;
+        this.mElem2Radius["NI"] = 1.24;
+        this.mElem2Radius["CU"] = 1.32;
+        this.mElem2Radius["ZN"] = 1.22;
+        this.mElem2Radius["GA"] = 1.22;
+        this.mElem2Radius["GE"] = 1.20;
+        this.mElem2Radius["AS"] = 1.19;
+        this.mElem2Radius["SE"] = 1.20;
+        this.mElem2Radius["BR"] = 1.20;
+        this.mElem2Radius["KR"] = 1.16;
+        this.mElem2Radius["RB"] = 2.20;
+        this.mElem2Radius["SR"] = 1.95;
+        this.mElem2Radius["Y"] = 1.90;
+        this.mElem2Radius["ZR"] = 1.75;
+        this.mElem2Radius["NB"] = 1.64;
+        this.mElem2Radius["MO"] = 1.54;
+        this.mElem2Radius["TC"] = 1.47;
+        this.mElem2Radius["RU"] = 1.46;
+        this.mElem2Radius["RH"] = 1.42;
+        this.mElem2Radius["PD"] = 1.39;
+        this.mElem2Radius["AG"] = 1.45;
+        this.mElem2Radius["CD"] = 1.44;
+        this.mElem2Radius["IN"] = 1.42;
+        this.mElem2Radius["SN"] = 1.39;
+        this.mElem2Radius["SB"] = 1.39;
+        this.mElem2Radius["TE"] = 1.38;
+        this.mElem2Radius["I"] = 1.39;
+        this.mElem2Radius["XE"] = 1.40;
+        this.mElem2Radius["CS"] = 2.44;
+        this.mElem2Radius["BA"] = 2.15;
+        this.mElem2Radius["LA"] = 2.07;
+        this.mElem2Radius["CE"] = 2.04;
+        this.mElem2Radius["PR"] = 2.03;
+        this.mElem2Radius["ND"] = 2.01;
+        this.mElem2Radius["PM"] = 1.99;
+        this.mElem2Radius["SM"] = 1.98;
+        this.mElem2Radius["EU"] = 1.98;
+        this.mElem2Radius["GD"] = 1.96;
+        this.mElem2Radius["TB"] = 1.94;
+        this.mElem2Radius["DY"] = 1.92;
+        this.mElem2Radius["HO"] = 1.92;
+        this.mElem2Radius["ER"] = 1.89;
+        this.mElem2Radius["TM"] = 1.90;
+        this.mElem2Radius["YB"] = 1.87;
+        this.mElem2Radius["LU"] = 1.87;
+        this.mElem2Radius["HF"] = 1.75;
+        this.mElem2Radius["TA"] = 1.70;
+        this.mElem2Radius["W"] = 1.62;
+        this.mElem2Radius["RE"] = 1.51;
+        this.mElem2Radius["OS"] = 1.44;
+        this.mElem2Radius["IR"] = 1.41;
+        this.mElem2Radius["PT"] = 1.36;
+        this.mElem2Radius["AU"] = 1.36;
+        this.mElem2Radius["HG"] = 1.32;
+        this.mElem2Radius["TL"] = 1.45;
+        this.mElem2Radius["PB"] = 1.46;
+        this.mElem2Radius["BI"] = 1.48;
+        this.mElem2Radius["PO"] = 1.40;
+        this.mElem2Radius["AT"] = 1.50;
+        this.mElem2Radius["RN"] = 1.50;
+        this.mElem2Radius["FR"] = 2.60;
+        this.mElem2Radius["RA"] = 2.21;
+        this.mElem2Radius["AC"] = 2.15;
+        this.mElem2Radius["TH"] = 2.06;
+        this.mElem2Radius["PA"] = 2.00;
+        this.mElem2Radius["U"] = 1.96;
+        this.mElem2Radius["NP"] = 1.90;
+        this.mElem2Radius["PU"] = 1.87;
+        this.mElem2Radius["AM"] = 1.80;
+        this.mElem2Radius["CM"] = 1.69;
     }
 
-    // from the 2016 NCBI hackathon in Orlando: https://github.com/NCBI-Hackathons/iCN3D-MMTF
-    // Contributors: Jiyao Wang, Alexander Rose, Peter Rose
-    // requires the library mmtf.js
-
-    //MMTF is a new binary data format besides the previous PDB and mmCIF formats for 3D structures.
-    //The JavaScript Methods at http://mmtf.rcsb.org/ was used to load and parse the data.
-    async downloadMmtf(mmtfid) { let ic = this.icn3d, me = ic.icn3dui;
-        ic.ParserUtilsCls.setYourNote(mmtfid.toUpperCase() + '(MMTF) in iCn3D');
+    // https://github.com/dsehnal/CIFTools.js
+    // https://github.com/molstar/BinaryCIF
+    async downloadBcif(bcifid) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.ParserUtilsCls.setYourNote(bcifid.toUpperCase() + '(BCIF) in iCn3D');
         //ic.bCid = undefined;
 
-        let mmtfData = await me.getMmtfReducedPromise(mmtfid);
-        if(mmtfData.numAtoms * 10 > ic.maxatomcnt) {
-            let bFull = false;
-            if(Object.keys(mmtfData).length == 0) {
-                alert('This PDB structure is not found at RCSB...');
-                return;
-            }
+        let url = 'https://models.rcsb.org/' + bcifid + '.bcif';
+        let bcifArrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'bcif');
 
-            await ic.opmParserCls.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
+        if(bcifArrayBuffer.length == 0) {
+            alert('This PDB structure is not found at RCSB...');
+            return;
         }
-        else {
-            let mmtfData2 = await me.getMmtfPromise(mmtfid);
 
-            let bFull = true;
-            if(Object.keys(mmtfData2).length == 0) {
-                alert('This PDB structure is not found at RCSB...');
-                return;
-            }
+        let bText = false;
+        // let bcifData = this.getBcifJson(bcifArrayBuffer, bcifid, bText);
+        // let bcifJson = JSON.parse(bcifData);
+        // await ic.mmcifParserCls.loadMmcifData(bcifJson, bcifid);
 
-            await ic.opmParserCls.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
-        }
+        await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'mmcif', undefined, bText);
     }
 
-    async parseMmtfData(mmtfData, mmtfid, bFull) { let ic = this.icn3d, me = ic.icn3dui;
-        mmtfData.numAtoms;
+    getBcifJson(bcifData, bcifid, bText, bNoCoord) { let ic = this.icn3d, me = ic.icn3dui;
+        let text = "";
 
-        ic.init();
+        let pmid = "", title = "", keyword = "", emd = "", organism = "";
 
-        let pmin = new THREE.Vector3( 9999, 9999, 9999);
-        let pmax = new THREE.Vector3(-9999,-9999,-9999);
-        let psum = new THREE.Vector3();
+        // bcifData could be binary or text
+        let parsed = (bText) ? CIFTools.Text.parse(bcifData) : CIFTools.Binary.parse(bcifData);
 
-        let id = mmtfData.structureId;
+        if (parsed.isError) {
+            // report error:
+            alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+            return;
+        }
 
-        ic.molTitle = mmtfData.title;
+        let block = parsed.result.dataBlocks[0];
 
-        // bioAsembly
-        if(mmtfData.bioAssemblyList !== undefined && mmtfData.bioAssemblyList[0]!== undefined && mmtfData.bioAssemblyList[0].transformList.length > 1) {
-            ic.biomtMatrices = [];
+        if(!bcifid) {
+            if(block.getCategory("_entry")) {
+                bcifid = block.getCategory("_entry").getColumn("id").getString(0);
+            }
+            if(bcifid == "") bcifid = "stru";
+        }
 
-            for(let i = 0, il = mmtfData.bioAssemblyList[0].transformList.length; i < il; ++i) {
-                //var biomt = new THREE.Matrix4().identity();
+        if(block.getCategory("_citation")) {
+            pmid = block.getCategory("_citation").getColumn("pdbx_database_id_PubMed").getString(0);
+        }
 
-                //for(let j = 0, jl = mmtfData.bioAssemblyList[0].transformList[i].matrix.length; j < jl; ++j) {
-                    //biomt.elements[j] = mmtfData.bioAssemblyList[0].transformList[i].matrix[j];
-                //}
+        if(block.getCategory("_struct")) {
+            title = block.getCategory("_struct").getColumn("title").getString(0);
+            title = title.replace(/"/, "'");
+        }
 
-                let biomt = new THREE.Matrix4().fromArray(mmtfData.bioAssemblyList[0].transformList[i].matrix).transpose();
+        if(block.getCategory("_struct_keywords")) {
+            keyword = block.getCategory("_struct_keywords").getColumn("pdbx_keywords").getString(0);
+        }
+        
+        if(block.getCategory("_entity_src_gen")) {
+            organism = block.getCategory("_entity_src_gen").getColumn("gene_src_common_name").getString(0);
+        }
 
-                ic.biomtMatrices.push(biomt);
+        let sSSBegin = {}, sSSEnd = {};
+        let mResId2SS = {};
+
+        if(block.getCategory("_database_2")) {
+            let database_2 = block.getCategory("_database_2");
+
+            // Iterate through every row in the table
+            let db2Size = database_2.rowCount ;
+            for (let i = 0; i < db2Size; ++i) {
+                let db_id = database_2.getColumn("database_id").getString(0);
+                let db_code = database_2.getColumn("database_code").getString(0);
+
+                if(db_id == "EMDB") {
+                    emd = db_code;
+                    break;
+                }
+            }
+        }
+        if(block.getCategory("_struct_conf")) {
+            // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
+            let struct_conf = block.getCategory("_struct_conf");
+
+            let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+
+            let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
+            let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+
+            let chain2Array = struct_conf.getColumn("end_auth_asym_id").data;
+            let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+
+            // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
+            let confSize = struct_conf.rowCount;
+            for (let i = 0; i < confSize; ++i) {
+                let conf_type_id = conf_type_idArray[i];
+
+                let chain1 = chain1Array[i];
+                let resi1 = resi1Array[i];
+                let id1 = chain1 + "_" + resi1;
+
+                let chain2 = chain2Array[i];
+                let resi2 = resi2Array[i];
+                let id2 = chain2 + "_" + resi2;
+
+                let ss;
+                if(conf_type_id.substr(0, 4) == "HELX") {
+                    ss = "helix";
+
+                    sSSBegin[id1] = 1;
+                    sSSEnd[id2] = 1;
+                }
+                else if(conf_type_id.substr(0, 4) == "STRN") {
+                    ss = "sheet";
+
+                    sSSBegin[id1] = 1;
+                    sSSEnd[id2] = 1;
+                }
+
+                if(ss == "helix" || ss == "sheet") {
+                    for(let j = parseInt(resi1); j <= parseInt(resi2); ++j) {
+                        let id = chain1 + "_" + j;
+                        mResId2SS[id] = ss;
+                    }
+                }
+            }
+
+            conf_type_idArray = chain1Array = resi1Array = chain2Array = resi2Array = [];
+        }
+
+        if(block.getCategory("_struct_sheet_range")) {
+            // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
+            let struct_sheet_range = block.getCategory("_struct_sheet_range");
+
+            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
+            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+
+            let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id").data;
+            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+
+            // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
+            let sheetSize = struct_sheet_range.rowCount;
+            for (let i = 0; i < sheetSize; ++i) {
+                let chain1 = chain1Array[i];
+                let resi1 = resi1Array[i];
+                let id1 = chain1 + "_" + resi1;
+
+                sSSBegin[id1] = 1;
+
+                let chain2 = chain2Array[i];
+                let resi2 = resi2Array[i];
+                let id2 = chain2 + "_" + resi2;
+
+                sSSEnd[id2] = 1;
+
+                let ss = "sheet";
+
+                for(let j = parseInt(resi1); j <= parseInt(resi2); ++j) {
+                    let id = chain1 + "_" + j;
+                    mResId2SS[id] = ss;
+                }
+            }
+
+            chain1Array = resi1Array = chain2Array = resi2Array = [];
+        }
+
+        // Iterate through every row in the struct_conn category table, where each row delineates an interatomic connection
+        let mId2Set = {};
+        let vBonds = [];
+        let vDisulfides = [];
+
+        if(block.getCategory("_struct_conn")) {
+            // Retrieve the table corresponding to the struct_conn category, which delineates connections1
+            let struct_conn = block.getCategory("_struct_conn");
+
+            let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+
+            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
+            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
+            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+
+            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
+            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
+            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+
+            let connSize = struct_conn.rowCount;
+            for (let i = 0; i < connSize; ++i) {
+                let conn_type_id = conn_type_idArray[i];
+
+                let chain1 = chain1Array[i];
+                let name1 = name1Array[i];
+                let resi1 = resi1Array[i];
+                let id1 = chain1 + "_" + resi1 + "_" + name1;
+
+                let chain2 = chain2Array[i];
+                let name2 = name2Array[i];
+                let resi2 = resi2Array[i];
+                let id2 = chain2 + "_" + resi2 + "_" + name2;
+
+                // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
+
+                if (conn_type_id == "covale") {
+                    vBonds.push(id1);
+                    vBonds.push(id2);
+                }
+                else if(conn_type_id == "disulf") {
+                    vDisulfides.push(bcifid + "_" + chain1 + "_" + resi1);
+                    vDisulfides.push(bcifid + "_" + chain2 + "_" + resi2);
+                }
+            }
+
+            conn_type_idArray = chain1Array = name1Array = resi1Array = chain2Array = name2Array = resi2Array = [];
+        }
+
+        // Retrieve the table corresponding to the atom_site category, which delineates atomic constituents
+        let atom_site = block.getCategory("_atom_site");
+
+        // set the map from atom name to serial
+        let mName2Serial = {};
+
+        let prevC = {};
+        // let atom = {};
+        prevC.id = "";
+
+        let prevResi = "", currResi;
+        let mResi2Atoms = {};
+
+        let sChain = {};
+        let prevResn = "";
+        let atomSize = atom_site.rowCount;
+        let serial = 1;
+
+        let bFull = (atomSize * 10 > ic.maxatomcnt) ? false : true;
+
+        let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray = [];
+
+        if(!bNoCoord) {
+            atom_hetatmArray = atom_site.getColumn("group_PDB").data;
+            resnArray = atom_site.getColumn("label_comp_id").data;
+            elemArray = atom_site.getColumn("type_symbol").data;
+            nameArray = atom_site.getColumn("label_atom_id").data;
+
+            chainArray = atom_site.getColumn("auth_asym_id").data;
+            
+            resiArray = atom_site.getColumn("label_seq_id").data;
+            resiOriArray = atom_site.getColumn("auth_seq_id").data;
+            altArray = atom_site.getColumn("label_alt_id").data;
+
+            bArray = atom_site.getColumn("B_iso_or_equiv").data;
+
+            xArray = atom_site.getColumn("Cartn_x").data;
+            yArray = atom_site.getColumn("Cartn_y").data;
+            zArray = atom_site.getColumn("Cartn_z").data;
+
+            autochainArray = atom_site.getColumn("label_asym_id").data;
+
+            // get the bond info
+            let ligSeqHash = {}, prevAutochain = '';
+            for (let i = 0; i < atomSize; ++i) {
+                let atom_hetatm = atom_hetatmArray[i];
+                let resn = resnArray[i];
+                let elem = elemArray[i];
+                let name = nameArray[i];
+        // use the chain name from author, and use seq id from standardized seq id
+                //let chain = atom_site.getColumn("label_asym_id").getString(i);
+                let chain = chainArray[i];
+                let resi = resiArray[i];
+                let oriResi = resiOriArray[i]; 
+                let alt = altArray[i];
+
+                let autochain = autochainArray[i];
+
+                resi = oriResi;
+
+                let molecueType;
+                if(atom_hetatm == "ATOM") {
+                    if(resn.length == 3) {
+                        molecueType = "p"; // protein
+                    }
+                    else {
+                        molecueType = "n"; // nucleotide
+                    }
+                }
+                else {
+                    if(resn == "WAT" || resn == "HOH") {
+                        molecueType = "s"; // solvent
+                        chain = 'Misc';
+                    }
+                    else {
+                        molecueType = "l"; // ligands or ions
+                        chain = resn;
+                    }
+                }
+
+                // C-alpha only for large structure
+                if(!bFull && ((molecueType == "p" && !(elem == 'C' && name == 'CA')) 
+                    || (molecueType == "n" && !(name == "P")) ) ) continue;
+                // skip alternative atoms
+                if(alt == "B") continue;
+
+                sChain[chain] = 1;
+
+                if(resi == "?" || resi == "." || resi == "0") {
+                    resi = oriResi;
+                    // if(resn.length != 3 || resn == "HOH" || resn == "WAT") {
+                    //     if(resn.length != 3 || (elem == 'O' && (resn == "HOH" || resn == "WAT"))) {
+                    //         resi = (++tmpResi).toString();
+                    //     }
+                    // }
+                    // else {
+                    //     if(chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                    //         resi = (++tmpResi).toString();
+                    //     }
+                    //     else {
+                    //         resi = (tmpResi).toString();
+                    //     }
+                    // }
+                }
+    
+                if(molecueType == 's' || molecueType == "l") {
+                    let seq = {};
+                    if(!ligSeqHash.hasOwnProperty(chain)) {
+                        ligSeqHash[chain] = [];
+                    }
+    
+                    if(resn.length != 3 || resn == "HOH" || resn == "WAT") {
+                        if(resn.length != 3 || (elem == 'O' && (resn == "HOH" || resn == "WAT"))) {
+                            seq.resi = resi;
+                            seq.name = me.utilsCls.residueName2Abbr(resn);
+                            ligSeqHash[chain].push(seq);
+                        }
+                    }
+                    else {
+                        if(chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                            seq.resi = resi;
+                            seq.name = me.utilsCls.residueName2Abbr(resn);
+                            ligSeqHash[chain].push(seq);
+                        }
+                    }
+                }
+
+                let x = xArray[i];
+                let y = yArray[i];
+                let z = zArray[i];
+
+                let id = serial.toString();
+
+                let atomname = chain + "_" + resi + "_" + name;
+
+                mName2Serial[atomname] = id;
+
+                let atom = {};
+
+                atom.id = id;
+                atom.elem = elem;
+                atom.x = x;
+                atom.y = y;
+                atom.z = z;
+                atom.alt = alt;
+
+                currResi = chain + "_" + resi;
+
+                let para = 1.3;
+                // let para = (atom_hetatm == "HETATM") ? 1.3 : 1;
+
+                if(currResi != prevResi || prevAutochain != autochain) {
+                    mResi2Atoms = {};
+
+                    mResi2Atoms[currResi] = {};
+                    mResi2Atoms[currResi][atom.id] = atom;
+                }
+                else {
+                    // bond between this atom and all other atom in the same residue
+                    for(let j in mResi2Atoms[currResi]) { // j is atom.id
+                        if(this.hasCovalentBond(atom, mResi2Atoms[currResi][j], para)) {
+                            if(!mId2Set.hasOwnProperty(atom.id)) mId2Set[atom.id] = {};
+                            if(!mId2Set.hasOwnProperty(mResi2Atoms[currResi][j].id)) mId2Set[mResi2Atoms[currResi][j].id] = {};
+                            mId2Set[atom.id][mResi2Atoms[currResi][j].id] = 1;
+                            mId2Set[mResi2Atoms[currResi][j].id][atom.id] = 1;
+                        }
+                    }
+
+                    mResi2Atoms[currResi][atom.id] = atom;
+                }
+
+                // bond between N and previous C
+                if(name == "N" && prevC.id != "") {
+                    if(this.hasCovalentBond(atom, prevC, para)) {
+                        if(!mId2Set.hasOwnProperty(atom.id)) mId2Set[atom.id] = {};
+                        if(!mId2Set.hasOwnProperty(prevC.id)) mId2Set[prevC.id] = {};
+                        mId2Set[atom.id][prevC.id] = 1;
+                        mId2Set[prevC.id][atom.id] = 1;
+                    }
+                }
+
+                if(name == "C") {
+                    prevC = atom;
+                }
+
+                prevResi = currResi;
+                prevResn = chain + "_" + resn;
+
+                prevAutochain = autochain;
+
+                ++serial;
+            }
+
+            /// add the defined bonds
+            for(let i = 0; i < vBonds.length; i = i + 2) {
+                let id1 = mName2Serial[vBonds[i]];
+                let id2 = mName2Serial[vBonds[i+1]];
+
+                if(!mId2Set.hasOwnProperty(id1)) mId2Set[id1] = {};
+                if(!mId2Set.hasOwnProperty(id2)) mId2Set[id2] = {};
+                mId2Set[id1][id2] = 1;
+                mId2Set[id2][id1] = 1;
             }
         }
 
-        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-            $("#" + ic.pre + "assemblyWrapper").show();
+        let emdStr = (emd != "") ? "\"emd\":\"" + emd + "\"," : "";
+        let organismStr = (organism != "") ? "\"organism\":\"" + organism + "\"," : "";
 
-            ic.asuCnt = ic.biomtMatrices.length;
+        text += "{\"bcif\":\"" + bcifid + "\", " + emdStr + organismStr + "\"pubmedid\":\"" + pmid + "\", \"descr\": {\"name\": \"" + title + "\", \"class\": \"" + keyword + "\"}";
+        
+        if(!bNoCoord) {
+            text += ", \"atoms\":[\n";
+            prevResn = "";
+            serial = 1;
+
+            let structure = atom_site.getColumn("pdbx_PDB_model_num").getString(0);
+
+            if(structure == "1") {
+                structure = bcifid;
+            }
+            else {
+                structure = bcifid + structure;
+            }
+
+            for (let i = 0; i < atomSize; ++i) {
+                let atom_hetatm = atom_hetatmArray[i];
+                let resn = resnArray[i];
+                let elem = elemArray[i];
+                let name = nameArray[i];
+        // use the chain name from author, and use seq id from standardized seq id
+                //let chain = atom_site.getColumn("label_asym_id").getString(i);
+                let chain = chainArray[i];
+                let resi = resiArray[i];
+                let oriResi = resiOriArray[i]; 
+                let alt = altArray[i];
+
+                let autochain = autochainArray[i];
+
+                resi = oriResi;
+
+                let molecueType;
+                if(atom_hetatm == "ATOM") {
+                    if(resn.length == 3) {
+                        molecueType = "p"; // protein
+                    }
+                    else {
+                        molecueType = "n"; // nucleotide
+                    }
+                }
+                else {
+                    if(resn == "WAT" || resn == "HOH") {
+                        molecueType = "s"; // solvent
+                        chain = 'Misc';
+                    }
+                    else {
+                        molecueType = "l"; // ligands or ions
+                        chain = resn;
+                    }
+                }
+
+                // C-alpha only for large structure
+                if(!bFull && ((molecueType == "p" && !(elem == 'C' && name == 'CA')) 
+                    || (molecueType == "n" && !(name == "P")) ) ) continue;
+                // skip alternative atoms
+                if(alt == "B") continue;
+
+                if(resi == "?" || resi == "." || resi == "0") {
+                    resi = oriResi;
+
+                    // if(resn.length != 3 || resn == "HOH" || resn == "WAT") {
+                    //     if(resn.length != 3 || (elem = 'O' && (resn == "HOH" || resn == "WAT"))) {
+                    //         resi = (++tmpResi).toString();
+                    //     }
+                    // }
+                    // else {
+                    //     if(chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                    //         resi = (++tmpResi).toString();
+                    //     }
+                    //     else {
+                    //         resi = (tmpResi).toString();
+                    //     }
+                    // }
+                }
+
+                let b = bArray[i];
+
+                let x = xArray[i];
+                let y = yArray[i];
+                let z = zArray[i];
+                //int serial = parseInt(atom_site(i, "id"));
+
+                //let id = chain + "_" + resi + "_" + name;
+                let id = serial.toString();
+                let resId = chain + "_" + resi;
+
+                let het = (atom_hetatm == "HETATM") ? "1" : "0";
+
+                text += "{";
+                text += "\"het\":" + het + ", ";
+                text += "\"serial\":" + serial + ", ";
+                text += "\"name\":\"" + name + "\", ";
+                text += "\"resn\":\"" + resn + "\", ";
+                text += "\"structure\":\"" + structure + "\", ";
+                text += "\"chain\":\"" + chain + "\", ";
+                text += "\"resi\":" + resi + ", ";
+                text += "\"coord\":{\"x\":" + x + ", \"y\":" + y + ", \"z\":" + z + "}, ";
+                text += "\"b\":\"" + b + "\", ";
+                text += "\"elem\":\"" + elem + "\", ";
+                text += "\"bonds\":[";
+
+                let sConnId = {};
+
+                if(mId2Set.hasOwnProperty(id)) sConnId = mId2Set[id];
+
+                let vConnId = Object.keys(sConnId);
+                
+                for(let j = 0, jl = vConnId.length; j < jl; ++j) {
+                    if(vConnId[j] === 'undefined') continue;
+
+                    text += vConnId[j];
+
+                    // if(j < jl - 1 && vConnId[j]) text += ", ";
+                    text += ", ";
+                }
+                if(vConnId.length > 0) text = text.substr(0, text.length - 2);
+
+                text += "], ";
+
+                if(mResId2SS.hasOwnProperty(resId)) {
+                    let ss = mResId2SS[resId];
+                    text += "\"ss\":\"" + ss + "\", ";
+                }
+                else {
+                    text += "\"ss\":\"coil\", ";
+                }
+
+                if(sSSBegin.hasOwnProperty(resId)) {
+                    text += "\"ssbegin\":1, ";
+                }
+                else {
+                    text += "\"ssbegin\":0, ";
+                }
+
+                if(sSSEnd.hasOwnProperty(resId)) {
+                    text += "\"ssend\":1, ";
+                }
+                else {
+                    text += "\"ssend\":0, ";
+                }
+
+                //text += "\"color\":\"#FFF\", ";
+                text += "\"mt\":\"" + molecueType + "\"";
+
+                text += "}";
+
+                // if(i < atomSize - 1) text += ",\n";
+                text += ",\n";
+
+                prevResn = chain + "_" + resn;
+                prevAutochain = autochain;
+
+                ++serial;
+            }
+            // remove the last comma and new line
+            if(serial > 1) text = text.substr(0, text.length - 2);
+
+            text += "]";
         }
 
-        let oriindex2serial = {};
+        atom_hetatmArray = resnArray = elemArray = nameArray = chainArray = resiArray = resiOriArray 
+        = altArray = bArray = xArray = yArray = zArray = autochainArray = [];
 
-        // save SG atoms in CYS residues
-        let SGAtomSerialArray = [];
+        let mChainSeq = {};
+        if(block.getCategory("_pdbx_poly_seq_scheme")) {
+            let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
 
-        let prevSS = 'coil';
-        let prevChain = '';
-        let prevResi = 0;
+            let resiArray = poly_seq_scheme.getColumn("seq_id").data;
+            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
+            let resnArray = poly_seq_scheme.getColumn("mon_id").data;
+            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
 
-        let serial = 0;
+            let seqSize = poly_seq_scheme.rowCount;
+            let prevChain = "";
+            let seq = "";
+            for (let i = 0; i < seqSize; ++i) {
+                resiArray[i];
+                let oriResi = oriResiArray[i];
+                let resn = resnArray[i];
+                let chain = chainArray[i];
 
-        let structure, chain, resn, resi, ss, ssbegin, ssend;
-        let het, bProtein, bNucleotide;
-        let elem, atomName, coord, b, alt;
-        let CSerial, prevCSerial, OSerial, prevOSerial;
-
-        let callbackDict = {
-            onModel: function( modelData ){
-                structure =(modelData.modelIndex === 0) ? id : id +(modelData.modelIndex + 1).toString();
-            },
-            onChain: function( chainData ){
-
-                chain = chainData.chainName; // or chainData.chainId
-                let chainid = structure + '_' + chain;
-
-                if(ic.structures[structure] === undefined) ic.structures[structure] = [];
-                ic.structures[structure].push(chainid);
-            },
-            onGroup: function( groupData ){
-                resn = groupData.groupName;
-                resi = groupData.groupId;
-
-                let resid = structure + '_' + chain + '_' + resi;
-
-                if(groupData.secStruct === 0 || groupData.secStruct === 2 || groupData.secStruct === 4) {
-                    ss = 'helix';
-                }
-                else if(groupData.secStruct === 3) {
-                    ss = 'sheet';
-                }
-                else if(groupData.secStruct === -1) {
-                    ss = 'other';
-                }
-                else {
-                    ss = 'coil';
-                }
-
-                // no residue can be both ssbegin and ssend in DSSP calculated secondary structures
-                let bSetPrevSsend = false;
-
-                if(chain !== prevChain) {
-                    prevCSerial = undefined;
-                    prevOSerial = undefined;
-
-                    // new chain
-                    if(ss !== 'coil' && ss !== 'other') {
-                        ssbegin = true;
-                        ssend = false;
+                if(chain != prevChain) {
+                    if(i == 0) {
+                        seq = "[";
                     }
                     else {
-                        ssbegin = false;
-                        ssend = false;
-                    }
+                        seq = seq.substr(0, seq.length - 2);
 
-                    // set up the end of previous chain
-                    if(prevSS !== 'coil' && prevSS !== 'other') {
-                        let prevResid = structure + '_' + prevChain + '_' + prevResi.toString();
+                        seq += "]";
 
-                        for(let i in ic.residues[prevResid]) {
-                            ic.atoms[i].ssbegin = false;
-                            ic.atoms[i].ssend = true;
-                        }
-                    }
-                }
-                else {
-                    prevCSerial = CSerial;
-                    prevOSerial = OSerial;
+                        mChainSeq[prevChain] = seq;
 
-                    if(ss !== prevSS) {
-                        if(prevSS === 'coil' || prevSS === 'other') {
-                            ssbegin = true;
-                            ssend = false;
-                        }
-                        else if(ss === 'coil' || ss === 'other') {
-                            bSetPrevSsend = true;
-                            ssbegin = false;
-                            ssend = false;
-                        }
-                        else if((prevSS === 'sheet' && ss === 'helix') ||(prevSS === 'helix' && ss === 'sheet')) {
-                            bSetPrevSsend = true;
-                            ssbegin = true;
-                            ssend = false;
-                        }
-                    }
-                    else {
-                            ssbegin = false;
-                            ssend = false;
+                        seq = "[";
                     }
                 }
 
-                if(bSetPrevSsend && !isNaN(resi)) {
-                    let prevResid = structure + '_' + chain + '_' +(resi - 1).toString();
-                    for(let i in ic.residues[prevResid]) {
-                        ic.atoms[i].ssbegin = false;
-                        ic.atoms[i].ssend = true;
-                    }
-                }
+                // seq += "[" + resi + ", \"" + resn + "\"]";
+                seq += "[" + oriResi + ", \"" + resn + "\"]";
 
-                prevSS = ss;
+                if(i < seqSize - 1) seq += ", ";
+
                 prevChain = chain;
-                prevResi = resi;
+            }
 
-                het = false;
-                bProtein = false;
-                bNucleotide = false;
-                if(groupData.chemCompType.toLowerCase() === 'non-polymer' || groupData.chemCompType.toLowerCase() === 'other' || groupData.chemCompType.toLowerCase().indexOf('saccharide') !== -1) {
-                    het = true;
-                }
-                else if(groupData.chemCompType.toLowerCase().indexOf('peptide') !== -1) {
-                    bProtein = true;
-                }
-                else if(groupData.chemCompType.toLowerCase().indexOf('dna') !== -1 || groupData.chemCompType.toLowerCase().indexOf('rna') !== -1) {
-                    bNucleotide = true;
+            seq += "]";
+
+            mChainSeq[prevChain] = seq;
+
+            resiArray = oriResiArray = resnArray = chainArray = [];
+        }
+
+        // print sequences
+        text += ", \"sequences\":{";
+        let bData = false;
+        for(let chain in sChain) {
+            let seq;
+            if(ligSeqHash.hasOwnProperty(chain)) {
+                seq = "[" + ligSeqHash[chain] + "]";
+            }
+            else {
+                seq = mChainSeq[chain];
+            }
+
+            // if(seq != "") {
+            if(seq !== "" && seq !== undefined) {
+                text += "\"" + chain + "\": " + seq + ", ";
+                bData = true;
+            }
+        }
+
+        if(bData) text = text.substr(0, text.length - 2);
+
+        text += "}";
+
+        if(block.getCategory("_pdbx_struct_oper_list")) {
+            // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
+            let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
+
+            let struct_oper_idArray = struct_oper_list.getColumn("id").data;
+            let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
+            let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
+            let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
+            let m14Array = struct_oper_list.getColumn("vector[1]").data;
+
+            let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
+            let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
+            let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
+            let m24Array = struct_oper_list.getColumn("vector[2]").data;
+
+            let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
+            let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
+            let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
+            let m34Array = struct_oper_list.getColumn("vector[3]").data;
+
+            text += ", \"assembly\":[";
+
+            let pmatrix = ", \"pmatrix\":";
+            let bPmatrix = false;
+
+            let assemblySize = struct_oper_list.rowCount;
+            for (let i = 0; i < assemblySize; ++i) {
+                let struct_oper_id = struct_oper_idArray[i];
+                if(struct_oper_id == "X0") continue;
+
+                let m11 = m11Array[i];
+                let m12 = m12Array[i];
+                let m13 = m13Array[i];
+                let m14 = m14Array[i];
+
+                let m21 = m21Array[i];
+                let m22 = m22Array[i];
+                let m23 = m23Array[i];
+                let m24 = m24Array[i];
+
+                let m31 = m31Array[i];
+                let m32 = m32Array[i];
+                let m33 = m33Array[i];
+                let m34 = m34Array[i];
+
+                let matrix = "[" + m11 + "," + m21 + "," + m31 + ", 0, "
+                    + m12 + "," + m22 + "," + m32 + ", 0, "
+                    + m13 + "," + m23 + "," + m33 + ", 0, "
+                    + m14 + "," + m24 + "," + m34 + ", 1"
+                    + "]";
+
+                if(struct_oper_id == "P") {
+                    pmatrix += matrix;
+                    bPmatrix = true;
                 }
                 else {
-                    bProtein = true;
-                }
+                    text += matrix;
 
-                  // add sequence information
-                  let chainid = structure + '_' + chain;
-
-                  let resObject = {};
-                  resObject.resi = resi;
-                  resObject.name = me.utilsCls.residueName2Abbr(resn);
-
-                  ic.residueId2Name[resid] = resObject.name;
-                  if(resObject.resi % 10 === 0) resObject.resi.toString();
-
-                  let secondaries = '-';
-                  if(ss === 'helix') {
-                      secondaries = 'H';
-                  }
-                  else if(ss === 'sheet') {
-                      secondaries = 'E';
-                  }
-                  else if(ss === 'coil') {
-                      secondaries = 'c';
-                  }
-                  else if(ss === 'other') {
-                      secondaries = 'o';
-                  }
-
-                  if(ic.chainsSeq[chainid] === undefined) ic.chainsSeq[chainid] = [];
-                  if(ic.bFullUi) ic.chainsSeq[chainid].push(resObject);
-
-                  ic.secondaries[resid] = secondaries;
-            },
-            onAtom: function( atomData ){
-                elem = atomData.element;
-                atomName = atomData.atomName;
-                coord = new THREE.Vector3(atomData.xCoord, atomData.yCoord, atomData.zCoord);
-                b = atomData.bFactor;
-
-                alt = atomData.altLoc;
-                if(atomData.altLoc === '\u0000') { // a temp value, should be ''
-                    alt = '';
-                }
-
-                // skip the atoms where alt is not '' or 'A'
-                if(alt === '' || alt === 'A') {
-                    ++serial;
-
-                    if(atomName === 'SG') SGAtomSerialArray.push(serial);
-
-                    oriindex2serial[atomData.atomIndex] = serial;
-
-                    let atomDetails = {
-                        het: het, // optional, used to determine chemicals, water, ions, etc
-                        serial: serial,         // required, unique atom id
-                        name: atomName,             // required, atom name
-                        alt: alt,               // optional, some alternative coordinates
-                        resn: resn,             // optional, used to determine protein or nucleotide
-                        structure: structure,   // optional, used to identify structure
-                        chain: chain,           // optional, used to identify chain
-                        resi: resi,             // optional, used to identify residue ID
-                        //insc: line.substr(26, 1),
-                        coord: coord,           // required, used to draw 3D shape
-                        b: b,         // optional, used to draw B-factor tube
-                        elem: elem,             // optional, used to determine hydrogen bond
-                        bonds: [],              // required, used to connect atoms
-                        bondOrder: [],
-                        ss: ss,             // optional, used to show secondary structures
-                        ssbegin: ssbegin,         // optional, used to show the beginning of secondary structures
-                        ssend: ssend            // optional, used to show the end of secondary structures
-                    };
-
-                    if(!atomDetails.het && atomDetails.name === 'C') {
-                        CSerial = serial;
-                    }
-                    if(!atomDetails.het && atomDetails.name === 'O') {
-                        OSerial = serial;
-                    }
-
-                    // from DSSP C++ code
-                    if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
-                        let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
-
-                        let x2 = atomDetails.coord.x +(ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
-                        let y2 = atomDetails.coord.y +(ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
-                        let z2 = atomDetails.coord.z +(ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
-
-                        atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
-                    }
-
-                    ic.atoms[serial] = atomDetails;
-
-                    pmin.min(coord);
-                    pmax.max(coord);
-                    psum.add(coord);
-
-                    let chainid = structure + '_' + chain;
-                    let resid = chainid + '_' + resi;
-
-                    if(ic.chains[chainid] === undefined) ic.chains[chainid] = {};
-                    ic.chains[chainid][serial] = 1;
-
-                    if(ic.residues[resid] === undefined) ic.residues[resid] = {};
-                    ic.residues[resid][serial] = 1;
-
-                    if(bProtein) {
-                      ic.proteins[serial] = 1;
-
-                      if(atomName === 'CA') ic.calphas[serial] = 1;
-                      if(atomName !== 'N' && atomName !== 'H' && atomName !== 'CA' && atomName !== 'HA' && atomName !== 'C' && atomName !== 'O') ic.sidec[serial] = 1;
-                    }
-                    else if(bNucleotide) {
-                      ic.nucleotides[serial] = 1;
-
-                      if(bFull &&(atomName == "O3'" || atomName == "O3*")) {
-                          ic.nucleotidesO3[serial] = 1;
-                      }
-                      else if(!bFull && atomName == 'P') {
-                          ic.nucleotidesO3[serial] = 1;
-                      }
-
-                      if(me.parasCls.nuclMainArray.indexOf(atomName) === -1) {
-                        ic.ntbase[serial] = 1;
-                      }
-                    }
-                    else {
-                      if(elem.toLowerCase() === resn.toLowerCase()) {
-                          ic.ions[serial] = 1;
-                      }
-                      else if(resn === 'HOH' || resn === 'WAT' || resn === 'SQL' || resn === 'H2O' || resn === 'W' || resn === 'DOD' || resn === 'D3O') {
-                          ic.water[serial] = 1;
-                      }
-                      else {
-                          ic.chemicals[serial] = 1;
-                      }
-                    }
-
-                    ic.dAtoms[serial] = 1;
-                    ic.hAtoms[serial] = 1;
-                }
-            },
-            onBond: function( bondData ){
-                let from = oriindex2serial[bondData.atomIndex1];
-                let to = oriindex2serial[bondData.atomIndex2];
-
-                if(oriindex2serial.hasOwnProperty(bondData.atomIndex1) && oriindex2serial.hasOwnProperty(bondData.atomIndex2)) { // some alt atoms were skipped
-                    ic.atoms[from].bonds.push(to);
-                    ic.atoms[to].bonds.push(from);
-
-                    if(het) {
-                        let order = bondData.bondOrder;
-
-                        ic.atoms[from].bondOrder.push(order);
-                        ic.atoms[to].bondOrder.push(order);
-
-                        if(order === 2) {
-                            ic.doublebonds[from + '_' + to] = 1;
-                            ic.doublebonds[to + '_' + from] = 1;
-                        }
-                        else if(order === 3) {
-                            ic.triplebonds[from + '_' + to] = 1;
-                            ic.triplebonds[to + '_' + from] = 1;
-                        }
-                    }
+                    if(i < assemblySize - 1) text += ", ";
                 }
             }
-        };
 
-        // traverse
-        MMTF.traverse( mmtfData, callbackDict );
+            text += "]";
 
-        ic.loadPDBCls.setResidMapping();
+            if(bPmatrix) text += pmatrix;
 
-        // set up disulfide bonds
-        let sgLength = SGAtomSerialArray.length;
-        for(let i = 0, il = sgLength; i < il; ++i) {
-            for(let j = i+1; j < il; ++j) {
+            struct_oper_idArray = m11Array = m12Array = m13Array = m14Array = m21Array = m22Array = m23Array 
+            = m24Array = m31Array = m32Array = m33Array = m34Array = [];
+        }
 
-                let serial1 = SGAtomSerialArray[i];
-                let serial2 = SGAtomSerialArray[j];
+        if(vDisulfides.length > 0) {
+            text += ", \"disulfides\":[";
 
-                let atom1 = ic.atoms[serial1];
-                let atom2 = ic.atoms[serial2];
+            for(let i = 0; i < vDisulfides.length; i += 2) {
+                text += "[";
+                text += "\"" + vDisulfides[i] + "\", \"" + vDisulfides[i+1] + "\"";
+                text += "]";
 
-                if($.inArray(serial2, atom1.bonds) !== -1) {
-                    let resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
-                    let resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
-
-                    if(ic.ssbondpnts[atom1.structure] === undefined) ic.ssbondpnts[atom1.structure] = [];
-
-                    ic.ssbondpnts[atom1.structure].push(resid1);
-                    ic.ssbondpnts[atom1.structure].push(resid2);
-                }
+                if(i < vDisulfides.length - 2) text += ", ";
             }
+
+            text += "]";
         }
 
-        ic.cnt = serial;
+        text += "}";
+        
+        return text;
+    }
 
-        if(ic.cnt > ic.maxatomcnt ||(ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > 10 * ic.maxatomcnt) ) {
-            ic.opts['proteins'] = 'c alpha trace'; //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
-            ic.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
-        }
+    hasCovalentBond(atom1, atom2, para) { let ic = this.icn3d; ic.icn3dui;
+        let r = this.mElem2Radius[atom1.elem] + this.mElem2Radius[atom2.elem];
 
-        ic.pmin = pmin;
-        ic.pmax = pmax;
-        //ic.maxD = pmax.distanceTo(pmin);
-        //ic.center = psum.multiplyScalar(1.0 / ic.cnt);
-        ic.center = ic.ParserUtilsCls.getGeoCenter(ic.pmin, ic.pmax);
-        ic.maxD = ic.ParserUtilsCls.getStructureSize(ic.atoms, ic.pmin, ic.pmax, ic.center);
+        let dx = (atom1.x - atom2.x);
+        let dy = (atom1.y - atom2.y);
+        let dz = (atom1.z - atom2.z);
 
-        if(ic.maxD < 5) ic.maxD = 5;
-        ic.oriMaxD = ic.maxD;
-        ic.oriCenter = ic.center.clone();
+        let dist2 = dx * dx + dy * dy + dz * dz;
 
-        ic.ParserUtilsCls.transformToOpmOri(mmtfid);
-
-        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
-            $("#" + ic.pre + "alternateWrapper").hide();
-        }
-
-        ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-
-        await ic.ParserUtilsCls.renderStructure();
-
-        ic.saveFileCls.showTitle();
-
-        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
-
-        //if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        return dist2 < para * r * r;
     }
 }
 
@@ -53430,7 +56969,7 @@ class OpmParser {
     }
 
 
-    async loadOpmData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadOpmData(data, pdbid, bFull, type, pdbid2, bText) { let ic = this.icn3d, me = ic.icn3dui;
         try {
              if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
@@ -53438,10 +56977,10 @@ class OpmParser {
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
     
             this.setOpmData(opmdata); // set ic.bOpm
-            await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
         catch(err) {
-            await this.parseAtomData(data, pdbid, bFull, type, pdbid2);
+            await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
     }
 
@@ -53467,14 +57006,31 @@ class OpmParser {
         }
     }
 
-    async parseAtomData(data, pdbid, bFull, type, pdbid2) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseAtomData(data, pdbid, bFull, type, pdbid2, bText) { let ic = this.icn3d, me = ic.icn3dui;
+        /*
         if(type === 'mmtf') {
-            await ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
-
-            /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
+            await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
         }
-        else if(type === 'mmcif') {
-            ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+        else if(type === 'bcif') {
+            await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
+        }
+        else 
+        */
+
+        if(type === 'mmcif') {
+            // ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+            ic.loadCIFCls.loadCIF(data, pdbid, bText);
+
+            if(ic.emd !== undefined) {
+              $("#" + ic.pre + "mapWrapper1").hide();
+              $("#" + ic.pre + "mapWrapper2").hide();
+              $("#" + ic.pre + "mapWrapper3").hide();
+            }
+            else {
+              $("#" + ic.pre + "emmapWrapper1").hide();
+              $("#" + ic.pre + "emmapWrapper2").hide();
+              $("#" + ic.pre + "emmapWrapper3").hide();
+            }
 
             if(Object.keys(ic.structures).length == 1) {
                 $("#" + ic.pre + "alternateWrapper").hide();
@@ -53500,7 +57056,7 @@ class OpmParser {
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
     
             await ic.ParserUtilsCls.renderStructure();
-    
+
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
@@ -53554,7 +57110,8 @@ class PdbParser {
             }
         }
         else {
-            url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+            // url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+            url = "https://files.rcsb.org/download/" + pdbid + ".pdb";
             pdbid = pdbid.toUpperCase();
             ic.ParserUtilsCls.setYourNote(pdbid + '(PDB) in iCn3D');
         }
@@ -53610,10 +57167,17 @@ class PdbParser {
             await this.loadPdbData(data, id, undefined, bAppend);
         }
         else if(type === 'mmcif') {
-            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-            let dataObj = {'mmciffile': data};
-            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-            await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+            // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            // let dataObj = {'mmciffile': data};
+            // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+            // await ic.mmcifParserCls.loadMmcifData(data2, undefined);
+
+            let bText = true;
+            // let bcifData = ic.bcifParserCls.getBcifJson(data, undefined, bText);
+            // let bcifJson = JSON.parse(bcifData);
+
+            // await ic.mmcifParserCls.loadMmcifData(bcifJson, undefined);
+            await ic.opmParserCls.loadOpmData(data, undefined, undefined, 'mmcif', undefined, bText);
         }
         else if(type === 'mol2') {
             await ic.mol2ParserCls.loadMol2Data(data);
@@ -56583,7 +60147,8 @@ class ParserUtils {
  
       // display the structure right away. load the mns and sequences later
       setTimeout(async function(){
-          if(ic.bInitial) {
+            if(ic.bInitial) {
+        //   if(!ic.bAnnoShown || ic.bResetAnno) {
             //   if(me.cfg.showsets) {
             //        ic.definedSetsCls.showSets();
             //   }
@@ -57141,15 +60706,16 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            let bNonMmcif = (me.cfg.mmcifid === undefined && me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined && ic.InputfileType != 'mmcif');
+            let bProtein = (bNonMmcif) ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
+            let bNucleotide = (bNonMmcif) ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
+            let bSolvent = (bNonMmcif) ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
             //var bChemicalIons =(me.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
             // kind: other, otherPolymer, etc
-            let bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            let bChemicalIons = (bNonMmcif) ? (chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
             if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
                 if(atm.name === 'CA' && atm.elem === 'C') {
@@ -57302,7 +60868,7 @@ class LoadAtomData {
               }
 
               // ic.chainsSeq[chainid][atm.resi - 1] should have been defined for major chains
-              if(!isNaN(atm.resi)) {
+              if(!isNaN(atm.resi) && atm.resi !== null) {
                   if( bChainSeqSet && !bAddedNewSeq && ic.chainsSeq[chainid][atm.resi - 1] !== undefined) {
                       ic.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
                   }
@@ -58257,7 +61823,14 @@ class SetSeqAlign {
                     //     resi = ic.qt_start_end[chainIndex][i].t_start;
                     // }
                     // else {
-                        let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        // let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        let resiPos;
+                        if(me.cfg.aligntool == 'tmalign') {
+                            resiPos = j - baseResi;
+                        }
+                        else {
+                            resiPos = (bRealign) ? j : j - baseResi;
+                        }
                         resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
                     // }
 
@@ -59182,16 +62755,16 @@ class LoadPDB {
                 //SSBOND   1 CYS E   48    CYS E   51                          2555
                 let chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
                 let resi1 = line.substr(17, 4).trim();
-                let resid1 = id + '_' + chain1 + '_' + resi1;
+                let resid1 = structure + '_' + chain1 + '_' + resi1;
 
                 let chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
                 let resi2 = line.substr(31, 4).trim();
-                let resid2 = id + '_' + chain2 + '_' + resi2;
+                let resid2 = structure + '_' + chain2 + '_' + resi2;
 
-                if(ic.ssbondpnts[id] === undefined) ic.ssbondpnts[id] = [];
+                if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
 
-                ic.ssbondpnts[id].push(resid1);
-                ic.ssbondpnts[id].push(resid2);
+                ic.ssbondpnts[structure].push(resid1);
+                ic.ssbondpnts[structure].push(resid2);
             } else if (record === 'REMARK') {
                  let remarkType = parseInt(line.substr(7, 3));
 
@@ -59326,6 +62899,9 @@ class LoadPDB {
                 let oriResi = line.substr(22, 5).trim();
 
                 let resi = oriResi; //parseInt(oriResi);
+                // if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
+                //   bModifyResi = true;
+                // }
 
                 if(bOpm && resn === 'DUM') {
                     elem = atom;
@@ -59550,8 +63126,7 @@ class LoadPDB {
         // remove the reference
         lines = null;
 
-        let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.hAtoms);
-        let curChain = firstAtom.chain, curResi = firstAtom.resi, curResAtoms = [];
+        let curChain, curResi, curResAtoms = [];
       
         let pmin = new THREE.Vector3( 9999, 9999, 9999);
         let pmax = new THREE.Vector3(-9999,-9999,-9999);
@@ -59562,7 +63137,7 @@ class LoadPDB {
         let lipidResidHash = {};
 
         // assign atoms
-        let prevCarbonArray = [firstAtom]; // add a dummy atom
+        let prevCarbonArray = []; 
         //for (let i in ic.atoms) {
         for (let i in ic.hAtoms) {    
             let atom = ic.atoms[i];
@@ -59571,6 +63146,12 @@ class LoadPDB {
             pmin.min(coord);
             pmax.max(coord);
             ++cnt;
+
+            if(cnt == 1) {
+                curChain = atom.chain;
+                curResi = atom.resi;
+                prevCarbonArray.push(atom);
+            }
 
             if(!atom.het) {
               if($.inArray(atom.resn, me.parasCls.nucleotidesArray) !== -1) {
@@ -59912,7 +63493,9 @@ class LoadPDB {
         return {'chainresiCalphaHash': chainCalphaHash, 'center': ic.center.clone()}
     }
 
-    isSecondary(resid, residArray, bNMR) { let ic = this.icn3d; ic.icn3dui;
+    isSecondary(resid, residArray, bNMR, bNonFull) { let ic = this.icn3d; ic.icn3dui;
+        if(bNonFull) return false;
+
         if(!bNMR) {
             return $.inArray(resid, residArray) != -1;
         }
@@ -59929,6 +63512,829 @@ class LoadPDB {
 
             return bFound;
         }
+    }
+}
+
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
+class LoadCIF {
+    constructor(icn3d) {
+        this.icn3d = icn3d;
+    }
+
+    // loadCIF(src, bcifid, bOpm, bVector, bMutation, bAppend, type, bEsmfold, bText) { let ic = this.icn3d, me = ic.icn3dui;
+    loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+        let hAtoms = {};
+
+        // bcifData could be binary or text
+        let parsed = (bText) ? CIFTools.Text.parse(bcifData) : CIFTools.Binary.parse(bcifData);
+
+        if (parsed.isError) {
+            // report error:
+            alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+            return;
+        }
+
+        let block = parsed.result.dataBlocks[0];
+
+
+        let bNMR = false;
+        // let lines = src.split('\n');
+
+        let chainsTmp = {}; // serial -> atom
+        let residuesTmp = {}; // serial -> atom
+
+        if(!ic.atoms) bAppend = false;
+
+        let serial, moleculeNum;
+        // if(!bMutation && !bAppend) {
+        if(!bAppend) {
+            ic.init();
+            moleculeNum = 1;
+            serial = 0;
+        }
+        else {
+            ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
+
+            moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
+            // Concatenation of two pdbs will have several atoms for the same serial
+            serial = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
+        }
+
+        //let helices = [], sheets = [];
+        let sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
+
+        let chainNum, residueNum, oriResidueNum;
+        let prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '';
+
+        let id = (bcifid) ? bcifid : ic.defaultPdbId;
+
+        let structure = id;
+        
+        let bFirstAtom = true;
+
+        if(block.getCategory("_entry")) {
+            id = block.getCategory("_entry").getColumn("id").getString(0);
+
+            if(id == '') {
+                if(bAppend) {
+                    id = ic.defaultPdbId;
+                }
+                else {
+                    //if(!ic.inputid) ic.inputid = ic.defaultPdbId;
+                    id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : ic.defaultPdbId; //ic.filename.substr(0, 4);
+                }
+            }
+
+            structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
+
+            ic.molTitle = '';
+            ic.molTitleHash = {};
+        }
+        
+        if(block.getCategory("_struct")) {
+            let title = block.getCategory("_struct").getColumn("title").getString(0);
+            title = title.replace(/"/, "'");
+            let name = title.replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
+            ic.molTitle += name.trim() + " ";
+            // if(bEsmfold && ic.esmTitle) ic.molTitle = ic.esmTitle;
+
+            if(!ic.molTitleHash) ic.molTitleHash = {};
+            ic.molTitleHash[structure] = ic.molTitle;
+
+        }
+
+        if(block.getCategory("_entity_src_gen")) {
+            ic.organism = block.getCategory("_entity_src_gen").getColumn("gene_src_common_name").getString(0);
+        }
+        
+        if(block.getCategory("_database_2")) {
+            let database_2 = block.getCategory("_database_2");
+        
+            // Iterate through every row in the table
+            let db2Size = database_2.rowCount ;
+            for (let i = 0; i < db2Size; ++i) {
+                let db_id = database_2.getColumn("database_id").getString(0);
+                let db_code = database_2.getColumn("database_code").getString(0);
+            
+                if(db_id == "EMDB") {
+                    ic.emd = db_code;
+                    break;
+                }
+            }
+        }
+
+        if(block.getCategory("_struct_conf")) {
+            ic.bSecondaryStructure = true;
+
+            // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
+            let struct_conf = block.getCategory("_struct_conf");
+        
+            let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+        
+            let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
+            let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+        
+            struct_conf.getColumn("end_auth_asym_id").data;
+            let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+        
+            // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
+            let confSize = struct_conf.rowCount;
+            for (let i = 0; i < confSize; ++i) {
+                let conf_type_id = conf_type_idArray[i];
+            
+                let startChain = chain1Array[i];
+                let startResi = parseInt(resi1Array[i]);
+                let endResi = parseInt(resi2Array[i]);
+            
+                if(conf_type_id.substr(0, 4) == "HELX") {
+                    for(let j = parseInt(startResi); j <= parseInt(endResi); ++j) {
+                        let resid = structure + "_" + startChain + "_" + j;
+                        helixArray.push(resid);
+        
+                        if(j == startResi) helixStart.push(resid);
+                        if(j == endResi) helixEnd.push(resid);
+                    } 
+                }
+                else if(conf_type_id.substr(0, 4) == "STRN") {
+                    for(let j = startResi; j <= endResi; ++j) {
+                        let resid = structure + "_" + startChain + "_" + j;
+                        sheetArray.push(resid);
+        
+                        if(j == startResi) sheetStart.push(resid);
+                        if(j == endResi) sheetEnd.push(resid);
+                    } 
+                }
+            }
+        
+            conf_type_idArray = chain1Array = resi1Array = resi2Array = [];
+        }
+
+        if(block.getCategory("_struct_sheet_range")) {
+            // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
+            let struct_sheet_range = block.getCategory("_struct_sheet_range");
+        
+            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
+            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+        
+            struct_sheet_range.getColumn("end_auth_asym_id").data;
+            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+        
+            // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
+            let sheetSize = struct_sheet_range.rowCount;
+            for (let i = 0; i < sheetSize; ++i) {
+                let startChain = chain1Array[i];
+                let startResi = parseInt(resi1Array[i]);
+                let endResi = parseInt(resi2Array[i]);
+            
+                for(let j = startResi; j <= endResi; ++j) {
+                    let resid = structure + "_" + startChain + "_" + j;
+                    sheetArray.push(resid);
+    
+                    if(j == startResi) sheetStart.push(resid);
+                    if(j == endResi) sheetEnd.push(resid);
+                } 
+            }
+        
+            chain1Array = resi1Array = resi2Array = [];
+        }
+
+        if(block.getCategory("_struct_conn")) {
+            ic.bSsbondProvided = true;
+
+            // Retrieve the table corresponding to the struct_conn category, which delineates connections1
+            let struct_conn = block.getCategory("_struct_conn");
+        
+            let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+        
+            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
+            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
+            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+        
+            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
+            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
+            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+        
+            let connSize = struct_conn.rowCount;
+            for (let i = 0; i < connSize; ++i) {
+                let conn_type_id = conn_type_idArray[i];
+            
+                let chain1 = chain1Array[i];
+                name1Array[i];
+                let resi1 = resi1Array[i];
+                let id1 = structure + '_' + chain1 + "_" + resi1;
+            
+                let chain2 = chain2Array[i];
+                name2Array[i];
+                let resi2 = resi2Array[i];
+                let id2 = structure + '_' + chain2 + "_" + resi2;
+            
+                // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
+            
+                // if (conn_type_id == "covale") {
+                //     vBonds.push(id1);
+                //     vBonds.push(id2);
+                // }
+                
+                if(conn_type_id == "disulf") {
+                    if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
+
+                    ic.ssbondpnts[structure].push(id1);
+                    ic.ssbondpnts[structure].push(id2);
+                }
+            }
+        
+            conn_type_idArray = chain1Array = name1Array = resi1Array = chain2Array = name2Array = resi2Array = [];
+        }
+
+        if(block.getCategory("_exptl")) {
+            let method = block.getCategory("_exptl").getColumn("method").getString(0);
+            if(method.indexOf('NMR') != -1) {
+                bNMR = true;
+            }
+        }
+
+        if(block.getCategory("_pdbx_struct_oper_list")) {
+            // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
+            let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
+        
+            let struct_oper_idArray = struct_oper_list.getColumn("id").data;
+            let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
+            let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
+            let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
+            let m14Array = struct_oper_list.getColumn("vector[1]").data;
+        
+            let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
+            let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
+            let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
+            let m24Array = struct_oper_list.getColumn("vector[2]").data;
+        
+            let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
+            let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
+            let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
+            let m34Array = struct_oper_list.getColumn("vector[3]").data;
+        
+            let assemblySize = struct_oper_list.rowCount;
+            for (let i = 0; i < assemblySize; ++i) {
+                let struct_oper_id = struct_oper_idArray[i];
+                if(struct_oper_id == "X0") continue;
+
+                if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+                ic.biomtMatrices[i].set(m11Array[i], m12Array[i], m13Array[i], m14Array[i], 
+                    m21Array[i], m22Array[i], m23Array[i], m24Array[i], 
+                    m31Array[i], m32Array[i], m33Array[i], m34Array[i], 
+                    0, 0, 0, 1);
+            }
+        
+            struct_oper_idArray = m11Array = m12Array = m13Array = m14Array = m21Array = m22Array = m23Array 
+            = m24Array = m31Array = m32Array = m33Array = m34Array = [];
+        }
+
+        // if (record === 'ENDMDL') {
+        //     ++moleculeNum;
+        //     id = ic.defaultPdbId;
+
+        //     structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
+
+        //     //helices = [];
+        //     //sheets = [];
+        //     if(!bNMR) {
+        //         sheetArray = [];
+        //         sheetStart = [];
+        //         sheetEnd = [];
+        //         helixArray = [];
+        //         helixStart = [];
+        //         helixEnd = [];
+        //     }
+
+        //     bHeader = false; // reinitialize to read structure name from the header
+        // }
+
+        if(block.getCategory("_citation")) {
+            ic.pmid = block.getCategory("_citation").getColumn("pdbx_database_id_PubMed").getString(0);
+        }
+
+        // Retrieve the table corresponding to the atom_site category, which delineates atomic constituents
+        let atom_site = block.getCategory("_atom_site");
+        let atomSize = atom_site.rowCount;
+        // let bFull = (atomSize * 10 > ic.maxatomcnt) ? false : true;
+        let bFull = (atomSize > ic.maxatomcnt) ? false : true;
+
+        if(!bFull) {
+            ic.opts['proteins'] = 'c alpha trace'; //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
+            ic.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
+        }
+
+        let atom_hetatmArray = atom_site.getColumn("group_PDB").data;
+        let resnArray = atom_site.getColumn("label_comp_id").data;
+        let elemArray = atom_site.getColumn("type_symbol").data;
+        let nameArray = atom_site.getColumn("label_atom_id").data;
+    
+        let chainArray = atom_site.getColumn("auth_asym_id").data;
+    
+        let resiArray = atom_site.getColumn("label_seq_id").data;
+        let resiOriArray = atom_site.getColumn("auth_seq_id").data;
+        let altArray = atom_site.getColumn("label_alt_id").data;
+    
+        let bArray = atom_site.getColumn("B_iso_or_equiv").data;
+    
+        let xArray = atom_site.getColumn("Cartn_x").data;
+        let yArray = atom_site.getColumn("Cartn_y").data;
+        let zArray = atom_site.getColumn("Cartn_z").data;
+    
+        let autochainArray = atom_site.getColumn("label_asym_id").data;
+
+        // get the bond info
+        let ligSeqHash = {}, prevAutochain = '';
+        let prevResn;
+        let sChain = {};
+        for (let i = 0; i < atomSize; ++i) {
+            let atom_hetatm = atom_hetatmArray[i];
+            let resn = resnArray[i];
+            let elem = elemArray[i];
+            let atom = nameArray[i];
+            let chain = chainArray[i];
+            let resi = resiArray[i];
+            let oriResi = resiOriArray[i]; 
+            let alt = altArray[i];
+            let bFactor = bArray[i];
+
+            let autochain = autochainArray[i];
+
+            resi = oriResi;
+
+            let molecueType;
+            if(atom_hetatm == "ATOM") {
+                if(resn.length == 3) {
+                    molecueType = "p"; // protein
+                }
+                else {
+                    molecueType = "n"; // nucleotide
+                }
+            }
+            else {
+                if(resn == "WAT" || resn == "HOH") {
+                    molecueType = "s"; // solvent
+                    chain = 'Misc';
+                }
+                else {
+                    molecueType = "l"; // ligands or ions
+                    chain = resn;
+                }
+            }
+            if(chain === '') chain = 'A';
+
+            // C-alpha only for large structure
+            if(!bFull && ((molecueType == "p" && !(elem == 'C' && atom == 'CA')) || (molecueType == "n" && !(atom == "P")) ) ) continue;
+            
+            // skip alternative atoms
+            if(alt == "B") continue;
+
+            sChain[chain] = 1;
+
+            if(bFirstAtom) {
+                structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
+
+                bFirstAtom = false;
+            }
+
+            // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
+            // Concatenation of two pdbs will have several atoms for the same serial
+            ++serial;
+
+            // if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
+            //     bModifyResi = true;
+            // }
+
+            if(resi == "?" || resi == "." || resi == "0") {
+                resi = oriResi;
+
+                // if(resn.length != 3 || resn == "HOH" || resn == "WAT") {
+                //     if(resn.length != 3 || (elem == 'O' && (resn == "HOH" || resn == "WAT"))) {
+                //         resi = (++tmpResi).toString();
+                //     }
+                // }
+                // else {
+                //     if(chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                //         resi = (++tmpResi).toString();
+                //     }
+                //     else {
+                //         resi = (tmpResi).toString();
+                //     }
+                // }
+            }
+
+            if(molecueType == 's' || molecueType == "l") {
+                let seq = {};
+                if(!ligSeqHash.hasOwnProperty(chain)) {
+                    ligSeqHash[chain] = [];
+                }
+
+                if(resn.length != 3 || resn == "HOH" || resn == "WAT") {
+                    if(resn.length != 3 || (elem == 'O' && (resn == "HOH" || resn == "WAT"))) {
+                        seq.resi = resi;
+                        seq.name = me.utilsCls.residueName2Abbr(resn);
+                        ligSeqHash[chain].push(seq);
+                    }
+                }
+                else {
+                    if(chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                        seq.resi = resi;
+                        seq.name = me.utilsCls.residueName2Abbr(resn);
+                        ligSeqHash[chain].push(seq);
+                    }
+                }
+            }
+
+            // if(bOpm && resn === 'DUM') {
+            //     elem = atom;
+            //     chain = 'MEM';
+            //     resi = 1;
+            //     oriResi = 1;
+            // }
+
+            // if(bVector && resn === 'DUM') break; // just need to get the vector of the largest chain
+
+            chainNum = structure + "_" + chain;
+            oriResidueNum = chainNum + "_" + oriResi;
+
+            residueNum = chainNum + "_" + resi;
+
+            //let chain_resi = chain + "_" + resi;
+
+            let x = xArray[i];
+            let y = yArray[i];
+            let z = zArray[i];
+            let coord = new THREE.Vector3(x, y, z);
+
+            let atomDetails = {
+                het: (atom_hetatm == "HETATM"), // optional, used to determine chemicals, water, ions, etc
+                serial: serial,         // required, unique atom id
+                name: atom,             // required, atom name
+                alt: alt,               // optional, some alternative coordinates
+                resn: resn,         // optional, used to determine protein or nucleotide
+                structure: structure,   // optional, used to identify structure
+                chain: chain,           // optional, used to identify chain
+                resi: resi,             // optional, used to identify residue ID
+                //insc: line.substr(26, 1),
+                coord: coord,           // required, used to draw 3D shape
+                b: bFactor,             // optional, used to draw B-factor tube
+                elem: elem,             // optional, used to determine hydrogen bond
+                bonds: [],              // required, used to connect atoms
+                ss: 'coil',             // optional, used to show secondary structures
+                ssbegin: false,         // optional, used to show the beginning of secondary structures
+                ssend: false            // optional, used to show the end of secondary structures
+            };
+
+            if(!atomDetails.het && atomDetails.name === 'C') ;
+            if(!atomDetails.het && atomDetails.name === 'O') ;
+
+            // from DSSP C++ code
+            // if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
+            //     let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
+
+            //     let x2 = atomDetails.coord.x + (ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
+            //     let y2 = atomDetails.coord.y + (ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
+            //     let z2 = atomDetails.coord.z + (ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
+
+            //     atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
+            // }
+
+            ic.atoms[serial] = atomDetails;
+
+            ic.dAtoms[serial] = 1;
+            ic.hAtoms[serial] = 1;
+            hAtoms[serial] = 1;
+
+            // Assign secondary structures from the input
+            // if a residue is assigned both sheet and helix, it is assigned as sheet
+            if(ic.loadPDBCls.isSecondary(residueNum, sheetArray, bNMR, !bFull)) {
+                ic.atoms[serial].ss = 'sheet';
+                if(ic.loadPDBCls.isSecondary(residueNum, sheetStart, bNMR, !bFull)) {
+                ic.atoms[serial].ssbegin = true;
+                }
+
+                // do not use else if. Some residues are both start and end of secondary structure
+                if(ic.loadPDBCls.isSecondary(residueNum, sheetEnd, bNMR, !bFull)) {
+                ic.atoms[serial].ssend = true;
+                }
+            }
+            else if(ic.loadPDBCls.isSecondary(residueNum, helixArray, bNMR, !bFull)) {
+                ic.atoms[serial].ss = 'helix';
+
+                if(ic.loadPDBCls.isSecondary(residueNum, helixStart, bNMR, !bFull)) {
+                ic.atoms[serial].ssbegin = true;
+                }
+
+                // do not use else if. Some residues are both start and end of secondary structure
+                if(ic.loadPDBCls.isSecondary(residueNum, helixEnd, bNMR, !bFull)) {
+                ic.atoms[serial].ssend = true;
+                }
+            }
+
+            let secondaries = '-';
+            if(ic.atoms[serial].ss === 'helix') {
+                secondaries = 'H';
+            }
+            else if(ic.atoms[serial].ss === 'sheet') {
+                secondaries = 'E';
+            }
+            //else if(ic.atoms[serial].ss === 'coil') {
+            //    secondaries = 'c';
+            //}
+            else if(!ic.atoms[serial].het && me.parasCls.residueColors.hasOwnProperty(ic.atoms[serial].resn.toUpperCase()) ) {
+                secondaries = 'c';
+            }
+            else {
+                secondaries = 'o';
+            }
+
+            ic.secondaries[residueNum] = secondaries;
+
+            // different residue
+            //if(residueNum !== prevResidueNum) {
+                
+            // if(oriResidueNum !== prevOriResidueNum) {
+            if(oriResidueNum !== prevOriResidueNum || chain + "_" + resn != prevResn || prevAutochain != autochain) {
+                let residue = me.utilsCls.residueName2Abbr(resn);
+                
+                ic.residueId2Name[residueNum] = residue;
+
+                if(serial !== 1 && prevResidueNum !== '') {
+                    ic.residues[prevResidueNum] = residuesTmp;
+                }
+
+                if(residueNum !== prevResidueNum) {
+                    residuesTmp = {};
+                }
+
+                // different chain
+                if(chainNum !== prevChainNum) {
+
+                    // a chain could be separated in two sections
+                    if(serial !== 1 && prevChainNum !== '') {
+                        if(ic.chains[prevChainNum] === undefined) ic.chains[prevChainNum] = {};
+                        ic.chains[prevChainNum] = me.hashUtilsCls.unionHash(ic.chains[prevChainNum], chainsTmp);
+                    }
+
+                    chainsTmp = {};
+
+                    if(ic.structures[structure.toString()] === undefined) ic.structures[structure.toString()] = [];
+                    if(!ic.structures[structure.toString()].includes(chainNum)) ic.structures[structure.toString()].push(chainNum);
+
+                    if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
+
+                    let resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = residue;
+
+                    ic.chainsSeq[chainNum].push(resObject);
+                }
+                else {
+
+                    let resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = residue;
+
+                    ic.chainsSeq[chainNum].push(resObject);
+                }
+            }
+
+            chainsTmp[serial] = 1;
+            residuesTmp[serial] = 1;
+
+            prevChainNum = chainNum;
+            prevResidueNum = residueNum;
+            prevOriResidueNum = oriResidueNum;
+
+            prevResn = chain + "_" + resn;
+            prevAutochain = autochain;
+        }
+
+        // add the last residue set
+        ic.residues[residueNum] = residuesTmp;
+        if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {};
+        ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
+
+        // clear memory
+        atom_hetatmArray = resnArray = elemArray = nameArray = chainArray = resiArray = resiOriArray 
+            = altArray = bArray = xArray = yArray = zArray = autochainArray = [];
+
+        let mChainSeq = {};
+        if(block.getCategory("_pdbx_poly_seq_scheme")) {
+            let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
+
+            let resiArray = poly_seq_scheme.getColumn("seq_id").data;
+            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
+            let resnArray = poly_seq_scheme.getColumn("mon_id").data;
+            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
+
+            let seqSize = poly_seq_scheme.rowCount;
+            let prevChain = "";
+            let seqArray = [];
+            for (let i = 0; i < seqSize; ++i) {
+                resiArray[i];
+                let oriResi = oriResiArray[i];
+                let resn = resnArray[i];
+                let chain = chainArray[i];
+
+                if(chain != prevChain && i > 0) {
+                    mChainSeq[prevChain] = seqArray;
+
+                    seqArray = [];
+                }
+
+                // seqArray.push({"resi": resi, "name": me.utilsCls.residueName2Abbr(resn)});
+                seqArray.push({"resi": oriResi, "name": me.utilsCls.residueName2Abbr(resn)});
+
+                prevChain = chain;
+            }
+
+            mChainSeq[prevChain] = seqArray;
+
+            resiArray = oriResiArray = resnArray = chainArray = [];
+        }
+        
+        this.setSeq(structure, sChain, mChainSeq, ligSeqHash);
+
+        // copy disulfide bonds
+        let structureArray = Object.keys(ic.structures);
+        for(let s = 0, sl = structureArray.length; s < sl; ++s) {
+            let structure = structureArray[s];
+
+            if(structure == id) continue;
+
+            if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
+
+            if(ic.ssbondpnts[id] !== undefined) {
+                for(let j = 0, jl = ic.ssbondpnts[id].length; j < jl; ++j) {
+                    let ori_resid = ic.ssbondpnts[id][j];
+                    let pos = ori_resid.indexOf('_');
+                    let resid = structure + ori_resid.substr(pos);
+
+                    ic.ssbondpnts[structure].push(resid);
+                }
+            }
+        }
+
+        // calculate disulfide bonds for CIF files
+        if(!ic.bSsbondProvided) {
+            ic.loadPDBCls.setSsbond();
+        }
+
+        let curChain, curResi, curResAtoms = [];
+      
+        let pmin = new THREE.Vector3( 9999, 9999, 9999);
+        let pmax = new THREE.Vector3(-9999,-9999,-9999);
+        let psum = new THREE.Vector3();
+        let cnt = 0;
+
+        // lipids may be considered as protein if "ATOM" instead of "HETATM" was used
+        let lipidResidHash = {};
+
+        // assign atoms
+        let prevCarbonArray = []; 
+        //for (let i in ic.atoms) {
+        for (let i in ic.hAtoms) {    
+            let atom = ic.atoms[i];
+            let coord = atom.coord;
+            psum.add(coord);
+            pmin.min(coord);
+            pmax.max(coord);
+            ++cnt;
+
+            if(cnt == 1) {
+                curChain = atom.chain;
+                curResi = atom.resi;
+                prevCarbonArray.push(atom);
+            }
+
+            if(!atom.het) {
+              if($.inArray(atom.resn, me.parasCls.nucleotidesArray) !== -1) {
+                ic.nucleotides[atom.serial] = 1;
+                //if (atom.name === 'P') {
+                if (atom.name === "O3'" || atom.name === "O3*") {
+                    ic.nucleotidesO3[atom.serial] = 1;
+
+                    ic.secondaries[atom.structure + '_' + atom.chain + '_' + atom.resi] = 'o'; // nucleotide
+                }
+
+                if(me.parasCls.nuclMainArray.indexOf(atom.name) === -1) {
+                    ic.ntbase[atom.serial] = 1;
+                }
+              }
+              else {
+                if (atom.elem === 'P') {
+                    lipidResidHash[atom.structure + '_' + atom.chain + '_' + atom.resi] = 1;
+                }
+
+                ic.proteins[atom.serial] = 1;
+                if (atom.name === 'CA') ic.calphas[atom.serial] = 1;
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') ic.sidec[atom.serial] = 1;
+              }
+            }
+            else if(atom.het) {
+              if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
+                ic.water[atom.serial] = 1;
+              }
+              else if($.inArray(atom.resn, me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+                ic.ions[atom.serial] = 1;
+              }
+              else {
+                ic.chemicals[atom.serial] = 1;
+              }
+
+              atom.color = me.parasCls.atomColors[atom.elem];
+            }
+
+            if(!(curChain === atom.chain && curResi === atom.resi)) {
+                // a new residue, add the residue-residue bond besides the regular bonds               
+                ic.loadPDBCls.refreshBonds(curResAtoms, prevCarbonArray[0]);
+
+                prevCarbonArray.splice(0, 1); // remove the first carbon
+
+                curChain = atom.chain;
+                curResi = atom.resi;
+                //curInsc = atom.insc;
+                curResAtoms.length = 0;
+            }
+            curResAtoms.push(atom);
+
+            if(atom.name === 'C' || atom.name === 'O3\'') {
+                prevCarbonArray.push(atom);
+            }
+        } // end of for
+
+        // last residue
+        //refreshBonds();
+        ic.loadPDBCls.refreshBonds(curResAtoms, prevCarbonArray[0]);
+
+        // reset lipid
+        for(let resid in lipidResidHash) {
+            let atomHash = ic.residues[resid];
+            for(serial in atomHash) {
+                let atom = ic.atoms[serial];
+
+                atom.het = true;
+                ic.chemicals[atom.serial] = 1;
+                ic.secondaries[resid] = 'o'; // nucleotide
+
+                delete ic.proteins[atom.serial];
+                if (atom.name === 'CA') delete ic.calphas[atom.serial];
+                if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
+            }
+        }
+
+        ic.pmin = pmin;
+        ic.pmax = pmax;
+
+        ic.cnt = cnt;
+
+        //ic.maxD = ic.pmax.distanceTo(ic.pmin);
+        //ic.center = psum.multiplyScalar(1.0 / ic.cnt);
+        ic.center = ic.ParserUtilsCls.getGeoCenter(ic.pmin, ic.pmax);
+
+        ic.maxD = ic.ParserUtilsCls.getStructureSize(ic.atoms, ic.pmin, ic.pmax, ic.center);
+
+        if (ic.maxD < 5) ic.maxD = 5;
+
+        ic.oriMaxD = ic.maxD;
+        ic.oriCenter = ic.center.clone();
+
+        // if(type === 'target') {
+        //     ic.oriMaxD = ic.maxD;
+        //     ic.center1 = ic.center;
+        // }
+        // else if(type === 'query') {
+        //     if(ic.oriMaxD < ic.maxD) ic.oriMaxD = ic.maxD;
+
+        //     ic.center2 = ic.center;
+        //     ic.center = new THREE.Vector3(0,0,0);
+        // }
+
+        // if(bVector) { // just need to get the vector of the largest chain
+        //     return ic.loadPDBCls.getChainCalpha(ic.chains, ic.atoms);
+        // }
+        // else {
+            return hAtoms;
+        // }
+    }
+
+    setSeq(structure, sChain, mChainSeq, ligSeqHash) { let ic = this.icn3d; ic.icn3dui;
+        for(let chain in sChain) {
+            let chainNum = structure + '_' + chain;
+
+            if(ligSeqHash.hasOwnProperty(chain)) {
+                ic.chainsSeq[chainNum] = ligSeqHash[chain];
+            }
+            else {
+                ic.chainsSeq[chainNum] = mChainSeq[chain];
+            }
+        }
+
+        ic.loadPDBCls.setResidMapping();
     }
 }
 
@@ -60051,6 +64457,7 @@ class Vastplus {
         }
 
         let bRealign = true, atype = 2; // VAST+ based on TM-align
+        me.cfg.aligntool = 'tmalign';
         await ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
     }
 
@@ -60995,7 +65402,7 @@ class ApplyCommand {
       else if(command == 'set annotation ig') {
           ic.bRunRefnumAgain = true;
           await ic.annotationCls.setAnnoTabIg();
-          // ic.bRunRefnumAgain = false;
+          ic.bRunRefnumAgain = false;
       }
       else if(command == 'ig refnum on') {
         ic.bRunRefnumAgain = true;
@@ -61003,7 +65410,7 @@ class ApplyCommand {
         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
         await ic.annotationCls.setAnnoTabIg(true);
 
-        // ic.bRunRefnumAgain = false;
+        ic.bRunRefnumAgain = false;
     }
       else if(command == 'highlight level up') {
           ic.resid2specCls.switchHighlightLevelUp();
@@ -61322,6 +65729,9 @@ class ApplyCommand {
       else if(commandOri.indexOf('select saved atoms') == 0 || commandOri.indexOf('select sets') == 0) {
         // backward compatible: convert previous aligned_protein to protein_aligned
         commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
+
+        // define chains
+        ic.definedSetsCls.setChainsInMenu();
 
         let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
@@ -63726,7 +68136,7 @@ class LoadScript {
                         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                         await ic.annotationCls.setAnnoTabIg(true);
 
-                        // ic.bRunRefnumAgain = false;
+                        ic.bRunRefnumAgain = false;
                     }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
@@ -63863,7 +68273,12 @@ class LoadScript {
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
           
-          await ic.mmtfParserCls.downloadMmtf(id);
+          await ic.bcifParserCls.downloadBcif(id);
+        }
+        else if(command.indexOf('load bcif') !== -1) {
+          me.cfg.bcifid = id;
+          
+          await ic.bcifParserCls.downloadBcif(id);
         }
         else if(command.indexOf('load pdb') !== -1) {
           me.cfg.pdbid = id;
@@ -65867,13 +70282,14 @@ class FirstAtomObj {
         return ic.atoms[firstIndex];
     }
 
-    getMiddleAtomObj(atomsHash) { let ic = this.icn3d; ic.icn3dui;
+    // n is the position of the selected atom
+    getMiddleAtomObj(atomsHash, n) { let ic = this.icn3d; ic.icn3dui;
         if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
             return undefined;
         }
 
         let atomKeys = Object.keys(atomsHash);
-        let middleIndex = atomKeys[parseInt(atomKeys.length / 2)];
+        let middleIndex = (n && n < atomKeys.length) ? atomKeys[n] : atomKeys[parseInt(atomKeys.length / 2)];
 
         return ic.atoms[middleIndex];
     }
@@ -66719,6 +71135,8 @@ class Dssp {
  class Refnum {
     constructor(icn3d) {
         this.icn3d = icn3d;
+        this.TMThreshold = 0.85;
+        this.topClusters = 5;
     }
 
     async hideIgRefNum() { let ic = this.icn3d; ic.icn3dui;
@@ -66753,7 +71171,7 @@ class Dssp {
 
     setRefPdbs() { let ic = this.icn3d; ic.icn3dui;
         // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_Iset', '1CD28_1yjdC_human_V', '1CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_C2', '1CD28_1yjdC_human_V', '1CD19_6al5A_human-n1'];
 
         // round 2
         ic.refpdbHash = {};
@@ -66763,19 +71181,19 @@ class Dssp {
         ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
         ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
         ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
-        ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_FN3-n1', 'VTCN1_Q7Z7D3_human_V-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C2-n2'];
+        ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_C1-n1', 'VTCN1_Q7Z7D3_human_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
+        ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C1-n2'];
         ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2'];
         ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
         ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
         ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
-        ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Unk-n152', 'LAG3_7tzgD_human_C2-n2', 'JAM1_1nbqA_human_VorIset-n2', 'Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_Iset'];
-        ic.refpdbHash['1CD3g_6jxrg_human_Iset'] = ['CD3g_6jxrg_human_Iset', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_Iset'];
-        ic.refpdbHash['1CD19_6al5A_human_C2orV-n1'] = ['CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Iset-n152', 'LAG3_7tzgD_human_C1-n2', 'JAM1_1nbqA_human_Iset-n2', 'Contactin1_3s97C_human_Iset-n2'];
+        ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_C1'];
+        ic.refpdbHash['1CD3g_6jxrg_human_C2'] = ['CD3g_6jxrg_human_C2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
+        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_C1'];
+        ic.refpdbHash['1CD19_6al5A_human-n1'] = ['CD19_6al5A_human-n1'];
 
-        ic.refpdbHash['all_templates'] = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human_C2orV-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_Iset', 'CD3e_6jxrf_human_Iset', 'CD3g_6jxrg_human_Iset', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_C2-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_FN3-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_VorIset-n2', 'LAG3_7tzgD_human_C2-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C2-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Unk-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_V-n2'];
+        ic.refpdbHash['all_templates'] = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'CD3g_6jxrg_human_C2', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_Iset-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_C1-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_Iset-n2', 'LAG3_7tzgD_human_C1-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Iset-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_C1-n2'];
 
         // use known ref structure
         ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
@@ -66783,7 +71201,7 @@ class Dssp {
         ic.refpdbHash['8GUY_E'] = ['InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2'];
         ic.refpdbHash['6JXR_m'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
         ic.refpdbHash['1HNF_A'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
-        ic.refpdbHash['7TZG_D'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C2-n2'];
+        ic.refpdbHash['7TZG_D'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C1-n2'];
         ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
         ic.refpdbHash['1BQU_B'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
 
@@ -66793,7 +71211,7 @@ class Dssp {
         ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
         ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
         ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
-        ic.refpdbHash['1NBQ_A'] = ['JAM1_1nbqA_human_VorIset-n2'];
+        ic.refpdbHash['1NBQ_A'] = ['JAM1_1nbqA_human_Iset-n2'];
         ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
         ic.refpdbHash['7PHR_H'] = ['MHCIa_7phrH_human_C1'];
         ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
@@ -66805,9 +71223,9 @@ class Dssp {
         ic.refpdbHash['2AW2_A'] = ['BTLA_2aw2A_human_Iset'];
         ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
         ic.refpdbHash['1WF5_A'] = ['Sidekick2_1wf5A_human_FN3-n7'];
-        ic.refpdbHash['5J0B_B'] = ['Siglec3_5j0bB_human_C2-n2'];
+        ic.refpdbHash['5J0B_B'] = ['Siglec3_5j0bB_human_C1-n2'];
         ic.refpdbHash['1IFR_A'] = ['LaminAC_1ifrA_human'];
-        ic.refpdbHash['Q7Z7D3_A'] = ['VTCN1_Q7Z7D3_human_V-n2'];
+        ic.refpdbHash['Q7Z7D3_A'] = ['VTCN1_Q7Z7D3_human_C1-n2'];
         ic.refpdbHash['4ZQK_B'] = ['PD1_4zqkB_human_V'];
         ic.refpdbHash['2DM3_A'] = ['Palladin_2dm3A_human_Iset-n1'];
         ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
@@ -66815,17 +71233,17 @@ class Dssp {
         ic.refpdbHash['4ZT1_A'] = ['ECadherin_4zt1A_human_n2'];
         ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
         ic.refpdbHash['1CD8_A'] = ['CD8a_1cd8A_human_V'];
-        ic.refpdbHash['3S97_C'] = ['Contactin1_3s97C_human_C2-n2'];
-        ic.refpdbHash['1AXI_B'] = ['GHR_1axiB_human_FN3-n1'];
+        ic.refpdbHash['3S97_C'] = ['Contactin1_3s97C_human_Iset-n2'];
+        ic.refpdbHash['1AXI_B'] = ['GHR_1axiB_human_C1-n1'];
         ic.refpdbHash['6X4G_A'] = ['ICOS_6x4gA_human_V'];
         ic.refpdbHash['2EE2_A'] = ['Contactin1_2ee2A_human_FN3-n9'];
-        ic.refpdbHash['4UOW_M'] = ['Titin_4uowM_human_Unk-n152'];
-        ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human_C2orV-n1'];
+        ic.refpdbHash['4UOW_M'] = ['Titin_4uowM_human_Iset-n152'];
+        ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human-n1'];
         ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
         ic.refpdbHash['1YJD_C'] = ['CD28_1yjdC_human_V'];
-        ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_Iset'];
-        ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_Iset'];
-        ic.refpdbHash['6JXR_g'] = ['CD3g_6jxrg_human_Iset'];
+        ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_C1'];
+        ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_C1'];
+        ic.refpdbHash['6JXR_g'] = ['CD3g_6jxrg_human_C2'];
 
         // assign Ig types
         ic.ref2igtype = {};
@@ -66835,17 +71253,17 @@ class Dssp {
         ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
         ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
         ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
-        ic.ref2igtype['CD19_6al5A_human_C2orV-n1'] = 'CD19';
+        ic.ref2igtype['CD19_6al5A_human-n1'] = 'CD19';
         ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
         ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
         ic.ref2igtype['CD2_1hnfA_human_V-n1'] = 'IgV';
-        ic.ref2igtype['CD3d_6jxrd_human_Iset'] = 'IgI';
-        ic.ref2igtype['CD3e_6jxrf_human_Iset'] = 'IgI';
-        ic.ref2igtype['CD3g_6jxrg_human_Iset'] = 'IgI';
+        ic.ref2igtype['CD3d_6jxrd_human_C1'] = 'IgI';
+        ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgI';
+        ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgI';
         ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
         ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
         ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
-        ic.ref2igtype['Contactin1_3s97C_human_C2-n2'] = 'IgC2';
+        ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgC2';
         ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
         ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'Cadherin';
         ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
@@ -66853,15 +71271,15 @@ class Dssp {
         ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
         ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
         ic.ref2igtype['FAB-LIGHT_5esv_V-n1'] = 'IgV';
-        ic.ref2igtype['GHR_1axiB_human_FN3-n1'] = 'IgFN3';
+        ic.ref2igtype['GHR_1axiB_human_C1-n1'] = 'IgFN3';
         ic.ref2igtype['ICOS_6x4gA_human_V'] = 'IgV';
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n2'] = 'IgFN3';
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n1'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
         ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
-        ic.ref2igtype['JAM1_1nbqA_human_VorIset-n2'] = 'IgI';
-        ic.ref2igtype['LAG3_7tzgD_human_C2-n2'] = 'IgC2';
+        ic.ref2igtype['JAM1_1nbqA_human_Iset-n2'] = 'IgI';
+        ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC2';
         ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
@@ -66875,16 +71293,16 @@ class Dssp {
         ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
         ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
         ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
-        ic.ref2igtype['Siglec3_5j0bB_human_C2-n2'] = 'IgC2';
+        ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC2';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
         ic.ref2igtype['TEAD1_3kysC_human'] = 'IgE';
         ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
         ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
-        ic.ref2igtype['Titin_4uowM_human_Unk-n152'] = 'IgI';
+        ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
         ic.ref2igtype['VISTA_6oilA_human_V'] = 'IgV';
         ic.ref2igtype['VNAR_1t6vN_shark_V'] = 'IgV';
-        ic.ref2igtype['VTCN1_Q7Z7D3_human_V-n2'] = 'IgV';
+        ic.ref2igtype['VTCN1_Q7Z7D3_human_C1-n2'] = 'IgV';
     }
 
     getPdbAjaxArray() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -67276,21 +71694,30 @@ class Dssp {
 
                     if(q_start > 2540 && q_start < 2560) {
                         bBstrand = true;
-                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-                        if(atom.ss == 'helix') bBSheet = false;
                     }
                     else if(q_start > 3540 && q_start < 3560) {
                         bCstrand = true;
-                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-                        if(atom.ss == 'helix') bCSheet = false;
                     }
                     else if(q_start > 7540 && q_start < 7560) {
                         bEstrand = true;
-                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-                        if(atom.ss == 'helix') bESheet = false; 
                     }
                     else if(q_start > 8540 && q_start < 8560) {
                         bFstrand = true;
+                    }
+
+                    if(q_start == 2550) {
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        if(atom.ss == 'helix') bBSheet = false;
+                    }
+                    else if(q_start == 3550) {
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        if(atom.ss == 'helix') bCSheet = false;
+                    }
+                    else if(q_start == 7550) {
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                        if(atom.ss == 'helix') bESheet = false; 
+                    }
+                    else if(q_start == 8550) {
                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                         if(atom.ss == 'helix') bFSheet = false;
                     }
@@ -67299,17 +71726,20 @@ class Dssp {
                     if(bBstrand && bCstrand && bEstrand && bFstrand) break;
                 }
 
-                if(!(bBstrand && bCstrand && bEstrand && bFstrand) || !(bBSheet && bCSheet && bESheet && bFSheet)) {
-                // if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
-                    if(!me.bNode && !(bBstrand && bCstrand && bEstrand && bFstrand)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
-                    if(!me.bNode && !(bBSheet && bCSheet && bESheet && bFSheet)) console.log("Some of the Ig strands B, C, E, F are not beta sheets...");
-                    // if(!me.bNode && (BCnt < 3 || CCnt < 3 || ECnt < 3 || FCnt < 3)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
-                    if(ic.domainid2refpdbname[domainid][0] == refpdbname) {
-                        delete ic.domainid2refpdbname[domainid];
-                        delete ic.domainid2score[domainid];
+                // if(refpdbname != 'CD19_6al5A_human-n1') { // relax for CD19
+                    if(!(bBstrand && bCstrand && bEstrand && bFstrand) || !(bBSheet && bCSheet && bESheet && bFSheet)) {
+                    // if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
+                        if(!me.bNode && !(bBstrand && bCstrand && bEstrand && bFstrand)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                        if(!me.bNode && !(bBSheet && bCSheet && bESheet && bFSheet)) console.log("Some of the Ig strands B, C, E, F are not beta sheets...");
+                        // if(!me.bNode && (BCnt < 3 || CCnt < 3 || ECnt < 3 || FCnt < 3)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+                        if(ic.domainid2refpdbname[domainid][0] == refpdbname) {
+                            delete ic.domainid2refpdbname[domainid];
+                            delete ic.domainid2score[domainid];
+                        }
+                        // continue;
                     }
-                    continue;
-                }
+                // }
+
             }
 
             if(!bRound1) {
@@ -67338,7 +71768,9 @@ class Dssp {
                 ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;
 
                 if(bRound1) {
-                    ic.domainid2refpdbname[domainid] = score > 0.75 ? [refpdbname] : ['all_templates'];
+                    // ic.domainid2refpdbname[domainid] = score > 0.75 ? [refpdbname] : ['all_templates'];
+                    ic.domainid2refpdbname[domainid] = score >= this.TMThreshold ? [refpdbname] : ['all_templates'];
+                    // if(me.bNode) ic.domainid2refpdbname[domainid] = ['all_templates'];
                 }
                 else {
                     ic.domainid2refpdbname[domainid] = [refpdbname];
@@ -67357,9 +71789,7 @@ class Dssp {
             }
         }
 
-        //!!!
-
-        // combine the top four clusters for the 2nd round alignment
+        // combine the top  clusters for the 2nd round alignment
         if(bRound1) {
             for(let domainid in domainid2refpdbnamelist) {
                 if(!me.bNode && ic.domainid2refpdbname[domainid][0] == 'all_templates') {
@@ -67368,8 +71798,8 @@ class Dssp {
                     refpdbnameList.sort(function(a, b) {
                         return refpdbname2score[b] - refpdbname2score[a]
                     });
-                    // top 4 templates
-                    ic.domainid2refpdbname[domainid] = refpdbnameList.slice(0,4);
+                    // top templates
+                    ic.domainid2refpdbname[domainid] = refpdbnameList.slice(0, this.topClusters);
                 }
             }
         }
@@ -67536,6 +71966,8 @@ class Dssp {
             // adjust C' and D strands ======start
             let bCstrand = false, bCpstrand = false, bCppstrand = false, bDstrand = false, bEstrand = false;
             let CAtom, CpAtom, DAtom, EAtom;
+            let CAtomArray = [], EAtomArray = [];
+
             //let chainid = domainid.split(',')[0];
 
             let cntBtwCE;
@@ -67572,11 +72004,30 @@ class Dssp {
                 else if(seg.q_start.indexOf('7550') != -1) {
                     bEstrand = true;
                     EAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                }
 
+                if(seg.q_start >= 3545 && seg.q_start <= 3555) {
+                    let atomTmp = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                    if(atomTmp) CAtomArray.push(atomTmp);
+                }
+                else if(seg.q_start >= 7545 && seg.q_start <= 7555) {
+                    let atomTmp = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+                    if(atomTmp) EAtomArray.push(atomTmp);
+                }
+
+                if(seg.q_start.indexOf('8550') != -1) {
                     // check C' and D strands
                     if(cntBtwCE == 1) {
-                        let distToC = (bCpstrand) ? CpAtom.coord.distanceTo(CAtom.coord) : DAtom.coord.distanceTo(CAtom.coord);
-                        let distToE = (bCpstrand) ? CpAtom.coord.distanceTo(EAtom.coord) : DAtom.coord.distanceTo(EAtom.coord);
+                        let distToC = 999, distToE = 999;
+                        for(let j = 0, jl = CAtomArray.length; j < jl; ++j) {
+                            let dist = (bCpstrand) ? CpAtom.coord.distanceTo(CAtomArray[j].coord) : DAtom.coord.distanceTo(CAtomArray[j].coord);
+                            if(dist < distToC) distToC = dist;
+                        }
+                        for(let j = 0, jl = EAtomArray.length; j < jl; ++j) {
+                            let dist = (bCpstrand) ? CpAtom.coord.distanceTo(EAtomArray[j].coord) : DAtom.coord.distanceTo(EAtomArray[j].coord);
+                            if(dist < distToE) distToE = dist;
+                        }
+
                         distToC = parseInt(distToC);
                         distToE = parseInt(distToE);
 
@@ -67586,11 +72037,13 @@ class Dssp {
                         if(bCpstrand) {
                             if(distToC > distToE || (distToC == distToE && resiDistToC > resiDistToE)) { // rename C' to D
                                 CpToDResi.push(CpAtom.resi);
+                                if(!me.bNode) console.log("Rename strand C' to D: distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE);
                             }
                         }
                         else if(bDstrand) {
                             if(distToC < distToE || (distToC == distToE && resiDistToC < resiDistToE)) { // rename D to C'
                                 DToCpResi.push(DAtom.resi);
+                                if(!me.bNode) console.log("Rename strand D to C': distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE);
                             }
                         }
                     }
@@ -67601,13 +72054,13 @@ class Dssp {
 
             let currStrand;
 
-            // let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human_C2orV-n1';
+            // let bCd19 = refpdbnameArray.length == 1 && refpdbnameArray[0] == 'CD19_6al5A_human-n1';
             for(let i = 0, il = segArray.length; i < il; ++i) {
                 let seg = segArray[i];
                 if(!seg) continue;
 
-                let qStart = seg.q_start;
-                parseInt(seg.q_start);
+                seg.q_start;
+                let qStartInt = parseInt(seg.q_start);
                 if(isNaN(seg.q_start)) seg.q_start.substr(seg.q_start.length - 1, 1);
 
                 // one item in "seq"
@@ -67620,7 +72073,8 @@ class Dssp {
                     let resid = chainid + '_' + seg.t_start;
                     //let refnum = qStartInt.toString() + postfix;
                     //let refnum = qStart + postfix;
-                    let refnum = qStart;
+                    //let refnum = qStart;
+                    let refnum = qStartInt;
 
                     let refnumLabel = this.getLabelFromRefnum(refnum);
                     currStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
@@ -68035,7 +72489,7 @@ class Dssp {
         if(!ic.chainid2refpdbname[chnid]) return false;
 
         // auto-generate ref numbers for loops 
-        let currStrand = '', prevStrand = '';
+        let currStrand = '', prevStrand = '', prevValidStrand = '';
         let refnumLabel, refnumStr_ori, refnumStr, postfix, strandPostfix, refnum, refnum3c, refnum2c;
         let bExtendedStrand = false, bSecThird9 = false;
 
@@ -68099,7 +72553,8 @@ class Dssp {
                     if(!bSecThird9 || (bExtendedStrand && !bSecThird9)) {
                         let lastTwo = parseInt(refnum.toString().substr(refnum.toString().length - 2, 2));
                         
-                        if(currStrand != prevStrand) { // reset currCnt
+                        // reset currCnt
+                        if(currStrand != prevStrand && currStrand != prevValidStrand) { // sometimes the same resid appear several times, e.g, 7M7B_H_135
                             bFoundAnchor = false;
 
                             if(strandHash[currStrand + postfix]) {
@@ -68201,6 +72656,8 @@ class Dssp {
                             }
                         }
                     }
+
+                    prevValidStrand = currStrand;
                 }
             }
 
@@ -68288,21 +72745,24 @@ class Dssp {
         for(let il = strandArray.length, i = il - 1; i >= 0; --i) {
             // let strandTmp = strandArray[i].strand.substr(0, 1);
             let strandTmp = strandArray[i].strand;
+
             if(strandTmp != 'G' && strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
                 if(i != il - 1) { // modify 
                     strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + parseInt(strandArray[i].endResi) - parseInt(strandArray[i].startResi) + 1;
                 }
+                
+                // assign before removing
+                let resid = chnid + '_' + strandArray[i].startResi;
 
                 strandArray.splice(i, 1);
 
                 if(strandTmp == 'B' || strandTmp == 'C' || strandTmp == 'E' || strandTmp == 'F') {
                     if(!me.bNode) console.log("Ig strand " + strandTmp + " is removed since it is too short...");
                     
-                    let resid = chnid + '_' + strandArray[i].startResi;
                     let domainid = ic.resid2domainid[resid];
                     removeDomainidHash[domainid] = 1;
                     continue;
-                }
+                }                
             }
         }
 
@@ -68419,10 +72879,12 @@ class Dssp {
                                 let halfLen = parseInt(len / 2.0 + 0.5);
                     
                                 if(loopCnt <= halfLen) {
-                                    currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
-                                    refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
-                                    refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
-                                    domainid = strandArray[prevStrandCnt].domainid;
+                                    if(strandArray[prevStrandCnt]) {
+                                        currRefnum = strandArray[prevStrandCnt].endRefnum + loopCnt;
+                                        refnumLabelNoPostfix = strandArray[prevStrandCnt].strand + currRefnum;
+                                        refnumLabel = refnumLabelNoPostfix  + strandArray[prevStrandCnt].strandPostfix; 
+                                        domainid = strandArray[prevStrandCnt].domainid;
+                                    }
                                 }
                                 else {
                                     currRefnum = strandArray[strandCnt].startRefnum - len + loopCnt - 1;
@@ -72912,10 +77374,10 @@ class SaveFile {
                 for(let n = 0; n < 3; ++n) {
                     let nNum = n + 1;
                     stru2header[stru] += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 0].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 4].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 8].toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 12].toString().padStart(14, ' ') + "\n";
+                        + " " + ic.biomtMatrices[m].elements[n + 0].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 4].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 8].toFixed(6).toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 12].toFixed(6).toString().padStart(14, ' ') + "\n";
                 }
             }
         }
@@ -76372,6 +80834,7 @@ class iCn3D {
     this.saltbridgeCls = new Saltbridge(this);
 
     this.loadPDBCls = new LoadPDB(this);
+    this.loadCIFCls = new LoadCIF(this);
     this.vastplusCls = new Vastplus(this);
     this.transformCls = new Transform(this);
 
@@ -76415,7 +80878,7 @@ class iCn3D {
     this.mtzParserCls = new MtzParser(this);
     this.mmcifParserCls = new MmcifParser(this);
     this.mmdbParserCls = new MmdbParser(this);
-    this.mmtfParserCls = new MmtfParser(this);
+    this.bcifParserCls = new BcifParser(this);
     this.mol2ParserCls = new Mol2Parser(this);
     this.opmParserCls = new OpmParser(this);
     this.pdbParserCls = new PdbParser(this);
@@ -76676,7 +81139,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.30.1';
+    this.REVISION = '3.31.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -76829,7 +81292,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         let loadCommand = ic.commandsBeforeCrash.split('|||')[0];
         let id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
         // reload only if viewing the same structure
-        if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
+        if(id === me.cfg.bcifid || id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
           || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
             await ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
             return;
@@ -76925,8 +81388,14 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        ic.inputid = me.cfg.mmtfid;
        ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       await ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
+       await ic.bcifParserCls.downloadBcif(me.cfg.mmtfid);
     }
+    else if(me.cfg.bcifid !== undefined) {
+        ic.inputid = me.cfg.bcifid;
+        ic.loadCmd = 'load bcif ' + me.cfg.bcifid;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.bcifParserCls.downloadBcif(me.cfg.bcifid);
+     }
     else if(me.cfg.pdbid !== undefined) {
        ic.inputid = me.cfg.pdbid;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
@@ -77397,4 +81866,4 @@ class printMsg {
   }
 }
 
-export { ARButton, AddTrack, AlignParser, AlignSW, AlignSeq, Alternate, Analysis, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Annotation, ApplyCenter, ApplyClbonds, ApplyCommand, ApplyDisplay, ApplyMap, ApplyOther, ApplySsbonds, ApplySymd, Axes, Box, Brick, Camera, CartoonNucl, ChainalignParser, ClickMenu, Contact, Control, ConvertTypeCls, Curve, CurveStripArrow, Cylinder, DefinedSets, Delphi, DensityCifParser, Diagram2d, Dialog, Domain3d, Draw, DrawGraph, Dsn6Parser, Dssp, ElectronMap, Events, Export3D, FirstAtomObj, Fog, GetGraph, Glycan, HBond, HashUtilsCls, HlObjects, HlSeq, HlUpdate, Html, Impostor, Instancing, Label, Line$1 as Line, LineGraph, LoadAtomData, LoadPDB, LoadScript, MarchingCube, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, MyEventCls, OpmParser, ParasCls, ParserUtils, PdbParser, PiHalogen, Picking, ProteinSurface, Ray, RealignParser, Refnum, ReprSub, Resid2spec, ResidueLabels, ResizeCanvas, RmsdSuprCls, Saltbridge, SaveFile, Scap, Scene, SdfParser, SelectByCommand, Selection, SetColor, SetDialog, SetHtml, SetMenu, SetOption, SetSeqAlign, SetStyle, ShareLink, ShowAnno, ShowInter, ShowSeq, Sphere$1 as Sphere, Stick, Strand, Strip, SubdivideCls, Surface, Symd, ThreeDPrint, Transform, Tube, UtilsCls, VRButton, Vastplus, ViewInterPairs, XyzParser, iCn3D, iCn3DUI, printMsg };
+export { ARButton, AddTrack, AlignParser, AlignSW, AlignSeq, Alternate, Analysis, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Annotation, ApplyCenter, ApplyClbonds, ApplyCommand, ApplyDisplay, ApplyMap, ApplyOther, ApplySsbonds, ApplySymd, Axes, Box, Brick, Camera, CartoonNucl, ChainalignParser, ClickMenu, Contact, Control, ConvertTypeCls, Curve, CurveStripArrow, Cylinder, DefinedSets, Delphi, DensityCifParser, Diagram2d, Dialog, Domain3d, Draw, DrawGraph, Dsn6Parser, Dssp, ElectronMap, Events, Export3D, FirstAtomObj, Fog, GetGraph, Glycan, HBond, HashUtilsCls, HlObjects, HlSeq, HlUpdate, Html, Impostor, Instancing, Label, Line$1 as Line, LineGraph, LoadAtomData, LoadCIF, LoadPDB, LoadScript, MarchingCube, MmcifParser, MmdbParser, Mol2Parser, MyEventCls, OpmParser, ParasCls, ParserUtils, PdbParser, PiHalogen, Picking, ProteinSurface, Ray, RealignParser, Refnum, ReprSub, Resid2spec, ResidueLabels, ResizeCanvas, RmsdSuprCls, Saltbridge, SaveFile, Scap, Scene, SdfParser, SelectByCommand, Selection, SetColor, SetDialog, SetHtml, SetMenu, SetOption, SetSeqAlign, SetStyle, ShareLink, ShowAnno, ShowInter, ShowSeq, Sphere$1 as Sphere, Stick, Strand, Strip, SubdivideCls, Surface, Symd, ThreeDPrint, Transform, Tube, UtilsCls, VRButton, Vastplus, ViewInterPairs, XyzParser, iCn3D, iCn3DUI, printMsg };

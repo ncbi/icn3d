@@ -685,7 +685,14 @@ class SetSeqAlign {
                     //     resi = ic.qt_start_end[chainIndex][i].t_start;
                     // }
                     // else {
-                        let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        // let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
+                        let resiPos;
+                        if(me.cfg.aligntool == 'tmalign') {
+                            resiPos = j - baseResi;
+                        }
+                        else {
+                            resiPos = (bRealign) ? j : j - baseResi;
+                        }
                         resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
                     // }
 

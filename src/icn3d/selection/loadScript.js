@@ -412,7 +412,7 @@ class LoadScript {
                         if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
                         await ic.annotationCls.setAnnoTabIg(true);
 
-                        // ic.bRunRefnumAgain = false;
+                        ic.bRunRefnumAgain = false;
                     }
                     else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                         thisClass.applyCommand3ddomain(lastCommand);
@@ -550,7 +550,12 @@ class LoadScript {
         if(command.indexOf('load mmtf') !== -1) {
           me.cfg.mmtfid = id;
           
-          await ic.mmtfParserCls.downloadMmtf(id);
+          await ic.bcifParserCls.downloadBcif(id);
+        }
+        else if(command.indexOf('load bcif') !== -1) {
+          me.cfg.bcifid = id;
+          
+          await ic.bcifParserCls.downloadBcif(id);
         }
         else if(command.indexOf('load pdb') !== -1) {
           me.cfg.pdbid = id;

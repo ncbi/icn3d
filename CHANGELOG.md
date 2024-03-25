@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.31.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.0.zip) was release on March 21, 2024. Replaced MMTF data with Binary CIF data. Both "mmtfid" and "bcifid" inputs get the Binary CIF data. 
+
 [icn3d-3.30.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.30.1.zip) was release on March 11, 2024. Fixed 3D domain summary view.
 
 [icn3d-3.30.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.30.0.zip) was release on February 27, 2024. Calculate 3D domains on-the-fly and show 3D domains even when only one domain is available.

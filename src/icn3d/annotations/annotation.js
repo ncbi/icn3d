@@ -45,7 +45,7 @@ class Annotation {
 
         ic.bRunRefnumAgain = true;
         await this.updateIg();
-        // ic.bRunRefnumAgain = false;
+        ic.bRunRefnumAgain = false;
 
         this.updateInteraction();
     }
@@ -127,8 +127,9 @@ class Annotation {
 
             $("[id^=" + ic.pre + "transmem]").show();
         }
-        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
-            // ic.bRunRefnumAgain = true;
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked || ic.bShowRefnum) {
+            // no need to redo ref num calculation
+            ic.bRunRefnumAgain = false;
 
             await this.updateIg();
 
@@ -241,6 +242,7 @@ class Annotation {
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
     }
     async setAnnoTabIg(bSelection, template) {  let ic = this.icn3d, me = ic.icn3dui;
+
         await this.updateIg(bSelection, template);
 
         $("[id^=" + ic.pre + "ig]").show();
@@ -403,7 +405,7 @@ class Annotation {
                 await thisClass.setAnnoTabIg();
                 me.htmlCls.clickMenuCls.setLogCmd("set annotation ig", true);
 
-                // ic.bRunRefnumAgain = false;
+                ic.bRunRefnumAgain = false;
             }
             else{
                 thisClass.hideAnnoTabIg();

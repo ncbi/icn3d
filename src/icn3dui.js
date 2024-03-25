@@ -110,7 +110,7 @@ import {Ccp4Parser} from './icn3d/parsers/ccp4Parser.js';
 import {MtzParser} from './icn3d/parsers/mtzParser.js';
 import {MmcifParser} from './icn3d/parsers/mmcifParser.js';
 import {MmdbParser} from './icn3d/parsers/mmdbParser.js';
-import {MmtfParser} from './icn3d/parsers/mmtfParser.js';
+import {BcifParser} from './icn3d/parsers/bcifParser.js';
 import {Mol2Parser} from './icn3d/parsers/mol2Parser.js';
 import {OpmParser} from './icn3d/parsers/opmParser.js';
 import {PdbParser} from './icn3d/parsers/pdbParser.js';
@@ -122,6 +122,7 @@ import {ParserUtils} from './icn3d/parsers/parserUtils.js';
 import {LoadAtomData} from './icn3d/parsers/loadAtomData.js';
 import {SetSeqAlign} from './icn3d/parsers/setSeqAlign.js';
 import {LoadPDB} from './icn3d/parsers/loadPDB.js';
+import {LoadCIF} from './icn3d/parsers/loadCIF.js';
 import {Vastplus} from './icn3d/parsers/vastplus.js';
 
 import {ApplyCommand} from './icn3d/selection/applyCommand.js';
@@ -166,7 +167,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.30.1';
+    this.REVISION = '3.31.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -319,7 +320,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         let loadCommand = ic.commandsBeforeCrash.split('|||')[0];
         let id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
         // reload only if viewing the same structure
-        if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
+        if(id === me.cfg.bcifid || id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
           || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign || id === me.cfg.mmdbafid) {
             await ic.loadScriptCls.loadScript(ic.commandsBeforeCrash, true);
             return;
@@ -415,8 +416,14 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        ic.inputid = me.cfg.mmtfid;
        ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-       await ic.mmtfParserCls.downloadMmtf(me.cfg.mmtfid);
+       await ic.bcifParserCls.downloadBcif(me.cfg.mmtfid);
     }
+    else if(me.cfg.bcifid !== undefined) {
+        ic.inputid = me.cfg.bcifid;
+        ic.loadCmd = 'load bcif ' + me.cfg.bcifid;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.bcifParserCls.downloadBcif(me.cfg.bcifid);
+     }
     else if(me.cfg.pdbid !== undefined) {
        ic.inputid = me.cfg.pdbid;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
@@ -891,4 +898,4 @@ class printMsg {
 
 //export {iCn3DUI, printMsg}
 
-export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, Vastplus, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Refnum, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}
+export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Domain3d, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, Vastplus, SetSeqAlign, LoadPDB, LoadCIF, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Refnum, Scap, Symd, AlignSW, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking, VRButton, ARButton}

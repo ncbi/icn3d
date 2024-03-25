@@ -117,6 +117,7 @@ class Vastplus {
         }
 
         let bRealign = true, atype = 2; // VAST+ based on TM-align
+        me.cfg.aligntool = 'tmalign';
         await ic.vastplusCls.vastplusAlign(Object.keys(structHash), atype, bRealign);
     }
 

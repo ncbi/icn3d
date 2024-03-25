@@ -161,7 +161,7 @@ class ChainalignParser {
         await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
-    setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+    setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;        
         // get aligned length for each pair
         let index_alignLen = [];
         for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
@@ -990,6 +990,7 @@ class ChainalignParser {
             // vastplusAtype: 0: VAST, global, 1: VAST, invarant core, 2: TM-align, global
             // VAST+ on the fly
             let structArray = Object.keys(ic.structures);
+            if(vastplusAtype == 2) me.cfg.aligntool = 'tmalign';
             await ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
         }
 
