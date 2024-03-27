@@ -18,6 +18,7 @@ class MmcifParser {
         let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
         let data = await me.getAjaxPromise(url, 'text', true);
 
+        /*
         // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         // let dataObj = {'mmciffile': data};
         // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -30,27 +31,33 @@ class MmcifParser {
 
         // await this.loadMmcifData(bcifJson, mmcifid);
         await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
+        */
+
+        url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        let dataObj = {'mmciffile': data};
+        let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+
+        await this.loadMmcifData(data2, mmcifid);
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
       try {
-        // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
-        // Some header files are in the wrong format. So we use the full mmCIF file
-        //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
-        // let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
-        let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
+        // let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
+        // let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
+        // let bText = true;
 
-        //ic.bCid = undefined;
-        let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
+        let url = 'https://models.rcsb.org/' + mmcifid + '.bcif';
+        let data1 = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'bcif');
+        let bText = false;
 
         // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         // let dataObj = {'mmcifheader': data1};
 
         // let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
 
-        let bText = true;
         let bNoCoord = true;
         let bcifData = ic.bcifParserCls.getBcifJson(data1, mmcifid, bText, bNoCoord);
+
         let data = JSON.parse(bcifData);
 
         if(data.emd !== undefined) ic.emd = data.emd;

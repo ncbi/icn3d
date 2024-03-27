@@ -582,6 +582,15 @@ class Annotation {
     }
 
     async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
+        // if(bSelection) { // clear previous refnum
+        //     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+        //     for(let resid in residueHash) {
+        //         if(ic.resid2refnum) delete ic.resid2refnum[resid];
+        //         if(ic.residIgLoop) delete ic.residIgLoop[resid];
+        //         if(ic.resid2domainid) delete ic.resid2domainid[resid];
+        //     }
+        // }
+
         // if(!ic.bIgShown) {
             if(!bSelection && !template) {
                 // select all protein chains

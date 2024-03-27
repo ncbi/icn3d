@@ -9834,7 +9834,7 @@ class ClickMenu {
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input MMTF ID');
+           me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input BCIF/MMTF ID');
         });
 
     //    clkMn1_pdbid: function() {
@@ -12560,7 +12560,7 @@ class SetMenu {
         
         html += this.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr, 1, 2);
         html += this.getLink('mn1_mmdbid', 'NCBI MMDB ID (annotation) ' + me.htmlCls.wifiStr, undefined, 2);
-        html += this.getLink('mn1_mmtfid', 'RCSB MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_mmtfid', 'RCSB BCIF/MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_pdbid', 'RCSB PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
 
         html += this.getMenuText('mn1_afwrap', 'AlphaFold Structures', undefined, undefined, 2);
@@ -14722,8 +14722,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_mmtfid', 'Please input an MMTF ID');
-        html += "MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
+        html += this.addNotebookTitle('dl_mmtfid', 'Please input an BCIF/MMTF ID');
+        html += "BCIF/MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmtf'>Load</button>";
         html += "</div>";
 
@@ -16727,9 +16727,9 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
+           thisClass.setLogCmd("load bcif " + $("#" + me.pre + "mmtfid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-           window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+           window.open(hostUrl + '?bcifid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { let ic = me.icn3d;
@@ -17826,6 +17826,7 @@ class Events {
                 thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                 ic.molTitle = "";
 
+                /*
                 // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                 // //ic.bCid = undefined;
 
@@ -17843,6 +17844,19 @@ class Events {
                 ic.InputfileType = 'mmcif';
                 // await ic.mmcifParserCls.loadMmcifData(data); 
                 await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
+                */
+
+                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+
+                let dataObj = {'mmciffile': dataStr};
+                let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                //ic.initUI();
+                ic.init();
+                ic.bInputfile = true;
+                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                ic.InputfileType = 'mmcif';
+                await ic.mmcifParserCls.loadMmcifData(data); 
              };
              reader.readAsText(file);
            }
@@ -41775,13 +41789,56 @@ class AnnoIg {
         let bResult = ic.chainid2igtrack[chnid];
         if(!bResult) return {html: '', html2: '', html3: ''};
 
+        let html = this.getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt);
+
         // add color to atoms
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
             ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
         }
 
-        return this.getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt);
+        return html;
+    }
+
+    setChain2igArray(chnid, giSeq, bCustom) { let ic = this.icn3d; ic.icn3dui;
+        let refnumLabel;
+
+        let domainid2respos = {};
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+
+            refnumLabel = ic.resid2refnum[residueid];
+
+            if(refnumLabel) {              
+                if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
+                domainid2respos[domainid].push(i);
+            }
+        }
+
+        for(let domainid in domainid2respos) {
+            let posArray = domainid2respos[domainid];
+            let pos, prevPos, startPosArray = [], endPosArray = [];
+            for(let i = 0, il = posArray.length; i < il; ++i) {
+                pos = posArray[i];
+                if(i == 0) startPosArray.push(pos);
+
+                if(i > 0 && pos != prevPos + 1) { // a new range
+                    endPosArray.push(prevPos);
+                    startPosArray.push(pos);
+                }
+
+                prevPos = pos;
+            }
+            endPosArray.push(pos);
+
+            let igElem = {};
+            igElem.domainid = domainid;
+            igElem.startPosArray = startPosArray;
+            igElem.endPosArray = endPosArray;
+            ic.chain2igArray[chnid].push(igElem);
+        }
     }
 
     getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt) { let ic = this.icn3d, me = ic.icn3dui;
@@ -41789,13 +41846,91 @@ class AnnoIg {
         let type = 'ig';
 
         if(!ic.chain2igArray) ic.chain2igArray = {};
-        ic.chain2igArray[chnid] = [];
 
         let bLoop = false, currStrand = '';
         let refnumLabel, refnumStr_ori, refnumStr;
 
+        ic.chain2igArray[chnid] = [];
+        this.setChain2igArray(chnid, giSeq, bCustom);
+
+        // remove Igs without BCEF strands one more time
+        let igArray = ic.chain2igArray[chnid];    
+
+        for(let i = 0, il = igArray.length; i < il; ++i) {
+            let domainid = igArray[i].domainid;
+            let info = ic.domainid2info[domainid];
+            if(!info) continue;
+
+            let bBStrand = false, bCStrand = false, bEStrand = false, bFStrand = false;
+
+            let residHash = {};
+            for(let j = 0, jl = igArray[i].startPosArray.length; j < jl; ++j) {
+                let startPos = igArray[i].startPosArray[j];
+                let endPos = igArray[i].endPosArray[j];
+                for(let k = startPos; k <= endPos; ++k) {
+                    const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi;
+                    residHash[resid] = 1;
+                    let refnum = ic.resid2refnum[resid];
+
+                    if(refnum) {
+                        if(refnum.indexOf('B2550') != -1) bBStrand = true;
+                        if(refnum.indexOf('C3550') != -1) bCStrand = true;
+                        if(refnum.indexOf('E7550') != -1) bEStrand = true;
+                        if(refnum.indexOf('F8550') != -1) bFStrand = true;
+                    }
+                }
+            }
+
+            if(!(bBStrand && bCStrand && bEStrand && bFStrand)) {
+                // reset for these residues
+                for(let resid in residHash) {
+                    delete ic.resid2refnum[resid];
+                    delete ic.residIgLoop[resid];
+                    delete ic.resid2domainid[resid];
+                }
+
+                let residArray = Object.keys(residHash);
+
+                // delete the following loops
+                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[residArray.length - 1].split('_')[2]);
+
+                for(let j = lastPos + 1, jl = ic.chainsSeq[chnid].length; j < jl; ++j) {
+                    let resi = ic.chainsSeq[chnid][j].resi;
+                    let resid = chnid + '_' + resi;
+                    if(ic.residIgLoop.hasOwnProperty(resid)) {
+                        delete ic.resid2refnum[resid];
+                        delete ic.residIgLoop[resid];
+                        delete ic.resid2domainid[resid]; 
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                // delete the previous loops
+                ic.setSeqAlignCls.getPosFromResi(chnid, residArray[0].split('_')[2]);
+
+                for(let j = lastPos - 1; j >= 0; --j) {
+                    let resi = ic.chainsSeq[chnid][j].resi;
+                    let resid = chnid + '_' + resi;
+                    if(ic.residIgLoop.hasOwnProperty(resid)) {
+                        delete ic.resid2refnum[resid];
+                        delete ic.residIgLoop[resid];
+                        delete ic.resid2domainid[resid]; 
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // reset ic.chain2igArray
+        ic.chain2igArray[chnid] = [];
+        this.setChain2igArray(chnid, giSeq, bCustom);
+
         // show tracks
-        let domainid2respos = {};
+        // let domainid2respos = {};
         let htmlIg = '';
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             htmlIg += ic.showSeqCls.insertGap(chnid, i, '-');
@@ -41812,9 +41947,9 @@ class AnnoIg {
                 let bHidelabel = false;
 
                 if(refnumLabel) {              
-                    if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
-                    domainid2respos[domainid].push(i);
-         
+                    // if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
+                    // domainid2respos[domainid].push(i);
+            
                     refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                     currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
 
@@ -41884,32 +42019,6 @@ class AnnoIg {
             //}
         }
 
-        // igElem.endPos = prevPos;
-        // ic.chain2igArray[chnid].push(igElem);
-
-        for(let domainid in domainid2respos) {
-            let posArray = domainid2respos[domainid];
-            let pos, prevPos, startPosArray = [], endPosArray = [];
-            for(let i = 0, il = posArray.length; i < il; ++i) {
-                pos = posArray[i];
-                if(i == 0) startPosArray.push(pos);
-
-                if(i > 0 && pos != prevPos + 1) { // a new range
-                    endPosArray.push(prevPos);
-                    startPosArray.push(pos);
-                }
-
-                prevPos = pos;
-            }
-            endPosArray.push(pos);
-
-            let igElem = {};
-            igElem.domainid = domainid;
-            igElem.startPosArray = startPosArray;
-            igElem.endPosArray = endPosArray;
-            ic.chain2igArray[chnid].push(igElem);
-        }
-
         if(me.bNode) return {html: html, html2: html2, html3: html3}
         let titleSpace = 120;
 
@@ -41967,7 +42076,8 @@ class AnnoIg {
         html += '</div>';
         html += '</div>';
 
-        let igArray = ic.chain2igArray[chnid];      
+        // use the updated ic.chain2igArray
+        igArray = ic.chain2igArray[chnid];      
 
         if(igArray.length == 0) return {html: html, html2: html2, html3: html3}
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
@@ -41978,10 +42088,6 @@ class AnnoIg {
             if(!info) continue;
 
             let tmscore = info.score;
-            // let igType = ic.ref2igtype[info.refpdbname];
-            // let confidance = (parseFloat(tmscore) < 0.75 ) ? '?' : '';
-            // titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            // fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
@@ -41998,7 +42104,7 @@ class AnnoIg {
             rangeArray.push(range);
         }
 
-        if(titleArray.length == 0) return {html: html, html2: html2, html3: html3}
+        if(rangeArray.length == 0) return {html: html, html2: html2, html3: html3}
 
         // add tracks for the summary view
         if(!kabat_or_imgt && !bCustom) {
@@ -47034,6 +47140,15 @@ class Annotation {
     }
 
     async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
+        // if(bSelection) { // clear previous refnum
+        //     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+        //     for(let resid in residueHash) {
+        //         if(ic.resid2refnum) delete ic.resid2refnum[resid];
+        //         if(ic.residIgLoop) delete ic.residIgLoop[resid];
+        //         if(ic.resid2domainid) delete ic.resid2domainid[resid];
+        //     }
+        // }
+
         // if(!ic.bIgShown) {
             if(!bSelection && !template) {
                 // select all protein chains
@@ -55280,6 +55395,7 @@ class MmcifParser {
         let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
         let data = await me.getAjaxPromise(url, 'text', true);
 
+        /*
         // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         // let dataObj = {'mmciffile': data};
         // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -55292,27 +55408,33 @@ class MmcifParser {
 
         // await this.loadMmcifData(bcifJson, mmcifid);
         await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
+        */
+
+        url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+        let dataObj = {'mmciffile': data};
+        let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+
+        await this.loadMmcifData(data2, mmcifid);
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
       try {
-        // https://files.rcsb.org/header/ is not accessible in Node.js and Mac
-        // Some header files are in the wrong format. So we use the full mmCIF file
-        //let url = (me.bNode || me.utilsCls.isMac()) ? "https://files.rcsb.org/view/" + mmcifid + ".cif" : "https://files.rcsb.org/header/" + mmcifid + ".cif";
-        // let url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
-        let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
+        // let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
+        // let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
+        // let bText = true;
 
-        //ic.bCid = undefined;
-        let data1 = await me.getAjaxPromise(url, 'text', false, "The structure " + mmcifid + " was not found...");
+        let url = 'https://models.rcsb.org/' + mmcifid + '.bcif';
+        let data1 = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'bcif');
+        let bText = false;
 
         // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         // let dataObj = {'mmcifheader': data1};
 
         // let data = await me.getAjaxPostPromise(url, dataObj, false, "The mmCIF data of " + mmcifid + " can not be parsed...");
 
-        let bText = true;
         let bNoCoord = true;
         let bcifData = ic.bcifParserCls.getBcifJson(data1, mmcifid, bText, bNoCoord);
+
         let data = JSON.parse(bcifData);
 
         if(data.emd !== undefined) ic.emd = data.emd;
@@ -55983,9 +56105,11 @@ class BcifParser {
         // let bcifJson = JSON.parse(bcifData);
         // await ic.mmcifParserCls.loadMmcifData(bcifJson, bcifid);
 
-        await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'mmcif', undefined, bText);
+        await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'bcif', undefined, bText);
     }
 
+    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
+    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     getBcifJson(bcifData, bcifid, bText, bNoCoord) { let ic = this.icn3d, me = ic.icn3dui;
         let text = "";
 
@@ -56625,46 +56749,32 @@ class BcifParser {
             // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
             let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
 
-            let struct_oper_idArray = struct_oper_list.getColumn("id").data;
-            let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
-            let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
-            let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
-            let m14Array = struct_oper_list.getColumn("vector[1]").data;
-
-            let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
-            let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
-            let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
-            let m24Array = struct_oper_list.getColumn("vector[2]").data;
-
-            let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
-            let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
-            let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
-            let m34Array = struct_oper_list.getColumn("vector[3]").data;
-
             text += ", \"assembly\":[";
 
             let pmatrix = ", \"pmatrix\":";
             let bPmatrix = false;
 
             let assemblySize = struct_oper_list.rowCount;
+            
+            // could be one or more rows, struct_oper_list.getColumn("id").data is unavailable if one row
             for (let i = 0; i < assemblySize; ++i) {
-                let struct_oper_id = struct_oper_idArray[i];
+                let struct_oper_id = struct_oper_list.getColumn("id").getString(i);
                 if(struct_oper_id == "X0") continue;
 
-                let m11 = m11Array[i];
-                let m12 = m12Array[i];
-                let m13 = m13Array[i];
-                let m14 = m14Array[i];
-
-                let m21 = m21Array[i];
-                let m22 = m22Array[i];
-                let m23 = m23Array[i];
-                let m24 = m24Array[i];
-
-                let m31 = m31Array[i];
-                let m32 = m32Array[i];
-                let m33 = m33Array[i];
-                let m34 = m34Array[i];
+                let m11 = struct_oper_list.getColumn("matrix[1][1]").getFloat(i);
+                let m12 = struct_oper_list.getColumn("matrix[1][2]").getFloat(i);
+                let m13 = struct_oper_list.getColumn("matrix[1][3]").getFloat(i);
+                let m14 = struct_oper_list.getColumn("vector[1]").getFloat(i);
+    
+                let m21 = struct_oper_list.getColumn("matrix[2][1]").getFloat(i);
+                let m22 = struct_oper_list.getColumn("matrix[2][2]").getFloat(i);
+                let m23 = struct_oper_list.getColumn("matrix[2][3]").getFloat(i);
+                let m24 = struct_oper_list.getColumn("vector[2]").getFloat(i);
+    
+                let m31 = struct_oper_list.getColumn("matrix[3][1]").getFloat(i);
+                let m32 = struct_oper_list.getColumn("matrix[3][2]").getFloat(i);
+                let m33 = struct_oper_list.getColumn("matrix[3][3]").getFloat(i);
+                let m34 = struct_oper_list.getColumn("vector[3]").getFloat(i);
 
                 let matrix = "[" + m11 + "," + m21 + "," + m31 + ", 0, "
                     + m12 + "," + m22 + "," + m32 + ", 0, "
@@ -56686,9 +56796,6 @@ class BcifParser {
             text += "]";
 
             if(bPmatrix) text += pmatrix;
-
-            struct_oper_idArray = m11Array = m12Array = m13Array = m14Array = m21Array = m22Array = m23Array 
-            = m24Array = m31Array = m32Array = m33Array = m34Array = [];
         }
 
         if(vDisulfides.length > 0) {
@@ -56973,10 +57080,11 @@ class OpmParser {
         try {
              if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
-    
+
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
     
             this.setOpmData(opmdata); // set ic.bOpm
+
             await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
         catch(err) {
@@ -57017,9 +57125,13 @@ class OpmParser {
         else 
         */
 
-        if(type === 'mmcif') {
-            // ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-            ic.loadCIFCls.loadCIF(data, pdbid, bText);
+        if(type === 'mmcif' || type === 'bcif') {
+            if(type === 'mmcif') {
+                ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+            }
+            else if(type === 'bcif') {
+                ic.loadCIFCls.loadCIF(data, pdbid, bText);
+            }
 
             if(ic.emd !== undefined) {
               $("#" + ic.pre + "mapWrapper1").hide();
@@ -57037,15 +57149,17 @@ class OpmParser {
             }
     
             // load assembly info
-            let assembly =(data.assembly !== undefined) ? data.assembly : [];
-            for(let i = 0, il = assembly.length; i < il; ++i) {
-                if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-    
-                for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
-                ic.biomtMatrices[i].elements[j] = assembly[i][j];
+            if(type === 'mmcif') {
+                let assembly =(data.assembly !== undefined) ? data.assembly : [];
+                for(let i = 0, il = assembly.length; i < il; ++i) {
+                    if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+        
+                    for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
+                        ic.biomtMatrices[i].elements[j] = assembly[i][j];
+                    }
                 }
             }
-    
+        
             if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
                 $("#" + ic.pre + "assemblyWrapper").show();
     
@@ -57054,7 +57168,7 @@ class OpmParser {
     
             ic.setStyleCls.setAtomStyleByOptions(ic.opts);
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-    
+
             await ic.ParserUtilsCls.renderStructure();
 
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
@@ -57167,6 +57281,7 @@ class PdbParser {
             await this.loadPdbData(data, id, undefined, bAppend);
         }
         else if(type === 'mmcif') {
+            /*
             // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
             // let dataObj = {'mmciffile': data};
             // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -57178,6 +57293,12 @@ class PdbParser {
 
             // await ic.mmcifParserCls.loadMmcifData(bcifJson, undefined);
             await ic.opmParserCls.loadOpmData(data, undefined, undefined, 'mmcif', undefined, bText);
+            */
+
+            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            let dataObj = {'mmciffile': data};
+            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
+            await ic.mmcifParserCls.loadMmcifData(data2, undefined);
         }
         else if(type === 'mol2') {
             await ic.mol2ParserCls.loadMol2Data(data);
@@ -63524,7 +63645,8 @@ class LoadCIF {
         this.icn3d = icn3d;
     }
 
-    // loadCIF(src, bcifid, bOpm, bVector, bMutation, bAppend, type, bEsmfold, bText) { let ic = this.icn3d, me = ic.icn3dui;
+    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
+    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
@@ -63538,7 +63660,6 @@ class LoadCIF {
         }
 
         let block = parsed.result.dataBlocks[0];
-
 
         let bNMR = false;
         // let lines = src.split('\n');
@@ -65604,6 +65725,7 @@ class ApplyCommand {
       }
       else if(command == 'defined sets') {
          ic.definedSetsCls.showSets();
+         ic.bDefinedSets = true;
       }
       else if(command == 'delete selected sets') {
          ic.definedSetsCls.deleteSelectedSets();
@@ -65731,7 +65853,10 @@ class ApplyCommand {
         commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
 
         // define chains
-        ic.definedSetsCls.setChainsInMenu();
+        if(!ic.bDefinedSets) {
+          ic.definedSetsCls.setPredefinedInMenu();
+          ic.bDefinedSets = true;
+        }
 
         let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
@@ -71623,12 +71748,11 @@ class Dssp {
 
     parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
     // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let tmscoreThreshold = 0.4; // 0.4; //0.5;
+        let tmscoreThreshold = 0.45; // 0.4; //0.5;
         //let rmsdThreshold = 10;
 
         // find the best alignment for each chain
         let domainid2segs = {};
-        let domainid2strandcnt = {};
         let domainid2refpdbnamelist = {};
 
         if(!ic.chainid2refpdbname) ic.chainid2refpdbname = {};
@@ -71747,14 +71871,16 @@ class Dssp {
             }
 
             // count the number of matched strands
-            let strandHash = {};
-            for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
-                let seg = queryData[0].segs[j];
-                let q_start = parseInt(seg.q_start);
+            // let strandHash = {};
+            // for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
+            //     let seg = queryData[0].segs[j];
+            //     let q_start = parseInt(seg.q_start)
 
-                let strand = this.getStrandFromRefnum(q_start);
-                strandHash[strand] = 1;
-            }
+            //     let strand = this.getStrandFromRefnum(q_start);
+            //     strandHash[strand] = 1;
+            // }
+
+            // let tmAdjust = 0.1; 
             let score = parseFloat(queryData[0].score);
 
             // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
@@ -71777,7 +71903,7 @@ class Dssp {
                 }
 
                 domainid2segs[domainid] = queryData[0].segs;
-                domainid2strandcnt[domainid] = Object.keys(strandHash).length;
+                // domainid2strandcnt[domainid] = Object.keys(strandHash).length;
 
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
                 ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
@@ -72146,34 +72272,6 @@ class Dssp {
                 ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
             }
         }
-
-        /*
-        if(Object.keys(ic.resid2refnum).length > 0) {
-            ic.bShowRefnum = true;
-
-            // open sequence view
-            ic.hAtomsRefnum = {};
-            //ic.bResetAnno = true;
-            if(ic.bAnnoShown) {
-                for(let chain in ic.protein_chainid) {
-                    let chainidBase = ic.protein_chainid[chain];
-                    ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
-                }
-            }
-            else {
-                await ic.showAnnoCls.showAnnotations();
-            }
-
-            ic.annotationCls.setAnnoViewAndDisplay('detailed view');
-        }
-        else if(!me.bNode) {
-            if(!ic.bNoIg) {
-                // alert("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
-                console.log("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
-                ic.bNoIg = true;
-            }
-        }
-        */
     }
 
     getStrandFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d; ic.icn3dui;
@@ -72837,15 +72935,13 @@ class Dssp {
                                 domainid = strandArray[strandCnt].domainid;
                             }    
                             else {
-                                //loopCnt = 0;
                                 refnumLabelNoPostfix = undefined;
                                 refnumLabel = undefined;
                             }                        
                         }
                         else {
-                            if(prevStrandCnt >= 0 
-                            //  && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'F' || strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
-                                && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
+                            // if(prevStrandCnt >= 0 && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
+                            if(prevStrandCnt >= 0 && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G' || (strandArray[prevStrandCnt].strand.substr(0, 1) == 'F' && strandArray[strandCnt].strand.substr(0, 1) != 'G') )) {
                                 if(!bAfterGstrand) {
                                     //loopCnt = 0;
                                     refnumLabelNoPostfix = undefined;
@@ -78203,16 +78299,9 @@ class ShareLink {
 
                //statefile += ic.commands[i] + "\n";
 
-               // only output the most recent 'select saved atoms...' without " | name ..."
+               // only output the most recent 'select sets...' without " | name ..."
                // or those select without names
-            //    if(((prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
-            //      &&(commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
-            //      && prevCommandStr.indexOf(' name ') === -1)
-            //      ||(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
-            //      ) {
-
-               if(prevCommandStr.indexOf('select') == 0 && prevCommandStr.indexOf('select prop') === -1
-                 && commandStr.indexOf('select') === 0 && commandStr.indexOf('select prop') === -1
+               if(prevCommandStr.indexOf('select sets') == 0 && commandStr.indexOf('select sets') === 0 
                  && prevCommandStr.indexOf(' name ') === -1) ;
                else if(prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1) ;
                // remove all "show selection" except the last one

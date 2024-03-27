@@ -95,13 +95,56 @@ class AnnoIg {
         let bResult = ic.chainid2igtrack[chnid];
         if(!bResult) return {html: '', html2: '', html3: ''};
 
+        let html = this.getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt);
+
         // add color to atoms
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
             ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
         }
 
-        return this.getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt);
+        return html;
+    }
+
+    setChain2igArray(chnid, giSeq, bCustom) { let ic = this.icn3d, me = ic.icn3dui;
+        let refnumLabel;
+
+        let domainid2respos = {};
+        for(let i = 0, il = giSeq.length; i < il; ++i) {
+            let currResi = ic.ParserUtilsCls.getResi(chnid, i);
+            let residueid = chnid + '_' + currResi;
+            let domainid = (bCustom) ? 0 : ic.resid2domainid[residueid];
+
+            refnumLabel = ic.resid2refnum[residueid];
+
+            if(refnumLabel) {              
+                if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
+                domainid2respos[domainid].push(i);
+            }
+        }
+
+        for(let domainid in domainid2respos) {
+            let posArray = domainid2respos[domainid];
+            let pos, prevPos, startPosArray = [], endPosArray = [];
+            for(let i = 0, il = posArray.length; i < il; ++i) {
+                pos = posArray[i];
+                if(i == 0) startPosArray.push(pos);
+
+                if(i > 0 && pos != prevPos + 1) { // a new range
+                    endPosArray.push(prevPos);
+                    startPosArray.push(pos);
+                }
+
+                prevPos = pos;
+            }
+            endPosArray.push(pos);
+
+            let igElem = {};
+            igElem.domainid = domainid;
+            igElem.startPosArray = startPosArray;
+            igElem.endPosArray = endPosArray;
+            ic.chain2igArray[chnid].push(igElem);
+        }
     }
 
     getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt) { let ic = this.icn3d, me = ic.icn3dui;
@@ -109,7 +152,6 @@ class AnnoIg {
         let type = 'ig';
 
         if(!ic.chain2igArray) ic.chain2igArray = {};
-        ic.chain2igArray[chnid] = [];
 
         // let igElem = {};
         let bStart = false;
@@ -122,8 +164,87 @@ class AnnoIg {
         let bLoop = false, currStrand = '', currFirstDigit = '';
         let refnumLabel, refnumStr_ori, refnumStr, refnum;
 
+        ic.chain2igArray[chnid] = [];
+        this.setChain2igArray(chnid, giSeq, bCustom);
+
+        // remove Igs without BCEF strands one more time
+        let igArray = ic.chain2igArray[chnid];    
+
+        for(let i = 0, il = igArray.length; i < il; ++i) {
+            let domainid = igArray[i].domainid;
+            let info = ic.domainid2info[domainid];
+            if(!info) continue;
+
+            let bBStrand = false, bCStrand = false, bEStrand = false, bFStrand = false;
+
+            let residHash = {};
+            for(let j = 0, jl = igArray[i].startPosArray.length; j < jl; ++j) {
+                let startPos = igArray[i].startPosArray[j];
+                let endPos = igArray[i].endPosArray[j];
+                for(let k = startPos; k <= endPos; ++k) {
+                    const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi;
+                    residHash[resid] = 1;
+                    let refnum = ic.resid2refnum[resid];
+
+                    if(refnum) {
+                        if(refnum.indexOf('B2550') != -1) bBStrand = true;
+                        if(refnum.indexOf('C3550') != -1) bCStrand = true;
+                        if(refnum.indexOf('E7550') != -1) bEStrand = true;
+                        if(refnum.indexOf('F8550') != -1) bFStrand = true;
+                    }
+                }
+            }
+
+            if(!(bBStrand && bCStrand && bEStrand && bFStrand)) {
+                // reset for these residues
+                for(let resid in residHash) {
+                    delete ic.resid2refnum[resid];
+                    delete ic.residIgLoop[resid];
+                    delete ic.resid2domainid[resid];
+                }
+
+                let residArray = Object.keys(residHash);
+
+                // delete the following loops
+                let lastPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[residArray.length - 1].split('_')[2]);
+
+                for(let j = lastPos + 1, jl = ic.chainsSeq[chnid].length; j < jl; ++j) {
+                    let resi = ic.chainsSeq[chnid][j].resi;
+                    let resid = chnid + '_' + resi;
+                    if(ic.residIgLoop.hasOwnProperty(resid)) {
+                        delete ic.resid2refnum[resid];
+                        delete ic.residIgLoop[resid];
+                        delete ic.resid2domainid[resid]; 
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                // delete the previous loops
+                let firstPos = ic.setSeqAlignCls.getPosFromResi(chnid, residArray[0].split('_')[2]);
+
+                for(let j = lastPos - 1; j >= 0; --j) {
+                    let resi = ic.chainsSeq[chnid][j].resi;
+                    let resid = chnid + '_' + resi;
+                    if(ic.residIgLoop.hasOwnProperty(resid)) {
+                        delete ic.resid2refnum[resid];
+                        delete ic.residIgLoop[resid];
+                        delete ic.resid2domainid[resid]; 
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // reset ic.chain2igArray
+        ic.chain2igArray[chnid] = [];
+        this.setChain2igArray(chnid, giSeq, bCustom);
+
         // show tracks
-        let domainid2respos = {};
+        // let domainid2respos = {};
         let htmlIg = '';
         for(let i = 0, il = giSeq.length; i < il; ++i) {
             htmlIg += ic.showSeqCls.insertGap(chnid, i, '-');
@@ -140,9 +261,9 @@ class AnnoIg {
                 let bHidelabel = false;
 
                 if(refnumLabel) {              
-                    if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
-                    domainid2respos[domainid].push(i);
-         
+                    // if(!domainid2respos[domainid]) domainid2respos[domainid] = [];
+                    // domainid2respos[domainid].push(i);
+            
                     refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                     currStrand = refnumLabel.replace(new RegExp(refnumStr_ori,'g'), '');
                     currStrand_ori = currStrand;
@@ -219,32 +340,6 @@ class AnnoIg {
             //}
         }
 
-        // igElem.endPos = prevPos;
-        // ic.chain2igArray[chnid].push(igElem);
-
-        for(let domainid in domainid2respos) {
-            let posArray = domainid2respos[domainid];
-            let pos, prevPos, startPosArray = [], endPosArray = [];
-            for(let i = 0, il = posArray.length; i < il; ++i) {
-                pos = posArray[i];
-                if(i == 0) startPosArray.push(pos);
-
-                if(i > 0 && pos != prevPos + 1) { // a new range
-                    endPosArray.push(prevPos);
-                    startPosArray.push(pos);
-                }
-
-                prevPos = pos;
-            }
-            endPosArray.push(pos);
-
-            let igElem = {};
-            igElem.domainid = domainid;
-            igElem.startPosArray = startPosArray;
-            igElem.endPosArray = endPosArray;
-            ic.chain2igArray[chnid].push(igElem);
-        }
-
         if(me.bNode) return {html: html, html2: html2, html3: html3}
 
         let maxTextLen = 19;
@@ -304,7 +399,8 @@ class AnnoIg {
         html += '</div>';
         html += '</div>';
 
-        let igArray = ic.chain2igArray[chnid];      
+        // use the updated ic.chain2igArray
+        igArray = ic.chain2igArray[chnid];      
 
         if(igArray.length == 0) return {html: html, html2: html2, html3: html3}
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
@@ -315,10 +411,6 @@ class AnnoIg {
             if(!info) continue;
 
             let tmscore = info.score;
-            // let igType = ic.ref2igtype[info.refpdbname];
-            // let confidance = (parseFloat(tmscore) < 0.75 ) ? '?' : '';
-            // titleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            // fullTitleArray.push(igType + confidance + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
@@ -335,7 +427,7 @@ class AnnoIg {
             rangeArray.push(range);
         }
 
-        if(titleArray.length == 0) return {html: html, html2: html2, html3: html3}
+        if(rangeArray.length == 0) return {html: html, html2: html2, html3: html3}
 
         // add tracks for the summary view
         if(!kabat_or_imgt && !bCustom) {

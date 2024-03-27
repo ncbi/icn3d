@@ -632,9 +632,9 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
+           thisClass.setLogCmd("load bcif " + $("#" + me.pre + "mmtfid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-           window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+           window.open(hostUrl + '?bcifid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { let ic = me.icn3d;
@@ -1731,6 +1731,7 @@ class Events {
                 thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                 ic.molTitle = "";
 
+                /*
                 // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                 // //ic.bCid = undefined;
 
@@ -1748,6 +1749,19 @@ class Events {
                 ic.InputfileType = 'mmcif';
                 // await ic.mmcifParserCls.loadMmcifData(data); 
                 await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
+                */
+
+                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+
+                let dataObj = {'mmciffile': dataStr};
+                let data = await me.getAjaxPostPromise(url, dataObj, true);
+
+                //ic.initUI();
+                ic.init();
+                ic.bInputfile = true;
+                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                ic.InputfileType = 'mmcif';
+                await ic.mmcifParserCls.loadMmcifData(data); 
              }
              reader.readAsText(file);
            }
