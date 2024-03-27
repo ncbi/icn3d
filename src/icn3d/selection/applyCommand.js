@@ -495,6 +495,7 @@ class ApplyCommand {
       }
       else if(command == 'defined sets') {
          ic.definedSetsCls.showSets();
+         ic.bDefinedSets = true;
       }
       else if(command == 'delete selected sets') {
          ic.definedSetsCls.deleteSelectedSets();
@@ -622,7 +623,10 @@ class ApplyCommand {
         commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
 
         // define chains
-        ic.definedSetsCls.setChainsInMenu();
+        if(!ic.bDefinedSets) {
+          ic.definedSetsCls.setPredefinedInMenu();
+          ic.bDefinedSets = true;
+        }
 
         let paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 

@@ -7,7 +7,8 @@ class LoadCIF {
         this.icn3d = icn3d;
     }
 
-    // loadCIF(src, bcifid, bOpm, bVector, bMutation, bAppend, type, bEsmfold, bText) { let ic = this.icn3d, me = ic.icn3dui;
+    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
+    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
@@ -21,7 +22,6 @@ class LoadCIF {
         }
 
         let block = parsed.result.dataBlocks[0];
-
 
         let bNMR = false;
         // let lines = src.split('\n');

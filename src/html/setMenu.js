@@ -526,7 +526,7 @@ class SetMenu {
         
         html += this.getLink('mn1_mmdbafid', 'PDB/MMDB/AlphaFold IDs' + me.htmlCls.wifiStr, 1, 2);
         html += this.getLink('mn1_mmdbid', 'NCBI MMDB ID (annotation) ' + me.htmlCls.wifiStr, undefined, 2);
-        html += this.getLink('mn1_mmtfid', 'RCSB MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
+        html += this.getLink('mn1_mmtfid', 'RCSB BCIF/MMTF ID (fast) ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_pdbid', 'RCSB PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
 
         html += this.getMenuText('mn1_afwrap', 'AlphaFold Structures', undefined, undefined, 2);

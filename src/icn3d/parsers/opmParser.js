@@ -32,10 +32,11 @@ class OpmParser {
         try {
              if(!pdbid) pdbid = ic.defaultPdbId;
             let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
-    
+
             let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
     
             this.setOpmData(opmdata); // set ic.bOpm
+
             await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
         catch(err) {
@@ -76,9 +77,13 @@ class OpmParser {
         else 
         */
 
-        if(type === 'mmcif') {
-            // ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-            ic.loadCIFCls.loadCIF(data, pdbid, bText);
+        if(type === 'mmcif' || type === 'bcif') {
+            if(type === 'mmcif') {
+                ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+            }
+            else if(type === 'bcif') {
+                ic.loadCIFCls.loadCIF(data, pdbid, bText);
+            }
 
             if(ic.emd !== undefined) {
               $("#" + ic.pre + "mapWrapper1").hide();
@@ -96,15 +101,17 @@ class OpmParser {
             }
     
             // load assembly info
-            let assembly =(data.assembly !== undefined) ? data.assembly : [];
-            for(let i = 0, il = assembly.length; i < il; ++i) {
-                if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-    
-                for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
-                ic.biomtMatrices[i].elements[j] = assembly[i][j];
+            if(type === 'mmcif') {
+                let assembly =(data.assembly !== undefined) ? data.assembly : [];
+                for(let i = 0, il = assembly.length; i < il; ++i) {
+                    if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+        
+                    for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
+                        ic.biomtMatrices[i].elements[j] = assembly[i][j];
+                    }
                 }
             }
-    
+        
             if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
                 $("#" + ic.pre + "assemblyWrapper").show();
     
@@ -116,7 +123,7 @@ class OpmParser {
     
             ic.setStyleCls.setAtomStyleByOptions(ic.opts);
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-    
+
             await ic.ParserUtilsCls.renderStructure();
 
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);

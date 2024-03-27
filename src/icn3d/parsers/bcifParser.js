@@ -126,9 +126,11 @@ class BcifParser {
         // let bcifJson = JSON.parse(bcifData);
         // await ic.mmcifParserCls.loadMmcifData(bcifJson, bcifid);
 
-        await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'mmcif', undefined, bText);
+        await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'bcif', undefined, bText);
     }
 
+    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
+    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     getBcifJson(bcifData, bcifid, bText, bNoCoord) { let ic = this.icn3d, me = ic.icn3dui;
         let q = "\"";
         let text = "";
@@ -776,46 +778,32 @@ class BcifParser {
             // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
             let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
 
-            let struct_oper_idArray = struct_oper_list.getColumn("id").data;
-            let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
-            let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
-            let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
-            let m14Array = struct_oper_list.getColumn("vector[1]").data;
-
-            let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
-            let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
-            let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
-            let m24Array = struct_oper_list.getColumn("vector[2]").data;
-
-            let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
-            let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
-            let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
-            let m34Array = struct_oper_list.getColumn("vector[3]").data;
-
             text += ", \"assembly\":[";
 
             let pmatrix = ", \"pmatrix\":";
             let bPmatrix = false;
 
             let assemblySize = struct_oper_list.rowCount;
+            
+            // could be one or more rows, struct_oper_list.getColumn("id").data is unavailable if one row
             for (let i = 0; i < assemblySize; ++i) {
-                let struct_oper_id = struct_oper_idArray[i];
+                let struct_oper_id = struct_oper_list.getColumn("id").getString(i);
                 if(struct_oper_id == "X0") continue;
 
-                let m11 = m11Array[i];
-                let m12 = m12Array[i];
-                let m13 = m13Array[i];
-                let m14 = m14Array[i];
-
-                let m21 = m21Array[i];
-                let m22 = m22Array[i];
-                let m23 = m23Array[i];
-                let m24 = m24Array[i];
-
-                let m31 = m31Array[i];
-                let m32 = m32Array[i];
-                let m33 = m33Array[i];
-                let m34 = m34Array[i];
+                let m11 = struct_oper_list.getColumn("matrix[1][1]").getFloat(i);
+                let m12 = struct_oper_list.getColumn("matrix[1][2]").getFloat(i);
+                let m13 = struct_oper_list.getColumn("matrix[1][3]").getFloat(i);
+                let m14 = struct_oper_list.getColumn("vector[1]").getFloat(i);
+    
+                let m21 = struct_oper_list.getColumn("matrix[2][1]").getFloat(i);
+                let m22 = struct_oper_list.getColumn("matrix[2][2]").getFloat(i);
+                let m23 = struct_oper_list.getColumn("matrix[2][3]").getFloat(i);
+                let m24 = struct_oper_list.getColumn("vector[2]").getFloat(i);
+    
+                let m31 = struct_oper_list.getColumn("matrix[3][1]").getFloat(i);
+                let m32 = struct_oper_list.getColumn("matrix[3][2]").getFloat(i);
+                let m33 = struct_oper_list.getColumn("matrix[3][3]").getFloat(i);
+                let m34 = struct_oper_list.getColumn("vector[3]").getFloat(i);
 
                 let matrix = "[" + m11 + "," + m21 + "," + m31 + ", 0, "
                     + m12 + "," + m22 + "," + m32 + ", 0, "
@@ -837,9 +825,6 @@ class BcifParser {
             text += "]";
 
             if(bPmatrix) text += pmatrix;
-
-            struct_oper_idArray = m11Array = m12Array = m13Array = m14Array = m21Array = m22Array = m23Array 
-            = m24Array = m31Array = m32Array = m33Array = m34Array = [];
         }
 
         if(vDisulfides.length > 0) {

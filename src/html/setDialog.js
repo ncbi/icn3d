@@ -167,8 +167,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_mmtfid', 'Please input an MMTF ID');
-        html += "MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
+        html += this.addNotebookTitle('dl_mmtfid', 'Please input an BCIF/MMTF ID');
+        html += "BCIF/MMTF ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmtf'>Load</button>";
         html += "</div>";
 

@@ -196,7 +196,7 @@ class ClickMenu {
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input MMTF ID');
+           me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input BCIF/MMTF ID');
         });
 
     //    clkMn1_pdbid: function() {

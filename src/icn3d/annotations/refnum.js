@@ -495,7 +495,7 @@
 
     parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
     // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let tmscoreThreshold = 0.4; // 0.4; //0.5;
+        let tmscoreThreshold = 0.45; // 0.4; //0.5;
         //let rmsdThreshold = 10;
 
         // find the best alignment for each chain
@@ -619,16 +619,16 @@
             }
 
             // count the number of matched strands
-            let strandHash = {};
-            for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
-                let seg = queryData[0].segs[j];
-                let q_start = parseInt(seg.q_start)
+            // let strandHash = {};
+            // for(let j = 0, jl = queryData[0].segs.length; j < jl; ++j) {
+            //     let seg = queryData[0].segs[j];
+            //     let q_start = parseInt(seg.q_start)
 
-                let strand = this.getStrandFromRefnum(q_start);
-                strandHash[strand] = 1;
-            }
+            //     let strand = this.getStrandFromRefnum(q_start);
+            //     strandHash[strand] = 1;
+            // }
 
-            let tmAdjust = 0.1; 
+            // let tmAdjust = 0.1; 
             let score = parseFloat(queryData[0].score);
 
             // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
@@ -651,7 +651,7 @@
                 }
 
                 domainid2segs[domainid] = queryData[0].segs;
-                domainid2strandcnt[domainid] = Object.keys(strandHash).length;
+                // domainid2strandcnt[domainid] = Object.keys(strandHash).length;
 
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
                 ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
@@ -1022,34 +1022,6 @@
                 ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
             }
         }
-
-        /*
-        if(Object.keys(ic.resid2refnum).length > 0) {
-            ic.bShowRefnum = true;
-
-            // open sequence view
-            ic.hAtomsRefnum = {};
-            //ic.bResetAnno = true;
-            if(ic.bAnnoShown) {
-                for(let chain in ic.protein_chainid) {
-                    let chainidBase = ic.protein_chainid[chain];
-                    ic.showSeqCls.showSeq(chain, chainidBase, 'protein');
-                }
-            }
-            else {
-                await ic.showAnnoCls.showAnnotations();
-            }
-
-            ic.annotationCls.setAnnoViewAndDisplay('detailed view');
-        }
-        else if(!me.bNode) {
-            if(!ic.bNoIg) {
-                // alert("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
-                console.log("No Ig reference numbers are assigned based on the reference structures in iCn3D...");
-                ic.bNoIg = true;
-            }
-        }
-        */
     }
 
     getStrandFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d, me = ic.icn3dui;
@@ -1722,15 +1694,13 @@
                                 domainid = strandArray[strandCnt].domainid;
                             }    
                             else {
-                                //loopCnt = 0;
                                 refnumLabelNoPostfix = undefined;
                                 refnumLabel = undefined;
                             }                        
                         }
                         else {
-                            if(prevStrandCnt >= 0 
-                            //  && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'F' || strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
-                                && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
+                            // if(prevStrandCnt >= 0 && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G')) {
+                            if(prevStrandCnt >= 0 && (strandArray[prevStrandCnt].strand.substr(0, 1) == 'G' || (strandArray[prevStrandCnt].strand.substr(0, 1) == 'F' && strandArray[strandCnt].strand.substr(0, 1) != 'G') )) {
                                 if(!bAfterGstrand) {
                                     //loopCnt = 0;
                                     refnumLabelNoPostfix = undefined;
