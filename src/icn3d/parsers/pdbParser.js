@@ -83,7 +83,6 @@ class PdbParser {
             await this.loadPdbData(data, id, undefined, bAppend);
         }
         else if(type === 'mmcif') {
-            /*
             // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
             // let dataObj = {'mmciffile': data};
             // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -95,12 +94,6 @@ class PdbParser {
 
             // await ic.mmcifParserCls.loadMmcifData(bcifJson, undefined);
             await ic.opmParserCls.loadOpmData(data, undefined, undefined, 'mmcif', undefined, bText);
-            */
-
-            let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-            let dataObj = {'mmciffile': data};
-            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-            await ic.mmcifParserCls.loadMmcifData(data2, undefined);
         }
         else if(type === 'mol2') {
             await ic.mol2ParserCls.loadMol2Data(data);

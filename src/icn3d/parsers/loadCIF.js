@@ -7,8 +7,6 @@ class LoadCIF {
         this.icn3d = icn3d;
     }
 
-    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
-    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
@@ -121,22 +119,22 @@ class LoadCIF {
             // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
             let struct_conf = block.getCategory("_struct_conf");
         
-            let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+            let conf_type_idArray = struct_conf.getColumn("conf_type_id");
         
-            let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
-            let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+            let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
+            let resi1Array = struct_conf.getColumn("beg_label_seq_id");
         
-            let chain2Array = struct_conf.getColumn("end_auth_asym_id").data;
-            let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+            let chain2Array = struct_conf.getColumn("end_auth_asym_id");
+            let resi2Array = struct_conf.getColumn("end_label_seq_id");
         
             // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
             let confSize = struct_conf.rowCount;
             for (let i = 0; i < confSize; ++i) {
-                let conf_type_id = conf_type_idArray[i];
+                let conf_type_id = conf_type_idArray.getString(i);
             
-                let startChain = chain1Array[i];
-                let startResi = parseInt(resi1Array[i]);
-                let endResi = parseInt(resi2Array[i]);
+                let startChain = chain1Array.getString(i);
+                let startResi = parseInt(resi1Array.getString(i));
+                let endResi = parseInt(resi2Array.getString(i));
             
                 if(conf_type_id.substr(0, 4) == "HELX") {
                     for(let j = parseInt(startResi); j <= parseInt(endResi); ++j) {
@@ -165,18 +163,18 @@ class LoadCIF {
             // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
             let struct_sheet_range = block.getCategory("_struct_sheet_range");
         
-            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
-            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
+            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
         
-            let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id").data;
-            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+            let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id");
+            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
         
             // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
             let sheetSize = struct_sheet_range.rowCount;
             for (let i = 0; i < sheetSize; ++i) {
-                let startChain = chain1Array[i];
-                let startResi = parseInt(resi1Array[i]);
-                let endResi = parseInt(resi2Array[i]);
+                let startChain = chain1Array.getString(i);
+                let startResi = parseInt(resi1Array.getString(i));
+                let endResi = parseInt(resi2Array.getString(i));
             
                 for(let j = startResi; j <= endResi; ++j) {
                     let resid = structure + "_" + startChain + "_" + j;
@@ -196,28 +194,28 @@ class LoadCIF {
             // Retrieve the table corresponding to the struct_conn category, which delineates connections1
             let struct_conn = block.getCategory("_struct_conn");
         
-            let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+            let conn_type_idArray = struct_conn.getColumn("conn_type_id");
         
-            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
-            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
-            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
+            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
+            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
         
-            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
-            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
-            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
+            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
+            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
         
             let connSize = struct_conn.rowCount;
             for (let i = 0; i < connSize; ++i) {
-                let conn_type_id = conn_type_idArray[i];
+                let conn_type_id = conn_type_idArray.getString(i);
             
-                let chain1 = chain1Array[i];
-                let name1 = name1Array[i];
-                let resi1 = resi1Array[i];
+                let chain1 = chain1Array.getString(i);
+                let name1 = name1Array.getString(i);
+                let resi1 = resi1Array.getString(i);
                 let id1 = structure + '_' + chain1 + "_" + resi1;
             
-                let chain2 = chain2Array[i];
-                let name2 = name2Array[i];
-                let resi2 = resi2Array[i];
+                let chain2 = chain2Array.getString(i);
+                let name2 = name2Array.getString(i);
+                let resi2 = resi2Array.getString(i);
                 let id2 = structure + '_' + chain2 + "_" + resi2;
             
                 // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
@@ -249,31 +247,31 @@ class LoadCIF {
             // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
             let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
         
-            let struct_oper_idArray = struct_oper_list.getColumn("id").data;
-            let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
-            let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
-            let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
-            let m14Array = struct_oper_list.getColumn("vector[1]").data;
+            let struct_oper_idArray = struct_oper_list.getColumn("id");
+            let m11Array = struct_oper_list.getColumn("matrix[1][1]");
+            let m12Array = struct_oper_list.getColumn("matrix[1][2]");
+            let m13Array = struct_oper_list.getColumn("matrix[1][3]");
+            let m14Array = struct_oper_list.getColumn("vector[1]");
         
-            let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
-            let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
-            let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
-            let m24Array = struct_oper_list.getColumn("vector[2]").data;
+            let m21Array = struct_oper_list.getColumn("matrix[2][1]");
+            let m22Array = struct_oper_list.getColumn("matrix[2][2]");
+            let m23Array = struct_oper_list.getColumn("matrix[2][3]");
+            let m24Array = struct_oper_list.getColumn("vector[2]");
         
-            let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
-            let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
-            let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
-            let m34Array = struct_oper_list.getColumn("vector[3]").data;
+            let m31Array = struct_oper_list.getColumn("matrix[3][1]");
+            let m32Array = struct_oper_list.getColumn("matrix[3][2]");
+            let m33Array = struct_oper_list.getColumn("matrix[3][3]");
+            let m34Array = struct_oper_list.getColumn("vector[3]");
         
             let assemblySize = struct_oper_list.rowCount;
             for (let i = 0; i < assemblySize; ++i) {
-                let struct_oper_id = struct_oper_idArray[i];
+                let struct_oper_id = struct_oper_idArray.getString(i);
                 if(struct_oper_id == "X0") continue;
 
                 if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-                ic.biomtMatrices[i].set(m11Array[i], m12Array[i], m13Array[i], m14Array[i], 
-                    m21Array[i], m22Array[i], m23Array[i], m24Array[i], 
-                    m31Array[i], m32Array[i], m33Array[i], m34Array[i], 
+                ic.biomtMatrices[i].set(m11Array.getString(i), m12Array.getString(i), m13Array.getString(i), m14Array.getString(i), 
+                    m21Array.getString(i), m22Array.getString(i), m23Array.getString(i), m24Array.getString(i), 
+                    m31Array.getString(i), m32Array.getString(i), m33Array.getString(i), m34Array.getString(i), 
                     0, 0, 0, 1);
             }
         
@@ -316,41 +314,42 @@ class LoadCIF {
             ic.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
         }
 
-        let atom_hetatmArray = atom_site.getColumn("group_PDB").data;
-        let resnArray = atom_site.getColumn("label_comp_id").data;
-        let elemArray = atom_site.getColumn("type_symbol").data;
-        let nameArray = atom_site.getColumn("label_atom_id").data;
-    
-        let chainArray = atom_site.getColumn("auth_asym_id").data;
-    
-        let resiArray = atom_site.getColumn("label_seq_id").data;
-        let resiOriArray = atom_site.getColumn("auth_seq_id").data;
-        let altArray = atom_site.getColumn("label_alt_id").data;
-    
-        let bArray = atom_site.getColumn("B_iso_or_equiv").data;
-    
-        let xArray = atom_site.getColumn("Cartn_x").data;
-        let yArray = atom_site.getColumn("Cartn_y").data;
-        let zArray = atom_site.getColumn("Cartn_z").data;
-    
-        let autochainArray = atom_site.getColumn("label_asym_id").data;
+        let atom_hetatmArray = atom_site.getColumn("group_PDB");
+        let resnArray = atom_site.getColumn("label_comp_id");
+        let elemArray = atom_site.getColumn("type_symbol");
+        let nameArray = atom_site.getColumn("label_atom_id");
+
+        let chainArray = atom_site.getColumn("auth_asym_id");
+
+        let resiArray = atom_site.getColumn("label_seq_id");
+        let resiOriArray = atom_site.getColumn("auth_seq_id");
+        let altArray = atom_site.getColumn("label_alt_id");
+
+        let bArray = atom_site.getColumn("B_iso_or_equiv");
+
+        let xArray = atom_site.getColumn("Cartn_x");
+        let yArray = atom_site.getColumn("Cartn_y");
+        let zArray = atom_site.getColumn("Cartn_z");
+
+        let autochainArray = atom_site.getColumn("label_asym_id");
 
         // get the bond info
         let ligSeqHash = {}, prevAutochain = '';
         let prevResn, tmpResi = 0;
         let sChain = {};
         for (let i = 0; i < atomSize; ++i) {
-            let atom_hetatm = atom_hetatmArray[i];
-            let resn = resnArray[i];
-            let elem = elemArray[i];
-            let atom = nameArray[i];
-            let chain = chainArray[i];
-            let resi = resiArray[i];
-            let oriResi = resiOriArray[i]; 
-            let alt = altArray[i];
-            let bFactor = bArray[i];
+            let atom_hetatm = atom_hetatmArray.getString(i);
+            let resn = resnArray.getString(i);
+            let elem = elemArray.getString(i);
+            let atom = nameArray.getString(i);
+            let chain = chainArray.getString(i);
+            let resi = resiArray.getString(i);
+            let oriResi = resiOriArray.getString(i); 
+            let alt = altArray.getString(i);
+            let bFactor = bArray.getString(i);
 
-            let autochain = autochainArray[i];
+            let autochain = autochainArray.getString(i);
+
 
             resi = oriResi;
 
@@ -457,9 +456,9 @@ class LoadCIF {
 
             //let chain_resi = chain + "_" + resi;
 
-            let x = xArray[i];
-            let y = yArray[i];
-            let z = zArray[i];
+            let x = xArray.getFloat(i);
+            let y = yArray.getFloat(i);
+            let z = zArray.getFloat(i);
             let coord = new THREE.Vector3(x, y, z);
 
             let atomDetails = {
@@ -627,19 +626,19 @@ class LoadCIF {
         if(block.getCategory("_pdbx_poly_seq_scheme")) {
             let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
 
-            let resiArray = poly_seq_scheme.getColumn("seq_id").data;
-            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
-            let resnArray = poly_seq_scheme.getColumn("mon_id").data;
-            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
+            let resiArray = poly_seq_scheme.getColumn("seq_id");
+            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num");
+            let resnArray = poly_seq_scheme.getColumn("mon_id");
+            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id");
 
             let seqSize = poly_seq_scheme.rowCount;
             let prevChain = "";
             let seqArray = [];
             for (let i = 0; i < seqSize; ++i) {
-                let resi = resiArray[i];
-                let oriResi = oriResiArray[i];
-                let resn = resnArray[i];
-                let chain = chainArray[i];
+                let resi = resiArray.getString(i);
+                let oriResi = oriResiArray.getString(i);
+                let resn = resnArray.getString(i);
+                let chain = chainArray.getString(i);
 
                 if(chain != prevChain && i > 0) {
                     mChainSeq[prevChain] = seqArray;

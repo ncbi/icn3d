@@ -413,7 +413,8 @@ class MmdbParser {
           chain2molid[chain] = i;
           molid2chain[i] = chain;
 
-          ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+        //   ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+          if(type === undefined || me.cfg.mmdbafid) ic.chainsColor[chain] = me.parasCls.thr(color);
 
           let geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
           let geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
