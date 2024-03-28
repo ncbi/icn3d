@@ -71,19 +71,16 @@ class OpmParser {
         if(type === 'mmtf') {
             await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
         }
-        else if(type === 'bcif') {
-            await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
-        }
         else 
         */
 
         if(type === 'mmcif' || type === 'bcif') {
-            if(type === 'mmcif') {
-                ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-            }
-            else if(type === 'bcif') {
+            // if(type === 'mmcif') {
+            //     ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+            // }
+            // else if(type === 'bcif') {
                 ic.loadCIFCls.loadCIF(data, pdbid, bText);
-            }
+            // }
 
             if(ic.emd !== undefined) {
               $("#" + ic.pre + "mapWrapper1").hide();
@@ -99,7 +96,7 @@ class OpmParser {
             if(Object.keys(ic.structures).length == 1) {
                 $("#" + ic.pre + "alternateWrapper").hide();
             }
-    
+/*    
             // load assembly info
             if(type === 'mmcif') {
                 let assembly =(data.assembly !== undefined) ? data.assembly : [];
@@ -111,7 +108,7 @@ class OpmParser {
                     }
                 }
             }
-        
+*/        
             if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
                 $("#" + ic.pre + "assemblyWrapper").show();
     

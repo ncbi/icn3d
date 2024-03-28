@@ -410,25 +410,6 @@
         let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms, undefined);
         let subdomains = result.subdomains;
         let pos2resi = result.pos2resi;
-/*
-        if(subdomains.length <= 1) {
-            let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
-            if(residueArray.length < minResidues) return domainAtomsArray;
-
-            for(let n = 0, nl = residueArray.length; n < nl; ++n) {
-                let resid = residueArray[n];
-
-                // clear previous refnum assignment if any
-                // if(bRerunDomain) {
-                    delete ic.resid2refnum[resid];
-                    delete ic.residIgLoop[resid];
-                // }
-            }
-
-            domainAtomsArray.push(currAtoms);
-        }
-        else 
-*/
 
         if(subdomains.length >= 1) {
             for(let k = 0, kl = subdomains.length; k < kl; ++k) {
@@ -448,7 +429,7 @@
                         domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
 
                         // clear previous refnum assignment if any
-                        delete ic.resid2refnum[resid];
+                        // delete ic.resid2refnum[resid];
                         delete ic.residIgLoop[resid];
                     }
                 }
@@ -984,20 +965,6 @@
                         ic.resid2refnum_ori[resid] = refnumLabel;
                         ic.resid2domainid[resid] = domainid;
                     }
-
-                    // final reference numbers will be assign in ic.annoIgCls.showRefNum()
-
-                    // if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
-                    //     ic.refnum2residArray[refnum] = [resid];
-                    // }
-                    // else {
-                    //     ic.refnum2residArray[refnum].push(resid);
-                    // }
-
-                    // if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                    //     ic.chainsMapping[chainid] = {};
-                    // }
-                    // ic.chainsMapping[chainid][resid] = refnumLabel;
                 //}
             }
         }
@@ -1162,7 +1129,7 @@
         return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
     }
 
-    exportRefnum(type, bCalcRef) { let ic = this.icn3d, me = ic.icn3dui;
+    exportRefnum(type, bNoArraySymbol) { let ic = this.icn3d, me = ic.icn3dui;
         let refData = '';
 
         // 1. show IgStrand ref numbers
@@ -1209,90 +1176,100 @@
 
             let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
 
-            // refData += '{"Ig domain" : ' + bIgDomain + ', "ref PDB" : ' + JSON.stringify(ic.refPdbList) + ',\n';
-            refData += '{"Ig domain" : ' + bIgDomain + ',\n';
+            
 
             if(bIgDomain) {
-                refData += '"igs": [\n';
-                for(let chnid in ic.chains) {
-                    let igArray = ic.chain2igArray[chnid];
+                for(let structure in ic.structures) {
+                    refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
+                    for(let m = 0, ml = ic.structures[structure].length; m < ml; ++m) {
+                        let chnid = ic.structures[structure][m]; 
+                        let igArray = ic.chain2igArray[chnid];
 
-                    if(igArray && igArray.length > 0) {
-                        refData += '{"' + chnid + '": {\n';
+                        if(igArray && igArray.length > 0) {
+                            refData += '{"' + chnid + '": {\n';
 
-                        for(let i = 0, il = igArray.length; i < il; ++i) {
-                            let startPosArray = igArray[i].startPosArray;
-                            let endPosArray = igArray[i].endPosArray;
-                            let domainid = igArray[i].domainid;
-                            let info = ic.domainid2info[domainid];
-                            if(!info) continue;
+                            for(let i = 0, il = igArray.length; i < il; ++i) {
+                                let startPosArray = igArray[i].startPosArray;
+                                let endPosArray = igArray[i].endPosArray;
+                                let domainid = igArray[i].domainid;
+                                let info = ic.domainid2info[domainid];
+                                if(!info) continue;
 
-                            refData += '"' + domainid + '": {\n';
+                                refData += '"' + domainid + '": {\n';
 
-                            refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
-                            for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
-                                let startPos = startPosArray[j];
-                                let endPos = endPosArray[j];
-                                for(let k = startPos; k <= endPos; ++k) {
-                                    const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
-                                    refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
+                                for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
+                                    let startPos = startPosArray[j];
+                                    let endPos = endPosArray[j];
+                                    for(let k = startPos; k <= endPos; ++k) {
+                                        const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
+                                        refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                    }
                                 }
+                                refData += '],\n';
+
+                                refData += '},\n';
                             }
-                            refData += '],\n';
 
-                            refData += '},\n';
+                            refData += '}},\n';
                         }
-
-                        refData += '}},\n';
                     }
+
+                    refData += ']}},\n';
                 }
-
-                refData += ']\n';
             }
-
-            refData += '}\n';
         }
         // 2. show Kabat ref numbers
         else if(type == 'kabat' || type == 'Kabat') {
             let resid2kabat = {};
             for(let resid in ic.resid2refnum) {
-            let domainid = ic.resid2domainid[resid];
-            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+                let domainid = ic.resid2domainid[resid];
+                let refnumStr, refnumLabel = ic.resid2refnum[resid];
 
-            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                if(!atom) continue;
+                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
 
-            if(refnumLabel) {
-                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                if(refnumLabel) {
+                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                    refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                }
+
+                resid2kabat[resid + '_' + resn] = refnumStr;
             }
 
-            resid2kabat[resid + '_' + resn] = refnumStr;
-            }
-
+            refData += '{"Kabat": ';
             refData += JSON.stringify(resid2kabat);
+            refData += ',\n';
         }
         // 3. show IMGT ref numbers
         else if(type == 'imgt'|| type == 'IMGT') {
             let resid2imgt = {};
             for(let resid in ic.resid2refnum) {
-            let domainid = ic.resid2domainid[resid];
-            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+                let domainid = ic.resid2domainid[resid];
+                let refnumStr, refnumLabel = ic.resid2refnum[resid];
 
-            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-            let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                if(!atom) continue;
+                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
 
-            if(refnumLabel) {
-                let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+                if(refnumLabel) {
+                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                    refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+                }
+
+                resid2imgt[resid + '_' + resn] = refnumStr;
             }
 
-            resid2imgt[resid + '_' + resn] = refnumStr;
-            }
-
+            refData += '{"Kabat": ';
             refData += JSON.stringify(resid2imgt);
+            refData += ',\n';
         }
 
+
+        if(!bNoArraySymbol) {
+            refData = '[' + refData + ']';
+        }
 
         if(!me.bNode) {
             let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');

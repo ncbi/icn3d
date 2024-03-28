@@ -67,10 +67,7 @@ class AnnoIg {
         html3 += result.html3;
 
         let kabat_or_imgt = 1;
-        if(!bKabatFound) {
-            return {html: html, html2: html2, html3: html3};
-        }
-        else {
+        if(bKabatFound) {
             result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
             html += result.html;
             html2 += result.html2;
@@ -78,10 +75,7 @@ class AnnoIg {
         }
 
         kabat_or_imgt = 2;
-        if(!bImgtFound) {
-            return {html: html, html2: html2, html3: html3};
-        }
-        else {
+        if(bImgtFound) {
             result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
             html += result.html;
             html2 += result.html2;
@@ -100,7 +94,8 @@ class AnnoIg {
         // add color to atoms
         if(ic.bShowRefnum) {
             ic.opts.color = 'ig strand';
-            ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+            // ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+            ic.setColorCls.setColorByOptions(ic.opts, ic.chains[chnid]);
         }
 
         return html;
@@ -414,7 +409,7 @@ class AnnoIg {
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ' Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
             domainArray.push(igType);
 

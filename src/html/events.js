@@ -1731,7 +1731,6 @@ class Events {
                 thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                 ic.molTitle = "";
 
-                /*
                 // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                 // //ic.bCid = undefined;
 
@@ -1749,19 +1748,6 @@ class Events {
                 ic.InputfileType = 'mmcif';
                 // await ic.mmcifParserCls.loadMmcifData(data); 
                 await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
-                */
-
-                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-
-                let dataObj = {'mmciffile': dataStr};
-                let data = await me.getAjaxPostPromise(url, dataObj, true);
-
-                //ic.initUI();
-                ic.init();
-                ic.bInputfile = true;
-                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-                ic.InputfileType = 'mmcif';
-                await ic.mmcifParserCls.loadMmcifData(data); 
              }
              reader.readAsText(file);
            }

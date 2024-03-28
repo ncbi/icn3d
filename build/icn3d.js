@@ -17829,7 +17829,6 @@ var icn3d = (function (exports) {
                     thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
                     ic.molTitle = "";
 
-                    /*
                     // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                     // //ic.bCid = undefined;
 
@@ -17847,19 +17846,6 @@ var icn3d = (function (exports) {
                     ic.InputfileType = 'mmcif';
                     // await ic.mmcifParserCls.loadMmcifData(data); 
                     await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
-                    */
-
-                    let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-
-                    let dataObj = {'mmciffile': dataStr};
-                    let data = await me.getAjaxPostPromise(url, dataObj, true);
-
-                    //ic.initUI();
-                    ic.init();
-                    ic.bInputfile = true;
-                    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
-                    ic.InputfileType = 'mmcif';
-                    await ic.mmcifParserCls.loadMmcifData(data); 
                  };
                  reader.readAsText(file);
                }
@@ -41764,10 +41750,7 @@ var icn3d = (function (exports) {
             html3 += result.html3;
 
             let kabat_or_imgt = 1;
-            if(!bKabatFound) {
-                return {html: html, html2: html2, html3: html3};
-            }
-            else {
+            if(bKabatFound) {
                 result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
                 html += result.html;
                 html2 += result.html2;
@@ -41775,10 +41758,7 @@ var icn3d = (function (exports) {
             }
 
             kabat_or_imgt = 2;
-            if(!bImgtFound) {
-                return {html: html, html2: html2, html3: html3};
-            }
-            else {
+            if(bImgtFound) {
                 result = this.showRefNum(giSeq, chnid, kabat_or_imgt);
                 html += result.html;
                 html2 += result.html2;
@@ -41797,7 +41777,8 @@ var icn3d = (function (exports) {
             // add color to atoms
             if(ic.bShowRefnum) {
                 ic.opts.color = 'ig strand';
-                ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+                // ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+                ic.setColorCls.setColorByOptions(ic.opts, ic.chains[chnid]);
             }
 
             return html;
@@ -42094,7 +42075,7 @@ var icn3d = (function (exports) {
 
                 let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
                 titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-                fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+                fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ' Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
                 domainArray.push(igType);
 
@@ -47143,14 +47124,14 @@ var icn3d = (function (exports) {
         }
 
         async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
-            // if(bSelection) { // clear previous refnum
-            //     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
-            //     for(let resid in residueHash) {
-            //         if(ic.resid2refnum) delete ic.resid2refnum[resid];
-            //         if(ic.residIgLoop) delete ic.residIgLoop[resid];
-            //         if(ic.resid2domainid) delete ic.resid2domainid[resid];
-            //     }
-            // }
+            if(bSelection) { // clear previous refnum
+                let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                for(let resid in residueHash) {
+                    if(ic.resid2refnum) delete ic.resid2refnum[resid];
+                    if(ic.residIgLoop) delete ic.residIgLoop[resid];
+                    if(ic.resid2domainid) delete ic.resid2domainid[resid];
+                }
+            }
 
             // if(!ic.bIgShown) {
                 if(!bSelection && !template) {
@@ -48476,13 +48457,6 @@ var icn3d = (function (exports) {
                     html += '</div>';
                     html3 += '</div></div>';
                 }         
-
-                // if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                                       
-                //     let result = ic.annoIgCls.showAllRefNum(giSeq, chnid);
-                    
-                //     html += result.html;
-                //     html3 += result.html3;
-                // }
                 
                 if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
                     let bCustom = true;
@@ -55398,7 +55372,6 @@ var icn3d = (function (exports) {
             let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
             let data = await me.getAjaxPromise(url, 'text', true);
 
-            /*
             // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
             // let dataObj = {'mmciffile': data};
             // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -55411,13 +55384,6 @@ var icn3d = (function (exports) {
 
             // await this.loadMmcifData(bcifJson, mmcifid);
             await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
-            */
-
-            url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-            let dataObj = {'mmciffile': data};
-            let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-
-            await this.loadMmcifData(data2, mmcifid);
         }
 
         async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -55931,7 +55897,8 @@ var icn3d = (function (exports) {
               chain2molid[chain] = i;
               molid2chain[i] = chain;
 
-              ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+            //   ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
+              if(type === undefined || me.cfg.mmdbafid) ic.chainsColor[chain] = me.parasCls.thr(color);
 
               let geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
               let geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
@@ -56111,8 +56078,6 @@ var icn3d = (function (exports) {
             await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'bcif', undefined, bText);
         }
 
-        // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
-        // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
         getBcifJson(bcifData, bcifid, bText, bNoCoord) { let ic = this.icn3d, me = ic.icn3dui;
             let text = "";
 
@@ -56175,25 +56140,25 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
                 let struct_conf = block.getCategory("_struct_conf");
 
-                let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+                let conf_type_idArray = struct_conf.getColumn("conf_type_id");
 
-                let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
-                let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+                let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
+                let resi1Array = struct_conf.getColumn("beg_label_seq_id");
 
-                let chain2Array = struct_conf.getColumn("end_auth_asym_id").data;
-                let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+                let chain2Array = struct_conf.getColumn("end_auth_asym_id");
+                let resi2Array = struct_conf.getColumn("end_label_seq_id");
 
                 // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
                 let confSize = struct_conf.rowCount;
                 for (let i = 0; i < confSize; ++i) {
-                    let conf_type_id = conf_type_idArray[i];
+                    let conf_type_id = conf_type_idArray.getString(i);
 
-                    let chain1 = chain1Array[i];
-                    let resi1 = resi1Array[i];
+                    let chain1 = chain1Array.getString(i);
+                    let resi1 = resi1Array.getString(i);
                     let id1 = chain1 + "_" + resi1;
 
-                    let chain2 = chain2Array[i];
-                    let resi2 = resi2Array[i];
+                    let chain2 = chain2Array.getString(i);
+                    let resi2 = resi2Array.getString(i);
                     let id2 = chain2 + "_" + resi2;
 
                     let ss;
@@ -56225,23 +56190,23 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
                 let struct_sheet_range = block.getCategory("_struct_sheet_range");
 
-                let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
-                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+                let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
+                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
 
-                let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id").data;
-                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+                let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id");
+                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
 
                 // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
                 let sheetSize = struct_sheet_range.rowCount;
                 for (let i = 0; i < sheetSize; ++i) {
-                    let chain1 = chain1Array[i];
-                    let resi1 = resi1Array[i];
+                    let chain1 = chain1Array.getString(i);
+                    let resi1 = resi1Array.getString(i);
                     let id1 = chain1 + "_" + resi1;
 
                     sSSBegin[id1] = 1;
 
-                    let chain2 = chain2Array[i];
-                    let resi2 = resi2Array[i];
+                    let chain2 = chain2Array.getString(i);
+                    let resi2 = resi2Array.getString(i);
                     let id2 = chain2 + "_" + resi2;
 
                     sSSEnd[id2] = 1;
@@ -56266,28 +56231,28 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_conn category, which delineates connections1
                 let struct_conn = block.getCategory("_struct_conn");
 
-                let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+                let conn_type_idArray = struct_conn.getColumn("conn_type_id");
 
-                let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
-                let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
-                let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+                let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
+                let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
+                let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
 
-                let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
-                let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
-                let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+                let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
+                let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
+                let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
 
                 let connSize = struct_conn.rowCount;
                 for (let i = 0; i < connSize; ++i) {
-                    let conn_type_id = conn_type_idArray[i];
+                    let conn_type_id = conn_type_idArray.getString(i);
 
-                    let chain1 = chain1Array[i];
-                    let name1 = name1Array[i];
-                    let resi1 = resi1Array[i];
+                    let chain1 = chain1Array.getString(i);
+                    let name1 = name1Array.getString(i);
+                    let resi1 = resi1Array.getString(i);
                     let id1 = chain1 + "_" + resi1 + "_" + name1;
 
-                    let chain2 = chain2Array[i];
-                    let name2 = name2Array[i];
-                    let resi2 = resi2Array[i];
+                    let chain2 = chain2Array.getString(i);
+                    let name2 = name2Array.getString(i);
+                    let resi2 = resi2Array.getString(i);
                     let id2 = chain2 + "_" + resi2 + "_" + name2;
 
                     // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
@@ -56328,40 +56293,40 @@ var icn3d = (function (exports) {
             let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray = [];
 
             if(!bNoCoord) {
-                atom_hetatmArray = atom_site.getColumn("group_PDB").data;
-                resnArray = atom_site.getColumn("label_comp_id").data;
-                elemArray = atom_site.getColumn("type_symbol").data;
-                nameArray = atom_site.getColumn("label_atom_id").data;
+                atom_hetatmArray = atom_site.getColumn("group_PDB");
+                resnArray = atom_site.getColumn("label_comp_id");
+                elemArray = atom_site.getColumn("type_symbol");
+                nameArray = atom_site.getColumn("label_atom_id");
 
-                chainArray = atom_site.getColumn("auth_asym_id").data;
+                chainArray = atom_site.getColumn("auth_asym_id");
                 
-                resiArray = atom_site.getColumn("label_seq_id").data;
-                resiOriArray = atom_site.getColumn("auth_seq_id").data;
-                altArray = atom_site.getColumn("label_alt_id").data;
+                resiArray = atom_site.getColumn("label_seq_id");
+                resiOriArray = atom_site.getColumn("auth_seq_id");
+                altArray = atom_site.getColumn("label_alt_id");
 
-                bArray = atom_site.getColumn("B_iso_or_equiv").data;
+                bArray = atom_site.getColumn("B_iso_or_equiv");
 
-                xArray = atom_site.getColumn("Cartn_x").data;
-                yArray = atom_site.getColumn("Cartn_y").data;
-                zArray = atom_site.getColumn("Cartn_z").data;
+                xArray = atom_site.getColumn("Cartn_x");
+                yArray = atom_site.getColumn("Cartn_y");
+                zArray = atom_site.getColumn("Cartn_z");
 
-                autochainArray = atom_site.getColumn("label_asym_id").data;
+                autochainArray = atom_site.getColumn("label_asym_id");
 
                 // get the bond info
                 let ligSeqHash = {}, prevAutochain = '';
                 for (let i = 0; i < atomSize; ++i) {
-                    let atom_hetatm = atom_hetatmArray[i];
-                    let resn = resnArray[i];
-                    let elem = elemArray[i];
-                    let name = nameArray[i];
+                    let atom_hetatm = atom_hetatmArray.getString(i);
+                    let resn = resnArray.getString(i);
+                    let elem = elemArray.getString(i);
+                    let name = nameArray.getString(i);
             // use the chain name from author, and use seq id from standardized seq id
                     //let chain = atom_site.getColumn("label_asym_id").getString(i);
-                    let chain = chainArray[i];
-                    let resi = resiArray[i];
-                    let oriResi = resiOriArray[i]; 
-                    let alt = altArray[i];
+                    let chain = chainArray.getString(i);
+                    let resi = resiArray.getString(i);
+                    let oriResi = resiOriArray.getString(i); 
+                    let alt = altArray.getString(i);
 
-                    let autochain = autochainArray[i];
+                    let autochain = autochainArray.getString(i);
 
                     resi = oriResi;
 
@@ -56432,9 +56397,9 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    let x = xArray[i];
-                    let y = yArray[i];
-                    let z = zArray[i];
+                    let x = xArray.getFloat(i);
+                    let y = yArray.getFloat(i);
+                    let z = zArray.getFloat(i);
 
                     let id = serial.toString();
 
@@ -56530,18 +56495,18 @@ var icn3d = (function (exports) {
                 }
 
                 for (let i = 0; i < atomSize; ++i) {
-                    let atom_hetatm = atom_hetatmArray[i];
-                    let resn = resnArray[i];
-                    let elem = elemArray[i];
-                    let name = nameArray[i];
+                    let atom_hetatm = atom_hetatmArray.getString(i);
+                    let resn = resnArray.getString(i);
+                    let elem = elemArray.getString(i);
+                    let name = nameArray.getString(i);
             // use the chain name from author, and use seq id from standardized seq id
                     //let chain = atom_site.getColumn("label_asym_id").getString(i);
-                    let chain = chainArray[i];
-                    let resi = resiArray[i];
-                    let oriResi = resiOriArray[i]; 
-                    let alt = altArray[i];
+                    let chain = chainArray.getString(i);
+                    let resi = resiArray.getString(i);
+                    let oriResi = resiOriArray.getString(i); 
+                    let alt = altArray.getString(i);
 
-                    let autochain = autochainArray[i];
+                    let autochain = autochainArray.getString(i);
 
                     resi = oriResi;
 
@@ -56589,11 +56554,11 @@ var icn3d = (function (exports) {
                         // }
                     }
 
-                    let b = bArray[i];
+                    let b = bArray.getString(i);
 
-                    let x = xArray[i];
-                    let y = yArray[i];
-                    let z = zArray[i];
+                    let x = xArray.getFloat(i);
+                    let y = yArray.getFloat(i);
+                    let z = zArray.getFloat(i);
                     //int serial = parseInt(atom_site(i, "id"));
 
                     //let id = chain + "_" + resi + "_" + name;
@@ -56681,19 +56646,19 @@ var icn3d = (function (exports) {
             if(block.getCategory("_pdbx_poly_seq_scheme")) {
                 let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
 
-                let resiArray = poly_seq_scheme.getColumn("seq_id").data;
-                let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
-                let resnArray = poly_seq_scheme.getColumn("mon_id").data;
-                let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
+                let resiArray = poly_seq_scheme.getColumn("seq_id");
+                let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num");
+                let resnArray = poly_seq_scheme.getColumn("mon_id");
+                let chainArray = poly_seq_scheme.getColumn("pdb_strand_id");
 
                 let seqSize = poly_seq_scheme.rowCount;
                 let prevChain = "";
                 let seq = "";
                 for (let i = 0; i < seqSize; ++i) {
-                    resiArray[i];
-                    let oriResi = oriResiArray[i];
-                    let resn = resnArray[i];
-                    let chain = chainArray[i];
+                    resiArray.getString(i);
+                    let oriResi = oriResiArray.getString(i);
+                    let resn = resnArray.getString(i);
+                    let chain = chainArray.getString(i);
 
                     if(chain != prevChain) {
                         if(i == 0) {
@@ -57122,19 +57087,16 @@ var icn3d = (function (exports) {
             if(type === 'mmtf') {
                 await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
             }
-            else if(type === 'bcif') {
-                await ic.bcifParserCls.parseBcifData(data, pdbid, bFull);
-            }
             else 
             */
 
             if(type === 'mmcif' || type === 'bcif') {
-                if(type === 'mmcif') {
-                    ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-                }
-                else if(type === 'bcif') {
+                // if(type === 'mmcif') {
+                //     ic.loadAtomDataCls.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+                // }
+                // else if(type === 'bcif') {
                     ic.loadCIFCls.loadCIF(data, pdbid, bText);
-                }
+                // }
 
                 if(ic.emd !== undefined) {
                   $("#" + ic.pre + "mapWrapper1").hide();
@@ -57150,7 +57112,7 @@ var icn3d = (function (exports) {
                 if(Object.keys(ic.structures).length == 1) {
                     $("#" + ic.pre + "alternateWrapper").hide();
                 }
-        
+    /*    
                 // load assembly info
                 if(type === 'mmcif') {
                     let assembly =(data.assembly !== undefined) ? data.assembly : [];
@@ -57162,7 +57124,7 @@ var icn3d = (function (exports) {
                         }
                     }
                 }
-            
+    */        
                 if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
                     $("#" + ic.pre + "assemblyWrapper").show();
         
@@ -57284,7 +57246,6 @@ var icn3d = (function (exports) {
                 await this.loadPdbData(data, id, undefined, bAppend);
             }
             else if(type === 'mmcif') {
-                /*
                 // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                 // let dataObj = {'mmciffile': data};
                 // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -57296,12 +57257,6 @@ var icn3d = (function (exports) {
 
                 // await ic.mmcifParserCls.loadMmcifData(bcifJson, undefined);
                 await ic.opmParserCls.loadOpmData(data, undefined, undefined, 'mmcif', undefined, bText);
-                */
-
-                let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                let dataObj = {'mmciffile': data};
-                let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-                await ic.mmcifParserCls.loadMmcifData(data2, undefined);
             }
             else if(type === 'mol2') {
                 await ic.mol2ParserCls.loadMol2Data(data);
@@ -63648,8 +63603,6 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
-        // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
         loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
             let hAtoms = {};
 
@@ -63756,22 +63709,22 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
                 let struct_conf = block.getCategory("_struct_conf");
             
-                let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+                let conf_type_idArray = struct_conf.getColumn("conf_type_id");
             
-                let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
-                let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+                let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
+                let resi1Array = struct_conf.getColumn("beg_label_seq_id");
             
-                struct_conf.getColumn("end_auth_asym_id").data;
-                let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+                struct_conf.getColumn("end_auth_asym_id");
+                let resi2Array = struct_conf.getColumn("end_label_seq_id");
             
                 // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
                 let confSize = struct_conf.rowCount;
                 for (let i = 0; i < confSize; ++i) {
-                    let conf_type_id = conf_type_idArray[i];
+                    let conf_type_id = conf_type_idArray.getString(i);
                 
-                    let startChain = chain1Array[i];
-                    let startResi = parseInt(resi1Array[i]);
-                    let endResi = parseInt(resi2Array[i]);
+                    let startChain = chain1Array.getString(i);
+                    let startResi = parseInt(resi1Array.getString(i));
+                    let endResi = parseInt(resi2Array.getString(i));
                 
                     if(conf_type_id.substr(0, 4) == "HELX") {
                         for(let j = parseInt(startResi); j <= parseInt(endResi); ++j) {
@@ -63800,18 +63753,18 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
                 let struct_sheet_range = block.getCategory("_struct_sheet_range");
             
-                let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
-                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+                let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
+                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
             
-                struct_sheet_range.getColumn("end_auth_asym_id").data;
-                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+                struct_sheet_range.getColumn("end_auth_asym_id");
+                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
             
                 // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
                 let sheetSize = struct_sheet_range.rowCount;
                 for (let i = 0; i < sheetSize; ++i) {
-                    let startChain = chain1Array[i];
-                    let startResi = parseInt(resi1Array[i]);
-                    let endResi = parseInt(resi2Array[i]);
+                    let startChain = chain1Array.getString(i);
+                    let startResi = parseInt(resi1Array.getString(i));
+                    let endResi = parseInt(resi2Array.getString(i));
                 
                     for(let j = startResi; j <= endResi; ++j) {
                         let resid = structure + "_" + startChain + "_" + j;
@@ -63831,28 +63784,28 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_conn category, which delineates connections1
                 let struct_conn = block.getCategory("_struct_conn");
             
-                let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+                let conn_type_idArray = struct_conn.getColumn("conn_type_id");
             
-                let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
-                let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
-                let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+                let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
+                let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
+                let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
             
-                let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
-                let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
-                let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+                let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
+                let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
+                let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
             
                 let connSize = struct_conn.rowCount;
                 for (let i = 0; i < connSize; ++i) {
-                    let conn_type_id = conn_type_idArray[i];
+                    let conn_type_id = conn_type_idArray.getString(i);
                 
-                    let chain1 = chain1Array[i];
-                    name1Array[i];
-                    let resi1 = resi1Array[i];
+                    let chain1 = chain1Array.getString(i);
+                    name1Array.getString(i);
+                    let resi1 = resi1Array.getString(i);
                     let id1 = structure + '_' + chain1 + "_" + resi1;
                 
-                    let chain2 = chain2Array[i];
-                    name2Array[i];
-                    let resi2 = resi2Array[i];
+                    let chain2 = chain2Array.getString(i);
+                    name2Array.getString(i);
+                    let resi2 = resi2Array.getString(i);
                     let id2 = structure + '_' + chain2 + "_" + resi2;
                 
                     // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
@@ -63884,31 +63837,31 @@ var icn3d = (function (exports) {
                 // Retrieve the table corresponding to the struct_oper_list category, which delineates assembly
                 let struct_oper_list = block.getCategory("_pdbx_struct_oper_list");
             
-                let struct_oper_idArray = struct_oper_list.getColumn("id").data;
-                let m11Array = struct_oper_list.getColumn("matrix[1][1]").data;
-                let m12Array = struct_oper_list.getColumn("matrix[1][2]").data;
-                let m13Array = struct_oper_list.getColumn("matrix[1][3]").data;
-                let m14Array = struct_oper_list.getColumn("vector[1]").data;
+                let struct_oper_idArray = struct_oper_list.getColumn("id");
+                let m11Array = struct_oper_list.getColumn("matrix[1][1]");
+                let m12Array = struct_oper_list.getColumn("matrix[1][2]");
+                let m13Array = struct_oper_list.getColumn("matrix[1][3]");
+                let m14Array = struct_oper_list.getColumn("vector[1]");
             
-                let m21Array = struct_oper_list.getColumn("matrix[2][1]").data;
-                let m22Array = struct_oper_list.getColumn("matrix[2][2]").data;
-                let m23Array = struct_oper_list.getColumn("matrix[2][3]").data;
-                let m24Array = struct_oper_list.getColumn("vector[2]").data;
+                let m21Array = struct_oper_list.getColumn("matrix[2][1]");
+                let m22Array = struct_oper_list.getColumn("matrix[2][2]");
+                let m23Array = struct_oper_list.getColumn("matrix[2][3]");
+                let m24Array = struct_oper_list.getColumn("vector[2]");
             
-                let m31Array = struct_oper_list.getColumn("matrix[3][1]").data;
-                let m32Array = struct_oper_list.getColumn("matrix[3][2]").data;
-                let m33Array = struct_oper_list.getColumn("matrix[3][3]").data;
-                let m34Array = struct_oper_list.getColumn("vector[3]").data;
+                let m31Array = struct_oper_list.getColumn("matrix[3][1]");
+                let m32Array = struct_oper_list.getColumn("matrix[3][2]");
+                let m33Array = struct_oper_list.getColumn("matrix[3][3]");
+                let m34Array = struct_oper_list.getColumn("vector[3]");
             
                 let assemblySize = struct_oper_list.rowCount;
                 for (let i = 0; i < assemblySize; ++i) {
-                    let struct_oper_id = struct_oper_idArray[i];
+                    let struct_oper_id = struct_oper_idArray.getString(i);
                     if(struct_oper_id == "X0") continue;
 
                     if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-                    ic.biomtMatrices[i].set(m11Array[i], m12Array[i], m13Array[i], m14Array[i], 
-                        m21Array[i], m22Array[i], m23Array[i], m24Array[i], 
-                        m31Array[i], m32Array[i], m33Array[i], m34Array[i], 
+                    ic.biomtMatrices[i].set(m11Array.getString(i), m12Array.getString(i), m13Array.getString(i), m14Array.getString(i), 
+                        m21Array.getString(i), m22Array.getString(i), m23Array.getString(i), m24Array.getString(i), 
+                        m31Array.getString(i), m32Array.getString(i), m33Array.getString(i), m34Array.getString(i), 
                         0, 0, 0, 1);
                 }
             
@@ -63951,41 +63904,42 @@ var icn3d = (function (exports) {
                 ic.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
             }
 
-            let atom_hetatmArray = atom_site.getColumn("group_PDB").data;
-            let resnArray = atom_site.getColumn("label_comp_id").data;
-            let elemArray = atom_site.getColumn("type_symbol").data;
-            let nameArray = atom_site.getColumn("label_atom_id").data;
-        
-            let chainArray = atom_site.getColumn("auth_asym_id").data;
-        
-            let resiArray = atom_site.getColumn("label_seq_id").data;
-            let resiOriArray = atom_site.getColumn("auth_seq_id").data;
-            let altArray = atom_site.getColumn("label_alt_id").data;
-        
-            let bArray = atom_site.getColumn("B_iso_or_equiv").data;
-        
-            let xArray = atom_site.getColumn("Cartn_x").data;
-            let yArray = atom_site.getColumn("Cartn_y").data;
-            let zArray = atom_site.getColumn("Cartn_z").data;
-        
-            let autochainArray = atom_site.getColumn("label_asym_id").data;
+            let atom_hetatmArray = atom_site.getColumn("group_PDB");
+            let resnArray = atom_site.getColumn("label_comp_id");
+            let elemArray = atom_site.getColumn("type_symbol");
+            let nameArray = atom_site.getColumn("label_atom_id");
+
+            let chainArray = atom_site.getColumn("auth_asym_id");
+
+            let resiArray = atom_site.getColumn("label_seq_id");
+            let resiOriArray = atom_site.getColumn("auth_seq_id");
+            let altArray = atom_site.getColumn("label_alt_id");
+
+            let bArray = atom_site.getColumn("B_iso_or_equiv");
+
+            let xArray = atom_site.getColumn("Cartn_x");
+            let yArray = atom_site.getColumn("Cartn_y");
+            let zArray = atom_site.getColumn("Cartn_z");
+
+            let autochainArray = atom_site.getColumn("label_asym_id");
 
             // get the bond info
             let ligSeqHash = {}, prevAutochain = '';
             let prevResn;
             let sChain = {};
             for (let i = 0; i < atomSize; ++i) {
-                let atom_hetatm = atom_hetatmArray[i];
-                let resn = resnArray[i];
-                let elem = elemArray[i];
-                let atom = nameArray[i];
-                let chain = chainArray[i];
-                let resi = resiArray[i];
-                let oriResi = resiOriArray[i]; 
-                let alt = altArray[i];
-                let bFactor = bArray[i];
+                let atom_hetatm = atom_hetatmArray.getString(i);
+                let resn = resnArray.getString(i);
+                let elem = elemArray.getString(i);
+                let atom = nameArray.getString(i);
+                let chain = chainArray.getString(i);
+                let resi = resiArray.getString(i);
+                let oriResi = resiOriArray.getString(i); 
+                let alt = altArray.getString(i);
+                let bFactor = bArray.getString(i);
 
-                let autochain = autochainArray[i];
+                let autochain = autochainArray.getString(i);
+
 
                 resi = oriResi;
 
@@ -64088,9 +64042,9 @@ var icn3d = (function (exports) {
 
                 //let chain_resi = chain + "_" + resi;
 
-                let x = xArray[i];
-                let y = yArray[i];
-                let z = zArray[i];
+                let x = xArray.getFloat(i);
+                let y = yArray.getFloat(i);
+                let z = zArray.getFloat(i);
                 let coord = new THREE.Vector3(x, y, z);
 
                 let atomDetails = {
@@ -64250,19 +64204,19 @@ var icn3d = (function (exports) {
             if(block.getCategory("_pdbx_poly_seq_scheme")) {
                 let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
 
-                let resiArray = poly_seq_scheme.getColumn("seq_id").data;
-                let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
-                let resnArray = poly_seq_scheme.getColumn("mon_id").data;
-                let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
+                let resiArray = poly_seq_scheme.getColumn("seq_id");
+                let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num");
+                let resnArray = poly_seq_scheme.getColumn("mon_id");
+                let chainArray = poly_seq_scheme.getColumn("pdb_strand_id");
 
                 let seqSize = poly_seq_scheme.rowCount;
                 let prevChain = "";
                 let seqArray = [];
                 for (let i = 0; i < seqSize; ++i) {
-                    resiArray[i];
-                    let oriResi = oriResiArray[i];
-                    let resn = resnArray[i];
-                    let chain = chainArray[i];
+                    resiArray.getString(i);
+                    let oriResi = oriResiArray.getString(i);
+                    let resn = resnArray.getString(i);
+                    let chain = chainArray.getString(i);
 
                     if(chain != prevChain && i > 0) {
                         mChainSeq[prevChain] = seqArray;
@@ -71668,25 +71622,6 @@ var icn3d = (function (exports) {
             let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms, undefined);
             let subdomains = result.subdomains;
             let pos2resi = result.pos2resi;
-    /*
-            if(subdomains.length <= 1) {
-                let residueArray = ic.resid2specCls.atoms2residues(Object.keys(currAtoms));
-                if(residueArray.length < minResidues) return domainAtomsArray;
-
-                for(let n = 0, nl = residueArray.length; n < nl; ++n) {
-                    let resid = residueArray[n];
-
-                    // clear previous refnum assignment if any
-                    // if(bRerunDomain) {
-                        delete ic.resid2refnum[resid];
-                        delete ic.residIgLoop[resid];
-                    // }
-                }
-
-                domainAtomsArray.push(currAtoms);
-            }
-            else 
-    */
 
             if(subdomains.length >= 1) {
                 for(let k = 0, kl = subdomains.length; k < kl; ++k) {
@@ -71704,7 +71639,7 @@ var icn3d = (function (exports) {
                             domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
 
                             // clear previous refnum assignment if any
-                            delete ic.resid2refnum[resid];
+                            // delete ic.resid2refnum[resid];
                             delete ic.residIgLoop[resid];
                         }
                     }
@@ -72237,20 +72172,6 @@ var icn3d = (function (exports) {
                             ic.resid2refnum_ori[resid] = refnumLabel;
                             ic.resid2domainid[resid] = domainid;
                         }
-
-                        // final reference numbers will be assign in ic.annoIgCls.showRefNum()
-
-                        // if(!ic.refnum2residArray.hasOwnProperty(refnum)) {
-                        //     ic.refnum2residArray[refnum] = [resid];
-                        // }
-                        // else {
-                        //     ic.refnum2residArray[refnum].push(resid);
-                        // }
-
-                        // if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        //     ic.chainsMapping[chainid] = {};
-                        // }
-                        // ic.chainsMapping[chainid][resid] = refnumLabel;
                     //}
                 }
             }
@@ -72414,7 +72335,7 @@ var icn3d = (function (exports) {
             return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
         }
 
-        exportRefnum(type, bCalcRef) { let ic = this.icn3d, me = ic.icn3dui;
+        exportRefnum(type, bNoArraySymbol) { let ic = this.icn3d, me = ic.icn3dui;
             let refData = '';
 
             // 1. show IgStrand ref numbers
@@ -72461,90 +72382,100 @@ var icn3d = (function (exports) {
 
                 let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
 
-                // refData += '{"Ig domain" : ' + bIgDomain + ', "ref PDB" : ' + JSON.stringify(ic.refPdbList) + ',\n';
-                refData += '{"Ig domain" : ' + bIgDomain + ',\n';
+                
 
                 if(bIgDomain) {
-                    refData += '"igs": [\n';
-                    for(let chnid in ic.chains) {
-                        let igArray = ic.chain2igArray[chnid];
+                    for(let structure in ic.structures) {
+                        refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
+                        for(let m = 0, ml = ic.structures[structure].length; m < ml; ++m) {
+                            let chnid = ic.structures[structure][m]; 
+                            let igArray = ic.chain2igArray[chnid];
 
-                        if(igArray && igArray.length > 0) {
-                            refData += '{"' + chnid + '": {\n';
+                            if(igArray && igArray.length > 0) {
+                                refData += '{"' + chnid + '": {\n';
 
-                            for(let i = 0, il = igArray.length; i < il; ++i) {
-                                let startPosArray = igArray[i].startPosArray;
-                                let endPosArray = igArray[i].endPosArray;
-                                let domainid = igArray[i].domainid;
-                                let info = ic.domainid2info[domainid];
-                                if(!info) continue;
+                                for(let i = 0, il = igArray.length; i < il; ++i) {
+                                    let startPosArray = igArray[i].startPosArray;
+                                    let endPosArray = igArray[i].endPosArray;
+                                    let domainid = igArray[i].domainid;
+                                    let info = ic.domainid2info[domainid];
+                                    if(!info) continue;
 
-                                refData += '"' + domainid + '": {\n';
+                                    refData += '"' + domainid + '": {\n';
 
-                                refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
-                                for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
-                                    let startPos = startPosArray[j];
-                                    let endPos = endPosArray[j];
-                                    for(let k = startPos; k <= endPos; ++k) {
-                                        const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
-                                        refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                    refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
+                                    for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
+                                        let startPos = startPosArray[j];
+                                        let endPos = endPosArray[j];
+                                        for(let k = startPos; k <= endPos; ++k) {
+                                            const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
+                                            refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                        }
                                     }
+                                    refData += '],\n';
+
+                                    refData += '},\n';
                                 }
-                                refData += '],\n';
 
-                                refData += '},\n';
+                                refData += '}},\n';
                             }
-
-                            refData += '}},\n';
                         }
+
+                        refData += ']}},\n';
                     }
-
-                    refData += ']\n';
                 }
-
-                refData += '}\n';
             }
             // 2. show Kabat ref numbers
             else if(type == 'kabat' || type == 'Kabat') {
                 let resid2kabat = {};
                 for(let resid in ic.resid2refnum) {
-                let domainid = ic.resid2domainid[resid];
-                let refnumStr, refnumLabel = ic.resid2refnum[resid];
+                    let domainid = ic.resid2domainid[resid];
+                    let refnumStr, refnumLabel = ic.resid2refnum[resid];
 
-                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                    if(!atom) continue;
+                    let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
 
-                if(refnumLabel) {
-                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                    refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                    if(refnumLabel) {
+                        let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                        refnumStr = (ic.domainid2ig2kabat[domainid]) ? ic.domainid2ig2kabat[domainid][refnumStr_ori] : undefined;
+                    }
+
+                    resid2kabat[resid + '_' + resn] = refnumStr;
                 }
 
-                resid2kabat[resid + '_' + resn] = refnumStr;
-                }
-
+                refData += '{"Kabat": ';
                 refData += JSON.stringify(resid2kabat);
+                refData += ',\n';
             }
             // 3. show IMGT ref numbers
             else if(type == 'imgt'|| type == 'IMGT') {
                 let resid2imgt = {};
                 for(let resid in ic.resid2refnum) {
-                let domainid = ic.resid2domainid[resid];
-                let refnumStr, refnumLabel = ic.resid2refnum[resid];
+                    let domainid = ic.resid2domainid[resid];
+                    let refnumStr, refnumLabel = ic.resid2refnum[resid];
 
-                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
-                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                    if(!atom) continue;
+                    let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
 
-                if(refnumLabel) {
-                    let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                    refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+                    if(refnumLabel) {
+                        let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                        refnumStr = (ic.domainid2ig2imgt[domainid]) ? ic.domainid2ig2imgt[domainid][refnumStr_ori] : undefined;
+                    }
+
+                    resid2imgt[resid + '_' + resn] = refnumStr;
                 }
 
-                resid2imgt[resid + '_' + resn] = refnumStr;
-                }
-
+                refData += '{"Kabat": ';
                 refData += JSON.stringify(resid2imgt);
+                refData += ',\n';
             }
 
+
+            if(!bNoArraySymbol) {
+                refData = '[' + refData + ']';
+            }
 
             if(!me.bNode) {
                 let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
@@ -81231,7 +81162,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.31.0';
+        this.REVISION = '3.31.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

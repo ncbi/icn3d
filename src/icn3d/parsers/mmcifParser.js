@@ -18,7 +18,6 @@ class MmcifParser {
         let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
         let data = await me.getAjaxPromise(url, 'text', true);
 
-        /*
         // url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
         // let dataObj = {'mmciffile': data};
         // let data2 = await me.getAjaxPostPromise(url, dataObj, true);
@@ -31,13 +30,6 @@ class MmcifParser {
 
         // await this.loadMmcifData(bcifJson, mmcifid);
         await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
-        */
-
-        url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-        let dataObj = {'mmciffile': data};
-        let data2 = await me.getAjaxPostPromise(url, dataObj, true);
-
-        await this.loadMmcifData(data2, mmcifid);
     }
 
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;

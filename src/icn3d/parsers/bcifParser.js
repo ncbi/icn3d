@@ -129,8 +129,6 @@ class BcifParser {
         await ic.opmParserCls.loadOpmData(bcifArrayBuffer, bcifid, undefined, 'bcif', undefined, bText);
     }
 
-    // For text mmCIF file, CIFTools library does not support atom_site.getColumn("Cartn_x").data,
-    // but just support atom_site.getColumn("Cartn_x").getFloat(i). So do not use "bText = true" for now.
     getBcifJson(bcifData, bcifid, bText, bNoCoord) { let ic = this.icn3d, me = ic.icn3dui;
         let q = "\"";
         let text = "";
@@ -196,25 +194,25 @@ class BcifParser {
             // Retrieve the table corresponding to the struct_conf category, which delineates mainly helix
             let struct_conf = block.getCategory("_struct_conf");
 
-            let conf_type_idArray = struct_conf.getColumn("conf_type_id").data;
+            let conf_type_idArray = struct_conf.getColumn("conf_type_id");
 
-            let chain1Array = struct_conf.getColumn("beg_auth_asym_id").data;
-            let resi1Array = struct_conf.getColumn("beg_label_seq_id").data;
+            let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
+            let resi1Array = struct_conf.getColumn("beg_label_seq_id");
 
-            let chain2Array = struct_conf.getColumn("end_auth_asym_id").data;
-            let resi2Array = struct_conf.getColumn("end_label_seq_id").data;
+            let chain2Array = struct_conf.getColumn("end_auth_asym_id");
+            let resi2Array = struct_conf.getColumn("end_label_seq_id");
 
             // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
             let confSize = struct_conf.rowCount;
             for (let i = 0; i < confSize; ++i) {
-                let conf_type_id = conf_type_idArray[i];
+                let conf_type_id = conf_type_idArray.getString(i);
 
-                let chain1 = chain1Array[i];
-                let resi1 = resi1Array[i];
+                let chain1 = chain1Array.getString(i);
+                let resi1 = resi1Array.getString(i);
                 let id1 = chain1 + "_" + resi1;
 
-                let chain2 = chain2Array[i];
-                let resi2 = resi2Array[i];
+                let chain2 = chain2Array.getString(i);
+                let resi2 = resi2Array.getString(i);
                 let id2 = chain2 + "_" + resi2;
 
                 let ss;
@@ -247,23 +245,23 @@ class BcifParser {
             // Retrieve the table corresponding to the struct_sheet_range category, which delineates mainly beta sheet
             let struct_sheet_range = block.getCategory("_struct_sheet_range");
 
-            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id").data;
-            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id").data;
+            let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
+            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
 
-            let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id").data;
-            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id").data;
+            let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id");
+            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
 
             // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
             let sheetSize = struct_sheet_range.rowCount;
             for (let i = 0; i < sheetSize; ++i) {
-                let chain1 = chain1Array[i];
-                let resi1 = resi1Array[i];
+                let chain1 = chain1Array.getString(i);
+                let resi1 = resi1Array.getString(i);
                 let id1 = chain1 + "_" + resi1;
 
                 sSSBegin[id1] = 1;
 
-                let chain2 = chain2Array[i];
-                let resi2 = resi2Array[i];
+                let chain2 = chain2Array.getString(i);
+                let resi2 = resi2Array.getString(i);
                 let id2 = chain2 + "_" + resi2;
 
                 sSSEnd[id2] = 1;
@@ -288,28 +286,28 @@ class BcifParser {
             // Retrieve the table corresponding to the struct_conn category, which delineates connections1
             let struct_conn = block.getCategory("_struct_conn");
 
-            let conn_type_idArray = struct_conn.getColumn("conn_type_id").data;
+            let conn_type_idArray = struct_conn.getColumn("conn_type_id");
 
-            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id").data;
-            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id").data;
-            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id").data;
+            let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
+            let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
+            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
 
-            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id").data;
-            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id").data;
-            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id").data;
+            let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
+            let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
+            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
 
             let connSize = struct_conn.rowCount;
             for (let i = 0; i < connSize; ++i) {
-                let conn_type_id = conn_type_idArray[i];
+                let conn_type_id = conn_type_idArray.getString(i);
 
-                let chain1 = chain1Array[i];
-                let name1 = name1Array[i];
-                let resi1 = resi1Array[i];
+                let chain1 = chain1Array.getString(i);
+                let name1 = name1Array.getString(i);
+                let resi1 = resi1Array.getString(i);
                 let id1 = chain1 + "_" + resi1 + "_" + name1;
 
-                let chain2 = chain2Array[i];
-                let name2 = name2Array[i];
-                let resi2 = resi2Array[i];
+                let chain2 = chain2Array.getString(i);
+                let name2 = name2Array.getString(i);
+                let resi2 = resi2Array.getString(i);
                 let id2 = chain2 + "_" + resi2 + "_" + name2;
 
                 // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
@@ -352,40 +350,40 @@ class BcifParser {
         let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray = [];
 
         if(!bNoCoord) {
-            atom_hetatmArray = atom_site.getColumn("group_PDB").data;
-            resnArray = atom_site.getColumn("label_comp_id").data;
-            elemArray = atom_site.getColumn("type_symbol").data;
-            nameArray = atom_site.getColumn("label_atom_id").data;
+            atom_hetatmArray = atom_site.getColumn("group_PDB");
+            resnArray = atom_site.getColumn("label_comp_id");
+            elemArray = atom_site.getColumn("type_symbol");
+            nameArray = atom_site.getColumn("label_atom_id");
 
-            chainArray = atom_site.getColumn("auth_asym_id").data;
+            chainArray = atom_site.getColumn("auth_asym_id");
             
-            resiArray = atom_site.getColumn("label_seq_id").data;
-            resiOriArray = atom_site.getColumn("auth_seq_id").data;
-            altArray = atom_site.getColumn("label_alt_id").data;
+            resiArray = atom_site.getColumn("label_seq_id");
+            resiOriArray = atom_site.getColumn("auth_seq_id");
+            altArray = atom_site.getColumn("label_alt_id");
 
-            bArray = atom_site.getColumn("B_iso_or_equiv").data;
+            bArray = atom_site.getColumn("B_iso_or_equiv");
 
-            xArray = atom_site.getColumn("Cartn_x").data;
-            yArray = atom_site.getColumn("Cartn_y").data;
-            zArray = atom_site.getColumn("Cartn_z").data;
+            xArray = atom_site.getColumn("Cartn_x");
+            yArray = atom_site.getColumn("Cartn_y");
+            zArray = atom_site.getColumn("Cartn_z");
 
-            autochainArray = atom_site.getColumn("label_asym_id").data;
+            autochainArray = atom_site.getColumn("label_asym_id");
 
             // get the bond info
             let ligSeqHash = {}, prevAutochain = '';
             for (let i = 0; i < atomSize; ++i) {
-                let atom_hetatm = atom_hetatmArray[i];
-                let resn = resnArray[i];
-                let elem = elemArray[i];
-                let name = nameArray[i];
+                let atom_hetatm = atom_hetatmArray.getString(i);
+                let resn = resnArray.getString(i);
+                let elem = elemArray.getString(i);
+                let name = nameArray.getString(i);
         // use the chain name from author, and use seq id from standardized seq id
                 //let chain = atom_site.getColumn("label_asym_id").getString(i);
-                let chain = chainArray[i];
-                let resi = resiArray[i];
-                let oriResi = resiOriArray[i]; 
-                let alt = altArray[i];
+                let chain = chainArray.getString(i);
+                let resi = resiArray.getString(i);
+                let oriResi = resiOriArray.getString(i); 
+                let alt = altArray.getString(i);
 
-                let autochain = autochainArray[i];
+                let autochain = autochainArray.getString(i);
 
                 resi = oriResi;
 
@@ -456,9 +454,9 @@ class BcifParser {
                     }
                 }
 
-                let x = xArray[i];
-                let y = yArray[i];
-                let z = zArray[i];
+                let x = xArray.getFloat(i);
+                let y = yArray.getFloat(i);
+                let z = zArray.getFloat(i);
 
                 let id = serial.toString();
 
@@ -556,18 +554,18 @@ class BcifParser {
             }
 
             for (let i = 0; i < atomSize; ++i) {
-                let atom_hetatm = atom_hetatmArray[i];
-                let resn = resnArray[i];
-                let elem = elemArray[i];
-                let name = nameArray[i];
+                let atom_hetatm = atom_hetatmArray.getString(i);
+                let resn = resnArray.getString(i);
+                let elem = elemArray.getString(i);
+                let name = nameArray.getString(i);
         // use the chain name from author, and use seq id from standardized seq id
                 //let chain = atom_site.getColumn("label_asym_id").getString(i);
-                let chain = chainArray[i];
-                let resi = resiArray[i];
-                let oriResi = resiOriArray[i]; 
-                let alt = altArray[i];
+                let chain = chainArray.getString(i);
+                let resi = resiArray.getString(i);
+                let oriResi = resiOriArray.getString(i); 
+                let alt = altArray.getString(i);
 
-                let autochain = autochainArray[i];
+                let autochain = autochainArray.getString(i);
 
                 resi = oriResi;
 
@@ -615,11 +613,11 @@ class BcifParser {
                     // }
                 }
 
-                let b = bArray[i];
+                let b = bArray.getString(i);
 
-                let x = xArray[i];
-                let y = yArray[i];
-                let z = zArray[i];
+                let x = xArray.getFloat(i);
+                let y = yArray.getFloat(i);
+                let z = zArray.getFloat(i);
                 //int serial = parseInt(atom_site(i, "id"));
 
                 //let id = chain + "_" + resi + "_" + name;
@@ -707,19 +705,19 @@ class BcifParser {
         if(block.getCategory("_pdbx_poly_seq_scheme")) {
             let poly_seq_scheme = block.getCategory("_pdbx_poly_seq_scheme");
 
-            let resiArray = poly_seq_scheme.getColumn("seq_id").data;
-            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num").data;
-            let resnArray = poly_seq_scheme.getColumn("mon_id").data;
-            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id").data;
+            let resiArray = poly_seq_scheme.getColumn("seq_id");
+            let oriResiArray = poly_seq_scheme.getColumn("pdb_seq_num");
+            let resnArray = poly_seq_scheme.getColumn("mon_id");
+            let chainArray = poly_seq_scheme.getColumn("pdb_strand_id");
 
             let seqSize = poly_seq_scheme.rowCount;
             let prevChain = "";
             let seq = "";
             for (let i = 0; i < seqSize; ++i) {
-                let resi = resiArray[i];
-                let oriResi = oriResiArray[i];
-                let resn = resnArray[i];
-                let chain = chainArray[i];
+                let resi = resiArray.getString(i);
+                let oriResi = oriResiArray.getString(i);
+                let resn = resnArray.getString(i);
+                let chain = chainArray.getString(i);
 
                 if(chain != prevChain) {
                     if(i == 0) {

@@ -472,13 +472,6 @@ class ShowSeq {
                 html += '</div>';
                 html3 += '</div></div>';
             }         
-
-            // if(ic.bShowRefnum && ic.chainid2refpdbname.hasOwnProperty(chnid) && ic.chainid2refpdbname[chnid].length > 0) {                                       
-            //     let result = ic.annoIgCls.showAllRefNum(giSeq, chnid);
-                
-            //     html += result.html;
-            //     html3 += result.html3;
-            // }
             
             if(ic.bShowCustomRefnum && ic.chainsMapping.hasOwnProperty(chnid)) {              
                 let bCustom = true;
