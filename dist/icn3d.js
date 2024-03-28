@@ -3570,20 +3570,20 @@ THREE.OrthographicTrackballControls.prototype = Object.create( THREE.EventDispat
 THREE.OrthographicTrackballControls.prototype.constructor = THREE.OrthographicTrackballControls;
 
 
-; var __CIFTools = function () {
-  'use strict';
+// ; var __CIFTools = function () {
+//   'use strict';
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
 var CIFTools;
 (function (CIFTools) {
     CIFTools.VERSION = { number: "1.1.7", date: "Oct 30 2018" };
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
+// var CIFTools;
+// (function (CIFTools) {
     var Utils;
     (function (Utils) {
         var ChunkedArray;
@@ -3721,7 +3721,7 @@ var CIFTools;
             ChunkedArray.create = create;
         })(ChunkedArray = Utils.ChunkedArray || (Utils.ChunkedArray = {}));
     })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
@@ -3731,9 +3731,9 @@ var CIFTools;
  * For the purposes of parsing numbers from the mmCIF data representations,
  * up to 4 times faster than JS parseInt/parseFloat.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Utils;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Utils;
     (function (Utils) {
         var FastNumberParsers;
         (function (FastNumberParsers) {
@@ -3813,13 +3813,13 @@ var CIFTools;
             FastNumberParsers.parseFloat = parseFloat;
         })(FastNumberParsers = Utils.FastNumberParsers || (Utils.FastNumberParsers = {}));
     })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Utils;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Utils;
     (function (Utils) {
         var __paddingSpaces = [];
         (function () {
@@ -3962,13 +3962,13 @@ var CIFTools;
             StringWriter.writeFloatPadRight = writeFloatPadRight;
         })(StringWriter = Utils.StringWriter || (Utils.StringWriter = {}));
     })(Utils = CIFTools.Utils || (CIFTools.Utils = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    "use strict";
+// var CIFTools;
+// (function (CIFTools) {
+//     "use strict";
     /**
      * Represents a column that is not present.
      */
@@ -4028,13 +4028,13 @@ var CIFTools;
         }
         Category.getVector = getVector;
     })(Category = CIFTools.Category || (CIFTools.Category = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    "use strict";
+// var CIFTools;
+// (function (CIFTools) {
+//     "use strict";
     var ParserResult;
     (function (ParserResult) {
         function error(message, line) {
@@ -4072,7 +4072,7 @@ var CIFTools;
         return ParserSuccess;
     }());
     CIFTools.ParserSuccess = ParserSuccess;
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
@@ -4116,8 +4116,8 @@ var CIFTools;
     in memory that is very efficient, fast and introduces a very minimal overhead.
 
  */
-var CIFTools;
-(function (CIFTools) {
+// var CIFTools;
+// (function (CIFTools) {
     var Text;
     (function (Text) {
         "use strict";
@@ -4341,13 +4341,13 @@ var CIFTools;
         }());
         Text.Column = Column;
     })(Text = CIFTools.Text || (CIFTools.Text = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Text;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Text;
     (function (Text) {
         "use strict";
         var TokenIndexBuilder;
@@ -4861,13 +4861,13 @@ var CIFTools;
         }
         Text.parse = parse;
     })(Text = CIFTools.Text || (CIFTools.Text = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Text;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Text;
     (function (Text) {
         "use strict";
         var StringWriter = CIFTools.Utils.StringWriter;
@@ -5107,12 +5107,12 @@ var CIFTools;
             }
         }
     })(Text = CIFTools.Text || (CIFTools.Text = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
+// var CIFTools;
+// (function (CIFTools) {
     var Binary;
     (function (Binary) {
         var MessagePack;
@@ -5328,13 +5328,13 @@ var CIFTools;
             MessagePack.decode = decode;
         })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         var MessagePack;
         (function (MessagePack) {
@@ -5622,13 +5622,13 @@ var CIFTools;
             }
         })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         var MessagePack;
         (function (MessagePack) {
@@ -5748,13 +5748,13 @@ var CIFTools;
             MessagePack.utf8ByteCount = utf8ByteCount;
         })(MessagePack = Binary.MessagePack || (Binary.MessagePack = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         /**
@@ -5956,13 +5956,13 @@ var CIFTools;
             }
         })(Decoder || (Decoder = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         var File = /** @class */ (function () {
@@ -6120,13 +6120,13 @@ var CIFTools;
             return MaskedStringColumn;
         }());
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         /**
@@ -6486,13 +6486,13 @@ var CIFTools;
             Encoder.stringArray = stringArray;
         })(Encoder = Binary.Encoder || (Binary.Encoder = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         Binary.VERSION = '0.3.0';
@@ -6527,13 +6527,13 @@ var CIFTools;
             Encoding.isSignedIntegerDataType = isSignedIntegerDataType;
         })(Encoding = Binary.Encoding || (Binary.Encoding = {}));
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         function checkVersions(min, current) {
@@ -6560,13 +6560,13 @@ var CIFTools;
         }
         Binary.parse = parse;
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
+// })(CIFTools || (CIFTools = {}));
 /*
  * Copyright (c) 2016 - now David Sehnal, licensed under MIT License, See LICENSE file for more info.
  */
-var CIFTools;
-(function (CIFTools) {
-    var Binary;
+// var CIFTools;
+// (function (CIFTools) {
+//     var Binary;
     (function (Binary) {
         "use strict";
         function encodeField(field, data, totalCount) {
@@ -6669,17 +6669,17 @@ var CIFTools;
         }());
         Binary.Writer = Writer;
     })(Binary = CIFTools.Binary || (CIFTools.Binary = {}));
-})(CIFTools || (CIFTools = {}));
-  return CIFTools;
-}
-if (typeof module === 'object' && typeof module.exports === 'object') {
-  module.exports = __CIFTools();
-} else if (typeof define === 'function' && define.amd) {
-  define(['require'], function(require) { return __CIFTools(); })
-} else {
-  var __target = !!window ? window : this;
-  __target.CIFTools = __CIFTools();
-}
+ })(CIFTools || (CIFTools = {}));
+//   return CIFTools;
+// }
+// if (typeof module === 'object' && typeof module.exports === 'object') {
+//   module.exports = __CIFTools();
+// } else if (typeof define === 'function' && define.amd) {
+//   define(['require'], function(require) { return __CIFTools(); })
+// } else {
+//   var __target = !!window ? window : this;
+//   __target.CIFTools = __CIFTools();
+// }
 
 
 /*
