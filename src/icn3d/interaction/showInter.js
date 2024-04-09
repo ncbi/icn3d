@@ -182,7 +182,7 @@ class ShowInter {
             }
         }
 
-        ic.bShowHighlight = false;
+        //!!!ic.bShowHighlight = false;
     }
 
     hideHydrogens() { let ic = this.icn3d, me = ic.icn3dui;

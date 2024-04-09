@@ -13,13 +13,11 @@ class Domain3d {
 	init3ddomain() { let ic = this.icn3d, me = ic.icn3dui;
         //this.dcut = 8; // threshold for C-alpha interactions
 
-		// It seemed the threshold 7 angstrom works better
-		//this.dcut = 7; // threshold for C-alpha interactions
 		this.dcut = 8; // threshold for C-alpha interactions
 
 		// added by Jiyao
-		// pdbid 1CD8 requires a min contact 4, not 5
-		this.min_contacts = 4; //5; //3;			// minimum number of contacts to be considered as neighbors
+		// Ig domain should not be separated into two parts, set min as 2
+		this.min_contacts = 2; //3;			// minimum number of contacts to be considered as neighbors
 
 		this.MAX_SSE = 512;
 

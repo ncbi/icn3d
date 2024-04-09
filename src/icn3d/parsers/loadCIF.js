@@ -122,10 +122,12 @@ class LoadCIF {
             let conf_type_idArray = struct_conf.getColumn("conf_type_id");
         
             let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
-            let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+            // let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+            let resi1Array = struct_conf.getColumn("beg_auth_seq_id");
         
             let chain2Array = struct_conf.getColumn("end_auth_asym_id");
-            let resi2Array = struct_conf.getColumn("end_label_seq_id");
+            // let resi2Array = struct_conf.getColumn("end_label_seq_id");
+            let resi2Array = struct_conf.getColumn("end_auth_seq_id");
         
             // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
             let confSize = struct_conf.rowCount;
@@ -164,10 +166,12 @@ class LoadCIF {
             let struct_sheet_range = block.getCategory("_struct_sheet_range");
         
             let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
-            let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+            // let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+            let resi1Array = struct_sheet_range.getColumn("beg_auth_seq_id");
         
             let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id");
-            let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+            // let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+            let resi2Array = struct_sheet_range.getColumn("end_auth_seq_id");
         
             // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
             let sheetSize = struct_sheet_range.rowCount;
@@ -175,7 +179,7 @@ class LoadCIF {
                 let startChain = chain1Array.getString(i);
                 let startResi = parseInt(resi1Array.getString(i));
                 let endResi = parseInt(resi2Array.getString(i));
-            
+
                 for(let j = startResi; j <= endResi; ++j) {
                     let resid = structure + "_" + startChain + "_" + j;
                     sheetArray.push(resid);

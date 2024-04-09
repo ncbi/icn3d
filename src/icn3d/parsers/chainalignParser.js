@@ -838,7 +838,7 @@ class ChainalignParser {
             ic.init();
         }
         else {
-            ic.resetConfig();
+            //ic.resetConfig();
         
             ic.bResetAnno = true;
             ic.bResetSets = true;
@@ -935,7 +935,9 @@ class ChainalignParser {
         let hAtoms = {}, hAtomsTmp = {};
         let bLastQuery = false;
 
-        ic.opts['color'] = (ic.structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
+        let opts = {};
+
+        opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
@@ -967,11 +969,16 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
-        // parseMmdbData() didn't render structures for mmdbafid input
-        if(ic.structArray.length > 1) ic.opts['color'] = 'structure';
-        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-        
+        // add color only for the newly loaded structures
+        ic.setColorCls.setColorByOptions(opts, hAtoms);
+
         await ic.ParserUtilsCls.renderStructure();
+
+        if(ic.bAnnoShown) {
+            await ic.showAnnoCls.showAnnotations();
+            ic.annotationCls.resetAnnoTabAll();
+        }
+
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         if(bQuery && me.cfg.matchedchains) {          

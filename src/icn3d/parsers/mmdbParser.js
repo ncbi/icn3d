@@ -32,7 +32,7 @@ class MmdbParser {
         if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;
-            await ic.bciffParserCls.downloadBcif(pdbid);
+            await ic.bcifParserCls.downloadBcif(pdbid);
 
             return;
         }
