@@ -116,6 +116,8 @@ class SelectCollections {
           true
         );
         ic.bSelectResidue = false;
+
+        ic.bShowHighlight = true; // reset
       }
     });
 

@@ -582,34 +582,32 @@ class Annotation {
     }
 
     async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
-        if(bSelection) { // clear previous refnum
-            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
-            for(let resid in residueHash) {
-                if(ic.resid2refnum) delete ic.resid2refnum[resid];
-                if(ic.residIgLoop) delete ic.residIgLoop[resid];
-                if(ic.resid2domainid) delete ic.resid2domainid[resid];
+        ic.opts['color'] = 'ig strand';
+
+        // if(!bSelection && !template) {
+        if(!bSelection) {
+            // select all protein chains
+            ic.hAtoms = {};
+            for(let chainid in ic.protein_chainid) {
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
             }
         }
 
-        // if(!ic.bIgShown) {
-            if(!bSelection && !template) {
-                // select all protein chains
-                ic.hAtoms = {};
-                for(let chainid in ic.protein_chainid) {
-                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
-                }
-            }
+        // clear previous refnum
+        let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+        for(let resid in residueHash) {
+            if(ic.resid2refnum) delete ic.resid2refnum[resid];
+            if(ic.residIgLoop) delete ic.residIgLoop[resid];
+            if(ic.resid2domainid) delete ic.resid2domainid[resid];
+        }
 
-            for(let chainid in ic.protein_chainid) {
-                await ic.annoIgCls.showIg(chainid, template);
-            }
-        // }
-        // ic.bIgShown = true;
+        ic.bRunRefnumAgain = true;
+        for(let chainid in ic.protein_chainid) {
+            await ic.annoIgCls.showIg(chainid, template);
+            ic.bRunRefnumAgain = false; // run it once for all chains
+        }
 
         if(ic.bShowRefnum) {
-            // ic.opts.color = 'ig strand';
-            // ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
             ic.hlUpdateCls.updateHlAll();
             ic.drawCls.draw();
         } 

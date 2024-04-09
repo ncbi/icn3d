@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.31.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.2.zip) was release on April 9, 2024. Fixed the secondary structure ranges in CIF files.
+
 [icn3d-3.31.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.1.zip) was release on March 21, 2024. Switched from "let xArray = atom_site.getColumn('Cartn_x').data" to "let xArray = atom_site.getColumn('Cartn_x')" when accessing data from Binary or text CIF data.
 
 [icn3d-3.31.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.0.zip) was release on March 21, 2024. Replaced MMTF data with Binary CIF data. Both "mmtfid" and "bcifid" inputs get the Binary CIF data. 

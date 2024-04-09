@@ -5,7 +5,8 @@
  class Refnum {
     constructor(icn3d) {
         this.icn3d = icn3d;
-        this.TMThreshold = 0.85
+        this.TMThresholdIgType = 0.85
+        this.TMThresholdTemplate = 0.4
         this.topClusters = 5;
     }
 
@@ -127,13 +128,13 @@
         ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
         ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
         ic.ref2igtype['CD2_1hnfA_human_V-n1'] = 'IgV';
-        ic.ref2igtype['CD3d_6jxrd_human_C1'] = 'IgI';
-        ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgI';
-        ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgI';
+        ic.ref2igtype['CD3d_6jxrd_human_C1'] = 'IgC1';
+        ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgC1';
+        ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgC2';
         ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
         ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
         ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
-        ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgC2';
+        ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgI';
         ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
         ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'Cadherin';
         ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
@@ -141,7 +142,7 @@
         ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
         ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
         ic.ref2igtype['FAB-LIGHT_5esv_V-n1'] = 'IgV';
-        ic.ref2igtype['GHR_1axiB_human_C1-n1'] = 'IgFN3';
+        ic.ref2igtype['GHR_1axiB_human_C1-n1'] = 'IgC1';
         ic.ref2igtype['ICOS_6x4gA_human_V'] = 'IgV';
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n2'] = 'IgFN3';
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
@@ -149,7 +150,7 @@
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
         ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
         ic.ref2igtype['JAM1_1nbqA_human_Iset-n2'] = 'IgI';
-        ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC2';
+        ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
@@ -163,7 +164,7 @@
         ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
         ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
         ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
-        ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC2';
+        ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
         ic.ref2igtype['TEAD1_3kysC_human'] = 'IgE';
@@ -172,7 +173,7 @@
         ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
         ic.ref2igtype['VISTA_6oilA_human_V'] = 'IgV';
         ic.ref2igtype['VNAR_1t6vN_shark_V'] = 'IgV';
-        ic.ref2igtype['VTCN1_Q7Z7D3_human_C1-n2'] = 'IgV';
+        ic.ref2igtype['VTCN1_Q7Z7D3_human_C1-n2'] = 'IgC1';
     }
 
     getPdbAjaxArray() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -239,6 +240,7 @@
         ic.domainid2pdb = {};
 
         let bNoMoreIg = true;
+        let bFoundDomain = false;
         for(let i = 0, il = struArray.length; i < il; ++i) {
             let struct = struArray[i];
             let chainidArray = ic.structures[struct];
@@ -251,6 +253,12 @@
 
                 if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
                 if(!ic.domainid2score) ic.domainid2score = {};
+
+                if(domainAtomsArray.length == 0) {
+                    continue;
+                }
+
+                bFoundDomain = true;
 
                 for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                     bNoMoreIg = false;
@@ -265,6 +273,10 @@
                     let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtomsArray[k]).length;
                     //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length;
                     let domainid = chainid + ',' + k + '_' + resiSum;
+
+                    // clear score
+                    delete ic.domainid2score[domainid];
+
                     ic.domainid2pdb[domainid] = pdb_target;
 
                     if(!template) {
@@ -292,6 +304,10 @@
                     }
                 }
             }
+        }
+
+        if(!bFoundDomain) {
+            return bNoMoreIg;
         }
 
         //try {
@@ -431,27 +447,13 @@
                         // clear previous refnum assignment if any
                         // delete ic.resid2refnum[resid];
                         delete ic.residIgLoop[resid];
+                        delete ic.resid2domainid[resid];
                     }
                 }
 
                 if(resCnt < minResidues) continue;
 
                 domainAtomsArray.push(domainAtoms);
-/*
-                let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
-                let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
-                let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtoms).length;
-
-                for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                    let startResi = segArray[m];
-                    let endResi = segArray[m+1];
-                    for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                        let resid = chainid + '_' + pos2resi[n - 1];
-                        //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                        ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum;
-                    }
-                }
-*/
             }
         }
 
@@ -476,9 +478,6 @@
 
     parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
     // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-        let tmscoreThreshold = 0.45; // 0.4; //0.5;
-        //let rmsdThreshold = 10;
-
         // find the best alignment for each chain
         let domainid2segs = {};
         let domainid2strandcnt = {};
@@ -492,6 +491,7 @@
         if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
 
         let minResidues = 20;
+
         for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
             //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
             let queryData = (dataArray[i]) ? dataArray[i].value : undefined; //[0];
@@ -502,6 +502,7 @@
             }
 
             if(queryData[0].score === undefined) continue;
+            let score = parseFloat(queryData[0].score);
 
             //let domainid_index = domainidpairArray[i].split(',');
             //let domainid = domainid_index[0];
@@ -510,16 +511,13 @@
             //let chainid = domainid.split('-')[0];
 
             if(!bRound1) {
-                if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
-                    if(!me.bNode) console.log("domainid " + domainid + " and refpdbname " + refpdbname + " were skipped due to a TM-score less than " + tmscoreThreshold);
+                if(queryData[0].score < this.TMThresholdTemplate || queryData[0].num_res < minResidues) {
+                    if(!me.bNode) console.log("bRound1: " + bRound1 + ": domainid " + domainid + " and refpdbname " + refpdbname + " were skipped due to a TM-score less than " + this.TMThresholdTemplate);
                     continue;
                 }
             }
             else {
-                // if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
-                //     continue;
-                // }
-                if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                if(queryData[0].score < this.TMThresholdTemplate || queryData[0].num_res < minResidues / 2) {
                     continue;
                 }
             }
@@ -530,6 +528,9 @@
             else {
                 // if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd + ", num_seg: " + queryData[0].num_seg + ",  10/RMSD + num_seg/5: " + (10 / queryData[0].super_rmsd + queryData[0].num_seg / 5).toFixed(1));
                 if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
+
+                if(!domainid2refpdbnamelist[domainid]) domainid2refpdbnamelist[domainid] = {};
+                domainid2refpdbnamelist[domainid][refpdbname] = score;
             }
 
             // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
@@ -584,13 +585,13 @@
                     // if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                         if(!me.bNode && !(bBstrand && bCstrand && bEstrand && bFstrand)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
                         if(!me.bNode && !(bBSheet && bCSheet && bESheet && bFSheet)) console.log("Some of the Ig strands B, C, E, F are not beta sheets...");
-                        // if(!me.bNode && (BCnt < 3 || CCnt < 3 || ECnt < 3 || FCnt < 3)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+
                         if(ic.domainid2refpdbname[domainid][0] == refpdbname) {
                             delete ic.domainid2refpdbname[domainid];
                             delete ic.domainid2score[domainid];
                         }
-                        // continue;
-                    }
+                        continue;  
+                  }
                 // }
 
             }
@@ -610,7 +611,6 @@
             // }
 
             // let tmAdjust = 0.1; 
-            let score = parseFloat(queryData[0].score);
 
             // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
             // if(!domainid2segs.hasOwnProperty(domainid) || 
@@ -623,9 +623,7 @@
                 ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;
 
                 if(bRound1) {
-                    // ic.domainid2refpdbname[domainid] = score > 0.75 ? [refpdbname] : ['all_templates'];
-                    ic.domainid2refpdbname[domainid] = score >= this.TMThreshold ? [refpdbname] : ['all_templates'];
-                    // if(me.bNode) ic.domainid2refpdbname[domainid] = ['all_templates'];
+                    ic.domainid2refpdbname[domainid] = score >= this.TMThresholdIgType ? [refpdbname] : ['all_templates'];
                 }
                 else {
                     ic.domainid2refpdbname[domainid] = [refpdbname];
@@ -636,11 +634,6 @@
 
                 ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
                 ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-            }
-
-            if(bRound1) {
-                if(!domainid2refpdbnamelist[domainid]) domainid2refpdbnamelist[domainid] = {};
-                domainid2refpdbnamelist[domainid][refpdbname] = score;
             }
         }
 
@@ -668,6 +661,7 @@
         let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
 
         // no more Igs to detect
+        // no need to rerun the rest residues any more
         if(Object.keys(domainid2segs).length == 0) {
             bNoMoreIg = true;
             return bNoMoreIg;
@@ -739,7 +733,7 @@
 
             dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-            await this.parseAlignData(dataArray3, domainidpairArray3, false);
+            bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false);
 
             // end of round 2
             return bNoMoreIg;
@@ -790,7 +784,7 @@
 
         // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
         if(!ic.resid2refnum) ic.resid2refnum = {};
-        if(!ic.resid2refnum_ori) ic.resid2refnum_ori = {};
+        // if(!ic.resid2refnum_ori) ic.resid2refnum_ori = {};
         if(!ic.refnum2residArray) ic.refnum2residArray = {};
         if(!ic.chainsMapping) ic.chainsMapping = {};
 
@@ -811,10 +805,12 @@
 
             if(refpdbname) {
                 let message = "The reference PDB for domain " + domainid + " is " + refpdbname + ". The TM-score is " + score  + ". The sequence identity is " + seqid  + ". The number of aligned residues is " + nresAlign + ".";
+
                 if(!me.bNode) {
                     console.log(message);
                     me.htmlCls.clickMenuCls.setLogCmd(message, false, true);
                 }
+
                 // ic.refPdbList.push(message);
                 ic.domainid2info[domainid] = {'refpdbname': refpdbname, 'score': score, 'seqid': seqid, 'nresAlign': nresAlign};
             }
@@ -873,7 +869,7 @@
 
                 if(seg.q_start.indexOf('8550') != -1) {
                     // check C' and D strands
-                    if(cntBtwCE == 1) {
+                    if(cntBtwCE == 1 && CAtom && EAtom && (CpAtom || DAtom)) {
                         let distToC = 999, distToE = 999;
                         for(let j = 0, jl = CAtomArray.length; j < jl; ++j) {
                             let dist = (bCpstrand) ? CpAtom.coord.distanceTo(CAtomArray[j].coord) : DAtom.coord.distanceTo(CAtomArray[j].coord);
@@ -962,7 +958,7 @@
                     // only sheet or loop will be aligned
                     if(atom.ss != 'helix') {
                         ic.resid2refnum[resid] = refnumLabel;
-                        ic.resid2refnum_ori[resid] = refnumLabel;
+                        // ic.resid2refnum_ori[resid] = refnumLabel;
                         ic.resid2domainid[resid] = domainid;
                     }
                 //}
@@ -1019,7 +1015,7 @@
         // loops may have numbers such as 1310, 1410
 
         let strand;
-
+/*
         if(refnum < 1000) strand = undefined;
         else if(refnum >= 1200 && refnum < 1290) strand = "A---";
         else if(refnum >= 1320 && refnum < 1390) strand = "A--";
@@ -1041,7 +1037,34 @@
         else if(refnum >= 9620 && refnum < 9690) strand = "G+";
         else if(refnum >= 9720 && refnum < 9790) strand = "G++";
         else if(refnum > 9900) strand = undefined;
-        else strand = " ";;
+        else strand = " ";
+*/
+
+        // cover all ranges
+        if(refnum < 1000) strand = undefined;
+        else if(refnum >= 1200 && refnum < 1320) strand = "A---";
+        else if(refnum >= 1320 && refnum < 1420) strand = "A--";
+        else if(refnum >= 1420 && refnum < 1520) strand = "A-";
+        else if(refnum >= 1520 && refnum < 1620) strand = "A";
+        else if(refnum >= 1620 && refnum < 1720) strand = "A+";
+        else if(refnum >= 1720 && refnum < 1820) strand = "A++";
+        else if(refnum >= 1820 && refnum < 2000) strand = "A'";
+        else if(refnum >= 2000 && refnum < 3000) strand = "B";
+        else if(refnum >= 3000 && refnum < 3420) strand = "C--";
+        else if(refnum >= 3420 && refnum < 3520) strand = "C-";
+        else if(refnum >= 3520 && refnum < 4000) strand = "C";
+        else if(refnum >= 4000 && refnum < 5000) strand = "C'";
+        else if(refnum >= 5000 && refnum < 6000) strand = "C''";
+        else if(refnum >= 6000 && refnum < 7000) strand = "D";
+        else if(refnum >= 7000 && refnum < 7620) strand = "E";
+        else if(refnum >= 7620 && refnum < 8000) strand = "E+";
+        else if(refnum >= 8000 && refnum < 9000) strand = "F";
+        else if(refnum >= 9000 && refnum < 9620) strand = "G";
+        else if(refnum >= 9620 && refnum < 9720) strand = "G+";
+        else if(refnum >= 9720 && refnum < 9820) strand = "G++";
+        else if(refnum >= 9820 && refnum < 9900) strand = "G+++";
+        else if(refnum > 9900) strand = undefined;
+        else strand = " ";
 
         if(prevStrand) strand = prevStrand;
 
@@ -1135,7 +1158,7 @@
         // 1. show IgStrand ref numbers
         if(type == 'igstrand' || type == 'IgStrand') {
             // iGStrand reference numbers were adjusted when showing in sequences
-            // if(me.bNode) {            
+            // if(me.bNode) {        
             if(ic.bShowRefnum) {
                 for(let chnid in ic.chains) {
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
@@ -1174,50 +1197,56 @@
                 }
             }
 
-            let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
-
-            
-
-            if(bIgDomain) {
-                for(let structure in ic.structures) {
-                    refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
-                    for(let m = 0, ml = ic.structures[structure].length; m < ml; ++m) {
-                        let chnid = ic.structures[structure][m]; 
-                        let igArray = ic.chain2igArray[chnid];
-
-                        if(igArray && igArray.length > 0) {
-                            refData += '{"' + chnid + '": {\n';
-
-                            for(let i = 0, il = igArray.length; i < il; ++i) {
-                                let startPosArray = igArray[i].startPosArray;
-                                let endPosArray = igArray[i].endPosArray;
-                                let domainid = igArray[i].domainid;
-                                let info = ic.domainid2info[domainid];
-                                if(!info) continue;
-
-                                refData += '"' + domainid + '": {\n';
-
-                                refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
-                                for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
-                                    let startPos = startPosArray[j];
-                                    let endPos = endPosArray[j];
-                                    for(let k = startPos; k <= endPos; ++k) {
-                                        const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
-                                        refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
-                                    }
-                                }
-                                refData += '],\n';
-
-                                refData += '},\n';
-                            }
-
-                            refData += '}},\n';
-                        }
-                    }
-
-                    refData += ']}},\n';
-                }
+            // let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
+            let stru2bIgDomain = {};
+            for(let domainid in ic.domainid2info) {
+                let stru = domainid.split('_')[0];
+                stru2bIgDomain[stru] = 1;
             }
+
+        // if(bIgDomain) {
+            for(let structure in ic.structures) {
+                let bIgDomain = stru2bIgDomain.hasOwnProperty(structure) ? 1 : 0;
+
+                refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
+
+                for(let m = 0, ml = ic.structures[structure].length; ic.bShowRefnum && m < ml; ++m) {
+                    let chnid = ic.structures[structure][m]; 
+                    let igArray = ic.chain2igArray[chnid];
+
+                    if(igArray && igArray.length > 0) {
+                        refData += '{"' + chnid + '": {\n';
+
+                        for(let i = 0, il = igArray.length; i < il; ++i) {
+                            let startPosArray = igArray[i].startPosArray;
+                            let endPosArray = igArray[i].endPosArray;
+                            let domainid = igArray[i].domainid;
+                            let info = ic.domainid2info[domainid];
+                            if(!info) continue;
+
+                            refData += '"' + domainid + '": {\n';
+
+                            refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
+                            for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
+                                let startPos = startPosArray[j];
+                                let endPos = endPosArray[j];
+                                for(let k = startPos; k <= endPos; ++k) {
+                                    const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
+                                    refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                }
+                            }
+                            refData += '],\n';
+
+                            refData += '},\n';
+                        }
+
+                        refData += '}},\n';
+                    }
+                }
+
+                refData += ']}},\n';
+            }
+        // }
         }
         // 2. show Kabat ref numbers
         else if(type == 'kabat' || type == 'Kabat') {
@@ -1368,7 +1397,7 @@
                 refnum3c = (refnum - parseInt(refnum/1000) * 1000).toString();
                 refnum2c = (refnum - parseInt(refnum/100) * 100).toString();
 
-                // for extended strands, since A is 1550 and A+ is 1650, then the AA+ loop will be 1591, 1592, ... 1610, 1611, etc
+                // for extended strands, since A is 1550 and A+ is 1650, then the AA+ loop will be 1591, 1592, ... 1618, 1619, etc
                 bSecThird9 = refnum3c.substr(0,1) == '9' || refnum2c.substr(0,1) == '9' || refnum2c.substr(0,1) == '0' || refnum2c.substr(0,1) == '1';
                 if(bSecThird9) ic.residIgLoop[residueid] = 1;
 
@@ -1518,6 +1547,7 @@
                     let domainid = ic.resid2domainid[currResid];
                     if(currAtom.ssbegin) { // find the start of the sheet
                         // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                        let oriStartRefnum = strandArray[i].startRefnum;
                         strandArray[i].startResi = currResi;
                         strandArray[i].startRefnum -= j;
                         strandArray[i].loopResCnt -= j;
@@ -1530,8 +1560,10 @@
                             currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
                             let currResid = chnid + '_' + currResi;
                             delete ic.residIgLoop[currResid];
+                            ic.resid2refnum[currResid] = strandArray[i].strand + (oriStartRefnum - k).toString();
+
                             ic.resid2domainid[currResid] = domainid;
-                            ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
+                            // ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
                         }
 
                         break;
@@ -1550,6 +1582,7 @@
                     let domainid = ic.resid2domainid[currResid];
                     if(currAtom.ssend) { // find the end of the sheet
                         // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                        let oriEndRefnum = strandArray[i].endRefnum;
                         strandArray[i].endResi = currResi;
                         strandArray[i].endRefnum += j;
                         if(i < il - 1) {
@@ -1564,8 +1597,10 @@
                             currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
                             let currResid = chnid + '_' + currResi;
                             delete ic.residIgLoop[currResid];
+                            ic.resid2refnum[currResid] = strandArray[i].strand + (oriEndRefnum + k).toString();
+
                             ic.resid2domainid[currResid] = domainid;
-                            ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
+                            // ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
                         }
 
                         break;
@@ -1596,7 +1631,7 @@
                     let domainid = ic.resid2domainid[resid];
                     removeDomainidHash[domainid] = 1;
                     continue;
-                }                
+                }   
             }
         }
 
@@ -1789,6 +1824,7 @@
                 // remove domians without B,C,E,F strands
                 if(removeDomainidHash.hasOwnProperty(domainid)) {
                     delete ic.resid2refnum[residueid];
+                    delete ic.residIgLoop[residueid];
                     delete ic.resid2domainid[residueid];
 
                     continue;

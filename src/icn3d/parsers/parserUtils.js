@@ -110,9 +110,13 @@ class ParserUtils {
 
         for(let i = 0, il = ic.realignResid[chainid_t].length; i < il && i < ic.realignResid[chainid_q].length; ++i) {
             let resid_t = ic.realignResid[chainid_t][i].resid;
+            if(!resid_t) continue;
+
             let pos_t = resid_t.lastIndexOf('_');
             let resi_t = parseInt(resid_t.substr(pos_t + 1));
             let resid_q = ic.realignResid[chainid_q][i].resid;
+            if(!resid_q) continue;
+
             let pos_q = resid_q.lastIndexOf('_');
             let resi_q = parseInt(resid_q.substr(pos_q + 1));
 
@@ -744,7 +748,9 @@ class ParserUtils {
 
             if(data && data.pdbid) {
               let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
-             
+
+              if (me.bNode) return;
+
               if (me.cfg.afmem == 'off') {
                 // do nothing
                 /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();

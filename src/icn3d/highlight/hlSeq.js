@@ -326,9 +326,13 @@ class HlSeq {
                                     }
                                     */
                                     
-                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined || $(that).attr('ig') !== undefined) {
+                                    if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('ig') !== undefined) {
                                         let residNCBI = chainid + '_' + (j+1).toString();
                                         residueid = ic.ncbi2resid[residNCBI];
+                                    }
+                                    else if($(that).attr('3ddomain') !== undefined) {
+                                        // the position of residues with coordinates
+                                        residueid = ic.posid2resid[chainid + '_' + (j+1).toString()];
                                     }
                                     else {
                                         residueid = chainid + '_' + (j+1).toString();

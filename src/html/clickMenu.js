@@ -165,7 +165,7 @@ class ClickMenu {
          let resid = residueArray[i];
 
          if(ic.resid2refnum) delete ic.resid2refnum[resid];
-         if(ic.resid2refnum_ori) delete ic.resid2refnum_ori[resid];
+         // if(ic.resid2refnum_ori) delete ic.resid2refnum_ori[resid];
          if(ic.resid2domainid) delete ic.resid2domainid[resid];
       }
 
@@ -417,7 +417,7 @@ class ClickMenu {
       });
 
       me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-         ic.refnumCls.exportRefnum('kabat');
+      ic.refnumCls.exportRefnum('kabat');
          thisClass.setLogCmd("export refnum kabat", true);
       });
 

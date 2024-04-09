@@ -162,6 +162,7 @@ class AnnoIg {
         ic.chain2igArray[chnid] = [];
         this.setChain2igArray(chnid, giSeq, bCustom);
 
+
         // remove Igs without BCEF strands one more time
         let igArray = ic.chain2igArray[chnid];    
 
@@ -233,6 +234,7 @@ class AnnoIg {
                 }
             }
         }
+
 
         // reset ic.chain2igArray
         ic.chain2igArray[chnid] = [];
@@ -407,9 +409,9 @@ class AnnoIg {
 
             let tmscore = info.score;
 
-            let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+            let igType = (parseFloat(tmscore) < ic.refnumCls.TMThresholdIgType ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ' Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
             domainArray.push(igType);
 

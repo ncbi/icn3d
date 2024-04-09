@@ -445,7 +445,7 @@ class ApplyCommand {
       else if(command == 'clear selection') {
         ic.hlObjectsCls.removeHlObjects();
         ic.hlUpdateCls.removeHl2D();
-        ic.bShowHighlight = false;
+        // !!!ic.bShowHighlight = false;
 
         ic.bSelectResidue = false;
       }

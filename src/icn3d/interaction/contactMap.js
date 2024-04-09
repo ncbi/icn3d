@@ -44,8 +44,10 @@ class ContactMap {
         // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
         // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
         //let distMatrix = dataJson[0].distance; // version 2, one dimension
-        let distMatrix = dataJson[0].predicted_aligned_error; // version 3, two dimensions 
-        let max = dataJson[0].max_predicted_aligned_error;
+        let data = (dataJson[0]) ? dataJson[0] : dataJson; // dataJson[0] is from AlphaFold UniProt database
+        let distMatrix = data.predicted_aligned_error || data.pae; // version 3, two dimensions 
+        let max = data.max_predicted_aligned_error || data.max_pae; // max_predicted_aligned_error is from AlphaFold UniProt database
+
         if(!distMatrix || !max) {
             alert("The PAE file didn't have the right format...");
             return;
@@ -130,7 +132,7 @@ class ContactMap {
                 let color2 = rHex + gHex + bHex;
 
                 if(bLink) linkStr += ', ';
-                linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '"}\n';
+                linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '", "pae": ' + parseInt(distMatrix[i][j]) + '}\n';
                 bLink = true;
             }
         }

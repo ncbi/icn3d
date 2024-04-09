@@ -138,7 +138,7 @@ class Alternate {
         
         ic.drawCls.draw();
 
-        ic.bShowHighlight = true;
+        ic.bShowHighlight = true; //reset
     }
 
     async alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;

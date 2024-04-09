@@ -57,6 +57,8 @@ class ThreeDPrint {
         }
 
         ic.drawCls.draw();
+
+        ic.bShowHighlight = true; // reset
     }
 
     //Reset the hydrogen bonds, distance lines to dashed lines. Reset the thickness to the default values.

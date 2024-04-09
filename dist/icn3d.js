@@ -9806,7 +9806,7 @@ var icn3d = (function (exports) {
              let resid = residueArray[i];
 
              if(ic.resid2refnum) delete ic.resid2refnum[resid];
-             if(ic.resid2refnum_ori) delete ic.resid2refnum_ori[resid];
+             // if(ic.resid2refnum_ori) delete ic.resid2refnum_ori[resid];
              if(ic.resid2domainid) delete ic.resid2domainid[resid];
           }
 
@@ -10058,7 +10058,7 @@ var icn3d = (function (exports) {
           });
 
           me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-             ic.refnumCls.exportRefnum('kabat');
+          ic.refnumCls.exportRefnum('kabat');
              thisClass.setLogCmd("export refnum kabat", true);
           });
 
@@ -37083,7 +37083,7 @@ var icn3d = (function (exports) {
             
             ic.drawCls.draw();
 
-            ic.bShowHighlight = true;
+            ic.bShowHighlight = true; //reset
         }
 
         async alternateWrapper() { let ic = this.icn3d; ic.icn3dui;
@@ -41837,6 +41837,7 @@ var icn3d = (function (exports) {
             ic.chain2igArray[chnid] = [];
             this.setChain2igArray(chnid, giSeq, bCustom);
 
+
             // remove Igs without BCEF strands one more time
             let igArray = ic.chain2igArray[chnid];    
 
@@ -41908,6 +41909,7 @@ var icn3d = (function (exports) {
                     }
                 }
             }
+
 
             // reset ic.chain2igArray
             ic.chain2igArray[chnid] = [];
@@ -42073,9 +42075,9 @@ var icn3d = (function (exports) {
 
                 let tmscore = info.score;
 
-                let igType = (parseFloat(tmscore) < ic.refnumCls.TMThreshold ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+                let igType = (parseFloat(tmscore) < ic.refnumCls.TMThresholdIgType ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
                 titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-                fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ' Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+                fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
 
                 domainArray.push(igType);
 
@@ -43420,13 +43422,11 @@ var icn3d = (function (exports) {
     	init3ddomain() { let ic = this.icn3d; ic.icn3dui;
             //this.dcut = 8; // threshold for C-alpha interactions
 
-    		// It seemed the threshold 7 angstrom works better
-    		//this.dcut = 7; // threshold for C-alpha interactions
     		this.dcut = 8; // threshold for C-alpha interactions
 
     		// added by Jiyao
-    		// pdbid 1CD8 requires a min contact 4, not 5
-    		this.min_contacts = 4; //5; //3;			// minimum number of contacts to be considered as neighbors
+    		// Ig domain should not be separated into two parts, set min as 2
+    		this.min_contacts = 2; //3;			// minimum number of contacts to be considered as neighbors
 
     		this.MAX_SSE = 512;
 
@@ -45328,7 +45328,8 @@ var icn3d = (function (exports) {
         }
 
         getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d; ic.icn3dui;
-            return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+            // return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+            return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', #' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
         }
 
         getExonColor(start, end, pos) { let ic = this.icn3d; ic.icn3dui;
@@ -47124,34 +47125,32 @@ var icn3d = (function (exports) {
         }
 
         async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
-            if(bSelection) { // clear previous refnum
-                let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
-                for(let resid in residueHash) {
-                    if(ic.resid2refnum) delete ic.resid2refnum[resid];
-                    if(ic.residIgLoop) delete ic.residIgLoop[resid];
-                    if(ic.resid2domainid) delete ic.resid2domainid[resid];
+            ic.opts['color'] = 'ig strand';
+
+            // if(!bSelection && !template) {
+            if(!bSelection) {
+                // select all protein chains
+                ic.hAtoms = {};
+                for(let chainid in ic.protein_chainid) {
+                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
                 }
             }
 
-            // if(!ic.bIgShown) {
-                if(!bSelection && !template) {
-                    // select all protein chains
-                    ic.hAtoms = {};
-                    for(let chainid in ic.protein_chainid) {
-                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
-                    }
-                }
+            // clear previous refnum
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+            for(let resid in residueHash) {
+                if(ic.resid2refnum) delete ic.resid2refnum[resid];
+                if(ic.residIgLoop) delete ic.residIgLoop[resid];
+                if(ic.resid2domainid) delete ic.resid2domainid[resid];
+            }
 
-                for(let chainid in ic.protein_chainid) {
-                    await ic.annoIgCls.showIg(chainid, template);
-                }
-            // }
-            // ic.bIgShown = true;
+            ic.bRunRefnumAgain = true;
+            for(let chainid in ic.protein_chainid) {
+                await ic.annoIgCls.showIg(chainid, template);
+                ic.bRunRefnumAgain = false; // run it once for all chains
+            }
 
             if(ic.bShowRefnum) {
-                // ic.opts.color = 'ig strand';
-                // ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
                 ic.hlUpdateCls.updateHlAll();
                 ic.drawCls.draw();
             } 
@@ -48886,9 +48885,13 @@ var icn3d = (function (exports) {
                                         }
                                         */
                                         
-                                        if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('3ddomain') !== undefined || $(that).attr('ig') !== undefined) {
+                                        if(($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined) || $(that).attr('ig') !== undefined) {
                                             let residNCBI = chainid + '_' + (j+1).toString();
                                             residueid = ic.ncbi2resid[residNCBI];
+                                        }
+                                        else if($(that).attr('3ddomain') !== undefined) {
+                                            // the position of residues with coordinates
+                                            residueid = ic.posid2resid[chainid + '_' + (j+1).toString()];
                                         }
                                         else {
                                             residueid = chainid + '_' + (j+1).toString();
@@ -50865,7 +50868,7 @@ var icn3d = (function (exports) {
                 }
             }
 
-            ic.bShowHighlight = false;
+            //!!!ic.bShowHighlight = false;
         }
 
         hideHydrogens() { let ic = this.icn3d; ic.icn3dui;
@@ -52445,8 +52448,10 @@ var icn3d = (function (exports) {
             // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
             // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
             //let distMatrix = dataJson[0].distance; // version 2, one dimension
-            let distMatrix = dataJson[0].predicted_aligned_error; // version 3, two dimensions 
-            let max = dataJson[0].max_predicted_aligned_error;
+            let data = (dataJson[0]) ? dataJson[0] : dataJson; // dataJson[0] is from AlphaFold UniProt database
+            let distMatrix = data.predicted_aligned_error || data.pae; // version 3, two dimensions 
+            let max = data.max_predicted_aligned_error || data.max_pae; // max_predicted_aligned_error is from AlphaFold UniProt database
+
             if(!distMatrix || !max) {
                 alert("The PAE file didn't have the right format...");
                 return;
@@ -52531,7 +52536,7 @@ var icn3d = (function (exports) {
                     let color2 = rHex + gHex + bHex;
 
                     if(bLink) linkStr += ', ';
-                    linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '"}\n';
+                    linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '", "pae": ' + parseInt(distMatrix[i][j]) + '}\n';
                     bLink = true;
                 }
             }
@@ -53847,7 +53852,7 @@ var icn3d = (function (exports) {
                 ic.init();
             }
             else {
-                ic.resetConfig();
+                //ic.resetConfig();
             
                 ic.bResetAnno = true;
                 ic.bResetSets = true;
@@ -53943,7 +53948,9 @@ var icn3d = (function (exports) {
             let hAtoms = {}, hAtomsTmp = {};
             let bLastQuery = false;
 
-            ic.opts['color'] = (ic.structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
+            let opts = {};
+
+            opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
 
             for(let i = 0, il = structArray.length; i < il; ++i) {
                 if(i == structArray.length - 1) bLastQuery = true;
@@ -53975,11 +53982,16 @@ var icn3d = (function (exports) {
                 hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
             }
 
-            // parseMmdbData() didn't render structures for mmdbafid input
-            if(ic.structArray.length > 1) ic.opts['color'] = 'structure';
-            ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-            
+            // add color only for the newly loaded structures
+            ic.setColorCls.setColorByOptions(opts, hAtoms);
+
             await ic.ParserUtilsCls.renderStructure();
+
+            if(ic.bAnnoShown) {
+                await ic.showAnnoCls.showAnnotations();
+                ic.annotationCls.resetAnnoTabAll();
+            }
+
             if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             if(bQuery && me.cfg.matchedchains) {          
@@ -55531,7 +55543,7 @@ var icn3d = (function (exports) {
             if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
                 // use mmtfid
                 let pdbid = data.pdbId;
-                await ic.bciffParserCls.downloadBcif(pdbid);
+                await ic.bcifParserCls.downloadBcif(pdbid);
 
                 return;
             }
@@ -56143,10 +56155,12 @@ var icn3d = (function (exports) {
                 let conf_type_idArray = struct_conf.getColumn("conf_type_id");
 
                 let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
-                let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+                // let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+                let resi1Array = struct_conf.getColumn("beg_auth_seq_id");
 
                 let chain2Array = struct_conf.getColumn("end_auth_asym_id");
-                let resi2Array = struct_conf.getColumn("end_label_seq_id");
+                // let resi2Array = struct_conf.getColumn("end_label_seq_id");
+                let resi2Array = struct_conf.getColumn("end_auth_seq_id");
 
                 // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
                 let confSize = struct_conf.rowCount;
@@ -56191,10 +56205,12 @@ var icn3d = (function (exports) {
                 let struct_sheet_range = block.getCategory("_struct_sheet_range");
 
                 let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
-                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+                // let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+                let resi1Array = struct_sheet_range.getColumn("beg_auth_seq_id");
 
                 let chain2Array = struct_sheet_range.getColumn("end_auth_asym_id");
-                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+                // let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+                let resi2Array = struct_sheet_range.getColumn("end_auth_seq_id");
 
                 // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
                 let sheetSize = struct_sheet_range.rowCount;
@@ -59699,9 +59715,13 @@ var icn3d = (function (exports) {
 
             for(let i = 0, il = ic.realignResid[chainid_t].length; i < il && i < ic.realignResid[chainid_q].length; ++i) {
                 let resid_t = ic.realignResid[chainid_t][i].resid;
+                if(!resid_t) continue;
+
                 let pos_t = resid_t.lastIndexOf('_');
                 let resi_t = parseInt(resid_t.substr(pos_t + 1));
                 let resid_q = ic.realignResid[chainid_q][i].resid;
+                if(!resid_q) continue;
+
                 let pos_q = resid_q.lastIndexOf('_');
                 let resi_q = parseInt(resid_q.substr(pos_q + 1));
 
@@ -60325,7 +60345,9 @@ var icn3d = (function (exports) {
 
                 if(data && data.pdbid) {
                   let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
-                 
+
+                  if (me.bNode) return;
+
                   if (me.cfg.afmem == 'off') {
                     // do nothing
                     /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
@@ -63712,10 +63734,12 @@ var icn3d = (function (exports) {
                 let conf_type_idArray = struct_conf.getColumn("conf_type_id");
             
                 let chain1Array = struct_conf.getColumn("beg_auth_asym_id");
-                let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+                // let resi1Array = struct_conf.getColumn("beg_label_seq_id");
+                let resi1Array = struct_conf.getColumn("beg_auth_seq_id");
             
                 struct_conf.getColumn("end_auth_asym_id");
-                let resi2Array = struct_conf.getColumn("end_label_seq_id");
+                // let resi2Array = struct_conf.getColumn("end_label_seq_id");
+                let resi2Array = struct_conf.getColumn("end_auth_seq_id");
             
                 // Iterate through every row in the struct_conf category table, where each row delineates an interatomic connection
                 let confSize = struct_conf.rowCount;
@@ -63754,10 +63778,12 @@ var icn3d = (function (exports) {
                 let struct_sheet_range = block.getCategory("_struct_sheet_range");
             
                 let chain1Array = struct_sheet_range.getColumn("beg_auth_asym_id");
-                let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+                // let resi1Array = struct_sheet_range.getColumn("beg_label_seq_id");
+                let resi1Array = struct_sheet_range.getColumn("beg_auth_seq_id");
             
                 struct_sheet_range.getColumn("end_auth_asym_id");
-                let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+                // let resi2Array = struct_sheet_range.getColumn("end_label_seq_id");
+                let resi2Array = struct_sheet_range.getColumn("end_auth_seq_id");
             
                 // Iterate through every row in the struct_sheet_range category table, where each row delineates an interatomic connection
                 let sheetSize = struct_sheet_range.rowCount;
@@ -63765,7 +63791,7 @@ var icn3d = (function (exports) {
                     let startChain = chain1Array.getString(i);
                     let startResi = parseInt(resi1Array.getString(i));
                     let endResi = parseInt(resi2Array.getString(i));
-                
+
                     for(let j = startResi; j <= endResi; ++j) {
                         let resid = structure + "_" + startChain + "_" + j;
                         sheetArray.push(resid);
@@ -65632,7 +65658,7 @@ var icn3d = (function (exports) {
           else if(command == 'clear selection') {
             ic.hlObjectsCls.removeHlObjects();
             ic.hlUpdateCls.removeHl2D();
-            ic.bShowHighlight = false;
+            // !!!ic.bShowHighlight = false;
 
             ic.bSelectResidue = false;
           }
@@ -67789,6 +67815,8 @@ var icn3d = (function (exports) {
               true
             );
             ic.bSelectResidue = false;
+
+            ic.bShowHighlight = true; // reset
           }
         });
 
@@ -71217,7 +71245,8 @@ var icn3d = (function (exports) {
      class Refnum {
         constructor(icn3d) {
             this.icn3d = icn3d;
-            this.TMThreshold = 0.85;
+            this.TMThresholdIgType = 0.85;
+            this.TMThresholdTemplate = 0.4;
             this.topClusters = 5;
         }
 
@@ -71339,13 +71368,13 @@ var icn3d = (function (exports) {
             ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
             ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
             ic.ref2igtype['CD2_1hnfA_human_V-n1'] = 'IgV';
-            ic.ref2igtype['CD3d_6jxrd_human_C1'] = 'IgI';
-            ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgI';
-            ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgI';
+            ic.ref2igtype['CD3d_6jxrd_human_C1'] = 'IgC1';
+            ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgC1';
+            ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgC2';
             ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
             ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
             ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
-            ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgC2';
+            ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgI';
             ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
             ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'Cadherin';
             ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
@@ -71353,7 +71382,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
             ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
             ic.ref2igtype['FAB-LIGHT_5esv_V-n1'] = 'IgV';
-            ic.ref2igtype['GHR_1axiB_human_C1-n1'] = 'IgFN3';
+            ic.ref2igtype['GHR_1axiB_human_C1-n1'] = 'IgC1';
             ic.ref2igtype['ICOS_6x4gA_human_V'] = 'IgV';
             ic.ref2igtype['IL6Rb_1bquB_human_FN3-n2'] = 'IgFN3';
             ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
@@ -71361,7 +71390,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
             ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
             ic.ref2igtype['JAM1_1nbqA_human_Iset-n2'] = 'IgI';
-            ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC2';
+            ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC1';
             ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
             ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
             ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
@@ -71375,7 +71404,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
             ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
             ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
-            ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC2';
+            ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
             ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
             ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
             ic.ref2igtype['TEAD1_3kysC_human'] = 'IgE';
@@ -71384,7 +71413,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
             ic.ref2igtype['VISTA_6oilA_human_V'] = 'IgV';
             ic.ref2igtype['VNAR_1t6vN_shark_V'] = 'IgV';
-            ic.ref2igtype['VTCN1_Q7Z7D3_human_C1-n2'] = 'IgV';
+            ic.ref2igtype['VTCN1_Q7Z7D3_human_C1-n2'] = 'IgC1';
         }
 
         getPdbAjaxArray() {  let ic = this.icn3d, me = ic.icn3dui;
@@ -71451,6 +71480,7 @@ var icn3d = (function (exports) {
             ic.domainid2pdb = {};
 
             let bNoMoreIg = true;
+            let bFoundDomain = false;
             for(let i = 0, il = struArray.length; i < il; ++i) {
                 let struct = struArray[i];
                 let chainidArray = ic.structures[struct];
@@ -71463,6 +71493,12 @@ var icn3d = (function (exports) {
 
                     if(!ic.domainid2refpdbname) ic.domainid2refpdbname = {};
                     if(!ic.domainid2score) ic.domainid2score = {};
+
+                    if(domainAtomsArray.length == 0) {
+                        continue;
+                    }
+
+                    bFoundDomain = true;
 
                     for(let k = 0, kl = domainAtomsArray.length; k < kl; ++k) {
                         bNoMoreIg = false;
@@ -71477,6 +71513,10 @@ var icn3d = (function (exports) {
                         let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtomsArray[k]).length;
                         //let domainid = chainid + '-' + k + '_' + Object.keys(domainAtomsArray[k]).length;
                         let domainid = chainid + ',' + k + '_' + resiSum;
+
+                        // clear score
+                        delete ic.domainid2score[domainid];
+
                         ic.domainid2pdb[domainid] = pdb_target;
 
                         if(!template) {
@@ -71504,6 +71544,10 @@ var icn3d = (function (exports) {
                         }
                     }
                 }
+            }
+
+            if(!bFoundDomain) {
+                return bNoMoreIg;
             }
 
             //try {
@@ -71641,27 +71685,13 @@ var icn3d = (function (exports) {
                             // clear previous refnum assignment if any
                             // delete ic.resid2refnum[resid];
                             delete ic.residIgLoop[resid];
+                            delete ic.resid2domainid[resid];
                         }
                     }
 
                     if(resCnt < minResidues) continue;
 
                     domainAtomsArray.push(domainAtoms);
-    /*
-                    let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtoms);
-                    let atomLast = ic.firstAtomObjCls.getLastAtomObj(domainAtoms);
-                    let resiSum = atomFirst.resi + ':' + atomLast.resi + ':' + Object.keys(domainAtoms).length;
-
-                    for(let m = 0, ml = segArray.length; m < ml; m += 2) {
-                        let startResi = segArray[m];
-                        let endResi = segArray[m+1];
-                        for(let n = parseInt(startResi); n <= parseInt(endResi); ++n) {
-                            let resid = chainid + '_' + pos2resi[n - 1];
-                            //domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
-                            ic.resid2domainid[resid] = chainid + ',' + k + '_' + resiSum;
-                        }
-                    }
-    */
                 }
             }
 
@@ -71686,9 +71716,6 @@ var icn3d = (function (exports) {
 
         parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
         // async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
-            let tmscoreThreshold = 0.45; // 0.4; //0.5;
-            //let rmsdThreshold = 10;
-
             // find the best alignment for each chain
             let domainid2segs = {};
             let domainid2refpdbnamelist = {};
@@ -71701,6 +71728,7 @@ var icn3d = (function (exports) {
             if(!ic.domainid2ig2imgt) ic.domainid2ig2imgt = {};
 
             let minResidues = 20;
+
             for(let i = 0, il = domainidpairArray.length; i < il; ++i) {
                 //let queryData = (me.bNode) ? dataArray[i] : dataArray[i].value; //[0];
                 let queryData = (dataArray[i]) ? dataArray[i].value : undefined; //[0];
@@ -71711,6 +71739,7 @@ var icn3d = (function (exports) {
                 }
 
                 if(queryData[0].score === undefined) continue;
+                let score = parseFloat(queryData[0].score);
 
                 //let domainid_index = domainidpairArray[i].split(',');
                 //let domainid = domainid_index[0];
@@ -71719,16 +71748,13 @@ var icn3d = (function (exports) {
                 //let chainid = domainid.split('-')[0];
 
                 if(!bRound1) {
-                    if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
-                        if(!me.bNode) console.log("domainid " + domainid + " and refpdbname " + refpdbname + " were skipped due to a TM-score less than " + tmscoreThreshold);
+                    if(queryData[0].score < this.TMThresholdTemplate || queryData[0].num_res < minResidues) {
+                        if(!me.bNode) console.log("bRound1: " + bRound1 + ": domainid " + domainid + " and refpdbname " + refpdbname + " were skipped due to a TM-score less than " + this.TMThresholdTemplate);
                         continue;
                     }
                 }
                 else {
-                    // if(queryData[0].super_rmsd > rmsdThreshold || queryData[0].num_res < minResidues) {
-                    //     continue;
-                    // }
-                    if(queryData[0].score < tmscoreThreshold || queryData[0].num_res < minResidues) {
+                    if(queryData[0].score < this.TMThresholdTemplate || queryData[0].num_res < minResidues / 2) {
                         continue;
                     }
                 }
@@ -71739,6 +71765,9 @@ var icn3d = (function (exports) {
                 else {
                     // if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " RMSD: " + queryData[0].super_rmsd + ", num_seg: " + queryData[0].num_seg + ",  10/RMSD + num_seg/5: " + (10 / queryData[0].super_rmsd + queryData[0].num_seg / 5).toFixed(1));
                     if(!me.bNode) console.log("domainid: " + domainid + " refpdbname " + refpdbname + " TM-score: " + queryData[0].score);
+
+                    if(!domainid2refpdbnamelist[domainid]) domainid2refpdbnamelist[domainid] = {};
+                    domainid2refpdbnamelist[domainid][refpdbname] = score;
                 }
 
                 // Ig-like domains: B (2150, 2150a, 2150b), C (3150, 3250), E (7150, 7250), F (8150, 8250) strands
@@ -71793,13 +71822,13 @@ var icn3d = (function (exports) {
                         // if(!(bBstrand && bCstrand && bEstrand && bFstrand)) {
                             if(!me.bNode && !(bBstrand && bCstrand && bEstrand && bFstrand)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
                             if(!me.bNode && !(bBSheet && bCSheet && bESheet && bFSheet)) console.log("Some of the Ig strands B, C, E, F are not beta sheets...");
-                            // if(!me.bNode && (BCnt < 3 || CCnt < 3 || ECnt < 3 || FCnt < 3)) console.log("Some of the Ig strands B, C, E, F are missing in the domain " + domainid + "...");
+
                             if(ic.domainid2refpdbname[domainid][0] == refpdbname) {
                                 delete ic.domainid2refpdbname[domainid];
                                 delete ic.domainid2score[domainid];
                             }
-                            // continue;
-                        }
+                            continue;  
+                      }
                     // }
 
                 }
@@ -71819,7 +71848,6 @@ var icn3d = (function (exports) {
                 // }
 
                 // let tmAdjust = 0.1; 
-                let score = parseFloat(queryData[0].score);
 
                 // if the TM score difference is within 0.1 and more strands are found, use the template with more strands
                 // if(!domainid2segs.hasOwnProperty(domainid) || 
@@ -71832,9 +71860,7 @@ var icn3d = (function (exports) {
                     ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;
 
                     if(bRound1) {
-                        // ic.domainid2refpdbname[domainid] = score > 0.75 ? [refpdbname] : ['all_templates'];
-                        ic.domainid2refpdbname[domainid] = score >= this.TMThreshold ? [refpdbname] : ['all_templates'];
-                        // if(me.bNode) ic.domainid2refpdbname[domainid] = ['all_templates'];
+                        ic.domainid2refpdbname[domainid] = score >= this.TMThresholdIgType ? [refpdbname] : ['all_templates'];
                     }
                     else {
                         ic.domainid2refpdbname[domainid] = [refpdbname];
@@ -71845,11 +71871,6 @@ var icn3d = (function (exports) {
 
                     ic.domainid2ig2kabat[domainid] = queryData[0].ig2kabat;
                     ic.domainid2ig2imgt[domainid] = queryData[0].ig2imgt;
-                }
-
-                if(bRound1) {
-                    if(!domainid2refpdbnamelist[domainid]) domainid2refpdbnamelist[domainid] = {};
-                    domainid2refpdbnamelist[domainid][refpdbname] = score;
                 }
             }
 
@@ -71877,6 +71898,7 @@ var icn3d = (function (exports) {
             let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
 
             // no more Igs to detect
+            // no need to rerun the rest residues any more
             if(Object.keys(domainid2segs).length == 0) {
                 bNoMoreIg = true;
                 return bNoMoreIg;
@@ -71948,7 +71970,7 @@ var icn3d = (function (exports) {
 
                 dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-                await this.parseAlignData(dataArray3, domainidpairArray3, false);
+                bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false);
 
                 // end of round 2
                 return bNoMoreIg;
@@ -71998,7 +72020,7 @@ var icn3d = (function (exports) {
 
             // assign ic.resid2refnum, ic.refnum2residArray, ic.chainsMapping
             if(!ic.resid2refnum) ic.resid2refnum = {};
-            if(!ic.resid2refnum_ori) ic.resid2refnum_ori = {};
+            // if(!ic.resid2refnum_ori) ic.resid2refnum_ori = {};
             if(!ic.refnum2residArray) ic.refnum2residArray = {};
             if(!ic.chainsMapping) ic.chainsMapping = {};
 
@@ -72019,10 +72041,12 @@ var icn3d = (function (exports) {
 
                 if(refpdbname) {
                     let message = "The reference PDB for domain " + domainid + " is " + refpdbname + ". The TM-score is " + score  + ". The sequence identity is " + seqid  + ". The number of aligned residues is " + nresAlign + ".";
+
                     if(!me.bNode) {
                         console.log(message);
                         me.htmlCls.clickMenuCls.setLogCmd(message, false, true);
                     }
+
                     // ic.refPdbList.push(message);
                     ic.domainid2info[domainid] = {'refpdbname': refpdbname, 'score': score, 'seqid': seqid, 'nresAlign': nresAlign};
                 }
@@ -72081,7 +72105,7 @@ var icn3d = (function (exports) {
 
                     if(seg.q_start.indexOf('8550') != -1) {
                         // check C' and D strands
-                        if(cntBtwCE == 1) {
+                        if(cntBtwCE == 1 && CAtom && EAtom && (CpAtom || DAtom)) {
                             let distToC = 999, distToE = 999;
                             for(let j = 0, jl = CAtomArray.length; j < jl; ++j) {
                                 let dist = (bCpstrand) ? CpAtom.coord.distanceTo(CAtomArray[j].coord) : DAtom.coord.distanceTo(CAtomArray[j].coord);
@@ -72169,7 +72193,7 @@ var icn3d = (function (exports) {
                         // only sheet or loop will be aligned
                         if(atom.ss != 'helix') {
                             ic.resid2refnum[resid] = refnumLabel;
-                            ic.resid2refnum_ori[resid] = refnumLabel;
+                            // ic.resid2refnum_ori[resid] = refnumLabel;
                             ic.resid2domainid[resid] = domainid;
                         }
                     //}
@@ -72226,7 +72250,7 @@ var icn3d = (function (exports) {
             // loops may have numbers such as 1310, 1410
 
             let strand;
-
+    /*
             if(refnum < 1000) strand = undefined;
             else if(refnum >= 1200 && refnum < 1290) strand = "A---";
             else if(refnum >= 1320 && refnum < 1390) strand = "A--";
@@ -72249,6 +72273,34 @@ var icn3d = (function (exports) {
             else if(refnum >= 9720 && refnum < 9790) strand = "G++";
             else if(refnum > 9900) strand = undefined;
             else strand = " ";
+    */
+
+            // cover all ranges
+            if(refnum < 1000) strand = undefined;
+            else if(refnum >= 1200 && refnum < 1320) strand = "A---";
+            else if(refnum >= 1320 && refnum < 1420) strand = "A--";
+            else if(refnum >= 1420 && refnum < 1520) strand = "A-";
+            else if(refnum >= 1520 && refnum < 1620) strand = "A";
+            else if(refnum >= 1620 && refnum < 1720) strand = "A+";
+            else if(refnum >= 1720 && refnum < 1820) strand = "A++";
+            else if(refnum >= 1820 && refnum < 2000) strand = "A'";
+            else if(refnum >= 2000 && refnum < 3000) strand = "B";
+            else if(refnum >= 3000 && refnum < 3420) strand = "C--";
+            else if(refnum >= 3420 && refnum < 3520) strand = "C-";
+            else if(refnum >= 3520 && refnum < 4000) strand = "C";
+            else if(refnum >= 4000 && refnum < 5000) strand = "C'";
+            else if(refnum >= 5000 && refnum < 6000) strand = "C''";
+            else if(refnum >= 6000 && refnum < 7000) strand = "D";
+            else if(refnum >= 7000 && refnum < 7620) strand = "E";
+            else if(refnum >= 7620 && refnum < 8000) strand = "E+";
+            else if(refnum >= 8000 && refnum < 9000) strand = "F";
+            else if(refnum >= 9000 && refnum < 9620) strand = "G";
+            else if(refnum >= 9620 && refnum < 9720) strand = "G+";
+            else if(refnum >= 9720 && refnum < 9820) strand = "G++";
+            else if(refnum >= 9820 && refnum < 9900) strand = "G+++";
+            else if(refnum > 9900) strand = undefined;
+            else strand = " ";
+
             if(prevStrand) strand = prevStrand;
 
             return strand
@@ -72341,7 +72393,7 @@ var icn3d = (function (exports) {
             // 1. show IgStrand ref numbers
             if(type == 'igstrand' || type == 'IgStrand') {
                 // iGStrand reference numbers were adjusted when showing in sequences
-                // if(me.bNode) {            
+                // if(me.bNode) {        
                 if(ic.bShowRefnum) {
                     for(let chnid in ic.chains) {
                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chnid]);
@@ -72380,50 +72432,56 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
-
-                
-
-                if(bIgDomain) {
-                    for(let structure in ic.structures) {
-                        refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
-                        for(let m = 0, ml = ic.structures[structure].length; m < ml; ++m) {
-                            let chnid = ic.structures[structure][m]; 
-                            let igArray = ic.chain2igArray[chnid];
-
-                            if(igArray && igArray.length > 0) {
-                                refData += '{"' + chnid + '": {\n';
-
-                                for(let i = 0, il = igArray.length; i < il; ++i) {
-                                    let startPosArray = igArray[i].startPosArray;
-                                    let endPosArray = igArray[i].endPosArray;
-                                    let domainid = igArray[i].domainid;
-                                    let info = ic.domainid2info[domainid];
-                                    if(!info) continue;
-
-                                    refData += '"' + domainid + '": {\n';
-
-                                    refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
-                                    for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
-                                        let startPos = startPosArray[j];
-                                        let endPos = endPosArray[j];
-                                        for(let k = startPos; k <= endPos; ++k) {
-                                            const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
-                                            refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
-                                        }
-                                    }
-                                    refData += '],\n';
-
-                                    refData += '},\n';
-                                }
-
-                                refData += '}},\n';
-                            }
-                        }
-
-                        refData += ']}},\n';
-                    }
+                // let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
+                let stru2bIgDomain = {};
+                for(let domainid in ic.domainid2info) {
+                    let stru = domainid.split('_')[0];
+                    stru2bIgDomain[stru] = 1;
                 }
+
+            // if(bIgDomain) {
+                for(let structure in ic.structures) {
+                    let bIgDomain = stru2bIgDomain.hasOwnProperty(structure) ? 1 : 0;
+
+                    refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
+
+                    for(let m = 0, ml = ic.structures[structure].length; ic.bShowRefnum && m < ml; ++m) {
+                        let chnid = ic.structures[structure][m]; 
+                        let igArray = ic.chain2igArray[chnid];
+
+                        if(igArray && igArray.length > 0) {
+                            refData += '{"' + chnid + '": {\n';
+
+                            for(let i = 0, il = igArray.length; i < il; ++i) {
+                                let startPosArray = igArray[i].startPosArray;
+                                let endPosArray = igArray[i].endPosArray;
+                                let domainid = igArray[i].domainid;
+                                let info = ic.domainid2info[domainid];
+                                if(!info) continue;
+
+                                refData += '"' + domainid + '": {\n';
+
+                                refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
+                                for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
+                                    let startPos = startPosArray[j];
+                                    let endPos = endPosArray[j];
+                                    for(let k = startPos; k <= endPos; ++k) {
+                                        const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
+                                        refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                    }
+                                }
+                                refData += '],\n';
+
+                                refData += '},\n';
+                            }
+
+                            refData += '}},\n';
+                        }
+                    }
+
+                    refData += ']}},\n';
+                }
+            // }
             }
             // 2. show Kabat ref numbers
             else if(type == 'kabat' || type == 'Kabat') {
@@ -72570,7 +72628,7 @@ var icn3d = (function (exports) {
                     refnum3c = (refnum - parseInt(refnum/1000) * 1000).toString();
                     refnum2c = (refnum - parseInt(refnum/100) * 100).toString();
 
-                    // for extended strands, since A is 1550 and A+ is 1650, then the AA+ loop will be 1591, 1592, ... 1610, 1611, etc
+                    // for extended strands, since A is 1550 and A+ is 1650, then the AA+ loop will be 1591, 1592, ... 1618, 1619, etc
                     bSecThird9 = refnum3c.substr(0,1) == '9' || refnum2c.substr(0,1) == '9' || refnum2c.substr(0,1) == '0' || refnum2c.substr(0,1) == '1';
                     if(bSecThird9) ic.residIgLoop[residueid] = 1;
 
@@ -72716,6 +72774,7 @@ var icn3d = (function (exports) {
                         let domainid = ic.resid2domainid[currResid];
                         if(currAtom.ssbegin) { // find the start of the sheet
                             // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                            let oriStartRefnum = strandArray[i].startRefnum;
                             strandArray[i].startResi = currResi;
                             strandArray[i].startRefnum -= j;
                             strandArray[i].loopResCnt -= j;
@@ -72728,8 +72787,10 @@ var icn3d = (function (exports) {
                                 currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
                                 let currResid = chnid + '_' + currResi;
                                 delete ic.residIgLoop[currResid];
+                                ic.resid2refnum[currResid] = strandArray[i].strand + (oriStartRefnum - k).toString();
+
                                 ic.resid2domainid[currResid] = domainid;
-                                ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
+                                // ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
                             }
 
                             break;
@@ -72748,6 +72809,7 @@ var icn3d = (function (exports) {
                         let domainid = ic.resid2domainid[currResid];
                         if(currAtom.ssend) { // find the end of the sheet
                             // update the following: startResi,startRefnum,endResi,endRefnum,loopResCnt,resCntBfAnchor,resCntAtAnchor
+                            let oriEndRefnum = strandArray[i].endRefnum;
                             strandArray[i].endResi = currResi;
                             strandArray[i].endRefnum += j;
                             if(i < il - 1) {
@@ -72762,8 +72824,10 @@ var icn3d = (function (exports) {
                                 currResi = ic.ParserUtilsCls.getResi(chnid, currPos);
                                 let currResid = chnid + '_' + currResi;
                                 delete ic.residIgLoop[currResid];
+                                ic.resid2refnum[currResid] = strandArray[i].strand + (oriEndRefnum + k).toString();
+
                                 ic.resid2domainid[currResid] = domainid;
-                                ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
+                                // ic.resid2refnum_ori[currResid] = 1; // a hash to check which residues were assigned
                             }
 
                             break;
@@ -72794,7 +72858,7 @@ var icn3d = (function (exports) {
                         let domainid = ic.resid2domainid[resid];
                         removeDomainidHash[domainid] = 1;
                         continue;
-                    }                
+                    }   
                 }
             }
 
@@ -72987,6 +73051,7 @@ var icn3d = (function (exports) {
                     // remove domians without B,C,E,F strands
                     if(removeDomainidHash.hasOwnProperty(domainid)) {
                         delete ic.resid2refnum[residueid];
+                        delete ic.residIgLoop[residueid];
                         delete ic.resid2domainid[residueid];
 
                         continue;
@@ -78395,6 +78460,8 @@ var icn3d = (function (exports) {
             }
 
             ic.drawCls.draw();
+
+            ic.bShowHighlight = true; // reset
         }
 
         //Reset the hydrogen bonds, distance lines to dashed lines. Reset the thickness to the default values.
@@ -81162,7 +81229,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.31.1';
+        this.REVISION = '3.31.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
