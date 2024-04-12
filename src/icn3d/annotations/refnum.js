@@ -155,7 +155,7 @@
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
         ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgE';
-        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgE';
+        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
         ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
         ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
         ic.ref2igtype['PD1_4zqkB_human_V'] = 'IgV';
@@ -886,14 +886,16 @@
                         let resiDistToC = (bCpstrand) ? parseInt(CpAtom.resi) - parseInt(CAtom.resi) : parseInt(DAtom.resi) - parseInt(CAtom.resi);
                         let resiDistToE = (bCpstrand) ? parseInt(EAtom.resi) - parseInt(CpAtom.resi) : parseInt(EAtom.resi) - parseInt(DAtom.resi);
 
+                        let adjust = 1;
+
                         if(bCpstrand) {
-                            if(distToC > distToE || (distToC == distToE && resiDistToC > resiDistToE)) { // rename C' to D
+                            if(distToC > distToE + adjust || (distToC == distToE + adjust && resiDistToC > resiDistToE + adjust)) { // rename C' to D
                                 CpToDResi.push(CpAtom.resi);
                                 if(!me.bNode) console.log("Rename strand C' to D: distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE)
                             }
                         }
                         else if(bDstrand) {
-                            if(distToC < distToE || (distToC == distToE && resiDistToC < resiDistToE)) { // rename D to C'
+                            if(distToC + adjust < distToE || (distToC + adjust == distToE && resiDistToC + adjust < resiDistToE)) { // rename D to C'
                                 DToCpResi.push(DAtom.resi);
                                 if(!me.bNode) console.log("Rename strand D to C': distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE)
                             }
@@ -929,7 +931,7 @@
                     //let refnum = qStart;
                     let refnum = qStartInt;
 
-                    let refnumLabel = this.getLabelFromRefnum(refnum);
+                    let refnumLabel = this.getLabelFromRefnum(refnum, postfix);
                     currStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                     let currStrandFinal = currStrand;
@@ -951,7 +953,7 @@
                     }
 
                     if(currStrand != currStrandFinal) {
-                        refnumLabel = this.getLabelFromRefnum(refnum, currStrandFinal);
+                        refnumLabel = this.getLabelFromRefnum(refnum, postfix, currStrandFinal);
                     }
 
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
@@ -987,7 +989,7 @@
         }
     }
 
-    getStrandFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d, me = ic.icn3dui;
+    getStrandFromRefnum(oriRefnum, finalStrand) { let ic = this.icn3d, me = ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
         //N-terminus = 0999-0001
@@ -1066,16 +1068,25 @@
         else if(refnum > 9900) strand = undefined;
         else strand = " ";
 
-        if(prevStrand) strand = prevStrand;
+        if(finalStrand) strand = finalStrand;
 
         return strand
     }
 
-    getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d, me = ic.icn3dui;
-        let strand = this.getStrandFromRefnum(oriRefnum, prevStrand);
+    getLabelFromRefnum(oriRefnum, postfix, finalStrand) { let ic = this.icn3d, me = ic.icn3dui;
+        let strand = this.getStrandFromRefnum(oriRefnum, finalStrand);
+
+        // rename C' to D or D to C'
+        let refnum = oriRefnum.toString();
+        if(finalStrand == "C'" && refnum.substr(0, 1) == '6') { // previous D
+            refnum = '4' + refnum.substr(1);
+        }
+        else if(finalStrand == "D" && refnum.substr(0, 1) == '4') { // previous C'
+            refnum = '6' + refnum.substr(1);
+        }
 
         if(strand) {
-            return strand + oriRefnum;
+            return strand + refnum + postfix;
         }
         else {
             return undefined;
