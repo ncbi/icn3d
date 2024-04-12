@@ -477,18 +477,18 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
-        html += me.htmlCls.divStr + "dl_collection' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_collection', 'Please input the collection file');
+        html += me.htmlCls.divStr + "dl_selectCollections' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_collectionsMenu'>";
+        html += '<b>Collection File</b>: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'dl_collection_file_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="' + me.pre + 'dl_collection_file_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div><br>';
+        html += me.htmlCls.divStr + "dl_collection_file' style=''>";
         html += "You can load a collection of structures via a file. Here is <a href='https://github.com/ncbi/icn3d/blob/master/example/collection.json' target='_blank'>one example file</a><br><br>";
         html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
         html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
-
-        html += me.htmlCls.divStr + "dl_selectCollections' class='" + dialogClass + "'>";
-        html += me.htmlCls.divStr + "dl_collectionsMenu'>";
-        html += "<b>Structures:</b> <br/>";
-        html += "<select id='" +  me.pre + "collections_menu' multiple size='6' style='min-width:130px;'>";
-        html += "</select>";
+        html += "</div>";
+        html += '<br/><b>Structures</b>: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'dl_collection_structures_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'dl_collection_structures_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
+        html += me.htmlCls.divStr + "dl_collection_structures' style='display: none'>";
+        html += "<select id='" + me.pre + "collections_menu'multiple size='6' style='min-width:300px;'></select>";
         html += "</div>";
         html += "</div>";
 
