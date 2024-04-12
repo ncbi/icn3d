@@ -68377,7 +68377,10 @@ var icn3d = (function (exports) {
             let idArray = id.split(',');
             let idNew = '';
             for(let i = 0, il = idArray.length; i < il; ++i) {
-              if(!(ic.structures && ic.structures.hasOwnProperty(idArray[i]))) {
+              if(!(ic.structures && (ic.structures.hasOwnProperty(idArray[i]) 
+                  || ic.structures.hasOwnProperty(idArray[i].toLowerCase()) 
+                  || ic.structures.hasOwnProperty(idArray[i].toUpperCase())
+                  ) )) {
                 if(idNew) idNew += ',';
                 idNew += idArray[i];
               }
