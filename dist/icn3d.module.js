@@ -42051,8 +42051,12 @@ class AnnoIg {
         html3 += htmlTmp + '<br>';
         html += htmlTmp + '<span class="icn3d-seqLine">';
 
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+ 
         html += htmlIg;
 
+        if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
+        
         html += htmlCnt;
         html += '</span>';
         html += '<br>';
@@ -42094,6 +42098,8 @@ class AnnoIg {
             // summary html2
             html2 += htmlTitle; 
             html2 += htmlCnt + '<span class="icn3d-seqLine">';
+
+            if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
 
             let prevDomainindex, color;
             for(let i = 0, il = fromArray.length; i < il; ++i) {
@@ -42526,7 +42532,7 @@ class AnnoDomain {
 
             if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
 
-            if(me.cfg.blast_rep_id != chnid) { // regular
+            if(me.cfg.blast_rep_id != chnid) { // regular             
                 for(let i = 0, il = posFromArray.length; i < il; ++i) {
                     // let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                     let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(posFromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(posFromArray[i] - posToArray[i-1] - 1) / ic.maxAnnoLength);
@@ -42535,7 +42541,7 @@ class AnnoDomain {
                     html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(posToArray[i] - posFromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + posFromArray + '" to="' + posToArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' +(index+1).toString() + '</div>';
                 }
             }
-            else { // with potential gaps
+            else { // with potential gaps 
                 let fromArray2 = [], toArray2 = [];
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     fromArray2.push(fromArray[i]);
@@ -45326,7 +45332,7 @@ class AddTrack {
 
     getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d; ic.icn3dui;
         // return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
-        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', #' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
     }
 
     getExonColor(start, end, pos) { let ic = this.icn3d; ic.icn3dui;
@@ -71392,7 +71398,7 @@ class Dssp {
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
         ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgE';
-        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgE';
+        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
         ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
         ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
         ic.ref2igtype['PD1_4zqkB_human_V'] = 'IgV';
@@ -72119,14 +72125,16 @@ class Dssp {
                         let resiDistToC = (bCpstrand) ? parseInt(CpAtom.resi) - parseInt(CAtom.resi) : parseInt(DAtom.resi) - parseInt(CAtom.resi);
                         let resiDistToE = (bCpstrand) ? parseInt(EAtom.resi) - parseInt(CpAtom.resi) : parseInt(EAtom.resi) - parseInt(DAtom.resi);
 
+                        let adjust = 1;
+
                         if(bCpstrand) {
-                            if(distToC > distToE || (distToC == distToE && resiDistToC > resiDistToE)) { // rename C' to D
+                            if(distToC > distToE + adjust || (distToC == distToE + adjust && resiDistToC > resiDistToE + adjust)) { // rename C' to D
                                 CpToDResi.push(CpAtom.resi);
                                 if(!me.bNode) console.log("Rename strand C' to D: distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE);
                             }
                         }
                         else if(bDstrand) {
-                            if(distToC < distToE || (distToC == distToE && resiDistToC < resiDistToE)) { // rename D to C'
+                            if(distToC + adjust < distToE || (distToC + adjust == distToE && resiDistToC + adjust < resiDistToE)) { // rename D to C'
                                 DToCpResi.push(DAtom.resi);
                                 if(!me.bNode) console.log("Rename strand D to C': distToC " + distToC + " distToE " + distToE + " resiDistToC " + resiDistToC + " resiDistToE " + resiDistToE);
                             }
@@ -72146,7 +72154,8 @@ class Dssp {
 
                 seg.q_start;
                 let qStartInt = parseInt(seg.q_start);
-                if(isNaN(seg.q_start)) seg.q_start.substr(seg.q_start.length - 1, 1);
+                let postfix = '';
+                if(isNaN(seg.q_start)) postfix = seg.q_start.substr(seg.q_start.length - 1, 1);
 
                 // one item in "seq"
                 // q_start and q_end are numbers, but saved in string
@@ -72161,7 +72170,7 @@ class Dssp {
                     //let refnum = qStart;
                     let refnum = qStartInt;
 
-                    let refnumLabel = this.getLabelFromRefnum(refnum);
+                    let refnumLabel = this.getLabelFromRefnum(refnum, postfix);
                     currStrand = (refnumLabel) ? refnumLabel.replace(new RegExp(refnum,'g'), '') : undefined;
 
                     let currStrandFinal = currStrand;
@@ -72183,7 +72192,7 @@ class Dssp {
                     }
 
                     if(currStrand != currStrandFinal) {
-                        refnumLabel = this.getLabelFromRefnum(refnum, currStrandFinal);
+                        refnumLabel = this.getLabelFromRefnum(refnum, postfix, currStrandFinal);
                     }
 
                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
@@ -72219,7 +72228,7 @@ class Dssp {
         }
     }
 
-    getStrandFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d; ic.icn3dui;
+    getStrandFromRefnum(oriRefnum, finalStrand) { let ic = this.icn3d; ic.icn3dui;
         let refnum = parseInt(oriRefnum);
 
         //N-terminus = 0999-0001
@@ -72298,16 +72307,25 @@ class Dssp {
         else if(refnum > 9900) strand = undefined;
         else strand = " ";
 
-        if(prevStrand) strand = prevStrand;
+        if(finalStrand) strand = finalStrand;
 
         return strand
     }
 
-    getLabelFromRefnum(oriRefnum, prevStrand) { let ic = this.icn3d; ic.icn3dui;
-        let strand = this.getStrandFromRefnum(oriRefnum, prevStrand);
+    getLabelFromRefnum(oriRefnum, postfix, finalStrand) { let ic = this.icn3d; ic.icn3dui;
+        let strand = this.getStrandFromRefnum(oriRefnum, finalStrand);
+
+        // rename C' to D or D to C'
+        let refnum = oriRefnum.toString();
+        if(finalStrand == "C'" && refnum.substr(0, 1) == '6') { // previous D
+            refnum = '4' + refnum.substr(1);
+        }
+        else if(finalStrand == "D" && refnum.substr(0, 1) == '4') { // previous C'
+            refnum = '6' + refnum.substr(1);
+        }
 
         if(strand) {
-            return strand + oriRefnum;
+            return strand + refnum + postfix;
         }
         else {
             return undefined;

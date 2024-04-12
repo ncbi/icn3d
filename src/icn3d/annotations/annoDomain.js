@@ -236,7 +236,7 @@ class AnnoDomain {
 
             if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
 
-            if(me.cfg.blast_rep_id != chnid) { // regular
+            if(me.cfg.blast_rep_id != chnid) { // regular             
                 for(let i = 0, il = posFromArray.length; i < il; ++i) {
                     // let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                     let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(posFromArray[i]) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(posFromArray[i] - posToArray[i-1] - 1) / ic.maxAnnoLength);
@@ -245,7 +245,7 @@ class AnnoDomain {
                     html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(posToArray[i] - posFromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + posFromArray + '" to="' + posToArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' +(index+1).toString() + '</div>';
                 }
             }
-            else { // with potential gaps
+            else { // with potential gaps 
                 let fromArray2 = [], toArray2 = [];
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     fromArray2.push(fromArray[i]);
