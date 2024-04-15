@@ -1311,17 +1311,13 @@ class Events {
                 ic.resizeCanvasCls.closeDialogs();
             }
             me.htmlCls.setHtmlCls.fileSupport();
-            let reader = new FileReader();
-            reader.onload = async function (e) {
+                let reader = new FileReader();
+                
+                reader.onload = async function (e) {
                 let dataStr = JSON.parse(e.target.result);
                 let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
                 let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
-                let bNoDuplicate = true;
-                await ic.chainalignParserCls.downloadMmdbAf(collection[0][0], undefined, undefined, bNoDuplicate);
-    
-                ic.opts["color"] = "structure";
-                ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-    
+
                 $("#" + ic.pre + "collections_menu").html(collectionHtml);
                 ic.selectCollectionsCls.clickStructure();
     
@@ -1332,8 +1328,27 @@ class Events {
                     $("#" + me.pre + "collectionfile").val(),
                 false
                 );
+                
             };
             reader.readAsText(file);
+            
+            if (Object.keys(me.utilsCls.getStructures(ic.dAtoms))){
+                $("#" + me.pre + "dl_collection_file").hide()
+                $("#" + me.pre + "dl_collection_structures").show()
+                $("#" + me.pre + "dl_collection_file_expand").show()
+                $("#" + me.pre + "dl_collection_file_shrink").hide()
+                $("#" + me.pre + "dl_collection_structures_expand").hide()
+                $("#" + me.pre + "dl_collection_structures_shrink").show()
+
+            } else {
+                $("#" + me.pre + "dl_collection_file").show()
+                $("#" + me.pre + "dl_collection_structures").hide()
+                $("#" + me.pre + "dl_collection_file_expand").hide()
+                $("#" + me.pre + "dl_collection_file_shrink").hide()
+                $("#" + me.pre + "dl_collection_structures_expand").show()
+                $("#" + me.pre + "dl_collection_structures_shrink").hide()
+            }
+              
             me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
             }
         });

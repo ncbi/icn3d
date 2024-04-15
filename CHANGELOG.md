@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.31.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.3.zip) was release on April 15, 2024. Jack Lin fixed some issues in loading a collection file.
+
 [icn3d-3.31.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.2.zip) was release on April 9, 2024. Fixed the secondary structure ranges in CIF files.
 
 [icn3d-3.31.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.1.zip) was release on March 21, 2024. Switched from "let xArray = atom_site.getColumn('Cartn_x').data" to "let xArray = atom_site.getColumn('Cartn_x')" when accessing data from Binary or text CIF data.

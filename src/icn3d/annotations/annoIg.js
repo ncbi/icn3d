@@ -86,8 +86,10 @@ class AnnoIg {
     }
 
     showRefNum(giSeq, chnid, kabat_or_imgt, bCustom) {  let ic = this.icn3d, me = ic.icn3dui;
-        let bResult = ic.chainid2igtrack[chnid];
-        if(!bResult) return {html: '', html2: '', html3: ''};
+        if(ic.chainid2igtrack) {
+            let bResult = ic.chainid2igtrack[chnid];
+            if(!bResult) return {html: '', html2: '', html3: ''};
+        }
 
         let html = this.getIgAnnoHtml(chnid, giSeq, bCustom, kabat_or_imgt);
 
@@ -162,12 +164,13 @@ class AnnoIg {
         ic.chain2igArray[chnid] = [];
         this.setChain2igArray(chnid, giSeq, bCustom);
 
-
         // remove Igs without BCEF strands one more time
         let igArray = ic.chain2igArray[chnid];    
 
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
+
+            if(!ic.domainid2info) continue;
             let info = ic.domainid2info[domainid];
             if(!info) continue;
 
@@ -235,7 +238,6 @@ class AnnoIg {
             }
         }
 
-
         // reset ic.chain2igArray
         ic.chain2igArray[chnid] = [];
         this.setChain2igArray(chnid, giSeq, bCustom);
@@ -254,7 +256,7 @@ class AnnoIg {
             //    htmlIg += '<span></span>';
             //}
             //else {
-                refnumLabel = ic.resid2refnum[residueid];
+                refnumLabel = (bCustom) ? ic.chainsMapping[chnid][residueid] : ic.resid2refnum[residueid];
                 let bHidelabel = false;
 
                 if(refnumLabel) {              
@@ -394,7 +396,8 @@ class AnnoIg {
 
         if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqEndLen[chnid], '-');
         
-        html += htmlCnt;
+        if(!bCustom) html += htmlCnt;
+
         html += '</span>';
         html += '<br>';
         html += '</div>';
@@ -408,6 +411,8 @@ class AnnoIg {
 
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
+            if(!ic.domainid2info) continue;
+
             let info = ic.domainid2info[domainid];
             if(!info) continue;
 
