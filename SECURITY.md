@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-Please open an issue to report a vulnerability.
+Please send an email to wangjiy@ncbi.nlm.nih.gov to report a vulnerability.
