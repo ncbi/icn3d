@@ -477,6 +477,7 @@ class ShowSeq {
                 let bCustom = true;
                 let result = ic.annoIgCls.showRefNum(giSeq, chnid, undefined, bCustom);
                 html += result.html;
+                // html2 += result.html2;
                 html3 += result.html3;
             }
         }

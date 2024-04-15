@@ -1160,7 +1160,12 @@
     }
 
     rmStrandFromRefnumlabel(refnumLabel) { let ic = this.icn3d, me = ic.icn3dui;
-        return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
+        if(isNaN(refnumLabel.substr(0,1))) {
+            return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
+        }
+        else { // custom ref numbers
+            return refnumLabel;
+        }
     }
 
     exportRefnum(type, bNoArraySymbol) { let ic = this.icn3d, me = ic.icn3dui;
