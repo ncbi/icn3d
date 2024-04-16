@@ -51,7 +51,10 @@
           var cfg = getConfig();
           cfg.version = version;
 
-          if(cfg.mmtfid !== undefined) {
+          if(cfg.bcifid !== undefined) {
+              await setupViewer('bcifid', cfg.bcifid, cfg);
+          }
+          else if(cfg.mmtfid !== undefined) {
               await setupViewer('mmtfid', cfg.mmtfid, cfg);
           }
           else if(cfg.pdbid !== undefined) {
@@ -198,7 +201,7 @@
                 else {
                     var paraPos = cfg.command.indexOf(' | parameters ');
 
-                    if(paraPos != -1) { //"&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
+                    if(paraPos != -1) { // "&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
                         var tmpPos = cfg.command.indexOf('}}&');
                         if(tmpPos != -1) { // more parameters after the command
                           decodeSearch += cfg.command.substr(tmpPos + 2);
@@ -266,7 +269,7 @@
         // default to show biological unit
         if(cfg.bu === undefined) cfg.bu = 1; //0;
         if(cfg.buidx !== undefined) cfg.bu = cfg.buidx;
-
+        
         return cfg;
       }
 

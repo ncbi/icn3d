@@ -146,8 +146,9 @@ class RealignParser {
       }
 
       // If rmsd from vastsrv is too large, realign the chains
-      //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {   
-      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {     
+      //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
+      // redo algnment only for VAST serv page 
+      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {    
         console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align.") 
         //let nameArray = me.cfg.chainalign.split(',');
         let nameArray = Object.keys(chainidHash);
