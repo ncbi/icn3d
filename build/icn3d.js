@@ -47868,6 +47868,7 @@ var icn3d = (function (exports) {
                       // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                       let nGap = 0;
                       ic.alnChainsSeq[chnid] = [];
+
                       //let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
                       for(let i = 0, il = targetSeq.length; i < il; ++i) {
                           //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
@@ -57961,8 +57962,9 @@ var icn3d = (function (exports) {
           }
 
           // If rmsd from vastsrv is too large, realign the chains
-          //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {   
-          if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {     
+          //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
+          // redo algnment only for VAST serv page 
+          if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {    
             console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align."); 
             //let nameArray = me.cfg.chainalign.split(',');
             let nameArray = Object.keys(chainidHash);
@@ -72544,7 +72546,7 @@ var icn3d = (function (exports) {
         }
 
         rmStrandFromRefnumlabel(refnumLabel) { let ic = this.icn3d; ic.icn3dui;
-            if(isNaN(refnumLabel.substr(0,1))) {
+            if(refnumLabel && isNaN(refnumLabel.substr(0,1))) {
                 return (!refnumLabel) ? refnumLabel : refnumLabel.replace(/'/g, '').replace(/\*/g, '').replace(/\^/g, '').replace(/\+/g, '').replace(/\-/g, '').substr(1); // C', C''
             }
             else { // custom ref numbers
@@ -72597,25 +72599,16 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                // let bIgDomain = (ic.domainid2info && Object.keys(ic.domainid2info).length > 0) ? 1 : 0;
-                let stru2bIgDomain = {};
-                for(let domainid in ic.domainid2info) {
-                    let stru = domainid.split('_')[0];
-                    stru2bIgDomain[stru] = 1;
-                }
-
             // if(bIgDomain) {
                 for(let structure in ic.structures) {
-                    let bIgDomain = stru2bIgDomain.hasOwnProperty(structure) ? 1 : 0;
-
-                    refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
-
+                    let bIgDomain = 0;
+                    let refDataTmp = '';
                     for(let m = 0, ml = ic.structures[structure].length; ic.bShowRefnum && m < ml; ++m) {
                         let chnid = ic.structures[structure][m]; 
                         let igArray = ic.chain2igArray[chnid];
 
                         if(igArray && igArray.length > 0) {
-                            refData += '{"' + chnid + '": {\n';
+                            refDataTmp += '{"' + chnid + '": {\n';
 
                             for(let i = 0, il = igArray.length; i < il; ++i) {
                                 let startPosArray = igArray[i].startPosArray;
@@ -72624,25 +72617,31 @@ var icn3d = (function (exports) {
                                 let info = ic.domainid2info[domainid];
                                 if(!info) continue;
 
-                                refData += '"' + domainid + '": {\n';
+                                refDataTmp += '"' + domainid + '": {\n';
 
-                                refData += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
+                                refDataTmp += '"refpdbname":"' + info.refpdbname + '", "score":' + info.score + ', "seqid":' + info.seqid + ', "nresAlign":' + info.nresAlign + ', "data": [';
                                 for(let j = 0, jl = startPosArray.length; j < jl; ++j) {
                                     let startPos = startPosArray[j];
                                     let endPos = endPosArray[j];
                                     for(let k = startPos; k <= endPos; ++k) {
                                         const resid = chnid + '_' + ic.chainsSeq[chnid][k].resi + '_' + ic.chainsSeq[chnid][k].name;
-                                        refData += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
+                                        refDataTmp += '{"' + resid + '": "' + resid2refnum[resid] + '"},\n';
                                     }
                                 }
-                                refData += '],\n';
+                                refDataTmp += '],\n';
 
-                                refData += '},\n';
+                                refDataTmp += '},\n';
+
+                                bIgDomain = 1;
                             }
 
-                            refData += '}},\n';
+                            refDataTmp += '}},\n';
                         }
                     }
+
+                    refData += '{"' + structure + '": {"Ig domain" : ' + bIgDomain + ', "igs": [\n';
+
+                    if(bIgDomain) refData += refDataTmp;
 
                     refData += ']}},\n';
                 }
@@ -73008,7 +73007,7 @@ var icn3d = (function (exports) {
                 let strandTmp = strandArray[i].strand;
 
                 if(strandTmp != 'G' && strandArray[i].endRefnum - strandArray[i].startRefnum + 1 < 3) { // remove the strand
-                    if(i != il - 1) { // modify 
+                    if(strandArray[i + 1]) { // modify 
                         strandArray[i + 1].loopResCnt += strandArray[i].loopResCnt + parseInt(strandArray[i].endResi) - parseInt(strandArray[i].startResi) + 1;
                     }
                     
