@@ -75,7 +75,7 @@ class SelectCollections {
 
     ic.ssbondpnts = {};
 
-    ic.bShowHighlight = false;
+    ic.bShowHighlight = undefined;
     ic.bResetSets = true;
   }
 
@@ -206,8 +206,8 @@ class SelectCollections {
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
           }
           
-        ic.opts["color"] = "structure";
-        ic.setStyleCls.setAtomStyleByOptions();
+        ic.opts["color"] = (Object.keys(ic.structures).length == 1) ? "chain" : "structure";
+        // ic.setStyleCls.setAtomStyleByOptions();
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
         ic.transformCls.zoominSelection();
