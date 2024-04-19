@@ -25,11 +25,12 @@ class HlSeq {
                   ic.bAlignSeq = false;
                   ic.bAnnotations = true;
               }
-
-              if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+              
+            //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+              if(!ic.bShift && !ic.bCtrl) {
                   ic.selectionCls.removeSelection();
               }
-
+              
               // select residues
               $("span.ui-selected", this).each(function() {
                   let id = $(this).attr('id');
@@ -40,11 +41,12 @@ class HlSeq {
               });
 
               ic.selectionCls.saveSelectionPrep(true);
-              ic.selectionCls.saveSelection(undefined, undefined, true);
+              //ic.selectionCls.saveSelection(undefined, undefined, true);
+              // do not use selected residues, use ic.hAtoms instead
+              ic.selectionCls.saveSelection(undefined, undefined, false);
 
               //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);
               ic.hlObjectsCls.addHlObjects();  // render() is called
-
               // get all chainid in the selected residues
               let chainHash = {}
               for(let residueid in ic.selectedResidues) {
@@ -127,7 +129,9 @@ class HlSeq {
                    thisClass.selectResidues(id, this);
 
                    ic.selectionCls.saveSelectionPrep(true);
-                   ic.selectionCls.saveSelection(undefined, undefined, true);
+                   //ic.selectionCls.saveSelection(undefined, undefined, true);
+                   // do not use selected residues, use ic.hAtoms instead
+                   ic.selectionCls.saveSelection(undefined, undefined, false);
               }
           //});
 
@@ -451,10 +455,11 @@ class HlSeq {
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
 
-      if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+    //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+      if(!ic.bShift && !ic.bCtrl) {
           ic.selectionCls.removeSelection();
       }
-
+      
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict
         //if(id.substr(0, 5) === 'align') id = id.substr(5);

@@ -29047,14 +29047,14 @@ class Strand {
         // include the whole sheet or helix when highlighting
         let atomsAdjust = {};
 
-        //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
-        //if( !ic.bAllAtoms) {
-        if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
-            atomsAdjust = this.getSSExpandedAtoms(atoms);
-        }
-        else {
-            atomsAdjust = atoms;
-        }
+        // if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
+        //     atomsAdjust = this.getSSExpandedAtoms(atoms);
+        // }
+        // else {
+        //     atomsAdjust = atoms;
+        // }
+
+        atomsAdjust = atoms;
 
         if(bHighlight === 2) {
             if(fill) {
@@ -29112,9 +29112,16 @@ class Strand {
 
         let maxDist = 6.0;
 
+        //get the last residue
+        let atomArray = Object.keys(atoms);
+        let lastAtomSerial = atomArray[atomArray.length - 1];
+        let lastAtom = atoms[lastAtomSerial];
+        let lastResid = lastAtom.structure + '_' + lastAtom.chain + '_' + lastAtom.resi;
+
         for (let i in atomsAdjust) {
           atom = atomsAdjust[i];
           let chainid = atom.structure + '_' + atom.chain;
+          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             // "CA" has to appear before "O"
 
@@ -29151,7 +29158,7 @@ class Strand {
                 if(atom.ssend && atom.ss === 'sheet') {
                     bSheetSegment = true;
                 }
-                else if(atom.ssend && atom.ss === 'helix') {
+                else if( (atom.ssend && atom.ss === 'helix') || resid == lastResid) { // partial sheet will draw as helix
                     bHelixSegment = true;
                 }
 
@@ -29258,7 +29265,7 @@ class Strand {
                 // }
 
                 //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0) {
+                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) {
                     let atomName = 'CA';
                 
                     let prevone = [], nexttwo = [];
@@ -29401,8 +29408,11 @@ class Strand {
                     bHelixSegment = false;
                 } // end if (atom.ssbegin || atom.ssend)
 
-                // end of a chain
-                if ((currentChain !== atom.chain || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) && pnts[0].length > 0) {
+                // end of a chain, or end of selection
+                if ((currentChain !== atom.chain 
+                    || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
+                    || resid == lastResid
+                    ) && pnts[0].length > 0) {
                 //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                     let atomName = 'CA';
@@ -40904,6 +40914,9 @@ class AnnoCddSite {
                 // if(type != 'domain') setname += "_" + index + "_" + r; 
                 if(type != 'domain') setname = chnid + "_" + index + "_" + r  + "_" + domain; 
 
+                //remove space in setname
+                setname = setname.replace(/\s+/g, '');
+
                 if(type == 'domain') pssmid2fromArray[pssmid] = fromArray;
                 if(type == 'domain') pssmid2toArray[pssmid] = toArray;
 
@@ -48609,11 +48622,12 @@ class HlSeq {
                   ic.bAlignSeq = false;
                   ic.bAnnotations = true;
               }
-
-              if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+              
+            //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+              if(!ic.bShift && !ic.bCtrl) {
                   ic.selectionCls.removeSelection();
               }
-
+              
               // select residues
               $("span.ui-selected", this).each(function() {
                   let id = $(this).attr('id');
@@ -48624,11 +48638,12 @@ class HlSeq {
               });
 
               ic.selectionCls.saveSelectionPrep(true);
-              ic.selectionCls.saveSelection(undefined, undefined, true);
+              //ic.selectionCls.saveSelection(undefined, undefined, true);
+              // do not use selected residues, use ic.hAtoms instead
+              ic.selectionCls.saveSelection(undefined, undefined, false);
 
               //ic.residueLabelsCls.addResidueLabels(ic.hAtoms, false, 0.5);
               ic.hlObjectsCls.addHlObjects();  // render() is called
-
               // get all chainid in the selected residues
               let chainHash = {};
               for(let residueid in ic.selectedResidues) {
@@ -48711,7 +48726,9 @@ class HlSeq {
                    thisClass.selectResidues(id, this);
 
                    ic.selectionCls.saveSelectionPrep(true);
-                   ic.selectionCls.saveSelection(undefined, undefined, true);
+                   //ic.selectionCls.saveSelection(undefined, undefined, true);
+                   // do not use selected residues, use ic.hAtoms instead
+                   ic.selectionCls.saveSelection(undefined, undefined, false);
               }
           //});
 
@@ -49035,10 +49052,11 @@ class HlSeq {
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
 
-      if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+    //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+      if(!ic.bShift && !ic.bCtrl) {
           ic.selectionCls.removeSelection();
       }
-
+      
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict
         //if(id.substr(0, 5) === 'align') id = id.substr(5);
@@ -67807,7 +67825,7 @@ class SelectCollections {
 
     ic.ssbondpnts = {};
 
-    ic.bShowHighlight = false;
+    ic.bShowHighlight = undefined;
     ic.bResetSets = true;
   }
 
@@ -67938,8 +67956,8 @@ class SelectCollections {
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
           }
           
-        ic.opts["color"] = "structure";
-        ic.setStyleCls.setAtomStyleByOptions();
+        ic.opts["color"] = (Object.keys(ic.structures).length == 1) ? "chain" : "structure";
+        // ic.setStyleCls.setAtomStyleByOptions();
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
         ic.transformCls.zoominSelection();

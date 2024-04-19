@@ -23,14 +23,14 @@ class Strand {
         // include the whole sheet or helix when highlighting
         let atomsAdjust = {};
 
-        //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
-        //if( !ic.bAllAtoms) {
-        if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
-            atomsAdjust = this.getSSExpandedAtoms(atoms);
-        }
-        else {
-            atomsAdjust = atoms;
-        }
+        // if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
+        //     atomsAdjust = this.getSSExpandedAtoms(atoms);
+        // }
+        // else {
+        //     atomsAdjust = atoms;
+        // }
+
+        atomsAdjust = atoms;
 
         if(bHighlight === 2) {
             if(fill) {
@@ -89,9 +89,16 @@ class Strand {
 
         let maxDist = 6.0;
 
+        //get the last residue
+        let atomArray = Object.keys(atoms);
+        let lastAtomSerial = atomArray[atomArray.length - 1];
+        let lastAtom = atoms[lastAtomSerial];
+        let lastResid = lastAtom.structure + '_' + lastAtom.chain + '_' + lastAtom.resi;
+
         for (let i in atomsAdjust) {
           atom = atomsAdjust[i];
           let chainid = atom.structure + '_' + atom.chain;
+          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
           let atomOxygen = undefined;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
@@ -130,7 +137,7 @@ class Strand {
                 if(atom.ssend && atom.ss === 'sheet') {
                     bSheetSegment = true;
                 }
-                else if(atom.ssend && atom.ss === 'helix') {
+                else if( (atom.ssend && atom.ss === 'helix') || resid == lastResid) { // partial sheet will draw as helix
                     bHelixSegment = true;
                 }
 
@@ -239,7 +246,7 @@ class Strand {
                 // }
 
                 //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0) {
+                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) {
                     let atomName = 'CA';
                 
                     let prevone = [], nexttwo = [];
@@ -382,8 +389,11 @@ class Strand {
                     bHelixSegment = false;
                 } // end if (atom.ssbegin || atom.ssend)
 
-                // end of a chain
-                if ((currentChain !== atom.chain || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)) && pnts[0].length > 0) {
+                // end of a chain, or end of selection
+                if ((currentChain !== atom.chain 
+                    || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
+                    || resid == lastResid
+                    ) && pnts[0].length > 0) {
                 //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                     let atomName = 'CA';

@@ -344,6 +344,9 @@ class AnnoCddSite {
                 // if(type != 'domain') setname += "_" + index + "_" + r; 
                 if(type != 'domain') setname = chnid + "_" + index + "_" + r  + "_" + domain; 
 
+                //remove space in setname
+                setname = setname.replace(/\s+/g, '');
+
                 if(type == 'domain') pssmid2fromArray[pssmid] = fromArray;
                 if(type == 'domain') pssmid2toArray[pssmid] = toArray;
 
