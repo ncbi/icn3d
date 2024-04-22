@@ -48623,8 +48623,8 @@ class HlSeq {
                   ic.bAnnotations = true;
               }
               
-            //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
-              if(!ic.bShift && !ic.bCtrl) {
+              if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+            //   if(!ic.bShift && !ic.bCtrl) {
                   ic.selectionCls.removeSelection();
               }
               
@@ -49052,8 +49052,8 @@ class HlSeq {
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
 
-    //   if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
-      if(!ic.bShift && !ic.bCtrl) {
+      if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+    //   if(!ic.bShift && !ic.bCtrl) {
           ic.selectionCls.removeSelection();
       }
       
