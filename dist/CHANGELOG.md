@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.31.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.4.zip) was release on May 11, 2024. Release Ig templates for assigning reference numbers.
+
 [icn3d-3.31.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.3.zip) was release on April 15, 2024. Jack Lin fixed some issues in loading a collection file.
 
 [icn3d-3.31.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.2.zip) was release on April 9, 2024. Fixed the secondary structure ranges in CIF files.
@@ -147,7 +149,7 @@
 
 [icn3d-3.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.5.zip) was release on May 3, 2022. Added VAST+ and VAST Search interface in the menu "File > Search Similar". Enabled to assign rainbow/spectrum colors for a list of sets in the menu "Color > Rainbow/Spectrum > for Sets".
 
-[icn3d-3.11.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.4.zip) was release on April 26, 2022. Added two examples in https://ww.ncbi.nlm.nih.gov/Structure/icn3d/example.html to show the predefined alignment of two PDB files, or the predefined alignment of one PDB file to other chains.
+[icn3d-3.11.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.4.zip) was release on April 26, 2022. Added two examples in https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html to show the predefined alignment of two PDB files, or the predefined alignment of one PDB file to other chains.
 
 [icn3d-3.11.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.11.3.zip) was release on April 22, 2022. Added the menu "Style > Nucl. Bases" to display the bases of nucleotides.
 

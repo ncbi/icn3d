@@ -78,20 +78,22 @@ let bFinished = 0;
 main();
 
 async function main() {
-    let urlSeq = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + queries;
+    // let urlSeq = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + queries;
 
-    let dataStrSeq = await getAjaxPromise(urlSeq);
-    //console.log("dataStrSeq: " + dataStrSeq);
+    // let dataStrSeq = await getAjaxPromise(urlSeq);
+    // //console.log("dataStrSeq: " + dataStrSeq);
 
-    let strArray = dataStrSeq.split('\n');
-    strArray.shift();
-    let allSeq = strArray.join('');
-    g_seqArray = allSeq.split('');
+    // let strArray = dataStrSeq.split('\n');
+    // strArray.shift();
+    // let allSeq = strArray.join('');
 
-    await cdsearch(g_seqArray);
+
+    // g_seqArray = allSeq.split('');
+
+    await cdsearch();
 }
 
-async function cdsearch(g_seqArray) {
+async function cdsearch() {
   // smode=auto: retrieve pre-computed results from CDART
   //let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
   // smode=live: retrieve live search results from CDART

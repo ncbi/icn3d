@@ -823,11 +823,13 @@ class ApplyCommand {
         ic.drawCls.draw();
       }
       else if(command.indexOf('add sphere') == 0) {
-        this.addShape(command, 'sphere');
+        this.addShape(commandOri, 'sphere');
+        ic.shapeCmdHash[commandOri] = 1;
         //ic.drawCls.draw();
       }
       else if(command.indexOf('add cube') == 0) {
-        this.addShape(command, 'cube');
+        this.addShape(commandOri, 'cube');
+        ic.shapeCmdHash[commandOri] = 1;
         //ic.drawCls.draw();
       }
       else if(command.indexOf('clear shape') == 0) {
@@ -1570,7 +1572,7 @@ class ApplyCommand {
     }
 
     addShape(command, shape) { let ic = this.icn3d, me = ic.icn3dui;
-      ic.shapeCmdHash[command] = 1;
+      // ic.shapeCmdHash[command] = 1;
       
       let paraArray = command.split(' | ');
       let p1Array = paraArray[1].split(' ');
@@ -1581,7 +1583,17 @@ class ApplyCommand {
       colorStr = '#' + colorStr.replace(/\#/g, '');
       let color = me.parasCls.thr(colorStr);
 
-      let pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+      let pos1;
+
+      if(p1Array[0] == 'x1') { // input position
+        pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+      }
+      else { // input sets
+        let nameArray = paraArray[1].split(',');
+        let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        let posArray1 = ic.contactCls.getExtent(atomSet1);
+        pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+      }
 
       if(shape == 'sphere') {
         ic.sphereCls.createSphereBase(pos1, color, parseFloat(radius), undefined, undefined, undefined, parseFloat(opacity));

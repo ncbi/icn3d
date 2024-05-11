@@ -1142,14 +1142,20 @@
 
                 let resi = refAA[i][j].trim();
                 let refnum = refAA[refI][j].trim();
+
+                if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
+                }
+
+                let resid = chainid + '_' + resi;
+
                 if(resi && refnum) {
-                    let resid = chainid + '_' + resi;
                     ic.resid2refnum[resid] = refnum;
 
-                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                    }
                     ic.chainsMapping[chainid][resid] = refnum;
+                }
+                else {
+                    ic.chainsMapping[chainid][resid] = resi;
                 }
             }
         }
@@ -1862,7 +1868,7 @@
 
                 // remove the postfix when comparing interactions
                 //ic.chainsMapping[chnid][residueid] = refnumLabel;
-                ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
+                ic.chainsMapping[chnid][residueid] = (refnumLabelNoPostfix) ? refnumLabelNoPostfix : currResi;
             }
         }
 
