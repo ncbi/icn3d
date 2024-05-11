@@ -17854,7 +17854,7 @@ class Events {
                 //ic.initUI();
                 ic.init();
                 ic.bInputfile = true;
-                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : dataStr;
                 ic.InputfileType = 'mmcif';
                 // await ic.mmcifParserCls.loadMmcifData(data); 
                 await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
@@ -18509,11 +18509,13 @@ class Events {
             let command;
             if(shape == 'Sphere') {
                 ic.sphereCls.createSphereBase(pos1, color, radius, undefined, undefined, undefined, opacity);
-                command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                // command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                command = 'add sphere | ' + nameArray + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
             }
             else {
                 ic.boxCls.createBox_base(pos1, radius, color, undefined, undefined, undefined, opacity);
-                command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                // command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                command = 'add cube | ' + nameArray + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
             }
 
             thisClass.setLogCmd(command, true);
@@ -66087,11 +66089,13 @@ class ApplyCommand {
         ic.drawCls.draw();
       }
       else if(command.indexOf('add sphere') == 0) {
-        this.addShape(command, 'sphere');
+        this.addShape(commandOri, 'sphere');
+        ic.shapeCmdHash[commandOri] = 1;
         //ic.drawCls.draw();
       }
       else if(command.indexOf('add cube') == 0) {
-        this.addShape(command, 'cube');
+        this.addShape(commandOri, 'cube');
+        ic.shapeCmdHash[commandOri] = 1;
         //ic.drawCls.draw();
       }
       else if(command.indexOf('clear shape') == 0) {
@@ -66834,7 +66838,7 @@ class ApplyCommand {
     }
 
     addShape(command, shape) { let ic = this.icn3d, me = ic.icn3dui;
-      ic.shapeCmdHash[command] = 1;
+      // ic.shapeCmdHash[command] = 1;
       
       let paraArray = command.split(' | ');
       let p1Array = paraArray[1].split(' ');
@@ -66845,7 +66849,17 @@ class ApplyCommand {
       colorStr = '#' + colorStr.replace(/\#/g, '');
       let color = me.parasCls.thr(colorStr);
 
-      let pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+      let pos1;
+
+      if(p1Array[0] == 'x1') { // input position
+        pos1 = new THREE.Vector3(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]));
+      }
+      else { // input sets
+        let nameArray = paraArray[1].split(',');
+        let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+        let posArray1 = ic.contactCls.getExtent(atomSet1);
+        pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+      }
 
       if(shape == 'sphere') {
         ic.sphereCls.createSphereBase(pos1, color, parseFloat(radius), undefined, undefined, undefined, parseFloat(opacity));
@@ -72543,14 +72557,20 @@ class Dssp {
 
                 let resi = refAA[i][j].trim();
                 let refnum = refAA[refI][j].trim();
+
+                if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
+                }
+
+                let resid = chainid + '_' + resi;
+
                 if(resi && refnum) {
-                    let resid = chainid + '_' + resi;
                     ic.resid2refnum[resid] = refnum;
 
-                    if(!ic.chainsMapping.hasOwnProperty(chainid)) {
-                        ic.chainsMapping[chainid] = {};
-                    }
                     ic.chainsMapping[chainid][resid] = refnum;
+                }
+                else {
+                    ic.chainsMapping[chainid][resid] = resi;
                 }
             }
         }
@@ -73255,7 +73275,7 @@ class Dssp {
 
                 // remove the postfix when comparing interactions
                 //ic.chainsMapping[chnid][residueid] = refnumLabel;
-                ic.chainsMapping[chnid][residueid] = refnumLabelNoPostfix;
+                ic.chainsMapping[chnid][residueid] = (refnumLabelNoPostfix) ? refnumLabelNoPostfix : currResi;
             }
         }
 
@@ -81408,7 +81428,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.31.3';
+    this.REVISION = '3.31.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

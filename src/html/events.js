@@ -1759,7 +1759,7 @@ class Events {
                 //ic.initUI();
                 ic.init();
                 ic.bInputfile = true;
-                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : dataStr;
                 ic.InputfileType = 'mmcif';
                 // await ic.mmcifParserCls.loadMmcifData(data); 
                 await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
@@ -2416,11 +2416,13 @@ class Events {
             let command;
             if(shape == 'Sphere') {
                 ic.sphereCls.createSphereBase(pos1, color, radius, undefined, undefined, undefined, opacity);
-                command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                // command = 'add sphere | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                command = 'add sphere | ' + nameArray + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
             }
             else {
                 ic.boxCls.createBox_base(pos1, radius, color, undefined, undefined, undefined, opacity);
-                command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                // command = 'add cube | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
+                command = 'add cube | ' + nameArray + ' | color ' + colorStr + ' | opacity ' + opacity + ' | radius ' + radius;
             }
 
             thisClass.setLogCmd(command, true);
