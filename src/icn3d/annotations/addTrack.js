@@ -136,22 +136,7 @@ class AddTrack {
             //e.preventDefault();
             dialog.dialog( "close" );
 
-            let chainid = $("#" + ic.pre + "track_chainid").val();    
-            let geneid = $("#" + ic.pre + "track_geneid").val();
-            if(!geneid) {
-                alert("Please fill in the Gene ID...");
-                return;
-            }
-
-            let startpos = $("#" + ic.pre + "fasta_startpos2").val();
-            if(!startpos) startpos = 1;
-
-            //let colorseqby = $("#" + ic.pre + "colorseqby2").val();
-            //let type =(colorseqby == 'identity') ? 'identity' : 'custom';
-
-            let type = 'identity';
-    
-            await thisClass.addExonTracks(chainid, geneid, startpos, type);
+            await thisClass.addExonTracksWrap();
         });
 
         // BED file
@@ -1752,6 +1737,25 @@ class AddTrack {
         }
 
         return acclistTmp;
+    }
+
+    async addExonTracksWrap() { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid = $("#" + ic.pre + "track_chainid").val();    
+        let geneid = $("#" + ic.pre + "track_geneid").val();
+        if(!geneid) {
+            alert("Please fill in the Gene ID...");
+            return;
+        }
+
+        let startpos = $("#" + ic.pre + "fasta_startpos2").val();
+        if(!startpos) startpos = 1;
+
+        //let colorseqby = $("#" + ic.pre + "colorseqby2").val();
+        //let type =(colorseqby == 'identity') ? 'identity' : 'custom';
+
+        let type = 'identity';
+
+        await thisClass.addExonTracks(chainid, geneid, startpos, type);
     }
 
     async addExonTracks(chainid, geneid, startpos, type) { let ic = this.icn3d, me = ic.icn3dui;

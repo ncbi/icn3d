@@ -278,9 +278,24 @@ class AnnoCddSite {
             pssmid2toArray = {};
         }
 
-        let indexl =(domainArray !== undefined) ? domainArray.length : 0;
+        if(domainArray === undefined) domainArray = [];
+        let indexl = domainArray.length;
         let maxTextLen =(type == 'domain') ? 14 : 19;
         let titleSpace =(type == 'domain') ? 100 : 120;
+
+        // sort domainArray
+        domainArray.sort(function(a, b) {
+            let domainRepeatArray = a.locs;
+            let segArray = (type == 'domain' || type == 'ig') ? domainRepeatArray[0].segs : [domainRepeatArray[0]];
+            let domainFrom1 = Math.round(segArray[0].from);
+
+            domainRepeatArray = b.locs;
+            segArray = (type == 'domain' || type == 'ig') ? domainRepeatArray[0].segs : [domainRepeatArray[0]];
+            let domainFrom2 = Math.round(segArray[0].from);
+
+            return domainFrom1 - domainFrom2;
+        });
+
         for(let index = 0; index < indexl; ++index) {
             let pssmid = (type == 'domain') ? domainArray[index].pssmid : 0;
 

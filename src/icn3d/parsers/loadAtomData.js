@@ -12,6 +12,7 @@ class LoadAtomData {
 
     //This function was used to parse atom "data" to set up parameters for the 3D viewer. "type" is mmcifid or mmdbid.
     //"id" is the MMDB ID or mmCIF ID.
+    // thi sfunction is NOT used for mmCIF loading any more
     loadAtomDataIn(data, id, type, seqalign, alignType, chainidInput, chainIndex, bLastQuery, bNoSeqalign) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
         ic.pmin = new THREE.Vector3( 9999, 9999, 9999);
@@ -156,13 +157,6 @@ class LoadAtomData {
 
                   if(ic.pdbid_chain2title === undefined) ic.pdbid_chain2title = {}
                   ic.pdbid_chain2title[chainid] = data.moleculeInfor[molid].name;
-
-                  //if(alignType == 'query' && chain == ic.chain_q) {
-                  //    ic.alignmolid2color[0][molid] = molidCnt.toString();
-                  //}
-                  //else if(alignType == 'target' && chain == ic.chain_t) {
-                  //    ic.alignmolid2color[1][molid] = molidCnt.toString();
-                  //}
 
                   if(chain == chainid.substr(chainid.lastIndexOf('_')) ) {
                       let tmpHash = {}
@@ -370,10 +364,12 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let bNonMmcif = (me.cfg.mmcifid === undefined && me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined && ic.InputfileType != 'mmcif');
-            let bProtein = (bNonMmcif) ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let bNucleotide = (bNonMmcif) ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let bSolvent = (bNonMmcif) ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            // let bNonMmcif = (me.cfg.mmcifid === undefined && me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined && ic.InputfileType != 'mmcif');
+            // this fucntion is NOT used for mmCIF file any more
+            let bNonMmcif = true;
+            let bProtein = (bNonMmcif) ? chainid2kind[chainNum] === 'protein' : atm.mt === 'protein';
+            let bNucleotide = (bNonMmcif) ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'nucleotide';
+            let bSolvent = (bNonMmcif) ? chainid2kind[chainNum] === 'solvent' : atm.mt === 'solvent';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
@@ -647,18 +643,17 @@ class LoadAtomData {
 
         // update bonds info
         if(type !== 'mmcifid') {
-        //for(let i in ic.atoms) {
-        for(let i in atoms) {
-            let currSerial = atomid2serial[i];
+            //for(let i in ic.atoms) {
+            for(let i in atoms) {
+                let currSerial = atomid2serial[i];
 
-            let bondLength =(ic.atoms[currSerial].bonds === undefined) ? 0 : ic.atoms[currSerial].bonds.length;
+                let bondLength =(ic.atoms[currSerial].bonds === undefined) ? 0 : ic.atoms[currSerial].bonds.length;
 
-            for(let j = 0; j < bondLength; ++j) {
-                ic.atoms[currSerial].bonds[j] = atomid2serial[ic.atoms[currSerial].bonds[j]];
+                for(let j = 0; j < bondLength; ++j) {
+                    ic.atoms[currSerial].bonds[j] = atomid2serial[ic.atoms[currSerial].bonds[j]];
+                }
             }
         }
-        }
-
         // remove the reference
         data.atoms = {};
 
@@ -754,7 +749,7 @@ class LoadAtomData {
         // display the structure right away. load the mns and sequences later
     //        setTimeout(function(){
         let hAtoms = {};
-    
+
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
@@ -777,7 +772,7 @@ class LoadAtomData {
                 hAtoms = ic.hAtoms;
             }
         }
-        else if(type === 'mmdbid' && alignType === 'target') {
+        else { //if(type === 'mmdbid' && alignType === 'target') {
             hAtoms = ic.hAtoms;
         }
 

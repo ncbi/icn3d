@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.32.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.32.0.zip) was release on May 28, 2024. Allowed to load multiple mmCIF text files, which could contain multiple structures separated by "ENDMDL\n". 
+
 [icn3d-3.31.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.4.zip) was release on May 11, 2024. Release Ig templates for assigning reference numbers.
 
 [icn3d-3.31.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.31.3.zip) was release on April 15, 2024. Jack Lin fixed some issues in loading a collection file.

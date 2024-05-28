@@ -264,8 +264,6 @@
                     bNoMoreIg = false;
 
                     let pdb_target = ic.saveFileCls.getAtomPDB(domainAtomsArray[k], undefined, undefined, undefined, undefined, struct);
-                    //let bForceOneDomain = true;
-                    //let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(domainAtomsArray[k], bForceOneDomain);
 
                     // ig strand for any subset will have the same k, use the number of residue to separate them
                     let atomFirst = ic.firstAtomObjCls.getFirstAtomObj(domainAtomsArray[k]);
@@ -425,22 +423,24 @@
         // assign ref numbers to selected residues
         let result = ic.domain3dCls.c2b_NewSplitChain(currAtoms, undefined);
         let subdomains = result.subdomains;
-        let pos2resi = result.pos2resi;
+        // let pos2resi = result.pos2resi;
 
         if(subdomains.length >= 1) {
             for(let k = 0, kl = subdomains.length; k < kl; ++k) {
                 let domainAtoms = {};
                 let segArray = subdomains[k];
 
-                let resCnt = 0, minResi = 999, maxResi = -999;
+                let resCnt = 0; // minResi = 999, maxResi = -999;
                 for(let m = 0, ml = segArray.length; m < ml; m += 2) {
                     let startResi = parseInt(segArray[m]);
                     let endResi = parseInt(segArray[m+1]);
-                    if(startResi < minResi) minResi = startResi;
-                    if(endResi > maxResi) maxResi = endResi;
+
+                    // if(startResi < minResi) minResi = startResi;
+                    // if(endResi > maxResi) maxResi = endResi;
 
                     for(let n = startResi; n <= endResi; ++n) {
-                        let resid = chainid + '_' + pos2resi[n - 1];
+                        // let resid = chainid + '_' + pos2resi[n - 1];
+                        let resid = ic.ncbi2resid[chainid + '_' + n];
                         ++resCnt;
                         domainAtoms = me.hashUtilsCls.unionHash(domainAtoms, ic.residues[resid]);
 
@@ -456,6 +456,9 @@
                 domainAtomsArray.push(domainAtoms);
             }
         }
+        // else { // no domain
+        //     domainAtomsArray = [currAtoms];
+        // }
 
         return domainAtomsArray;
     }
@@ -593,7 +596,6 @@
                         continue;  
                   }
                 // }
-
             }
 
             if(!bRound1) {
@@ -1644,13 +1646,14 @@
 
                 strandArray.splice(i, 1);
 
-                if(strandTmp == 'B' || strandTmp == 'C' || strandTmp == 'E' || strandTmp == 'F') {
-                    if(!me.bNode) console.log("Ig strand " + strandTmp + " is removed since it is too short...");
+                // do not remove BCEF strands even though they are short
+                // if(strandTmp == 'B' || strandTmp == 'C' || strandTmp == 'E' || strandTmp == 'F') {
+                //     if(!me.bNode) console.log("Ig strand " + strandTmp + " is removed since it is too short...");
                     
-                    let domainid = ic.resid2domainid[resid];
-                    removeDomainidHash[domainid] = 1;
-                    continue;
-                }   
+                //     let domainid = ic.resid2domainid[resid];
+                //     removeDomainidHash[domainid] = 1;
+                //     continue;
+                // }   
             }
         }
 

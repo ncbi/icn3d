@@ -335,8 +335,9 @@ class HlSeq {
                                         residueid = ic.ncbi2resid[residNCBI];
                                     }
                                     else if($(that).attr('3ddomain') !== undefined) {
-                                        // the position of residues with coordinates
-                                        residueid = ic.posid2resid[chainid + '_' + (j+1).toString()];
+                                        // NCBI residue numbers
+                                        // residueid = ic.posid2resid[chainid + '_' + (j+1).toString()];
+                                        residueid = ic.ncbi2resid[chainid + '_' + j];
                                     }
                                     else {
                                         residueid = chainid + '_' + (j+1).toString();

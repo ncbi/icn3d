@@ -128,6 +128,34 @@ class Resid2spec {
          return spec;
     }
 
+    resi2range(resiArray) {var ic = this.icn3d, me = ic.icn3dui;
+        let range = [];
+    
+        let resiArraySorted = resiArray.sort(function(a, b) {
+           return parseInt(a) - parseInt(b);
+        });
+        
+        let startResi = resiArraySorted[0];
+        let prevResi, resi;
+        for(let j = 0, jl = resiArraySorted.length; j < jl; ++j) {
+            resi = resiArraySorted[j];
+    
+            if(j != 0 && resi != prevResi + 1) {
+                range.push(startResi);
+                range.push(prevResi);
+                startResi = resi;
+            }
+    
+            prevResi = resi;
+        }
+        
+        // last residue
+        range.push(startResi);
+        range.push(prevResi);
+    
+        return range;
+    }
+
     atoms2spec(atomHash) {var ic = this.icn3d, me = ic.icn3dui;
         let spec = "";
         let i = 0;

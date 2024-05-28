@@ -48,7 +48,7 @@ class LineGraph {
             // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
             let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
             let nodeArray1SplitDiff = [], nodeArray2SplitDiff = [], linkArraySplitDiff = [], nameHashSplitDiff = [];
-            let linkedNodeCnt = {}, linkedNodeInterDiff = {};
+            let linkedNodeCnt = {}, linkedNodeInterDiff = {}, linkedNodeInterDiffBool = {};
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {   
                 nodeArray1Split[i] = [];
@@ -107,13 +107,15 @@ class LineGraph {
                             linkedNodeInterDiff[mappingid] = link.n;
                           }
                           else {                           
-                            ++linkedNodeCnt[mappingid];                            
-                            linkedNodeInterDiff[mappingid] -= link.n; // show difference
+                            ++linkedNodeCnt[mappingid];   
+                            linkedNodeInterDiff[mappingid] += link.n; 
+                            
+                            linkedNodeInterDiffBool[mappingid] = (linkedNodeInterDiff[mappingid] / link.n == linkedNodeCnt[mappingid]) ? 0 : 1; 
                           }
                       }
                 } 
             }
-
+            
             // do not combine with the above section since linkedNodeCnt was pre-populated above
             // set linkArraySplitCommon and nameHashSplitCommon
             // set linkArraySplitDiff and nameHashSplitDiff
@@ -159,7 +161,7 @@ class LineGraph {
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
-                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiff[mappingid] == 0) {
+                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiffBool[mappingid] == 0) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  
                           else {

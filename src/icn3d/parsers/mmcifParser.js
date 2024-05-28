@@ -123,23 +123,31 @@ class MmcifParser {
             if(data.emd !== undefined) ic.emd = data.emd;
             if(data.organism !== undefined) ic.organism = data.organism;
 
-            if(ic.emd !== undefined) {
-              $("#" + ic.pre + "mapWrapper1").hide();
-              $("#" + ic.pre + "mapWrapper2").hide();
-              $("#" + ic.pre + "mapWrapper3").hide();
-            }
-            else {
-              $("#" + ic.pre + "emmapWrapper1").hide();
-              $("#" + ic.pre + "emmapWrapper2").hide();
-              $("#" + ic.pre + "emmapWrapper3").hide();
-            }
-
             await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif');
+
+            ic.opmParserCls.modifyUIMapAssembly();
         }
         else {
-            //alert('invalid atoms data.');
             return false;
         }
+    }
+
+    async loadMultipleMmcifData(data, mmcifid, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+        let bText = true;
+        ic.loadCIFCls.loadCIF(data, mmcifid, bText, bAppend);
+        
+        if(Object.keys(ic.structures).length > 1) {
+            ic.opts['color'] = 'structure';
+        }
+
+        ic.opmParserCls.modifyUIMapAssembly();
+
+        ic.pdbParserCls.addSecondary(bAppend);
+
+        // ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+        // ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+
+        // await ic.ParserUtilsCls.renderStructure();
     }
 }
 
