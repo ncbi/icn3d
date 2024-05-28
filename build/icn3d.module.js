@@ -12585,7 +12585,7 @@ class SetMenu {
 //        html += this.getLink('mn1_pdbfile', 'PDB File');
 //        html += this.getLink('mn1_pdbfile_app', 'PDB File (append)');
         html += this.getLink('mn1_pdbfile_app', 'PDB Files (appendable)', 1, 2);
-        html += this.getLink('mn1_mmciffile', 'mmCIF File (appendable)', undefined, 2);
+        html += this.getLink('mn1_mmciffile', 'mmCIF Files (appendable)', undefined, 2);
         html += this.getLink('mn1_mol2file', 'Mol2 File', undefined, 2);
         html += this.getLink('mn1_sdffile', 'SDF File', undefined, 2);
         html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
