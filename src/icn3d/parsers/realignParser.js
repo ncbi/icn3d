@@ -413,23 +413,27 @@ class RealignParser {
 
         for(let s = 0, sl = structArray.length; s < sl; ++s) {
             let struct1 = structArray[s];
+
             let chainidArray1 = Object.keys(struct2domain[struct1]);
             if(chainidArray1.length == 0) continue;
-            for(let t = s+1, tl = structArray.length; t < tl; ++t) {
-                let struct2 = structArray[t];
-                let chainidArray2 = Object.keys(struct2domain[struct2]);
-                if(chainidArray2.length == 0) continue;
 
-                for(let i = 0, il = chainidArray1.length; i < il; ++i) {
-                    let chainid1 = chainidArray1[i];
-                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+            for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                let chainid1 = chainidArray1[i];
+                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+
+                for(let t = s+1, tl = structArray.length; t < tl; ++t) {
+                    let struct2 = structArray[t];
+
+                    let chainidArray2 = Object.keys(struct2domain[struct2]);
+                    if(chainidArray2.length == 0) continue;
+
                     for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
                         let chainid2 = chainidArray2[j];
 
                         let alignAjax;
                         if(me.cfg.aligntool != 'tmalign') {
                             let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-                        
+           
                             let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                             alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                         }
@@ -454,7 +458,14 @@ class RealignParser {
 
         let allPromise = Promise.allSettled(ajaxArray);
         // try {
+            // let dataArray = await allPromise;
+
+            let startDate = new Date();
             let dataArray = await allPromise;
+            let endDate   = new Date();
+            let miliseconds = (endDate.getTime() - startDate.getTime());
+            console.log("vastdyn time: " + miliseconds + " miliseconds")
+          
             ic.qt_start_end = []; // reset the alignment
             await ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse);  
         // }

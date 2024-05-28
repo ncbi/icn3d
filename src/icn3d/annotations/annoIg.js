@@ -11,6 +11,7 @@ class AnnoIg {
     async showIg(chnid, template) { let ic = this.icn3d, me = ic.icn3dui;
         // if(!ic.bRunRefnum || Object.keys(ic.atoms).length > Object.keys(ic.hAtoms).length) {
         if(ic.bRunRefnumAgain) {
+            // run for all chains
             await ic.refnumCls.showIgRefNum(template);
             // ic.bRunRefnum = true;    
         }

@@ -394,26 +394,26 @@ class BcifParser {
                 let molecueType;
                 if(atom_hetatm == "ATOM") {
                     if(resn.length == 3) {
-                        molecueType = "p"; // protein
+                        molecueType = "protein"; //"p"; // protein
                     }
                     else {
-                        molecueType = "n"; // nucleotide
+                        molecueType = "nucleotide"; //"n"; // nucleotide
                     }
                 }
                 else {
                     if(resn == "WAT" || resn == "HOH") {
-                        molecueType = "s"; // solvent
+                        molecueType = "solvent"; //"s"; // solvent
                         chain = 'Misc';
                     }
                     else {
-                        molecueType = "l"; // ligands or ions
+                        molecueType = "ligand"; //"l"; // ligands or ions
                         chain = resn;
                     }
                 }
 
                 // C-alpha only for large structure
-                if(!bFull && ((molecueType == "p" && !(elem == 'C' && name == 'CA')) 
-                    || (molecueType == "n" && !(name == "P")) ) ) continue;
+                if(!bFull && ((molecueType == "protein" && !(elem == 'C' && name == 'CA')) 
+                    || (molecueType == "nucleotide" && !(name == "P")) ) ) continue;
                 // skip alternative atoms
                 if(alt == "B") continue;
 
@@ -436,7 +436,7 @@ class BcifParser {
                     // }
                 }
     
-                if(molecueType == 's' || molecueType == "l") {
+                if(molecueType == 'solvent' || molecueType == "ligand") {
                     let seq = {};
                     if(!ligSeqHash.hasOwnProperty(chain)) {
                         ligSeqHash[chain] = [];
@@ -576,26 +576,26 @@ class BcifParser {
                 let molecueType;
                 if(atom_hetatm == "ATOM") {
                     if(resn.length == 3) {
-                        molecueType = "p"; // protein
+                        molecueType = "protein"; // protein
                     }
                     else {
-                        molecueType = "n"; // nucleotide
+                        molecueType = "nucleotide"; // nucleotide
                     }
                 }
                 else {
                     if(resn == "WAT" || resn == "HOH") {
-                        molecueType = "s"; // solvent
+                        molecueType = "solvent"; // solvent
                         chain = 'Misc';
                     }
                     else {
-                        molecueType = "l"; // ligands or ions
+                        molecueType = "ligand"; // ligands or ions
                         chain = resn;
                     }
                 }
 
                 // C-alpha only for large structure
-                if(!bFull && ((molecueType == "p" && !(elem == 'C' && name == 'CA')) 
-                    || (molecueType == "n" && !(name == "P")) ) ) continue;
+                if(!bFull && ((molecueType == "protein" && !(elem == 'C' && name == 'CA')) 
+                    || (molecueType == "nucleotide" && !(name == "P")) ) ) continue;
                 // skip alternative atoms
                 if(alt == "B") continue;
 

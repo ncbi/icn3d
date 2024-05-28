@@ -294,13 +294,19 @@ class SetSeqAlign {
           resi = pos;
         }
         else {
-          if(ic.posid2resid) {
-              let resid = ic.posid2resid[chainid + '_' + pos];
-              resi = resid.substr(resid.lastIndexOf('_') + 1);
-          }
-          else {
+        //   if(ic.posid2resid) {
+        //       let resid = ic.posid2resid[chainid + '_' + pos];
+        //       resi = resid.substr(resid.lastIndexOf('_') + 1);
+        //   }
+        //   else {
+            //   resi = (ic.chainsSeq[chainid][pos].resi) ? ic.chainsSeq[chainid][pos].resi : pos;
+              if(pos > ic.chainsSeq[chainid].length - 1) {
+                console.log("Error: the position " + pos + " exceeds the max index " + (ic.chainsSeq[chainid].length - 1))
+                pos = ic.chainsSeq[chainid].length - 1;
+              }
+
               resi = ic.chainsSeq[chainid][pos].resi;
-          }
+        //   }
         }
 
         return resi;

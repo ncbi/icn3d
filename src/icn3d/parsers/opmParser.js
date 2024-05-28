@@ -66,6 +66,46 @@ class OpmParser {
         }
     }
 
+    modifyUIMapAssembly() { let ic = this.icn3d, me = ic.icn3dui;
+        if(!me.bNode) {
+            if(ic.emd !== undefined) {
+                $("#" + ic.pre + "mapWrapper1").hide();
+                $("#" + ic.pre + "mapWrapper2").hide();
+                $("#" + ic.pre + "mapWrapper3").hide();
+              }
+              else {
+                $("#" + ic.pre + "emmapWrapper1").hide();
+                $("#" + ic.pre + "emmapWrapper2").hide();
+                $("#" + ic.pre + "emmapWrapper3").hide();
+              }
+  
+              if(Object.keys(ic.structures).length == 1) {
+                  $("#" + ic.pre + "alternateWrapper").hide();
+              }
+  /*    
+              // load assembly info
+              if(type === 'mmcif') {
+                  let assembly =(data.assembly !== undefined) ? data.assembly : [];
+                  for(let i = 0, il = assembly.length; i < il; ++i) {
+                      if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+          
+                      for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
+                          ic.biomtMatrices[i].elements[j] = assembly[i][j];
+                      }
+                  }
+              }
+  */        
+              if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
+                  $("#" + ic.pre + "assemblyWrapper").show();
+      
+                  ic.asuCnt = ic.biomtMatrices.length;
+              }
+              else {
+                  //$("#" + ic.pre + "assemblyWrapper").hide();
+              }
+        }
+    }
+
     async parseAtomData(data, pdbid, bFull, type, pdbid2, bText) { let ic = this.icn3d, me = ic.icn3dui;
         /*
         if(type === 'mmtf') {
@@ -82,41 +122,7 @@ class OpmParser {
                 ic.loadCIFCls.loadCIF(data, pdbid, bText);
             // }
 
-            if(ic.emd !== undefined) {
-              $("#" + ic.pre + "mapWrapper1").hide();
-              $("#" + ic.pre + "mapWrapper2").hide();
-              $("#" + ic.pre + "mapWrapper3").hide();
-            }
-            else {
-              $("#" + ic.pre + "emmapWrapper1").hide();
-              $("#" + ic.pre + "emmapWrapper2").hide();
-              $("#" + ic.pre + "emmapWrapper3").hide();
-            }
-
-            if(Object.keys(ic.structures).length == 1) {
-                $("#" + ic.pre + "alternateWrapper").hide();
-            }
-/*    
-            // load assembly info
-            if(type === 'mmcif') {
-                let assembly =(data.assembly !== undefined) ? data.assembly : [];
-                for(let i = 0, il = assembly.length; i < il; ++i) {
-                    if(ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-        
-                    for(let j = 0, jl = assembly[i].length; j < jl; ++j) {
-                        ic.biomtMatrices[i].elements[j] = assembly[i][j];
-                    }
-                }
-            }
-*/        
-            if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-                $("#" + ic.pre + "assemblyWrapper").show();
-    
-                ic.asuCnt = ic.biomtMatrices.length;
-            }
-            else {
-                //$("#" + ic.pre + "assemblyWrapper").hide();
-            }
+            this.modifyUIMapAssembly();
     
             ic.setStyleCls.setAtomStyleByOptions(ic.opts);
             ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);

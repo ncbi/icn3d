@@ -374,8 +374,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmciffile' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_mmciffile', 'Please input an mmCIF file');
-        html += "mmCIF File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "mmciffile' value='1TUP' size=8> ";
+        html += this.addNotebookTitle('dl_mmciffile', 'Please append mmCIF files');
+        html += "Multiple mmCIF Files: <input type='file' multiple id='" + me.pre + "mmciffile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_mmciffile'>Load</button>";
         html += "</div>";
 

@@ -181,7 +181,7 @@ class ContactMap {
 
         let graphStr = '{\n';
 
-        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : ic.defaultPdbId;
+        let struc1 = (Object.keys(ic.structures).length > 0) ? ic.structures[0] : ic.defaultPdbId;
         let len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         let factor = 1;

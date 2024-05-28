@@ -163,6 +163,12 @@ class PdbParser {
             }
         }
 
+        await this.addSecondary(bAppend, bNoDssp);
+
+        return hAtoms;
+    }
+
+    async addSecondary(bAppend, bNoDssp) { let ic = this.icn3d, me = ic.icn3dui;
         // calculate secondary structures if not available
         // DSSP only works for structures with all atoms. The Calpha only structures didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
@@ -186,8 +192,6 @@ class PdbParser {
 
             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
-
-        return hAtoms;
     }
 
     async applyCommandDssp(bAppend) { let ic = this.icn3d, me = ic.icn3dui;

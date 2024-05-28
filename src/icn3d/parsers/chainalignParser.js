@@ -100,6 +100,7 @@ class ChainalignParser {
                 let allPromise = Promise.allSettled(ajaxArray);
                 // try {
                     let dataArray = await allPromise;
+                    
                     await thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
                 // }
                 // catch(err) {
@@ -708,13 +709,13 @@ class ChainalignParser {
         if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
             && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
         ) {
-            if((align === undefined || align.length == 0) && bEqualMmdbid && bEqualChain) {
+            if((align === "error" || align === undefined || align.length == 0) && bEqualMmdbid && bEqualChain) {
                 ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
                 ic.q_trans_sub[index] = {"x":0, "y":0, "z":0};
                 ic.q_rotation[index] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
                 ic.qt_start_end[index] = undefined;
             }
-            else if(align === undefined || align.length == 0) {
+            else if(align === "error" || align === undefined || align.length == 0) {
                 if(!me.cfg.command && !bNoAlert) alert('These two chains can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
 
                 ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
@@ -745,14 +746,16 @@ class ChainalignParser {
                 ic.qt_start_end[index] = align[0].segs;
 
                 let rmsd = align[0].super_rmsd;
+                let rmsdStr = (rmsd) ? rmsd.toPrecision(4) : rmsd;
+                let scoreStr = (align[0].score) ? align[0].score.toPrecision(4) : align[0].score;
 
-                let logStr = "alignment RMSD: " + rmsd.toPrecision(4);
-                if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + align[0].score.toPrecision(4);
+                let logStr = "alignment RMSD: " + rmsdStr;
+                if(me.cfg.aligntool == 'tmalign') logStr += "; TM-score: " + scoreStr;
                 me.htmlCls.clickMenuCls.setLogCmd(logStr, false);
-                let html = "<br><b>Alignment RMSD</b>: " + rmsd.toPrecision(4) + " &#8491;<br>";
+                let html = "<br><b>Alignment RMSD</b>: " + rmsdStr + " &#8491;<br>";
                 if(me.cfg.aligntool == 'tmalign') {
-                    html += "<b>TM-score</b>: " + align[0].score.toPrecision(4) + "<br><br>";
-                    ic.tmscore = align[0].score.toPrecision(4);
+                    html += "<b>TM-score</b>: " + scoreStr + "<br><br>";
+                    ic.tmscore = scoreStr;
                 }
 
                 $("#" + ic.pre + "dl_rmsd_html").html(html);
@@ -899,6 +902,7 @@ class ChainalignParser {
         let allPromise = Promise.allSettled(ajaxArray);
         // try {
             let dataArray = await allPromise;
+
             await thisClass.parseMMdbAfData(dataArray, structArray, bQuery, vastplusAtype);
             if(vastplusAtype === undefined) ic.ParserUtilsCls.hideLoading();
         // }
@@ -935,10 +939,6 @@ class ChainalignParser {
         let hAtoms = {}, hAtomsTmp = {};
         let bLastQuery = false;
 
-        let opts = {};
-
-        opts['color'] = (structArray.length > 1) ? 'structure' : ((structArray[0].length > 5) ? 'confidence' : 'chain');
-
         for(let i = 0, il = structArray.length; i < il; ++i) {
             if(i == structArray.length - 1) bLastQuery = true;
 
@@ -953,7 +953,7 @@ class ChainalignParser {
                 targetOrQuery = 'query';
                 bAppend = true; 
             }
-            
+
             //if(structArray[i].length > 4) {
             if(isNaN(structArray[i]) && structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 //let bNoDssp = true;
@@ -963,14 +963,22 @@ class ChainalignParser {
             else {
                 let bNoSeqalign = true;
                 let pdbid = structArray[i];
+
+                //hAtomsTmp contains all atoms
                 hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign, pdbid);
             }
                     
-            hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+            // hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
-        // add color only for the newly loaded structures
-        ic.setColorCls.setColorByOptions(opts, hAtoms);
+        let opts = {};
+
+        let structArrayAll = Object.keys(ic.structures);
+
+        ic.opts['color'] = (structArrayAll.length > 1) ? 'structure' : ((structArrayAll[0].length > 5) ? 'confidence' : 'chain');
+
+        // add color for all structures
+        ic.setColorCls.setColorByOptions(ic.opts, hAtoms);
 
         await ic.ParserUtilsCls.renderStructure();
 
@@ -1000,15 +1008,6 @@ class ChainalignParser {
             if(vastplusAtype == 2) me.cfg.aligntool = 'tmalign';
             await ic.vastplusCls.vastplusAlign(structArray, vastplusAtype);
         }
-
-        // /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-
-        // if(Object.keys(ic.structures).length == 1 && me.cfg.mmdbafid.length > 5) {
-        //     ic.ParserUtilsCls.checkMemProtein(me.cfg.mmdbafid);
-        // }
-        // else {
-        //     /// if(ic.deferredMmdbaf !== undefined) ic.deferredMmdbaf.resolve();
-        // }
     }
 }
 

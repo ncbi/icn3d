@@ -1285,8 +1285,8 @@ class ApplyCommand {
 
         ic.hlUpdateCls.updateHlAll();
 
-        // change graph color
-        ic.getGraphCls.updateGraphColor();
+        // change graph color, was done in color command
+        //ic.getGraphCls.updateGraphColor();
       }
       else if(commandOri.indexOf('remove legend') == 0) {
         $("#" + me.pre + "legend").hide();

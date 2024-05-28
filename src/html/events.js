@@ -90,17 +90,15 @@ class Events {
         }
     }
 
-    async readFile(bAppend, files, index, dataStrAll) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async readFile(bAppend, files, index, dataStrAll, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
+        commandName += (bmmCIF) ? ' mmcif file ': ' pdb file ';
         
         let reader = new FileReader();
         reader.onload = async function(e) {
-            //++ic.loadedFileCnt;
-
             let dataStr = e.target.result; // or = reader.result;
-            //thisClass.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
-            thisClass.setLogCmd(commandName + ' pdb file ' + file.name, false);
+            thisClass.setLogCmd(commandName + file.name, false);
 
             if(!bAppend) {
                 ic.init();
@@ -114,7 +112,7 @@ class Events {
             }
 
             ic.bInputfile = true;
-            ic.InputfileType = 'pdb';
+            ic.InputfileType = (bmmCIF) ? 'mmcif' : 'pdb';
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
 
             dataStrAll = (index > 0) ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
@@ -124,15 +122,21 @@ class Events {
                     ic.hAtoms = {};
                     ic.dAtoms = {};
                 }
-                await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+                if(bmmCIF) {
+                    await ic.mmcifParserCls.loadMultipleMmcifData(dataStrAll, undefined, bAppend); 
+                }
+                else {
+                	await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
+                }
+
+                //ic.InputfileType = undefined; // reset
             }
             else {
-                await thisClass.readFile(bAppend, files, index + 1, dataStrAll);
+                await thisClass.readFile(bAppend, files, index + 1, dataStrAll, bmmCIF);
             }
 
             if(bAppend) {
                 if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
-                //if(ic.bSetChainsAdvancedMenu) ic.legendTableCls.showSets();
 
                 ic.bResetAnno = true;
 
@@ -149,9 +153,7 @@ class Events {
         }
     }
 
-    async loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
-       let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
-
+    async loadPdbFile(bAppend, fileId, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        //me = ic.setIcn3dui(this.id);
        ic.bInitial = true;
        if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -175,7 +177,7 @@ class Events {
 
             ic.dataStrAll = '';
 
-            await this.readFile(bAppend, files, 0, '');
+            await this.readFile(bAppend, files, 0, '', bmmCIF);
        }
     }
 
@@ -1532,14 +1534,14 @@ class Events {
            e.preventDefault();
 
            let bAppend = false;
-           await thisClass.loadPdbFile(bAppend);
+           await thisClass.loadPdbFile(bAppend, 'pdbfile');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
 
            ic.bAppend = true;
-           await thisClass.loadPdbFile(ic.bAppend);
+           await thisClass.loadPdbFile(ic.bAppend, 'pdbfile_app');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
@@ -1723,49 +1725,13 @@ class Events {
            await ic.pdbParserCls.downloadUrl(url, type);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_mmciffile", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_mmciffile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
-           ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
-           let file = $("#" + me.pre + "mmciffile")[0].files[0];
-           if(!file) {
-             alert("Please select a file before clicking 'Load'");
-           }
-           else {
-             me.htmlCls.setHtmlCls.fileSupport();
-             let reader = new FileReader();
-             reader.onload = async function(e) {
-                let dataStr = e.target.result; // or = reader.result;
-                thisClass.setLogCmd('load mmcif file ' + $("#" + me.pre + "mmciffile").val(), false);
-                ic.molTitle = "";
 
-                // let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
-                // //ic.bCid = undefined;
-
-                // let dataObj = {'mmciffile': dataStr};
-                // let data = await me.getAjaxPostPromise(url, dataObj, true);
-
-                let bText = true;
-                // let bcifData = ic.bcifParserCls.getBcifJson(dataStr, undefined, bText);
-                // let data = JSON.parse(bcifData);
-
-                //ic.initUI();
-                ic.init();
-                ic.bInputfile = true;
-                ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : dataStr;
-                ic.InputfileType = 'mmcif';
-                // await ic.mmcifParserCls.loadMmcifData(data); 
-                await ic.opmParserCls.loadOpmData(dataStr, undefined, undefined, 'mmcif', undefined, bText);
-             }
-             reader.readAsText(file);
-           }
+           ic.bAppend = true;
+           let bmmCIF = true;
+           let fileId = 'mmciffile';
+           await thisClass.loadPdbFile(ic.bAppend, fileId, bmmCIF);
         });
 
         me.myEventCls.onIds("#" + me.pre + "applycustomcolor", "click", function(e) { let ic = me.icn3d;

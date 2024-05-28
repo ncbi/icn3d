@@ -642,6 +642,7 @@ class Domain3d {
 	//c2b_NewSplitChain(string asymId, let seqLen, let* x0, let* y0, let* z0) { let ic = this.icn3d, me = ic.icn3dui;
 	// x0, y0, z0: array of x,y,z coordinates of C-alpha atoms
 	//c2b_NewSplitChain(chnid, dcut) { let ic = this.icn3d, me = ic.icn3dui;
+	// this function works for a single chain
 	c2b_NewSplitChain(atoms, dcut) { let ic = this.icn3d, me = ic.icn3dui;
 		this.init3ddomain();
 
@@ -701,14 +702,11 @@ class Domain3d {
 			// pos2resi[i+1] = resi;
 			pos2resi[i] = resi;
 
-			ic.posid2resid[atom.structure + '_' + atom.chain + '_' + (i+1).toString()]  = resid;
-			// let residNCBI = ic.resid2ncbi[resid];
-			// let pos = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
-			// pos2resi[pos] = resi;
-
+			// ic.posid2resid[atom.structure + '_' + atom.chain + '_' + (i+1).toString()]  = resid;
 			if(atom.ssend) {
 				//substructItem.To = parseInt(resi);
 				substructItem.To = i + 1;
+				// substructItem.To = ic.annoDomainCls.getNcbiresiFromResid(resid);
 				substructItem.x2 = atom.coord.x;
 				substructItem.y2 = atom.coord.y;
 				substructItem.z2 = atom.coord.z;
@@ -723,6 +721,7 @@ class Domain3d {
 			if(atom.ssbegin) {
 				//substructItem.From = parseInt(resi);
 				substructItem.From = i + 1;
+				// substructItem.From = ic.annoDomainCls.getNcbiresiFromResid(resid);
 				substructItem.x1 = atom.coord.x;
 				substructItem.y1 = atom.coord.y;
 				substructItem.z1 = atom.coord.z;
@@ -730,17 +729,19 @@ class Domain3d {
         }
 
 		let nsse = substruct.length;
-
-		if (nsse <= 3)
+		
+		if (nsse <= 3) {
 			// too small, can't split or trim
-			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
+			substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
+			return {subdomains: subdomains, substruct: substruct};
+        }
 
 		if (nsse > this.MAX_SSE) {
 			// we have a problem...
-
-			return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
+			substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
+			return {subdomains: subdomains, substruct: substruct};
 		}
-
+		
 		let seqLen = residueArray.length; // + resiOffset;
 		//let lastResi = resiArray[seqLen - 1];
 		let lastResi = seqLen;
@@ -1061,7 +1062,8 @@ class Domain3d {
 				let k = prts[i] - 1;
 
 				if ((k < 0) || (k >= substruct.length)) {
-					return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi};
+					substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
+					return {subdomains: subdomains, substruct: substruct};
 				}
 
 				//SSE_Rec sserec = substruct[k];
@@ -1148,16 +1150,23 @@ class Domain3d {
 
 				if (inseg && (rf == 0)) {
 					// segment ends
-					segments.push(startseg);
-					segments.push(i);
+					// segments.push(startseg);
+					// segments.push(i);
+
+					let resiRangeArray = this.getNcbiresiRangeFromPos(chnid, startseg, i, pos2resi);
+					segments = segments.concat(resiRangeArray);
+
 					inseg = false;
 				}
 			}
 
 			// check for the last segment
 			if (inseg) {
-				segments.push(startseg);
-				segments.push(lastResi);
+				// segments.push(startseg);
+				// segments.push(lastResi);
+
+				let resiRangeArray = this.getNcbiresiRangeFromPos(chnid, startseg, lastResi, pos2resi);
+				segments = segments.concat(resiRangeArray);
 			}
 
 			subdomains.push(segments);
@@ -1178,61 +1187,114 @@ class Domain3d {
 			}
 		}
 
-		return {subdomains: subdomains, substruct: substruct, pos2resi: pos2resi };
+		substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
+
+		// return {subdomains: subdomains, substruct: substruct};
+		//subdomains contains NCBI residue numbers
+		return {subdomains: subdomains, substruct: substruct};
 	} // end c2b_NewSplitChain
 
-	getDomainJsonForAlign(atoms, bForceOneDomain) { let ic = this.icn3d, me = ic.icn3dui;
+	standardizeSubstruct(chnid, substruct, pos2resi) { let ic = this.icn3d, me = ic.icn3dui;
+		// adjust substruct to use NCBI residue number
+		for (let i = 0; i < substruct.length; i++) {
+			//SSE_Rec sserec = substruct[i];
+			let sserec = substruct[i];
+			let FromPos = sserec.From;
+			let ToPos = sserec.To;
+			
+			let FromResi = pos2resi[FromPos - 1];
+			let ToResi = pos2resi[ToPos - 1];
+
+			let FromNcbiResid = ic.annoDomainCls.getNcbiresiFromResid(chnid + '_' + FromResi);
+			let ToNcbiResid = ic.annoDomainCls.getNcbiresiFromResid(chnid + '_' + ToResi);
+
+			substruct[i].From = FromNcbiResid.substr(FromNcbiResid.lastIndexOf('_') + 1);
+			substruct[i].To = ToNcbiResid.substr(ToNcbiResid.lastIndexOf('_') + 1);
+
+			substruct[i].From = parseInt(substruct[i].From);
+			substruct[i].To = parseInt(substruct[i].To);
+		}
+
+		return substruct;
+	}
+
+	getNcbiresiRangeFromPos(chnid, startPos, endPos, pos2resi) { let ic = this.icn3d, me = ic.icn3dui;
+		let resiArray = [];
+		for(let i = startPos; i <= endPos; ++i) {
+			let resi = pos2resi[i - 1];
+			let residNCBI = (ic.resid2ncbi[chnid + '_' + resi]) ? ic.resid2ncbi[chnid + '_' + resi] : chnid + '_' + resi;
+			let ncbiresi = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
+			resiArray.push(parseInt(ncbiresi));
+		}
+
+		let resiRangeArray = ic.resid2specCls.resi2range(resiArray);
+	
+		return resiRangeArray;
+	}
+
+	/*
+	// this function works for atoms in a single chain
+	// getDomainJsonForAlign(atoms, bForceOneDomain) { let ic = this.icn3d, me = ic.icn3dui;
+	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
 		let result = this.c2b_NewSplitChain(atoms);
 
 		let subdomains = result.subdomains;
 		let substruct = result.substruct;
-		let pos2resi = result.pos2resi;
+		// let pos2resi = result.pos2resi;
+
 
 		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
-		let residueArray = Object.keys(residueHash);
-		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+		// let residueArray = Object.keys(residueHash);
+		// let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
 
-		if(bForceOneDomain) subdomains = [];
+		let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atoms);
+		let chnid = firstAtom.structure + '_' + firstAtom.chain;
+
+		// if(bForceOneDomain) subdomains = [];
 
 		//the whole structure is also considered as a large domain
-		//if(subdomains.length == 0) {
-			//subdomains.push([parseInt(ic.chainsSeq[chnid][0].resi), parseInt(ic.chainsSeq[chnid][ic.chainsSeq[chnid].length - 1].resi)]);
-
-			// subdomains.push([parseInt(residueArray[0].substr(residueArray[0].lastIndexOf('_') + 1)), 
-			//  	parseInt(residueArray[residueArray.length-1].substr(residueArray[residueArray.length-1].lastIndexOf('_') + 1))]);
-
-			// use position based
-			subdomains.push([1, residueArray.length]);
-				
-		//}	
+		if(subdomains.length == 0) {
+			let resid1 = residueArray[0];
+			let resid2 = residueArray[residueArray.length - 1];
+			let ncbiresid1 = (ic.resid2ncbi[resid1]) ? ic.resid2ncbi[resid1] : resid1;
+			let ncbiresid2 = (ic.resid2ncbi[resid2]) ? ic.resid2ncbi[resid2] : resid2;
+			subdomains.push([parseInt(ncbiresid1.substr(ncbiresid1.lastIndexOf('_') + 1)), parseInt(ncbiresid2.substr(ncbiresid2.lastIndexOf('_') + 1))]);	
+		}	
 
 		// m_domains1: {"data": [ {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]], "domain": [[1,43,x,y,z],[2,58,x,y,z], ...]}, {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]],"domain": [[1,43,x,y,z],[2,58,x,y,z], ...]} ] }
 		let jsonStr = '{"data": [';
+		//merge all subdomains into one domain
+		jsonStr += '{"ss": ['; //secondary structure
+
+		let ssCnt = 0, startAll = 999, endAll = -999;
 		for(let i = 0, il = subdomains.length; i < il; ++i) {
-			if(i > 0) jsonStr += ', ';
-			//secondary structure
-			jsonStr += '{"ss": [';
-			let ssCnt = 0;
+			// if(i > 0) jsonStr += ', ';
+			// jsonStr += '{"ss": ['; //secondary structure
+			
 			for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
 				let start = subdomains[i][j];
 				let end = subdomains[i][j + 1];
-			
+				
+				if(start < startAll) startAll = start;
+				if(end > endAll) endAll = end;
+				
 				for(let k = 0, kl = substruct.length; k < kl; ++k) {
 					//ss: sstype	ss_start	ss_end	x1	y1	z1	x2	y2	z2
 						//sstype: 1 (helix), 2 (sheet)
 					let sstype = (substruct[k].Sheet) ? 2 : 1;
-					let from = pos2resi[substruct[k].From - 1]; // 1-based to 0-based
-					let to = pos2resi[substruct[k].To - 1];
+					// let from = pos2resi[substruct[k].From - 1]; // 1-based to 0-based
+					// let to = pos2resi[substruct[k].To - 1];
 
 					// 1-based residue numbers
 					let fromPos = substruct[k].From;
 					let toPos = substruct[k].To;
 
-					let residFrom = chnid + "_" + from;
+					let residFrom = ic.ncbi2resid[chnid + "_" + fromPos];
 					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
+
 					if(!atomFrom || !ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
 
-					let residTo = chnid + "_" + to;
+					let residTo = ic.ncbi2resid[chnid + "_" + toPos];
 					let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
 					if(!atomTo || !ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
 
@@ -1244,45 +1306,170 @@ class Domain3d {
 					}
 				}				
 			}
-			jsonStr += ']';
-
-			// domain
-			jsonStr += ', "domain": [';
-			let domainCnt = 0;
-			for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
-				let start = subdomains[i][j];
-				let end = subdomains[i][j + 1];
-
-				for(let k = 0, kl = residueArray.length; k < kl; ++k) {
-					let resid = residueArray[k];
-
-					// let resi = resid.substr(resid.lastIndexOf('_') + 1);
-					// let residNCBI = ic.resid2ncbi[resid];
-					// let pos = residNCBI.substr(residNCBI.lastIndexOf('_') + 1);
-					let pos = k + 1;
-		
-					//let resid = chnid + "_" + resi;
-					let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
-
-					if(!atom) continue;
-					if(!ic.hAtoms.hasOwnProperty(atom.serial)) continue;
-
-					//domain: resi, restype, x, y, z
-					let restype = me.parasCls.resn2restype[atom.resn];
-					if(restype !== undefined && pos >= start && pos <= end) {
-						if(domainCnt > 0) jsonStr += ', ';
-						jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' 
-							+ atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
-						++domainCnt;
-					}
-				}			
-			}
-			jsonStr += ']}';
 		}
+		jsonStr += ']';
+		
+		// domain
+		jsonStr += ', "domain": [';
+		let domainCnt = 0;
+		let fakeCoord = 0; //-100000;  // the fake corrd is not read anyway
+
+		// resi should be the continuous number starting from 1. make this correction in the backend
+		for(let j = startAll; j <= endAll; ++j) {
+			let ncbiResid = chnid + '_' + j;
+			let resid = ic.ncbi2resid[ncbiResid];
+
+			let pos = j;
+
+			if(domainCnt > 0) jsonStr += ', ';
+
+			if(!residueHash.hasOwnProperty(resid)) {
+				jsonStr += '[' + pos + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
+			}
+			else {
+				let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+				//domain: resi, restype, x, y, z
+				let restype = (me.parasCls.resn2restype[atom.resn]) ? me.parasCls.resn2restype[atom.resn] : 0;
+				
+				jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
+			}
+
+			++domainCnt;		
+		}
+		jsonStr += ']}';
+
 		jsonStr += ']}';
 
 		return jsonStr;
 	} 
+*/
+	// this function works for atoms in a single chain
+	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+		// let result = this.c2b_NewSplitChain(atoms);
+
+		// let subdomains = result.subdomains;
+		// let substruct = result.substruct;
+
+		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+		let residueArray = Object.keys(residueHash);
+		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+
+		// let resid1 = residueArray[0];
+		// let resid2 = residueArray[residueArray.length - 1];
+		// let ncbiresid1 = (ic.resid2ncbi[resid1]) ? ic.resid2ncbi[resid1] : resid1;
+		// let ncbiresid2 = (ic.resid2ncbi[resid2]) ? ic.resid2ncbi[resid2] : resid2;
+		// let startAll = parseInt(ncbiresid1.substr(ncbiresid1.lastIndexOf('_') + 1));
+		// let endAll = parseInt(ncbiresid2.substr(ncbiresid2.lastIndexOf('_') + 1));	
+
+		let substruct = [];
+		let substructItem = {};
+		let pos2resi = {}; // 0-based
+		let startAll = 999, endAll = -999;
+		for(let i = 0; i < residueArray.length; ++i) {
+			let resid = residueArray[i];
+			let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+			let resi = resid.substr(resid.lastIndexOf('_') + 1);
+			pos2resi[i] = resi;
+
+			let ncbiresid = (ic.resid2ncbi[resid]) ? ic.resid2ncbi[resid] : resid;
+			let ncbiresi = parseInt(ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1));
+
+			if(ncbiresi < startAll) startAll = ncbiresi;
+			if(ncbiresi > endAll) endAll = ncbiresi;
+
+			if(atom.ssend) {
+				substructItem.To = i + 1;
+				substructItem.x2 = atom.coord.x;
+				substructItem.y2 = atom.coord.y;
+				substructItem.z2 = atom.coord.z;
+
+				substructItem.Sheet = (atom.ss == 'sheet') ? true : false;
+
+				substruct.push(substructItem);
+				substructItem = {};		
+			}
+
+			// a residue could be both start and end. check ssend first, then check ssbegin 
+			if(atom.ssbegin) {
+				substructItem.From = i + 1;
+				substructItem.x1 = atom.coord.x;
+				substructItem.y1 = atom.coord.y;
+				substructItem.z1 = atom.coord.z;
+			}
+        }
+
+		substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
+
+		// m_domains1: {"data": [ {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]], "domain": [[1,43,x,y,z],[2,58,x,y,z], ...]}, {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]],"domain": [[1,43,x,y,z],[2,58,x,y,z], ...]} ] }
+		let jsonStr = '{"data": [';
+		//merge all subdomains into one domain
+		jsonStr += '{"ss": ['; //secondary structure
+
+		let ssCnt = 0;
+		for(let k = 0, kl = substruct.length; k < kl; ++k) {
+			//ss: sstype	ss_start	ss_end	x1	y1	z1	x2	y2	z2
+			//sstype: 1 (helix), 2 (sheet)
+			let sstype = (substruct[k].Sheet) ? 2 : 1;
+
+			// 1-based residue numbers
+			let fromPos = substruct[k].From;
+			let toPos = substruct[k].To;
+
+			let residFrom = ic.ncbi2resid[chnid + "_" + fromPos];
+			let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
+			if(!atomFrom || !ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
+
+			let residTo = ic.ncbi2resid[chnid + "_" + toPos];
+			let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
+			if(!atomTo || !ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
+
+			// if(fromPos >= start && toPos <= end) {
+				if(ssCnt > 0) jsonStr += ', ';
+				jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
+					+ substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
+				++ssCnt;
+			// }
+		}				
+
+		jsonStr += ']';
+		
+		// domain
+		jsonStr += ', "domain": [';
+		let domainCnt = 0;
+		let fakeCoord = 0; //-100000;  // the fake corrd is not read anyway
+
+		// resi should be the continuous number starting from 1. make this correction in the backend
+		for(let j = startAll; j <= endAll; ++j) {
+			let ncbiResid = chnid + '_' + j;
+			let resid = ic.ncbi2resid[ncbiResid];
+
+			let pos = j;
+
+			if(domainCnt > 0) jsonStr += ', ';
+
+			if(!residueHash.hasOwnProperty(resid)) {
+				jsonStr += '[' + pos + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
+			}
+			else {
+				let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+				//domain: resi, restype, x, y, z
+				let restype = (me.parasCls.resn2restype[atom.resn]) ? me.parasCls.resn2restype[atom.resn] : 0;
+				
+				jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
+			}
+
+			++domainCnt;		
+		}
+		jsonStr += ']}';
+
+		jsonStr += ']}';
+
+		return jsonStr;
+	} 
+
 }
 
 export {Domain3d}

@@ -242,7 +242,6 @@ class Annotation {
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
     }
     async setAnnoTabIg(bSelection, template) {  let ic = this.icn3d, me = ic.icn3dui;
-
         await this.updateIg(bSelection, template);
 
         $("[id^=" + ic.pre + "ig]").show();
@@ -583,7 +582,7 @@ class Annotation {
 
     async updateIg(bSelection, template) { let ic = this.icn3d, me = ic.icn3dui;
         ic.opts['color'] = 'ig strand';
-
+        
         // if(!bSelection && !template) {
         if(!bSelection) {
             // select all protein chains
@@ -602,11 +601,13 @@ class Annotation {
         }
 
         ic.bRunRefnumAgain = true;
-        for(let chainid in ic.protein_chainid) {
+        let chainidHash = (!bSelection) ? ic.protein_chainid : ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms)
+        for(let chainid in chainidHash) {
+            // showIgRefNum() in showIg() runs for all chains
             await ic.annoIgCls.showIg(chainid, template);
             ic.bRunRefnumAgain = false; // run it once for all chains
         }
-
+        
         if(ic.bShowRefnum) {
             ic.hlUpdateCls.updateHlAll();
             ic.drawCls.draw();
