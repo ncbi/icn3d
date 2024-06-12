@@ -8,7 +8,7 @@ In your Node.js scripts, you can call iCn3D JavaScript functions in [icn3d npm p
 Installation
 ------------
 
-Install the following packages (npm icn3d version should be 3.21.0 or above):
+Install the following packages (The version of node should be 16 or later):
 
     npm install three
     npm install jquery
@@ -83,6 +83,16 @@ Examples
         6M0J, 6M0J_E, 501, N, Y, 0, 0, 9, 0, 1, 1
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
+
+* <b>Detect Ig domains and assign IgStrand reference numbers</b>
+
+    You can download the folders "refpdb" and "tmalign-icn3dnode" to your local directoy, compile "tmalign-icn3dnode", and modify the script "refnum.js" to set up the path to the local program "tmalign-icn3dnode", then run the following:
+    
+        node refnum.js [a list of comma-separated PDB or UniProt IDs (no space)]
+    
+    The output JSON file contains the Ig domain detection, templates, reference numbers, etc. You could also specify a template in the folder "refpdb" to detect the Ig domains:
+
+        node refnum.js [a list of comma-separated PDB or UniProt IDs (no space)] [a template, e.g., CD28_1yjdC_human_V.pdb]
 
 * <b>Output Secondary Structure in PDB or JSON</b>
 
