@@ -112,7 +112,7 @@ class Vastplus {
                 let chainid = chainidArray[i];
                 let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
                 let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atoms);
-                structHash[firstAtom.structure] = 1;
+                if(firstAtom) structHash[firstAtom.structure] = 1;
             }
         }
 

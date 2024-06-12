@@ -351,6 +351,8 @@ class AnnoIg {
         let igCnt = ic.chain2igArray[chnid].length;
         let fromArray = [], toArray = [];
         let posindex2domainindex = {};
+        if(!ic.igLabel2Pos) ic.igLabel2Pos = {};
+        ic.igLabel2Pos[chnid] = {};
         for(let i = 0; i < igCnt; ++i) {
             let igElem = ic.chain2igArray[chnid][i];
             fromArray = fromArray.concat(igElem.startPosArray);
@@ -360,6 +362,18 @@ class AnnoIg {
                 let pos = igElem.startPosArray[j];
                 posindex2domainindex[pos] = i;
             }
+
+            let resi1 = ic.ParserUtilsCls.getResi(chnid, igElem.startPosArray[0]);
+            let resid1 = chnid + "_" + resi1;
+            let calpha1 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid1]);
+
+            let resi2 = ic.ParserUtilsCls.getResi(chnid, igElem.endPosArray[igElem.endPosArray.length - 1]);
+            let resid2 = chnid + "_" + resi2;
+            let calpha2 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid2]);
+
+            let label = chnid.substr(chnid.lastIndexOf('_') + 1) + '-Ig' + (i+1).toString();
+
+            ic.igLabel2Pos[chnid][label] = calpha1.coord.clone().add(calpha2.coord).multiplyScalar(0.5);
         }
 
         // let htmlCnt = '<span class="icn3d-residueNum" title="Ig domain count">' + igCnt.toString() + ' Igs</span>';
@@ -410,6 +424,7 @@ class AnnoIg {
         if(igArray.length == 0) return {html: html, html2: html2, html3: html3}
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
 
+        let chain = chnid.substr(chnid.lastIndexOf('_') + 1);
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             if(!ic.domainid2info) continue;
@@ -421,7 +436,7 @@ class AnnoIg {
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThresholdIgType ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign + ', label in 3D: ' + chain + '-Ig' + (i+1).toString());
 
             domainArray.push(igType);
 

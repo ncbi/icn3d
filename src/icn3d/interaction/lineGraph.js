@@ -150,6 +150,8 @@ class LineGraph {
                         && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
                           mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
                           mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                          let bIgRef = (mapping1.length > 4 && !isNaN(parseInt(mapping1.substr(-4, 4)))) || (mapping2.length > 4 && !isNaN(parseInt(mapping2.substr(-4, 4))));
   
                           let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
@@ -161,7 +163,7 @@ class LineGraph {
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
-                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiffBool[mappingid] == 0) {
+                          if(linkedNodeCnt[mappingid] == structureArray.length && (bIgRef || linkedNodeInterDiffBool[mappingid] == 0)) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  
                           else {

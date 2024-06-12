@@ -365,6 +365,11 @@ class ApplyCommand {
 
         ic.drawCls.draw();
       }
+      else if(command == 'add ig labels') {
+        ic.residueLabelsCls.addIgLabels(ic.hAtoms);
+
+        ic.drawCls.draw();
+      }
       else if(command == 'add atom labels') {
         ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
 
@@ -1691,6 +1696,7 @@ class ApplyCommand {
         else if(cmd.indexOf('hide annotation') == 0) return seqAnnoStr + ': checkboxes off';
         else if(cmd == 'add residue labels') return labelStr + 'per Residue';
         else if(cmd == 'add residue number labels') return labelStr + 'per Residue & Number';
+        else if(cmd == 'add Ig domain labels') return labelStr + 'per Ig Domain';
         else if(cmd == 'add atom labels') return labelStr + 'per Atom';
         else if(cmd == 'add chain labels') return labelStr + 'per Chain';
         else if(cmd == 'add terminal labels') return labelStr + 'N- & C- Termini';

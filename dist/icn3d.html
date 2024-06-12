@@ -156,6 +156,7 @@ pre span {color: red;}
         <li><a href="#simifoldseek"><span>Similar AlphaFold/PDB</span></a>
         <li><a href="#alignmul"><span>Align Multiple Structures</span></a>
         <li><a href="#batchanalysis"><span>Batch Analysis</span></a>
+        <li><a href="#igrefnum"><span>Assign Ig Ref. Numbers</span></a>
         <li><a href="#embedicn3d"><span>Embed iCn3D</span></a>
     </ul>
 </li>
@@ -891,6 +892,13 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
     You can use Node.js scripts to retrieve any data in iCn3D, even those unavailable in the UI. Some example scripts are listed at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode/">icn3dnode</a>" to retrieve annotations, interactions, electrostatic potentials, and surface areas, etc. For example, you can use the following command to retrieve the residues interacting with the ligand "JFM" in the structure with PDB ID 5R7Y: "node ligand.js 5R7Y JFM".<br>
     <br>
     You can also use Python scripts to retrieve data in the UI. Some example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython/icn3d_url">icn3dpython</a> to retrieve secondary structures, iCn3D PNG Images, JSON data for interactions, etc.<br>
+    <br>
+</li>
+
+<li><span class="anchor" id="igrefnum"></span><a name="igrefnum"></a><b>Q: How to use iCn3D to assign Ig reference numbers?</b><br>
+    You can assign IgStrand reference numbers via the menu "Analysis > Ref. Number > Show Ig for Selection", or via the menu "Analysis > Seq. & Annotations" and click the checkbox "Ig Domains" in the "Annotations" section. The reference numbers can be exported via the menu "File > Save File > Reference Numbers". See the manuscript <a href="https://www.biorxiv.org/content/10.1101/2024.06.10.598201v1">A universal residue numbering scheme for the Immunoglobulin-fold (Ig-fold) to study Ig-Proteomes and Ig-Interactomes</a> for more details.<br>
+    <br>
+    If you want to process a list of structures, you can download iCn3D Node.js script "refnum.js" at https://github.com/ncbi/icn3d/tree/master/icn3dnode. This script runs TM-align locally using the program at https://github.com/ncbi/icn3d/tree/master/icn3dnode/tmalign-icn3dnode and the templates at https://github.com/ncbi/icn3d/tree/master/icn3dnode/refpdb.<br>
     <br>
 </li>
 
