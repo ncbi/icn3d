@@ -679,15 +679,12 @@ class SetMenu {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
         }
 
-        //!!!
-/*
         html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
         html += "<ul>";
         html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
         html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
         html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
         html += "</ul>";
-*/
 
         html += "<li><br/></li>";
 
@@ -1532,9 +1529,8 @@ class SetMenu {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'pLDDT', undefined, 1, 1);
             //}
 
-            //!!!
-            // html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-            // html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -1664,8 +1660,10 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
-            //!!!
-            // html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelIg', 'per Ig Domain', undefined, 1, 2);
+
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
         }
@@ -1758,17 +1756,13 @@ class SetMenu {
             html += this.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-//!!!
-/*
+
             html += this.getLink('mn6_igrefYes', 'Show Ig for Selection', undefined, 2);
             html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_alignrefTpl', 'Align w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Reset Ig Ref. Number', undefined, 2);
 
             html += this.getMenuSep();
-*/
-
-
 
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
@@ -1860,6 +1854,7 @@ class SetMenu {
         html += this.getMenuUrl('faq_simialphapdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek", "Similar AlphaFold/PDB", 1, 2);
         html += this.getMenuUrl('faq_alnstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul", "Align Multiple Structures", 1, 2);
         html += this.getMenuUrl('faq_batchanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis", "Batch Analysis", 1, 2);
+        html += this.getMenuUrl('faq_batchanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#igrefnum", "Assign Ig Ref. Numbers", 1, 2);
         html += this.getMenuUrl('faq_embedicn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d", "Embed iCn3D", 1, 2);
         html += "</ul>";
         html += "</li>";

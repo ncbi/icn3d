@@ -11489,6 +11489,13 @@ class ClickMenu {
          ic.drawCls.draw();
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelIg", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         ic.residueLabelsCls.addIgLabels(ic.hAtoms);
+         ic.selectionCls.saveSelectionIfSelected();
+         thisClass.setLogCmd('add ig labels', true);
+         ic.drawCls.draw();
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.analysisCls.addChainLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
@@ -12713,15 +12720,12 @@ class SetMenu {
             html += this.getLink('mn1_exportSecondary', 'Secondary Structure', undefined, 2);
         }
 
-        //!!!
-/*
         html += this.getMenuText('m1_exportrefnum', 'Reference Numbers', undefined, undefined, 2);
         html += "<ul>";
         html += this.getLink('mn1_exportIgstrand', 'Ig Strand', undefined, 3);
         html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
         html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
         html += "</ul>";
-*/
 
         html += "<li><br/></li>";
 
@@ -13564,9 +13568,8 @@ class SetMenu {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'pLDDT', undefined, 1, 1);
             //}
 
-            //!!!
-            // html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-            // html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -13696,8 +13699,10 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
-            //!!!
-            // html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelIg', 'per Ig Domain', undefined, 1, 2);
+
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
         }
@@ -13790,17 +13795,13 @@ class SetMenu {
             html += this.getMenuText('mn6_igrefwrap', 'Ref. Number', undefined, undefined, 1);
 
             html += "<ul>";
-//!!!
-/*
+
             html += this.getLink('mn6_igrefYes', 'Show Ig for Selection', undefined, 2);
             html += this.getLink('mn6_igrefTpl', 'Ig w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_alignrefTpl', 'Align w/ Specified Template', undefined, 2);
             html += this.getLink('mn6_igrefNo', 'Reset Ig Ref. Number', undefined, 2);
 
             html += this.getMenuSep();
-*/
-
-
 
             html += this.getLink('mn6_customref', 'Custom Ref. Number', undefined, 2);
             html += "</ul>";
@@ -13890,6 +13891,7 @@ class SetMenu {
         html += this.getMenuUrl('faq_simialphapdb', me.htmlCls.baseUrl + "icn3d/icn3d.html#simifoldseek", "Similar AlphaFold/PDB", 1, 2);
         html += this.getMenuUrl('faq_alnstru', me.htmlCls.baseUrl + "icn3d/icn3d.html#alignmul", "Align Multiple Structures", 1, 2);
         html += this.getMenuUrl('faq_batchanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#batchanalysis", "Batch Analysis", 1, 2);
+        html += this.getMenuUrl('faq_batchanal', me.htmlCls.baseUrl + "icn3d/icn3d.html#igrefnum", "Assign Ig Ref. Numbers", 1, 2);
         html += this.getMenuUrl('faq_embedicn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#embedicn3d", "Embed iCn3D", 1, 2);
         html += "</ul>";
         html += "</li>";
@@ -16078,13 +16080,10 @@ class SetDialog {
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane" + me.htmlCls.space2 + "</span></td>";
-//!!!
-/*
+
         html += "<td></td>";
         html += "</tr><tr>";
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_ig'>Ig Domains" + me.htmlCls.space2 + "</span></td>";
-*/
-
 
         html += "<td></td>";
         html += "</tr></table></div></div>";
@@ -35755,6 +35754,33 @@ class ResidueLabels {
         ic.hlObjectsCls.removeHlObjects();
     }
 
+    //Add labels for each Ig domain
+    addIgLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
+
+        let size = 60; //18;
+
+        ic.labels['ig'] = [];
+        let chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(atoms);
+
+        for(let chainid in ic.igLabel2Pos) {
+            if(!chainidHash.hasOwnProperty(chainid)) continue;
+
+            for(let text in ic.igLabel2Pos[chainid]) {
+                let label = {}; // Each label contains 'position', 'text', 'color', 'background'
+                label.position = ic.igLabel2Pos[chainid][text];
+                label.text = text;
+
+                label.size = size;
+                label.color = '#00FFFF';
+
+                ic.labels['ig'].push(label);
+            }
+        }
+
+        ic.hlObjectsCls.removeHlObjects();
+    }
+
     addNonCarbonAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
@@ -42025,6 +42051,8 @@ class AnnoIg {
         let igCnt = ic.chain2igArray[chnid].length;
         let fromArray = [], toArray = [];
         let posindex2domainindex = {};
+        if(!ic.igLabel2Pos) ic.igLabel2Pos = {};
+        ic.igLabel2Pos[chnid] = {};
         for(let i = 0; i < igCnt; ++i) {
             let igElem = ic.chain2igArray[chnid][i];
             fromArray = fromArray.concat(igElem.startPosArray);
@@ -42034,6 +42062,18 @@ class AnnoIg {
                 let pos = igElem.startPosArray[j];
                 posindex2domainindex[pos] = i;
             }
+
+            let resi1 = ic.ParserUtilsCls.getResi(chnid, igElem.startPosArray[0]);
+            let resid1 = chnid + "_" + resi1;
+            let calpha1 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid1]);
+
+            let resi2 = ic.ParserUtilsCls.getResi(chnid, igElem.endPosArray[igElem.endPosArray.length - 1]);
+            let resid2 = chnid + "_" + resi2;
+            let calpha2 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid2]);
+
+            let label = chnid.substr(chnid.lastIndexOf('_') + 1) + '-Ig' + (i+1).toString();
+
+            ic.igLabel2Pos[chnid][label] = calpha1.coord.clone().add(calpha2.coord).multiplyScalar(0.5);
         }
 
         // let htmlCnt = '<span class="icn3d-residueNum" title="Ig domain count">' + igCnt.toString() + ' Igs</span>';
@@ -42084,6 +42124,7 @@ class AnnoIg {
         if(igArray.length == 0) return {html: html, html2: html2, html3: html3}
         let rangeArray = [], titleArray = [], fullTitleArray = [], domainArray = [];
 
+        let chain = chnid.substr(chnid.lastIndexOf('_') + 1);
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             if(!ic.domainid2info) continue;
@@ -42095,7 +42136,7 @@ class AnnoIg {
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThresholdIgType ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign);
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign + ', label in 3D: ' + chain + '-Ig' + (i+1).toString());
 
             domainArray.push(igType);
 
@@ -49365,7 +49406,7 @@ class HlUpdate {
     }
 
     //Remove the highlight in the 2D interaction diagram.
-    removeHl2D() { let ic = this.icn3d; ic.icn3dui;
+    removeHl2D(bRemoveChainOnly) { let ic = this.icn3d; ic.icn3dui;
           // clear nodes in 2d dgm
           $("#" + ic.pre + "dl_2ddgm rect").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_2ddgm circle").attr('stroke', '#000000');
@@ -49378,6 +49419,22 @@ class HlUpdate {
           if($("#" + ic.pre + "dl_2ddgm circle").length > 0) {
               $("#" + ic.pre + "dl_2ddgm svg line").attr('stroke', '#000000');
               $("#" + ic.pre + "dl_2ddgm line").attr('stroke-width', 1);
+          }
+
+          if(!bRemoveChainOnly) {
+            // clear nodes in 2d interaction network
+            // $("#" + ic.pre + "dl_linegraph rect").attr('stroke', '#000000');
+            $("#" + ic.pre + "dl_linegraph circle").attr('stroke', '#000000');
+    
+            // $("#" + ic.pre + "dl_linegraph rect").attr('stroke-width', 1);
+            $("#" + ic.pre + "dl_linegraph circle").attr('stroke-width', 1);
+
+            // clear nodes in 2d interaction graph
+            $("#" + ic.pre + "dl_scatterplot rect").attr('stroke', '#000000');
+            $("#" + ic.pre + "dl_scatterplot circle").attr('stroke', '#000000');
+    
+            $("#" + ic.pre + "dl_scatterplot rect").attr('stroke-width', 1);
+            $("#" + ic.pre + "dl_scatterplot circle").attr('stroke-width', 1);
           }
     }
 
@@ -49476,7 +49533,7 @@ class HlUpdate {
     // update highlight in 2D window
     //Update the highlight of 2D interaction diagram according to the current highlighted atoms.
     updateHl2D(chainArray2d) { let ic = this.icn3d, me = ic.icn3dui;
-      this.removeHl2D();
+      this.removeHl2D(true);
 
       if(ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
@@ -49903,6 +49960,8 @@ class LineGraph {
                         && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
                           mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
                           mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                          let bIgRef = (mapping1.length > 4 && !isNaN(parseInt(mapping1.substr(-4, 4)))) || (mapping2.length > 4 && !isNaN(parseInt(mapping2.substr(-4, 4))));
   
                           let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
@@ -49914,7 +49973,7 @@ class LineGraph {
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
                       
-                          if(linkedNodeCnt[mappingid] == structureArray.length && linkedNodeInterDiffBool[mappingid] == 0) {
+                          if(linkedNodeCnt[mappingid] == structureArray.length && (bIgRef || linkedNodeInterDiffBool[mappingid] == 0)) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  
                           else {
@@ -64837,7 +64896,7 @@ class Vastplus {
                 let chainid = chainidArray[i];
                 let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
                 let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atoms);
-                structHash[firstAtom.structure] = 1;
+                if(firstAtom) structHash[firstAtom.structure] = 1;
             }
         }
 
@@ -65856,6 +65915,11 @@ class ApplyCommand {
       }
       else if(command == 'add reference number labels') {
         ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
+
+        ic.drawCls.draw();
+      }
+      else if(command == 'add ig labels') {
+        ic.residueLabelsCls.addIgLabels(ic.hAtoms);
 
         ic.drawCls.draw();
       }
@@ -67185,6 +67249,7 @@ class ApplyCommand {
         else if(cmd.indexOf('hide annotation') == 0) return seqAnnoStr + ': checkboxes off';
         else if(cmd == 'add residue labels') return labelStr + 'per Residue';
         else if(cmd == 'add residue number labels') return labelStr + 'per Residue & Number';
+        else if(cmd == 'add Ig domain labels') return labelStr + 'per Ig Domain';
         else if(cmd == 'add atom labels') return labelStr + 'per Atom';
         else if(cmd == 'add chain labels') return labelStr + 'per Chain';
         else if(cmd == 'add terminal labels') return labelStr + 'N- & C- Termini';
@@ -81689,7 +81754,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.32.0';
+    this.REVISION = '3.33.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

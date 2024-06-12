@@ -71,7 +71,7 @@ class HlUpdate {
     }
 
     //Remove the highlight in the 2D interaction diagram.
-    removeHl2D() { let ic = this.icn3d, me = ic.icn3dui;
+    removeHl2D(bRemoveChainOnly) { let ic = this.icn3d, me = ic.icn3dui;
           // clear nodes in 2d dgm
           $("#" + ic.pre + "dl_2ddgm rect").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_2ddgm circle").attr('stroke', '#000000');
@@ -84,6 +84,22 @@ class HlUpdate {
           if($("#" + ic.pre + "dl_2ddgm circle").length > 0) {
               $("#" + ic.pre + "dl_2ddgm svg line").attr('stroke', '#000000');
               $("#" + ic.pre + "dl_2ddgm line").attr('stroke-width', 1);
+          }
+
+          if(!bRemoveChainOnly) {
+            // clear nodes in 2d interaction network
+            // $("#" + ic.pre + "dl_linegraph rect").attr('stroke', '#000000');
+            $("#" + ic.pre + "dl_linegraph circle").attr('stroke', '#000000');
+    
+            // $("#" + ic.pre + "dl_linegraph rect").attr('stroke-width', 1);
+            $("#" + ic.pre + "dl_linegraph circle").attr('stroke-width', 1);
+
+            // clear nodes in 2d interaction graph
+            $("#" + ic.pre + "dl_scatterplot rect").attr('stroke', '#000000');
+            $("#" + ic.pre + "dl_scatterplot circle").attr('stroke', '#000000');
+    
+            $("#" + ic.pre + "dl_scatterplot rect").attr('stroke-width', 1);
+            $("#" + ic.pre + "dl_scatterplot circle").attr('stroke-width', 1);
           }
     }
 
@@ -182,7 +198,7 @@ class HlUpdate {
     // update highlight in 2D window
     //Update the highlight of 2D interaction diagram according to the current highlighted atoms.
     updateHl2D(chainArray2d) { let ic = this.icn3d, me = ic.icn3dui;
-      this.removeHl2D();
+      this.removeHl2D(true);
 
       if(ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 

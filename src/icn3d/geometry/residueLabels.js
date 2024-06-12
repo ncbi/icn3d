@@ -92,6 +92,33 @@ class ResidueLabels {
         ic.hlObjectsCls.removeHlObjects();
     }
 
+    //Add labels for each Ig domain
+    addIgLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
+
+        let size = 60; //18;
+
+        ic.labels['ig'] = [];
+        let chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(atoms);
+
+        for(let chainid in ic.igLabel2Pos) {
+            if(!chainidHash.hasOwnProperty(chainid)) continue;
+
+            for(let text in ic.igLabel2Pos[chainid]) {
+                let label = {}; // Each label contains 'position', 'text', 'color', 'background'
+                label.position = ic.igLabel2Pos[chainid][text];
+                label.text = text;
+
+                label.size = size
+                label.color = '#00FFFF';
+
+                ic.labels['ig'].push(label);
+            }
+        }
+
+        ic.hlObjectsCls.removeHlObjects();
+    }
+
     addNonCarbonAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
