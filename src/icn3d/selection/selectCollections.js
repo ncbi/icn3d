@@ -105,9 +105,9 @@ class SelectCollections {
         'chemicals': {},
         'ions': {},
         'water': {},
-        'structures': {}, // getSSExpandedAtoms
+        'structures': {},
         'ssbondpnts': {},
-        'residues': {}, // getSSExpandedAtoms
+        'residues': {},
         'chains': {},
         'chainsSeq': {}, //Sequences and Annotation
         'defNames2Atoms': {},
@@ -156,9 +156,9 @@ class SelectCollections {
                 'chemicals': ic.chemicals,
                 'ions': ic.ions,
                 'water': ic.water,
-                'structures': ic.structures, // getSSExpandedAtoms
+                'structures': ic.structures,
                 'ssbondpnts': ic.ssbondpnts,
-                'residues': ic.residues, // getSSExpandedAtoms
+                'residues': ic.residues,
                 'chains': ic.chains,
                 'chainsSeq': ic.chainsSeq, //Sequences and Annotation
                 'defNames2Atoms': ic.defNames2Atoms,
@@ -172,9 +172,9 @@ class SelectCollections {
                 'chemicals': thisClass.dictionaryDifference(ic.allData['prev']['chemicals'], ic.chemicals),
                 'ions': thisClass.dictionaryDifference(ic.allData['prev']['ions'], ic.ions),
                 'water': thisClass.dictionaryDifference(ic.allData['prev']['water'], ic.water),
-                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures), // getSSExpandedAtoms
+                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures),
                 'ssbondpnts': thisClass.dictionaryDifference(ic.allData['prev']['ssbondpnts'], ic.ssbondpnts),
-                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues), // getSSExpandedAtoms
+                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues),
                 'chains': thisClass.dictionaryDifference(ic.allData['prev']['chains'], ic.chains),
                 'chainsSeq': thisClass.dictionaryDifference(ic.allData['prev']['chainsSeq'], ic.chainsSeq), //Sequences and Annotation
                 'defNames2Atoms': thisClass.dictionaryDifference(ic.allData['prev']['defNames2Atoms'], ic.defNames2Atoms),

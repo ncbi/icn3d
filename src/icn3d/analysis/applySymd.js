@@ -204,87 +204,87 @@ class ApplySymd {
             }
             else if(symmetryType == 'H') {
             }
-        }
 
-        if(symmetryType == 'T') {
-            let pos1 = pointArray[0]; // pointArray: start, end, start, end, ...
-            ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
+            if(symmetryType == 'T') {
+                let pos1 = pointArray[0]; // pointArray: start, end, start, end, ...
+                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
 
-            let dist2 = pos1.distanceTo(pointArray[2]);
-            let dist3 = pos1.distanceTo(pointArray[3]);
+                let dist2 = pos1.distanceTo(pointArray[2]);
+                let dist3 = pos1.distanceTo(pointArray[3]);
 
-            let distSmall, posSel;
-            if(dist2 < dist3) {
-                distSmall = dist2;
-                posSel = pointArray[3];
+                let distSmall, posSel;
+                if(dist2 < dist3) {
+                    distSmall = dist2;
+                    posSel = pointArray[3];
+                }
+                else {
+                    distSmall = dist3;
+                    posSel = pointArray[2];
+                }
+
+                ic.sphereCls.createSphereBase(posSel, colorPolygon, polygonRadius, 1.0, 0);
+                ic.cylinderCls.createCylinder(pos1, posSel, polygonRadius, colorPolygon, 0);
+
+                let iPrev;
+                for(let i = 4, il = pointArray.length; i < il; ++i) {
+                    let pos2 = pointArray[i];
+
+                    let dist = pos1.distanceTo(pos2);
+                    if(dist > distSmall) {
+                        ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos2, polygonRadius, colorPolygon, 0);
+
+                        ic.cylinderCls.createCylinder(posSel, pos2, polygonRadius, colorPolygon, 0);
+                        if(iPrev !== undefined) {
+                            ic.cylinderCls.createCylinder(pointArray[iPrev], pos2, polygonRadius, colorPolygon, 0);
+                        }
+
+                        iPrev = i;
+                    }
+                }
             }
-            else {
-                distSmall = dist3;
-                posSel = pointArray[2];
-            }
-
-            ic.sphereCls.createSphereBase(posSel, colorPolygon, polygonRadius, 1.0, 0);
-            ic.cylinderCls.createCylinder(pos1, posSel, polygonRadius, colorPolygon, 0);
-
-            let iPrev;
-            for(let i = 4, il = pointArray.length; i < il; ++i) {
-                let pos2 = pointArray[i];
-
-                let dist = pos1.distanceTo(pos2);
-                if(dist > distSmall) {
+            else if(symmetryType == 'O') {
+                for(let i = 0, il = pointArray.length; i < il; i += 2) {
+                    let pos1 = pointArray[i];
+                    let pos2 = pointArray[i+1];
+                    ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
                     ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos2, polygonRadius, colorPolygon, 0);
-
-                    ic.cylinderCls.createCylinder(posSel, pos2, polygonRadius, colorPolygon, 0);
-                    if(iPrev !== undefined) {
-                        ic.cylinderCls.createCylinder(pointArray[iPrev], pos2, polygonRadius, colorPolygon, 0);
+                    for(let j = i + 2, jl = pointArray.length; j < jl; ++j) {
+                        let pos3 = pointArray[j];
+                        ic.sphereCls.createSphereBase(pos3, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos3, polygonRadius, colorPolygon, 0);
+                        ic.cylinderCls.createCylinder(pos2, pos3, polygonRadius, colorPolygon, 0);
                     }
-
-                    iPrev = i;
                 }
             }
-        }
-        else if(symmetryType == 'O') {
-            for(let i = 0, il = pointArray.length; i < il; i += 2) {
-                let pos1 = pointArray[i];
-                let pos2 = pointArray[i+1];
-                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
-                ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                for(let j = i + 2, jl = pointArray.length; j < jl; ++j) {
-                    let pos3 = pointArray[j];
-                    ic.sphereCls.createSphereBase(pos3, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos3, polygonRadius, colorPolygon, 0);
-                    ic.cylinderCls.createCylinder(pos2, pos3, polygonRadius, colorPolygon, 0);
-                }
-            }
-        }
-        else if(symmetryType == 'I') {
-            for(let i = 0, il = pointArray.length; i < il; i += 2) {
-                let pos1 = pointArray[i];
-                let pos2 = pointArray[i+1];
-                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
-                ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                for(let j = i + 2, jl = pointArray.length; j < jl; j += 2) {
-                    let pos3 = pointArray[j];
-                    let pos4 = pointArray[j+1];
+            else if(symmetryType == 'I') {
+                for(let i = 0, il = pointArray.length; i < il; i += 2) {
+                    let pos1 = pointArray[i];
+                    let pos2 = pointArray[i+1];
+                    ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
+                    ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
+                    for(let j = i + 2, jl = pointArray.length; j < jl; j += 2) {
+                        let pos3 = pointArray[j];
+                        let pos4 = pointArray[j+1];
 
-                    let dist3 = pos1.distanceTo(pos3);
-                    let dist4 = pos1.distanceTo(pos4);
+                        let dist3 = pos1.distanceTo(pos3);
+                        let dist4 = pos1.distanceTo(pos4);
 
-                    let pos1Sel, pos2Sel;
-                    if(dist3 < dist4) {
-                        pos1Sel = pos3;
-                        pos2Sel = pos4;
+                        let pos1Sel, pos2Sel;
+                        if(dist3 < dist4) {
+                            pos1Sel = pos3;
+                            pos2Sel = pos4;
+                        }
+                        else {
+                            pos1Sel = pos4;
+                            pos2Sel = pos3;
+                        }
+
+                        ic.sphereCls.createSphereBase(pos1Sel, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.sphereCls.createSphereBase(pos2Sel, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos1Sel, polygonRadius, colorPolygon, 0);
+                        ic.cylinderCls.createCylinder(pos2, pos2Sel, polygonRadius, colorPolygon, 0);
                     }
-                    else {
-                        pos1Sel = pos4;
-                        pos2Sel = pos3;
-                    }
-
-                    ic.sphereCls.createSphereBase(pos1Sel, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.sphereCls.createSphereBase(pos2Sel, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos1Sel, polygonRadius, colorPolygon, 0);
-                    ic.cylinderCls.createCylinder(pos2, pos2Sel, polygonRadius, colorPolygon, 0);
                 }
             }
         }

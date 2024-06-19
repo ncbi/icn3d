@@ -1755,7 +1755,7 @@ class AddTrack {
 
         let type = 'identity';
 
-        await thisClass.addExonTracks(chainid, geneid, startpos, type);
+        await this.addExonTracks(chainid, geneid, startpos, type);
     }
 
     async addExonTracks(chainid, geneid, startpos, type) { let ic = this.icn3d, me = ic.icn3dui;

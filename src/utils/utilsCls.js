@@ -70,7 +70,10 @@ class UtilsCls {
           let nOtherAtoms = 0;
           for(let i in atomlist) {
             if(index < testLength) {
-              let atomName = atomlist[i].name.trim();        
+              let atomName = atomlist[i].name;   
+              if(!atomName) continue;
+              atomName = atomName.trim();
+
               if(atomName !== "CA" && atomName !== "P" && atomName !== "O3'" && atomName !== "O3*") {
                 //bOtherAtoms = true;
                 //break;

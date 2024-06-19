@@ -458,13 +458,7 @@ class RealignParser {
 
         let allPromise = Promise.allSettled(ajaxArray);
         // try {
-            // let dataArray = await allPromise;
-
-            let startDate = new Date();
             let dataArray = await allPromise;
-            let endDate   = new Date();
-            let miliseconds = (endDate.getTime() - startDate.getTime());
-            console.log("vastdyn time: " + miliseconds + " miliseconds")
           
             ic.qt_start_end = []; // reset the alignment
             await ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse);  
@@ -555,6 +549,8 @@ class RealignParser {
 
     async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
+
+        me.cfg.aligntool = 'seqalign';
 
         //bRealign: realign based on seq alignment
         //bPredefined: chain alignment with predefined matching residues

@@ -19,18 +19,17 @@ class Strand {
 
         let bRibbon = fill ? true: false;
 
-        // when highlight, the input atoms may only include part of sheet or helix
-        // include the whole sheet or helix when highlighting
+        // when highlight, the input atoms may only include one rediue.
+        // add one extra residue to show the strand
         let atomsAdjust = {};
 
-        // if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
-        //     atomsAdjust = this.getSSExpandedAtoms(atoms);
-        // }
-        // else {
-        //     atomsAdjust = atoms;
-        // }
-
-        atomsAdjust = atoms;
+        let residueHashTmp = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+        if( Object.keys(residueHashTmp).length  == 1) {
+            atomsAdjust = this.getOneExtraResidue(residueHashTmp);
+        }
+        else {
+            atomsAdjust = atoms;
+        }
 
         if(bHighlight === 2) {
             if(fill) {
@@ -73,7 +72,7 @@ class Strand {
         // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
         let residueHash = {};
         for(let i in atomsAdjust) {
-            let atom = atomsAdjust[i];
+            let atom = ic.atoms[i];
 
             let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residueHash[residueid] = 1;
@@ -90,13 +89,13 @@ class Strand {
         let maxDist = 6.0;
 
         //get the last residue
-        let atomArray = Object.keys(atoms);
+        let atomArray = Object.keys(atomsAdjust);
         let lastAtomSerial = atomArray[atomArray.length - 1];
-        let lastAtom = atoms[lastAtomSerial];
+        let lastAtom = ic.atoms[lastAtomSerial];
         let lastResid = lastAtom.structure + '_' + lastAtom.chain + '_' + lastAtom.resi;
 
         for (let i in atomsAdjust) {
-          atom = atomsAdjust[i];
+          let atom = ic.atoms[i];
           let chainid = atom.structure + '_' + atom.chain;
           let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
@@ -106,7 +105,7 @@ class Strand {
 
             if (atom.name === 'CA') {
                 if ( atoms.hasOwnProperty(i) && ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) ) {
-                    tubeAtoms[i] = atom;
+                    // tubeAtoms[i] = atom;
                 }
 
                 currentCA = atom.coord;
@@ -246,7 +245,9 @@ class Strand {
                 // }
 
                 //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) {
+                // if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) { // last coil was not drawn correctly, e.g., in 1TOP
+
+                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || bBrokenSs || (resid == lastResid && atom.ss != 'coil')) && pnts[0].length > 0) {
                     let atomName = 'CA';
                 
                     let prevone = [], nexttwo = [];
@@ -392,7 +393,9 @@ class Strand {
                 // end of a chain, or end of selection
                 if ((currentChain !== atom.chain 
                     || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
-                    || resid == lastResid
+                    // || (drawnResidueCount === totalResidueCount - 1) 
+                    // || bBrokenSs 
+                    || (resid == lastResid && atom.ss != 'coil')
                     ) && pnts[0].length > 0) {
                 //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
@@ -467,12 +470,38 @@ class Strand {
 
         caArray = [];
 
-        ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
+        // ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
+        // draw all atoms in tubes and assign zero radius when the residue is not coil
+        ic.tubeCls.createTube(atomsAdjust, 'CA', coilWidth, bHighlight);
 
         tubeAtoms = {};
         pnts = {};
     }
 
+    getOneExtraResidue(residueHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let atomsAdjust = {};
+        
+        for(let resid in residueHash) {
+            atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[resid]);
+
+            let residNcbi = ic.resid2ncbi[resid];
+            let resiNcbi = residNcbi.substr(residNcbi.lastIndexOf('_') + 1);
+
+            let nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) + 1);
+            let nextResid = ic.ncbi2resid[nextResidNcbi];
+
+            if(!nextResid) {
+                nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) - 1);
+                nextResid = ic.ncbi2resid[nextResidNcbi];
+            }
+
+            if(nextResid) atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[nextResid]);
+        }
+
+        return atomsAdjust;
+    }
+
+    /*
     getSSExpandedAtoms(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         let currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
         let firstAtom, lastAtom;
@@ -579,6 +608,7 @@ class Strand {
 
         return atomsAdjust;
     }
+    */
 }
 
 export {Strand}
