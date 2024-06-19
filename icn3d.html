@@ -898,7 +898,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <li><span class="anchor" id="igrefnum"></span><a name="igrefnum"></a><b>Q: How to use iCn3D to assign Ig reference numbers?</b><br>
     You can assign IgStrand reference numbers via the menu "Analysis > Ref. Number > Show Ig for Selection", or via the menu "Analysis > Seq. & Annotations" and click the checkbox "Ig Domains" in the "Annotations" section. The reference numbers can be exported via the menu "File > Save File > Reference Numbers". See the manuscript <a href="https://www.biorxiv.org/content/10.1101/2024.06.10.598201v1">A universal residue numbering scheme for the Immunoglobulin-fold (Ig-fold) to study Ig-Proteomes and Ig-Interactomes</a> for more details.<br>
     <br>
-    If you want to process a list of structures, you can download iCn3D Node.js script "refnum.js" at https://github.com/ncbi/icn3d/tree/master/icn3dnode. This script runs TM-align locally using the program at https://github.com/ncbi/icn3d/tree/master/icn3dnode/tmalign-icn3dnode and the templates at https://github.com/ncbi/icn3d/tree/master/icn3dnode/refpdb.<br>
+    If you want to process a list of structures, you can download iCn3D Node.js script "refnum.js" at https://github.com/ncbi/icn3d/tree/master/icn3dnode. This script runs TM-align locally using the program at https://github.com/ncbi/icn3d/tree/master/icn3dnode/tmalign-icn3dnode and the templates at https://github.com/ncbi/icn3d/tree/master/icn3dnode/refpdb. One example is listed at the section “Detect Ig domains and assign IgStrand reference numbers” at https://github.com/ncbi/icn3d/tree/master/icn3dnode.<br>
     <br>
 </li>
 
@@ -2793,7 +2793,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>residueLabelsCls (geometry)</td><td>addResidueLabels, addNonCarbonAtomLabels, addAtomLabels</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sphereCls (geometry)</td><td>createSphere, createSphereBase, createSphereRepresentation</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stickCls (geometry)</td><td>createStickRepresentation</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>strandCls (geometry)</td><td>createStrand, getSSExpandedAtoms</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>strandCls (geometry)</td><td>createStrand, getOneExtraResidue</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stripCls (geometry)</td><td>createStrip, setCalphaDrawnCoord</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>tubeCls (geometry)</td><td>createTube, getCustomtubesize, createTubeSub, getRadius</td></tr>
 

@@ -7794,7 +7794,10 @@ class UtilsCls {
           let nOtherAtoms = 0;
           for(let i in atomlist) {
             if(index < testLength) {
-              let atomName = atomlist[i].name.trim();        
+              let atomName = atomlist[i].name;   
+              if(!atomName) continue;
+              atomName = atomName.trim();
+
               if(atomName !== "CA" && atomName !== "P" && atomName !== "O3'" && atomName !== "O3*") {
                 //bOtherAtoms = true;
                 //break;
@@ -29010,18 +29013,17 @@ class Strand {
 
         let bRibbon = fill ? true: false;
 
-        // when highlight, the input atoms may only include part of sheet or helix
-        // include the whole sheet or helix when highlighting
+        // when highlight, the input atoms may only include one rediue.
+        // add one extra residue to show the strand
         let atomsAdjust = {};
 
-        // if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
-        //     atomsAdjust = this.getSSExpandedAtoms(atoms);
-        // }
-        // else {
-        //     atomsAdjust = atoms;
-        // }
-
-        atomsAdjust = atoms;
+        let residueHashTmp = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+        if( Object.keys(residueHashTmp).length  == 1) {
+            atomsAdjust = this.getOneExtraResidue(residueHashTmp);
+        }
+        else {
+            atomsAdjust = atoms;
+        }
 
         if(bHighlight === 2) {
             if(fill) {
@@ -29056,7 +29058,6 @@ class Strand {
         let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
         let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevAtomSelected = null, prevResi = null, calphaid = null, prevCalphaid = null;
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
-        let atom, tubeAtoms = {};
 
         // test the first 30 atoms to see whether only C-alpha is available
         ic.bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atomsAdjust); //, 'CA');
@@ -29064,14 +29065,12 @@ class Strand {
         // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
         let residueHash = {};
         for(let i in atomsAdjust) {
-            let atom = atomsAdjust[i];
+            let atom = ic.atoms[i];
 
             let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residueHash[residueid] = 1;
         }
-        let totalResidueCount = Object.keys(residueHash).length;
-
-        let drawnResidueCount = 0;
+        Object.keys(residueHash).length;
 
         let bFullAtom = (Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) ? true : false;
 
@@ -29080,22 +29079,20 @@ class Strand {
         let maxDist = 6.0;
 
         //get the last residue
-        let atomArray = Object.keys(atoms);
+        let atomArray = Object.keys(atomsAdjust);
         let lastAtomSerial = atomArray[atomArray.length - 1];
-        let lastAtom = atoms[lastAtomSerial];
+        let lastAtom = ic.atoms[lastAtomSerial];
         let lastResid = lastAtom.structure + '_' + lastAtom.chain + '_' + lastAtom.resi;
 
         for (let i in atomsAdjust) {
-          atom = atomsAdjust[i];
+          let atom = ic.atoms[i];
           let chainid = atom.structure + '_' + atom.chain;
           let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             // "CA" has to appear before "O"
 
             if (atom.name === 'CA') {
-                if ( atoms.hasOwnProperty(i) && ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) ) {
-                    tubeAtoms[i] = atom;
-                }
+                if ( atoms.hasOwnProperty(i) && ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) ) ;
 
                 currentCA = atom.coord;
                 currentColor = atom.color;
@@ -29202,8 +29199,6 @@ class Strand {
                         bShowArray.push(0);
                         calphaIdArray.push(0);
                     }
-
-                    ++drawnResidueCount;
                 }
 
                 //let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
@@ -29232,7 +29227,9 @@ class Strand {
                 // }
 
                 //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) {
+                // if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) { // last coil was not drawn correctly, e.g., in 1TOP
+
+                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || bBrokenSs || (resid == lastResid && atom.ss != 'coil')) && pnts[0].length > 0) {
                     let atomName = 'CA';
                 
                     let prevone = [], nexttwo = [];
@@ -29378,7 +29375,9 @@ class Strand {
                 // end of a chain, or end of selection
                 if ((currentChain !== atom.chain 
                     || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
-                    || resid == lastResid
+                    // || (drawnResidueCount === totalResidueCount - 1) 
+                    // || bBrokenSs 
+                    || (resid == lastResid && atom.ss != 'coil')
                     ) && pnts[0].length > 0) {
                 //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
@@ -29452,12 +29451,36 @@ class Strand {
 
         caArray = [];
 
-        ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
-
-        tubeAtoms = {};
+        // ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
+        // draw all atoms in tubes and assign zero radius when the residue is not coil
+        ic.tubeCls.createTube(atomsAdjust, 'CA', coilWidth, bHighlight);
         pnts = {};
     }
 
+    getOneExtraResidue(residueHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let atomsAdjust = {};
+        
+        for(let resid in residueHash) {
+            atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[resid]);
+
+            let residNcbi = ic.resid2ncbi[resid];
+            let resiNcbi = residNcbi.substr(residNcbi.lastIndexOf('_') + 1);
+
+            let nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) + 1);
+            let nextResid = ic.ncbi2resid[nextResidNcbi];
+
+            if(!nextResid) {
+                nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) - 1);
+                nextResid = ic.ncbi2resid[nextResidNcbi];
+            }
+
+            if(nextResid) atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[nextResid]);
+        }
+
+        return atomsAdjust;
+    }
+
+    /*
     getSSExpandedAtoms(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         let currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
         let firstAtom, lastAtom;
@@ -29564,6 +29587,7 @@ class Strand {
 
         return atomsAdjust;
     }
+    */
 }
 
 /**
@@ -29911,7 +29935,7 @@ class Tube {
     //Create tubes for "atoms" with certain "atomName". "radius" is the radius of the tubes.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be
     //outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createTube(atoms, atomName, radius, bHighlight, bCustom, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
+    createTube(atoms, atomName, radius, bHighlight, bCustom, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
@@ -30023,6 +30047,9 @@ class Tube {
                 else {
                     radiusFinal = this.getRadius(radius, atom);
                 }
+                
+                // draw all atoms in tubes and assign zero radius when the residue is not coil
+                if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
 
                 //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : ic.coilWidth));
                 radii.push(radiusFinal);
@@ -30096,11 +30123,116 @@ class Tube {
             let prevone = pnts_colors_radii_prevone_nexttwo[i].prevone;
             let nexttwo = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
 
-            this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray);
+            this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil);
+        }
+
+        pnts_colors_radii_prevone_nexttwo = [];
+    }
+
+/*    
+    createTube(atoms, atomName, radius, bHighlight, bCustom, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
+
+        let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
+        let currentChain, currentResi;
+        let index = 0;
+        let maxDist = 6.0;
+        let maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
+
+        let pnts_colors_radii_prevone_nexttwo = [];
+        let firstAtom, atom, prevAtom;
+
+        for (let i in atoms) {
+            atom = atoms[i];
+            if ((atom.name === atomName) && !atom.het) {
+                if(index == 0) {
+                    firstAtom = atom;
+                }
+
+                if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
+                  || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
+                  ) ) {
+                    if(bHighlight !== 2) {
+                        if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
+                            let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
+                            let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                            prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+
+                            let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
+
+                            // add one more residue if only one residue is available
+                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                                let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+
+                                if(nextAtom) {
+                                    pnts.push(nextAtom.coord);
+                                    colors.push(nextAtom.color);
+
+                                    let radiusFinal = this.getRadius(radius, atom);
+                                    radii.push(radiusFinal);
+                                }
+                            }
+                       
+                        }
+
+                        pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+                    }
+                    pnts = []; colors = []; radii = []; prevone = []; nexttwo = [];
+                    firstAtom = atom;
+                    index = 0;
+                }
+
+                pnts.push(atom.coord);
+
+                let radiusFinal;
+                if(bCustom) {
+                    radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
+                }
+                else {
+                    radiusFinal = this.getRadius(radius, atom);
+                }
+
+                // draw all atoms in tubes and assign zero radius when the residue is not coil
+                if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
+
+                //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : ic.coilWidth));
+                radii.push(radiusFinal);
+
+                colors.push(atom.color);
+                // the starting residue of a coil uses the color from the next residue to avoid using the color of the last helix/sheet residue
+                if(index === 1) colors[colors.length - 2] = atom.color;
+
+                currentChain = atom.chain;
+                currentResi = atom.resi;
+
+                let scale = 1.2;
+                if(bHighlight === 2 && !atom.ssbegin) {
+                    ic.boxCls.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
+                }
+
+                ++index;
+
+                prevAtom = atom;
+            }
+        }
+
+        if(bHighlight !== 2) {
+            pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+        }
+
+        for(let i = 0, il = pnts_colors_radii_prevone_nexttwo.length; i < il; ++i) {
+            let pnts = pnts_colors_radii_prevone_nexttwo[i].pnts;
+            let colors = pnts_colors_radii_prevone_nexttwo[i].colors;
+            let radii = pnts_colors_radii_prevone_nexttwo[i].radii;
+            let prevone = []; // = pnts_colors_radii_prevone_nexttwo[i].prevone;
+            let nexttwo = []; // = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
+
+            this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil);
         }
 
         pnts_colors_radii_prevone_nexttwo = [];    
     }
+*/
 
     getCustomtubesize(resid) { let ic = this.icn3d; ic.icn3dui;
         let pos = resid.lastIndexOf('_');
@@ -30113,166 +30245,125 @@ class Tube {
     };
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createTubeSub(_pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
+    createTubeSub(_pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         if (_pnts.length < 2) return;
 
-//        if(bRadiusArray) {
-            let circleDiv = ic.tubeDIV, axisDiv = ic.axisDIV;
-            let circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
-            //var geo = new THREE.Geometry();
-            let geo = new THREE.BufferGeometry();
-            let verticeArray = [], colorArray = [],indexArray = [], color;
-            let offset = 0, offset2 = 0, offset3 = 0;
+        let circleDiv = ic.tubeDIV, axisDiv = ic.axisDIV;
+        let circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
+        //var geo = new THREE.Geometry();
+        let geo = new THREE.BufferGeometry();
+        let verticeArray = [], colorArray = [],indexArray = [], color;
+        let offset = 0, offset2 = 0, offset3 = 0;
 
-            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
+        let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
 
-            let pnts = pnts_clrs[0];
-            colors = pnts_clrs[2];
+        let pnts = pnts_clrs[0];
+        colors = pnts_clrs[2];
 
-            let prevAxis1 = new THREE.Vector3(), prevAxis2;
-            for (let i = 0, lim = pnts.length; i < lim; ++i) {
-                let r, idx = (i - 1) * axisDivInv;
-                if (i === 0) r = radii[0];
+        let constRadiius;
+        // a threshold to stop drawing the tube if it's less than this ratio of radius
+        let thresholdRatio = 1; //0.9;
+
+        let prevAxis1 = new THREE.Vector3(), prevAxis2;
+        for (let i = 0, lim = pnts.length; i < lim; ++i) {
+            let r, idx = (i - 1) * axisDivInv;
+
+            if (i === 0) {
+                r = radii[0];
+                if(r > 0) constRadiius = r;
+            }
+            else {
+                if (idx % 1 === 0) {
+                    r = radii[idx];
+                    if(r > 0) constRadiius = r;
+                }
                 else {
-                    if (idx % 1 === 0) r = radii[idx];
-                    else {
-                        let floored = Math.floor(idx);
-                        let tmp = idx - floored;
-                        r = radii[floored] * tmp + radii[floored + 1] * (1 - tmp);
+                    let floored = Math.floor(idx);
+                    let tmp = idx - floored;
+                    // draw all atoms in tubes and assign zero radius when the residue is not coil
+                    // r = radii[floored] * tmp + radii[floored + 1] * (1 - tmp);
+                    r = radii[floored] * (1 - tmp) + radii[floored + 1] * tmp;
+
+                    // a threshold to stop drawing the tube if it's less than this ratio of radius.
+                    // The extra bit of tube connects coil with strands or helices
+                    if(!bNonCoil) {
+                        if(r < thresholdRatio * constRadiius) {
+                            r = 0;
+                        }
+                        // else if(r < constRadiius) {
+                        //     r *= 0.5; // use small radius for the connection between coild and sheets/helices 
+                        // }
                     }
                 }
-                let delta, axis1, axis2;
-                if (i < lim - 1) {
-                    delta = pnts[i].clone().sub(pnts[i + 1]);
-                    axis1 = new THREE.Vector3(0, -delta.z, delta.y).normalize().multiplyScalar(r);
-                    axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);
-                    //      let dir = 1, offset = 0;
-                    if (prevAxis1.dot(axis1) < 0) {
-                        axis1.negate(); axis2.negate();  //dir = -1;//offset = 2 * Math.PI / axisDiv;
-                    }
-                    prevAxis1 = axis1; prevAxis2 = axis2;
-                } else {
-                    axis1 = prevAxis1; axis2 = prevAxis2;
-                }
-                for (let j = 0; j < circleDiv; ++j) {
-                    let angle = 2 * Math.PI * circleDivInv * j; //* dir  + offset;
-                    let point = pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle)));
-                    verticeArray[offset++] = point.x;
-                    verticeArray[offset++] = point.y;
-                    verticeArray[offset++] = point.z;
-
-                    color = (i == colors.length - 1 && colors.length > 1) ? me.parasCls.thr(colors[colors.length - 2]) : me.parasCls.thr(colors[i]);
-                    colorArray[offset2++] = color.r;
-                    colorArray[offset2++] = color.g;
-                    colorArray[offset2++] = color.b;
-                }
             }
-            let offsetTmp = 0, nComp = 3;
-            for (let i = 0, lim = pnts.length - 1; i < lim; ++i) {
-                let reg = 0;
-                //var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
-                //var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
-                let pos = offsetTmp * nComp;
-                let point1 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
-                pos = (offsetTmp + circleDiv) * nComp;
-                let point2 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
-                pos = (offsetTmp + circleDiv + 1) * nComp;
-                let point3 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
-
-                let r1 = point1.clone().sub(point2).lengthSq();
-                let r2 = point1.clone().sub(point3).lengthSq();
-                if (r1 > r2) { r1 = r2; reg = 1; }                for (let j = 0; j < circleDiv; ++j) {
-                    //geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
-                    //geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
-                    //indexArray = indexArray.concat([offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv]);
-                    indexArray[offset3++] = offsetTmp + j;
-                    indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
-                    indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
-
-                    //indexArray = indexArray.concat([offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv]);
-                    indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
-                    indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
-                    indexArray[offset3++] = offsetTmp + (j + reg + 1) % circleDiv + circleDiv;
+            let delta, axis1, axis2;
+            if (i < lim - 1) {
+                delta = pnts[i].clone().sub(pnts[i + 1]);
+                axis1 = new THREE.Vector3(0, -delta.z, delta.y).normalize().multiplyScalar(r);
+                axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);
+                //      let dir = 1, offset = 0;
+                if (prevAxis1.dot(axis1) < 0) {
+                    axis1.negate(); axis2.negate();  //dir = -1;//offset = 2 * Math.PI / axisDiv;
                 }
-                offsetTmp += circleDiv;
+                prevAxis1 = axis1; prevAxis2 = axis2;
+            } else {
+                axis1 = prevAxis1; axis2 = prevAxis2;
             }
+            for (let j = 0; j < circleDiv; ++j) {
+                let angle = 2 * Math.PI * circleDivInv * j; //* dir  + offset;
+                let point = pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle)));
+                verticeArray[offset++] = point.x;
+                verticeArray[offset++] = point.y;
+                verticeArray[offset++] = point.z;
 
-            geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
-            geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
-
-            geo.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
-            //geo.setIndex(indexArray);
-
-            //geo.computeFaceNormals();
-            //geo.computeVertexNormals(false);
-            geo.computeVertexNormals();
-/*
+                color = (i == colors.length - 1 && colors.length > 1) ? me.parasCls.thr(colors[colors.length - 2]) : me.parasCls.thr(colors[i]);
+                colorArray[offset2++] = color.r;
+                colorArray[offset2++] = color.g;
+                colorArray[offset2++] = color.b;
+            }
         }
-        else {
-            let axisDiv = ic.axisDIV;
+        let offsetTmp = 0, nComp = 3;
+        for (let i = 0, lim = pnts.length - 1; i < lim; ++i) {
+            let reg = 0;
+            //var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
+            //var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
+            let pos = offsetTmp * nComp;
+            let point1 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
+            pos = (offsetTmp + circleDiv) * nComp;
+            let point2 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
+            pos = (offsetTmp + circleDiv + 1) * nComp;
+            let point3 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
 
-            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
-            // extend one residue
-            //var pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo, true);
+            let r1 = point1.clone().sub(point2).lengthSq();
+            let r2 = point1.clone().sub(point3).lengthSq();
+            if (r1 > r2) { r1 = r2; reg = 1; }            for (let j = 0; j < circleDiv; ++j) {
+                //geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
+                //geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
+                //indexArray = indexArray.concat([offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv]);
+                indexArray[offset3++] = offsetTmp + j;
+                indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
+                indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
 
-            _pnts = pnts_clrs[0];
-            colors = pnts_clrs[2];
-
-            let radius = ic.coilWidth;
-            segments = _pnts.length;
-            //radiusSegments = 8;
-            radiusSegments = 4; // save memory
-            let closed = false;
-
-            // when using radiusArray with modified three.js, the tube didn't work in picking
-            let geo = new THREE.TubeGeometry(
-                new THREE.CatmullRomCurve3(_pnts), // path
-                segments,
-                radius, //radiusArray, //radius,
-                radiusSegments,
-                closed
-            );
-
-            //https://stemkoski.github.io/Three.js/Graphulus-Curve.html
-            let color, face, numberOfSides, vertexIndex;
-            // faces are indexed using characters
-            let faceIndices = [ 'a', 'b', 'c', 'd' ];
-
-            // first, assign colors to vertices as desired
-            let prevColor,  geoColors = {};
-            for ( let s = 0; s <= segments; s++ ) {
-                for ( let r = 0; r < radiusSegments; r++ )
-                {
-                    vertexIndex = r + s * radiusSegments;
-                    color = colors[s];
-                    if(!color) color = prevColor;
-
-                    geoColors[vertexIndex] = color; // use this array for convenience
-
-                    prevColor = color;
-                }
+                //indexArray = indexArray.concat([offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv]);
+                indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
+                indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
+                indexArray[offset3++] = offsetTmp + (j + reg + 1) % circleDiv + circleDiv;
             }
-
-            // copy the colors as necessary to the face's vertexColors array.
-            // after version r125, geo.faces is undefined for TubeGeometry
-            for ( let i = 0; geo.faces && i < geo.faces.length; i++ )
-            {
-                face = geo.faces[ i ];
-
-                numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
-                for( let j = 0; j < numberOfSides; j++ )
-                {
-                    vertexIndex = face[ faceIndices[ j ] ];
-                    face.vertexColors[ j ] = geoColors[ vertexIndex ];
-                }
-            }
-
-            geo.computeFaceNormals();
-            geo.computeVertexNormals(false);
+            offsetTmp += circleDiv;
         }
-*/
+
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
+
+        geo.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+        //geo.setIndex(indexArray);
+
+        //geo.computeFaceNormals();
+        //geo.computeVertexNormals(false);
+        geo.computeVertexNormals();
+
         let mesh;
         if(bHighlight === 2) {
           //mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
@@ -35310,87 +35401,87 @@ class ApplySymd {
                 pointArray.push(end);
             }
             else ;
-        }
 
-        if(symmetryType == 'T') {
-            let pos1 = pointArray[0]; // pointArray: start, end, start, end, ...
-            ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
+            if(symmetryType == 'T') {
+                let pos1 = pointArray[0]; // pointArray: start, end, start, end, ...
+                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
 
-            let dist2 = pos1.distanceTo(pointArray[2]);
-            let dist3 = pos1.distanceTo(pointArray[3]);
+                let dist2 = pos1.distanceTo(pointArray[2]);
+                let dist3 = pos1.distanceTo(pointArray[3]);
 
-            let distSmall, posSel;
-            if(dist2 < dist3) {
-                distSmall = dist2;
-                posSel = pointArray[3];
+                let distSmall, posSel;
+                if(dist2 < dist3) {
+                    distSmall = dist2;
+                    posSel = pointArray[3];
+                }
+                else {
+                    distSmall = dist3;
+                    posSel = pointArray[2];
+                }
+
+                ic.sphereCls.createSphereBase(posSel, colorPolygon, polygonRadius, 1.0, 0);
+                ic.cylinderCls.createCylinder(pos1, posSel, polygonRadius, colorPolygon, 0);
+
+                let iPrev;
+                for(let i = 4, il = pointArray.length; i < il; ++i) {
+                    let pos2 = pointArray[i];
+
+                    let dist = pos1.distanceTo(pos2);
+                    if(dist > distSmall) {
+                        ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos2, polygonRadius, colorPolygon, 0);
+
+                        ic.cylinderCls.createCylinder(posSel, pos2, polygonRadius, colorPolygon, 0);
+                        if(iPrev !== undefined) {
+                            ic.cylinderCls.createCylinder(pointArray[iPrev], pos2, polygonRadius, colorPolygon, 0);
+                        }
+
+                        iPrev = i;
+                    }
+                }
             }
-            else {
-                distSmall = dist3;
-                posSel = pointArray[2];
-            }
-
-            ic.sphereCls.createSphereBase(posSel, colorPolygon, polygonRadius, 1.0, 0);
-            ic.cylinderCls.createCylinder(pos1, posSel, polygonRadius, colorPolygon, 0);
-
-            let iPrev;
-            for(let i = 4, il = pointArray.length; i < il; ++i) {
-                let pos2 = pointArray[i];
-
-                let dist = pos1.distanceTo(pos2);
-                if(dist > distSmall) {
+            else if(symmetryType == 'O') {
+                for(let i = 0, il = pointArray.length; i < il; i += 2) {
+                    let pos1 = pointArray[i];
+                    let pos2 = pointArray[i+1];
+                    ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
                     ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos2, polygonRadius, colorPolygon, 0);
-
-                    ic.cylinderCls.createCylinder(posSel, pos2, polygonRadius, colorPolygon, 0);
-                    if(iPrev !== undefined) {
-                        ic.cylinderCls.createCylinder(pointArray[iPrev], pos2, polygonRadius, colorPolygon, 0);
+                    for(let j = i + 2, jl = pointArray.length; j < jl; ++j) {
+                        let pos3 = pointArray[j];
+                        ic.sphereCls.createSphereBase(pos3, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos3, polygonRadius, colorPolygon, 0);
+                        ic.cylinderCls.createCylinder(pos2, pos3, polygonRadius, colorPolygon, 0);
                     }
-
-                    iPrev = i;
                 }
             }
-        }
-        else if(symmetryType == 'O') {
-            for(let i = 0, il = pointArray.length; i < il; i += 2) {
-                let pos1 = pointArray[i];
-                let pos2 = pointArray[i+1];
-                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
-                ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                for(let j = i + 2, jl = pointArray.length; j < jl; ++j) {
-                    let pos3 = pointArray[j];
-                    ic.sphereCls.createSphereBase(pos3, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos3, polygonRadius, colorPolygon, 0);
-                    ic.cylinderCls.createCylinder(pos2, pos3, polygonRadius, colorPolygon, 0);
-                }
-            }
-        }
-        else if(symmetryType == 'I') {
-            for(let i = 0, il = pointArray.length; i < il; i += 2) {
-                let pos1 = pointArray[i];
-                let pos2 = pointArray[i+1];
-                ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
-                ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
-                for(let j = i + 2, jl = pointArray.length; j < jl; j += 2) {
-                    let pos3 = pointArray[j];
-                    let pos4 = pointArray[j+1];
+            else if(symmetryType == 'I') {
+                for(let i = 0, il = pointArray.length; i < il; i += 2) {
+                    let pos1 = pointArray[i];
+                    let pos2 = pointArray[i+1];
+                    ic.sphereCls.createSphereBase(pos1, colorPolygon, polygonRadius, 1.0, 0);
+                    ic.sphereCls.createSphereBase(pos2, colorPolygon, polygonRadius, 1.0, 0);
+                    for(let j = i + 2, jl = pointArray.length; j < jl; j += 2) {
+                        let pos3 = pointArray[j];
+                        let pos4 = pointArray[j+1];
 
-                    let dist3 = pos1.distanceTo(pos3);
-                    let dist4 = pos1.distanceTo(pos4);
+                        let dist3 = pos1.distanceTo(pos3);
+                        let dist4 = pos1.distanceTo(pos4);
 
-                    let pos1Sel, pos2Sel;
-                    if(dist3 < dist4) {
-                        pos1Sel = pos3;
-                        pos2Sel = pos4;
+                        let pos1Sel, pos2Sel;
+                        if(dist3 < dist4) {
+                            pos1Sel = pos3;
+                            pos2Sel = pos4;
+                        }
+                        else {
+                            pos1Sel = pos4;
+                            pos2Sel = pos3;
+                        }
+
+                        ic.sphereCls.createSphereBase(pos1Sel, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.sphereCls.createSphereBase(pos2Sel, colorPolygon, polygonRadius, 1.0, 0);
+                        ic.cylinderCls.createCylinder(pos1, pos1Sel, polygonRadius, colorPolygon, 0);
+                        ic.cylinderCls.createCylinder(pos2, pos2Sel, polygonRadius, colorPolygon, 0);
                     }
-                    else {
-                        pos1Sel = pos4;
-                        pos2Sel = pos3;
-                    }
-
-                    ic.sphereCls.createSphereBase(pos1Sel, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.sphereCls.createSphereBase(pos2Sel, colorPolygon, polygonRadius, 1.0, 0);
-                    ic.cylinderCls.createCylinder(pos1, pos1Sel, polygonRadius, colorPolygon, 0);
-                    ic.cylinderCls.createCylinder(pos2, pos2Sel, polygonRadius, colorPolygon, 0);
                 }
             }
         }
@@ -46648,7 +46739,7 @@ class AddTrack {
 
         let type = 'identity';
 
-        await thisClass.addExonTracks(chainid, geneid, startpos, type);
+        await this.addExonTracks(chainid, geneid, startpos, type);
     }
 
     async addExonTracks(chainid, geneid, startpos, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -58552,13 +58643,7 @@ class RealignParser {
 
         let allPromise = Promise.allSettled(ajaxArray);
         // try {
-            // let dataArray = await allPromise;
-
-            let startDate = new Date();
             let dataArray = await allPromise;
-            let endDate   = new Date();
-            let miliseconds = (endDate.getTime() - startDate.getTime());
-            console.log("vastdyn time: " + miliseconds + " miliseconds");
           
             ic.qt_start_end = []; // reset the alignment
             await ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse);  
@@ -58649,6 +58734,8 @@ class RealignParser {
 
     async realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
+
+        me.cfg.aligntool = 'seqalign';
 
         //bRealign: realign based on seq alignment
         //bPredefined: chain alignment with predefined matching residues
@@ -61842,7 +61929,9 @@ class SetSeqAlign {
 
         let resid = chainid + '_' + resi;
         let resn = ic.residueId2Name[resid];
-        if(!resn) resn = '?';
+        if(!resn) {
+            resn = '?';
+        }
 
         return resn;
     }
@@ -68162,9 +68251,9 @@ class SelectCollections {
         'chemicals': {},
         'ions': {},
         'water': {},
-        'structures': {}, // getSSExpandedAtoms
+        'structures': {},
         'ssbondpnts': {},
-        'residues': {}, // getSSExpandedAtoms
+        'residues': {},
         'chains': {},
         'chainsSeq': {}, //Sequences and Annotation
         'defNames2Atoms': {},
@@ -68213,9 +68302,9 @@ class SelectCollections {
                 'chemicals': ic.chemicals,
                 'ions': ic.ions,
                 'water': ic.water,
-                'structures': ic.structures, // getSSExpandedAtoms
+                'structures': ic.structures,
                 'ssbondpnts': ic.ssbondpnts,
-                'residues': ic.residues, // getSSExpandedAtoms
+                'residues': ic.residues,
                 'chains': ic.chains,
                 'chainsSeq': ic.chainsSeq, //Sequences and Annotation
                 'defNames2Atoms': ic.defNames2Atoms,
@@ -68229,9 +68318,9 @@ class SelectCollections {
                 'chemicals': thisClass.dictionaryDifference(ic.allData['prev']['chemicals'], ic.chemicals),
                 'ions': thisClass.dictionaryDifference(ic.allData['prev']['ions'], ic.ions),
                 'water': thisClass.dictionaryDifference(ic.allData['prev']['water'], ic.water),
-                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures), // getSSExpandedAtoms
+                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures),
                 'ssbondpnts': thisClass.dictionaryDifference(ic.allData['prev']['ssbondpnts'], ic.ssbondpnts),
-                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues), // getSSExpandedAtoms
+                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues),
                 'chains': thisClass.dictionaryDifference(ic.allData['prev']['chains'], ic.chains),
                 'chainsSeq': thisClass.dictionaryDifference(ic.allData['prev']['chainsSeq'], ic.chainsSeq), //Sequences and Annotation
                 'defNames2Atoms': thisClass.dictionaryDifference(ic.allData['prev']['defNames2Atoms'], ic.defNames2Atoms),
@@ -81754,7 +81843,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.33.0';
+    this.REVISION = '3.33.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

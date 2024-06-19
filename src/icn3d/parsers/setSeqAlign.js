@@ -283,7 +283,9 @@ class SetSeqAlign {
 
         let resid = chainid + '_' + resi;
         let resn = ic.residueId2Name[resid];
-        if(!resn) resn = '?';
+        if(!resn) {
+            resn = '?';
+        }
 
         return resn;
     }
