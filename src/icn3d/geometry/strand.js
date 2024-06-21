@@ -66,8 +66,12 @@ class Strand {
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
         let atom, tubeAtoms = {};
 
-        // test the first 30 atoms to see whether only C-alpha is available
-        ic.bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atomsAdjust); //, 'CA');
+        // For each chain, test the first 30 atoms to see whether only C-alpha is available
+        let bCalphaOnlyHash = {};
+        for(let chainid in ic.chains) {
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(ic.chains[chainid]); //, 'CA');
+            bCalphaOnlyHash[chainid] = bCalphaOnly;
+        }
 
         // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
         let residueHash = {};
@@ -115,7 +119,7 @@ class Strand {
                 caArray.push(atom.serial);
             }
 
-            if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA')) {
+            if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA')) {
                 if(currentCA === null || currentCA === undefined) {
                     currentCA = atom.coord;
                     currentColor = atom.color;
@@ -178,7 +182,7 @@ class Strand {
                             }
                         }
                     }
-                    else if(ic.bCalphaOnly && atom.name === 'CA') {
+                    else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
                         if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                             O = prevCoorCA.clone();
                             oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
@@ -304,7 +308,7 @@ class Strand {
                             O = currentO.clone();
                             O.sub(currentCA);
                         }
-                        else if(ic.bCalphaOnly && atom.name === 'CA') {
+                        else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
                             if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                 O = currentCA.clone();
                                 oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
@@ -464,7 +468,7 @@ class Strand {
                 prevCoorCA = currentCA;
                 prevCoorO = atom.coord;
                 prevColor = currentColor;
-            } // end if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA') ) {
+            } // end if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA') ) {
           } // end if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
         } // end for
 

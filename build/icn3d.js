@@ -7789,7 +7789,7 @@ var icn3d = (function (exports) {
         }
 
         //isCalphaPhosOnly(atomlist, atomname1, atomname2) {
-        isCalphaPhosOnly(atomlist) { this.icn3dui;
+        isCalphaPhosOnly(atomlist) { let me = this.icn3dui, ic = me.icn3d;
               let bCalphaPhosOnly = false;
 
               let index = 0, testLength = 100; //30
@@ -7797,7 +7797,7 @@ var icn3d = (function (exports) {
               let nOtherAtoms = 0;
               for(let i in atomlist) {
                 if(index < testLength) {
-                  let atomName = atomlist[i].name;   
+                  let atomName = ic.atoms[i].name;   
                   if(!atomName) continue;
                   atomName = atomName.trim();
 
@@ -29062,8 +29062,12 @@ var icn3d = (function (exports) {
             let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevAtomSelected = null, prevResi = null, calphaid = null, prevCalphaid = null;
             let strandWidth, bSheetSegment = false, bHelixSegment = false;
 
-            // test the first 30 atoms to see whether only C-alpha is available
-            ic.bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atomsAdjust); //, 'CA');
+            // For each chain, test the first 30 atoms to see whether only C-alpha is available
+            let bCalphaOnlyHash = {};
+            for(let chainid in ic.chains) {
+                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(ic.chains[chainid]); //, 'CA');
+                bCalphaOnlyHash[chainid] = bCalphaOnly;
+            }
 
             // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
             let residueHash = {};
@@ -29104,7 +29108,7 @@ var icn3d = (function (exports) {
                     caArray.push(atom.serial);
                 }
 
-                if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA')) {
+                if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA')) {
                     if(currentCA === null || currentCA === undefined) {
                         currentCA = atom.coord;
                         currentColor = atom.color;
@@ -29167,7 +29171,7 @@ var icn3d = (function (exports) {
                                 }
                             }
                         }
-                        else if(ic.bCalphaOnly && atom.name === 'CA') {
+                        else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
                             if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                 O = prevCoorCA.clone();
                                 oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
@@ -29289,7 +29293,7 @@ var icn3d = (function (exports) {
                                 O = currentO.clone();
                                 O.sub(currentCA);
                             }
-                            else if(ic.bCalphaOnly && atom.name === 'CA') {
+                            else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
                                 if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                     O = currentCA.clone();
                                     oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
@@ -29448,7 +29452,7 @@ var icn3d = (function (exports) {
                     prevCoorCA = currentCA;
                     prevCoorO = atom.coord;
                     prevColor = currentColor;
-                } // end if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA') ) {
+                } // end if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA') ) {
               } // end if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             } // end for
 
@@ -29610,7 +29614,8 @@ var icn3d = (function (exports) {
             if (p0.length < 2) return;
             div = div || ic.axisDIV;
 
-            if(pntsCA && ic.bDoublecolor && !ic.bCalphaOnly) {
+            // if(pntsCA && ic.bDoublecolor && !ic.bCalphaOnly) {
+            if(pntsCA && ic.bDoublecolor) {
                 let bExtendLastRes = false; //true;
 
                 let pnts_clrs = me.subdivideCls.subdivide(pntsCA, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
@@ -81990,7 +81995,7 @@ var icn3d = (function (exports) {
         ic.setStyleCls.handleContextLost();
         ic.applyCenterCls.setWidthHeight(width, height);
         ic.ori_chemicalbinding = ic.opts['chemicalbinding'];
-        if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
+        // if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
         ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
         ic.STATENUMBER = ic.commands.length;
         // If previously crashed, recover it
@@ -82018,7 +82023,7 @@ var icn3d = (function (exports) {
             ic.bInputfile = true;
             ic.InputfileType = 'pdb';
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
-            
+
             await ic.pdbParserCls.loadPdbData(pdbStr);
 
             if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
@@ -82029,9 +82034,9 @@ var icn3d = (function (exports) {
                     for(let i = 0, il = structureArray.length; i  < il; ++i) {
                         chainidArray.push(structureArray[i] + '_' + chainArray[i]);
                     }
-                    
+
                     chainidArray = ic.chainalignParserCls.addPostfixForChainids(chainidArray);
-                    
+
                     let bRealign = true, bPredefined = true;
                     await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
                 }
@@ -82052,7 +82057,7 @@ var icn3d = (function (exports) {
                         chainidArray.push(domainidArray[i]);
                     }
                 }
-                
+
                 // get the matched structures, do not include the template
                 let mmdbafid = '';
                 for(let i = 0, il = chainidArray.length; i < il; ++i) {
@@ -82063,7 +82068,7 @@ var icn3d = (function (exports) {
                 // realign, include the template
                 ic.chainidArray = [chain_t].concat(chainidArray);
                 ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
-                
+
                 me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 
                 ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
@@ -82140,7 +82145,7 @@ var icn3d = (function (exports) {
         }
         else if(me.cfg.refseqid !== undefined) {
             ic.inputid = me.cfg.refseqid;
-            
+
             // ic.bNCBI = true;
             ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -82148,7 +82153,7 @@ var icn3d = (function (exports) {
         }
         else if(me.cfg.protein !== undefined) {
             ic.inputid = me.cfg.protein;
-            
+
             // ic.bNCBI = true;
             ic.loadCmd = 'load protein ' + me.cfg.protein;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -82157,7 +82162,7 @@ var icn3d = (function (exports) {
         else if(me.cfg.blast_rep_id !== undefined) {
            // ic.bNCBI = true;
            ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-           
+
            me.cfg.oriQuery_id = me.cfg.query_id;
            me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
@@ -82181,7 +82186,7 @@ var icn3d = (function (exports) {
                     ic.bSmithwm = false;
                     ic.bLocalSmithwm = false;
                 }
-                
+
                 me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
                 await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
            }
@@ -82190,7 +82195,7 @@ var icn3d = (function (exports) {
                 let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
 
                 for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                    
+
                     let hitArray;
                     if(data.BlastOutput2[q].report.results.iterations) { // psi-blast may have "iterations". Use the last iteration.
                         let nIterations = data.BlastOutput2[q].report.results.iterations.length;
@@ -82201,7 +82206,7 @@ var icn3d = (function (exports) {
                         if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
                         hitArray = data.BlastOutput2[q].report.results.search.hits;
                     }
-                    
+
                     let qseq = undefined;
                     for(let i = 0, il = hitArray.length; i < il; ++i) {
                         let hit = hitArray[i];
@@ -82297,7 +82302,7 @@ var icn3d = (function (exports) {
             }
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+            await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
             //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
@@ -82311,7 +82316,7 @@ var icn3d = (function (exports) {
 
             return;
         }
-        
+
         await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     //   });
     //   return me.deferred.promise();
@@ -82379,7 +82384,7 @@ var icn3d = (function (exports) {
             let oReq = new XMLHttpRequest();
             oReq.open(dataType, url, true);
             oReq.responseType = responseType;
-            
+
             oReq.onreadystatechange = function() {
                 if (this.readyState == 4) {
                    if(this.status == 200) {
@@ -82431,7 +82436,7 @@ var icn3d = (function (exports) {
                     error : function() {
                         if(alertMess) alert(alertMess);
                         if(logMess) console.log(logMess);
-                        
+
                         reject('error');
                     }
                 });
@@ -82474,7 +82479,7 @@ var icn3d = (function (exports) {
                         //if(alertMess) alert(alertMess);
                         if(!me.bNode && alertMess) console.log(alertMess);
                         if(!me.bNode && logMess) console.log(logMess);
-                        
+
                         // reject('error');
                         // keep running the program
                         resolve('error');

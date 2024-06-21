@@ -62,7 +62,7 @@ class UtilsCls {
     }
 
     //isCalphaPhosOnly(atomlist, atomname1, atomname2) {
-    isCalphaPhosOnly(atomlist) { let me = this.icn3dui;
+    isCalphaPhosOnly(atomlist) { let me = this.icn3dui, ic = me.icn3d;
           let bCalphaPhosOnly = false;
 
           let index = 0, testLength = 100; //30
@@ -70,7 +70,7 @@ class UtilsCls {
           let nOtherAtoms = 0;
           for(let i in atomlist) {
             if(index < testLength) {
-              let atomName = atomlist[i].name;   
+              let atomName = ic.atoms[i].name;   
               if(!atomName) continue;
               atomName = atomName.trim();
 
