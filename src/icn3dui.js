@@ -311,7 +311,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     ic.setStyleCls.handleContextLost();
     ic.applyCenterCls.setWidthHeight(width, height);
     ic.ori_chemicalbinding = ic.opts['chemicalbinding'];
-    if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
+    // if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
     ic.opts = me.hashUtilsCls.cloneHash(ic.opts);
     ic.STATENUMBER = ic.commands.length;
     // If previously crashed, recover it
@@ -339,7 +339,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.bInputfile = true;
         ic.InputfileType = 'pdb';
         ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
-        
+
         await ic.pdbParserCls.loadPdbData(pdbStr);
 
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
@@ -350,9 +350,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                 for(let i = 0, il = structureArray.length; i  < il; ++i) {
                     chainidArray.push(structureArray[i] + '_' + chainArray[i]);
                 }
-                
+
                 chainidArray = ic.chainalignParserCls.addPostfixForChainids(chainidArray);
-                
+
                 let bRealign = true, bPredefined = true;
                 await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
@@ -373,7 +373,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                     chainidArray.push(domainidArray[i]);
                 }
             }
-            
+
             // get the matched structures, do not include the template
             let mmdbafid = '';
             for(let i = 0, il = chainidArray.length; i < il; ++i) {
@@ -384,7 +384,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             // realign, include the template
             ic.chainidArray = [chain_t].concat(chainidArray);
             ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
-            
+
             me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 
             ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
@@ -461,7 +461,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.refseqid !== undefined) {
         ic.inputid = me.cfg.refseqid;
-        
+
         // ic.bNCBI = true;
         ic.loadCmd = 'load refseq ' + me.cfg.refseqid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -469,7 +469,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.protein !== undefined) {
         ic.inputid = me.cfg.protein;
-        
+
         // ic.bNCBI = true;
         ic.loadCmd = 'load protein ' + me.cfg.protein;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -478,7 +478,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     else if(me.cfg.blast_rep_id !== undefined) {
        // ic.bNCBI = true;
        ic.inputid =  me.cfg.query_id + ',' + me.cfg.blast_rep_id;
-       
+
        me.cfg.oriQuery_id = me.cfg.query_id;
        me.cfg.oriBlast_rep_id = me.cfg.blast_rep_id;
 
@@ -502,7 +502,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                 ic.bSmithwm = false;
                 ic.bLocalSmithwm = false;
             }
-            
+
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
             await ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
        }
@@ -511,7 +511,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let data = await me.getAjaxPromise(url, 'json', false, 'The RID ' + me.cfg.rid + ' may have expired...');
 
             for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
-                
+
                 let hitArray;
                 if(data.BlastOutput2[q].report.results.iterations) { // psi-blast may have "iterations". Use the last iteration.
                     let nIterations = data.BlastOutput2[q].report.results.iterations.length;
@@ -522,7 +522,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                     if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
                     hitArray = data.BlastOutput2[q].report.results.search.hits;
                 }
-                
+
                 let qseq = undefined;
                 for(let i = 0, il = hitArray.length; i < il; ++i) {
                     let hit = hitArray[i];
@@ -618,7 +618,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         }
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
 
-        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);   
+        await ic.chainalignParserCls.downloadMmdbAf(me.cfg.mmdbafid);
         //await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
     }
     else if(me.cfg.command !== undefined && me.cfg.command !== '') {
@@ -632,7 +632,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
         return;
     }
-    
+
     await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
 //   });
 //   return me.deferred.promise();
@@ -702,7 +702,7 @@ iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, 
         let oReq = new XMLHttpRequest();
         oReq.open(dataType, url, true);
         oReq.responseType = responseType;
-        
+
         oReq.onreadystatechange = function() {
             if (this.readyState == 4) {
                if(this.status == 200) {
@@ -754,7 +754,7 @@ iCn3DUI.prototype.getAjaxPromise = function(url, dataType, beforeSend, alertMess
                 error : function() {
                     if(alertMess) alert(alertMess);
                     if(logMess) console.log(logMess);
-                    
+
                     reject('error');
                 }
             });
@@ -797,7 +797,7 @@ iCn3DUI.prototype.getAjaxPostPromise = async function(url, data, beforeSend, ale
                     //if(alertMess) alert(alertMess);
                     if(!me.bNode && alertMess) console.log(alertMess);
                     if(!me.bNode && logMess) console.log(logMess);
-                    
+
                     // reject('error');
                     // keep running the program
                     resolve('error');

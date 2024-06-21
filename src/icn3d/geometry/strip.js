@@ -15,7 +15,8 @@ class Strip {
         if (p0.length < 2) return;
         div = div || ic.axisDIV;
 
-        if(pntsCA && ic.bDoublecolor && !ic.bCalphaOnly) {
+        // if(pntsCA && ic.bDoublecolor && !ic.bCalphaOnly) {
+        if(pntsCA && ic.bDoublecolor) {
             let bExtendLastRes = false; //true;
 
             let pnts_clrs = me.subdivideCls.subdivide(pntsCA, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
