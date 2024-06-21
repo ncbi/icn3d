@@ -671,6 +671,26 @@ class Events {
             thisClass.setLogCmd("translate pdb " + dx + " " + dy + " "  + dz, true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "measure_angle", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let v1X = $("#" + me.pre + "v1X").val();
+            let v1Y = $("#" + me.pre + "v1Y").val();
+            let v1Z= $("#" + me.pre + "v1Z").val();
+
+            let v2X = $("#" + me.pre + "v2X").val();
+            let v2Y = $("#" + me.pre + "v2Y").val();
+            let v2Z = $("#" + me.pre + "v2Z").val();
+
+            let angleRad = new THREE.Vector3(parseFloat(v1X), parseFloat(v1Y), parseFloat(v1Z)).angleTo(new THREE.Vector3(parseFloat(v2X), parseFloat(v2Y), parseFloat(v2Z)));
+            let angle = angleRad / 3.1416 * 180;
+            angle = Math.abs(angle).toFixed(0);
+            if(angle > 180) angle -= 180;
+            if(angle > 90) angle = 180 - angle;
+
+            thisClass.setLogCmd("The angle is " + angle + " degree", false);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "matrix_pdb", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );

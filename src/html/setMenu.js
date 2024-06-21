@@ -1649,6 +1649,8 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += this.getLink('mn6_angle', 'Angle b/w Vectors', undefined, 1);
+
         html += this.getLink('mn6_area', 'Surface Area', 1, 1);
 
         html += this.getMenuText('mn6_addlabelwrap', 'Label', undefined, 1, 1);

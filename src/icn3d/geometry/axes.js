@@ -218,6 +218,9 @@ class Axes {
 
        let positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.4));
 
+       let prinXaxis = vecX.normalize();
+       me.htmlCls.clickMenuCls.setLogCmd('Principle X-Axis: ' + prinXaxis.x.toFixed(3) + " " + prinXaxis.y.toFixed(3) + " " + prinXaxis.z.toFixed(3), false);
+
        let vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
        let positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
 

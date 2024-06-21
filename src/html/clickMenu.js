@@ -2026,6 +2026,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
         });
 
+        $(document).on("click", "#" + me.pre + "mn6_angle", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.htmlCls.dialogCls.openDlg('dl_angle', 'Measure the angle between two vectors');
+        });
+
         $(document).on("click", "#" + me.pre + "mn2_matrix", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
         });

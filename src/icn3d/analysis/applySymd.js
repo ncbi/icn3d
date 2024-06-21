@@ -47,6 +47,9 @@ class ApplySymd {
 
             ic.cylinderCls.createCylinder(start, end, axisRadius, colorAxis, 0);
 
+            let SymAxis = end.clone().sub(start).normalize();
+            me.htmlCls.clickMenuCls.setLogCmd('Symmetry Axis: ' + SymAxis.x.toFixed(3) + " " + SymAxis.y.toFixed(3) + " " + SymAxis.z.toFixed(3), false);     
+
             if(ic.bAxisOnly) continue;
 
             if(symmetryType == 'C' || (symmetryType == 'D' && order == nSide) ) {
