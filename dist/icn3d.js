@@ -7789,7 +7789,7 @@ var icn3d = (function (exports) {
         }
 
         //isCalphaPhosOnly(atomlist, atomname1, atomname2) {
-        isCalphaPhosOnly(atomlist) { let me = this.icn3dui, ic = me.icn3d;
+        isCalphaPhosOnly(atomlist) { this.icn3dui;
               let bCalphaPhosOnly = false;
 
               let index = 0, testLength = 100; //30
@@ -7797,7 +7797,7 @@ var icn3d = (function (exports) {
               let nOtherAtoms = 0;
               for(let i in atomlist) {
                 if(index < testLength) {
-                  let atomName = ic.atoms[i].name;   
+                  let atomName = atomlist[i].name;   
                   if(!atomName) continue;
                   atomName = atomName.trim();
 
@@ -11668,6 +11668,10 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
             });
 
+            $(document).on("click", "#" + me.pre + "mn6_angle", function(e) { me.icn3d; //e.preventDefault();
+             me.htmlCls.dialogCls.openDlg('dl_angle', 'Measure the angle between two vectors');
+            });
+
             $(document).on("click", "#" + me.pre + "mn2_matrix", function(e) { me.icn3d; //e.preventDefault();
                me.htmlCls.dialogCls.openDlg('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
             });
@@ -13693,6 +13697,8 @@ var icn3d = (function (exports) {
             html += this.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true, 1, 2);
             html += "</ul>";
             html += "</li>";
+
+            html += this.getLink('mn6_angle', 'Angle b/w Vectors', undefined, 1);
 
             html += this.getLink('mn6_area', 'Surface Area', 1, 1);
 
@@ -15928,6 +15934,19 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "translate_pdb'>Translate</button>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_angle' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_angle', 'Measure the angle between two vectors');
+            html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=4> ";
+            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=4> ";
+            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=4><br>";
+            html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=4> ";
+            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=4> ";
+            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=4><br>";
+            html += "<br>";
+            
+            html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
             html += "0: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix0' value='1' size=2> ";
@@ -16769,6 +16788,26 @@ var icn3d = (function (exports) {
                 ic.drawCls.draw();
 
                 thisClass.setLogCmd("translate pdb " + dx + " " + dy + " "  + dz, true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "measure_angle", "click", function(e) { me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let v1X = $("#" + me.pre + "v1X").val();
+                let v1Y = $("#" + me.pre + "v1Y").val();
+                let v1Z= $("#" + me.pre + "v1Z").val();
+
+                let v2X = $("#" + me.pre + "v2X").val();
+                let v2Y = $("#" + me.pre + "v2Y").val();
+                let v2Z = $("#" + me.pre + "v2Z").val();
+
+                let angleRad = new THREE.Vector3(parseFloat(v1X), parseFloat(v1Y), parseFloat(v1Z)).angleTo(new THREE.Vector3(parseFloat(v2X), parseFloat(v2Y), parseFloat(v2Z)));
+                let angle = angleRad / 3.1416 * 180;
+                angle = Math.abs(angle).toFixed(0);
+                if(angle > 180) angle -= 180;
+                if(angle > 90) angle = 180 - angle;
+
+                thisClass.setLogCmd("The angle is " + angle + " degree", false);
             });
 
             me.myEventCls.onIds("#" + me.pre + "matrix_pdb", "click", function(e) { let ic = me.icn3d;
@@ -29065,7 +29104,8 @@ var icn3d = (function (exports) {
             // For each chain, test the first 30 atoms to see whether only C-alpha is available
             let bCalphaOnlyHash = {};
             for(let chainid in ic.chains) {
-                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(ic.chains[chainid]); //, 'CA');
+                let atoms = me.hashUtilsCls.hash2Atoms(ic.chains[chainid], ic.atoms);
+                let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, 'CA');
                 bCalphaOnlyHash[chainid] = bCalphaOnly;
             }
 
@@ -31034,6 +31074,9 @@ var icn3d = (function (exports) {
         */
 
            let positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.4));
+
+           let prinXaxis = vecX.normalize();
+           me.htmlCls.clickMenuCls.setLogCmd('Principle X-Axis: ' + prinXaxis.x.toFixed(3) + " " + prinXaxis.y.toFixed(3) + " " + prinXaxis.z.toFixed(3), false);
 
            let vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
            let positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
@@ -35252,6 +35295,9 @@ var icn3d = (function (exports) {
                 let chain = dataArray[i][5];
 
                 ic.cylinderCls.createCylinder(start, end, axisRadius, colorAxis, 0);
+
+                let SymAxis = end.clone().sub(start).normalize();
+                me.htmlCls.clickMenuCls.setLogCmd('Symmetry Axis: ' + SymAxis.x.toFixed(3) + " " + SymAxis.y.toFixed(3) + " " + SymAxis.z.toFixed(3), false);     
 
                 if(ic.bAxisOnly) continue;
 

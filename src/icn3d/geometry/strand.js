@@ -69,7 +69,8 @@ class Strand {
         // For each chain, test the first 30 atoms to see whether only C-alpha is available
         let bCalphaOnlyHash = {};
         for(let chainid in ic.chains) {
-            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(ic.chains[chainid]); //, 'CA');
+            let atoms = me.hashUtilsCls.hash2Atoms(ic.chains[chainid], ic.atoms);
+            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, 'CA');
             bCalphaOnlyHash[chainid] = bCalphaOnly;
         }
 

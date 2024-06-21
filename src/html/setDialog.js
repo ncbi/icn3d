@@ -1365,6 +1365,19 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "translate_pdb'>Translate</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_angle' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_angle', 'Measure the angle between two vectors');
+        html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=4> ";
+        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=4> ";
+        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=4><br>";
+        html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=4> ";
+        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=4> ";
+        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=4><br>";
+        html += "<br>";
+        
+        html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
         html += "0: " + me.htmlCls.inputTextStr + "id='" + me.pre + "matrix0' value='1' size=2> ";
