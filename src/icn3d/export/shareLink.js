@@ -343,7 +343,8 @@ class ShareLink {
             }
             else {
                 text += "\nStart of type file======\n";
-                text += ic.InputfileType + "\n";
+                // text += ic.InputfileType + "\n";
+                text += "pdb\n";
                 text += "End of type file======\n";
 
                 text += "Start of data file======\n";

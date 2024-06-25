@@ -177,7 +177,73 @@ class Analysis {
 
             $("#" + me.pre + "dl_disttable_html").html(tableHtml);
         }
-     }
+    }
+
+    measureAngleManySets(nameArray, nameArray2) {var ic = this.icn3d, me = ic.icn3dui;
+        if(nameArray.length == 0 || nameArray2.length == 0) {
+            alert("Please select sets for angleance calculation...");
+        }
+        else {
+            let angleHash = {};
+
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                let set1 = nameArray[i];
+                let array1 = [set1];
+                angleHash[set1] = {};
+
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(array1);
+                let axis1 = ic.axesCls.setPc1Axes(true);
+
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+                    let array2 = [set2];
+
+                    if(set1 == set2) continue;
+
+                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(array2);
+                    let axis2 = ic.axesCls.setPc1Axes(true);
+
+                    let angleRad = new THREE.Vector3(parseFloat(axis1.x), parseFloat(axis1.y), parseFloat(axis1.z)).angleTo(new THREE.Vector3(parseFloat(axis2.x), parseFloat(axis2.y), parseFloat(axis2.z)));
+                    
+                    let angle = angleRad / 3.1416 * 180;
+                    angle = Math.abs(angle).toFixed(0);
+                    if(angle > 180) angle -= 180;
+                    if(angle > 90) angle = 180 - angle;
+
+                    angleHash[set1][set2] = angle;
+                }
+            }
+
+            let tableHtml = '<table align=center border=1 cellpadding=10 cellspacing=0><tr><th></th>';
+            for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                let set2 = nameArray2[j];
+                tableHtml += '<th><b>' + set2 + '</b> (&deg;)</th>';
+            }
+            tableHtml += '</tr>';
+
+            for(let i = 0, il = nameArray.length; i < il; ++i) {
+                let set1 = nameArray[i];
+                tableHtml += '<tr><th><b>' + set1 + '</b> (&deg;)</th>';
+
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+
+                    if(angleHash[set1] && angleHash[set1][set2]) {
+                        tableHtml += '<td><span>' + angleHash[set1][set2] + '</span></td>';
+                    }
+                    else {
+                        tableHtml += '<td>0</td>';
+                    }
+                }
+
+                tableHtml += '</tr>';
+            }
+
+            tableHtml += '</table><br><br>';
+
+            $("#" + me.pre + "dl_angletable_html").html(tableHtml);
+        }
+    }
 
     //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
     //The line can be dashed if "dashed" is set true.

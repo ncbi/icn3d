@@ -167,7 +167,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.33.1';
+    this.REVISION = '3.33.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -554,6 +554,18 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        }
     }
     else if(me.cfg.cid !== undefined) {
+        if(isNaN(me.cfg.cid)) {
+            let urlCid = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?compound2cid=" + me.cfg.cid;
+            let cidJson = await me.getAjaxPromise(urlCid, 'jsonp');
+            if(cidJson.cid && cidJson.cid[0]) {
+                me.cfg.cid = cidJson.cid[0];
+            }
+            else {
+                alert("Please input an valid PubChem CID...");
+                return;
+            }
+        }
+
         ic.inputid = me.cfg.cid;
 
         let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
