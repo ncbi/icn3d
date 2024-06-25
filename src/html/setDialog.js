@@ -446,8 +446,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_cid', 'Please input a PubChem CID');
-        html += "PubChem CID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
+        html += this.addNotebookTitle('dl_cid', 'Please input a PubChem Compound');
+        html += "PubChem CID/Name/InchI: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
         html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";
         html += "</div>";
 
@@ -1078,6 +1078,28 @@ class SetDialog {
         html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applydisttable'>Distances in Table</button></span>";
         html += "</div>";
 
+
+        html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_anglemanysets', 'Measure angles among many sets');
+        html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise angles</span><br/>";
+        html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+        html += me.htmlCls.divNowrapStr + "First sets:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomAngleTable2' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td><td>";
+
+        html += me.htmlCls.divNowrapStr + "Second sets:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomAngleTable' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td></tr></table>";
+
+        html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applyangletable'>Angles in Table</button></span>";
+        html += "</div>";
+
+
         html += me.htmlCls.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_stabilizer_rm', 'Remove a stabilizer');
         if(me.utilsCls.isMobile()) {
@@ -1357,6 +1379,11 @@ class SetDialog {
         html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
         html += "</div>";
 
+        
+        html += me.htmlCls.divStr + "dl_angletable' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_angletable', 'Angle Table', true);
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_translate' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
         html += "X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "translateX' value='' size=4> ";
@@ -1367,15 +1394,16 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_angle' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_angle', 'Measure the angle between two vectors');
-        html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=4> ";
-        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=4> ";
-        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=4><br>";
-        html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=4> ";
-        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=4> ";
-        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=4><br>";
+        html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=6> ";
+        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=6> ";
+        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=6><br>";
+        html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=6> ";
+        html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=6> ";
+        html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=6><br>";
         html += "<br>";
         
         html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
+        html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";

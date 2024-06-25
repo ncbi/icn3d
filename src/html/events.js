@@ -689,6 +689,7 @@ class Events {
             if(angle > 90) angle = 180 - angle;
 
             thisClass.setLogCmd("The angle is " + angle + " degree", false);
+            $("#" + me.pre + "angle_value").val(angle);
         });
 
         me.myEventCls.onIds("#" + me.pre + "matrix_pdb", "click", function(e) { let ic = me.icn3d;
@@ -2347,6 +2348,20 @@ class Events {
             me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
 
             thisClass.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "applyangletable", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.bMeasureAngle = false;
+ 
+            let nameArray = $("#" + me.pre + "atomsCustomAngleTable").val();
+            let nameArray2 = $("#" + me.pre + "atomsCustomAngleTable2").val();
+ 
+            ic.analysisCls.measureAngleManySets(nameArray, nameArray2);
+            me.htmlCls.dialogCls.openDlg('dl_angletable', 'Angles among the sets');
+
+            thisClass.setLogCmd("angletable | " + nameArray2 + " " + nameArray, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "applylinebtwsets", "click", function(e) { let ic = me.icn3d;

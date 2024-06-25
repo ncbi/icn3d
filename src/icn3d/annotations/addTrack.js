@@ -665,7 +665,6 @@ class AddTrack {
     }
 
     getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d, me = ic.icn3dui;
-        // return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
         return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
     }
 
@@ -1415,7 +1414,7 @@ class AddTrack {
         let targetId = 'genomeRes';
 
         let acc2index = {};
-        
+
         for(let index = 0, indexl = accArray.length; index < indexl; ++index) {
             let acc = accArray[index];
 
@@ -1502,22 +1501,24 @@ class AddTrack {
             trackSeqArrayFinal[i] = '';
         }
 
-        for(let j = 0, jl = trackSeqArray[maxIndex].length; j < jl; ++j) {
-            let seq = trackSeqArray[maxIndex][j];
+        if(trackSeqArray[maxIndex]) {
+            for(let j = 0, jl = trackSeqArray[maxIndex].length; j < jl; ++j) {
+                let seq = trackSeqArray[maxIndex][j];
 
-            let bExon = (seq != '-') ? true : false;
-            if(!bExon) {
-                for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
-                    if(trackSeqArray[i][j] != '-') {
-                        bExon = true;
-                        break;
+                let bExon = (seq != '-') ? true : false;
+                if(!bExon) {
+                    for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
+                        if(trackSeqArray[i][j] != '-') {
+                            bExon = true;
+                            break;
+                        }
                     }
                 }
-            }
-            
-            if(bExon) {
-                for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
-                    trackSeqArrayFinal[i] += trackSeqArray[i][j];
+                
+                if(bExon) {
+                    for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
+                        trackSeqArrayFinal[i] += trackSeqArray[i][j];
+                    }
                 }
             }
         }
@@ -1588,7 +1589,9 @@ class AddTrack {
                 ic.maxAnnoLength = ic.maxAnnoLengthOri + ic.seqStartLen[chainid] + ic.seqEndLen[chainid];
         }
 
-        await ic.annotationCls.resetAnnoAll();
+        // do not remove other tracks
+        // await ic.annotationCls.resetAnnoAll();
+        await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
         let targetGapHashStr = '';
         let cntTmp = 0;
@@ -1790,13 +1793,12 @@ class AddTrack {
                 let cnt = (j == jl - 1) ? itemArray[2] - 3 : itemArray[2]; // The last one is stop codeon
                 cntTotal += cnt;
 
-                let resStart = parseInt(prevCntTotal/3.0 + 0.5); // 0-based
-                let resEnd = parseInt(cntTotal/3.0 + 0.5) - 1; // 0-based
+                let resStart = parseInt((prevCntTotal+2)/3.0); // 0-based
+                let resEnd = parseInt((cntTotal+2)/3.0) - 1; // 0-based
 
-                let genResStart = parseInt(itemArray[0] / 3.0 + 0.5);
-                
-                //let genResEnd = parseInt(itemArray[1] / 3.0 + 0.5); // some difference due to round
-                let genResEnd = genResStart + ic.exonOrder * (resEnd - resStart);
+                let genResEnd = parseInt((itemArray[1]+2) / 3.0);
+                // let genResStart = parseInt((itemArray[0]+2) / 3.0); // some difference due to round
+                let genResStart = genResEnd - ic.exonOrder * (resEnd - resStart);
 
                 rangeArray.push({genomeRange: genomeRange, genResStart: genResStart, genResEnd: genResEnd, resStart: resStart, resEnd: resEnd});
 
@@ -1850,7 +1852,7 @@ class AddTrack {
 
         let ALen = trackSeqArray.length;
 
-        while (i < A.length && j < B.length) {
+        while (A && B && i < A.length && j < B.length) {
             if(A[i] != B[j]) {
                 if(A[i] == '-') { 
                     // insert "-" in B

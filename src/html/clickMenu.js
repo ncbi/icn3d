@@ -309,7 +309,7 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem CID');
+           me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem Compound');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -1933,12 +1933,20 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
+            me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distances among many sets');
 
             thisClass.setSetsMenus('atomsCustomDistTable');
 
            ic.bMeasureDistance = true;
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_angleManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.htmlCls.dialogCls.openDlg('dl_anglemanysets', 'Measure the pairwise angles among many sets');
+
+         thisClass.setSetsMenus('atomsCustomAngleTable');
+
+        ic.bMeasureAngle = true;
+       });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pickpair = false;
@@ -2026,7 +2034,7 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
         });
 
-        $(document).on("click", "#" + me.pre + "mn6_angle", function(e) { let ic = me.icn3d; //e.preventDefault();
+        $(document).on("click", "#" + me.pre + "mn6_angleTwoSets", function(e) { let ic = me.icn3d; //e.preventDefault();
          me.htmlCls.dialogCls.openDlg('dl_angle', 'Measure the angle between two vectors');
         });
 

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.33.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.1.zip) was release on June 25, 2024. Enabled to measure angles between sets in the menu "Analysis > Angle". 
+
 [icn3d-3.33.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.1.zip) was release on June 18, 2024. Draw coils for the whole structure with zero radius for the secondary structure parts. 
 
 [icn3d-3.33.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.0.zip) was release on June 12, 2024. Users can use iCn3D to detect Ig domains for any structures and assign IgStrand reference numbers for each residue. The instruction is at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#igrefnum.  

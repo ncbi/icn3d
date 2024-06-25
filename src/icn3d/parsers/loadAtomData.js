@@ -76,9 +76,11 @@ class LoadAtomData {
                   serial2structure[j] = pdbidTmp.toString();
                   mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
               }
-
+              
               for(let j = 0, jl = structure.molecules.length; j < jl; ++j) {
                   let chain = structure.molecules[j].chain;
+                  chain = chain.replace(/_/g, ''); // change "A_1" to "A1"
+
                   let kind = structure.molecules[j].kind;
                   let title = structure.molecules[j].name;
                   //var seq = structure.molecules[j].sequence;

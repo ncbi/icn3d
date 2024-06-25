@@ -1001,7 +1001,21 @@ class ApplyCommand {
                 let nameArray2 = setNameArray[1].split(',');
 
                 ic.analysisCls.measureDistManySets(nameArray, nameArray2);
-                me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
+                me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distances among the sets');
+            }
+        }
+      }
+      else if(commandOri.indexOf('angletable') == 0) {
+        let paraArray = commandOri.split(' | ');
+        if(paraArray.length == 2) {
+            let setNameArray = paraArray[1].split(' ');
+
+            if(setNameArray.length == 2) {
+                let nameArray = setNameArray[0].split(',');
+                let nameArray2 = setNameArray[1].split(',');
+
+                ic.analysisCls.measureAngleManySets(nameArray, nameArray2);
+                me.htmlCls.dialogCls.openDlg('dl_angletable', 'Angles among the sets');
             }
         }
       }

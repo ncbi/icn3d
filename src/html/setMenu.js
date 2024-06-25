@@ -541,7 +541,7 @@ class SetMenu {
         html += this.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
         //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
-        html += this.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
+        html += this.getLink('mn1_cid', 'PubChem CID/Name/InchI ' + me.htmlCls.wifiStr, 1, 2);
         
         html += "</ul>";
         html += "</li>";
@@ -1644,12 +1644,17 @@ class SetMenu {
         html += "<ul>";
         html += this.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms', undefined, 1, 2);
         html += this.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets', undefined, undefined, 2);
-        html += this.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets', undefined, undefined, 2);
+        html += this.getRadio('mn6_distance', 'mn6_distManySets', 'among Many Sets', undefined, undefined, 2);
         html += this.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true, 1, 2);
         html += "</ul>";
         html += "</li>";
 
-        html += this.getLink('mn6_angle', 'Angle b/w Vectors', undefined, 1);
+        html += this.getMenuText('mn6_anglewrap', 'Angle', undefined, 1, 1);
+        html += "<ul>";
+        html += this.getRadio('mn6_angle', 'mn6_angleManySets', 'among Many Sets', undefined, 1, 2);
+        html += this.getRadio('mn6_angle', 'mn6_angleTwoSets', 'b/w Two Vectors', undefined, undefined, 2);
+        html += "</ul>";
+        html += "</li>";
 
         html += this.getLink('mn6_area', 'Surface Area', 1, 1);
 

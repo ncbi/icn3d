@@ -9953,7 +9953,7 @@ var icn3d = (function (exports) {
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { me.icn3d; //e.preventDefault();
-               me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem CID');
+               me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem Compound');
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { me.icn3d; //e.preventDefault();
@@ -11577,12 +11577,20 @@ var icn3d = (function (exports) {
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-                me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distance among many sets');
+                me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distances among many sets');
 
                 thisClass.setSetsMenus('atomsCustomDistTable');
 
                ic.bMeasureDistance = true;
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_angleManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+             me.htmlCls.dialogCls.openDlg('dl_anglemanysets', 'Measure the pairwise angles among many sets');
+
+             thisClass.setSetsMenus('atomsCustomAngleTable');
+
+            ic.bMeasureAngle = true;
+           });
 
             me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
                ic.pickpair = false;
@@ -11668,7 +11676,7 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
             });
 
-            $(document).on("click", "#" + me.pre + "mn6_angle", function(e) { me.icn3d; //e.preventDefault();
+            $(document).on("click", "#" + me.pre + "mn6_angleTwoSets", function(e) { me.icn3d; //e.preventDefault();
              me.htmlCls.dialogCls.openDlg('dl_angle', 'Measure the angle between two vectors');
             });
 
@@ -12592,7 +12600,7 @@ var icn3d = (function (exports) {
             html += this.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
             //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
-            html += this.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr, 1, 2);
+            html += this.getLink('mn1_cid', 'PubChem CID/Name/InchI ' + me.htmlCls.wifiStr, 1, 2);
             
             html += "</ul>";
             html += "</li>";
@@ -13693,12 +13701,17 @@ var icn3d = (function (exports) {
             html += "<ul>";
             html += this.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms', undefined, 1, 2);
             html += this.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets', undefined, undefined, 2);
-            html += this.getRadio('mn6_distance', 'mn6_distManySets', 'Among Many Sets', undefined, undefined, 2);
+            html += this.getRadio('mn6_distance', 'mn6_distManySets', 'among Many Sets', undefined, undefined, 2);
             html += this.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
-            html += this.getLink('mn6_angle', 'Angle b/w Vectors', undefined, 1);
+            html += this.getMenuText('mn6_anglewrap', 'Angle', undefined, 1, 1);
+            html += "<ul>";
+            html += this.getRadio('mn6_angle', 'mn6_angleManySets', 'among Many Sets', undefined, 1, 2);
+            html += this.getRadio('mn6_angle', 'mn6_angleTwoSets', 'b/w Two Vectors', undefined, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
 
             html += this.getLink('mn6_area', 'Surface Area', 1, 1);
 
@@ -15015,8 +15028,8 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
-            html += this.addNotebookTitle('dl_cid', 'Please input a PubChem CID');
-            html += "PubChem CID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
+            html += this.addNotebookTitle('dl_cid', 'Please input a PubChem Compound');
+            html += "PubChem CID/Name/InchI: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
             html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";
             html += "</div>";
 
@@ -15647,6 +15660,28 @@ var icn3d = (function (exports) {
             html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applydisttable'>Distances in Table</button></span>";
             html += "</div>";
 
+
+            html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_anglemanysets', 'Measure angles among many sets');
+            html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise angles</span><br/>";
+            html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+            html += me.htmlCls.divNowrapStr + "First sets:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomAngleTable2' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td><td>";
+
+            html += me.htmlCls.divNowrapStr + "Second sets:</div>";
+            html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomAngleTable' multiple size='5' style='min-width:130px;'>";
+            html += "</select></div>";
+
+            html += "</td></tr></table>";
+
+            html += me.htmlCls.spanNowrapStr + "2. " + me.htmlCls.buttonStr + "applyangletable'>Angles in Table</button></span>";
+            html += "</div>";
+
+
             html += me.htmlCls.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_stabilizer_rm', 'Remove a stabilizer');
             if(me.utilsCls.isMobile()) {
@@ -15926,6 +15961,11 @@ var icn3d = (function (exports) {
             html += this.addNotebookTitle('dl_disttable', 'Distance Table', true);
             html += "</div>";
 
+            
+            html += me.htmlCls.divStr + "dl_angletable' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_angletable', 'Angle Table', true);
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_translate' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
             html += "X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "translateX' value='' size=4> ";
@@ -15936,15 +15976,16 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_angle' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_angle', 'Measure the angle between two vectors');
-            html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=4> ";
-            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=4> ";
-            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=4><br>";
-            html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=4> ";
-            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=4> ";
-            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=4><br>";
+            html += "<b>Vector 1</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1X' value='' size=6> ";
+            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Y' value='' size=6> ";
+            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v1Z' value='' size=6><br>";
+            html += "<b>Vector 2</b>, X: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2X' value='' size=6> ";
+            html += "Y: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Y' value='' size=6> ";
+            html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=6><br>";
             html += "<br>";
             
             html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
+            html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";
@@ -16808,6 +16849,7 @@ var icn3d = (function (exports) {
                 if(angle > 90) angle = 180 - angle;
 
                 thisClass.setLogCmd("The angle is " + angle + " degree", false);
+                $("#" + me.pre + "angle_value").val(angle);
             });
 
             me.myEventCls.onIds("#" + me.pre + "matrix_pdb", "click", function(e) { let ic = me.icn3d;
@@ -18464,6 +18506,20 @@ var icn3d = (function (exports) {
                 me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
 
                 thisClass.setLogCmd("disttable | " + nameArray2 + " " + nameArray, true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "applyangletable", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.bMeasureAngle = false;
+     
+                let nameArray = $("#" + me.pre + "atomsCustomAngleTable").val();
+                let nameArray2 = $("#" + me.pre + "atomsCustomAngleTable2").val();
+     
+                ic.analysisCls.measureAngleManySets(nameArray, nameArray2);
+                me.htmlCls.dialogCls.openDlg('dl_angletable', 'Angles among the sets');
+
+                thisClass.setLogCmd("angletable | " + nameArray2 + " " + nameArray, true);
             });
 
             me.myEventCls.onIds("#" + me.pre + "applylinebtwsets", "click", function(e) { let ic = me.icn3d;
@@ -30994,7 +31050,7 @@ var icn3d = (function (exports) {
             return cone;
         }
 
-        setPc1Axes() { let ic = this.icn3d, me = ic.icn3dui;
+        setPc1Axes(bXAxis) { let ic = this.icn3d, me = ic.icn3dui;
            if(me.bNode) return;
 
            let atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
@@ -31077,6 +31133,8 @@ var icn3d = (function (exports) {
 
            let prinXaxis = vecX.normalize();
            me.htmlCls.clickMenuCls.setLogCmd('Principle X-Axis: ' + prinXaxis.x.toFixed(3) + " " + prinXaxis.y.toFixed(3) + " " + prinXaxis.z.toFixed(3), false);
+
+           if(bXAxis) return prinXaxis;
 
            let vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
            let positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
@@ -45713,7 +45771,6 @@ var icn3d = (function (exports) {
         }
 
         getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d; ic.icn3dui;
-            // return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', Exon ' + (exonIndex + 1) + '" title="Exon ' + (exonIndex + 1) + ': ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
             return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
         }
 
@@ -46455,7 +46512,7 @@ var icn3d = (function (exports) {
             let targetId = 'genomeRes';
 
             let acc2index = {};
-            
+
             for(let index = 0, indexl = accArray.length; index < indexl; ++index) {
                 let acc = accArray[index];
 
@@ -46540,22 +46597,24 @@ var icn3d = (function (exports) {
                 trackSeqArrayFinal[i] = '';
             }
 
-            for(let j = 0, jl = trackSeqArray[maxIndex].length; j < jl; ++j) {
-                let seq = trackSeqArray[maxIndex][j];
+            if(trackSeqArray[maxIndex]) {
+                for(let j = 0, jl = trackSeqArray[maxIndex].length; j < jl; ++j) {
+                    let seq = trackSeqArray[maxIndex][j];
 
-                let bExon = (seq != '-') ? true : false;
-                if(!bExon) {
-                    for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
-                        if(trackSeqArray[i][j] != '-') {
-                            bExon = true;
-                            break;
+                    let bExon = (seq != '-') ? true : false;
+                    if(!bExon) {
+                        for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
+                            if(trackSeqArray[i][j] != '-') {
+                                bExon = true;
+                                break;
+                            }
                         }
                     }
-                }
-                
-                if(bExon) {
-                    for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
-                        trackSeqArrayFinal[i] += trackSeqArray[i][j];
+                    
+                    if(bExon) {
+                        for(let i = 0, il = trackSeqArray.length; i < il; ++i) {
+                            trackSeqArrayFinal[i] += trackSeqArray[i][j];
+                        }
                     }
                 }
             }
@@ -46626,7 +46685,9 @@ var icn3d = (function (exports) {
                     ic.maxAnnoLength = ic.maxAnnoLengthOri + ic.seqStartLen[chainid] + ic.seqEndLen[chainid];
             }
 
-            await ic.annotationCls.resetAnnoAll();
+            // do not remove other tracks
+            // await ic.annotationCls.resetAnnoAll();
+            await ic.showAnnoCls.processSeqData(ic.chainid_seq);
 
             let targetGapHashStr = '';
             let cntTmp = 0;
@@ -46828,13 +46889,12 @@ var icn3d = (function (exports) {
                     let cnt = (j == jl - 1) ? itemArray[2] - 3 : itemArray[2]; // The last one is stop codeon
                     cntTotal += cnt;
 
-                    let resStart = parseInt(prevCntTotal/3.0 + 0.5); // 0-based
-                    let resEnd = parseInt(cntTotal/3.0 + 0.5) - 1; // 0-based
+                    let resStart = parseInt((prevCntTotal+2)/3.0); // 0-based
+                    let resEnd = parseInt((cntTotal+2)/3.0) - 1; // 0-based
 
-                    let genResStart = parseInt(itemArray[0] / 3.0 + 0.5);
-                    
-                    //let genResEnd = parseInt(itemArray[1] / 3.0 + 0.5); // some difference due to round
-                    let genResEnd = genResStart + ic.exonOrder * (resEnd - resStart);
+                    let genResEnd = parseInt((itemArray[1]+2) / 3.0);
+                    // let genResStart = parseInt((itemArray[0]+2) / 3.0); // some difference due to round
+                    let genResStart = genResEnd - ic.exonOrder * (resEnd - resStart);
 
                     rangeArray.push({genomeRange: genomeRange, genResStart: genResStart, genResEnd: genResEnd, resStart: resStart, resEnd: resEnd});
 
@@ -46888,7 +46948,7 @@ var icn3d = (function (exports) {
 
             let ALen = trackSeqArray.length;
 
-            while (i < A.length && j < B.length) {
+            while (A && B && i < A.length && j < B.length) {
                 if(A[i] != B[j]) {
                     if(A[i] == '-') { 
                         // insert "-" in B
@@ -60988,9 +61048,11 @@ var icn3d = (function (exports) {
                       serial2structure[j] = pdbidTmp.toString();
                       mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
                   }
-
+                  
                   for(let j = 0, jl = structure.molecules.length; j < jl; ++j) {
                       let chain = structure.molecules[j].chain;
+                      chain = chain.replace(/_/g, ''); // change "A_1" to "A1"
+
                       let kind = structure.molecules[j].kind;
                       let title = structure.molecules[j].name;
                       //var seq = structure.molecules[j].sequence;
@@ -66697,7 +66759,21 @@ var icn3d = (function (exports) {
                     let nameArray2 = setNameArray[1].split(',');
 
                     ic.analysisCls.measureDistManySets(nameArray, nameArray2);
-                    me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distance among the sets');
+                    me.htmlCls.dialogCls.openDlg('dl_disttable', 'Distances among the sets');
+                }
+            }
+          }
+          else if(commandOri.indexOf('angletable') == 0) {
+            let paraArray = commandOri.split(' | ');
+            if(paraArray.length == 2) {
+                let setNameArray = paraArray[1].split(' ');
+
+                if(setNameArray.length == 2) {
+                    let nameArray = setNameArray[0].split(',');
+                    let nameArray2 = setNameArray[1].split(',');
+
+                    ic.analysisCls.measureAngleManySets(nameArray, nameArray2);
+                    me.htmlCls.dialogCls.openDlg('dl_angletable', 'Angles among the sets');
                 }
             }
           }
@@ -75189,7 +75265,73 @@ var icn3d = (function (exports) {
 
                 $("#" + me.pre + "dl_disttable_html").html(tableHtml);
             }
-         }
+        }
+
+        measureAngleManySets(nameArray, nameArray2) {var ic = this.icn3d, me = ic.icn3dui;
+            if(nameArray.length == 0 || nameArray2.length == 0) {
+                alert("Please select sets for angleance calculation...");
+            }
+            else {
+                let angleHash = {};
+
+                for(let i = 0, il = nameArray.length; i < il; ++i) {
+                    let set1 = nameArray[i];
+                    let array1 = [set1];
+                    angleHash[set1] = {};
+
+                    ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(array1);
+                    let axis1 = ic.axesCls.setPc1Axes(true);
+
+                    for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                        let set2 = nameArray2[j];
+                        let array2 = [set2];
+
+                        if(set1 == set2) continue;
+
+                        ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(array2);
+                        let axis2 = ic.axesCls.setPc1Axes(true);
+
+                        let angleRad = new THREE.Vector3(parseFloat(axis1.x), parseFloat(axis1.y), parseFloat(axis1.z)).angleTo(new THREE.Vector3(parseFloat(axis2.x), parseFloat(axis2.y), parseFloat(axis2.z)));
+                        
+                        let angle = angleRad / 3.1416 * 180;
+                        angle = Math.abs(angle).toFixed(0);
+                        if(angle > 180) angle -= 180;
+                        if(angle > 90) angle = 180 - angle;
+
+                        angleHash[set1][set2] = angle;
+                    }
+                }
+
+                let tableHtml = '<table align=center border=1 cellpadding=10 cellspacing=0><tr><th></th>';
+                for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                    let set2 = nameArray2[j];
+                    tableHtml += '<th><b>' + set2 + '</b> (&deg;)</th>';
+                }
+                tableHtml += '</tr>';
+
+                for(let i = 0, il = nameArray.length; i < il; ++i) {
+                    let set1 = nameArray[i];
+                    tableHtml += '<tr><th><b>' + set1 + '</b> (&deg;)</th>';
+
+                    for(let j = 0, jl = nameArray2.length; j < jl; ++j) {
+                        let set2 = nameArray2[j];
+
+                        if(angleHash[set1] && angleHash[set1][set2]) {
+                            tableHtml += '<td><span>' + angleHash[set1][set2] + '</span></td>';
+                        }
+                        else {
+                            tableHtml += '<td>0</td>';
+                        }
+                    }
+
+                    tableHtml += '</tr>';
+                }
+
+                tableHtml += '</table><br><br>';
+
+                $("#" + me.pre + "dl_angletable_html").html(tableHtml);
+            }
+        }
 
         //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
         //The line can be dashed if "dashed" is set true.
@@ -79032,7 +79174,8 @@ var icn3d = (function (exports) {
                 }
                 else {
                     text += "\nStart of type file======\n";
-                    text += ic.InputfileType + "\n";
+                    // text += ic.InputfileType + "\n";
+                    text += "pdb\n";
                     text += "End of type file======\n";
 
                     text += "Start of data file======\n";
@@ -81897,7 +82040,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.33.1';
+        this.REVISION = '3.33.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -82284,6 +82427,18 @@ var icn3d = (function (exports) {
            }
         }
         else if(me.cfg.cid !== undefined) {
+            if(isNaN(me.cfg.cid)) {
+                let urlCid = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?compound2cid=" + me.cfg.cid;
+                let cidJson = await me.getAjaxPromise(urlCid, 'jsonp');
+                if(cidJson.cid && cidJson.cid[0]) {
+                    me.cfg.cid = cidJson.cid[0];
+                }
+                else {
+                    alert("Please input an valid PubChem CID...");
+                    return;
+                }
+            }
+
             ic.inputid = me.cfg.cid;
 
             let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";

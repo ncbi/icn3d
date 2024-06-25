@@ -137,7 +137,7 @@ class Axes {
         return cone;
     }
 
-    setPc1Axes() { let ic = this.icn3d, me = ic.icn3dui;
+    setPc1Axes(bXAxis) { let ic = this.icn3d, me = ic.icn3dui;
        if(me.bNode) return;
 
        let atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
@@ -220,6 +220,8 @@ class Axes {
 
        let prinXaxis = vecX.normalize();
        me.htmlCls.clickMenuCls.setLogCmd('Principle X-Axis: ' + prinXaxis.x.toFixed(3) + " " + prinXaxis.y.toFixed(3) + " " + prinXaxis.z.toFixed(3), false);
+
+       if(bXAxis) return prinXaxis;
 
        let vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
        let positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
