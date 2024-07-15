@@ -82,8 +82,8 @@ class ChainalignParser {
                     let chain_t = idArray[3];
                     let chainid_t = mmdbid_t + '_' + chain_t;
 
-                    let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
-                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
+                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
                 // end of original version =============
                 
 /*
