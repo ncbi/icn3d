@@ -53631,8 +53631,8 @@ var icn3d = (function (exports) {
                         let chain_t = idArray[3];
                         let chainid_t = mmdbid_t + '_' + chain_t;
 
-                        let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
-                        let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                        let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
+                        let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
                     // end of original version =============
                     
     /*
@@ -82592,7 +82592,8 @@ var icn3d = (function (exports) {
 
             ic.bChainAlign = true;
             ic.inputid = me.cfg.chainalign;
-            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + ' | resrange ' + me.cfg.resrange;
+            let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + me.cfg.resrange : '';
+            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
             await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
         }
