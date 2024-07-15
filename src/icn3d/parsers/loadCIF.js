@@ -49,7 +49,7 @@ class LoadCIF {
         
         let bHeader = false, bFirstAtom = true;
 
-        let cifArray = bcifData.split('ENDMDL\n');
+        let cifArray = (bText) ? bcifData.split('ENDMDL\n') : [bcifData];
 
         for(let index = 0, indexl = cifArray.length; index  < indexl; ++index) {
             ++moleculeNum;

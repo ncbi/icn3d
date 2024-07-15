@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-3.33.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.1.zip) was release on June 25, 2024. Enabled to measure angles between sets in the menu "Analysis > Angle". 
+[icn3d-3.33.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.3.zip) was release on July 15, 2024. Switch electron density data from RCSB DSN6 to PDBe Density Server. 
+
+[icn3d-3.33.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.2.zip) was release on June 25, 2024. Enabled to measure angles between sets in the menu "Analysis > Angle". 
 
 [icn3d-3.33.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.1.zip) was release on June 18, 2024. Draw coils for the whole structure with zero radius for the secondary structure parts. 
 
