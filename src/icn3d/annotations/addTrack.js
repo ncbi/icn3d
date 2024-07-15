@@ -322,7 +322,7 @@ class AddTrack {
 
     }
 
-    showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray, seqStartLen, exonArray) {  let ic = this.icn3d, me = ic.icn3dui;
+    showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray) {  let ic = this.icn3d, me = ic.icn3dui;
         //if(ic.customTracks[chnid] === undefined) {
         //    ic.customTracks[chnid] = {}
         //}
@@ -542,14 +542,16 @@ class AddTrack {
 
         if(fromArray !== undefined) {
             htmlTmp2 = '';
-            let fromArray2 = [], toArray2 = [];
+            let fromArray2 = [], toArray2 = [], offsetArray2 = [];
             for(let i = 0, il = fromArray.length; i < il; ++i) {
                 fromArray2.push(fromArray[i]);
+                offsetArray2.push(offsetArray[i]);
 
                 for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                     if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                         toArray2.push(j - 1);
                         fromArray2.push(j);
+                        offsetArray2.push(offsetArray[i]);
                     }
                 }
 
@@ -583,6 +585,7 @@ class AddTrack {
                     // determine how this range sits in the exon ranges in exonArray
                     let startExon, endExon, bStart = false, bEnd = false;
                     
+                    let offset = offsetArray2[i];
                     cnt = toArray[i] - fromArray[i] + 1;
                     let from = prevCntTotal, to = prevCntTotal + cnt - 1;
 
@@ -611,26 +614,26 @@ class AddTrack {
                         endColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, to);
 
                         colorGradient = startColorStr + ' 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                        htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange, chnid, simpTitle);
+                        htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange, chnid, simpTitle, offset);
                     }
                     else {
                         if(startExon) {
                             startColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, from);
 
                             colorGradient = startColorStr + ' 0%, #FFF 50%, #00F 100%';
-                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange, chnid, simpTitle);
+                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange, chnid, simpTitle, offset);
                         }
 
                         if(startExon && endExon) {
                             for(let j = startExon.exonIndex + 1; j < endExon.exonIndex; ++j) {
                                 colorGradient = '#F00 0%, #FFF 50%, #00F 100%';
-                                htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange, chnid, simpTitle);
+                                htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange, chnid, simpTitle, offset);
                             }
 
                             endColorStr = this.getExonColor(endExon.rangeStart, endExon.rangeEnd, to);
 
                             colorGradient = '#F00 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                            htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange, chnid, simpTitle);
+                            htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange, chnid, simpTitle, offset);
                         }
                     }
 
@@ -664,8 +667,8 @@ class AddTrack {
         }
     }
 
-    getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d, me = ic.icn3dui;
-        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+    getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle, offset) { let ic = this.icn3d, me = ic.icn3dui;
+        return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + (from + offset) + '" to="' + (to + offset) + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
     }
 
     getExonColor(start, end, pos) { let ic = this.icn3d, me = ic.icn3dui;
@@ -1622,6 +1625,7 @@ class AddTrack {
             let fromArray = [], toArray = [];
             let bFound = false;
             let seqStartLen = 0;
+            let offset = 0, offsetArray = [];
             //    for(let k = seqStart; k <= seqEnd; ++k) {
             for(let k = 0; k < seqLength; ++k) {
                 //if(seqFirst[k] == '-') continue;
@@ -1630,19 +1634,29 @@ class AddTrack {
 
                 resn = trackSeqArray[j][k];
 
+                if(resn != '-') {
+                    if(!bFound) {
+                        seqStartLen = k;
+                        bFound = true;
+                        
+                        offset = ic.startposGiSeq - ic.seqStartLen[chainid] + seqStartLen;
+                    }
+                }
+
                 if(prevResn == '-' && resn != '-') {
                     fromArray.push(k);
+                    offsetArray.push(offset);
                 }
 
                 if(prevResn != '-' && resn == '-') {
                     toArray.push(k - 1);
                 }
 
-                if(resn != '-') {
-                    if(!bFound) {
-                        seqStartLen = k;
-                        bFound = true;
-                    }
+                // use "offset" to adjut the residue numbers, e.g., P20138
+                // some isoforms starts residues before the first residue in the template sequence
+                if(k >= ic.seqStartLen[chainid]) {
+                    if(seqFirst[k] == '-') offset--;
+                    if(resn == '-') offset++;
                 }
 
                 text += resn; //ic.giSeq[chainid][i];
@@ -1663,7 +1677,7 @@ class AddTrack {
             let title =(trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
             let bMsa = true;
             let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
-            this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray);
+            this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray);
         }
 
         // update exon color

@@ -642,20 +642,23 @@ class LoadScript {
           }
         }
         else if(command.indexOf('load chainalignment') !== -1) {
-          //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
+          //load chainalignment [id] | resnum [resnum] | resdef [resdef] | aligntool [aligntool] | parameters [inpara] | resrange [resrange] 
           let urlArray = command.split(" | ");
           if(urlArray.length > 1 && urlArray[1].indexOf('resnum') != -1) {
                 me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
           }
           if(urlArray.length > 2 && urlArray[2].indexOf('resdef') != -1) {
-                me.cfg.resdef = urlArray[2].substr(urlArray[1].indexOf('resdef') + 7);
+                me.cfg.resdef = urlArray[2].substr(urlArray[2].indexOf('resdef') + 7);
           }
           if(urlArray.length > 3 && urlArray[3].indexOf('aligntool') != -1) {
-                me.cfg.aligntool = urlArray[3].substr(urlArray[1].indexOf('aligntool') + 10);
+                me.cfg.aligntool = urlArray[3].substr(urlArray[3].indexOf('aligntool') + 10);
+          }
+          if(urlArray.length > 5 && urlArray[5].indexOf('resrange') != -1) {
+            me.cfg.resrange = urlArray[5].substr(urlArray[5].indexOf('resrange') + 9);
           }
 
           me.cfg.chainalign = id;
-          await ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
+          await ic.chainalignParserCls.downloadChainalignment(id);
         }
         else if(command.indexOf('load url') !== -1) {
             let typeStr = load_parameters[1]; // type pdb
@@ -705,7 +708,8 @@ class LoadScript {
               if(urlArray.length == 2) {
                 let bInputSigma = true;
                 if(fileType == 'dsn6') {
-                  await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                  // await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                  await ic.densityCifParserCls.densityCifParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
                 }
                 else if(fileType == 'ccp4') {
                   await ic.ccp4ParserCls.ccp4ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
@@ -718,7 +722,8 @@ class LoadScript {
                 }
               }
               else {
-                await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                // await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma);
               }
           }
     //   }); // end of me.deferred = $.Deferred(function() {

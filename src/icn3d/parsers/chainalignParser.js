@@ -52,8 +52,10 @@ class ChainalignParser {
             //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 await ic.pdbParserCls.applyCommandDssp(true);
 
+                // original version =============
                 // align PDB chains
                 for(let index in ic.pdbChainIndexHash) {
+                    //ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                     let idArray = ic.pdbChainIndexHash[index].split('_');
                     mmdbid_q = idArray[0];
                     let chain_q = idArray[1];
@@ -68,25 +70,49 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
                     mmdbid_q = idArray[0];
                     let chain_q = idArray[1];
+                    let chainid_q = mmdbid_q + '_' + chain_q;
+
                     mmdbid_t = idArray[2];
                     let chain_t = idArray[3];
+                    let chainid_t = mmdbid_t + '_' + chain_t;
+
+                    let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
+                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                // end of original version =============
+                
+/*
+                // new version to be done for VASTsrv ==============
+                // dynamically align pairs in all chainids
+                let ajaxArray = [], indexArray = [], struArray = [];
+                let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+                let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+
+                // dynamically align pairs in all chainids
+                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainidArray[0]).hAtoms : ic.chains[chainidArray[0]];
+                for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainidArray[index]).hAtoms : ic.chains[chainidArray[index]];
+                // end of new version to be done for VASTsrv ==============
+*/
 
                     let alignAjax;
                     if(me.cfg.aligntool != 'tmalign') {
-                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
-                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
                             
                         let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                         alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                     }
                     else {
-                        let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
-                
-                        let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
+                        let pdb_query = ic.saveFileCls.getAtomPDB(atomSet_q);
+                        let pdb_target= ic.saveFileCls.getAtomPDB(atomSet_t);
 
                         let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
                         alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                
@@ -493,7 +519,7 @@ class ChainalignParser {
         return chainidArray;
     }
 
-    async downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadChainalignment(chainalign) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         ic.opts['proteins'] = 'c alpha trace';
@@ -771,7 +797,7 @@ class ChainalignParser {
     async loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        if(me.cfg.resnum || me.cfg.resdef) {
+        if(me.cfg.resnum || me.cfg.resdef || me.cfg.resrange) {
             if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
             await this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 

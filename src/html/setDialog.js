@@ -504,14 +504,14 @@ class SetDialog {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: " 
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigma2fofc' value='' size=8> &sigma;</span><br/>";
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmafofc' value='' size=8> &sigma;</span><br/>";
 
-        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
-        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+        //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+        html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
 
 
         html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
@@ -525,12 +525,16 @@ class SetDialog {
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: "
           + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurl2fofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+        //html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
         + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurlfofc' value='' size=8> &sigma;</span><br/>";
 
-        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+        //html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+
+        html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
 
         html += me.htmlCls.buttonStr + "elecmapNo5'>Remove Map</button><br>";
 
@@ -1079,8 +1083,9 @@ class SetDialog {
         html += "</div>";
 
 
-        html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "'>";
+        html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "' style='max-width:500px'>";
         html += this.addNotebookTitle('dl_anglemanysets', 'Measure angles among many sets');
+        html += me.htmlCls.spanNowrapStr + "Note: Each set is represented by a vector, which is the X-axis of the principle axes. The angles between the vectors are then calculated.<br/><br/>";
         html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise angles</span><br/>";
         html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
@@ -1402,8 +1407,8 @@ class SetDialog {
         html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=6><br>";
         html += "<br>";
         
-        html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
-        html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.";
+        html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button><br><br>";
+        html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.<br><br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";

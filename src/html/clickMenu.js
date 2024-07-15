@@ -1660,8 +1660,8 @@ class ClickMenu {
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
            let type = '2fofc';
-           await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
-           //ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
+           //await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+           await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
 
            //ic.setOptionCls.setOption('map', '2fofc');
            thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
@@ -1673,7 +1673,8 @@ class ClickMenu {
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
            let type = 'fofc';
-           await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+           //await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+           await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
            //ic.setOptionCls.setOption('map', 'fofc');
            thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
@@ -2222,6 +2223,18 @@ class ClickMenu {
 
         me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
+        });
+
+        me.myEventCls.onIds(["#" + me.pre + "mn6_DSSP"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+         thisClass.setLogCmd('set dssp sse', true);
+         await ic.pdbParserCls.applyCommandDssp();
+         ic.bResetAnno = true;
+
+         if(ic.bAnnoShown) {
+             await ic.showAnnoCls.showAnnotations();
+ 
+             ic.annotationCls.resetAnnoTabAll();
+         }
         });
 
 

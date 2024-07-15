@@ -17,6 +17,7 @@ class DensityCifParser {
 
        //https://www.ebi.ac.uk/pdbe/densities/doc.html
        if(type == '2fofc' || type == 'fofc') {
+           detail = 0;
            url = "https://www.ebi.ac.uk/pdbe/densities/x-ray/" + pdbid.toLowerCase() + "/cell?detail=" + detail;
        }
        else if(type == 'em') {
@@ -55,6 +56,39 @@ class DensityCifParser {
                 ic.setOptionCls.setOption('emmap', type);
             }
         }
+    }
+
+    async densityCifParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
+        if(type == '2fofc' && ic.bAjax2fofc) {
+            ic.mapData.sigma2 = sigma;
+            ic.setOptionCls.setOption('map', type);
+        }
+        else if(type == 'fofc' && ic.bAjaxfofc) {
+            ic.mapData.sigma = sigma;
+            ic.setOptionCls.setOption('map', type);
+        }
+        else {
+            let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', type);
+            
+            thisClass.parseChannels(arrayBuffer, type, sigma);
+
+            if(type == '2fofc' || type == 'fofc') {
+                ic.bAjax2fofc = true;
+                ic.bAjaxfofc = true;
+
+                ic.setOptionCls.setOption('map', type);
+            }
+            else if(type == 'em') {
+                ic.bAjaxEm = true;
+
+                ic.setOptionCls.setOption('emmap', type);
+            }
+        }
+
+        // return sigma;
     }
 
     parseChannels(densitydata, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;

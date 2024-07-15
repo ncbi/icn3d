@@ -11304,8 +11304,8 @@ var icn3d = (function (exports) {
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                let sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
                let type = '2fofc';
-               await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
-               //ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
+               //await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma2fofc);
+               await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
 
                //ic.setOptionCls.setOption('map', '2fofc');
                thisClass.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
@@ -11317,7 +11317,8 @@ var icn3d = (function (exports) {
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
                let type = 'fofc';
-               await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+               //await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
+               await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
                //ic.setOptionCls.setOption('map', 'fofc');
                thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
             });
@@ -11864,6 +11865,18 @@ var icn3d = (function (exports) {
 
             me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { me.icn3d; //e.preventDefault();
                 me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
+            });
+
+            me.myEventCls.onIds(["#" + me.pre + "mn6_DSSP"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+             thisClass.setLogCmd('set dssp sse', true);
+             await ic.pdbParserCls.applyCommandDssp();
+             ic.bResetAnno = true;
+
+             if(ic.bAnnoShown) {
+                 await ic.showAnnoCls.showAnnotations();
+     
+                 ic.annotationCls.resetAnnoTabAll();
+             }
             });
 
 
@@ -13786,6 +13799,8 @@ var icn3d = (function (exports) {
                 html += "</ul>";
                 html += "</li>";
 
+                html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
+
                 let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
                 if(bOnePdb) {
@@ -15086,14 +15101,14 @@ var icn3d = (function (exports) {
 
             html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: " 
               + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigma2fofc' value='' size=8> &sigma;</span><br/>";
-            //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'> " + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br/>";
-            html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+            //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6file2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+            html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6file2fofc'><br>" + me.htmlCls.buttonStr + "reload_ccp4file2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfile2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfile2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
             html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
               + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmafofc' value='' size=8> &sigma;</span><br/>";
 
-            //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'> " + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button><br><br><br>";
-            html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+            //html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_dsn6filefofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+            html += me.htmlCls.inputFileStr + "id='" + me.pre + "dsn6filefofc'><br>" + me.htmlCls.buttonStr + "reload_ccp4filefofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfilefofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfilefofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
 
 
             html += me.htmlCls.buttonStr + "elecmapNo4'>Remove Map</button><br>";
@@ -15107,12 +15122,16 @@ var icn3d = (function (exports) {
             html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at default threshold or at: "
               + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurl2fofc' value='' size=8> &sigma;</span><br/>";
 
-            html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+            //html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurl2fofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
+
+            html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20><br>" + me.htmlCls.buttonStr + "reload_ccp4fileurl2fofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>" + me.htmlCls.buttonStr + "reload_mtzfileurl2fofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>" + me.htmlCls.buttonStr + "reload_rcsbmtzfileurl2fofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br/>";
 
             html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at default threshold or at: "
             + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6sigmaurlfofc' value='' size=8> &sigma;</span><br/>";
 
-            html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+            //html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_dsn6fileurlfofc' style='margin: 6px 20px 0 0;'>Load DSN6</button>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
+
+            html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20><br>" + me.htmlCls.buttonStr + "reload_ccp4fileurlfofc' style='margin: 6px 20px 0 0;'>Load CCP4</button>"  + me.htmlCls.buttonStr + "reload_mtzfileurlfofc' style='margin: 6px 20px 0 0;'>Load MTZ</button>"  + me.htmlCls.buttonStr + "reload_rcsbmtzfileurlfofc' style='margin-top: 6px;'>Load RCSB MTZ</button><br><br><br>";
 
             html += me.htmlCls.buttonStr + "elecmapNo5'>Remove Map</button><br>";
 
@@ -15661,8 +15680,9 @@ var icn3d = (function (exports) {
             html += "</div>";
 
 
-            html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "'>";
+            html += me.htmlCls.divStr + "dl_anglemanysets' class='" + dialogClass + "' style='max-width:500px'>";
             html += this.addNotebookTitle('dl_anglemanysets', 'Measure angles among many sets');
+            html += me.htmlCls.spanNowrapStr + "Note: Each set is represented by a vector, which is the X-axis of the principle axes. The angles between the vectors are then calculated.<br/><br/>";
             html += me.htmlCls.spanNowrapStr + "1. Select sets for pairwise angles</span><br/>";
             html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
@@ -15984,8 +16004,8 @@ var icn3d = (function (exports) {
             html += "Z: " + me.htmlCls.inputTextStr + "id='" + me.pre + "v2Z' value='' size=6><br>";
             html += "<br>";
             
-            html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button>";
-            html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.";
+            html += me.htmlCls.buttonStr + "measure_angle'>Measure Angle</button><br><br>";
+            html += "The angle is: " + me.htmlCls.inputTextStr + "id='" + me.pre + "angle_value' value='' size=6> degree.<br><br>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_matrix' class='" + dialogClass + "'>";
@@ -45430,7 +45450,7 @@ var icn3d = (function (exports) {
 
         }
 
-        showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray, seqStartLen, exonArray) {  let ic = this.icn3d, me = ic.icn3dui;
+        showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray) {  let ic = this.icn3d, me = ic.icn3dui;
             //if(ic.customTracks[chnid] === undefined) {
             //    ic.customTracks[chnid] = {}
             //}
@@ -45648,14 +45668,16 @@ var icn3d = (function (exports) {
 
             if(fromArray !== undefined) {
                 htmlTmp2 = '';
-                let fromArray2 = [], toArray2 = [];
+                let fromArray2 = [], toArray2 = [], offsetArray2 = [];
                 for(let i = 0, il = fromArray.length; i < il; ++i) {
                     fromArray2.push(fromArray[i]);
+                    offsetArray2.push(offsetArray[i]);
 
                     for(let j = parseInt(fromArray[i]); j <= parseInt(toArray[i]); ++j) {
                         if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                             toArray2.push(j - 1);
                             fromArray2.push(j);
+                            offsetArray2.push(offsetArray[i]);
                         }
                     }
 
@@ -45689,6 +45711,7 @@ var icn3d = (function (exports) {
                         // determine how this range sits in the exon ranges in exonArray
                         let startExon, endExon;
                         
+                        let offset = offsetArray2[i];
                         cnt = toArray[i] - fromArray[i] + 1;
                         let from = prevCntTotal, to = prevCntTotal + cnt - 1;
 
@@ -45717,26 +45740,26 @@ var icn3d = (function (exports) {
                             endColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, to);
 
                             colorGradient = startColorStr + ' 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange, chnid, simpTitle);
+                            htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, endExon.to, startExon.genomeRange, chnid, simpTitle, offset);
                         }
                         else {
                             if(startExon) {
                                 startColorStr = this.getExonColor(startExon.rangeStart, startExon.rangeEnd, from);
 
                                 colorGradient = startColorStr + ' 0%, #FFF 50%, #00F 100%';
-                                htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange, chnid, simpTitle);
+                                htmlTmp2 += this.getExonHtml(startExon.exonIndex, colorGradient, startExon.from, startExon.rangeEnd, startExon.genomeRange, chnid, simpTitle, offset);
                             }
 
                             if(startExon && endExon) {
                                 for(let j = startExon.exonIndex + 1; j < endExon.exonIndex; ++j) {
                                     colorGradient = '#F00 0%, #FFF 50%, #00F 100%';
-                                    htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange, chnid, simpTitle);
+                                    htmlTmp2 += this.getExonHtml(j, colorGradient, exonArray[j].resStart, exonArray[j].resEnd, exonArray[j].genomeRange, chnid, simpTitle, offset);
                                 }
 
                                 endColorStr = this.getExonColor(endExon.rangeStart, endExon.rangeEnd, to);
 
                                 colorGradient = '#F00 0%, #FFF 50%, ' + endColorStr + ' 100%';
-                                htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange, chnid, simpTitle);
+                                htmlTmp2 += this.getExonHtml(endExon.exonIndex, colorGradient, endExon.rangeStart, endExon.to, endExon.genomeRange, chnid, simpTitle, offset);
                             }
                         }
 
@@ -45770,8 +45793,8 @@ var icn3d = (function (exports) {
             }
         }
 
-        getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle) { let ic = this.icn3d; ic.icn3dui;
-            return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + from + '" to="' + to + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
+        getExonHtml(exonIndex, colorGradient, from, to, genomeRange, chainid, simpTitle, offset) { let ic = this.icn3d; ic.icn3dui;
+            return '<div style="display:inline-block; color:white!important; width:' + Math.round(ic.seqAnnWidth *(to - from + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (exonIndex + 1) + '" from="' + (from + offset) + '" to="' + (to + offset) + '" setname="' + simpTitle + ', ' + (exonIndex + 1) + '" title="Exon: ' + genomeRange + ' genomic interval" anno="sequence" chain="' + chainid + '"><div style="height: 12px; border: 1px solid #000; background: linear-gradient(to right, ' + colorGradient + ');"></div></div>';
         }
 
         getExonColor(start, end, pos) { let ic = this.icn3d; ic.icn3dui;
@@ -46718,6 +46741,7 @@ var icn3d = (function (exports) {
                 let fromArray = [], toArray = [];
                 let bFound = false;
                 let seqStartLen = 0;
+                let offset = 0, offsetArray = [];
                 //    for(let k = seqStart; k <= seqEnd; ++k) {
                 for(let k = 0; k < seqLength; ++k) {
                     //if(seqFirst[k] == '-') continue;
@@ -46726,19 +46750,29 @@ var icn3d = (function (exports) {
 
                     resn = trackSeqArray[j][k];
 
+                    if(resn != '-') {
+                        if(!bFound) {
+                            seqStartLen = k;
+                            bFound = true;
+                            
+                            offset = ic.startposGiSeq - ic.seqStartLen[chainid] + seqStartLen;
+                        }
+                    }
+
                     if(prevResn == '-' && resn != '-') {
                         fromArray.push(k);
+                        offsetArray.push(offset);
                     }
 
                     if(prevResn != '-' && resn == '-') {
                         toArray.push(k - 1);
                     }
 
-                    if(resn != '-') {
-                        if(!bFound) {
-                            seqStartLen = k;
-                            bFound = true;
-                        }
+                    // use "offset" to adjut the residue numbers, e.g., P20138
+                    // some isoforms starts residues before the first residue in the template sequence
+                    if(k >= ic.seqStartLen[chainid]) {
+                        if(seqFirst[k] == '-') offset--;
+                        if(resn == '-') offset++;
                     }
 
                     text += resn; //ic.giSeq[chainid][i];
@@ -46759,7 +46793,7 @@ var icn3d = (function (exports) {
                 let title =(trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
                 let bMsa = true;
                 let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
-                this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray);
+                this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray);
             }
 
             // update exon color
@@ -53567,8 +53601,10 @@ var icn3d = (function (exports) {
                 //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                     await ic.pdbParserCls.applyCommandDssp(true);
 
+                    // original version =============
                     // align PDB chains
                     for(let index in ic.pdbChainIndexHash) {
+                        //ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                         let idArray = ic.pdbChainIndexHash[index].split('_');
                         mmdbid_q = idArray[0];
                         idArray[1];
@@ -53583,25 +53619,49 @@ var icn3d = (function (exports) {
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                     let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
+                    let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+
                     for(let index in ic.afChainIndexHash) {
                         let idArray = ic.afChainIndexHash[index].split('_');
                         mmdbid_q = idArray[0];
                         let chain_q = idArray[1];
+                        let chainid_q = mmdbid_q + '_' + chain_q;
+
                         mmdbid_t = idArray[2];
                         let chain_t = idArray[3];
+                        let chainid_t = mmdbid_t + '_' + chain_t;
+
+                        let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
+                        let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                    // end of original version =============
+                    
+    /*
+                    // new version to be done for VASTsrv ==============
+                    // dynamically align pairs in all chainids
+                    let ajaxArray = [], indexArray = [], struArray = [];
+                    let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+                    let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
+
+                    let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+
+                    // dynamically align pairs in all chainids
+                    let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainidArray[0]).hAtoms : ic.chains[chainidArray[0]];
+                    for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+                        let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainidArray[index]).hAtoms : ic.chains[chainidArray[index]];
+                    // end of new version to be done for VASTsrv ==============
+    */
 
                         let alignAjax;
                         if(me.cfg.aligntool != 'tmalign') {
-                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
-                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
+                            let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
                                 
                             let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                             alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                         }
                         else {
-                            let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_q + '_' + chain_q]);
-                    
-                            let pdb_target= ic.saveFileCls.getAtomPDB(ic.chains[mmdbid_t + '_' + chain_t]);
+                            let pdb_query = ic.saveFileCls.getAtomPDB(atomSet_q);
+                            let pdb_target= ic.saveFileCls.getAtomPDB(atomSet_t);
 
                             let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
                             alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                
@@ -54004,7 +54064,7 @@ var icn3d = (function (exports) {
             return chainidArray;
         }
 
-        async downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d, me = ic.icn3dui;
+        async downloadChainalignment(chainalign) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             ic.opts['proteins'] = 'c alpha trace';
@@ -54281,7 +54341,7 @@ var icn3d = (function (exports) {
         async loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            if(me.cfg.resnum || me.cfg.resdef) {
+            if(me.cfg.resnum || me.cfg.resdef || me.cfg.resrange) {
                 if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                 await this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
@@ -59158,6 +59218,7 @@ var icn3d = (function (exports) {
 
            //https://www.ebi.ac.uk/pdbe/densities/doc.html
            if(type == '2fofc' || type == 'fofc') {
+               detail = 0;
                url = "https://www.ebi.ac.uk/pdbe/densities/x-ray/" + pdbid.toLowerCase() + "/cell?detail=" + detail;
            }
            else if(type == 'em') {
@@ -59196,6 +59257,39 @@ var icn3d = (function (exports) {
                     ic.setOptionCls.setOption('emmap', type);
                 }
             }
+        }
+
+        async densityCifParserBase(url, type, sigma, location, bInputSigma) { let ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
+
+            //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
+            if(type == '2fofc' && ic.bAjax2fofc) {
+                ic.mapData.sigma2 = sigma;
+                ic.setOptionCls.setOption('map', type);
+            }
+            else if(type == 'fofc' && ic.bAjaxfofc) {
+                ic.mapData.sigma = sigma;
+                ic.setOptionCls.setOption('map', type);
+            }
+            else {
+                let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', type);
+                
+                thisClass.parseChannels(arrayBuffer, type, sigma);
+
+                if(type == '2fofc' || type == 'fofc') {
+                    ic.bAjax2fofc = true;
+                    ic.bAjaxfofc = true;
+
+                    ic.setOptionCls.setOption('map', type);
+                }
+                else if(type == 'em') {
+                    ic.bAjaxEm = true;
+
+                    ic.setOptionCls.setOption('emmap', type);
+                }
+            }
+
+            // return sigma;
         }
 
         parseChannels(densitydata, type, sigma) { let ic = this.icn3d; ic.icn3dui;
@@ -64190,7 +64284,7 @@ var icn3d = (function (exports) {
             
             let bFirstAtom = true;
 
-            let cifArray = bcifData.split('ENDMDL\n');
+            let cifArray = (bText) ? bcifData.split('ENDMDL\n') : [bcifData];
 
             for(let index = 0, indexl = cifArray.length; index  < indexl; ++index) {
                 ++moleculeNum;
@@ -67181,6 +67275,16 @@ var icn3d = (function (exports) {
             ic.transformCls.rotateCoord(ic.hAtoms, mArrayFloat);
             ic.drawCls.draw();
           }
+          else if(command.indexOf('set dssp sse') == 0) {
+            await ic.pdbParserCls.applyCommandDssp();
+            ic.bResetAnno = true;
+
+            if(ic.bAnnoShown) {
+                await ic.showAnnoCls.showAnnotations();
+
+                ic.annotationCls.resetAnnoTabAll();
+            }
+          }
 
         // special, select ==========
 
@@ -69163,20 +69267,23 @@ var icn3d = (function (exports) {
               }
             }
             else if(command.indexOf('load chainalignment') !== -1) {
-              //load chainalignment [id] | resnum [resnum] | resdef [resnum] | aligntool [aligntool] | parameters [inpara]
+              //load chainalignment [id] | resnum [resnum] | resdef [resdef] | aligntool [aligntool] | parameters [inpara] | resrange [resrange] 
               let urlArray = command.split(" | ");
               if(urlArray.length > 1 && urlArray[1].indexOf('resnum') != -1) {
                     me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
               }
               if(urlArray.length > 2 && urlArray[2].indexOf('resdef') != -1) {
-                    me.cfg.resdef = urlArray[2].substr(urlArray[1].indexOf('resdef') + 7);
+                    me.cfg.resdef = urlArray[2].substr(urlArray[2].indexOf('resdef') + 7);
               }
               if(urlArray.length > 3 && urlArray[3].indexOf('aligntool') != -1) {
-                    me.cfg.aligntool = urlArray[3].substr(urlArray[1].indexOf('aligntool') + 10);
+                    me.cfg.aligntool = urlArray[3].substr(urlArray[3].indexOf('aligntool') + 10);
+              }
+              if(urlArray.length > 5 && urlArray[5].indexOf('resrange') != -1) {
+                me.cfg.resrange = urlArray[5].substr(urlArray[5].indexOf('resrange') + 9);
               }
 
               me.cfg.chainalign = id;
-              await ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum, me.cfg.resdef);
+              await ic.chainalignParserCls.downloadChainalignment(id);
             }
             else if(command.indexOf('load url') !== -1) {
                 let typeStr = load_parameters[1]; // type pdb
@@ -69225,7 +69332,8 @@ var icn3d = (function (exports) {
                   if(urlArray.length == 2) {
                     let bInputSigma = true;
                     if(fileType == 'dsn6') {
-                      await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                      // await ic.dsn6ParserCls.dsn6ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
+                      await ic.densityCifParserCls.densityCifParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
                     }
                     else if(fileType == 'ccp4') {
                       await ic.ccp4ParserCls.ccp4ParserBase(urlArray[1], type, sigma, 'url', bInputSigma);
@@ -69238,7 +69346,8 @@ var icn3d = (function (exports) {
                     }
                   }
                   else {
-                    await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                    // await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
+                    await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma);
                   }
               }
         //   }); // end of me.deferred = $.Deferred(function() {
@@ -82040,7 +82149,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.33.2';
+        this.REVISION = '3.33.3';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -82483,9 +82592,9 @@ var icn3d = (function (exports) {
 
             ic.bChainAlign = true;
             ic.inputid = me.cfg.chainalign;
-            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara;
+            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + ' | resrange ' + me.cfg.resrange;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
+            await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
         }
         else if(me.cfg.mmdbafid !== undefined) {
             // ic.bNCBI = true;

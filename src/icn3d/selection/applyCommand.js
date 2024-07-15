@@ -1423,6 +1423,16 @@ class ApplyCommand {
         ic.transformCls.rotateCoord(ic.hAtoms, mArrayFloat);
         ic.drawCls.draw();
       }
+      else if(command.indexOf('set dssp sse') == 0) {
+        await ic.pdbParserCls.applyCommandDssp();
+        ic.bResetAnno = true;
+
+        if(ic.bAnnoShown) {
+            await ic.showAnnoCls.showAnnotations();
+
+            ic.annotationCls.resetAnnoTabAll();
+        }
+      }
 
     // special, select ==========
 

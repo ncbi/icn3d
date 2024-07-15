@@ -1729,6 +1729,8 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 
+            html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
+
             let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
             if(bOnePdb) {
