@@ -204,7 +204,7 @@ class SaveFile {
         }
     }
 
-    saveSvg(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+    saveSvg(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
         
         let width = $("#" + id).width();
@@ -212,19 +212,26 @@ class SaveFile {
 
         if(bContactmap) height = width;
 
-        let svgXml = this.getSvgXml(id, width, height, bContactmap);
+        if(bLigplot) {
+            width += ic.len4ang;
+            height += ic.len4ang;
+        }
+
+        let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot);
 
         let blob = new Blob([svgXml], {type: "image/svg+xml"});
         saveAs(blob, filename);
     }
 
-    getSvgXml(id, width, height, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+    getSvgXml(id, width, height, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
 
         // font is not good
         let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
-        let viewbox = (width && height) ? "<svg viewBox=\"0 0 " + width + " " + height + "\"" : "<svg";
+        let startX = (bLigplot) ? -30 : 0;
+        let startY = (bLigplot) ? -30 : 0;
+        let viewbox = (width && height) ? "<svg viewBox=\"" + startX + " " + startY + " " + width + " " + height + "\"" : "<svg";
         //let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
         let head = viewbox + " title=\"graph\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
@@ -236,7 +243,7 @@ class SaveFile {
         return full_svg;
     }
 
-    savePng(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+    savePng(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
 
         let width = $("#" + id).width();
@@ -249,7 +256,7 @@ class SaveFile {
         let bbox = svg.getBBox();
 
         let copy = svg.cloneNode(true);
-        ic.lineGraphCls.copyStylesInline(copy, svg);
+        if(!bLigplot) ic.lineGraphCls.copyStylesInline(copy, svg);
         let canvas = document.createElement("CANVAS");
         canvas.width = width;
         canvas.height = height;

@@ -14092,6 +14092,7 @@ var icn3d = (function (exports) {
             let bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
             let bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
             let bScatterplot = $('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content'); // initialized
+            let bLigplot = $('#' + me.pre + 'dl_ligplot').hasClass('ui-dialog-content'); // initialized
             let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
             let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
             let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
@@ -14101,13 +14102,14 @@ var icn3d = (function (exports) {
             let bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
             status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
-            status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
+            status.bScatterplot2 = false, status.bLigplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
             status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
 
             id2flag.dl_selectannotations = 'bSelectannotationsInit2';
             id2flag.dl_graph = 'bGraph2';
             id2flag.dl_linegraph = 'bLineGraph2';
-            id2flag.dl_scatterplot = 'bScatterplot2';	
+            id2flag.dl_scatterplot = 'bScatterplot2';
+            id2flag.dl_ligplot = 'bLigplot2';	
             id2flag.dl_contactmap = 'bContactmap2';
             id2flag.dl_alignerrormap = 'bAlignerrormap2';
             id2flag.dl_interactionsorted = 'bTable2';
@@ -14120,6 +14122,7 @@ var icn3d = (function (exports) {
             if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
             if(bLineGraph) status.bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
             if(bScatterplot) status.bScatterplot2 = $('#' + me.pre + 'dl_scatterplot').dialog( 'isOpen' );
+            if(bLigplot) status.bLigplot2 = $('#' + me.pre + 'dl_ligplot').dialog( 'isOpen' );
             if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
             if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
             if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
@@ -14206,7 +14209,7 @@ var icn3d = (function (exports) {
 
                       d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                   }
-                  else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
+                  else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                       let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                       let ratio = $("#" + id).width() / oriWidth;
 
@@ -14218,6 +14221,14 @@ var icn3d = (function (exports) {
                           let width = ic.scatterplotWidth * ratio;
                           $("#" + me.scatterplotid).attr("width", width);
                       }
+                      else if(id == me.pre + 'dl_ligplot') {
+                        let width = ic.ligplotWidth * ratio;
+                        $("#" + me.ligplotid).attr("width", width);
+                      }
+                      else if(id == me.pre + 'dl_ligplot') {
+                        let width = ic.ligplotWidth * ratio;
+                        $("#" + me.ligplotid).attr("width", width);
+                    }
                       else if(id == me.pre + 'dl_contactmap') {
                           let width = ic.contactmapWidth * ratio;
                           $("#" + me.contactmapid).attr("width", width);
@@ -14271,7 +14282,7 @@ var icn3d = (function (exports) {
               close: function(e) {
                   let status = thisClass.getDialogStatus().status;
 
-                  if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
+                  if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
                         //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                         ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
                   }
@@ -14300,7 +14311,7 @@ var icn3d = (function (exports) {
 
             let status = this.getDialogStatus().status;
 
-            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
                 //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                 let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
@@ -14336,14 +14347,15 @@ var icn3d = (function (exports) {
                       modal: false,
                       position: position,
                       close: function(e) {
-                          if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bAlignerrormap2))
-                            ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
+                          if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2))
                             ) {
                               if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                                   let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -14369,7 +14381,7 @@ var icn3d = (function (exports) {
 
                               d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                           }
-                          else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
+                          else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                               let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                               let ratio = $("#" + id).width() / oriWidth;
 
@@ -14381,6 +14393,10 @@ var icn3d = (function (exports) {
                                   let width = ic.scatterplotWidth * ratio;
                                   $("#" + me.scatterplotid).attr("width", width);
                               }
+                              else if(id == me.pre + 'dl_ligplot') {
+                                let width = ic.ligplotWidth * ratio;
+                                $("#" + me.ligplotid).attr("width", width);
+                            }
                               else if(id == me.pre + 'dl_contactmap') {
                                   let width = ic.contactmapWidth * ratio;
                                   $("#" + me.contactmapid).attr("width", width);
@@ -14402,7 +14418,7 @@ var icn3d = (function (exports) {
 
                 //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
                 if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
-                    if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bTable2 || status.bAlignmentInit2) {
+                    if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
                         //tmpWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                         tmpWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
                     }
@@ -14441,7 +14457,7 @@ var icn3d = (function (exports) {
 
                     //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
                     if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
-                        if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bTable2 || status.bAlignmentInit2) {
+                        if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
                             //tmpWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                             tmpWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
                         }
@@ -14521,7 +14537,7 @@ var icn3d = (function (exports) {
             let width = 400, height = 150;
             let twoddgmWidth = me.htmlCls.width2d + 20;
 
-            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
                 $( "#" + id ).show();
                 $( "#" + id + "_nb").show();
                 $( "#" + id + "_title").html(title);
@@ -14555,6 +14571,11 @@ var icn3d = (function (exports) {
                           let width = ic.scatterplotWidth * ratio;
 
                           $("#" + me.scatterplotid).attr("width", width);
+                      }
+                      else if(id == me.pre + 'dl_ligplot') {
+                        let width = ic.ligplotWidth * ratio;
+
+                        $("#" + me.ligplotid).attr("width", width);
                       }
                       else if(id == me.pre + 'dl_contactmap') {
                           let width = ic.contactmapWidth * ratio;
@@ -15254,6 +15275,8 @@ var icn3d = (function (exports) {
 
             html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> " + me.htmlCls.buttonStr + "hbondScatterplot2' style='margin-left:12px'>2D Map with Reference Numbers</button> to show map</div><br>";
 
+            html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondLigplot'>2D Interaction for One Ligand/Residue</button> with atom details</div><br>";
+
             tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
 
             html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondGraph'>2D Graph(Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
@@ -15419,6 +15442,40 @@ var icn3d = (function (exports) {
             html += '<div id="' + me.pre + 'scatterplotDiv"></div>';
 
             html += "</div>";
+
+
+            html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
+
+            html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes can be dragged or clicked. Hold Ctrl key to select multiple nodes. " + me.htmlCls.space3;
+
+            html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+              + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
+              + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
+
+            html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
+
+            // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
+            html += "<b>Color Legend</b>: <br>";
+
+            html += me.htmlCls.setHtmlCls.setColorHints();
+
+            html += "<br></div>";
+
+            me.ligplotid = me.pre + 'ligplot';
+            html += me.htmlCls.divNowrapStr + buttonStrTmp + me.ligplotid + '_svg">SVG</button>' + me.htmlCls.space2;
+            html += buttonStrTmp + me.ligplotid + '_png">PNG</button>' + me.htmlCls.space2;
+            // html += buttonStrTmp + me.ligplotid + '_json">JSON</button>' + me.htmlCls.space4;
+            html += "<b>Scale</b>: <select id='" + me.ligplotid + "_scale'>";
+
+            html += me.htmlCls.setHtmlCls.getOptionHtml(optArray4, 5);
+
+            html += "</select></div><br>";
+            html += '<div id="' + me.pre + 'ligplotDiv"></div>';
+
+            html += "</div>";
+
+
 
             html += me.htmlCls.divStr + "dl_contactmap' style='background-color:white' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_contactmap', 'Contact Map');
@@ -16474,6 +16531,7 @@ var icn3d = (function (exports) {
 
             ic.diagram2dCls.click2Ddgm();
             ic.cartoon2dCls.click2Dcartoon();
+            ic.ligplotCls.clickLigplot();
             ic.addTrackCls.clickAddTrackButton();
             ic.resizeCanvasCls.windowResize();
             ic.annotationCls.setTabs();
@@ -18095,6 +18153,13 @@ var icn3d = (function (exports) {
                thisClass.setLogCmd("show ref number", true);
                await ic.showInterCls.showInteractions('scatterplot');
             });
+            me.myEventCls.onIds("#" + me.pre + "hbondLigplot", "click", async function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                
+                ic.bShownRefnum = false;
+                thisClass.setLogCmd("hide ref number", true);
+                await ic.showInterCls.showInteractions('ligplot');
+            });
             // select residues
             $(document).on("click", "#" + me.svgid + " circle.selected", function(e) { let ic = me.icn3d;
                 e.stopImmediatePropagation();
@@ -18204,6 +18269,33 @@ var icn3d = (function (exports) {
                $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
                thisClass.setLogCmd("scatterplot scale " + scale, true);
             });
+
+            me.myEventCls.onIds("#" + me.ligplotid + "_svg", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                
+                ic.saveFileCls.saveSvg(me.ligplotid, ic.inputid + "_ligplot.svg", undefined, true);
+             });
+             me.myEventCls.onIds("#" + me.ligplotid + "_png", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                
+                ic.saveFileCls.savePng(me.ligplotid, ic.inputid + "_ligplot.png", undefined, true);
+             });
+            //  me.myEventCls.onIds("#" + me.ligplotid + "_json", "click", function(e) { let ic = me.icn3d;
+            //      e.preventDefault();
+                 
+            //      let graphStr2 = ic.ligplotStr.substr(0, ic.ligplotStr.lastIndexOf('}'));
+     
+            //      graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+     
+            //      ic.saveFileCls.saveFile(ic.inputid + "_ligplot.json", "text", [graphStr2]);
+            //  });
+             me.myEventCls.onIds("#" + me.ligplotid + "_scale", "change", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                
+                let scale = $("#" + me.ligplotid + "_scale").val();
+                $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
+                thisClass.setLogCmd("ligplot scale " + scale, true);
+             });
 
             me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
@@ -37662,7 +37754,8 @@ var icn3d = (function (exports) {
                 if(oriCalpha === undefined) oriCalpha = oriAtom;
 
                 if(bGetPairs) {
-                    oriResidName = oriAtom.resn + ' $' + oriAtom.structure + '.' + oriAtom.chain + ':' + oriAtom.resi;
+                    let serialList = (oriAtom.name.indexOf('pi') == 0 && oriAtom.ring) ? oriAtom.ring.join(',') : oriAtom.serial;
+                    oriResidName = oriAtom.resn + ' $' + oriAtom.structure + '.' + oriAtom.chain + ':' + oriAtom.resi + ' ' + serialList;
                     if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
                 }
 
@@ -37707,13 +37800,14 @@ var icn3d = (function (exports) {
                         if(bGetPairs) {
             let chain_resi2 = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-            residName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi;
+            let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+            residName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + ' ' + serialList;
             //var dist = Math.sqrt(atomDistSq).toFixed(1);
             let dist1 = atomDist.toFixed(1);
             let dist2 = calpha.coord.distanceTo(oriCalpha.coord).toFixed(1);
 
             let resids = chain_resi + '_' + oriAtom.resn + ',' + chain_resi2 + '_' + atom.resn;
-            let residNames = oriResidName + ',' + residName;
+            let residNames = oriResidName + '|' + residName;
             if(ic.resids2interAll[resids] === undefined
                 || ic.resids2interAll[resids]['contact'] === undefined
                 || !ic.resids2interAll[resids]['contact'].hasOwnProperty(residNames)
@@ -37730,12 +37824,12 @@ var icn3d = (function (exports) {
                       if(!bInternal) {
                           if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {};
                           if(ic.resids2inter[resids]['contact'] === undefined) ic.resids2inter[resids]['contact'] = {};
-                          ic.resids2inter[resids]['contact'][oriResidName + ',' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
+                          ic.resids2inter[resids]['contact'][oriResidName + '|' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
                       }
 
                       if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {};
                       if(ic.resids2interAll[resids]['contact'] === undefined) ic.resids2interAll[resids]['contact'] = {};
-                      ic.resids2interAll[resids]['contact'][oriResidName + ',' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
+                      ic.resids2interAll[resids]['contact'][oriResidName + '|' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
                   }
             }
                         } // if(bGetPairs) {
@@ -38161,7 +38255,8 @@ var icn3d = (function (exports) {
                 chain_resi_atom = chain_resi + "_" + atom.name;
 
                 //var oriResidName = atom.resn + ' ' + chain_resi_atom;
-                let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+                let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+                let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name + ' ' + serialList;
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
                 for (let j in atomHbond) {
@@ -38286,24 +38381,25 @@ var icn3d = (function (exports) {
                   residueHash[chain_resi2] = 1;
 
                   //var residName = atomHbond[j].resn + " " + atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi + '_' + atomHbond[j].name;
-                  let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name;
+                  let serialList = (atomHbond[j].name.indexOf('pi') == 0 && atomHbond[j].ring) ? atomHbond[j].ring.join(',') : atomHbond[j].serial;
+                  let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name  + ' ' + serialList;
 
                   let resids = chain_resi + '_' + atom.resn + ',' + chain_resi2 + '_' + atomHbond[j].resn;
 
                   if(ic.resids2interAll[resids] === undefined
                     || ic.resids2interAll[resids]['ionic'] === undefined
-                    || !ic.resids2interAll[resids]['ionic'].hasOwnProperty(oriResidName + ',' + residName) ) {
+                    || !ic.resids2interAll[resids]['ionic'].hasOwnProperty(oriResidName + '|' + residName) ) {
                       ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
 
                       if(!bInternal) {
                           if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {};
                           if(ic.resids2inter[resids]['hbond'] === undefined) ic.resids2inter[resids]['hbond'] = {};
-                          ic.resids2inter[resids]['hbond'][oriResidName + ',' + residName] = dist.toFixed(1);
+                          ic.resids2inter[resids]['hbond'][oriResidName + '|' + residName] = dist.toFixed(1);
                       }
 
                       if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {};
                       if(ic.resids2interAll[resids]['hbond'] === undefined) ic.resids2interAll[resids]['hbond'] = {};
-                      ic.resids2interAll[resids]['hbond'][oriResidName + ',' + residName] = dist.toFixed(1);
+                      ic.resids2interAll[resids]['hbond'][oriResidName + '|' + residName] = dist.toFixed(1);
                   }
                 } // end of for (let j in atomHbond) {
               }
@@ -38456,7 +38552,8 @@ var icn3d = (function (exports) {
 
             for (let i in atoms1a) {
                 let atom1 = atoms1a[i];
-                let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+                let serialList = (atom1.name.indexOf('pi') == 0 && atom1.ring) ? atom1.ring.join(',') : atom1.serial;
+                let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name + ' ' + serialList;
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
                 for (let j in atoms1b) {
@@ -38500,7 +38597,8 @@ var icn3d = (function (exports) {
 
             for (let i in atoms2a) {
                 let atom1 = atoms2a[i];
-                let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+                let serialList = (atom1.name.indexOf('pi') == 0 && atom1.ring) ? atom1.ring.join(',') : atom1.serial;
+                let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name + ' ' + serialList;
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
                 // available in 1b and 2a
@@ -38665,7 +38763,8 @@ var icn3d = (function (exports) {
                   }
               }
 
-              let residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name;
+              let serialList = (atom2.name.indexOf('pi') == 0 && atom2.ring) ? atom2.ring.join(',') : atom2.serial;
+              let residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name + ' ' + serialList;
 
               //if(ic.resid2Residhash[oriResidName][residName] === undefined || ic.resid2Residhash[oriResidName][residName] > dist) {
                   ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
@@ -38677,12 +38776,12 @@ var icn3d = (function (exports) {
               if(!bInternal) {
                   if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {};
                   if(ic.resids2inter[resids][interactionType] === undefined) ic.resids2inter[resids][interactionType] = {};
-                  ic.resids2inter[resids][interactionType][oriResidName + ',' + residName] = dist.toFixed(1);
+                  ic.resids2inter[resids][interactionType][oriResidName + '|' + residName] = dist.toFixed(1);
               }
 
               if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {};
               if(ic.resids2interAll[resids][interactionType] === undefined) ic.resids2interAll[resids][interactionType] = {};
-              ic.resids2interAll[resids][interactionType][oriResidName + ',' + residName] = dist.toFixed(1);
+              ic.resids2interAll[resids][interactionType][oriResidName + '|' + residName] = dist.toFixed(1);
 
               return true;
         }
@@ -38929,12 +39028,13 @@ var icn3d = (function (exports) {
                 // Print the i-th cycle
                 let coord = new THREE.Vector3();
                 let cnt = 0, serial;
-                let coordArray = [];
+                let coordArray = [], ringArray = [];
                 if(cycles.hasOwnProperty(i)) {
                     for (let j = 0, jl = cycles[i].length; j < jl; ++j) {
                         serial = cycles[i][j];
                         coord.add(ic.atoms[serial].coord);
                         coordArray.push(ic.atoms[serial].coord);
+                        ringArray.push(serial);
                         ++cnt;
                     }
                 }
@@ -38954,7 +39054,7 @@ var icn3d = (function (exports) {
 
                         let atom = ic.atoms[serial];
                         name2atom[resid + '_pi' + serial] = {resn: atom.resn, name: 'pi' + serial, coord: coord, serial: atom.serial,
-                          structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normal};
+                          structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normal, ring: ringArray};
                     }
                 }
             }
@@ -39052,7 +39152,8 @@ var icn3d = (function (exports) {
                 chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
                 chain_resi_atom = chain_resi + "_" + atom.name;
 
-                let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+                let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+                let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name + ' ' + serialList;
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
                 let atomHbond = {};
@@ -39117,7 +39218,8 @@ var icn3d = (function (exports) {
                   residueHash[chain_resi] = 1;
                   residueHash[chain_resi2] = 1;
 
-                  let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name;
+                  let serialList = (atomHbond[j].name.indexOf('pi') == 0 && atomHbond[j].ring) ? atomHbond[j].ring.join(',') : atomHbond[j].serial;
+                  let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name  + ' ' + serialList;
 
                   //if(ic.resid2Residhash[oriResidName][residName] === undefined || ic.resid2Residhash[oriResidName][residName] > dist) {
                       ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
@@ -39128,12 +39230,12 @@ var icn3d = (function (exports) {
                   if(!bInternal) {
                       if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {};
                       if(ic.resids2inter[resids]['ionic'] === undefined) ic.resids2inter[resids]['ionic'] = {};
-                      ic.resids2inter[resids]['ionic'][oriResidName + ',' + residName] = dist.toFixed(1);
+                      ic.resids2inter[resids]['ionic'][oriResidName + '|' + residName] = dist.toFixed(1);
                   }
 
                   if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {};
                   if(ic.resids2interAll[resids]['ionic'] === undefined) ic.resids2interAll[resids]['ionic'] = {};
-                  ic.resids2interAll[resids]['ionic'][oriResidName + ',' + residName] = dist.toFixed(1);
+                  ic.resids2interAll[resids]['ionic'][oriResidName + '|' + residName] = dist.toFixed(1);
 
                 } // end of for (let j in atomHbond) {
               }
@@ -50518,20 +50620,9 @@ var icn3d = (function (exports) {
                 } else {
                     linestrokewidth = (link.n == 1) ? 2 : 4;
                 }
-                let strokecolor;
-                if(link.v == me.htmlCls.hbondValue) {
-                    strokecolor = "#" + me.htmlCls.hbondColor;
-                } else if(link.v == me.htmlCls.ionicValue) {
-                    strokecolor = "#" + me.htmlCls.ionicColor;
-                } else if(link.v == me.htmlCls.halogenValue) {
-                    strokecolor = "#" + me.htmlCls.halogenColor;
-                } else if(link.v == me.htmlCls.picationValue) {
-                    strokecolor = "#" + me.htmlCls.picationColor;
-                } else if(link.v == me.htmlCls.pistackingValue) {
-                    strokecolor = "#" + me.htmlCls.pistackingColor;
-                } else if(link.v == me.htmlCls.contactValue) {
-                    strokecolor = "#" + me.htmlCls.contactColor;
-                }
+                
+                let strokecolor = this.getStrokecolor(link.v);
+
                 html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
                 let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
                 if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
@@ -50594,6 +50685,44 @@ var icn3d = (function (exports) {
             return html;
         }
 
+        getStrokecolor(value, type) { let ic = this.icn3d, me = ic.icn3dui;
+            let strokecolor = "#000";
+
+            if(value) {
+                if(value == me.htmlCls.hbondValue) {
+                    strokecolor = "#" + me.htmlCls.hbondColor;
+                } else if(value == me.htmlCls.ionicValue) {
+                    strokecolor = "#" + me.htmlCls.ionicColor;
+                } else if(value == me.htmlCls.halogenValue) {
+                    strokecolor = "#" + me.htmlCls.halogenColor;
+                } else if(value == me.htmlCls.picationValue) {
+                    strokecolor = "#" + me.htmlCls.picationColor;
+                } else if(value == me.htmlCls.pistackingValue) {
+                    strokecolor = "#" + me.htmlCls.pistackingColor;
+                } else if(value == me.htmlCls.contactValue) {
+                    strokecolor = "#" + me.htmlCls.contactColor;
+                }
+            }
+
+            if(type) {
+                if(type == 'hbond') {
+                    strokecolor = "#" + me.htmlCls.hbondColor;
+                } else if(type == 'ionic') {
+                    strokecolor = "#" + me.htmlCls.ionicColor;
+                } else if(type == 'halogen') {
+                    strokecolor = "#" + me.htmlCls.halogenColor;
+                } else if(type == 'pi-cation') {
+                    strokecolor = "#" + me.htmlCls.picationColor;
+                } else if(type == 'pi-stacking') {
+                    strokecolor = "#" + me.htmlCls.pistackingColor;
+                } else if(type == 'contact') {
+                    strokecolor = "#" + me.htmlCls.contactColor;
+                }
+            }
+
+            return strokecolor;
+        }
+
         drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap) { let ic = this.icn3d, me = ic.icn3dui;
             let html = '';
 
@@ -50609,20 +50738,7 @@ var icn3d = (function (exports) {
             let pos2 = node2posSet2[node2.id];
             if(pos1 === undefined || pos2 === undefined) return html;
 
-            let strokecolor;
-            if(link.v == me.htmlCls.hbondValue) {
-                strokecolor = "#" + me.htmlCls.hbondColor;
-            } else if(link.v == me.htmlCls.ionicValue) {
-                strokecolor = "#" + me.htmlCls.ionicColor;
-            } else if(link.v == me.htmlCls.halogenValue) {
-                strokecolor = "#" + me.htmlCls.halogenColor;
-            } else if(link.v == me.htmlCls.picationValue) {
-                strokecolor = "#" + me.htmlCls.picationColor;
-            } else if(link.v == me.htmlCls.pistackingValue) {
-                strokecolor = "#" + me.htmlCls.pistackingColor;
-            } else if(link.v == me.htmlCls.contactValue) {
-                strokecolor = "#" + me.htmlCls.contactColor;
-            }
+            let strokecolor = this.getStrokecolor(link.v);
 
             if(bContactMap) strokecolor = "#" + link.c;
 
@@ -51202,6 +51318,10 @@ var icn3d = (function (exports) {
         convertLabel2Resid(residLabel) {var ic = this.icn3d; ic.icn3dui;
             //ASN $1KQ2.A:6@ND2
             //or ASN $1KQ2.A:6
+            // or ASN $1KQ2.A:6@ND2 1234
+            let idArray = residLabel.split(' ');
+            residLabel = (idArray.length == 2) ? residLabel : residLabel.substr(0, residLabel.lastIndexOf(' '));
+            
             residLabel.indexOf(' ');
             let pos2Tmp = residLabel.indexOf('@');
             let pos2 =(pos2Tmp !== -1) ? pos2Tmp : residLabel.length;
@@ -51235,6 +51355,25 @@ var icn3d = (function (exports) {
            // add the interacting atoms to display
            ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms);
            ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms2);
+
+           if(type == 'ligplot') {
+                let residueHash1 = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+                let residueHash2 = ic.firstAtomObjCls.getResiduesFromAtoms(atoms2);
+
+                if(Object.keys(residueHash1).length > 1 && Object.keys(residueHash2).length > 1) {
+                    alert("Please select one ligand or residue as one of the interaction sets...");
+                    return;
+                }
+
+                // switch the sets to make the first set as the ligand
+                if(Object.keys(residueHash1).length < Object.keys(residueHash2).length) {
+                    nameArray2 = $("#" + ic.pre + "atomsCustomHbond").val();
+                    nameArray = $("#" + ic.pre + "atomsCustomHbond2").val();
+             
+                    atoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                    atoms2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+                }
+           }
 
            if(nameArray2.length == 0) {
                alert("Please select the first set");
@@ -51278,6 +51417,9 @@ var icn3d = (function (exports) {
                }
                else if(type == 'scatterplot') {
                    me.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
+               }
+               else if(type == 'ligplot') {
+                me.htmlCls.clickMenuCls.setLogCmd("ligplot interaction pairs | " + tmpStr, true);
                }
                else if(type == 'graph') { // force-directed graph
                     let dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());
@@ -51967,6 +52109,9 @@ var icn3d = (function (exports) {
                let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
                $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
            }
+           else if(type == 'ligplot') {
+                await ic.ligplotCls.drawLigplot(atomSet1);
+           }
            else if(bContactMapLocal) {
                me.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
                let bAnyAtom = true;
@@ -52056,7 +52201,9 @@ var icn3d = (function (exports) {
              }
         }
 
-        getAllInteractionTable(type) { let ic = this.icn3d, me = ic.icn3dui;
+        getAllInteractionTable(type, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;
+            let svgHtmlNode = '', svgHtmlLine = '';
+
             let bondCnt = [];
 
             let residsArray = Object.keys(ic.resids2inter);
@@ -52095,40 +52242,53 @@ var icn3d = (function (exports) {
                 }
                 let labels2dist, result;
                 labels2dist = ic.resids2inter[resids]['hbond'];
-                result = this.getInteractionPairDetails(labels2dist, type, 'hbond');
+                result = this.getInteractionPairDetails(labels2dist, type, 'hbond', index2xy, xlen, ylen, xcenter, ycenter);
                 strHbond += result.html;
                 cntHbond += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
                 if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
 
                 labels2dist = ic.resids2inter[resids]['ionic'];
-                result = this.getInteractionPairDetails(labels2dist, type, 'ionic');
+                result = this.getInteractionPairDetails(labels2dist, type, 'ionic', index2xy, xlen, ylen, xcenter, ycenter);
                 strIonic += result.html;
                 cntIonic += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
                 if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
 
-                labels2dist = ic.resids2inter[resids]['contact'];
-                result = this.getContactPairDetails(labels2dist, type, 'contact');
-                strContact += result.html;
-                cntContact += result.cnt;
-                if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
-
                 labels2dist = ic.resids2inter[resids]['halogen'];
-                result = this.getInteractionPairDetails(labels2dist, type, 'halogen');
+                result = this.getInteractionPairDetails(labels2dist, type, 'halogen', index2xy, xlen, ylen, xcenter, ycenter);
                 strHalegen += result.html;
                 cntHalegen += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
                 if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
 
                 labels2dist = ic.resids2inter[resids]['pi-cation'];
-                result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation');
+                result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation', index2xy, xlen, ylen, xcenter, ycenter);
                 strPication += result.html;
                 cntPication += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
                 if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
 
                 labels2dist = ic.resids2inter[resids]['pi-stacking'];
-                result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking');
+                result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking', index2xy, xlen, ylen, xcenter, ycenter);
                 strPistacking += result.html;
                 cntPistacking += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
                 if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+
+                // put contact as the last one since contact will use the same node as other interactions in ligand-protein interactoin
+                labels2dist = ic.resids2inter[resids]['contact'];
+                result = this.getContactPairDetails(labels2dist, type, 'contact', index2xy, xlen, ylen, xcenter, ycenter);
+                strContact += result.html;
+                cntContact += result.cnt;
+                svgHtmlNode += result.svgHtmlNode;
+                svgHtmlLine += result.svgHtmlLine;
+                if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
 
                 prevResidname1 = residname1;
                 prevIds = ids;
@@ -52157,7 +52317,7 @@ var icn3d = (function (exports) {
                 html += tmpText;
                 html += '</tbody></table><br/>';
             }
-            return  {html: html, bondCnt: bondCnt};
+            return  {html: html, bondCnt: bondCnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine};
         }
         getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
           cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking) { let ic = this.icn3d; ic.icn3dui;
@@ -52172,15 +52332,24 @@ var icn3d = (function (exports) {
             tmpText += '</tr>';
             return tmpText;
         }
-        getInteractionPairDetails(labels2dist, type, interactionType) { let ic = this.icn3d; ic.icn3dui;
-            let tmpText = '', cnt = 0;
+        getInteractionPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d; ic.icn3dui;
+            let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
             let colorText1 = ' <span style="background-color:#';
             let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
             if(labels2dist !== undefined) {
+                if(!ic.resid2cnt) ic.resid2cnt = {};
+                if(!ic.resid2ToXy) ic.resid2ToXy = {};
+                if(!ic.nodeid2lineid) ic.nodeid2lineid = {};
                 for(let labels in labels2dist) {
-                    let resid1_resid2 = labels.split(',');
-                    let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                    let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                    let resid1_resid2 = labels.split('|');
+                    let resid1Ori =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                    let resid2Ori =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                    //resid1: MET $3GVU.A:364@N 1234
+                    let pos1 = resid1Ori.lastIndexOf(' ');
+                    let pos2 = resid2Ori.lastIndexOf(' ');
+                    let resid1 = resid1Ori.substr(0, pos1);
+                    let resid2 = resid2Ori.substr(0, pos2);
+
                     let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                     let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
                     let color1 = (atom1.color) ? atom1.color.getHexString() : '';
@@ -52192,38 +52361,125 @@ var icn3d = (function (exports) {
                     tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                     ++cnt;
+
+                    if(index2xy) {
+                        let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
+
+                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter);
+                        svgHtmlNode += result.node;
+                        svgHtmlLine += result.line;
+                    }
                 }
             }
-            return {html: tmpText, cnt: cnt}
+            return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine}
         }
-        getContactPairDetails(labels2dist, type) { let ic = this.icn3d; ic.icn3dui;
-            let tmpText = '', cnt = 0;
+
+        getContactPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d; ic.icn3dui;
+            let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
             let colorText1 = ' <span style="background-color:#';
             let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
             if(labels2dist !== undefined) {
+                let resids2distCnt = {};
+                if(!ic.resid2cnt) ic.resid2cnt = {};
+                if(!ic.resid2ToXy) ic.resid2ToXy = {};
+                if(!ic.nodeid2lineid) ic.nodeid2lineid = {};
                 for(let labels in labels2dist) {
-                    let resid1_resid2 = labels.split(',');
-                    let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                    let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                    let resid1_resid2 = labels.split('|');
+                    let resid1Ori =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                    let resid2Ori =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                    //resid1: MET $3GVU.A:364 1234
+                    let pos1 = resid1Ori.lastIndexOf(' ');
+                    let pos2 = resid2Ori.lastIndexOf(' ');
+                    
+                    let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
+                    let resid1 = resid1Ori.substr(0, pos1);
+                    if(index2xy) {
+                        // add atom name to resid1
+                        resid1 += '@' + ic.atoms[serialArray1[0]].name;
+                    }
+                    
+                    let resid2 = resid2Ori.substr(0, pos2);
+                    let resids = resid1 + '|' + resid2;
+
+                    let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+                    ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+                    // let color1 = (atom1.color) ? atom1.color.getHexString() : '';
+                    let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                    ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                    // let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                    let dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
+                    let dist1 = parseFloat(dist1_dist2_atom1_atom2[0]);
+                    // let dist2 = parseFloat(dist1_dist2_atom1_atom2[1]);
+                    // let atom1Name = dist1_dist2_atom1_atom2[2];
+                    // let atom2Name = dist1_dist2_atom1_atom2[3];
+                    let contactCnt = parseInt(dist1_dist2_atom1_atom2[4]);
+                    if(!resids2distCnt.hasOwnProperty(resids)) {
+                        resids2distCnt[resids] = {'dist1': dist1, 'dist1_dist2_atom1_atom2': dist1_dist2_atom1_atom2, 'cnt': contactCnt, 'serialArray1': serialArray1};
+                    }
+                    else {
+                        resids2distCnt[resids].cnt += contactCnt;
+                        if(dist1 < resids2distCnt[resids].dist1) {
+                            resids2distCnt[resids].dist1 = dist1;
+                            resids2distCnt[resids].dist1_dist2_atom1_atom2 = dist1_dist2_atom1_atom2;
+                            resids2distCnt[resids].serialArray1 = serialArray1;
+                        }
+                    }
+                }
+
+                let resid2ToResid1 = {};
+                for(let resids in resids2distCnt) {
+                    let resid1_resid2 = resids.split('|');
+                    let resid1 = resid1_resid2[0];
+                    let resid2 = resid1_resid2[1];
+
+                    if(!resid2ToResid1.hasOwnProperty(resid2)) {
+                        resid2ToResid1[resid2] = [resid1];
+                    }
+                    else {
+                        resid2ToResid1[resid2].push(resid1);
+                    }
+
                     let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                     let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
                     let color1 = (atom1.color) ? atom1.color.getHexString() : '';
                     let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
                     let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
                     let color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                    let dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
+                    let dist1_dist2_atom1_atom2 = resids2distCnt[resids].dist1_dist2_atom1_atom2;
                     let dist1 = dist1_dist2_atom1_atom2[0];
                     let dist2 = dist1_dist2_atom1_atom2[1];
                     let atom1Name = dist1_dist2_atom1_atom2[2];
                     let atom2Name = dist1_dist2_atom1_atom2[3];
-                    let contactCnt = dist1_dist2_atom1_atom2[4];
+                    let contactCnt = 1; //resids2distCnt[resids].cnt;
+                    
                     tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1Name + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2Name + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                     tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                     cnt += parseInt(contactCnt);
                 }
+
+                if(index2xy) {
+                    for(let resid2 in resid2ToResid1) {
+                        let resid1Array = resid2ToResid1[resid2];
+                        let prevX2, prevY2;
+                        for(let i = 0, il = resid1Array.length; i < il; ++i) {
+                            let resid1 = resid1Array[i];
+                            let resids = resid1 + '|' + resid2;
+                
+                            let serialArray1 = resids2distCnt[resids].serialArray1;
+
+                            let bNotDrawNode = (i == 0) ? false : true;
+                            let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2);
+                            svgHtmlNode += result.node;
+                            svgHtmlLine += result.line;
+                            prevX2 = result.x2;
+                            prevY2 = result.y2;
+                        }
+                    }
+                }
             }
-            return {html: tmpText, cnt: cnt}
+
+            return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine};
         }
 
         //Export the list of residues in some chain interacting with residues in another chain.
@@ -56289,6 +56545,22 @@ var icn3d = (function (exports) {
 
                 hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
             }
+
+            // show ligand-protein interaction
+            if(me.cfg.ligand) { // sid123059722
+                for(let chainid in ic.chainid2sid) {
+                    if(ic.chainid2sid[chainid] == me.cfg.ligand.substr(3)) {
+                        // save a set named me.cfg.ligand
+                        let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
+                        let idArray = Object.keys(residueHash)[0].split('_');
+                        let select = '.' + idArray[1] + ':' + idArray[2];
+
+                        await ic.selByCommCls.selectByCommand(select, me.cfg.ligand, me.cfg.ligand);
+                        break;
+                    }
+                }
+            }
+            ic.hAtoms = hAtoms;
 
             // set 3d domains
             let structure = data.pdbId;
@@ -66877,6 +67149,7 @@ var icn3d = (function (exports) {
               || commandOri.indexOf('save2 interaction pairs') == 0
               || commandOri.indexOf('line graph interaction pairs') == 0
               || commandOri.indexOf('scatterplot interaction pairs') == 0
+              || commandOri.indexOf('ligplot interaction pairs') == 0
               ) {
             let paraArray = commandOri.split(' | ');
             if(paraArray.length >= 3) {
@@ -66933,6 +67206,9 @@ var icn3d = (function (exports) {
                     }
                     else if(commandOri.indexOf('scatterplot interaction pairs') == 0) {
                         type = 'scatterplot';
+                    }
+                    else if(commandOri.indexOf('ligplot interaction pairs') == 0) {
+                      type = 'ligplot';
                     }
 
                     await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
@@ -66992,6 +67268,14 @@ var icn3d = (function (exports) {
             $("#" + me.scatterplotid + "_scale").val(scale);
 
             $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+          }
+          else if(command.indexOf('ligplot scale') == 0) {
+            let pos = command.lastIndexOf(' ');
+            let scale = command.substr(pos + 1);
+
+            $("#" + me.ligplotid + "_scale").val(scale);
+
+            $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
           }
           else if(command.indexOf('contactmap scale') == 0) {
             let pos = command.lastIndexOf(' ');
@@ -67646,6 +67930,7 @@ var icn3d = (function (exports) {
             else if(cmd.indexOf('save2 interaction pairs') == 0) return hbondIntStr + ': "Set 2" button';
             else if(cmd.indexOf('line graph interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Network" button';
             else if(cmd.indexOf('scatterplot interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Map" button';
+            else if(cmd.indexOf('ligplot interaction pairs') == 0) return hbondIntStr + ': "2D Interaction for One Ligand/Residue" button';
             else if(cmd.indexOf('graph label') == 0) return forceStr + ': "Label Size" menu';
             else if(cmd.indexOf('graph force') == 0) return forceStr + ': "Force on Nodes" menu';
             else if(cmd.indexOf('hide edges') == 0) return forceStr + ': "Internal Edges" menu';
@@ -76203,6 +76488,12 @@ var icn3d = (function (exports) {
                 thisClass.clickNode(this);
             });
 
+            $(document).on("click", "#" + ic.pre + "dl_ligplot .icn3d-node", function(e) { thisClass.icn3d;
+                e.stopImmediatePropagation();
+
+                thisClass.clickNode(this);
+            });
+
             //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
             $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
                   e.stopImmediatePropagation();
@@ -76285,6 +76576,8 @@ var icn3d = (function (exports) {
             let strokeWidth = 2;
             $(node).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(node).find('circle').attr('stroke-width', strokeWidth);
+            $(node).find('rect').attr('stroke', me.htmlCls.ORANGE);
+            $(node).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 
@@ -77406,6 +77699,364 @@ var icn3d = (function (exports) {
      * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
      */
 
+    class Ligplot {
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        async drawLigplot(atomSet1) { let ic = this.icn3d, me = ic.icn3dui;
+            me.htmlCls.dialogCls.openDlg('dl_ligplot', 'Show ligand interactions with atom details');
+
+            let widthOri, heightOri, width = 100, height = 100;
+            ic.len4ang = 80;
+
+            // get SVG from backend
+            let pdbStr = ic.saveFileCls.getAtomPDB(atomSet1);
+            pdbStr = pdbStr.trim();
+            pdbStr = pdbStr.replace(/\n\n/g, '\n'); // remove empty lines
+
+            let dataObj = {'pdb2svg': pdbStr};
+            let url = me.htmlCls.baseUrl + "openbabel/openbabel.cgi"; 
+            let dataStr = await me.getAjaxPostPromise(url, dataObj, undefined, undefined, undefined, undefined, 'text');
+
+            let lineArray = dataStr.split('\n');
+            let lineSvg = '', nodeSvg = '', index2xy = {};
+            let xsum = 0, ysum = 0, cnt = 0;
+            ic.svgGridSize = ic.len4ang; // make the scg into many  grids to tell whether the grid is empty, 30 is about bond length (1.5 angstrom)
+            ic.gridXY2used = {};
+            for(let i = 0, il = lineArray.length; i < il; ++i) {
+                let line = lineArray[i];
+                if(line.indexOf('<svg width') == 0) { 
+                    //<svg width="100" height="100" x="0" y="0" viewBox="0 0 634.256 380"
+                    // get real width and height
+                    let start = line.indexOf('viewBox="') + 9;
+                    let linePart = line.substr(start);
+                    let viewbox = linePart.substr(0, linePart.indexOf('"'));
+                    let viewboxArray = viewbox.split(' ');
+                    widthOri = parseFloat(viewboxArray[2]);
+                    heightOri = parseFloat(viewboxArray[3]);
+                    width = widthOri + 2*ic.len4ang;
+                    height = heightOri + 2*ic.len4ang;
+                }
+                else if(line.indexOf('<line') == 0) { 
+                    lineSvg += line + '\n';
+                }
+                else if(line.indexOf('<text') == 0) { 
+                    if(line.indexOf('font-size="12"') != -1) { 
+                        // index node
+                        //<text x="40.000000" y="120.000000" fill="rgb(255,0,0)" stroke-width="0" font-weight="bold" font-size="12" >1</text>
+                        let start = line.indexOf('>') + 1;
+                        let indexPart = line.substr(start);
+                        let index = parseInt(indexPart.substr(0, indexPart.indexOf('<')));
+                        
+                        start = line.indexOf('x="') + 3;
+                        let xPart = line.substr(start);
+                        let x = parseFloat(xPart.substr(0, xPart.indexOf('"')));
+
+                        start = line.indexOf('y="') + 3;
+                        let yPart = line.substr(start);
+                        let y = parseFloat(yPart.substr(0, yPart.indexOf('"')));
+
+                        index2xy[index] = {"x": x, "y": y};
+                        let xGrid = parseInt(x / ic.svgGridSize);
+                        let yGrid = parseInt(y / ic.svgGridSize);
+                        ic.gridXY2used[xGrid + '_' + yGrid] = 1;
+
+                        xsum += x;
+                        ysum += y;
+                        ++cnt;
+                    }
+                    else { // font-size > 12
+                        nodeSvg += line + '\n';
+                    }
+                }
+                else if(line.indexOf('</svg>') == 0) { 
+                    break;
+                }
+            }
+
+            let xcenter = xsum / cnt, ycenter = ysum / cnt;
+
+            let id = me.ligplotid;
+            ic.ligplotWidth = width;
+            let graphWidth = ic.ligplotWidth;
+            
+            let textHeight = 30;
+            let heightAll = height + textHeight;
+
+            let offset = - ic.len4ang;
+            let svgHtml = "<svg id='" + id + "' viewBox='" + offset + "," + offset + "," + width + "," + heightAll + "' width='" + graphWidth + "px' font-family='sans-serif' stroke='rgb(0,0,0)' stroke-width='2' stroke-linecap='round'>";
+
+            let xlen = parseInt(widthOri / ic.svgGridSize), ylen = parseInt(heightOri / ic.svgGridSize);
+            let result = ic.viewInterPairsCls.getAllInteractionTable("save1", index2xy, xlen, ylen, xcenter, ycenter); // sort on the ligand/set1
+            ic.bLigplot = true;
+
+            svgHtml += lineSvg + result.svgHtmlLine;
+
+            svgHtml += nodeSvg + result.svgHtmlNode;
+
+            svgHtml += "</svg>";
+
+            $("#" + ic.pre + "ligplotDiv").html(svgHtml);
+
+            this.setEventsForLigplot();
+        }
+
+        
+        getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2) { let ic = this.icn3d, me = ic.icn3dui;
+            let xOffset = 1, yOffset = -1;
+            let bondLen = (interactionType == 'hbond' || interactionType == 'contact' || interactionType == 'halogen') ? ic.len4ang : ic.len4ang * 1.5; // real distance should be bout 120, not 80
+            let shortBondLen = ic.len4ang / 2;
+            let strokeWidth = (interactionType == 'contact') ? 1 : 2;
+
+            let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+            let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+            let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+            let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+
+            let xSum = 0, ySum = 0, cntPoint = 0;
+            let baseSerial = atom1.serial;
+            for(let i = 0, il = serialArray1.length; i < il; ++i) {
+                let index = serialArray1[i] - baseSerial + 1;
+                xSum += index2xy[index].x;
+                ySum += index2xy[index].y;
+                ++cntPoint;
+            }
+
+            let x1 = xSum / cntPoint - xOffset;
+            let y1 = ySum / cntPoint - yOffset;
+
+            if(!ic.resid2cnt.hasOwnProperty(resid1)) {
+                ic.resid2cnt[resid1] = 0;
+            }
+            else {
+                ++ic.resid2cnt[resid1];
+            }
+
+            let x2, y2, angle;
+            if(!bNotDrawNode && !ic.resid2ToXy.hasOwnProperty(resid2Real)) {
+                // 1st and ideal way to find a position. If failed, use the 2nd way
+                let xGrid = parseInt(x1 / ic.svgGridSize);
+                let yGrid = parseInt(y1 / ic.svgGridSize);
+                let gridArray = [];
+                for(let i = 1; i >= -1; --i) { // try right-bottom first
+                    for(let j = 1; j >= -1; --j) {
+                        if(!(i == 0 && j == 0)) {
+                            if(xGrid + i >= 0 && xGrid + i <= xlen && yGrid + j >= 0 && yGrid + j <= ylen) gridArray.push((xGrid + i) + '_' + (yGrid + j));
+                        }
+                    }
+                }
+                for(let i = 2; i >= -2; --i) { // try right-bottom first
+                    for(let j = 2; j >= -2; --j) {
+                        if(!(i >= -1 && i <= 1 && j >= -1 && j <= 1 )) {
+                            if(xGrid + i >= 0 && xGrid + i <= xlen && yGrid + j >= 0 && yGrid + j <= ylen) gridArray.push((xGrid + i) + '_' + (yGrid + j));
+                        }
+                    }
+                }
+
+                let bFound = false, xyGrids;
+                for(let i = 0, il = gridArray.length; i < il; ++i) {
+                    if(!ic.gridXY2used[gridArray[i]]) { // found a spot to put the residue
+                        xyGrids = gridArray[i].split('_');
+                        x2 = (parseInt(xyGrids[0]) + 0.5) * ic.svgGridSize;
+                        y2 = (parseInt(xyGrids[1]) + 0.5) * ic.svgGridSize;
+
+                        let dist = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+                        let x2b = bondLen / dist * (x2 - x1) + x1;
+                        let y2b = bondLen / dist * (y2 - y1) + y1;
+                        x2 = x2b;
+                        y2 = y2b;
+
+                        ic.gridXY2used[gridArray[i]] = 1;
+                        bFound = true;
+                        break;
+                    }
+                }
+                
+                if(!bFound) {
+                    // 2nd way to find a position from the center to the outside
+                    let dx = x1 - xcenter;
+                    let dy = y1 - ycenter;
+
+                    let baseAngle = 0;
+                    if(Math.abs(dx) > Math.abs(dy)) { // extend along x-axis
+                        if(dx > 0) { // +x direction
+                            baseAngle = 0;
+                        }
+                        else { // -x direction
+                            baseAngle = 180;
+                        }
+                    }
+                    else { // extend along y-axis
+                        if(dy > 0) { // +y direction
+                            baseAngle = 90;
+                        }
+                        else { // -y direction
+                            baseAngle = 270;
+                        }
+                    }
+                    angle = baseAngle - 10 + ic.resid2cnt[resid1] * 30; 
+
+                    x2 = x1 + bondLen * Math.cos(angle * Math.PI/180);
+                    y2 = y1 + bondLen * Math.sin(angle * Math.PI/180);
+                }
+            }
+
+            let oneLetterRes = me.utilsCls.residueName2Abbr(atom2.resn.substr(0, 3));
+            let resName2 = oneLetterRes + atom2.resi;
+            let textColor2 = (atom2.color) ? atom2.color.getHexString() : '000';
+            let lineColor = ic.lineGraphCls.getStrokecolor(undefined, interactionType);
+
+            // let node = '<circle cx="' + x2 + '" cy="' + y2 + '" r="8" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2 + '"></circle>\n<text x="' + x2 + '" y="' + y2 + '" stroke="#000" stroke-width="1px" text-anchor="middle" alignment-baseline="central" font-size="8px">' + resName2 + '</text>';
+          
+            let node = '', line = '';
+
+            // id can't contain comma and thus use '-'
+            // sometimes the same ligand atom is used in both Hbond and contact. THus we add "interactionType"
+            let idpair = resid2Real + '--' + serialArray1.join('-') + interactionType; 
+
+            let id = resid2Real;
+            if(bNotDrawNode || ic.resid2ToXy.hasOwnProperty(id)) {
+                x2 = (ic.resid2ToXy.hasOwnProperty(id)) ? ic.resid2ToXy[id].x2 : prevX2;
+                y2 = (ic.resid2ToXy.hasOwnProperty(id)) ? ic.resid2ToXy[id].y2 : prevY2;
+
+                // draw a short line from x2, y2 to x1, y1 with the distance shortBondLen
+                let x1b = x1, y1b = y1, bShort = 0;
+                if(interactionType == 'contact') {
+                    let dist = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+                    if(shortBondLen < dist) {
+                        x1b = shortBondLen / dist * (x1 - x2) + x2;
+                        y1b = shortBondLen / dist * (y1 - y2) + y2;
+                        bShort = 1;
+                    }
+                }
+
+                line += '<line id="' + idpair + '" x1="' + x1b.toFixed(2)  + '" y1="' + y1b.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" x0="' + x1.toFixed(2)  + '" y0="' + y1.toFixed(2)  + '" short="' + bShort + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+            }
+            else {
+                node +='<g>';
+                node += '<title>' + resName2 + '</title>';
+                // node += '<circle class='icn3d-ctnode' cx="' + x2.toFixed(2) + '" cy="' + y2.toFixed(2)  + '" r="10" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
+                let boxWidth = 28, boxHeight = 14;
+                node += '<rect id="' + id + '_node" x="' + (x2 - boxWidth*0.5).toFixed(2) + '" y="' + (y2 - boxHeight*0.5).toFixed(2)  + '" width="' + boxWidth + '" height="' + boxHeight + '" rx="2" ry="2" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
+
+                node += '<text class="icn3d-ctnode" resid="' + id + '" id="' + id + '" x="' + x2.toFixed(2)  + '" y="' + y2.toFixed(2)  + '" fill="#000" stroke="none" text-anchor="middle" alignment-baseline="central" style="font-size:10px">' + resName2 + '</text>';
+                node += '</g>\n';
+
+                line += '<line id="' + idpair + '" x1="' + x1.toFixed(2)  + '" y1="' + y1.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+
+                if(interactionType != 'contact') {
+                    if(!ic.resid2ToXy.hasOwnProperty(resid2Real)) ic.resid2ToXy[resid2Real] = {x2: x2, y2: y2};
+                }
+            }
+
+            if(!ic.nodeid2lineid.hasOwnProperty(id)) ic.nodeid2lineid[id] = [];
+            ic.nodeid2lineid[id].push(idpair);
+
+            return {node: node, line: line, x2: x2, y2: y2};
+        }
+
+        setEventsForLigplot() {  let ic = this.icn3d, me = ic.icn3dui;
+            //https://stackoverflow.com/questions/1108480/svg-draggable-using-jquery-and-jquery-svg
+            $("#" + me.ligplotid + " .icn3d-ctnode")
+            .draggable({
+                start: function( e, ui ) {
+                    let oriX= parseFloat(e.target.getAttribute('x'));
+                    let oriY = parseFloat(e.target.getAttribute('y'));
+
+                    e.target.setAttribute('x', oriX);
+                    e.target.setAttribute('y', oriY);
+                },
+                drag: function( e, ui ) {
+                    let offsetX = $("#" + me.ligplotid).offset().left + ic.len4ang; // ic.len4ang was defined in svg viewbox
+                    let offsetY = $("#" + me.ligplotid).offset().top + ic.len4ang;
+
+                    let id = e.target.getAttribute('resid');
+                    let x = (e.clientX - offsetX);
+                    let y = (e.clientY - offsetY);
+
+                    let oriX = parseFloat(e.target.getAttribute('x'));
+                    let oriY = parseFloat(e.target.getAttribute('y'));
+
+                    // change for each step
+                    let dx = (x - oriX) / ic.resizeRatioX;
+                    let dy = (y - oriY) / ic.resizeRatioY;
+
+                    // move the text label
+                    oriX = parseFloat($("#" + id + "_node").attr('x'));
+                    oriY = parseFloat($("#" + id + "_node").attr('y'));
+
+                    $("#" + id + "_node").attr('x', oriX + dx);
+                    $("#" + id + "_node").attr('y', oriY + dy);
+
+                    // update the center
+                    e.target.setAttribute('x', x);
+                    e.target.setAttribute('y', y);
+
+                    // update the edges
+                    if(ic.nodeid2lineid[id]) {
+                        for(let i = 0, il = ic.nodeid2lineid[id].length; i < il; ++i) {
+                            let idpair = ic.nodeid2lineid[id][i];
+
+                            updateEdges(idpair, id);
+                        }
+                    }
+
+                    function updateEdges(idpair, id) {
+                        if(idpair && idpair.indexOf(id) != -1) {
+                            let idArray = idpair.split('--');
+                            if(idArray.length == 2) {
+                                let id2;
+                                id2 = idArray[0];
+
+                                let x2 = parseFloat($("#" + id2).attr('x'));
+                                let y2 = parseFloat($("#" + id2).attr('y'));
+
+                                $("#" + idpair).attr('x2', x2);
+                                $("#" + idpair).attr('y2', y2);
+
+                                let x1 = $("#" + idpair).attr('x1');
+                                let y1 = $("#" + idpair).attr('y1');
+                                let x1b = x1, y1b = y1;
+
+                                let bShort = parseInt($("#" + idpair).attr('short'));
+                                if(bShort) { // adjust x1,y1
+                                    x1 = $("#" + idpair).attr('x0');
+                                    y1 = $("#" + idpair).attr('y0');
+
+                                    let dist = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+                                    let shortBondLen = ic.len4ang / 2;
+                                    
+                                    if(shortBondLen < dist) {
+                                        x1b = shortBondLen / dist * (x1 - x2) + x2;
+                                        y1b = shortBondLen / dist * (y1 - y2) + y2;
+                                    }
+                                }
+
+                                $("#" + idpair).attr('x1', x1b);
+                                $("#" + idpair).attr('y1', y1b);
+                            }
+                        } // if
+                    } // function
+                }
+            });
+        }
+
+        clickLigplot() { let ic = this.icn3d; ic.icn3dui;
+            let thisClass = this;
+
+            $(document).on("click", "#" + ic.pre + "dl_ligplot .icn3d-ctnode", function(e) { let ic = thisClass.icn3d;
+                e.stopImmediatePropagation();
+
+                ic.diagram2dCls.clickNode(this);
+            });
+        }
+    }
+
+    /**
+     * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+     */
+
     class ResizeCanvas {
         constructor(icn3d) {
             this.icn3d = icn3d;
@@ -78085,7 +78736,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        saveSvg(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+        saveSvg(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
             
             let width = $("#" + id).width();
@@ -78093,19 +78744,26 @@ var icn3d = (function (exports) {
 
             if(bContactmap) height = width;
 
-            let svgXml = this.getSvgXml(id, width, height, bContactmap);
+            if(bLigplot) {
+                width += ic.len4ang;
+                height += ic.len4ang;
+            }
+
+            let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot);
 
             let blob = new Blob([svgXml], {type: "image/svg+xml"});
             saveAs(blob, filename);
         }
 
-        getSvgXml(id, width, height, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+        getSvgXml(id, width, height, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
 
             // font is not good
             let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
-            let viewbox = (width && height) ? "<svg viewBox=\"0 0 " + width + " " + height + "\"" : "<svg";
+            let startX = (bLigplot) ? -30 : 0;
+            let startY = (bLigplot) ? -30 : 0;
+            let viewbox = (width && height) ? "<svg viewBox=\"" + startX + " " + startY + " " + width + " " + height + "\"" : "<svg";
             //let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
             let head = viewbox + " title=\"graph\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
@@ -78117,7 +78775,7 @@ var icn3d = (function (exports) {
             return full_svg;
         }
 
-        savePng(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
+        savePng(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
 
             let width = $("#" + id).width();
@@ -78130,7 +78788,7 @@ var icn3d = (function (exports) {
             let bbox = svg.getBBox();
 
             let copy = svg.cloneNode(true);
-            ic.lineGraphCls.copyStylesInline(copy, svg);
+            if(!bLigplot) ic.lineGraphCls.copyStylesInline(copy, svg);
             let canvas = document.createElement("CANVAS");
             canvas.width = width;
             canvas.height = height;
@@ -81923,6 +82581,7 @@ var icn3d = (function (exports) {
         this.shareLinkCls = new ShareLink(this);
         this.diagram2dCls = new Diagram2d(this);
         this.cartoon2dCls = new Cartoon2d(this);
+        this.ligplotCls = new Ligplot(this);
 
         this.rayCls = new Ray(this);
         this.controlCls = new Control(this);
@@ -82149,7 +82808,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.33.3';
+        this.REVISION = '3.34.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

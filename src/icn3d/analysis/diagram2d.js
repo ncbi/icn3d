@@ -638,6 +638,12 @@ class Diagram2d {
             thisClass.clickNode(this);
         });
 
+        $(document).on("click", "#" + ic.pre + "dl_ligplot .icn3d-node", function(e) { let ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+
+            thisClass.clickNode(this);
+        });
+
         //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
         $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
               e.stopImmediatePropagation();
@@ -720,6 +726,8 @@ class Diagram2d {
         let strokeWidth = 2;
         $(node).find('circle').attr('stroke', me.htmlCls.ORANGE);
         $(node).find('circle').attr('stroke-width', strokeWidth);
+        $(node).find('rect').attr('stroke', me.htmlCls.ORANGE);
+        $(node).find('rect').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 

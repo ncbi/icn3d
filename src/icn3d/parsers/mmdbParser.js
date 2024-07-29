@@ -218,6 +218,22 @@ class MmdbParser {
             hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
         }
 
+        // show ligand-protein interaction
+        if(me.cfg.ligand) { // sid123059722
+            for(let chainid in ic.chainid2sid) {
+                if(ic.chainid2sid[chainid] == me.cfg.ligand.substr(3)) {
+                    // save a set named me.cfg.ligand
+                    let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
+                    let idArray = Object.keys(residueHash)[0].split('_');
+                    let select = '.' + idArray[1] + ':' + idArray[2];
+
+                    await ic.selByCommCls.selectByCommand(select, me.cfg.ligand, me.cfg.ligand);
+                    break;
+                }
+            }
+        }
+        ic.hAtoms = hAtoms;
+
         // set 3d domains
         let structure = data.pdbId;
 

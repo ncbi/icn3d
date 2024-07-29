@@ -70,7 +70,8 @@ class PiHalogen {
 
         for (let i in atoms1a) {
             let atom1 = atoms1a[i];
-            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+            let serialList = (atom1.name.indexOf('pi') == 0 && atom1.ring) ? atom1.ring.join(',') : atom1.serial;
+            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name + ' ' + serialList;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
 
             for (let j in atoms1b) {
@@ -114,7 +115,8 @@ class PiHalogen {
 
         for (let i in atoms2a) {
             let atom1 = atoms2a[i];
-            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+            let serialList = (atom1.name.indexOf('pi') == 0 && atom1.ring) ? atom1.ring.join(',') : atom1.serial;
+            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name + ' ' + serialList;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
 
             // available in 1b and 2a
@@ -279,7 +281,8 @@ class PiHalogen {
               }
           }
 
-          let residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name;
+          let serialList = (atom2.name.indexOf('pi') == 0 && atom2.ring) ? atom2.ring.join(',') : atom2.serial;
+          let residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name + ' ' + serialList;
 
           //if(ic.resid2Residhash[oriResidName][residName] === undefined || ic.resid2Residhash[oriResidName][residName] > dist) {
               ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
@@ -291,12 +294,12 @@ class PiHalogen {
           if(!bInternal) {
               if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {}
               if(ic.resids2inter[resids][interactionType] === undefined) ic.resids2inter[resids][interactionType] = {}
-              ic.resids2inter[resids][interactionType][oriResidName + ',' + residName] = dist.toFixed(1);
+              ic.resids2inter[resids][interactionType][oriResidName + '|' + residName] = dist.toFixed(1);
           }
 
           if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {}
           if(ic.resids2interAll[resids][interactionType] === undefined) ic.resids2interAll[resids][interactionType] = {}
-          ic.resids2interAll[resids][interactionType][oriResidName + ',' + residName] = dist.toFixed(1);
+          ic.resids2interAll[resids][interactionType][oriResidName + '|' + residName] = dist.toFixed(1);
 
           return true;
     }
@@ -543,12 +546,13 @@ class PiHalogen {
             // Print the i-th cycle
             let coord = new THREE.Vector3();
             let cnt = 0, serial;
-            let coordArray = [];
+            let coordArray = [], ringArray = [];
             if(cycles.hasOwnProperty(i)) {
                 for (let j = 0, jl = cycles[i].length; j < jl; ++j) {
                     serial = cycles[i][j];
                     coord.add(ic.atoms[serial].coord);
                     coordArray.push(ic.atoms[serial].coord);
+                    ringArray.push(serial);
                     ++cnt;
                 }
             }
@@ -568,7 +572,7 @@ class PiHalogen {
 
                     let atom = ic.atoms[serial];
                     name2atom[resid + '_pi' + serial] = {resn: atom.resn, name: 'pi' + serial, coord: coord, serial: atom.serial,
-                      structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normal}
+                      structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normal, ring: ringArray}
                 }
             }
         }

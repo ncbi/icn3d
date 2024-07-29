@@ -525,6 +525,10 @@ class GetGraph {
     convertLabel2Resid(residLabel) {var ic = this.icn3d, me = ic.icn3dui;
         //ASN $1KQ2.A:6@ND2
         //or ASN $1KQ2.A:6
+        // or ASN $1KQ2.A:6@ND2 1234
+        let idArray = residLabel.split(' ');
+        residLabel = (idArray.length == 2) ? residLabel : residLabel.substr(0, residLabel.lastIndexOf(' '));
+        
         let pos1 = residLabel.indexOf(' ');
         let pos2Tmp = residLabel.indexOf('@');
         let pos2 =(pos2Tmp !== -1) ? pos2Tmp : residLabel.length;

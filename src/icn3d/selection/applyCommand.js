@@ -1025,6 +1025,7 @@ class ApplyCommand {
           || commandOri.indexOf('save2 interaction pairs') == 0
           || commandOri.indexOf('line graph interaction pairs') == 0
           || commandOri.indexOf('scatterplot interaction pairs') == 0
+          || commandOri.indexOf('ligplot interaction pairs') == 0
           ) {
         let paraArray = commandOri.split(' | ');
         if(paraArray.length >= 3) {
@@ -1081,6 +1082,9 @@ class ApplyCommand {
                 }
                 else if(commandOri.indexOf('scatterplot interaction pairs') == 0) {
                     type = 'scatterplot';
+                }
+                else if(commandOri.indexOf('ligplot interaction pairs') == 0) {
+                  type = 'ligplot';
                 }
 
                 await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
@@ -1140,6 +1144,14 @@ class ApplyCommand {
         $("#" + me.scatterplotid + "_scale").val(scale);
 
         $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+      }
+      else if(command.indexOf('ligplot scale') == 0) {
+        let pos = command.lastIndexOf(' ');
+        let scale = command.substr(pos + 1);
+
+        $("#" + me.ligplotid + "_scale").val(scale);
+
+        $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('contactmap scale') == 0) {
         let pos = command.lastIndexOf(' ');
@@ -1794,6 +1806,7 @@ class ApplyCommand {
         else if(cmd.indexOf('save2 interaction pairs') == 0) return hbondIntStr + ': "Set 2" button';
         else if(cmd.indexOf('line graph interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Network" button';
         else if(cmd.indexOf('scatterplot interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Map" button';
+        else if(cmd.indexOf('ligplot interaction pairs') == 0) return hbondIntStr + ': "2D Interaction for One Ligand/Residue" button';
         else if(cmd.indexOf('graph label') == 0) return forceStr + ': "Label Size" menu';
         else if(cmd.indexOf('graph force') == 0) return forceStr + ': "Force on Nodes" menu';
         else if(cmd.indexOf('hide edges') == 0) return forceStr + ': "Internal Edges" menu';

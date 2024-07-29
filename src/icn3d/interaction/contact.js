@@ -40,7 +40,8 @@ class Contact {
             if(oriCalpha === undefined) oriCalpha = oriAtom;
 
             if(bGetPairs) {
-                oriResidName = oriAtom.resn + ' $' + oriAtom.structure + '.' + oriAtom.chain + ':' + oriAtom.resi;
+                let serialList = (oriAtom.name.indexOf('pi') == 0 && oriAtom.ring) ? oriAtom.ring.join(',') : oriAtom.serial;
+                oriResidName = oriAtom.resn + ' $' + oriAtom.structure + '.' + oriAtom.chain + ':' + oriAtom.resi + ' ' + serialList;
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
             }
 
@@ -85,13 +86,14 @@ class Contact {
                     if(bGetPairs) {
         let chain_resi2 = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-        residName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi;
+        let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+        residName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + ' ' + serialList;
         //var dist = Math.sqrt(atomDistSq).toFixed(1);
         let dist1 = atomDist.toFixed(1);
         let dist2 = calpha.coord.distanceTo(oriCalpha.coord).toFixed(1);
 
         let resids = chain_resi + '_' + oriAtom.resn + ',' + chain_resi2 + '_' + atom.resn;
-        let residNames = oriResidName + ',' + residName;
+        let residNames = oriResidName + '|' + residName;
         if(ic.resids2interAll[resids] === undefined
             || ic.resids2interAll[resids]['contact'] === undefined
             || !ic.resids2interAll[resids]['contact'].hasOwnProperty(residNames)
@@ -108,12 +110,12 @@ class Contact {
                   if(!bInternal) {
                       if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {};
                       if(ic.resids2inter[resids]['contact'] === undefined) ic.resids2inter[resids]['contact'] = {};
-                      ic.resids2inter[resids]['contact'][oriResidName + ',' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
+                      ic.resids2inter[resids]['contact'][oriResidName + '|' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
                   }
 
                   if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {};
                   if(ic.resids2interAll[resids]['contact'] === undefined) ic.resids2interAll[resids]['contact'] = {};
-                  ic.resids2interAll[resids]['contact'][oriResidName + ',' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
+                  ic.resids2interAll[resids]['contact'][oriResidName + '|' + residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
               }
         }
                     } // if(bGetPairs) {

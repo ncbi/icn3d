@@ -469,20 +469,9 @@ class LineGraph {
             } else {
                 linestrokewidth = (link.n == 1) ? 2 : 4;
             }
-            let strokecolor;
-            if(link.v == me.htmlCls.hbondValue) {
-                strokecolor = "#" + me.htmlCls.hbondColor;
-            } else if(link.v == me.htmlCls.ionicValue) {
-                strokecolor = "#" + me.htmlCls.ionicColor;
-            } else if(link.v == me.htmlCls.halogenValue) {
-                strokecolor = "#" + me.htmlCls.halogenColor;
-            } else if(link.v == me.htmlCls.picationValue) {
-                strokecolor = "#" + me.htmlCls.picationColor;
-            } else if(link.v == me.htmlCls.pistackingValue) {
-                strokecolor = "#" + me.htmlCls.pistackingColor;
-            } else if(link.v == me.htmlCls.contactValue) {
-                strokecolor = "#" + me.htmlCls.contactColor;
-            }
+            
+            let strokecolor = this.getStrokecolor(link.v);
+
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
             let interactStr = (link.n == 1) ? 'Interaction' : link.n + ' interactions';
             if(link.n > 1) html += "<title>" + interactStr + " of residue " + node1.id + " with residue " + node2.id + "</title>";
@@ -549,6 +538,44 @@ class LineGraph {
         return html;
     }
 
+    getStrokecolor(value, type) { let ic = this.icn3d, me = ic.icn3dui;
+        let strokecolor = "#000";
+
+        if(value) {
+            if(value == me.htmlCls.hbondValue) {
+                strokecolor = "#" + me.htmlCls.hbondColor;
+            } else if(value == me.htmlCls.ionicValue) {
+                strokecolor = "#" + me.htmlCls.ionicColor;
+            } else if(value == me.htmlCls.halogenValue) {
+                strokecolor = "#" + me.htmlCls.halogenColor;
+            } else if(value == me.htmlCls.picationValue) {
+                strokecolor = "#" + me.htmlCls.picationColor;
+            } else if(value == me.htmlCls.pistackingValue) {
+                strokecolor = "#" + me.htmlCls.pistackingColor;
+            } else if(value == me.htmlCls.contactValue) {
+                strokecolor = "#" + me.htmlCls.contactColor;
+            }
+        }
+
+        if(type) {
+            if(type == 'hbond') {
+                strokecolor = "#" + me.htmlCls.hbondColor;
+            } else if(type == 'ionic') {
+                strokecolor = "#" + me.htmlCls.ionicColor;
+            } else if(type == 'halogen') {
+                strokecolor = "#" + me.htmlCls.halogenColor;
+            } else if(type == 'pi-cation') {
+                strokecolor = "#" + me.htmlCls.picationColor;
+            } else if(type == 'pi-stacking') {
+                strokecolor = "#" + me.htmlCls.pistackingColor;
+            } else if(type == 'contact') {
+                strokecolor = "#" + me.htmlCls.contactColor;
+            }
+        }
+
+        return strokecolor;
+    }
+
     drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '';
 
@@ -564,20 +591,7 @@ class LineGraph {
         let pos2 = node2posSet2[node2.id];
         if(pos1 === undefined || pos2 === undefined) return html;
 
-        let strokecolor;
-        if(link.v == me.htmlCls.hbondValue) {
-            strokecolor = "#" + me.htmlCls.hbondColor;
-        } else if(link.v == me.htmlCls.ionicValue) {
-            strokecolor = "#" + me.htmlCls.ionicColor;
-        } else if(link.v == me.htmlCls.halogenValue) {
-            strokecolor = "#" + me.htmlCls.halogenColor;
-        } else if(link.v == me.htmlCls.picationValue) {
-            strokecolor = "#" + me.htmlCls.picationColor;
-        } else if(link.v == me.htmlCls.pistackingValue) {
-            strokecolor = "#" + me.htmlCls.pistackingColor;
-        } else if(link.v == me.htmlCls.contactValue) {
-            strokecolor = "#" + me.htmlCls.contactColor;
-        }
+        let strokecolor = this.getStrokecolor(link.v);
 
         if(bContactMap) strokecolor = "#" + link.c;
 
