@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.34.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.34.0.zip) was release on July 29, 2024. Show atom details for the interaction of one ligand/residue with protein via the menu "Analysis > Interaction" and then the button "2D Interaction for One Ligand/Residue". 
+
 [icn3d-3.33.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.3.zip) was release on July 15, 2024. Switch electron density data from RCSB DSN6 to PDBe Density Server. 
 
 [icn3d-3.33.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.33.2.zip) was release on June 25, 2024. Enabled to measure angles between sets in the menu "Analysis > Angle". 

@@ -657,6 +657,8 @@ class SetDialog {
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> " + me.htmlCls.buttonStr + "hbondScatterplot2' style='margin-left:12px'>2D Map with Reference Numbers</button> to show map</div><br>";
 
+        html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondLigplot'>2D Interaction for One Ligand/Residue</button> with atom details</div><br>";
+
         tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondGraph'>2D Graph(Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
@@ -822,6 +824,40 @@ class SetDialog {
         html += '<div id="' + me.pre + 'scatterplotDiv"></div>';
 
         html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
+
+        html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes can be dragged or clicked. Hold Ctrl key to select multiple nodes. " + me.htmlCls.space3;
+
+        html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+          + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
+          + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
+
+        html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
+
+        // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
+        html += "<b>Color Legend</b>: <br>";
+
+        html += me.htmlCls.setHtmlCls.setColorHints();
+
+        html += "<br></div>";
+
+        me.ligplotid = me.pre + 'ligplot';
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.ligplotid + '_svg">SVG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.ligplotid + '_png">PNG</button>' + me.htmlCls.space2;
+        // html += buttonStrTmp + me.ligplotid + '_json">JSON</button>' + me.htmlCls.space4;
+        html += "<b>Scale</b>: <select id='" + me.ligplotid + "_scale'>";
+
+        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray4, 5);
+
+        html += "</select></div><br>";
+        html += '<div id="' + me.pre + 'ligplotDiv"></div>';
+
+        html += "</div>";
+
+
 
         html += me.htmlCls.divStr + "dl_contactmap' style='background-color:white' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_contactmap', 'Contact Map');

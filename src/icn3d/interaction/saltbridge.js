@@ -75,7 +75,8 @@ class Saltbridge {
             chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
             chain_resi_atom = chain_resi + "_" + atom.name;
 
-            let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+            let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+            let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name + ' ' + serialList;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
 
             let atomHbond = {};
@@ -140,7 +141,8 @@ class Saltbridge {
               residueHash[chain_resi] = 1;
               residueHash[chain_resi2] = 1;
 
-              let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name;
+              let serialList = (atomHbond[j].name.indexOf('pi') == 0 && atomHbond[j].ring) ? atomHbond[j].ring.join(',') : atomHbond[j].serial;
+              let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name  + ' ' + serialList;
 
               //if(ic.resid2Residhash[oriResidName][residName] === undefined || ic.resid2Residhash[oriResidName][residName] > dist) {
                   ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
@@ -151,12 +153,12 @@ class Saltbridge {
               if(!bInternal) {
                   if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {}
                   if(ic.resids2inter[resids]['ionic'] === undefined) ic.resids2inter[resids]['ionic'] = {}
-                  ic.resids2inter[resids]['ionic'][oriResidName + ',' + residName] = dist.toFixed(1);
+                  ic.resids2inter[resids]['ionic'][oriResidName + '|' + residName] = dist.toFixed(1);
               }
 
               if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {}
               if(ic.resids2interAll[resids]['ionic'] === undefined) ic.resids2interAll[resids]['ionic'] = {}
-              ic.resids2interAll[resids]['ionic'][oriResidName + ',' + residName] = dist.toFixed(1);
+              ic.resids2interAll[resids]['ionic'][oriResidName + '|' + residName] = dist.toFixed(1);
 
             } // end of for (let j in atomHbond) {
           }

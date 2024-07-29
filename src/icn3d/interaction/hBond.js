@@ -349,7 +349,8 @@ class HBond {
             chain_resi_atom = chain_resi + "_" + atom.name;
 
             //var oriResidName = atom.resn + ' ' + chain_resi_atom;
-            let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+            let serialList = (atom.name.indexOf('pi') == 0 && atom.ring) ? atom.ring.join(',') : atom.serial;
+            let oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name + ' ' + serialList;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
 
             for (let j in atomHbond) {
@@ -477,24 +478,25 @@ class HBond {
               residueHash[chain_resi2] = 1;
 
               //var residName = atomHbond[j].resn + " " + atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi + '_' + atomHbond[j].name;
-              let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name;
+              let serialList = (atomHbond[j].name.indexOf('pi') == 0 && atomHbond[j].ring) ? atomHbond[j].ring.join(',') : atomHbond[j].serial;
+              let residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name  + ' ' + serialList;
 
               let resids = chain_resi + '_' + atom.resn + ',' + chain_resi2 + '_' + atomHbond[j].resn;
 
               if(ic.resids2interAll[resids] === undefined
                 || ic.resids2interAll[resids]['ionic'] === undefined
-                || !ic.resids2interAll[resids]['ionic'].hasOwnProperty(oriResidName + ',' + residName) ) {
+                || !ic.resids2interAll[resids]['ionic'].hasOwnProperty(oriResidName + '|' + residName) ) {
                   ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
 
                   if(!bInternal) {
                       if(ic.resids2inter[resids] === undefined) ic.resids2inter[resids] = {}
                       if(ic.resids2inter[resids]['hbond'] === undefined) ic.resids2inter[resids]['hbond'] = {}
-                      ic.resids2inter[resids]['hbond'][oriResidName + ',' + residName] = dist.toFixed(1);
+                      ic.resids2inter[resids]['hbond'][oriResidName + '|' + residName] = dist.toFixed(1);
                   }
 
                   if(ic.resids2interAll[resids] === undefined) ic.resids2interAll[resids] = {}
                   if(ic.resids2interAll[resids]['hbond'] === undefined) ic.resids2interAll[resids]['hbond'] = {}
-                  ic.resids2interAll[resids]['hbond'][oriResidName + ',' + residName] = dist.toFixed(1);
+                  ic.resids2interAll[resids]['hbond'][oriResidName + '|' + residName] = dist.toFixed(1);
               }
             } // end of for (let j in atomHbond) {
           }

@@ -319,6 +319,9 @@ class ViewInterPairs {
            let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
        }
+       else if(type == 'ligplot') {
+            await ic.ligplotCls.drawLigplot(atomSet1);
+       }
        else if(bContactMapLocal) {
            me.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
            let bLine = true;
@@ -409,7 +412,9 @@ class ViewInterPairs {
          }
     }
 
-    getAllInteractionTable(type) { let ic = this.icn3d, me = ic.icn3dui;
+    getAllInteractionTable(type, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;
+        let svgHtmlNode = '', svgHtmlLine = '';
+
         let bondCnt = [];
 
         let residsArray = Object.keys(ic.resids2inter);
@@ -448,40 +453,53 @@ class ViewInterPairs {
             }
             let labels2dist, result;
             labels2dist = ic.resids2inter[resids]['hbond'];
-            result = this.getInteractionPairDetails(labels2dist, type, 'hbond');
+            result = this.getInteractionPairDetails(labels2dist, type, 'hbond', index2xy, xlen, ylen, xcenter, ycenter);
             strHbond += result.html;
             cntHbond += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
             if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
 
             labels2dist = ic.resids2inter[resids]['ionic'];
-            result = this.getInteractionPairDetails(labels2dist, type, 'ionic');
+            result = this.getInteractionPairDetails(labels2dist, type, 'ionic', index2xy, xlen, ylen, xcenter, ycenter);
             strIonic += result.html;
             cntIonic += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
             if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
 
-            labels2dist = ic.resids2inter[resids]['contact'];
-            result = this.getContactPairDetails(labels2dist, type, 'contact');
-            strContact += result.html;
-            cntContact += result.cnt;
-            if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
-
             labels2dist = ic.resids2inter[resids]['halogen'];
-            result = this.getInteractionPairDetails(labels2dist, type, 'halogen');
+            result = this.getInteractionPairDetails(labels2dist, type, 'halogen', index2xy, xlen, ylen, xcenter, ycenter);
             strHalegen += result.html;
             cntHalegen += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
             if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
 
             labels2dist = ic.resids2inter[resids]['pi-cation'];
-            result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation');
+            result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation', index2xy, xlen, ylen, xcenter, ycenter);
             strPication += result.html;
             cntPication += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
             if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
 
             labels2dist = ic.resids2inter[resids]['pi-stacking'];
-            result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking');
+            result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking', index2xy, xlen, ylen, xcenter, ycenter);
             strPistacking += result.html;
             cntPistacking += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
             if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+
+            // put contact as the last one since contact will use the same node as other interactions in ligand-protein interactoin
+            labels2dist = ic.resids2inter[resids]['contact'];
+            result = this.getContactPairDetails(labels2dist, type, 'contact', index2xy, xlen, ylen, xcenter, ycenter);
+            strContact += result.html;
+            cntContact += result.cnt;
+            svgHtmlNode += result.svgHtmlNode;
+            svgHtmlLine += result.svgHtmlLine;
+            if(result.cnt > 0) residname2List += residname2 + ":contact_" + result.cnt + " ";
 
             prevResidname1 = residname1;
             prevIds = ids;
@@ -510,7 +528,7 @@ class ViewInterPairs {
             html += tmpText;
             html += '</tbody></table><br/>';
         }
-        return  {html: html, bondCnt: bondCnt};
+        return  {html: html, bondCnt: bondCnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine};
     }
     getInteractionPerResidue(prevIds, strHbond, strIonic, strContact, strHalegen, strPication, strPistacking,
       cntHbond, cntIonic, cntContact, cntHalegen, cntPication, cntPistacking) { let ic = this.icn3d, me = ic.icn3dui;
@@ -525,15 +543,24 @@ class ViewInterPairs {
         tmpText += '</tr>';
         return tmpText;
     }
-    getInteractionPairDetails(labels2dist, type, interactionType) { let ic = this.icn3d, me = ic.icn3dui;
-        let tmpText = '', cnt = 0;
+    getInteractionPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;
+        let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
         let colorText1 = ' <span style="background-color:#';
         let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         if(labels2dist !== undefined) {
+            if(!ic.resid2cnt) ic.resid2cnt = {};
+            if(!ic.resid2ToXy) ic.resid2ToXy = {};
+            if(!ic.nodeid2lineid) ic.nodeid2lineid = {};
             for(let labels in labels2dist) {
-                let resid1_resid2 = labels.split(',');
-                let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                let resid1_resid2 = labels.split('|');
+                let resid1Ori =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                let resid2Ori =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                //resid1: MET $3GVU.A:364@N 1234
+                let pos1 = resid1Ori.lastIndexOf(' ');
+                let pos2 = resid2Ori.lastIndexOf(' ');
+                let resid1 = resid1Ori.substr(0, pos1);
+                let resid2 = resid2Ori.substr(0, pos2);
+
                 let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                 let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
                 let color1 = (atom1.color) ? atom1.color.getHexString() : '';
@@ -545,38 +572,125 @@ class ViewInterPairs {
                 tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
+
+                if(index2xy) {
+                    let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
+
+                    let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter);
+                    svgHtmlNode += result.node;
+                    svgHtmlLine += result.line;
+                }
             }
         }
-        return {html: tmpText, cnt: cnt}
+        return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine}
     }
-    getContactPairDetails(labels2dist, type) { let ic = this.icn3d, me = ic.icn3dui;
-        let tmpText = '', cnt = 0;
+
+    getContactPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;
+        let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
         let colorText1 = ' <span style="background-color:#';
         let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         if(labels2dist !== undefined) {
+            let resids2distCnt = {};
+            if(!ic.resid2cnt) ic.resid2cnt = {};
+            if(!ic.resid2ToXy) ic.resid2ToXy = {};
+            if(!ic.nodeid2lineid) ic.nodeid2lineid = {};
             for(let labels in labels2dist) {
-                let resid1_resid2 = labels.split(',');
-                let resid1 =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
-                let resid2 =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                let resid1_resid2 = labels.split('|');
+                let resid1Ori =(type == 'save1') ? resid1_resid2[0] : resid1_resid2[1];
+                let resid2Ori =(type == 'save1') ? resid1_resid2[1] : resid1_resid2[0];
+                //resid1: MET $3GVU.A:364 1234
+                let pos1 = resid1Ori.lastIndexOf(' ');
+                let pos2 = resid2Ori.lastIndexOf(' ');
+                
+                let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
+                let resid1 = resid1Ori.substr(0, pos1);
+                if(index2xy) {
+                    // add atom name to resid1
+                    resid1 += '@' + ic.atoms[serialArray1[0]].name;
+                }
+                
+                let resid2 = resid2Ori.substr(0, pos2);
+                let resids = resid1 + '|' + resid2;
+
+                let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
+                let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
+                // let color1 = (atom1.color) ? atom1.color.getHexString() : '';
+                let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
+                // let color2 = (atom2.color) ? atom2.color.getHexString() : '';
+                let dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
+                let dist1 = parseFloat(dist1_dist2_atom1_atom2[0]);
+                // let dist2 = parseFloat(dist1_dist2_atom1_atom2[1]);
+                // let atom1Name = dist1_dist2_atom1_atom2[2];
+                // let atom2Name = dist1_dist2_atom1_atom2[3];
+                let contactCnt = parseInt(dist1_dist2_atom1_atom2[4]);
+                if(!resids2distCnt.hasOwnProperty(resids)) {
+                    resids2distCnt[resids] = {'dist1': dist1, 'dist1_dist2_atom1_atom2': dist1_dist2_atom1_atom2, 'cnt': contactCnt, 'serialArray1': serialArray1};
+                }
+                else {
+                    resids2distCnt[resids].cnt += contactCnt;
+                    if(dist1 < resids2distCnt[resids].dist1) {
+                        resids2distCnt[resids].dist1 = dist1;
+                        resids2distCnt[resids].dist1_dist2_atom1_atom2 = dist1_dist2_atom1_atom2;
+                        resids2distCnt[resids].serialArray1 = serialArray1;
+                    }
+                }
+            }
+
+            let resid2ToResid1 = {};
+            for(let resids in resids2distCnt) {
+                let resid1_resid2 = resids.split('|');
+                let resid1 = resid1_resid2[0];
+                let resid2 = resid1_resid2[1];
+
+                if(!resid2ToResid1.hasOwnProperty(resid2)) {
+                    resid2ToResid1[resid2] = [resid1];
+                }
+                else {
+                    resid2ToResid1[resid2].push(resid1);
+                }
+
                 let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                 let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
                 let color1 = (atom1.color) ? atom1.color.getHexString() : '';
                 let resid2Real = ic.getGraphCls.convertLabel2Resid(resid2);
                 let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2Real]);
                 let color2 = (atom2.color) ? atom2.color.getHexString() : '';
-                let dist1_dist2_atom1_atom2 = labels2dist[labels].split('_');
+                let dist1_dist2_atom1_atom2 = resids2distCnt[resids].dist1_dist2_atom1_atom2;
                 let dist1 = dist1_dist2_atom1_atom2[0];
                 let dist2 = dist1_dist2_atom1_atom2[1];
                 let atom1Name = dist1_dist2_atom1_atom2[2];
                 let atom2Name = dist1_dist2_atom1_atom2[3];
-                let contactCnt = dist1_dist2_atom1_atom2[4];
+                let contactCnt = 1; //resids2distCnt[resids].cnt;
+                
                 tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1Name + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + ic.pre + 'seloneres" id="' + ic.pre + 'inter2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2Name + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                 tmpText += '<td align="center"><button class="' + ic.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 cnt += parseInt(contactCnt);
             }
+
+            if(index2xy) {
+                for(let resid2 in resid2ToResid1) {
+                    let resid1Array = resid2ToResid1[resid2];
+                    let prevX2, prevY2;
+                    for(let i = 0, il = resid1Array.length; i < il; ++i) {
+                        let resid1 = resid1Array[i];
+                        let resids = resid1 + '|' + resid2;
+            
+                        let serialArray1 = resids2distCnt[resids].serialArray1;
+
+                        let bNotDrawNode = (i == 0) ? false : true;
+                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2);
+                        svgHtmlNode += result.node;
+                        svgHtmlLine += result.line;
+                        prevX2 = result.x2;
+                        prevY2 = result.y2;
+                    }
+                }
+            }
         }
-        return {html: tmpText, cnt: cnt}
+
+        return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine};
     }
 
     //Export the list of residues in some chain interacting with residues in another chain.

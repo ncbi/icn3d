@@ -125,6 +125,7 @@ import {AlignSW} from './analysis/alignSW.js';
 import {Analysis} from './analysis/analysis.js';
 import {Diagram2d} from './analysis/diagram2d.js';
 import {Cartoon2d} from './analysis/cartoon2d.js';
+import {Ligplot} from './interaction/ligplot.js';
 
 import {ResizeCanvas} from './transform/resizeCanvas.js';
 import {Transform} from './transform/transform.js';
@@ -647,6 +648,7 @@ class iCn3D {
     this.shareLinkCls = new ShareLink(this);
     this.diagram2dCls = new Diagram2d(this);
     this.cartoon2dCls = new Cartoon2d(this);
+    this.ligplotCls = new Ligplot(this);
 
     this.rayCls = new Ray(this);
     this.controlCls = new Control(this);

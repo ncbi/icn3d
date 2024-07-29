@@ -143,6 +143,7 @@ import {AlignSW} from './icn3d/analysis/alignSW.js';
 import {Analysis} from './icn3d/analysis/analysis.js';
 import {Diagram2d} from './icn3d/analysis/diagram2d.js';
 import {Cartoon2d} from './icn3d/analysis/cartoon2d.js';
+import {Ligplot} from './icn3d/interaction/ligplot.js';
 
 import {ResizeCanvas} from './icn3d/transform/resizeCanvas.js';
 import {Transform} from './icn3d/transform/transform.js';
@@ -167,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.33.3';
+    this.REVISION = '3.34.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

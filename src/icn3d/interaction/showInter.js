@@ -19,6 +19,25 @@ class ShowInter {
        ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms);
        ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atoms2);
 
+       if(type == 'ligplot') {
+            let residueHash1 = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+            let residueHash2 = ic.firstAtomObjCls.getResiduesFromAtoms(atoms2);
+
+            if(Object.keys(residueHash1).length > 1 && Object.keys(residueHash2).length > 1) {
+                alert("Please select one ligand or residue as one of the interaction sets...");
+                return;
+            }
+
+            // switch the sets to make the first set as the ligand
+            if(Object.keys(residueHash1).length < Object.keys(residueHash2).length) {
+                nameArray2 = $("#" + ic.pre + "atomsCustomHbond").val();
+                nameArray = $("#" + ic.pre + "atomsCustomHbond2").val();
+         
+                atoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                atoms2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+            }
+       }
+
        if(nameArray2.length == 0) {
            alert("Please select the first set");
        }
@@ -61,6 +80,9 @@ class ShowInter {
            }
            else if(type == 'scatterplot') {
                me.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
+           }
+           else if(type == 'ligplot') {
+            me.htmlCls.clickMenuCls.setLogCmd("ligplot interaction pairs | " + tmpStr, true);
            }
            else if(type == 'graph') { // force-directed graph
                 let dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());

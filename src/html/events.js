@@ -294,6 +294,7 @@ class Events {
 
         ic.diagram2dCls.click2Ddgm();
         ic.cartoon2dCls.click2Dcartoon();
+        ic.ligplotCls.clickLigplot();
         ic.addTrackCls.clickAddTrackButton();
         ic.resizeCanvasCls.windowResize();
         ic.annotationCls.setTabs();
@@ -1915,6 +1916,13 @@ class Events {
            thisClass.setLogCmd("show ref number", true);
            await ic.showInterCls.showInteractions('scatterplot');
         });
+        me.myEventCls.onIds("#" + me.pre + "hbondLigplot", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.bShownRefnum = false;
+            thisClass.setLogCmd("hide ref number", true);
+            await ic.showInterCls.showInteractions('ligplot');
+        });
         // select residues
         $(document).on("click", "#" + me.svgid + " circle.selected", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
@@ -2024,6 +2032,33 @@ class Events {
            $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
            thisClass.setLogCmd("scatterplot scale " + scale, true);
         });
+
+        me.myEventCls.onIds("#" + me.ligplotid + "_svg", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.saveFileCls.saveSvg(me.ligplotid, ic.inputid + "_ligplot.svg", undefined, true);
+         });
+         me.myEventCls.onIds("#" + me.ligplotid + "_png", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.saveFileCls.savePng(me.ligplotid, ic.inputid + "_ligplot.png", undefined, true);
+         });
+        //  me.myEventCls.onIds("#" + me.ligplotid + "_json", "click", function(e) { let ic = me.icn3d;
+        //      e.preventDefault();
+             
+        //      let graphStr2 = ic.ligplotStr.substr(0, ic.ligplotStr.lastIndexOf('}'));
+ 
+        //      graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+ 
+        //      ic.saveFileCls.saveFile(ic.inputid + "_ligplot.json", "text", [graphStr2]);
+        //  });
+         me.myEventCls.onIds("#" + me.ligplotid + "_scale", "change", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            let scale = $("#" + me.ligplotid + "_scale").val();
+            $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
+            thisClass.setLogCmd("ligplot scale " + scale, true);
+         });
 
         me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
