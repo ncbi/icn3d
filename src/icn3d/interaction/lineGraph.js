@@ -465,7 +465,8 @@ class LineGraph {
             if(pos1 === undefined || pos2 === undefined) continue;
             let linestrokewidth;
             if(link.v == me.htmlCls.contactValue) {
-                linestrokewidth = (link.n == 1) ? 1 : 3;
+                // linestrokewidth = (link.n == 1) ? 1 : 3;
+                linestrokewidth = 1;
             } else {
                 linestrokewidth = (link.n == 1) ? 2 : 4;
             }
@@ -597,7 +598,8 @@ class LineGraph {
 
         let linestrokewidth;
         if(link.v == me.htmlCls.contactValue) {
-            linestrokewidth = (link.n == 1) ? 1 : 3;
+            // linestrokewidth = (link.n == 1) ? 1 : 3;
+            linestrokewidth = 1;
         } else {
             linestrokewidth = (link.n == 1) ? 2 : 4;
         }
