@@ -838,7 +838,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
 
         // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
-        html += "<b>Color Legend</b>: <br>";
+        html += "Color legend for interactions (dashed lines): <br>";
 
         html += me.htmlCls.setHtmlCls.setColorHints();
 

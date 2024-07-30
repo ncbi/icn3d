@@ -421,6 +421,7 @@ class GetGraph {
                 interStr += this.getContactLinks(ssAtomsArray[i], ssAtomsArray[j], labelType, true, bCartoon2d);
             }
         }
+
         return interStr;
     }
     getContactLinks(atomlistTarget, otherAtoms, labelType, bInternal, bCartoon2d) { let ic = this.icn3d, me = ic.icn3dui;
@@ -463,7 +464,14 @@ class GetGraph {
         for(let resid1 in hash1) {
             //ASN $1KQ2.A:6@ND2
             //or ASN $1KQ2.A:6
-            resid1 = resid1.trim();
+            // or ASN $1KQ2.A:6@ND2 2006
+            let resid1Ori = resid1.trim();
+
+            let idArray1 = resid1Ori.split(' ');
+            if(idArray1.length == 3) {
+                resid1 = idArray1[0] + ' ' + idArray1[1];
+            }
+            
             let pos1a = resid1.indexOf(' ');
             let pos1b = resid1.indexOf(':');
             let posTmp1 = resid1.indexOf('@');
@@ -473,8 +481,14 @@ class GetGraph {
             let resName1 = me.utilsCls.residueName2Abbr(resid1.substr(0, pos1a)) + resid1.substr(pos1b + 1, pos1c - pos1b - 1);
             if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + resid1.substr(pos1d + 1, pos1b - pos1d - 1);
             if(labelType == 'structure') resName1 += '.' + resid1.substr(pos1e + 1, pos1d - pos1e - 1);
-            for(let resid2 in hash2[resid1]) {
-                resid2 = resid2.trim();
+            for(let resid2 in hash2[resid1Ori]) {
+                let resid2Ori = resid2.trim();
+
+                let idArray2 = resid2Ori.split(' ');
+                if(idArray2.length == 3) {
+                    resid2 = idArray2[0] + ' ' + idArray2[1];
+                }
+
                 let pos2a = resid2.indexOf(' ');
                 let pos2b = resid2.indexOf(':');
                 let posTmp2 = resid2.indexOf('@');
@@ -490,16 +504,6 @@ class GetGraph {
                     resName1 = ic.resi2resirange[resName1];
                     resName2 = ic.resi2resirange[resName2];
                 }
-/*
-                if(!sourceTargetHash.hasOwnProperty(resName1 + '_' + resName2) && resName1 !== undefined && resName2 !== undefined ) {
-                    let linkStr = ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"}';
-                    if(linkStr != prevLinkStr) hbondStr += linkStr;
-                    prevLinkStr = linkStr;
-
-                    sourceTargetHash[resName1 + '_' + resName2] = 1;
-                    sourceTargetHash[resName2 + '_' + resName1] = 1;
-                }
-*/
 
                 if(resName1 !== undefined && resName2 !== undefined ) {
                     let linkStr = '"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"';
