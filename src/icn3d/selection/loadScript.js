@@ -518,9 +518,10 @@ class LoadScript {
 
       if(command.indexOf('load') !== -1) { // 'load pdb [pdbid]'
         let load_parameters = command.split(' | ');
-
         let loadStr = load_parameters[0];
-        if(load_parameters.length > 1) {
+
+        // do not reset me.cfg.inpara from "command=..." part if it was not empty
+        if(load_parameters.length > 1 && !me.cfg.inpara) {
             let firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
             me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
             if(me.cfg.inpara === 'undefined') {

@@ -766,7 +766,7 @@ class RealignParser {
         }
     }
 
-    getSeqCoorResid(resiArray, chainid) { let ic = this.icn3d, me = ic.icn3dui;
+    getSeqCoorResid(resiArray, chainid, bNCBI) { let ic = this.icn3d, me = ic.icn3dui;
         let seq = '', coorArray = [], residArray = [];
         let hAtoms = {};
 
@@ -774,15 +774,7 @@ class RealignParser {
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                    // from VAST neighbor page, use NCBI residue number
-                    //if(me.cfg.usepdbnum === false) k += base - 1;
-
-                    //let seqIndex = k - base;
-                    let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-                    // if(ic.bNCBI) {
-                    //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                    //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                    // }
+                    let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                     // don't align solvent or chemicals
                     if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
@@ -794,20 +786,14 @@ class RealignParser {
                     residArray.push(chainid + '_' + k);
                 }            
             }
+            else if(resiArray[j] == 0) { // 0 means the whole chain
+                let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
+                residArray = Object.keys(residueHash);
+            }
             else { // one residue
-                
-                //let k = parseInt(resiArray[j]);
                 let k = resiArray[j];
-                // from VAST neighbor page, use NCBI residue number
-                //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                //let seqIndex = k - base;
-                let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-
-                // if(ic.bNCBI) {
-                //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                // }
+                let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                 if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
