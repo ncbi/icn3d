@@ -16,14 +16,15 @@ class SetColor {
 
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            if(!atom.het) ++cnt;
+            // if(!atom.het) ++cnt;
+            ++cnt;
         }
 
         let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+            // atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+            atom.color = me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
             ic.atomPrevColors[i] = atom.color;
         }
@@ -38,13 +39,15 @@ class SetColor {
 
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            if(!atom.het) ++cnt;
+            // if(!atom.het) ++cnt;
+            ++cnt;
         }
 
         let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+            // atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+            atom.color = me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
 
             ic.atomPrevColors[i] = atom.color;
         }

@@ -16515,8 +16515,8 @@ class Events {
         hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
 
         // some URLs from VAST search are like https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/
-        if(hostUrl == 'https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/') {
-            hostUrl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/';
+        if(hostUrl.indexOf('/vast/icn3d/')) {
+            hostUrl = hostUrl.replace(/\/vast\/icn3d\//g, '/icn3d/');
         }
 
         ic.definedSetsCls.clickCustomAtoms();
@@ -39495,15 +39495,16 @@ class SetColor {
         atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
 
         for (let i in atoms) {
-            let atom = ic.atoms[i];
-            if(!atom.het) ++cnt;
+            ic.atoms[i];
+            // if(!atom.het) ++cnt;
+            ++cnt;
         }
 
         let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+            // atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+            atom.color = me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
             ic.atomPrevColors[i] = atom.color;
         }
@@ -39517,14 +39518,16 @@ class SetColor {
         atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
 
         for (let i in atoms) {
-            let atom = ic.atoms[i];
-            if(!atom.het) ++cnt;
+            ic.atoms[i];
+            // if(!atom.het) ++cnt;
+            ++cnt;
         }
 
         let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
         for (let i in atoms) {
             let atom = ic.atoms[i];
-            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+            // atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+            atom.color = me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
 
             ic.atomPrevColors[i] = atom.color;
         }
@@ -53859,16 +53862,17 @@ class ChainalignParser {
             // calculate secondary structures with applyCommandDssp
             //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 await ic.pdbParserCls.applyCommandDssp(true);
-
+//!!!
+/*
                 // original version =============
                 // align PDB chains
                 for(let index in ic.pdbChainIndexHash) {
                     //ic.pdbChainIndexHash[index] = mmdbid_q_tmp + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
                     let idArray = ic.pdbChainIndexHash[index].split('_');
                     mmdbid_q = idArray[0];
-                    idArray[1];
+                    let chain_q = idArray[1];
                     mmdbid_t = idArray[2];
-                    idArray[3];
+                    let chain_t = idArray[3];
 
                     thisClass.transformStructure(mmdbid_q, index-1, 'query');                
                 }
@@ -53878,7 +53882,7 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -53890,25 +53894,26 @@ class ChainalignParser {
                     let chain_t = idArray[3];
                     let chainid_t = mmdbid_t + '_' + chain_t;
 
-                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
-                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                    // let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t, true).hAtoms : ic.chains[chainid_t];
+                    // let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q, true).hAtoms : ic.chains[chainid_q];
+                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainid_t, true).hAtoms : ic.chains[chainid_t];
+                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainid_q, true).hAtoms : ic.chains[chainid_q];
                 // end of original version =============
-                
-/*
+*/                
+
                 // new version to be done for VASTsrv ==============
                 // dynamically align pairs in all chainids
                 let ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
 
                 // dynamically align pairs in all chainids
-                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainidArray[0]).hAtoms : ic.chains[chainidArray[0]];
+                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
                 for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainidArray[index]).hAtoms : ic.chains[chainidArray[index]];
+                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
                 // end of new version to be done for VASTsrv ==============
-*/
 
                     let alignAjax;
                     if(me.cfg.aligntool != 'tmalign') {
@@ -54136,10 +54141,11 @@ class ChainalignParser {
 
             // chainid1 is target
             aligType = 'target';
-            this.transformStructure(target, index, aligType);
+            let bForce = true;
+            this.transformStructure(target, index, aligType, bForce);
 
             aligType = 'query';
-            this.transformStructure(query, index, aligType);
+            this.transformStructure(query, index, aligType, bForce);
 
             allChainidHash[chainidArray[0]] = 1;
             allChainidHash[chainidArray[1]] = 1;
@@ -54817,8 +54823,12 @@ class ChainalignParser {
 
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
-                let bRealign = true, bPredefined = true;
-                await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+                // let bRealign = true, bPredefined = true;
+                // await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(ic.chainidArray);
+                await ic.realignParserCls.realignOnStructAlign();
+
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");
                 ic.bAnnoShown = false;
@@ -59389,7 +59399,7 @@ class RealignParser {
         }
     }
 
-    getSeqCoorResid(resiArray, chainid) { let ic = this.icn3d, me = ic.icn3dui;
+    getSeqCoorResid(resiArray, chainid, bNCBI) { let ic = this.icn3d, me = ic.icn3dui;
         let seq = '', coorArray = [], residArray = [];
         let hAtoms = {};
 
@@ -59397,15 +59407,7 @@ class RealignParser {
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                    // from VAST neighbor page, use NCBI residue number
-                    //if(me.cfg.usepdbnum === false) k += base - 1;
-
-                    //let seqIndex = k - base;
-                    let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-                    // if(ic.bNCBI) {
-                    //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                    //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                    // }
+                    let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                     // don't align solvent or chemicals
                     if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
@@ -59417,20 +59419,14 @@ class RealignParser {
                     residArray.push(chainid + '_' + k);
                 }            
             }
+            else if(resiArray[j] == 0) { // 0 means the whole chain
+                let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
+                residArray = Object.keys(residueHash);
+            }
             else { // one residue
-                
-                //let k = parseInt(resiArray[j]);
                 let k = resiArray[j];
-                // from VAST neighbor page, use NCBI residue number
-                //if(me.cfg.usepdbnum === false) k += base - 1;
 
-                //let seqIndex = k - base;
-                let seqIndex = ic.setSeqAlignCls.getPosFromResi(chainid, k);
-
-                // if(ic.bNCBI) {
-                //     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
-                //     if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
-                // }
+                let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                 if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
@@ -69431,9 +69427,10 @@ class LoadScript {
 
       if(command.indexOf('load') !== -1) { // 'load pdb [pdbid]'
         let load_parameters = command.split(' | ');
-
         let loadStr = load_parameters[0];
-        if(load_parameters.length > 1) {
+
+        // do not reset me.cfg.inpara from "command=..." part if it was not empty
+        if(load_parameters.length > 1 && !me.cfg.inpara) {
             let firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
             me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
             if(me.cfg.inpara === 'undefined') {
@@ -82811,7 +82808,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.34.0';
+    this.REVISION = '3.34.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -83001,7 +82998,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                 await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
         }
-        else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+        // else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+        else if(me.cfg.matchedchains !== undefined) {
             let stru_t = Object.keys(ic.structures)[0];
 
             let chain_t = stru_t + '_' + me.cfg.masterchain;
@@ -83029,7 +83027,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             ic.chainidArray = [chain_t].concat(chainidArray);
             ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
 
-            me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
+            // me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 
             ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -83255,7 +83253,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
         let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + me.cfg.resrange : '';
-        ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
+        let resdef = (me.cfg.resdef) ? me.cfg.resdef : '';
+        ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
     }

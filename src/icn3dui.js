@@ -168,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.34.0';
+    this.REVISION = '3.34.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -358,7 +358,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
                 await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
             }
         }
-        else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+        // else if(me.cfg.resdef !== undefined && me.cfg.matchedchains !== undefined) {
+        else if(me.cfg.matchedchains !== undefined) {
             let stru_t = Object.keys(ic.structures)[0];
 
             let chain_t = stru_t + '_' + me.cfg.masterchain;
@@ -386,7 +387,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             ic.chainidArray = [chain_t].concat(chainidArray);
             ic.chainidArray = ic.chainalignParserCls.addPostfixForChainids(ic.chainidArray);
 
-            me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
+            // me.htmlCls.clickMenuCls.setLogCmd('resdef ' + me.cfg.resdef, true);
 
             ic.loadCmd = 'vast_search_chainid ' + ic.chainidArray;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -612,7 +613,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
         let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + me.cfg.resrange : '';
-        ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
+        let resdef = (me.cfg.resdef) ? me.cfg.resdef : '';
+        ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
     }

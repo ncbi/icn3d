@@ -281,8 +281,8 @@ class Events {
         hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
 
         // some URLs from VAST search are like https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/
-        if(hostUrl == 'https://www.ncbi.nlm.nih.gov/Structure/vast/icn3d/') {
-            hostUrl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/';
+        if(hostUrl.indexOf('/vast/icn3d/')) {
+            hostUrl = hostUrl.replace(/\/vast\/icn3d\//g, '/icn3d/');
         }
 
         ic.definedSetsCls.clickCustomAtoms();

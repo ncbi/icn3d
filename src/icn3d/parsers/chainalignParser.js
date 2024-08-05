@@ -51,7 +51,8 @@ class ChainalignParser {
             // calculate secondary structures with applyCommandDssp
             //$.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
                 await ic.pdbParserCls.applyCommandDssp(true);
-
+//!!!
+/*
                 // original version =============
                 // align PDB chains
                 for(let index in ic.pdbChainIndexHash) {
@@ -70,7 +71,7 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -82,25 +83,26 @@ class ChainalignParser {
                     let chain_t = idArray[3];
                     let chainid_t = mmdbid_t + '_' + chain_t;
 
-                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t).hAtoms : ic.chains[chainid_t];
-                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q).hAtoms : ic.chains[chainid_q];
+                    // let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainid_t, true).hAtoms : ic.chains[chainid_t];
+                    // let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainid_q, true).hAtoms : ic.chains[chainid_q];
+                    let atomSet_t = (resRangeArray[0]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainid_t, true).hAtoms : ic.chains[chainid_t];
+                    let atomSet_q = (resRangeArray[index]) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainid_q, true).hAtoms : ic.chains[chainid_q];
                 // end of original version =============
-                
-/*
+*/                
+
                 // new version to be done for VASTsrv ==============
                 // dynamically align pairs in all chainids
                 let ajaxArray = [], indexArray = [], struArray = [];
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
 
                 // dynamically align pairs in all chainids
-                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[0].split(','), chainidArray[0]).hAtoms : ic.chains[chainidArray[0]];
+                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
                 for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid(resRangeArray[index].split(','), chainidArray[index]).hAtoms : ic.chains[chainidArray[index]];
+                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
                 // end of new version to be done for VASTsrv ==============
-*/
 
                     let alignAjax;
                     if(me.cfg.aligntool != 'tmalign') {
@@ -328,10 +330,11 @@ class ChainalignParser {
 
             // chainid1 is target
             aligType = 'target';
-            this.transformStructure(target, index, aligType);
+            let bForce = true;
+            this.transformStructure(target, index, aligType, bForce);
 
             aligType = 'query';
-            this.transformStructure(query, index, aligType);
+            this.transformStructure(query, index, aligType, bForce);
 
             allChainidHash[chainidArray[0]] = 1;
             allChainidHash[chainidArray[1]] = 1;
@@ -1017,8 +1020,12 @@ class ChainalignParser {
 
         if(bQuery && me.cfg.matchedchains) {          
            // $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
-                let bRealign = true, bPredefined = true;
-                await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+                // let bRealign = true, bPredefined = true;
+                // await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
+
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(ic.chainidArray);
+                await ic.realignParserCls.realignOnStructAlign();
+
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");
                 ic.bAnnoShown = false;
