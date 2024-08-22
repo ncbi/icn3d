@@ -486,7 +486,8 @@ class ShowAnno {
         $("#" + ic.pre + "anno_" + name).append("<div id='" + ic.pre + "giseq_" + name + "'><div id='" + ic.pre + "dt_giseq_" + name + "' style='display:none'></div><div id='" + ic.pre + "ov_giseq_" + name + "'></div></div>");
         $("#" + ic.pre + "anno_" + name).append("<br><hr><br>");
         // sequence, detailed view
-        let htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+        // let htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+        let htmlTmp = '<div class="icn3d-dl_sequence">';
         let chainType = 'Chem.', chainTypeFull = 'Chemical';
         //htmlTmp += '<div class="icn3d-seqTitle2" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
         htmlTmp += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" anno="sequence" gi="' + name + '" resn="' + name + '"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
@@ -523,6 +524,8 @@ class ShowAnno {
     }
 
     async processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.bAnnoShown = true;
+
         for(let chnid in ic.protein_chainid) {
             let chnidBase = ic.protein_chainid[chnid];
             //if(chainid_seq.hasOwnProperty(chnid)) {

@@ -29,7 +29,7 @@
 
   <script type="text/javascript">
     $( document ).ready(async function() {
-          var cfg = {
+          let cfg = {
               divid: 'icn3dwrap',
               width: '100%',
               height: '100%',
@@ -48,7 +48,14 @@
           // or 2. Input several PDB files separated with "ENDMDL\n"
           // pdbStr = "ATOM      1  N   ALA A   1     -25.554 -20.891 -14.399  1.00 72.00           N  \nATOM      2  CA  ALA A   1     -25.074 -21.968 -13.538  1.00 75.00           C  \nATOM      3  C   ALA A   1     -24.757 -23.220 -14.350  1.00 71.00           C  \nATOM      4  CB  ALA A   1     -26.104 -22.285 -12.457  1.00 64.00           C  \nATOM      5  O   ALA A   1     -25.618 -23.738 -15.066  1.00 62.00           O  \nATOM      6  N   ALA A   2     -23.605 -23.208 -15.110  1.00 67.00           N  \nATOM      7  CA  ALA A   2     -23.044 -24.072 -16.146  1.00 64.00           C  \nATOM      8  C   ALA A   2     -22.007 -23.326 -16.979  1.00 65.00           C  \nATOM      9  CB  ALA A   2     -24.152 -24.616 -17.043  1.00 53.00           C  \nATOM     10  O   ALA A   2     -22.245 -22.195 -17.412  1.00 56.00           O  \nATOM     11  N   ALA A   3     -20.823 -22.786 -16.622  1.00 68.00           N  \nATOM     12  CA  ALA A   3     -19.626 -22.285 -17.292  1.00 68.00           C  \nATOM     13  C   ALA A   3     -19.018 -21.114 -16.525  1.00 67.00           C  \nATOM     14  CB  ALA A   3     -19.953 -21.867 -18.724  1.00 59.00           C  \nATOM     15  O   ALA A   3     -19.602 -20.028 -16.473  1.00 63.00           O  \nATOM     16  N   ALA A   4     -18.893 -21.281 -15.205  1.00 69.00           N  \nATOM     17  CA  ALA A   4     -18.322 -20.159 -14.465  1.00 71.00           C  \nATOM     18  C   ALA A   4     -17.456 -20.649 -13.308  1.00 68.00           C  \nATOM     19  CB  ALA A   4     -19.430 -19.245 -13.947  1.00 62.00           C  \nATOM     20  O   ALA A   4     -17.931 -21.378 -12.434  1.00 64.00           O  \nATOM     21  N   ALA A   5     -16.575 -21.591 -13.554  1.00 63.00           N  \nATOM     22  CA  ALA A   5     -15.721 -22.115 -12.490  1.00 66.00           C  \nATOM     23  C   ALA A   5     -14.333 -22.462 -13.022  1.00 62.00           C  \nATOM     24  CB  ALA A   5     -16.363 -23.343 -11.849  1.00 56.00           C  \nATOM     25  O   ALA A   5     -14.204 -23.136 -14.046  1.00 59.00           O  \nATOM     26  N   ALA A   6     -13.498 -21.492 -13.506  1.00 70.00           N  \nATOM     27  CA  ALA A   6     -12.083 -21.738 -13.770  1.00 72.00           C  \nATOM     28  C   ALA A   6     -11.291 -20.434 -13.774  1.00 70.00           C  \nATOM     29  CB  ALA A   6     -11.908 -22.467 -15.099  1.00 64.00           C  \nATOM     30  O   ALA A   6     -10.067 -20.444 -13.928  1.00 66.00           O  \nATOM     31  N   ALA A   7     -11.859 -19.402 -13.313  1.00 73.00           N  \nATOM     32  CA  ALA A   7     -11.148 -18.130 -13.412  1.00 73.00           C  \nATOM     33  C   ALA A   7     -10.948 -17.505 -12.034  1.00 69.00           C  \nATOM     34  CB  ALA A   7     -11.905 -17.168 -14.324  1.00 65.00           C  \nATOM     35  O   ALA A   7     -10.520 -16.354 -11.924  1.00 64.00           O  \nATOM     36  N   ALA A   8     -11.014 -17.910 -11.072  1.00 68.00           N  \nATOM     37  CA  ALA A   8     -10.450 -17.438  -9.811  1.00 74.00           C  \nATOM     38  C   ALA A   8      -9.450 -18.443  -9.246  1.00 66.00           C  \nATOM     39  CB  ALA A   8     -11.560 -17.170  -8.798  1.00 58.00           C  \nATOM     40  O   ALA A   8      -8.413 -18.058  -8.702  1.00 60.00           O  \n";
 
-          var icn3dui = new icn3d.iCn3DUI(cfg);
+          // Option 1, initial loading iCn3D
+          window.icn3dui = new icn3d.iCn3DUI(cfg);
+          
+          // or option 2, change the displayed structure
+          // // window.icn3dui = new icn3d.iCn3DUI(cfg);
+          // icn3dui.cfg['mmdbafid'] = '1top,1kq2'; 
+          // let ic = icn3dui.icn3d;
+          // ic.resizeCanvasCls.closeDialogs();
 
           //communicate with the 3D viewer with chained functions
           await icn3dui.show3DStructure(pdbStr);

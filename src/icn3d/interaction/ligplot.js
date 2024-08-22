@@ -113,7 +113,7 @@ class Ligplot {
     }
 
     
-    getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2) { let ic = this.icn3d, me = ic.icn3dui;
+    getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist, bNotDrawNode, prevX2, prevY2) { let ic = this.icn3d, me = ic.icn3dui;
         let xOffset = 1, yOffset = -1;
         let bondLen = (interactionType == 'hbond' || interactionType == 'contact' || interactionType == 'halogen') ? ic.len4ang : ic.len4ang * 1.5; // real distance should be bout 120, not 80
         let shortBondLen = ic.len4ang / 2;
@@ -225,6 +225,26 @@ class Ligplot {
         // sometimes the same ligand atom is used in both Hbond and contact. THus we add "interactionType"
         let idpair = resid2Real + '--' + serialArray1.join('-') + interactionType; 
 
+        let interactionTypeStr;
+        if(interactionType == 'hbond') {
+            interactionTypeStr = 'H-Bonds';
+        }
+        else if(interactionType == 'ionic') {
+            interactionTypeStr = 'Salt Bridge/Ionic';
+        }
+        else if(interactionType == 'halogen') {
+            interactionTypeStr = 'Halogen Bonds';
+        }
+        else if(interactionType == 'pi-cation') {
+            interactionTypeStr = '&pi;-Cation';
+        }
+        else if(interactionType == 'pi-stacking') {
+            interactionTypeStr = '&pi;-Stacking';
+        }
+        else if(interactionType == 'contact') {
+            interactionTypeStr = 'Contacts';
+        }
+
         let id = resid2Real;
         if(bNotDrawNode || ic.resid2ToXy.hasOwnProperty(id)) {
             x2 = (ic.resid2ToXy.hasOwnProperty(id)) ? ic.resid2ToXy[id].x2 : prevX2;
@@ -241,11 +261,12 @@ class Ligplot {
                 }
             }
 
-            line += '<line id="' + idpair + '" x1="' + x1b.toFixed(2)  + '" y1="' + y1b.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" x0="' + x1.toFixed(2)  + '" y0="' + y1.toFixed(2)  + '" short="' + bShort + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+            line +='<g><title>Interaction type: ' + interactionTypeStr + '; Distance: ' + parseFloat(dist).toFixed(1) + ' &#197;</title>';
+            line += '<line class="icn3d-interaction" id="' + idpair + '" resid1="' + resid1Real + '" resid2="' + resid2Real + '" x1="' + x1b.toFixed(2)  + '" y1="' + y1b.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" x0="' + x1.toFixed(2)  + '" y0="' + y1.toFixed(2)  + '" short="' + bShort + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+            line += '</g>\n'
         }
         else {
-            node +='<g>';
-            node += '<title>' + resName2 + '</title>';
+            node +='<g><title>' + resName2 + '</title>';
             // node += '<circle class='icn3d-ctnode' cx="' + x2.toFixed(2) + '" cy="' + y2.toFixed(2)  + '" r="10" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
             let boxWidth = 28, boxHeight = 14;
             node += '<rect id="' + id + '_node" x="' + (x2 - boxWidth*0.5).toFixed(2) + '" y="' + (y2 - boxHeight*0.5).toFixed(2)  + '" width="' + boxWidth + '" height="' + boxHeight + '" rx="2" ry="2" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
@@ -253,7 +274,9 @@ class Ligplot {
             node += '<text class="icn3d-ctnode" resid="' + id + '" id="' + id + '" x="' + x2.toFixed(2)  + '" y="' + y2.toFixed(2)  + '" fill="#000" stroke="none" text-anchor="middle" alignment-baseline="central" style="font-size:10px">' + resName2 + '</text>'
             node += '</g>\n'
 
-            line += '<line id="' + idpair + '" x1="' + x1.toFixed(2)  + '" y1="' + y1.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+            line +='<g><title>Interaction type: ' + interactionTypeStr + '; Distance: ' + parseFloat(dist).toFixed(1) + ' &#197;</title>';
+            line += '<line class="icn3d-interaction" id="' + idpair + '" resid1="' + resid1Real + '" resid2="' + resid2Real + '" x1="' + x1.toFixed(2)  + '" y1="' + y1.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>';
+            line += '</g>\n'
 
             if(interactionType != 'contact') {
                 if(!ic.resid2ToXy.hasOwnProperty(resid2Real)) ic.resid2ToXy[resid2Real] = {x2: x2, y2: y2};
@@ -273,26 +296,29 @@ class Ligplot {
             start: function( e, ui ) {
                 let oriX= parseFloat(e.target.getAttribute('x'));
                 let oriY = parseFloat(e.target.getAttribute('y'));
-
                 e.target.setAttribute('x', oriX);
                 e.target.setAttribute('y', oriY);
             },
             drag: function( e, ui ) {
-                let offsetX = $("#" + me.ligplotid).offset().left + ic.len4ang; // ic.len4ang was defined in svg viewbox
-                let offsetY = $("#" + me.ligplotid).offset().top + ic.len4ang;
+                let ligplotScale = (ic.ligplotScale) ? ic.ligplotScale : 1;
+
+                let offsetX = $("#" + me.ligplotid).offset().left + ic.len4ang * ligplotScale; // ic.len4ang was defined in svg viewbox
+                let offsetY = $("#" + me.ligplotid).offset().top + ic.len4ang * ligplotScale;
 
                 let id = e.target.getAttribute('resid');
-                let x = (e.clientX - offsetX);
-                let y = (e.clientY - offsetY);
+                let x = (e.clientX - offsetX) / ligplotScale;
+                let y = (e.clientY - offsetY) / ligplotScale;
 
                 let oriX = parseFloat(e.target.getAttribute('x'));
                 let oriY = parseFloat(e.target.getAttribute('y'));
 
                 // change for each step
-                let dx = (x - oriX) / ic.resizeRatioX;
-                let dy = (y - oriY) / ic.resizeRatioY;
+                // let dx = (x - oriX) / ic.resizeRatioX;
+                // let dy = (y - oriY) / ic.resizeRatioY;
+                let dx = (x - oriX);
+                let dy = (y - oriY);
 
-                // move the text label
+                // move the node
                 oriX = parseFloat($("#" + id + "_node").attr('x'));
                 oriY = parseFloat($("#" + id + "_node").attr('y'));
 

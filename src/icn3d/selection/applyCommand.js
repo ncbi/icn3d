@@ -1150,6 +1150,7 @@ class ApplyCommand {
         let scale = command.substr(pos + 1);
 
         $("#" + me.ligplotid + "_scale").val(scale);
+        ic.ligplotScale = parseFloat(scale);
 
         $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
       }
@@ -1378,6 +1379,7 @@ class ApplyCommand {
       }
       else if(command.indexOf('glycans cartoon') == 0) {
         let value = command.substr(command.lastIndexOf(' ') + 1);
+
         if(value == 'yes') {
             ic.bGlycansCartoon = true;
         }

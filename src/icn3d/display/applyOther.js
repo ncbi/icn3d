@@ -98,7 +98,7 @@ class ApplyOther {
             }
         }
 
-        if(ic.bInitial) {
+        if(ic.bInitial && ic.bGlycansCartoon === undefined) {
             if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
                 let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
 

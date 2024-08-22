@@ -326,7 +326,7 @@ class LoadScript {
 
             let chainid = paraArray[1].substr(8);
             let geneid = paraArray[2].substr(7);
-            let startpos = paraArray[3].substr(9);
+            let startpos = parseInt(paraArray[3].substr(9));
             let type = paraArray[4].substr(5);
 
             if($("#" + ic.pre + "anno_custom")[0]) {

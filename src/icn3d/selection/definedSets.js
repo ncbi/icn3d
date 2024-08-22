@@ -9,21 +9,21 @@ class DefinedSets {
 
     setProtNuclLigInMenu() { let ic = this.icn3d, me = ic.icn3dui;
         // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
-        if(Object.keys(ic.proteins).length > 0) {
+        if(ic.proteins && Object.keys(ic.proteins).length > 0) {
           //ic.defNames2Atoms['proteins'] = Object.keys(ic.proteins);
           ic.defNames2Residues['proteins'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.proteins));
           ic.defNames2Descr['proteins'] = 'proteins';
           ic.defNames2Command['proteins'] = 'select :proteins';
         }
 
-        if(Object.keys(ic.nucleotides).length > 0) {
+        if(ic.nucleotides && Object.keys(ic.nucleotides).length > 0) {
           //ic.defNames2Atoms['nucleotides'] = Object.keys(ic.nucleotides);
           ic.defNames2Residues['nucleotides'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.nucleotides));
           ic.defNames2Descr['nucleotides'] = 'nucleotides';
           ic.defNames2Command['nucleotides'] = 'select :nucleotides';
         }
 
-        if(Object.keys(ic.chemicals).length > 0) {
+        if(ic.chemicals && Object.keys(ic.chemicals).length > 0) {
           //ic.defNames2Atoms['chemicals'] = Object.keys(ic.chemicals);
           if(ic.bOpm) {
               let chemicalResHash = {}, memResHash = {}
@@ -57,14 +57,14 @@ class DefinedSets {
           }
         }
 
-        if(Object.keys(ic.ions).length > 0) {
+        if(ic.ions && Object.keys(ic.ions).length > 0) {
           //ic.defNames2Atoms['ions'] = Object.keys(ic.ions);
           ic.defNames2Residues['ions'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.ions));
           ic.defNames2Descr['ions'] = 'ions';
           ic.defNames2Command['ions'] = 'select :ions';
         }
 
-        if(Object.keys(ic.water).length > 0) {
+        if(ic.water && Object.keys(ic.water).length > 0) {
           //ic.defNames2Atoms['water'] = Object.keys(ic.water);
           ic.defNames2Residues['water'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.water));
           ic.defNames2Descr['water'] = 'water';
@@ -195,7 +195,7 @@ class DefinedSets {
         }
 
         // select whole structure
-        if(Object.keys(ic.structures) == 1) {
+        if(ic.structures && Object.keys(ic.structures) == 1) {
           let structure = Object.keys(ic.structures)[0];
 
           ic.defNames2Residues[structure] = Object.keys(ic.residues);
@@ -203,7 +203,7 @@ class DefinedSets {
 
           ic.defNames2Command[structure] = 'select $' + structure;
         }
-        else {
+        else if(ic.residues) {
             let resArray = Object.keys(ic.residues);
             let structResHash = {}
             for(let i = 0, il = resArray.length; i < il; ++i) {

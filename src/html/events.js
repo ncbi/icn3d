@@ -1103,7 +1103,11 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           let query_id = $("#" + me.pre + "query_id").val();
+           let query_id = $("#" + me.pre + "query_id").val().trim();
+           if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                return;
+           }
            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
            thisClass.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
@@ -1170,7 +1174,11 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            let query_id = $("#" + me.pre + "query_id").val();
+            let query_id = $("#" + me.pre + "query_id").val().trim();
+            if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                return;
+            }
             let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
             let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
             thisClass.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
@@ -1186,7 +1194,11 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
-            let query_id = $("#" + me.pre + "query_id").val();
+            let query_id = $("#" + me.pre + "query_id").val().trim();
+            if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                return;
+            }
             let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
             let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
             thisClass.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
@@ -2057,6 +2069,7 @@ class Events {
             
             let scale = $("#" + me.ligplotid + "_scale").val();
             $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
+            ic.ligplotScale = parseFloat(scale);
             thisClass.setLogCmd("ligplot scale " + scale, true);
          });
 

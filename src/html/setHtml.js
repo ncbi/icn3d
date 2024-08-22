@@ -145,7 +145,7 @@ class SetHtml {
 
         html += me.htmlCls.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-Bonds; ';
         html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Salt Bridge/Ionic; ';
-        html += '<span style="font-weight:bold">Grey</span>: contacts</div>';
+        html += '<span style="font-weight:bold">Grey</span>: Contacts</div>';
         html += me.htmlCls.divNowrapStr + '<span style="margin-left:33px; color:#FF00FF; font-weight:bold">Magenta</span>: Halogen Bonds; ';
         html += '<span style="color:#FF0000; font-weight:bold">Red</span>: &pi;-Cation; ';
         html += '<span style="color:#0000FF; font-weight:bold">Blue</span>: &pi;-Stacking</div>';

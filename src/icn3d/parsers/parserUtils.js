@@ -650,10 +650,7 @@ class ParserUtils {
       // display the structure right away. load the mns and sequences later
       setTimeout(async function(){
             if(ic.bInitial) {
-        //   if(!ic.bAnnoShown || ic.bResetAnno) {
-            //   if(me.cfg.showsets) {
-            //        ic.definedSetsCls.showSets();
-            //   }
+            // if(ic.bInitial && (!ic.bAnnoShown || ic.bResetAnno)) {
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
                   let id = ic.pre + 'selection';

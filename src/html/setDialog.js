@@ -415,10 +415,10 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_blast_rep_id', 'Align sequence to structure');
-        html += "Enter a Sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the Sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
-        html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
+        html += "Enter a protein sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the protein sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
+        html += "<b>Protein Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
         html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
-        html += "<b>NCBI protein accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
+        html += "<b>Aligned Protein Accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
         //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
         html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
             + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Global Smith-Waterman</button>"
@@ -829,7 +829,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
 
-        html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes can be dragged or clicked. Hold Ctrl key to select multiple nodes. " + me.htmlCls.space3;
+        html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
 
         html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
           + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
@@ -838,7 +838,8 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
 
         // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
-        html += "Color legend for interactions (dashed lines): <br>";
+        // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
+        html += "<b>Color legend</b> for interactions (dashed lines): <br>";
 
         html += me.htmlCls.setHtmlCls.setColorHints();
 
