@@ -370,7 +370,8 @@ class AddTrack {
         $("#" + ic.pre + "tt_custom_" + chnid).append("<div id='" + ic.pre + "tt_custom_" + chnid + "_" + simpTitle + "'></div>");
         $("#" + ic.pre + "tt_custom_" + chnid + "_" + simpTitle).width(divLength);
 
-        let html = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+        // let html = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+        let html = '<div class="icn3d-dl_sequence">';
         let htmlExon = html;
         let html2 = html;
         let html3 = html;
@@ -1677,6 +1678,7 @@ class AddTrack {
             let title =(trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
             let bMsa = true;
             let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
+
             this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray);
         }
 
@@ -1888,6 +1890,7 @@ class AddTrack {
         await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
 
         me.htmlCls.clickMenuCls.setLogCmd("add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type, true);
+        me.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
     }
 
     async addMsaTracks(chainid, startpos, type, fastaList) { let ic = this.icn3d, me = ic.icn3dui;

@@ -213,11 +213,17 @@ class ShowSeq {
         html += '</div>';
         html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
         html3 += '</div></div>';
+        // if(me.cfg.blast_rep_id === chnid) {
+        //     htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
+        // }
+        // else {
+        //     htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+        // }
         if(me.cfg.blast_rep_id === chnid) {
-            htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
+            htmlTmp = '<div class="icn3d-dl_sequence" style="border: solid 1px #000">';
         }
         else {
-            htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            htmlTmp = '<div class="icn3d-dl_sequence">';
         }
         let chainType = 'Protein', chainTypeFull = 'Protein';
         if(type !== undefined) {

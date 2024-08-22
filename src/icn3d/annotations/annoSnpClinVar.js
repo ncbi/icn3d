@@ -360,7 +360,7 @@ class AnnoSnpClinVar {
                                     }
 
                                     //snpTitle += "<br>Links: <span class='" + ic.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + ic.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + ic.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
-                                    snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
+                                    snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' style='color:blue' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' style='color:blue' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
                                 }
                                 else {
                                     if(bCoord && !me.cfg.hidelicense) {
@@ -445,7 +445,7 @@ class AnnoSnpClinVar {
                                 }
 
                                 //snpTitle += "<br>Links: <span class='" + ic.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + ic.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + ic.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
-                                snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
+                                snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' style='color:blue' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' style='color:blue' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
                                 if(j < jl - 1) {
                                     snpTitle += '<br><br>';
                                 }

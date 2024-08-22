@@ -157,7 +157,7 @@ class ApplyDisplay {
             atomsObj = {};
         } // end if(bHighlight === 1)
 
-        if(ic.bInitial) {
+        if(ic.bInitial && ic.bMembrane === undefined) {
             if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
                 let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
 

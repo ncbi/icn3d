@@ -576,7 +576,7 @@ class ViewInterPairs {
                 if(index2xy) {
                     let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
 
-                    let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter);
+                    let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist);
                     svgHtmlNode += result.node;
                     svgHtmlLine += result.line;
                 }
@@ -678,9 +678,12 @@ class ViewInterPairs {
                         let resids = resid1 + '|' + resid2;
             
                         let serialArray1 = resids2distCnt[resids].serialArray1;
-
+                        let dist1_dist2_atom1_atom2 = resids2distCnt[resids].dist1_dist2_atom1_atom2;
+                        let dist1 = dist1_dist2_atom1_atom2[0]; // min dist
+                        let dist2 = dist1_dist2_atom1_atom2[1]; // c-alpha dist
+                        // let dist = (dist1 < dist2) ? dist1 : dist2;
                         let bNotDrawNode = (i == 0) ? false : true;
-                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2);
+                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist1, bNotDrawNode, prevX2, prevY2);
                         svgHtmlNode += result.node;
                         svgHtmlLine += result.line;
                         prevX2 = result.x2;

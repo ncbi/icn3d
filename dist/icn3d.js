@@ -15033,10 +15033,10 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:600px;' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_blast_rep_id', 'Align sequence to structure');
-            html += "Enter a Sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the Sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
-            html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
+            html += "Enter a protein sequence ID (or FASTA sequence) and the aligned protein accession, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch' target='_blank'>BLAST</a> search with the protein sequence ID or FASTA sequence as input. If the protein accession is not a PDB chain, the corresponding AlphaFold UniProt structure is used.<br><br> ";
+            html += "<b>Protein Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
             html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
-            html += "<b>NCBI protein accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
+            html += "<b>Aligned Protein Accession</b> (or a chain of a PDB): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
             //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
             html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
                 + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Global Smith-Waterman</button>"
@@ -15447,7 +15447,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
 
-            html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes can be dragged or clicked. Hold Ctrl key to select multiple nodes. " + me.htmlCls.space3;
+            html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
 
             html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
               + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
@@ -15456,7 +15456,8 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
 
             // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
-            html += "Color legend for interactions (dashed lines): <br>";
+            // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
+            html += "<b>Color legend</b> for interactions (dashed lines): <br>";
 
             html += me.htmlCls.setHtmlCls.setColorHints();
 
@@ -17340,7 +17341,11 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               let query_id = $("#" + me.pre + "query_id").val();
+               let query_id = $("#" + me.pre + "query_id").val().trim();
+               if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                    alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                    return;
+               }
                let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
                let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
                thisClass.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
@@ -17407,7 +17412,11 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
-                let query_id = $("#" + me.pre + "query_id").val();
+                let query_id = $("#" + me.pre + "query_id").val().trim();
+                if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                    alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                    return;
+                }
                 let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
                 let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
                 thisClass.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
@@ -17423,7 +17432,11 @@ var icn3d = (function (exports) {
              me.myEventCls.onIds("#" + me.pre + "reload_alignswlocal", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 if(!me.cfg.notebook) dialog.dialog( "close" );
-                let query_id = $("#" + me.pre + "query_id").val();
+                let query_id = $("#" + me.pre + "query_id").val().trim();
+                if(query_id.substr(1, 2) == 'M_') { // e.g., NM_..., XM_...
+                    alert("You are inputting a nucleotide accession " + query_id + ". Please use a protein accession instead.");
+                    return;
+                }
                 let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
                 let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
                 thisClass.setLogCmd("load seq_struct_ids_local_smithwm " + query_id + "," + blast_rep_id, false);
@@ -18294,6 +18307,7 @@ var icn3d = (function (exports) {
                 
                 let scale = $("#" + me.ligplotid + "_scale").val();
                 $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
+                ic.ligplotScale = parseFloat(scale);
                 thisClass.setLogCmd("ligplot scale " + scale, true);
              });
 
@@ -19544,7 +19558,7 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-Bonds; ';
             html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Salt Bridge/Ionic; ';
-            html += '<span style="font-weight:bold">Grey</span>: contacts</div>';
+            html += '<span style="font-weight:bold">Grey</span>: Contacts</div>';
             html += me.htmlCls.divNowrapStr + '<span style="margin-left:33px; color:#FF00FF; font-weight:bold">Magenta</span>: Halogen Bonds; ';
             html += '<span style="color:#FF0000; font-weight:bold">Red</span>: &pi;-Cation; ';
             html += '<span style="color:#0000FF; font-weight:bold">Blue</span>: &pi;-Stacking</div>';
@@ -34815,7 +34829,7 @@ var icn3d = (function (exports) {
                 atomsObj = {};
             } // end if(bHighlight === 1)
 
-            if(ic.bInitial) {
+            if(ic.bInitial && ic.bMembrane === undefined) {
                 if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
                     let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
 
@@ -35109,7 +35123,7 @@ var icn3d = (function (exports) {
                 }
             }
 
-            if(ic.bInitial) {
+            if(ic.bInitial && ic.bGlycansCartoon === undefined) {
                 if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
                     let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
 
@@ -43329,7 +43343,7 @@ var icn3d = (function (exports) {
                                         }
 
                                         //snpTitle += "<br>Links: <span class='" + ic.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + ic.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + ic.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
-                                        snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
+                                        snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' style='color:blue' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' style='color:blue' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
                                     }
                                     else {
                                         if(bCoord && !me.cfg.hidelicense) {
@@ -43411,7 +43425,7 @@ var icn3d = (function (exports) {
                                     }
 
                                     //snpTitle += "<br>Links: <span class='" + ic.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + ic.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + ic.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
-                                    snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
+                                    snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' style='color:blue' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' style='color:blue' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
                                     if(j < jl - 1) {
                                         snpTitle += '<br><br>';
                                     }
@@ -45603,7 +45617,8 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + "tt_custom_" + chnid).append("<div id='" + ic.pre + "tt_custom_" + chnid + "_" + simpTitle + "'></div>");
             $("#" + ic.pre + "tt_custom_" + chnid + "_" + simpTitle).width(divLength);
 
-            let html = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            // let html = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            let html = '<div class="icn3d-dl_sequence">';
             let htmlExon = html;
             let html2 = html;
             let html3 = html;
@@ -46898,6 +46913,7 @@ var icn3d = (function (exports) {
                 let title =(trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
                 let bMsa = true;
                 let exonArray = (acc2exons) ? acc2exons[trackTitleArray[j]] : undefined;
+
                 this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa, fromArray, toArray, seqStartLen, exonArray, offsetArray);
             }
 
@@ -47109,6 +47125,7 @@ var icn3d = (function (exports) {
             await thisClass.showMsaTracks(chainid, seqFirst, trackTitleArray, trackSeqArray, startpos, type, acc2exons);
 
             me.htmlCls.clickMenuCls.setLogCmd("add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type, true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
         }
 
         async addMsaTracks(chainid, startpos, type, fastaList) { let ic = this.icn3d, me = ic.icn3dui;
@@ -48249,7 +48266,8 @@ var icn3d = (function (exports) {
             $("#" + ic.pre + "anno_" + name).append("<div id='" + ic.pre + "giseq_" + name + "'><div id='" + ic.pre + "dt_giseq_" + name + "' style='display:none'></div><div id='" + ic.pre + "ov_giseq_" + name + "'></div></div>");
             $("#" + ic.pre + "anno_" + name).append("<br><hr><br>");
             // sequence, detailed view
-            let htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            // let htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            let htmlTmp = '<div class="icn3d-dl_sequence">';
             let chainType = 'Chem.', chainTypeFull = 'Chemical';
             //htmlTmp += '<div class="icn3d-seqTitle2" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
             htmlTmp += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" anno="sequence" gi="' + name + '" resn="' + name + '"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
@@ -48286,6 +48304,8 @@ var icn3d = (function (exports) {
         }
 
         async processSeqData(chainid_seq) { let ic = this.icn3d, me = ic.icn3dui;
+            ic.bAnnoShown = true;
+
             for(let chnid in ic.protein_chainid) {
                 let chnidBase = ic.protein_chainid[chnid];
                 //if(chainid_seq.hasOwnProperty(chnid)) {
@@ -48803,11 +48823,17 @@ var icn3d = (function (exports) {
             html += '</div>';
             html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
             html3 += '</div></div>';
+            // if(me.cfg.blast_rep_id === chnid) {
+            //     htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
+            // }
+            // else {
+            //     htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+            // }
             if(me.cfg.blast_rep_id === chnid) {
-                htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
+                htmlTmp = '<div class="icn3d-dl_sequence" style="border: solid 1px #000">';
             }
             else {
-                htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+                htmlTmp = '<div class="icn3d-dl_sequence">';
             }
             let chainType = 'Protein', chainTypeFull = 'Protein';
             if(type !== undefined) {
@@ -52374,7 +52400,7 @@ var icn3d = (function (exports) {
                     if(index2xy) {
                         let serialArray1 = resid1Ori.substr(pos1 + 1).split(',');
 
-                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter);
+                        let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist);
                         svgHtmlNode += result.node;
                         svgHtmlLine += result.line;
                     }
@@ -52476,9 +52502,12 @@ var icn3d = (function (exports) {
                             let resids = resid1 + '|' + resid2;
                 
                             let serialArray1 = resids2distCnt[resids].serialArray1;
-
+                            let dist1_dist2_atom1_atom2 = resids2distCnt[resids].dist1_dist2_atom1_atom2;
+                            let dist1 = dist1_dist2_atom1_atom2[0]; // min dist
+                            dist1_dist2_atom1_atom2[1]; // c-alpha dist
+                            // let dist = (dist1 < dist2) ? dist1 : dist2;
                             let bNotDrawNode = (i == 0) ? false : true;
-                            let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2);
+                            let result = ic.ligplotCls.getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist1, bNotDrawNode, prevX2, prevY2);
                             svgHtmlNode += result.node;
                             svgHtmlLine += result.line;
                             prevX2 = result.x2;
@@ -61134,10 +61163,7 @@ var icn3d = (function (exports) {
           // display the structure right away. load the mns and sequences later
           setTimeout(async function(){
                 if(ic.bInitial) {
-            //   if(!ic.bAnnoShown || ic.bResetAnno) {
-                //   if(me.cfg.showsets) {
-                //        ic.definedSetsCls.showSets();
-                //   }
+                // if(ic.bInitial && (!ic.bAnnoShown || ic.bResetAnno)) {
                   if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                       // expand the toolbar
                       let id = ic.pre + 'selection';
@@ -67276,6 +67302,7 @@ var icn3d = (function (exports) {
             let scale = command.substr(pos + 1);
 
             $("#" + me.ligplotid + "_scale").val(scale);
+            ic.ligplotScale = parseFloat(scale);
 
             $("#" + me.ligplotid).attr("width",(ic.ligplotWidth * parseFloat(scale)).toString() + "px");
           }
@@ -67504,6 +67531,7 @@ var icn3d = (function (exports) {
           }
           else if(command.indexOf('glycans cartoon') == 0) {
             let value = command.substr(command.lastIndexOf(' ') + 1);
+
             if(value == 'yes') {
                 ic.bGlycansCartoon = true;
             }
@@ -67966,21 +67994,21 @@ var icn3d = (function (exports) {
 
         setProtNuclLigInMenu() { let ic = this.icn3d; ic.icn3dui;
             // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
-            if(Object.keys(ic.proteins).length > 0) {
+            if(ic.proteins && Object.keys(ic.proteins).length > 0) {
               //ic.defNames2Atoms['proteins'] = Object.keys(ic.proteins);
               ic.defNames2Residues['proteins'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.proteins));
               ic.defNames2Descr['proteins'] = 'proteins';
               ic.defNames2Command['proteins'] = 'select :proteins';
             }
 
-            if(Object.keys(ic.nucleotides).length > 0) {
+            if(ic.nucleotides && Object.keys(ic.nucleotides).length > 0) {
               //ic.defNames2Atoms['nucleotides'] = Object.keys(ic.nucleotides);
               ic.defNames2Residues['nucleotides'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.nucleotides));
               ic.defNames2Descr['nucleotides'] = 'nucleotides';
               ic.defNames2Command['nucleotides'] = 'select :nucleotides';
             }
 
-            if(Object.keys(ic.chemicals).length > 0) {
+            if(ic.chemicals && Object.keys(ic.chemicals).length > 0) {
               //ic.defNames2Atoms['chemicals'] = Object.keys(ic.chemicals);
               if(ic.bOpm) {
                   let chemicalResHash = {}, memResHash = {};
@@ -68014,14 +68042,14 @@ var icn3d = (function (exports) {
               }
             }
 
-            if(Object.keys(ic.ions).length > 0) {
+            if(ic.ions && Object.keys(ic.ions).length > 0) {
               //ic.defNames2Atoms['ions'] = Object.keys(ic.ions);
               ic.defNames2Residues['ions'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.ions));
               ic.defNames2Descr['ions'] = 'ions';
               ic.defNames2Command['ions'] = 'select :ions';
             }
 
-            if(Object.keys(ic.water).length > 0) {
+            if(ic.water && Object.keys(ic.water).length > 0) {
               //ic.defNames2Atoms['water'] = Object.keys(ic.water);
               ic.defNames2Residues['water'] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.water));
               ic.defNames2Descr['water'] = 'water';
@@ -68152,7 +68180,7 @@ var icn3d = (function (exports) {
             }
 
             // select whole structure
-            if(Object.keys(ic.structures) == 1) {
+            if(ic.structures && Object.keys(ic.structures) == 1) {
               let structure = Object.keys(ic.structures)[0];
 
               ic.defNames2Residues[structure] = Object.keys(ic.residues);
@@ -68160,7 +68188,7 @@ var icn3d = (function (exports) {
 
               ic.defNames2Command[structure] = 'select $' + structure;
             }
-            else {
+            else if(ic.residues) {
                 let resArray = Object.keys(ic.residues);
                 let structResHash = {};
                 for(let i = 0, il = resArray.length; i < il; ++i) {
@@ -69239,7 +69267,7 @@ var icn3d = (function (exports) {
 
                 let chainid = paraArray[1].substr(8);
                 let geneid = paraArray[2].substr(7);
-                let startpos = paraArray[3].substr(9);
+                let startpos = parseInt(paraArray[3].substr(9));
                 let type = paraArray[4].substr(5);
 
                 if($("#" + ic.pre + "anno_custom")[0]) {
@@ -76558,6 +76586,12 @@ var icn3d = (function (exports) {
                 thisClass.clickInteraction(this);
             });
 
+            $(document).on("click", "#" + ic.pre + "dl_ligplot .icn3d-interaction", function(e) { thisClass.icn3d;
+                e.stopImmediatePropagation();
+
+                thisClass.clickInteraction(this);
+            });
+
             $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-node", function(e) { thisClass.icn3d;
                 e.stopImmediatePropagation();
 
@@ -77806,7 +77840,7 @@ var icn3d = (function (exports) {
         }
 
         
-        getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, bNotDrawNode, prevX2, prevY2) { let ic = this.icn3d, me = ic.icn3dui;
+        getSvgPerPair(serialArray1, resid1, resid2, interactionType, index2xy, xlen, ylen, xcenter, ycenter, dist, bNotDrawNode, prevX2, prevY2) { let ic = this.icn3d, me = ic.icn3dui;
             let xOffset = 1, yOffset = -1;
             let bondLen = (interactionType == 'hbond' || interactionType == 'contact' || interactionType == 'halogen') ? ic.len4ang : ic.len4ang * 1.5; // real distance should be bout 120, not 80
             let shortBondLen = ic.len4ang / 2;
@@ -77918,6 +77952,26 @@ var icn3d = (function (exports) {
             // sometimes the same ligand atom is used in both Hbond and contact. THus we add "interactionType"
             let idpair = resid2Real + '--' + serialArray1.join('-') + interactionType; 
 
+            let interactionTypeStr;
+            if(interactionType == 'hbond') {
+                interactionTypeStr = 'H-Bonds';
+            }
+            else if(interactionType == 'ionic') {
+                interactionTypeStr = 'Salt Bridge/Ionic';
+            }
+            else if(interactionType == 'halogen') {
+                interactionTypeStr = 'Halogen Bonds';
+            }
+            else if(interactionType == 'pi-cation') {
+                interactionTypeStr = '&pi;-Cation';
+            }
+            else if(interactionType == 'pi-stacking') {
+                interactionTypeStr = '&pi;-Stacking';
+            }
+            else if(interactionType == 'contact') {
+                interactionTypeStr = 'Contacts';
+            }
+
             let id = resid2Real;
             if(bNotDrawNode || ic.resid2ToXy.hasOwnProperty(id)) {
                 x2 = (ic.resid2ToXy.hasOwnProperty(id)) ? ic.resid2ToXy[id].x2 : prevX2;
@@ -77934,11 +77988,12 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                line += '<line id="' + idpair + '" x1="' + x1b.toFixed(2)  + '" y1="' + y1b.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" x0="' + x1.toFixed(2)  + '" y0="' + y1.toFixed(2)  + '" short="' + bShort + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+                line +='<g><title>Interaction type: ' + interactionTypeStr + '; Distance: ' + parseFloat(dist).toFixed(1) + ' &#197;</title>';
+                line += '<line class="icn3d-interaction" id="' + idpair + '" resid1="' + resid1Real + '" resid2="' + resid2Real + '" x1="' + x1b.toFixed(2)  + '" y1="' + y1b.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" x0="' + x1.toFixed(2)  + '" y0="' + y1.toFixed(2)  + '" short="' + bShort + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+                line += '</g>\n';
             }
             else {
-                node +='<g>';
-                node += '<title>' + resName2 + '</title>';
+                node +='<g><title>' + resName2 + '</title>';
                 // node += '<circle class='icn3d-ctnode' cx="' + x2.toFixed(2) + '" cy="' + y2.toFixed(2)  + '" r="10" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
                 let boxWidth = 28, boxHeight = 14;
                 node += '<rect id="' + id + '_node" x="' + (x2 - boxWidth*0.5).toFixed(2) + '" y="' + (y2 - boxHeight*0.5).toFixed(2)  + '" width="' + boxWidth + '" height="' + boxHeight + '" rx="2" ry="2" fill="#' + textColor2 + '" stroke-width="1" stroke="' + textColor2 + '" resid="' + resid2Real + '"/>';
@@ -77946,7 +78001,9 @@ var icn3d = (function (exports) {
                 node += '<text class="icn3d-ctnode" resid="' + id + '" id="' + id + '" x="' + x2.toFixed(2)  + '" y="' + y2.toFixed(2)  + '" fill="#000" stroke="none" text-anchor="middle" alignment-baseline="central" style="font-size:10px">' + resName2 + '</text>';
                 node += '</g>\n';
 
-                line += '<line id="' + idpair + '" x1="' + x1.toFixed(2)  + '" y1="' + y1.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>\n';
+                line +='<g><title>Interaction type: ' + interactionTypeStr + '; Distance: ' + parseFloat(dist).toFixed(1) + ' &#197;</title>';
+                line += '<line class="icn3d-interaction" id="' + idpair + '" resid1="' + resid1Real + '" resid2="' + resid2Real + '" x1="' + x1.toFixed(2)  + '" y1="' + y1.toFixed(2)  + '" x2="' + x2.toFixed(2)  + '" y2="' + y2.toFixed(2)  + '" opacity="1.0" stroke="' + lineColor + '"  stroke-width="' + strokeWidth + '" stroke-dasharray="5,5"/>';
+                line += '</g>\n';
 
                 if(interactionType != 'contact') {
                     if(!ic.resid2ToXy.hasOwnProperty(resid2Real)) ic.resid2ToXy[resid2Real] = {x2: x2, y2: y2};
@@ -77966,26 +78023,29 @@ var icn3d = (function (exports) {
                 start: function( e, ui ) {
                     let oriX= parseFloat(e.target.getAttribute('x'));
                     let oriY = parseFloat(e.target.getAttribute('y'));
-
                     e.target.setAttribute('x', oriX);
                     e.target.setAttribute('y', oriY);
                 },
                 drag: function( e, ui ) {
-                    let offsetX = $("#" + me.ligplotid).offset().left + ic.len4ang; // ic.len4ang was defined in svg viewbox
-                    let offsetY = $("#" + me.ligplotid).offset().top + ic.len4ang;
+                    let ligplotScale = (ic.ligplotScale) ? ic.ligplotScale : 1;
+
+                    let offsetX = $("#" + me.ligplotid).offset().left + ic.len4ang * ligplotScale; // ic.len4ang was defined in svg viewbox
+                    let offsetY = $("#" + me.ligplotid).offset().top + ic.len4ang * ligplotScale;
 
                     let id = e.target.getAttribute('resid');
-                    let x = (e.clientX - offsetX);
-                    let y = (e.clientY - offsetY);
+                    let x = (e.clientX - offsetX) / ligplotScale;
+                    let y = (e.clientY - offsetY) / ligplotScale;
 
                     let oriX = parseFloat(e.target.getAttribute('x'));
                     let oriY = parseFloat(e.target.getAttribute('y'));
 
                     // change for each step
-                    let dx = (x - oriX) / ic.resizeRatioX;
-                    let dy = (y - oriY) / ic.resizeRatioY;
+                    // let dx = (x - oriX) / ic.resizeRatioX;
+                    // let dy = (y - oriY) / ic.resizeRatioY;
+                    let dx = (x - oriX);
+                    let dy = (y - oriY);
 
-                    // move the text label
+                    // move the node
                     oriX = parseFloat($("#" + id + "_node").attr('x'));
                     oriY = parseFloat($("#" + id + "_node").attr('y'));
 

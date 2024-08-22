@@ -705,6 +705,12 @@ class Diagram2d {
             thisClass.clickInteraction(this);
         });
 
+        $(document).on("click", "#" + ic.pre + "dl_ligplot .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+
+            thisClass.clickInteraction(this);
+        });
+
         $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
