@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.35.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.35.0.zip) was release on September 10, 2024. Retrieved updated ClinVar annotations directly from NCBI ClinVar database.
+
 [icn3d-3.34.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.34.1.zip) was release on August 5, 2024. Switched VAST search alignment from backend to dynamic alignment in iCn3D. 
 
 [icn3d-3.34.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.34.0.zip) was release on July 29, 2024. Show atom details for the interaction of one ligand/residue with protein via the menu "Analysis > Interaction" and then the button "2D Interaction for One Ligand/Residue". 

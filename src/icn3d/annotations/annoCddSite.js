@@ -87,6 +87,7 @@ class AnnoCddSite {
         if(me.bNode) {
             if(!ic.resid2cdd) ic.resid2cdd = {};
             if(!ic.resid2site) ic.resid2site = {};
+            if(!ic.chainid2cdd) ic.chainid2cdd = {};
         }
 
         for(let i = 0, il = dataArray.length; i < il; ++i) {
@@ -109,6 +110,8 @@ class AnnoCddSite {
                 let html3 = html;
                 let domainArray = cddData.doms;
                 if(me.bNode && !ic.resid2cdd[chnid]) ic.resid2cdd[chnid] = [];
+                if(me.bNode && !ic.chainid2cdd[chnid]) ic.chainid2cdd[chnid] = [];
+
                 let result = thisClass.setDomainFeature(domainArray, chnid, 'domain', html, html2, html3);
 
                 ic.chainid2pssmid[chnid] = {pssmid2name: result.pssmid2name, pssmid2fromArray: result.pssmid2fromArray, pssmid2toArray: result.pssmid2toArray};
@@ -265,6 +268,22 @@ class AnnoCddSite {
         ic.bAjaxCddSite = true;
     }
 
+    getResiArrayStr(resiNCBIArray, chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let resiArrayStr = '';
+        for(let i = 0, il = resiNCBIArray.length; i < il; ++i) {
+            let resiNCBI = resiNCBIArray[i] + 1; // zero-based
+            let residNCBI = chainid + '_' + resiNCBI;
+            let resid = ic.ncbi2resid[residNCBI];
+            if(!resid) resid = residNCBI; // this happens sometimes, e.g., Q9Y4K1
+
+            let resi = resid.split('_')[2];
+            if(i > 0) resiArrayStr += ',';
+            resiArrayStr += resi;
+        }
+
+        return resiArrayStr;
+    }
+
     setDomainFeature(domainArray, chnid, type, html, html2, html3, acc2domain, titleArray, fullTitleArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
@@ -400,6 +419,12 @@ class AnnoCddSite {
                 let pre = type + index.toString();
 
                 if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
+
+                if(me.bNode && type == 'domain') {
+                    let fromStr = this.getResiArrayStr(fromArray, chnid);
+                    let toStr = this.getResiArrayStr(toArray, chnid);
+                    ic.chainid2cdd[chnid].push(fulltitle + "_from_" + fromStr + "_to_" + toStr);
+                }
 
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
