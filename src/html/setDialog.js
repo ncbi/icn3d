@@ -452,9 +452,9 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_pngimage' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_pngimage', 'Please input an iCn3D PNG Image file');
-        html += "iCn3D PNG image: " + me.htmlCls.inputFileStr + "id='" + me.pre + "pngimage'><br/>";
-        html += me.htmlCls.buttonStr + "reload_pngimage' style='margin-top: 6px;'>Load</button>";
+        html += this.addNotebookTitle('dl_pngimage', 'Please append iCn3D PNG Image files');
+        html += "Multiple iCn3D PNG images: " + me.htmlCls.inputFileStr + " multiple id='" + me.pre + "pngimage' size=8><br/>";
+        html += me.htmlCls.buttonStr + "reload_pngimage' style='margin-top: 6px;'>Append</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_state' class='" + dialogClass + "'>";

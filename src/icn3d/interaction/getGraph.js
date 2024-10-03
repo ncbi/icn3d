@@ -318,6 +318,7 @@ class GetGraph {
                let residLabel = '1_1_' + resid;
                //if(cnt > 0) nodeStr += ', ';
                let colorStr = (atom.color) ? atom.color.getHexString().toUpperCase() : '000';
+               
                nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
                    + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + colorStr + '"}');
                if(cnt > 0 && prevChain == atom.chain &&(ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi] + 1 || ic.resid2ncbi[atom.resi] == ic.resid2ncbi[prevResi]) ) {

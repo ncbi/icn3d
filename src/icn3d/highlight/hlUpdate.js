@@ -210,6 +210,7 @@ class HlUpdate {
       if(chainArray2d !== undefined) {
           for(let i = 0, il = chainArray2d.length; i < il; ++i) {
               let hlatoms = me.hashUtilsCls.intHash(ic.chains[chainArray2d[i]], ic.hAtoms);
+              if(!ic.chains[chainArray2d[i]]) continue;
               let ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(ic.chains[chainArray2d[i]]).length;
 
               let firstAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(hlatoms);

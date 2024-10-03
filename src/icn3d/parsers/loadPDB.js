@@ -19,7 +19,7 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
+    async loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;
@@ -29,6 +29,8 @@ class LoadPDB {
         let residuesTmp = {} // serial -> atom
 
         if(!ic.atoms) bAppend = false;
+
+        if(ic.statefileArray) ic.struct_statefile = [];
 
         let serial, moleculeNum;
         if(!bMutation && !bAppend) {
@@ -226,11 +228,14 @@ class LoadPDB {
 
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
             } else if (record === 'ENDMDL') {
+                if(ic.statefileArray) {
+                    ic.struct_statefile.push({'structure': structure, 'statefile': ic.statefileArray[moleculeNum - 1]});
+                }
+
                 ++moleculeNum;
                 id = ic.defaultPdbId;
 
                 structure = this.getStructureId(id, moleculeNum, bMutation);
-
                 //helices = [];
                 //sheets = [];
                 if(!bNMR) {
@@ -501,6 +506,10 @@ class LoadPDB {
         ic.residues[residueNum] = residuesTmp;
         if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {}
         ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
+
+        if(ic.statefileArray) {
+            ic.struct_statefile.push({'structure': structure, 'statefile': ic.statefileArray[moleculeNum - 1]});
+        }
 
         //if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
         this.adjustSeq(ic.chainMissingResidueArray);

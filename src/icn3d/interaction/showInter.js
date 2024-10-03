@@ -123,11 +123,12 @@ class ShowInter {
         let firstSetAtoms, complement;
         firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-        let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
+        // let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(firstSetAtoms);
 
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             // let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
+
             let commanddesc;
             if(bSaltbridge) {
                 ic.resid2ResidhashSaltbridge = me.hashUtilsCls.cloneHash(ic.resid2Residhash);

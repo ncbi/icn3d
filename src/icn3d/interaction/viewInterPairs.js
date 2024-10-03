@@ -109,6 +109,7 @@ class ViewInterPairs {
            if(!threshold || isNaN(threshold)) threshold = ic.tsHbond;
            if(!bHbondCalc) {
                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
+
                ic.showInterCls.showHbonds(threshold, nameArray2, nameArray, bHbondCalc, undefined, type);
            }
            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.hAtoms);
