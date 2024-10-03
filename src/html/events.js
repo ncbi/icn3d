@@ -90,11 +90,18 @@ class Events {
         }
     }
 
-    async readFile(bAppend, files, index, dataStrAll, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async readFile(bAppend, files, index, dataStrAll, bmmCIF, bPng) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
-        commandName += (bmmCIF) ? ' mmcif file ': ' pdb file ';
+        commandName += (bmmCIF) ? ' mmcif file ' : (bPng) ? ' png file ' : ' pdb file ';
         
+        /*
+             reader.onload = async function(e) {
+               let imageStr = e.target.result; // or = reader.result;
+               await thisClass.loadPng(dataStr);
+             }
+             */
+
         let reader = new FileReader();
         reader.onload = async function(e) {
             let dataStr = e.target.result; // or = reader.result;
@@ -112,7 +119,14 @@ class Events {
             }
 
             ic.bInputfile = true;
-            ic.InputfileType = (bmmCIF) ? 'mmcif' : 'pdb';
+            ic.InputfileType = (bmmCIF) ? 'mmcif' : (bPng) ? 'png' : 'pdb';
+            if(bPng) {
+                let result = await me.htmlCls.setHtmlCls.loadPng(dataStr);
+                dataStr = result.pdb;
+                if(!ic.statefileArray) ic.statefileArray = [];
+                ic.statefileArray.push(result.statefile);
+            }
+
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
 
             dataStrAll = (index > 0) ? dataStrAll + '\nENDMDL\n' + dataStr : dataStr;
@@ -132,7 +146,7 @@ class Events {
                 //ic.InputfileType = undefined; // reset
             }
             else {
-                await thisClass.readFile(bAppend, files, index + 1, dataStrAll, bmmCIF);
+                await thisClass.readFile(bAppend, files, index + 1, dataStrAll, bmmCIF, bPng);
             }
 
             if(bAppend) {

@@ -512,15 +512,15 @@ class LoadCIF {
                 }
 
                 // from DSSP C++ code
-                // if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
-                //     let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
+                if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
+                    let dist = ic.atoms[prevCSerial].coord.distanceTo(ic.atoms[prevOSerial].coord);
 
-                //     let x2 = atomDetails.coord.x + (ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
-                //     let y2 = atomDetails.coord.y + (ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
-                //     let z2 = atomDetails.coord.z + (ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
+                    let x2 = atomDetails.coord.x + (ic.atoms[prevCSerial].coord.x - ic.atoms[prevOSerial].coord.x) / dist;
+                    let y2 = atomDetails.coord.y + (ic.atoms[prevCSerial].coord.y - ic.atoms[prevOSerial].coord.y) / dist;
+                    let z2 = atomDetails.coord.z + (ic.atoms[prevCSerial].coord.z - ic.atoms[prevOSerial].coord.z) / dist;
 
-                //     atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
-                // }
+                    atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
+                }
 
                 ic.atoms[serial] = atomDetails;
 

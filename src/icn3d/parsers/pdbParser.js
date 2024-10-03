@@ -108,7 +108,8 @@ class PdbParser {
             await ic.mmcifParserCls.loadMmcifData(data);
         }
         else if(type === 'icn3dpng') {
-            await me.htmlCls.setHtmlCls.loadPng(data, command);
+            // await me.htmlCls.setHtmlCls.loadPng(data, command);
+            await me.htmlCls.setHtmlCls.loadPng(data);
         }
         else if(type === 'pae') {
             me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
@@ -137,7 +138,7 @@ class PdbParser {
             if(!ic.bStatefile) ic.init(bKeepCmd);
         }
 
-        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library
+        let hAtoms = await ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bEsmfold); // defined in the core library
 
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -185,9 +186,7 @@ class PdbParser {
             await this.applyCommandDssp(bAppend);
         }
         else {
-            // could this line be removed?
             await this.loadPdbDataRender(bAppend);
-
             if(!me.bNode) await ic.ParserUtilsCls.checkMemProteinAndRotate();
 
             /// if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
@@ -233,7 +232,36 @@ class PdbParser {
             ic.definedSetsCls.setModeAndDisplay('all');
         }
 
+        if(ic.struct_statefile) {
+            for(let i = 0, il = ic.struct_statefile.length; i < il; ++i) {
+                await this.execStatefile(ic.struct_statefile[i].structure, ic.struct_statefile[i].statefile);
+            }
+        }
+
     //    if(me.deferred !== undefined) me.deferred.resolve(); /// if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+    }
+
+    async execStatefile(structure, statefile) {let ic = this.icn3d, me = ic.icn3dui;
+        // if(!statefile) return;
+
+        let commandArray = statefile.trim().split('\n');
+        commandArray = ['select $' + structure].concat(commandArray);
+        ic.STATENUMBER = commandArray.length;
+        ic.CURRENTNUMBER = 0;
+        let bStrict = true;
+
+        let hAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        let commands = ic.commands;
+
+        // reset ic.hAtoms
+        ic.hAtoms = {};
+        ic.commands = commandArray;
+        
+        await ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER, bStrict);
+
+        // revert back to the original set
+        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
+        ic.commands = commands.concat(ic.commands);
     }
 }
 

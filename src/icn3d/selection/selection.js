@@ -35,14 +35,16 @@ class Selection {
         ic.hAtoms = {}
         ic.dAtoms = {}
 
-        for(let i in ic.chains) {
-           ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[i]);
-           //ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[i]);
+        for(let structure in ic.structures) {
+            let chainidArray = ic.structures[structure];
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainidArray[i]]);
+            }
         }
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-        ic.ALTERNATE_STRUCTURE = -1
+        ic.ALTERNATE_STRUCTURE = -1;
     }
 
     //Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".

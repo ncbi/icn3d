@@ -109,14 +109,16 @@ class LoadScript {
       for(i=start; i <= end; ++i) {
           let bFinalStep =(i === steps - 1) ? true : false;
 
-          if(!ic.commands[i].trim()) continue;
+          if(!ic.commands[i] || !ic.commands[i].trim()) {
+            continue;
+          }
+
           let nAtoms = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
 
           if(nAtoms == 0 && ic.commands[i].indexOf('load') == -1) continue;
 
           let strArray = ic.commands[i].split("|||");
           let command = strArray[0].trim();
-
           // sometimes URL has an ID input, then load a structure in commands
           //if(ic.inputid) ic.bNotLoadStructure = true;
   

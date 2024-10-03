@@ -670,7 +670,7 @@ class SetHtml {
         if(me.bNode) return;
 
         let thisClass = this;
-        me.myEventCls.onIds("#" + me.pre + "reload_pngimage", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_pngimage", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
@@ -680,50 +680,53 @@ class SetHtml {
            else {
                ic.resizeCanvasCls.closeDialogs();
            }
-           // initialize icn3dui
-           //me.initUI();
-           ic.init();
-           let file = $("#" + me.pre + "pngimage")[0].files[0];
-           if(!file) {
+
+        //    ic.init();
+           let files = $("#" + me.pre + "pngimage")[0].files;
+           if(!files[0]) {
              alert("Please select a file before clicking 'Load'");
            }
            else {
              thisClass.fileSupport();
-             let reader = new FileReader();
-             reader.onload = async function(e) {
-               let imageStr = e.target.result; // or = reader.result;
-               await thisClass.loadPng(imageStr);
-             }
-             reader.readAsText(file);
+
+             let bAppend = true;
+             let bmmCIF = false;
+             let bPng = true;
+             await me.htmlCls.eventsCls.readFile(bAppend, files, 0, '', bmmCIF, bPng);
            }
         });
     }
 
-    async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
+    // async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
+    async loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
        let matchedStr = 'Share Link: ';
        let pos = imageStr.indexOf(matchedStr);
        let matchedStrState = "Start of state file======\n";
        let posState = imageStr.indexOf(matchedStrState);
+
+       let data = '', statefile = '';
+
        if(pos == -1 && posState == -1) {
            alert('Please load a PNG image saved by clicking the menu "File > Save File > iCn3D PNG Image"...');
        }
-       else if(pos != -1) {
-           let url = imageStr.substr(pos + matchedStr.length);
-           me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-           window.open(url, '_self');
-       }
+    //    else if(!bReturn && pos != -1) { // no need to return pdb and state files
+    //        let url = imageStr.substr(pos + matchedStr.length);
+    //        me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+    //        window.open(url, '_self');
+    //    }
        else if(posState != -1) {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
            ic.bInputPNGWithData = ic.bInputfile;
-           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+        //    let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+           let commandStr = '';
 
-           let statefile;
-           if(ic.bInputfile) {
+        //    let statefile;
+        //    if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
-               let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
-               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
+               data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+            //    ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
 
                let matchedStrType = "Start of type file======\n";
                let posType = imageStr.indexOf(matchedStrType);
@@ -737,7 +740,8 @@ class SetHtml {
                statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
-               
+
+/*
                 if(type === 'pdb') {
                     await ic.pdbParserCls.loadPdbData(data);
 
@@ -776,10 +780,13 @@ class SetHtml {
                //await  ic.loadScriptCls.loadScript(statefile, true);
            }
 
-           await ic.loadScriptCls.loadScript(statefile, true);
+            await ic.loadScriptCls.loadScript(statefile, true);
 
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+*/
        }
+
+       return {'pdb': data, 'statefile': statefile};
     }
 
     fileSupport() {

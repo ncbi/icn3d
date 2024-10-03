@@ -50,7 +50,7 @@ class Contact {
             for (let j in neighbors) {
                let atom = neighbors[j];
 
-               if(!ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
+               if(bInteraction && !ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
                // exclude the target atoms
                if(!bIncludeTarget && atom.serial in atomlistTarget) continue;

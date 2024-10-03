@@ -282,7 +282,6 @@ class HBond {
     //"threshold" is the maximum distance of hydrogen bonds and has the unit of angstrom.
     calculateChemicalHbonds(startAtoms, targetAtoms, threshold, bSaltbridge, type, bInternal) { let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
-
         ic.resid2Residhash = {};
 
         let atomHbond = {};
@@ -383,6 +382,7 @@ class HBond {
                 && (atom.name === 'N' || atom.name === 'O') && (atomHbond[j].name === 'O' || atomHbond[j].name === 'N') ) {
 
                 if(atom.name === atomHbond[j].name) continue;
+
                 if(atom.structure == atomHbond[j].structure && atom.chain == atomHbond[j].chain && Math.abs(atom.resi - atomHbond[j].resi) <= 1) continue; // peptide bond
 
                 // protein backbone hydrogen

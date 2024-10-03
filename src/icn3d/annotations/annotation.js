@@ -434,12 +434,14 @@ class Annotation {
             chainHash[chainid] = 1;
         }
         $("#" + ic.pre + "dl_annotations > .icn3d-annotation").hide();
+
         for(let chainid in chainHash) {
             if($("#" + ic.pre + "anno_" + chainid).length) {
                 $("#" + ic.pre + "anno_" + chainid).show();
             }
+            
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
-            if(atom.resn !== undefined) {
+            if(atom && atom.resn !== undefined) {
                 let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
                 $("#" + ic.pre + "anno_" + oneLetterRes).show();
             }

@@ -121,7 +121,7 @@ class ShareLink {
         });
     }
 
-    shareLinkUrl(bAllCommands, bOutputCmd) { let ic = this.icn3d, me = ic.icn3dui;
+    shareLinkUrl(bAllCommands, bOutputCmd, bStatefile) { let ic = this.icn3d, me = ic.icn3dui;
            let url = me.htmlCls.baseUrl + "icn3d/?";
            let outputCmd = '';
            if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
@@ -297,7 +297,7 @@ class ShareLink {
                }
 
                // keep all commands in statefile
-               statefile += prevCommandStr + "\n";
+               if(prevCommandStr.indexOf('load ') == -1) statefile += prevCommandStr + "\n";
 
                prevCommandStr = commandStr;
            }
@@ -327,7 +327,7 @@ class ShareLink {
                url = url.replace(new RegExp('blast_rep_id=!','g'), 'blast_rep_id=' + id + '_');
            }
 
-           return (bOutputCmd) ? outputCmd : url;
+           return (bStatefile) ? statefile : (bOutputCmd) ? outputCmd : url;
     }
 
     getPngText() { let ic = this.icn3d, me = ic.icn3dui;
@@ -335,6 +335,7 @@ class ShareLink {
         let bAllCommands = true;
 
         let text = "";
+/*
         if(ic.bInputfile) {
             url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
 
@@ -349,7 +350,6 @@ class ShareLink {
 
                 text += "Start of data file======\n";
                 //text += ic.InputfileData;
-    ///            text += ic.saveFileCls.getPDBHeader();
                 text += ic.saveFileCls.getAtomPDB(ic.atoms);
 
                 text += "End of data file======\n";
@@ -374,7 +374,38 @@ class ShareLink {
                 text += "\nShare Link: " + url;
             }
         }
+*/
 
+        // always output PDB and commands
+        text += "\nStart of type file======\n";
+        text += "pdb\n";
+        text += "End of type file======\n";
+
+        text += "Start of data file======\n";
+        text += ic.saveFileCls.getAtomPDB(ic.atoms);
+        text += "End of data file======\n";
+
+        let bStatefile = true;
+        let commands = this.shareLinkUrl(bAllCommands, undefined, bStatefile);
+        text += "Start of state file======\n";
+        text += commands + "\n";
+        text += "End of state file======\n";
+/*
+        if(ic.bInputfile) {
+            url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
+
+            if(url.substr(0,4) == 'http') {
+                text += "\nShare Link: " + url;
+            }
+        }
+        else {
+            url = this.shareLinkUrl();
+            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+            if(!bTooLong) {
+                text += "\nShare Link: " + url;
+            }
+        }
+*/
         text = text.replace(/!/g, Object.keys(ic.structures)[0] + '_');
 
         return text;
