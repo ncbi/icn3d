@@ -16363,6 +16363,9 @@ var icn3d = (function (exports) {
                 if(bPng) {
                     let result = await me.htmlCls.setHtmlCls.loadPng(dataStr);
                     dataStr = result.pdb;
+
+                    if(!dataStr) return; // old iCn3D PNG with sharable link
+
                     if(!ic.statefileArray) ic.statefileArray = [];
                     ic.statefileArray.push(result.statefile);
                 }
@@ -20138,11 +20141,11 @@ var icn3d = (function (exports) {
            if(pos == -1 && posState == -1) {
                alert('Please load a PNG image saved by clicking the menu "File > Save File > iCn3D PNG Image"...');
            }
-        //    else if(!bReturn && pos != -1) { // no need to return pdb and state files
-        //        let url = imageStr.substr(pos + matchedStr.length);
-        //        me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-        //        window.open(url, '_self');
-        //    }
+           else if(pos != -1) {
+               let url = imageStr.substr(pos + matchedStr.length);
+               me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+               window.open(url, '_self');
+           }
            else if(posState != -1) {
                let matchedStrData = "Start of data file======\n";
                let posData = imageStr.indexOf(matchedStrData);
@@ -56921,9 +56924,9 @@ var icn3d = (function (exports) {
               let color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
               let chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
               // remove "_" in chain name
-              if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+            //   if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
                 chainName = chainName.replace(/_/g, '');
-              }
+            //   }
 
               if(chainNameHash[chainName] === undefined) {
                   chainNameHash[chainName] = 1;
@@ -57336,7 +57339,7 @@ var icn3d = (function (exports) {
 
             let bFull = (atomSize * 10 > ic.maxatomcnt) ? false : true;
 
-            let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray = [];
+            let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray, modelNumArray;
 
             if(!bNoCoord) {
                 atom_hetatmArray = atom_site.getColumn("group_PDB");
@@ -57357,6 +57360,7 @@ var icn3d = (function (exports) {
                 zArray = atom_site.getColumn("Cartn_z");
 
                 autochainArray = atom_site.getColumn("label_asym_id");
+                modelNumArray = atom_site.getColumn("pdbx_PDB_model_num");
 
                 // get the bond info
                 let ligSeqHash = {}, prevAutochain = '';
@@ -57530,17 +57534,14 @@ var icn3d = (function (exports) {
                 text += ", \"atoms\":[\n";
                 prevResn = "";
                 serial = 1;
-
-                let structure = atom_site.getColumn("pdbx_PDB_model_num").getString(0);
-
-                if(structure == "1") {
-                    structure = bcifid;
-                }
-                else {
-                    structure = bcifid + structure;
-                }
+                let structure = bcifid;
 
                 for (let i = 0; i < atomSize; ++i) {
+                    let modelNum = modelNumArray.getString(i);
+                    if(modelNum != "1" && modelNum != "") {
+                        structure = bcifid + modelNum;
+                    }
+
                     let atom_hetatm = atom_hetatmArray.getString(i);
                     let resn = resnArray.getString(i);
                     let elem = elemArray.getString(i);
@@ -57739,6 +57740,8 @@ var icn3d = (function (exports) {
             // print sequences
             text += ", \"sequences\":{";
             let bData = false;
+            // need to consider different models in NMR structures
+            // But this function is only used for meta data, 
             for(let chain in sChain) {
                 let seq;
                 if(ligSeqHash.hasOwnProperty(chain)) {
@@ -61672,9 +61675,9 @@ var icn3d = (function (exports) {
                       let chain = data.moleculeInfor[molid].chain.trim();
 
                       // remove "_" in chain name
-                      if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                    //   if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
                         chain = chain.replace(/_/g, '');
-                      }
+                    //   }
 
                       let chainid = pdbidTmp + '_' + chain;
 
@@ -61816,9 +61819,9 @@ var icn3d = (function (exports) {
                 atm.chain = atm.chain.trim(); //.replace(/_/g, '');
 
                 // remove "_" in chain name
-                if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
+                // if(parseInt(me.cfg.date) >= 20231001 || (!me.cfg.date && parseInt(me.utilsCls.getDateDigitStr()) >= 20231001)) {
                     atm.chain = atm.chain.replace(/_/g, '');
-                }
+                // }
 
                 // mmcif has pre-assigned structure in mmcifparser.cgi output
                 if(type === 'mmdbid' || type === 'align') {
@@ -64750,13 +64753,13 @@ var icn3d = (function (exports) {
             // if(!bMutation && !bAppend) {
             if(!bAppend) {
                 ic.init();
-                moleculeNum = 1;
+                moleculeNum = 0; //1;
                 serial = 0;
             }
             else {
                 ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
 
-                moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
+                moleculeNum = ic.oriNStru; //ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
                 // Concatenation of two pdbs will have several atoms for the same serial
                 serial = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
             }
@@ -64771,8 +64774,6 @@ var icn3d = (function (exports) {
 
             let structure = id;
             let CSerial, prevCSerial, OSerial, prevOSerial;
-            
-            let bFirstAtom = true;
 
             let cifArray = (bText) ? bcifData.split('ENDMDL\n') : [bcifData];
 
@@ -65076,12 +65077,27 @@ var icn3d = (function (exports) {
                 let zArray = atom_site.getColumn("Cartn_z");
 
                 let autochainArray = atom_site.getColumn("label_asym_id");
+                let modelNumArray = atom_site.getColumn("pdbx_PDB_model_num");
 
                 // get the bond info
                 let ligSeqHash = {}, prevAutochain = '';
                 let prevResn;
                 let sChain = {};
+                let prevModelNum = '';
                 for (let i = 0; i < atomSize; ++i) {
+                    let modelNum = modelNumArray.getString(i);
+                    if(i > 0 && modelNum != prevModelNum) {
+                        ++moleculeNum;
+
+                        if(modelNum == "1") {
+                            structure = id;
+                        }
+                        else {
+                            structure = id + modelNum;
+                        }
+                    }
+                    prevModelNum = modelNum;
+
                     let atom_hetatm = atom_hetatmArray.getString(i);
                     let resn = resnArray.getString(i);
                     let elem = elemArray.getString(i);
@@ -65126,11 +65142,11 @@ var icn3d = (function (exports) {
 
                     sChain[chain] = 1;
 
-                    if(bFirstAtom) {
-                        structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
+                    // if(bFirstAtom) {
+                    //     structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
 
-                        bFirstAtom = false;
-                    }
+                    //     bFirstAtom = false;
+                    // }
 
                     // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
                     // Concatenation of two pdbs will have several atoms for the same serial
@@ -68731,6 +68747,12 @@ var icn3d = (function (exports) {
             let prevLabel = 'or';
 
             for(let i = 0, il = idArray.length; i < il; ++i) {
+                // replace 1CD8_A_1 with 1CD8_A1
+                let tmpArray = idArray[i].split('_');
+                if(tmpArray.length == 3 && !isNaN(tmpArray[2])) {
+                    idArray[i] = tmpArray[0] + '_' + tmpArray[1] + tmpArray[2];
+                }
+
                 if(idArray[i] === 'or' || idArray[i] === 'and' || idArray[i] === 'not') {
                     prevLabel = idArray[i];
                     continue;
@@ -70260,6 +70282,7 @@ var icn3d = (function (exports) {
                }
                else {
                  chainStr = testStr.substr(periodPos + 1);
+
                  //replace "A_1" with "A"
                  chainStr = chainStr.replace(/_/g, '');
 
@@ -70387,7 +70410,6 @@ var icn3d = (function (exports) {
 
                          for(let l = 0, ll = residArray.length; l < ll; ++l) {
                             let residueId = residArray[l];
-
                             if(i === 0) {
                                   residueHash[residueId] = 1;
                             }
@@ -83103,7 +83125,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.36.0';
+        this.REVISION = '3.36.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

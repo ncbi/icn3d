@@ -123,6 +123,9 @@ class Events {
             if(bPng) {
                 let result = await me.htmlCls.setHtmlCls.loadPng(dataStr);
                 dataStr = result.pdb;
+
+                if(!dataStr) return; // old iCn3D PNG with sharable link
+
                 if(!ic.statefileArray) ic.statefileArray = [];
                 ic.statefileArray.push(result.statefile);
             }

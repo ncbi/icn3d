@@ -709,11 +709,11 @@ class SetHtml {
        if(pos == -1 && posState == -1) {
            alert('Please load a PNG image saved by clicking the menu "File > Save File > iCn3D PNG Image"...');
        }
-    //    else if(!bReturn && pos != -1) { // no need to return pdb and state files
-    //        let url = imageStr.substr(pos + matchedStr.length);
-    //        me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-    //        window.open(url, '_self');
-    //    }
+       else if(pos != -1) {
+           let url = imageStr.substr(pos + matchedStr.length);
+           me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+           window.open(url, '_self');
+       }
        else if(posState != -1) {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
