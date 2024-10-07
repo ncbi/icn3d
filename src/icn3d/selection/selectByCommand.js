@@ -124,6 +124,7 @@ class SelectByCommand {
            }
            else {
              chainStr = testStr.substr(periodPos + 1);
+
              //replace "A_1" with "A"
              chainStr = chainStr.replace(/_/g, '');
 
@@ -251,7 +252,6 @@ class SelectByCommand {
 
                      for(let l = 0, ll = residArray.length; l < ll; ++l) {
                         let residueId = residArray[l];
-
                         if(i === 0) {
                               residueHash[residueId] = 1;
                         }

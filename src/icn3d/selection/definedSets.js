@@ -548,6 +548,12 @@ class DefinedSets {
         let prevLabel = 'or';
 
         for(let i = 0, il = idArray.length; i < il; ++i) {
+            // replace 1CD8_A_1 with 1CD8_A1
+            let tmpArray = idArray[i].split('_');
+            if(tmpArray.length == 3 && !isNaN(tmpArray[2])) {
+                idArray[i] = tmpArray[0] + '_' + tmpArray[1] + tmpArray[2];
+            }
+
             if(idArray[i] === 'or' || idArray[i] === 'and' || idArray[i] === 'not') {
                 prevLabel = idArray[i];
                 continue;

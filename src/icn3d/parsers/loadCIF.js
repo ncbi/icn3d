@@ -22,13 +22,13 @@ class LoadCIF {
         // if(!bMutation && !bAppend) {
         if(!bAppend) {
             ic.init();
-            moleculeNum = 1;
+            moleculeNum = 0; //1;
             serial = 0;
         }
         else {
             ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
 
-            moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
+            moleculeNum = ic.oriNStru; //ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
             // Concatenation of two pdbs will have several atoms for the same serial
             serial = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
         }
@@ -356,12 +356,27 @@ class LoadCIF {
             let zArray = atom_site.getColumn("Cartn_z");
 
             let autochainArray = atom_site.getColumn("label_asym_id");
+            let modelNumArray = atom_site.getColumn("pdbx_PDB_model_num");
 
             // get the bond info
             let ligSeqHash = {}, prevAutochain = '';
             let prevResn, tmpResi = 0;
             let sChain = {};
+            let prevModelNum = '';
             for (let i = 0; i < atomSize; ++i) {
+                let modelNum = modelNumArray.getString(i);
+                if(i > 0 && modelNum != prevModelNum) {
+                    ++moleculeNum;
+
+                    if(modelNum == "1") {
+                        structure = id;
+                    }
+                    else {
+                        structure = id + modelNum;
+                    }
+                }
+                prevModelNum = modelNum;
+
                 let atom_hetatm = atom_hetatmArray.getString(i);
                 let resn = resnArray.getString(i);
                 let elem = elemArray.getString(i);
@@ -406,11 +421,11 @@ class LoadCIF {
 
                 sChain[chain] = 1;
 
-                if(bFirstAtom) {
-                    structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
+                // if(bFirstAtom) {
+                //     structure = ic.loadPDBCls.getStructureId(id, moleculeNum);
 
-                    bFirstAtom = false;
-                }
+                //     bFirstAtom = false;
+                // }
 
                 // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
                 // Concatenation of two pdbs will have several atoms for the same serial

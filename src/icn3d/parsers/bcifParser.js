@@ -351,7 +351,7 @@ class BcifParser {
 
         let bFull = (atomSize * 10 > ic.maxatomcnt) ? false : true;
 
-        let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray = [];
+        let atom_hetatmArray, resnArray, elemArray, nameArray, chainArray, resiArray, resiOriArray, altArray, bArray, xArray, yArray, zArray, autochainArray, modelNumArray;
 
         if(!bNoCoord) {
             atom_hetatmArray = atom_site.getColumn("group_PDB");
@@ -372,6 +372,7 @@ class BcifParser {
             zArray = atom_site.getColumn("Cartn_z");
 
             autochainArray = atom_site.getColumn("label_asym_id");
+            modelNumArray = atom_site.getColumn("pdbx_PDB_model_num");
 
             // get the bond info
             let ligSeqHash = {}, prevAutochain = '';
@@ -547,17 +548,14 @@ class BcifParser {
             tmpResi = 0;
             prevResn = "";
             serial = 1;
-
-            let structure = atom_site.getColumn("pdbx_PDB_model_num").getString(0);
-
-            if(structure == "1") {
-                structure = bcifid;
-            }
-            else {
-                structure = bcifid + structure;
-            }
+            let structure = bcifid;
 
             for (let i = 0; i < atomSize; ++i) {
+                let modelNum = modelNumArray.getString(i);
+                if(modelNum != "1" && modelNum != "") {
+                    structure = bcifid + modelNum;
+                }
+
                 let atom_hetatm = atom_hetatmArray.getString(i);
                 let resn = resnArray.getString(i);
                 let elem = elemArray.getString(i);
@@ -756,6 +754,8 @@ class BcifParser {
         // print sequences
         text += ", \"sequences\":{";
         let bData = false;
+        // need to consider different models in NMR structures
+        // But this function is only used for meta data, 
         for(let chain in sChain) {
             let seq;
             if(ligSeqHash.hasOwnProperty(chain)) {
