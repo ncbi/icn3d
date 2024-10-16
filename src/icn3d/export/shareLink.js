@@ -122,7 +122,7 @@ class ShareLink {
     }
 
     shareLinkUrl(bAllCommands, bOutputCmd, bStatefile) { let ic = this.icn3d, me = ic.icn3dui;
-           let url = me.htmlCls.baseUrl + "icn3d/?";
+           let url = me.htmlCls.baseUrl + "icn3d/full_" + me.REVISION + ".html?";
            let outputCmd = '';
            if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
@@ -283,6 +283,9 @@ class ShareLink {
                // remove all "show selection" except the last one
                else if(prevCommandStr == 'show selection' && ic.commands.slice(i).toString().indexOf('show selection') != -1) {
                    // do nothing
+               }
+               else if(prevCommandStr == commandStr) { // remove duplicates
+                // do nothing
                }
                else if(prevCommandStr.indexOf(toggleStr) !== -1) {
                    ++cntToggle;

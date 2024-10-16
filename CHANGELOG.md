@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.37.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.37.0.zip) was release on October 16, 2024. Added a menu "View > Clashed Residues > Hide" to hide clashed residues.
+
 [icn3d-3.36.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.36.1.zip) was release on October 7, 2024. Fixed an issue related to previous chain IDs such as "A_1" (changed to "A1") in previous sharable links.
 
 [icn3d-3.36.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.36.0.zip) was release on October 3, 2024. Allowed to load multiple iCn3D PNG images.

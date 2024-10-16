@@ -22,6 +22,8 @@ class Contact {
         for(let i in atomlistTarget) {
             //var oriAtom = atomlistTarget[i];
             let oriAtom = ic.atoms[i];
+            let r1 = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()];
+            let chainid1 = oriAtom.structure + '_' + oriAtom.chain;
             //var radius = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()] || ic.defaultRadius;
             // The distance between atoms does not include the radius
             let radius = 0;
@@ -49,6 +51,8 @@ class Contact {
 
             for (let j in neighbors) {
                let atom = neighbors[j];
+               let r2 = me.parasCls.vdwRadii[atom.elem.toUpperCase()];
+               let chainid2 = atom.structure + '_' + atom.chain;
 
                if(bInteraction && !ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
@@ -59,7 +63,16 @@ class Contact {
                //var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
                let atomDist = atom.coord.distanceTo(oriAtom.coord);
 
-               //if(atomDistSq < maxDistSq) {
+               // consider backbone clashes
+               if(bInteraction && atomDist < r1 + r2 
+                  && (oriAtom.name === "N" || oriAtom.name === "C" || oriAtom.name === "O" || (oriAtom.name === "CA" && oriAtom.elem === "C") )
+                  && (atom.name === "N" || atom.name === "C" || atom.name === "O" || (atom.name === "CA" && atom.elem === "C") ) ) { // clashed atoms are not counted as interactions
+                    // store the clashed residues
+                    if(!ic.chainid2clashedResidpair) ic.chainid2clashedResidpair = {};
+
+                    ic.chainid2clashedResidpair[chainid1 + '_' + oriAtom.resi + '|' + chainid2 + '_' + atom.resi] = '0|0';
+               }
+               
                if(atomDist < distance) {
                     ret[atom.serial] = atom;
                     let calpha = undefined, residName = undefined;

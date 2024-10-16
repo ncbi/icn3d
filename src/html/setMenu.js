@@ -854,6 +854,7 @@ class SetMenu {
         html += this.getLink('mn2_selectedcenter', 'Zoom in Selection', 1, 1);
         //html += this.getLink('mn6_center', 'Center Selection', undefined, 1);
         html += this.getLink('mn6_center', 'Center Selection', 1, 1);
+
         html += this.getLink('mn2_fullstru', 'View Full Structure');
         html += this.getLinkWrapper('mn2_alternate', 'Alternate(Key "a")', 'mn2_alternateWrap', undefined, 1)
 
@@ -1102,6 +1103,15 @@ class SetMenu {
         html += this.getRadio('mn3_water', 'mn3_waterNo', 'Hide', true, 1, 2);
         html += "</ul>";
         html += "</li>";
+
+        if(me.cfg.cid === undefined) {
+            html += this.getMenuText('mn2_clashedwrap', 'Clashed Residues', undefined, undefined, 1);
+            html += "<ul>";
+            html += this.getRadio('mn2_clashed', 'mn2_clashedYes', 'Show', true, undefined, 2);
+            html += this.getRadio('mn2_clashed', 'mn2_clashedNo', 'Hide', undefined, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+        }
 
         html += this.getLink('mn3_setThickness', 'Preferences', undefined, 1);
 
