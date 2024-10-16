@@ -1387,6 +1387,19 @@ class ApplyCommand {
             ic.bGlycansCartoon = false;
         }
       }
+      else if(command.indexOf('clashed residues') == 0) {
+        let value = command.substr(command.lastIndexOf(' ') + 1);
+
+        if(value == 'show') {
+          ic.bHideClashed = false;
+          ic.annoDomainCls.showHideClashedResidues();
+        }
+        else {
+          ic.bHideClashed = true;
+          me.htmlCls.clickMenuCls.setClashedResidues();
+          ic.annoDomainCls.showHideClashedResidues();
+        }
+      }
       else if(command.indexOf('save html') == 0) {
         let id = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.eventsCls.saveHtml(id);

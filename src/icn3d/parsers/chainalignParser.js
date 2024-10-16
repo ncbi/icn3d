@@ -225,7 +225,7 @@ class ChainalignParser {
         return hAtomsAll;
     }
 
-    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse) { let ic = this.icn3d, me = ic.icn3dui;
+    async downloadChainalignmentPart2bRealign(dataArray, chainidPairArray, bReverse) { let ic = this.icn3d, me = ic.icn3dui;
         // set trans and rotation matrix
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -277,9 +277,22 @@ class ChainalignParser {
                 return;
             }
             else {
-                /// if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
-                if(ic.bRender) alert("These structures can NOT be aligned...");
-                return;
+                if(me.cfg.aligntool == 'tmalign') {
+                    if(ic.bRender) alert("These structures can NOT be aligned...");
+                    return;
+                }
+                else {
+                    console.log("These structures can NOT be aligned with VAST. Realign the chains with TM-align.") 
+
+                    // ic.hAtoms = {};
+                    // for(let i = 0, il = chainidPairArray.length; i < il; ++i) {
+                    //     ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainidPairArray[i]]);
+                    // }
+            
+                    me.cfg.aligntool = 'tmalign';
+                    await ic.realignParserCls.realignOnStructAlign();
+                    return;
+                }
             }
         }
 

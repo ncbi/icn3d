@@ -7,7 +7,7 @@ class AnnoDomain {
         this.icn3d = icn3d;
     }
 
-    showDomainPerStructure(index) { let ic = this.icn3d, me = ic.icn3dui;
+    showDomainPerStructure(index, bNotShowDomain) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //var chnid = Object.keys(ic.protein_chainid)[0];
         //var pdbid = chnid.substr(0, chnid.indexOf('_'));
@@ -39,7 +39,8 @@ class AnnoDomain {
             data.domains = {};
             for(let chainid in ic.chains) {
                 let structure = chainid.substr(0, chainid.indexOf('_'));
-                if(pdbid == structure && ic.protein_chainid.hasOwnProperty(chainid)) {
+                // if(pdbid == structure && ic.protein_chainid.hasOwnProperty(chainid)) {
+                if(pdbid == structure) {
                     data.domains[chainid] = {};
                     data.domains[chainid].domains = [];
 
@@ -66,10 +67,10 @@ class AnnoDomain {
             }
 
             ic.mmdb_dataArray[index] = data;
-            let bCalcDirect = true;
-            for(let chnid in ic.protein_chainid) {
+            // for(let chnid in ic.protein_chainid) {
+            for(let chnid in ic.chains) {
                 if(chnid.indexOf(pdbid) !== -1) {
-                    thisClass.showDomainWithData(chnid, ic.mmdb_dataArray[index], bCalcDirect);
+                    thisClass.showDomainWithData(chnid, ic.mmdb_dataArray[index], bNotShowDomain);
                 }
             }
 
@@ -79,7 +80,7 @@ class AnnoDomain {
     }
 
     //Show the annotations of 3D domains.
-    showDomainAll() { let ic = this.icn3d, me = ic.icn3dui;
+    showDomainAll(bNotShowDomain) { let ic = this.icn3d, me = ic.icn3dui;
         //var chnid = Object.keys(ic.protein_chainid)[0];
         //var pdbid = chnid.substr(0, chnid.indexOf('_'));
         let pdbArray = Object.keys(ic.structures);
@@ -91,7 +92,7 @@ class AnnoDomain {
         }
 
         for(let i = 0, il = pdbArray.length; i < il; ++i) {
-            this.showDomainPerStructure(i);
+            this.showDomainPerStructure(i, bNotShowDomain);
         }
     }
 
@@ -109,7 +110,7 @@ class AnnoDomain {
         return resi;
     }
 
-    showDomainWithData(chnid, data, bCalcDirect) { let ic = this.icn3d, me = ic.icn3dui;
+    showDomainWithData(chnid, data, bNotShowDomain) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '<div id="' + ic.pre + chnid + '_domainseq_sequence" class="icn3d-dl_sequence">';
         let html2 = html;
         let html3 = html;
@@ -182,6 +183,26 @@ class AnnoDomain {
                     resiHash[resi] = 1;
                 }
             }
+
+            if(ic.chainid2clashedResidpair) { //assign domain size to each residue in the clashed residues
+                for(let residpair in ic.chainid2clashedResidpair) {
+                    let residArray = residpair.split('|');
+                    let valueArray = ic.chainid2clashedResidpair[residpair].split('|');
+
+                    for(let i = 0, il = residArray.length; i < il; ++i) {
+                        let chainid = residArray[i][0] + '_' + residArray[i][1];
+
+                        if(chainid == chnid) {
+                            let resi = residArray[i][3];
+                            if(resiHash.hasOwnProperty(resi)) {
+                                ic.chainid2clashedResidpair[residpair] = (i == 0) ? resCnt + '|' + valueArray[1] : valueArray[1] + '|' + resCnt;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(bNotShowDomain) continue;
 
             // save 3D domain info for node.js script
             if(me.bNode) {
@@ -277,12 +298,103 @@ class AnnoDomain {
             html += htmlTmp;
             html2 += htmlTmp;
         }
-        html += '</div>';
-        html2 += '</div>';
-        html3 += '</div>';
-        $("#" + ic.pre + "dt_domain_" + chnid).html(html);
-        $("#" + ic.pre + "ov_domain_" + chnid).html(html2);
-        $("#" + ic.pre + "tt_domain_" + chnid).html(html3);
+
+        if(!bNotShowDomain) {
+            html += '</div>';
+            html2 += '</div>';
+            html3 += '</div>';
+            $("#" + ic.pre + "dt_domain_" + chnid).html(html);
+            $("#" + ic.pre + "ov_domain_" + chnid).html(html2);
+            $("#" + ic.pre + "tt_domain_" + chnid).html(html3);
+        }
+
+        // hide clashed residues between two chains
+        if(bNotShowDomain && ic.chainid2clashedResidpair) {
+            ic.clashedResidHash = {};
+            for(let residpair in ic.chainid2clashedResidpair) {
+                let residArray = residpair.split('|');
+                let valueArray = ic.chainid2clashedResidpair[residpair].split('|');
+                
+                if(parseInt(valueArray[0]) < parseInt(valueArray[1])) {
+                    ic.clashedResidHash[residArray[0]] = 1;
+                }
+                else {
+                    ic.clashedResidHash[residArray[1]] = 1;
+                }
+            }
+
+            // expand clashed residues to the SSE and the loops connecting the SSE
+            let addResidHash = {}, tmpHash = {};
+            for(let resid in ic.clashedResidHash) {
+                let pos = resid.lastIndexOf('_');
+                let resi = parseInt(resid.substr(pos + 1));
+                let chainid = resid.substr(0, pos);
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                if(atom.ss == 'coil') {
+                    tmpHash = this.getMoreResidues(resi, chainid, 1, 'not coil');
+                    addResidHash = me.hashUtilsCls.unionHash(addResidHash, tmpHash);
+                    tmpHash = this.getMoreResidues(resi, chainid, -1, 'not coil');
+                    addResidHash = me.hashUtilsCls.unionHash(addResidHash, tmpHash);
+                }
+                else {
+                    tmpHash = this.getMoreResidues(resi, chainid, 1, 'ssbegin');
+                    addResidHash = me.hashUtilsCls.unionHash(addResidHash, tmpHash);
+                    tmpHash = this.getMoreResidues(resi, chainid, -1, 'ssend');
+                    addResidHash = me.hashUtilsCls.unionHash(addResidHash, tmpHash);
+                }
+            }
+
+            ic.clashedResidHash = me.hashUtilsCls.unionHash(ic.clashedResidHash, addResidHash);
+        }
+    }
+
+    showHideClashedResidues() { let ic = this.icn3d, me = ic.icn3dui;
+        // show or hide clashed residues
+        if(ic.clashedResidHash && Object.keys(ic.clashedResidHash).length > 0) {
+            let tmpHash = {};
+            for(let resid in ic.clashedResidHash) {
+                tmpHash = me.hashUtilsCls.unionHash(tmpHash, ic.residues[resid]);
+            }
+
+            if(ic.bHideClashed) {
+                ic.hAtoms = me.hashUtilsCls.exclHash(ic.hAtoms, tmpHash);
+            }
+            else {
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, tmpHash);
+            }
+        
+            // if(ic.bHideClashed) ic.definedSetsCls.setMode('selection');
+            ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        }
+    }
+
+    getMoreResidues(resi, chainid, direction, condition) { let ic = this.icn3d, me = ic.icn3dui;
+        let addResidHash = {};
+        for(let i = 1; i < 100; ++i) {
+            let resid2 = chainid + '_' + (resi + direction * i).toString();
+            let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]);
+            if(atom2) {
+                let bBreak = false;
+                if(condition == 'not coil') {
+                    bBreak = (atom2.ss != 'coil');
+                }
+                else if(condition == 'ssbegin') {
+                    bBreak = atom2.ssbegin;
+                }
+                else if(condition == 'ssend') {
+                    bBreak = atom2.ssend;
+                }
+
+                if(bBreak) {
+                    break;
+                }
+                else {
+                    addResidHash[resid2] = 1;
+                }
+            }
+        }
+
+        return addResidHash;
     }
 
 }

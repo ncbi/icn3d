@@ -177,102 +177,119 @@ class ClickMenu {
       ic.bRunRefnumAgain = false;
     }
 
+    setClashedResidues() { let me = this.icn3dui, ic = me.icn3d;
+      // check contacts between all chains
+      let chainidArray = Object.keys(ic.chains);
+      let radius = 4, bSphereCalc = false, bInteraction = true;
+      for(let i = 0, il = chainidArray.length; i < il; ++i) {
+         let chainid1 = chainidArray[i];
+         for(let j = i + 1, jl = chainidArray.length; j < jl; ++j) {
+            let chainid2 = chainidArray[j];
+            ic.showInterCls.pickCustomSphere_base(radius, ic.chains[chainid1], ic.chains[chainid2], bSphereCalc, bInteraction);
+         }
+      }
+
+      // use domains to determine which one to hide
+      let bNotShowDomain = true;
+      ic.annoDomainCls.showDomainAll(bNotShowDomain);
+    }
+
     clickMenu1() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
         let thisClass = this;
     //mn 1
     //    clkMn1_mmtfid: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_vastplus", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_vastplus', 'Please input PDB ID for VAST+');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_vast", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_vast', 'Please input chain or PDB file for VAST');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_foldseek", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_foldseek', 'Submit your selection to Foldseek');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmtfid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmtfid', 'Please input BCIF/MMTF ID');
         });
 
     //    clkMn1_pdbid: function() {
-        me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_pdbid', 'Please input PDB ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_afid', 'Please input AlphaFold UniProt ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_refseqid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_refseqid', 'Please input NCBI Protein Accession');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_opmid', 'Please input OPM PDB ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_align', 'Align two PDB structures');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_alignaf', 'Align two AlphaFold structures');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_chainalign', 'Align multiple chains by structure alignment');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign2", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign2", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_chainalign2', 'Align multiple chains by sequence alignment');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign3", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_chainalign3", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_chainalign3', 'Align multiple chains residue by residue');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mutation", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mutation", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mutation', 'Show the mutations in 3D');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
         });
-        me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mol2file', 'Please input Mol2 File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_sdffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_sdffile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_sdffile', 'Please input SDF File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE File');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
         });
-        me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_fixedversion", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = $("#" + me.pre + "sharelinkurl").val();
            thisClass.setLogCmd("open " + url, false);
            localStorage.setItem('fixedversion', '1');
@@ -280,73 +297,73 @@ class ClickMenu {
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmciffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmciffile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmciffile', 'Please append mmCIF File');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmcifid', 'Please input mmCIF ID');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbafid", , "#" + me.pre + "tool_mmdbafid"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_mmdbafid", , "#" + me.pre + "tool_mmdbafid"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_mmdbafid', 'Please input PDB/MMDB/AlphaFold UniProt IDs');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_blast_rep_id", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_blast_rep_id', 'Align sequence to structure');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_esmfold", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_esmfold", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_esmfold', 'Sequence to structure prediction with ESMFold');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_proteinname", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_proteinname', 'Please input protein or gene name');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem Compound');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_pngimage', 'Please append PNG images');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_state", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_state", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_state', 'Please input the state file');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_selection', 'Please input the selection file');
         });
        
-        me.myEventCls.onIds("#" + me.pre + "mn1_collection", "click", function (e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_collection", "click", function (e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
         });
        
-        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6', 'Please input the map file to display electron density map');
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2", "#" + me.pre + "tool_delphi"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_delphi", "#" + me.pre + "mn1_delphi2", "#" + me.pre + "tool_delphi"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'delphi';
            $("#" + me.pre + "dl_delphi_tabs").tabs();
            me.htmlCls.dialogCls.openDlg('dl_delphi', 'Please set parameters to display DelPhi potential map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_phi", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_phi", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'phi';
            $("#" + me.pre + "dl_phi_tabs").tabs();
            $("#" + me.pre + "phitab1_tabs").tabs();
            $("#" + me.pre + "phitab2_tabs").tabs();
            me.htmlCls.dialogCls.openDlg('dl_phi', 'Please input local phi or cube file to display DelPhi potential map');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_phiurl", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_phiurl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.loadPhiFrom = 'phiurl';
            $("#" + me.pre + "dl_phiurl_tabs").tabs();
            $("#" + me.pre + "phiurltab1_tabs").tabs();
@@ -355,11 +372,11 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6url", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_dsn6url", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_dsn6url', 'Please input the map file to display electron density map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportState", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export state file", false);
            let file_pref = Object.keys(ic.structures).join(',');
 
@@ -367,19 +384,19 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportPdbRes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportPdbRes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.setHtmlCls.exportPdb();
 
            thisClass.setLogCmd("export pdb", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.setHtmlCls.exportSecondary();
 
            thisClass.setLogCmd("export secondary structure", true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let pdbStr = ic.saveFileCls.getSelectedResiduePDB();
 
            thisClass.setLogCmd("export PDB of selected residues", false);
@@ -388,57 +405,57 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphipqr", "#" + me.pre + "phipqr", "#" + me.pre + "phiurlpqr"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            await me.htmlCls.setHtmlCls.exportPqr();
            thisClass.setLogCmd("export pqr", true);
         });
 
-      //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+      //   me.myEventCls.onIds("#" + me.pre + "delphipqbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
       //       let bPdb = true;
       //       await me.htmlCls.setHtmlCls.exportPqr(bPdb);
       //       thisClass.setLogCmd("export pdbh", false);
       //    });
 
-        me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "profixpdb", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
          let bHydrogen = false;
          await ic.scapCls.exportPdbProfix(bHydrogen);
          thisClass.setLogCmd("export pdb missing atoms", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "profixpdbh", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
         let bHydrogen = true;
         await ic.scapCls.exportPdbProfix(bHydrogen);
         thisClass.setLogCmd("export pdb hydrogen", true);
        });
 
-       me.myEventCls.onIds("#" + me.pre + "mn1_exportIgstrand", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+       me.myEventCls.onIds("#" + me.pre + "mn1_exportIgstrand", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
        ic.refnumCls.exportRefnum('igstrand');
        thisClass.setLogCmd("export refnum igstrand", true);
       });
 
-      me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportKabat", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
       ic.refnumCls.exportRefnum('kabat');
          thisClass.setLogCmd("export refnum kabat", true);
       });
 
-      me.myEventCls.onIds("#" + me.pre + "mn1_exportImgt", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+      me.myEventCls.onIds("#" + me.pre + "mn1_exportImgt", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
       ic.refnumCls.exportRefnum('imgt');
       thisClass.setLogCmd("export refnum imgt", true);
       });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportStl", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl file", false);
            //ic.threeDPrintCls.hideStabilizer();
            ic.export3DCls.exportStlFile('');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrml", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrml", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export vrml file", false);
            //ic.threeDPrintCls.hideStabilizer();
            ic.export3DCls.exportVrmlFile('');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportStlStab", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportStlStab", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export stl stabilizer file", false);
            //ic.bRender = false;
            ic.threeDPrintCls.hideStabilizer();
@@ -447,7 +464,7 @@ class ClickMenu {
            ic.export3DCls.exportStlFile('_stab');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrmlStab", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportVrmlStab", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export vrml stabilizer file", false);
            //ic.bRender = false;
            ic.threeDPrintCls.hideStabilizer();
@@ -456,13 +473,13 @@ class ClickMenu {
            ic.export3DCls.exportVrmlFile('_stab');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_exportInteraction", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export interactions", false);
            if(me.cfg.mmdbid !== undefined) await ic.viewInterPairsCls.retrieveInteractionData();
            ic.viewInterPairsCls.exportInteractions();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            // do not record the export command
            //thisClass.setLogCmd("export canvas", true);
            thisClass.setLogCmd("export canvas", false);
@@ -471,28 +488,28 @@ class ClickMenu {
            let bPngHtml = true;
            await ic.shareLinkCls.shareLink(bPngHtml);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 1", true);
            ic.scaleFactor = 1;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 2", true);
            ic.scaleFactor = 2;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 4", true);
            ic.scaleFactor = 4;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export canvas 8", true);
            ic.scaleFactor = 8;
            await ic.shareLinkCls.shareLink(true, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export counts", false);
            let text = '<html><body><div style="text-align:center"><br><b>Total Count for atoms with coordinates</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Structure Count</th><th>Chain Count</th><th>Residue Count</th><th>Atom Count</th></tr>';
            text += '<tr><td>' + Object.keys(ic.structures).length + '</td><td>' + Object.keys(ic.chains).length + '</td><td>' + Object.keys(ic.residues).length + '</td><td>' + Object.keys(ic.atoms).length + '</td></tr>';
@@ -519,7 +536,7 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_counts.html', 'html', text);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelections", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export all selections", false);
           
            thisClass.SetChainsAdvancedMenu();
@@ -529,7 +546,7 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export all selections with details", false);
           
            thisClass.SetChainsAdvancedMenu();
@@ -540,32 +557,32 @@ class ClickMenu {
            ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_sharelink", "#" + me.pre + "tool_sharelink"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             await ic.shareLinkCls.shareLink();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayon", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
           await ic.resizeCanvasCls.replayon();
           thisClass.setLogCmd("replay on", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_replayoff", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             await ic.resizeCanvasCls.replayoff();
             thisClass.setLogCmd("replay off", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuall", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();    
           });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menusimple", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
           });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menupref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
 
             thisClass.getHiddenMenusFromCache();
@@ -573,7 +590,7 @@ class ClickMenu {
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "apply_menupref", "#" + me.pre + "apply_menupref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
             me.htmlCls.shownMenus = {};
             for (var checkbox of checkboxes) {
@@ -583,21 +600,21 @@ class ClickMenu {
             thisClass.applyShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
          });
 
-         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds(["#" + me.pre + "savepref", "#" + me.pre + "savepref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             let menuStr = '[';
 
             //var checkboxes = document.querySelectorAll('form[name="' + me.pre + 'selmenu"] input:checked');
@@ -646,30 +663,30 @@ class ClickMenu {
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_menuloadpref', 'Please input the menu preference file');
         });
          
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = ic.saveFileCls.getLinkToStructureSummary(true);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_alphafold", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_alphafold", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = 'https://github.com/sokrypton/ColabFold';
            window.open(url, '_blank');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_bind", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + ic.inputid;
            thisClass.setLogCmd("link to 3D protein structures bound to CID " + ic.inputid + ": " + url, false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_vast", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_vast", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          let url;  
          if(ic.inputid === undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pccompound?term=" + ic.molTitle;
@@ -698,7 +715,7 @@ class ClickMenu {
            window.open(url, urlTarget);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_pubmed", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_pubmed", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url;
            if(ic.inputid === undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + ic.molTitle;
@@ -742,7 +759,7 @@ class ClickMenu {
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_link_protein", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_link_protein", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
           //ic.saveFileCls.setEntrezLinks('protein');
           let structArray = Object.keys(ic.structures);
           let chainArray = Object.keys(ic.chains);
@@ -767,19 +784,19 @@ class ClickMenu {
 
         let thisClass = this;
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_selectannotations", "#" + me.pre + "tool_selectannotations"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            await ic.showAnnoCls.showAnnotations();
            thisClass.setLogCmd("view annotations", true);
            //thisClass.setLogCmd("window annotations", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectall", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectall", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select all", true);
            ic.selectionCls.selectAll();
            ic.hlUpdateCls.removeHlAll();
            ic.drawCls.draw();
         });
-        me.myEventCls.onIds("#" + me.pre + "clearall", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "clearall", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("clear all", true);
            ic.bSelectResidue = false;
            ic.selectionCls.selectAll();
@@ -787,7 +804,7 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select displayed set", true);
            //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
@@ -795,106 +812,123 @@ class ClickMenu {
            //ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_fullstru", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_clashedYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            ic.bHideClashed = false;
+            ic.annoDomainCls.showHideClashedResidues();
+
+            ic.drawCls.draw();
+            thisClass.setLogCmd('clashed residues show', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn2_clashedNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            ic.bHideClashed = true;
+
+            thisClass.setClashedResidues();
+            ic.annoDomainCls.showHideClashedResidues();
+
+            ic.drawCls.draw();
+            thisClass.setLogCmd('clashed residues hide', true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_fullstru", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("show all", true);
            ic.selectionCls.showAll();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectcomplement", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectcomplement", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) {
                thisClass.setLogCmd("select complement", true);
                ic.resid2specCls.selectComplement();
            }
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainchains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainchains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select main chains", true);
            ic.selectionCls.selectMainChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectsidechains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectsidechains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select side chains", true);
            ic.selectionCls.selectSideChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainsidechains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_selectmainsidechains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select main side chains", true);
            ic.selectionCls.selectMainSideChains();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_propPos", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propPos", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop positive", true);
            ic.resid2specCls.selectProperty('positive');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propNeg", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propNeg", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop negative", true);
            ic.resid2specCls.selectProperty('negative');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propHydro", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propHydro", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop hydrophobic", true);
            ic.resid2specCls.selectProperty('hydrophobic');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propPolar", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propPolar", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("select prop polar", true);
            ic.resid2specCls.selectProperty('polar');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_propbybfactor', 'Select residue based on B-factor/pLDDT');
         });
-        me.myEventCls.onIds("#" + me.pre + "mn2_propSolAcc", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_propSolAcc", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_propbypercentout', 'Select residue based on the percentage of solvent accessilbe surface area');
         });
-        me.myEventCls.onIds("#" + me.pre + "applypropbybfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applypropbybfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let from = $("#" + me.pre + "minbfactor").val();
            let to = $("#" + me.pre + "maxbfactor").val();
            thisClass.setLogCmd("select prop b factor | " + from + '_' + to, true);
            ic.resid2specCls.selectProperty('b factor', from, to);
         });
-        me.myEventCls.onIds("#" + me.pre + "applypropbypercentout", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applypropbypercentout", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let from = $("#" + me.pre + "minpercentout").val();
            let to = $("#" + me.pre + "maxpercentout").val();
            thisClass.setLogCmd("select prop percent out | " + from + '_' + to, true);
            ic.resid2specCls.selectProperty('percent out', from, to);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_alignment", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_alignment", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
            thisClass.setLogCmd("window aligned sequences", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_table", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_table", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
            thisClass.setLogCmd("window interaction table", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_linegraph", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_linegraph", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
            thisClass.setLogCmd("window interaction graph", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_scatterplot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_scatterplot", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as map');
            thisClass.setLogCmd("window interaction scatterplot", true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_window_graph", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_window_graph", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
            thisClass.setLogCmd("window force-directed graph", true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_yournote", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_yournote", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_yournote', 'Your note about the current display');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.yournote = $("#" + me.pre + "yournote").val();
            if(me.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_command", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_command", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_advanced2', 'Select by specification');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2", "#" + me.pre + "tool_definedsets"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_definedsets", "#" + me.pre + "definedsets", "#" + me.pre + "definedsets2", "#" + me.pre + "tool_definedsets"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.definedSetsCls.showSets();
            thisClass.setLogCmd('defined sets', true);
            //thisClass.setLogCmd('window defined sets', true);
@@ -913,7 +947,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 0;
            ic.opts['pk'] = 'no';
            thisClass.setLogCmd('set pk off', true);
@@ -921,50 +955,50 @@ class ClickMenu {
            ic.hlObjectsCls.removeHlObjects();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
            thisClass.setLogCmd('set pk atom', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkResidue", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 2;
            ic.opts['pk'] = 'residue';
            thisClass.setLogCmd('set pk residue', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkStrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkStrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 3;
            ic.opts['pk'] = 'strand';
            thisClass.setLogCmd('set pk strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkDomain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkDomain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 4;
            ic.opts['pk'] = 'domain';
            thisClass.setLogCmd('set pk domain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn2_pkChain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pk = 5;
            ic.opts['pk'] = 'chain';
            thisClass.setLogCmd('set pk chain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "adjustmem", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "adjustmem", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_adjustmem', 'Adjust the Z-axis positions of the membrane');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "togglemem", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "togglemem", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.selectionCls.toggleMembrane();
            thisClass.setLogCmd('toggle membrane', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "selectplane", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "selectplane", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_selectplane', 'Select a region between two planes');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_aroundsphere", "#" + me.pre + "tool_aroundsphere"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_aroundsphere", "#" + me.pre + "tool_aroundsphere"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
@@ -981,7 +1015,7 @@ class ClickMenu {
             $("#" + me.pre + "atomsCustomSphere2").resizable();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_select_chain", "#" + me.pre + "definedSets"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_select_chain", "#" + me.pre + "definedSets"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_select_chain', 'Select Structure/Chain/Custom Selection');
         });
 
@@ -992,242 +1026,242 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 3
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsRibbon","#" + me.pre + "tool_proteinsRibbon"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsRibbon","#" + me.pre + "tool_proteinsRibbon"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'ribbon');
            thisClass.setLogCmd('style proteins ribbon', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'strand');
            thisClass.setLogCmd('style proteins strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCylinder", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCylinder", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'cylinder and plate');
            thisClass.setLogCmd('style proteins cylinder and plate', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'schematic');
            thisClass.setLogCmd('style proteins schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCalpha", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsCalpha", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'c alpha trace');
            thisClass.setLogCmd('style proteins c alpha trace', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBackbone", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBackbone", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'backbone');
            thisClass.setLogCmd('style proteins backbone', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'b factor tube');
            thisClass.setLogCmd('style proteins b factor tube', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'lines');
            thisClass.setLogCmd('style proteins lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'stick');
            thisClass.setLogCmd('style proteins stick', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsBallstick", "#" + me.pre + "tool_proteinsBallstick"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsBallstick", "#" + me.pre + "tool_proteinsBallstick"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'ball and stick');
            thisClass.setLogCmd('style proteins ball and stick', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsSphere", "#" + me.pre + "tool_proteinsSphere"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn3_proteinsSphere", "#" + me.pre + "tool_proteinsSphere"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'sphere');
            thisClass.setLogCmd('style proteins sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('proteins', 'nothing');
            thisClass.setLogCmd('style proteins nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'lines2');
            thisClass.setLogCmd('style sidec lines2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'stick2');
            thisClass.setLogCmd('style sidec stick2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'ball and stick2');
            thisClass.setLogCmd('style sidec ball and stick2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'sphere2');
            thisClass.setLogCmd('style sidec sphere2', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_sidecNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_sidecNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('sidec', 'nothing');
            thisClass.setLogCmd('style sidec nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'lines2');
             thisClass.setLogCmd('style ntbase lines2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'stick2');
             thisClass.setLogCmd('style ntbase stick2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'ball and stick2');
             thisClass.setLogCmd('style ntbase ball and stick2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'sphere2');
             thisClass.setLogCmd('style ntbase sphere2', true);
          });
  
-         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn3_ntbaseNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setStyle('ntbase', 'nothing');
             thisClass.setLogCmd('style ntbase nothing', true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclCartoon", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'nucleotide cartoon');
            thisClass.setLogCmd('style nucleotides nucleotide cartoon', true);
        });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBackbone", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBackbone", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'backbone');
            thisClass.setLogCmd('style nucleotides backbone', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'schematic');
            thisClass.setLogCmd('style nucleotides schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclPhos", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclPhos", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'o3 trace');
            thisClass.setLogCmd('style nucleotides o3 trace', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'lines');
            thisClass.setLogCmd('style nucleotides lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'stick');
            thisClass.setLogCmd('style nucleotides stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'ball and stick');
            thisClass.setLogCmd('style nucleotides ball and stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'sphere');
            thisClass.setLogCmd('style nucleotides sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_nuclNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_nuclNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('nucleotides', 'nothing');
            thisClass.setLogCmd('style nucleotides nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligLines", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligLines", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'lines');
            thisClass.setLogCmd('style chemicals lines', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligStick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligStick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'stick');
            thisClass.setLogCmd('style chemicals stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligBallstick", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligBallstick", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'ball and stick');
            thisClass.setLogCmd('style chemicals ball and stick', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligSchematic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligSchematic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'schematic');
            thisClass.setLogCmd('style chemicals schematic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'sphere');
            thisClass.setLogCmd('style chemicals sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ligNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ligNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('chemicals', 'nothing');
            thisClass.setLogCmd('style chemicals nothing', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bGlycansCartoon = true;
            ic.drawCls.draw();
            thisClass.setLogCmd('glycans cartoon yes', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_glycansCartNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bGlycansCartoon = false;
            ic.drawCls.draw();
            thisClass.setLogCmd('glycans cartoon no', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.showHydrogens();
            ic.drawCls.draw();
            thisClass.setLogCmd('hydrogens', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_hydrogensNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.hideHydrogens();
            ic.drawCls.draw();
            thisClass.setLogCmd('set hydrogens off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'sphere');
            thisClass.setLogCmd('style ions sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsDot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsDot", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'dot');
            thisClass.setLogCmd('style ions dot', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_ionsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_ionsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('ions', 'nothing');
            thisClass.setLogCmd('style ions nothing', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterSphere", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterSphere", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'sphere');
            thisClass.setLogCmd('style water sphere', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterDot", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterDot", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'dot');
            thisClass.setLogCmd('style water dot', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_waterNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_waterNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setStyle('water', 'nothing');
            thisClass.setLogCmd('style water nothing', true);
         });
@@ -1239,16 +1273,16 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 4
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'spectrum');
            thisClass.setLogCmd('color spectrum', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'spectrum for chains');
            thisClass.setLogCmd('color spectrum for chains', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumAcrossSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumAcrossSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorSpectrumAcross").length) {
@@ -1259,7 +1293,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorSpectrumAcross").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorSpectrum").length) {
@@ -1270,7 +1304,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorSpectrum").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowAcrossSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowAcrossSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorRainbowAcross").length) {
@@ -1281,7 +1315,7 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorRainbowAcross").resizable();
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
              thisClass.SetChainsAdvancedMenu();
              let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
              if($("#" + me.pre + "atomsCustomColorRainbow").length) {
@@ -1292,60 +1326,60 @@ class ClickMenu {
              $("#" + me.pre + "atomsCustomColorRainbow").resizable();
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow');
 
            thisClass.setLogCmd('color rainbow', true);
         });
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrRainbowChain", "#" + me.pre + "tool_clrRainbowChain"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'rainbow for chains');
            thisClass.setLogCmd('color rainbow for chains', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrChain", "#" + me.pre + "tool_clrChain"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrChain", "#" + me.pre + "tool_clrChain"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'chain');
            thisClass.setLogCmd('color chain', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.setOptionCls.setOption('color', 'structure');
             thisClass.setLogCmd('color structure', true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'domain');
            thisClass.setLogCmd('color domain', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'defined sets');
            thisClass.setLogCmd('color defined sets', true);
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrSSGreen", "#" + me.pre + "tool_clrSSGreen"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrSSGreen", "#" + me.pre + "tool_clrSSGreen"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.sheetcolor = 'green';
            ic.setOptionCls.setOption('color', 'secondary structure green');
            thisClass.setLogCmd('color secondary structure green', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSYellow", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSYellow", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.sheetcolor = 'yellow';
            ic.setOptionCls.setOption('color', 'secondary structure yellow');
            thisClass.setLogCmd('color secondary structure yellow', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSSpectrum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSSSpectrum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'secondary structure spectrum');
            thisClass.setLogCmd('color secondary structure spectrum', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidue", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 2;
             ic.setOptionCls.setOption('color', 'residue');
             thisClass.setLogCmd('color residue', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrResidueCustom", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 2;
             me.htmlCls.dialogCls.openDlg('dl_rescolorfile', 'Please input the file on residue colors');
         });
@@ -1391,12 +1425,12 @@ class ClickMenu {
            ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_customref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
  
             me.htmlCls.dialogCls.openDlg('dl_customref', 'Set custom reference numbers');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "reload_customreffile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
  
             if(!me.cfg.notebook) dialog.dialog( "close" );
             
@@ -1433,82 +1467,82 @@ class ClickMenu {
            ic.addTrackCls.setCustomFile('tube');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrCharge", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 3;
             ic.setOptionCls.setOption('color', 'charge');
             thisClass.setLogCmd('color charge', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrHydrophobic", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 4; 
             ic.setOptionCls.setOption('color', 'hydrophobic');
             thisClass.setLogCmd('color hydrophobic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 4;
             ic.setOptionCls.setOption('color', 'normalized hydrophobic');
             thisClass.setLogCmd('color normalized hydrophobic', true);
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn4_clrAtom", "#" + me.pre + "tool_clrAtom"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 1;
             ic.setOptionCls.setOption('color', 'atom');
             thisClass.setLogCmd('color atom', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 5;
             ic.setOptionCls.setOption('color', 'b factor');
             thisClass.setLogCmd('color b factor', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'confidence');
             thisClass.setLogCmd('color confidence', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgstrand", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'ig strand');
             thisClass.setLogCmd('color ig strand', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIgproto", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             //ic.legendClick = 6;
             ic.setOptionCls.setOption('color', 'ig protodomain');
             thisClass.setLogCmd('color ig protodomain', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_colorbyarea', "Color based on residue's solvent accessibility");
         });
-        me.myEventCls.onIds("#" + me.pre + "applycolorbyarea", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applycolorbyarea", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.midpercent = $("#" + me.pre + 'midpercent').val();
             ic.setOptionCls.setOption('color', 'area');
             thisClass.setLogCmd('color area | ' + ic.midpercent, true);
 
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactorNorm", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrBfactorNorm", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'b factor percentile');
            thisClass.setLogCmd('color b factor percentile', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrIdentity", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrIdentity", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'identity');
            thisClass.setLogCmd('color identity', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrConserved", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConserved", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('color', 'conservation');
            thisClass.setLogCmd('color conservation', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrCustom", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrCustom", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_clr', 'Color picker');
         });
 
@@ -1521,22 +1555,22 @@ class ClickMenu {
           thisClass.setLogCmd("color " + color, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrSave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.saveColor();
            thisClass.setLogCmd('save color', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn4_clrApplySave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrApplySave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.applySavedColor();
            thisClass.setLogCmd('apply saved color', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_styleSave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_styleSave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.saveStyle();
            thisClass.setLogCmd('save style', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_styleApplySave", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_styleApplySave", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.applySavedStyle();
            thisClass.setLogCmd('apply saved style', true);
         });
@@ -1548,7 +1582,7 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 5
-        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.applyMapCls.removeLastSurface();
            ic.applyMapCls.applySurfaceOptions();
@@ -1556,7 +1590,7 @@ class ClickMenu {
            thisClass.setLogCmd('set surface neighbors on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_neighborsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.applyMapCls.removeLastSurface();
            ic.applyMapCls.applySurfaceOptions();
@@ -1564,48 +1598,48 @@ class ClickMenu {
            thisClass.setLogCmd('set surface neighbors off', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_surfaceVDW", "#" + me.pre + "tool_surfaceVDW"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_surfaceVDW", "#" + me.pre + "tool_surfaceVDW"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'Van der Waals surface');
            thisClass.setLogCmd('set surface Van der Waals surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSAS", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSAS", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'solvent accessible surface');
            thisClass.setLogCmd('set surface solvent accessible surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecular", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecular", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = false;
            ic.setOptionCls.setOption('surface', 'molecular surface');
            thisClass.setLogCmd('set surface molecular surface', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceVDWContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceVDWContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'Van der Waals surface with context');
            thisClass.setLogCmd('set surface Van der Waals surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSASContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceSASContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'solvent accessible surface with context');
            thisClass.setLogCmd('set surface solvent accessible surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecularContext", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceMolecularContext", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bConsiderNeighbors = true;
            ic.setOptionCls.setOption('surface', 'molecular surface with context');
            thisClass.setLogCmd('set surface molecular surface with context', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_surfaceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('surface', 'nothing');
            thisClass.setLogCmd('set surface nothing', true);
         });
 
-        $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn5_opacity", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.transparentRenderOrder = false;
 
             let value = $(this).attr('v');
@@ -1613,7 +1647,7 @@ class ClickMenu {
            thisClass.setLogCmd('set surface opacity ' + value, true);
         });
 
-        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn5_opacityslow", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.transparentRenderOrder = true;
 
             let value = $(this).attr('v');
@@ -1621,35 +1655,35 @@ class ClickMenu {
             thisClass.setLogCmd('set surface2 opacity ' + value, true);
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('wireframe', 'yes');
            thisClass.setLogCmd('set surface wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_wireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('wireframe', 'no');
            thisClass.setLogCmd('set surface wireframe off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_elecmap2fofc", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_elecmap2fofc", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_elecmapfofc", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_elecmapfofc", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_elecmapfofc', 'Fo-Fc Electron Density Map');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_elecmapNo", "#" + me.pre + "elecmapNo2", "#" + me.pre + "elecmapNo3", "#" + me.pre + "elecmapNo4", "#" + me.pre + "elecmapNo5"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_elecmapNo", "#" + me.pre + "elecmapNo2", "#" + me.pre + "elecmapNo3", "#" + me.pre + "elecmapNo4", "#" + me.pre + "elecmapNo5"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('map', 'nothing');
            thisClass.setLogCmd('setoption map nothing', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphimapNo", "#" + me.pre + "phimapNo", "#" + me.pre + "phiurlmapNo", "#" + me.pre + "mn1_phimapNo"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphimapNo", "#" + me.pre + "phimapNo", "#" + me.pre + "phiurlmapNo", "#" + me.pre + "mn1_phimapNo"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('phimap', 'nothing');
            thisClass.setLogCmd('setoption phimap nothing', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "delphimapNo2", "#" + me.pre + "phimapNo2", "#" + me.pre + "phiurlmapNo2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "delphimapNo2", "#" + me.pre + "phimapNo2", "#" + me.pre + "phiurlmapNo2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('surface', 'nothing');
            //thisClass.setLogCmd('set surface nothing', true);
            ic.setOptionCls.setOption('phisurface', 'nothing');
@@ -1681,22 +1715,22 @@ class ClickMenu {
            thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.dsn6ParserCls.dsn6Parser(ic.inputid);
            ic.setOptionCls.setOption('mapwireframe', 'yes');
            thisClass.setLogCmd('set map wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_mapwireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('mapwireframe', 'no');
            thisClass.setLogCmd('set map wireframe off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmap", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmap", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_emmap', 'EM Density Map');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn5_emmapNo", "#" + me.pre + "emmapNo2"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn5_emmapNo", "#" + me.pre + "emmapNo2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('emmap', 'nothing');
            thisClass.setLogCmd('setoption emmap nothing', true);
         });
@@ -1713,13 +1747,13 @@ class ClickMenu {
            thisClass.setLogCmd('set emmap percentage ' + empercentage, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.dsn6ParserCls.dsn6Parser(ic.inputid);
            ic.setOptionCls.setOption('emmapwireframe', 'yes');
            thisClass.setLogCmd('set emmap wireframe on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_emmapwireframeNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('emmapwireframe', 'no');
            thisClass.setLogCmd('set emmap wireframe off', true);
         });
@@ -1731,19 +1765,19 @@ class ClickMenu {
 
         let thisClass = this;
     // mn 6
-        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAssembly = true;
            thisClass.setLogCmd('set assembly on', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_assemblyNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAssembly = false;
            thisClass.setLogCmd('set assembly off', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.bRunRefnumAgain = true;
 
             thisClass.setLogCmd('ig refnum on', true);
@@ -1766,11 +1800,11 @@ class ClickMenu {
             ic.bRunRefnumAgain = false;
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_igrefTpl', 'Choose an Ig template');
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_igrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
 
             let template = $("#" + me.pre + "refTpl").val();
@@ -1780,11 +1814,11 @@ class ClickMenu {
             thisClass.setLogCmd('ig template ' + template, true);
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_alignrefTpl', 'Align with an Ig template');
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl_apply", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_alignrefTpl_apply", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
    
             let template = $("#" + me.pre + "refTpl2").val();
@@ -1808,7 +1842,7 @@ class ClickMenu {
             thisClass.setLogCmd('realign on tmalign', true);   
          });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_igrefNo", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.setLogCmd('ig refnum off', true);
             await ic.refnumCls.hideIgRefNum();
 
@@ -1818,14 +1852,14 @@ class ClickMenu {
             // ic.drawCls.draw();
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelAtoms", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelAtoms", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addAtomLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add atom labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelElements", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelElements", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addAtomLabels(ic.hAtoms, true);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add element labels', true);
@@ -1833,49 +1867,49 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResidues", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResidues", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addResidueLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add residue labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResnum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, true);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add residue number labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelRefnum", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          ic.residueLabelsCls.addResidueLabels(ic.hAtoms, undefined, undefined, undefined, true);
          ic.selectionCls.saveSelectionIfSelected();
          thisClass.setLogCmd('add reference number labels', true);
          ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelIg", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelIg", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          ic.residueLabelsCls.addIgLabels(ic.hAtoms);
          ic.selectionCls.saveSelectionIfSelected();
          thisClass.setLogCmd('add ig labels', true);
          ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelChains", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.analysisCls.addChainLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add chain labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelTermini", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelTermini", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.analysisCls.addTerminiLabels(ic.hAtoms);
            ic.selectionCls.saveSelectionIfSelected();
            thisClass.setLogCmd('add terminal labels', true);
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_addlabel', 'Add custom labels by selection');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -1883,19 +1917,19 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_addlabelselection', 'Add custom labels by the selected');
         });
 
-         me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+         me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_labelColor', 'Change color for all labels');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_saveselection","#" + me.pre + "tool_saveselection"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_saveselection","#" + me.pre + "tool_saveselection"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_saveselection', 'Save the selected');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.labelcolor = undefined;
             ic.pickpair = false;
            //ic.labels['residue'] = [];
@@ -1910,14 +1944,14 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        $(document).on("click", "." + me.pre + "mn6_labelscale", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_labelscale", function(e) { let ic = me.icn3d; //e.preventDefault();
            let value = $(this).attr('v');
            ic.labelScale = value;
            ic.drawCls.draw();
            thisClass.setLogCmd('set label scale ' + value, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distanceYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distanceYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_distance', 'Measure the distance of atoms');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -1927,7 +1961,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distTwoSets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_disttwosets', 'Measure the distance between two sets');
 
             thisClass.setSetsMenus('atomsCustomDist');
@@ -1935,7 +1969,7 @@ class ClickMenu {
            ic.bMeasureDistance = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_distmanysets', 'Measure the pairwise distances among many sets');
 
             thisClass.setSetsMenus('atomsCustomDistTable');
@@ -1943,7 +1977,7 @@ class ClickMenu {
            ic.bMeasureDistance = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_angleManySets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_angleManySets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
          me.htmlCls.dialogCls.openDlg('dl_anglemanysets', 'Measure the pairwise angles among many sets');
 
          thisClass.setSetsMenus('atomsCustomAngleTable');
@@ -1951,7 +1985,7 @@ class ClickMenu {
         ic.bMeasureAngle = true;
        });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_distanceNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pickpair = false;
            let select = "set lines off";
            thisClass.setLogCmd(select, true);
@@ -1962,7 +1996,7 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_cartoonshape", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_cartoonshape', 'Draw cartoon for a set');
 
             let bOneset = true;
@@ -1971,7 +2005,7 @@ class ClickMenu {
            ic.bCartoonshape = true;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn5_linebtwsets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_linebtwsets', 'Draw a line between two sets');
 
             thisClass.setSetsMenus('linebtwsets');
@@ -1980,21 +2014,21 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('zoom selection', true);
            ic.transformCls.zoominSelection();
            ic.drawCls.draw();
            thisClass.setLogCmd('zoom selection', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_center", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_center", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('center selection', true);
            ic.applyCenterCls.centerSelection();
            ic.drawCls.draw();
            thisClass.setLogCmd('center selection', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation", "#" + me.pre + "tool_resetOrientation"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_resetOrientation", "#" + me.pre + "resetOrientation", "#" + me.pre + "tool_resetOrientation"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('reset orientation', true);
            ic.transformCls.resetOrientation();
            //ic.setColorCls.applyOriginalColor();
@@ -2002,17 +2036,17 @@ class ClickMenu {
            thisClass.setLogCmd('reset orientation', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindingshow", "#" + me.pre + "chemicalbindingshow"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindingshow", "#" + me.pre + "chemicalbindingshow"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('chemicalbinding', 'show');
            thisClass.setLogCmd('set chemicalbinding show', true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindinghide", "#" + me.pre + "chemicalbindinghide"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_chemicalbindinghide", "#" + me.pre + "chemicalbindinghide"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('chemicalbinding', 'hide');
            thisClass.setLogCmd('set chemicalbinding hide', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            if(ic.bInputfile) {
                 alert("Side-by-Side does NOT work when the input is from a local file.");
                 return;
@@ -2033,19 +2067,19 @@ class ClickMenu {
            //}
         });
 
-        $(document).on("click", "#" + me.pre + "mn2_translate", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "#" + me.pre + "mn2_translate", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
         });
 
-        $(document).on("click", "#" + me.pre + "mn6_angleTwoSets", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "#" + me.pre + "mn6_angleTwoSets", function(e) { let ic = me.icn3d; //e.preventDefault();
          me.htmlCls.dialogCls.openDlg('dl_angle', 'Measure the angle between two vectors');
         });
 
-        $(document).on("click", "#" + me.pre + "mn2_matrix", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "#" + me.pre + "mn2_matrix", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_matrix', 'Apply matrix to the X,Y,Z coordinates of the structure');
         });
 
-        $(document).on("click", "." + me.pre + "mn6_rotate", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_rotate", function(e) { let ic = me.icn3d; //e.preventDefault();
            let value = $(this).attr('v').toLowerCase();
            let direction = value.split(' ')[1];
 
@@ -2057,7 +2091,7 @@ class ClickMenu {
            ic.resizeCanvasCls.rotStruc(direction);
         });
 
-        $(document).on("click", "." + me.pre + "mn6_rotate90", function(e) { let ic = me.icn3d; e.preventDefault();
+        $(document).on("click", "." + me.pre + "mn6_rotate90", function(e) { let ic = me.icn3d; //e.preventDefault();
           let value = $(this).attr('v').toLowerCase();
           let direction = value.split(' ')[1];
 
@@ -2076,21 +2110,21 @@ class ClickMenu {
           ic.transformCls.setRotation(axis, angle);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_cameraPers", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_cameraPers", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('camera', 'perspective');
            thisClass.setLogCmd('set camera perspective', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_cameraOrth", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_cameraOrth", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('camera', 'orthographic');
            thisClass.setLogCmd('set camera orthographic', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdBlack", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdBlack", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('black');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "tool_bkgd", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "tool_bkgd", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             if(ic.opts['background'] == 'black') {
                 ic.setStyleCls.setBackground('white');
             }
@@ -2099,19 +2133,19 @@ class ClickMenu {
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdGrey", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdGrey", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('grey');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_bkgdWhite", "#" + me.pre + "tool_bkgdWhite"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_bkgdWhite", "#" + me.pre + "tool_bkgdWhite"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('white');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdTransparent", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_bkgdTransparent", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setStyleCls.setBackground('transparent');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showfogYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showfogYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('fog', 'yes');
            ic.opts['fog'] = 'yes';
            ic.fogCls.setFog(true);
@@ -2119,7 +2153,7 @@ class ClickMenu {
            thisClass.setLogCmd('set fog on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showfogNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showfogNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //ic.setOptionCls.setOption('fog', 'no');
            ic.opts['fog'] = 'no';
            ic.fogCls.setFog(true);
@@ -2127,22 +2161,22 @@ class ClickMenu {
            thisClass.setLogCmd('set fog off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showslabYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showslabYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('slab', 'yes');
            thisClass.setLogCmd('set slab on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showslabNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showslabNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('slab', 'no');
            thisClass.setLogCmd('set slab off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.setOptionCls.setOption('axis', 'yes');
            thisClass.setLogCmd('set axis on', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisSel", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisSel", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pc1 = true;
 
            ic.axesCls.setPc1Axes();
@@ -2150,7 +2184,7 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_showaxisNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.pc1 = false;
            ic.axes = [];
 
@@ -2159,37 +2193,37 @@ class ClickMenu {
            thisClass.setLogCmd('set axis off', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
            await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
            //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
            await ic.symdCls.retrieveSymd();
            ic.bSymd = true;
 
            thisClass.setLogCmd('symd symmetry', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_clear_sym", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clear_sym", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.symdArray = [];
            ic.drawCls.draw();
            thisClass.setLogCmd('clear symd symmetry', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = true;
            ic.drawCls.draw();
            thisClass.setLogCmd('show axis', true);
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_area", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_area", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             ic.analysisCls.calculateArea();
             thisClass.setLogCmd('area', true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
 
            let title = $("#" + me.pre + "selectSymmetry" ).val();
@@ -2199,14 +2233,14 @@ class ClickMenu {
            ic.drawCls.draw();
            thisClass.setLogCmd('symmetry ' + title, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "clearsymmetry", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "clearsymmetry", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let title = 'none';
            ic.symmetrytitle = undefined;
            ic.drawCls.draw();
            thisClass.setLogCmd('symmetry ' + title, true);
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
@@ -2223,11 +2257,11 @@ class ClickMenu {
            $("#" + me.pre + "atomsCustomHbond2").resizable();
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
         });
 
-        me.myEventCls.onIds(["#" + me.pre + "mn6_DSSP"], "click", async function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn6_DSSP"], "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
          thisClass.setLogCmd('set dssp sse', true);
          await ic.pdbParserCls.applyCommandDssp();
          ic.bResetAnno = true;
@@ -2240,12 +2274,12 @@ class ClickMenu {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.showInterCls.hideHbondsContacts();
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "stabilizer";
            ic.threeDPrintCls.addStabilizer();
            ic.threeDPrintCls.prepareFor3Dprint();
@@ -2253,14 +2287,14 @@ class ClickMenu {
            thisClass.setLogCmd(select, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "set stabilizer off";
            thisClass.setLogCmd(select, true);
            ic.threeDPrintCls.hideStabilizer();
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerOne", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerOne", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_stabilizer', 'Add One Stabilizer');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -2268,7 +2302,7 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerRmOne", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_stabilizerRmOne", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_stabilizer_rm', 'Remove One Stabilizer');
            ic.pk = 1;
            ic.opts['pk'] = 'atom';
@@ -2276,27 +2310,27 @@ class ClickMenu {
            ic.pAtomNum = 0;
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_thicknessSet", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn1_thicknessSet", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_thickness', 'Set Thickness for 3D Printing');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Style Preferences');
         });
 
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "disulfide bonds";
            thisClass.setLogCmd(select, true);
            ic.showInterCls.showSsbonds();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsExport", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsExport", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.viewInterPairsCls.exportSsbondPairs();
            thisClass.setLogCmd("export disulfide bond pairs", false);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.opts["ssbonds"] = "no";
            let select = "set disulfide bonds off";
            thisClass.setLogCmd(select, true);
@@ -2304,7 +2338,7 @@ class ClickMenu {
            ic.setOptionCls.setStyle('sidec', 'nothing');
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsYes", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let select = "cross linkage";
            thisClass.setLogCmd(select, true);
            //ic.bShowCrossResidueBond = true;
@@ -2312,12 +2346,12 @@ class ClickMenu {
            ic.showInterCls.showClbonds();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsExport", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsExport", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.viewInterPairsCls.exportClbondPairs();
            thisClass.setLogCmd("export cross linkage pairs", false);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsNo", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "mn6_clbondsNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.opts["clbonds"] = "no";
            let select = "set cross linkage off";
            thisClass.setLogCmd(select, true);
@@ -2365,7 +2399,7 @@ class ClickMenu {
             });
         });
 
-        me.myEventCls.onIds("#" + me.pre + "jn_copy", "click", function(e) { let ic = me.icn3d; e.preventDefault();
+        me.myEventCls.onIds("#" + me.pre + "jn_copy", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             let text = $("#" + me.pre + "jn_commands").val();
             navigator.clipboard.writeText(text);
         });

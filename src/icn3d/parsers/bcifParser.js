@@ -179,8 +179,8 @@ class BcifParser {
             // Iterate through every row in the table
             let db2Size = database_2.rowCount ;
             for (let i = 0; i < db2Size; ++i) {
-                let db_id = database_2.getColumn("database_id").getString(0);
-                let db_code = database_2.getColumn("database_code").getString(0);
+                let db_id = database_2.getColumn("database_id").getString(i);
+                let db_code = database_2.getColumn("database_code").getString(i);
 
                 if(db_id == "EMDB") {
                     emd = db_code;
