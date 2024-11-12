@@ -108,7 +108,7 @@ class LineGraph {
                           }
                           else {                           
                             ++linkedNodeCnt[mappingid];   
-                            linkedNodeInterDiff[mappingid] += link.n; 
+                            linkedNodeInterDiff[mappingid] += link.n;
                             
                             linkedNodeInterDiffBool[mappingid] = (linkedNodeInterDiff[mappingid] / link.n == linkedNodeCnt[mappingid]) ? 0 : 1; 
                           }
@@ -162,7 +162,7 @@ class LineGraph {
                           let linkDiff = me.hashUtilsCls.cloneHash(link);
                           linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                           linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
-                      
+                          
                           if(linkedNodeCnt[mappingid] == structureArray.length && (bIgRef || linkedNodeInterDiffBool[mappingid] == 0)) {
                               linkArraySplitCommon[index].push(linkCommon);
                           }  

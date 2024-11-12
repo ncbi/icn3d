@@ -9973,6 +9973,10 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem Compound');
             });
 
+            me.myEventCls.onIds("#" + me.pre + "mn1_smiles", "click", function(e) { me.icn3d; //e.preventDefault();
+             me.htmlCls.dialogCls.openDlg('dl_smiles', 'Please input a chemical SMILES');
+            });
+
             me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { me.icn3d; //e.preventDefault();
                me.htmlCls.dialogCls.openDlg('dl_pngimage', 'Please append PNG images');
             });
@@ -12006,9 +12010,9 @@ var icn3d = (function (exports) {
 
             $("#" + me.pre + "newvs2").on('submit', function() {
                 // fill the pdbstr
-                let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
+                let bVastSearch = true;
+                let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms, undefined, undefined, undefined, undefined, undefined, undefined, bVastSearch);
                 $("#" + me.pre + "pdbstr").val(pdbstr);
-
                 return true;
             });
 
@@ -12650,6 +12654,7 @@ var icn3d = (function (exports) {
             //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
             html += this.getLink('mn1_cid', 'PubChem CID/Name/InchI ' + me.htmlCls.wifiStr, 1, 2);
+            html += this.getLink('mn1_smiles', 'Chemical SMILES ', undefined, 2);
             
             html += "</ul>";
             html += "</li>";
@@ -14921,7 +14926,7 @@ var icn3d = (function (exports) {
             html += '<div style="width:550px;">You can define your own reference numbers in a custom file using Excel, and then export it as a CSV file. An example file is shown below with cells separated by commas.<br>';
             html += '<pre>refnum,11,12,,21,22,,10C,11C,20C<br>';
             html += '1TUP_A,100,101,,,132,,,,<br>';
-            html += '1TUP_B,110,111,,141,142,,,,</pre>';
+            html += '1TUP_B,110,111,,141,142,,,,<br>';
             html += '1TUP_C,,,,,,,200,201,230</pre>';
             html += 'The first row defines the reference residue numbers, which could be any strings. The 1st cell could be anything. The rest cells are reference residue numbers (e.g., 11, 21, 10C, etc.) or empty cells. Each chain has a separate row. The first cell of the second row is the chain ID "1TUP_A". The rest cells are the corresponding real residue numbers for reference residue numbers in the first row. For example, the reference numbers for residues 100, 101, and 132 in the chain 1TUP_A are 11, 12, and 22, respectively. The fourth row shows another set of reference numners for the chain "1TUP_C". It could be a chain from a different structure.<br><br>';
             html += 'To select all residues corresponding to the reference numbers, you can simplay replace ":" with "%" in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank">Specification</a>. For example, "%12"  selects the residue 101 in 1TUP_A and the residue 111 in 1TUP_B. ".A%12" has the chain "A" filter and selects the residue 101 in 1TUP_A.<br>';
@@ -15113,6 +15118,12 @@ var icn3d = (function (exports) {
             html += this.addNotebookTitle('dl_cid', 'Please input a PubChem Compound');
             html += "PubChem CID/Name/InchI: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
             html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_smiles' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_cid', 'Please input a chemical SMILES');
+            html += "Chemical SMILES: " + me.htmlCls.inputTextStr + "id='" + me.pre + "smiles' value='CC(=O)OC1=CC=CC=C1C(=O)O' size=30> ";
+            html += me.htmlCls.buttonStr + "reload_smiles'>Load</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_pngimage' class='" + dialogClass + "'>";
@@ -17558,13 +17569,24 @@ var icn3d = (function (exports) {
             });
 
 
-            me.myEventCls.onIds("#" + me.pre 
-            + "reload_cid", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                thisClass.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_smiles", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                // thisClass.setLogCmd("load smiles " + $("#" + me.pre + "smiles").val(), false);
+                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+
+                urlTarget = '_blank';
+
+                console.log("smiles: " + $("#" + me.pre + "smiles").val() + " encode: " + encodeURIComponent($("#" + me.pre + "smiles").val()));
+                window.open(hostUrl + '?smiles=' + encodeURIComponent($("#" + me.pre + "smiles").val()), urlTarget);
             });
 
             me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { let ic = me.icn3d;
@@ -20173,8 +20195,8 @@ var icn3d = (function (exports) {
             });
         }
 
-        // async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
-        async loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
+        async loadPng(imageStr, command, bRender) { let me = this.icn3dui, ic = me.icn3d;
+        // async loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
            let matchedStr = 'Share Link: ';
            let pos = imageStr.indexOf(matchedStr);
            let matchedStrState = "Start of state file======\n";
@@ -20195,8 +20217,8 @@ var icn3d = (function (exports) {
                let posData = imageStr.indexOf(matchedStrData);
                ic.bInputfile =(posData == -1) ? false : true;
                ic.bInputPNGWithData = ic.bInputfile;
-            //    let commandStr = (command) ? command.replace(/;/g, "\n") : '';
-               let commandStr = '';
+               let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+            //    let commandStr = '';
 
             //    let statefile;
             //    if(ic.bInputfile) {
@@ -20217,31 +20239,37 @@ var icn3d = (function (exports) {
                    //statefile = decodeURIComponent(statefile);
                    statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
-    /*
-                    if(type === 'pdb') {
-                        await ic.pdbParserCls.loadPdbData(data);
+                   if(bRender) {
+                        if(type === 'pdb') {
+                            await ic.pdbParserCls.loadPdbData(data);
 
-                        ic.commands = [];
-                        ic.optsHistory = [];
-                        //await ic.loadScriptCls.loadScript(statefile, true);
+                            ic.commands = [];
+                            ic.optsHistory = [];
+                            //await ic.loadScriptCls.loadScript(statefile, true);
+                        }
+                        else {
+                            if(type === 'mol2') {
+                                await ic.mol2ParserCls.loadMol2Data(data);
+                            }
+                            else if(type === 'sdf') {
+                                await ic.sdfParserCls.loadSdfData(data);
+                            }
+                            else if(type === 'xyz') {
+                                await ic.xyzParserCls.loadXyzData(data);
+                            }
+                            else if(type === 'mmcif') {
+                                await ic.mmcifParserCls.loadMmcifData(data);
+                            }
+                            ic.commands = [];
+                            ic.optsHistory = [];
+                            //await ic.loadScriptCls.loadScript(statefile, true);
+                        }
+
+                        await ic.loadScriptCls.loadScript(statefile, true);
+
+                        // me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                     }
-                    else {
-                        if(type === 'mol2') {
-                            await ic.mol2ParserCls.loadMol2Data(data);
-                        }
-                        else if(type === 'sdf') {
-                            await ic.sdfParserCls.loadSdfData(data);
-                        }
-                        else if(type === 'xyz') {
-                            await ic.xyzParserCls.loadXyzData(data);
-                        }
-                        else if(type === 'mmcif') {
-                            await ic.mmcifParserCls.loadMmcifData(data);
-                        }
-                       ic.commands = [];
-                       ic.optsHistory = [];
-                       //await ic.loadScriptCls.loadScript(statefile, true);
-                   }
+    /*                   
                }
                else { // url length > 4000
                    //var matchedStrState = "Start of state file======\n";
@@ -43006,8 +43034,6 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                if(bNotShowDomain) continue;
-
                 // save 3D domain info for node.js script
                 if(me.bNode) {
                     let domainName = '3D domain ' +(index+1).toString();
@@ -43022,12 +43048,14 @@ var icn3d = (function (exports) {
                             // 0-based
                             let obj = {};
                             // let resi = ic.ParserUtilsCls.getResi(chnid, j);
-                            let resid = ic.ncbi2resid(chnid + '_' + j);
+                            let resid = ic.ncbi2resid[chnid + '_' + j];
                             obj[resid] = domainName;
                             ic.resid2domain[chnid].push(obj);
                         }
                     }
                 }
+
+                if(bNotShowDomain) continue;
 
                 let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
@@ -50609,7 +50637,7 @@ var icn3d = (function (exports) {
                               }
                               else {                           
                                 ++linkedNodeCnt[mappingid];   
-                                linkedNodeInterDiff[mappingid] += link.n; 
+                                linkedNodeInterDiff[mappingid] += link.n;
                                 
                                 linkedNodeInterDiffBool[mappingid] = (linkedNodeInterDiff[mappingid] / link.n == linkedNodeCnt[mappingid]) ? 0 : 1; 
                               }
@@ -50663,7 +50691,7 @@ var icn3d = (function (exports) {
                               let linkDiff = me.hashUtilsCls.cloneHash(link);
                               linkDiff.source += separatorDiff + ic.chainsMapping[chainid1][resid1];
                               linkDiff.target += separatorDiff + ic.chainsMapping[chainid2][resid2];
-                          
+                              
                               if(linkedNodeCnt[mappingid] == structureArray.length && (bIgRef || linkedNodeInterDiffBool[mappingid] == 0)) {
                                   linkArraySplitCommon[index].push(linkCommon);
                               }  
@@ -51356,6 +51384,7 @@ var icn3d = (function (exports) {
                     nodeArray2.push(node);
                 }
             }
+
             // sort array
             nodeArray1.sort(function(a,b) {
               return thisClass.compNode(a, b);
@@ -51363,6 +51392,7 @@ var icn3d = (function (exports) {
             nodeArray2.sort(function(a,b) {
               return thisClass.compNode(a, b, bReverseNode);
             });
+
             return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2, "name2node": name2nodeCommon};
         }
         updateGraphJson(struc, index, nodeArray1, nodeArray2, linkArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -51667,7 +51697,9 @@ var icn3d = (function (exports) {
             }
 
             for(let linkStr in linkstr2cnt) {
-                hbondStr += ', {' + linkStr + ', "n": ' + linkstr2cnt[linkStr] + '}';
+                // do not differentiate the number of contacts
+                let n = (value == me.htmlCls.contactInsideValue || value == me.htmlCls.contactValue) ? 1 : linkstr2cnt[linkStr];
+                hbondStr += ', {' + linkStr + ', "n": ' + n + '}';
             }
 
             return hbondStr;
@@ -58507,8 +58539,7 @@ var icn3d = (function (exports) {
                 await ic.mmcifParserCls.loadMmcifData(data);
             }
             else if(type === 'icn3dpng') {
-                // await me.htmlCls.setHtmlCls.loadPng(data, command);
-                await me.htmlCls.setHtmlCls.loadPng(data);
+                await me.htmlCls.setHtmlCls.loadPng(data, command, true);
             }
             else if(type === 'pae') {
                 me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
@@ -58638,7 +58669,7 @@ var icn3d = (function (exports) {
         }
 
         async execStatefile(structure, statefile) {let ic = this.icn3d, me = ic.icn3dui;
-            // if(!statefile) return;
+            if(!statefile) return;
 
             let commandArray = statefile.trim().split('\n');
             commandArray = ['select $' + structure].concat(commandArray);
@@ -58705,6 +58736,19 @@ var icn3d = (function (exports) {
 
                 if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
             }
+        }
+
+        async downloadSmiles(smiles) { let ic = this.icn3d, me = ic.icn3dui;
+            let urlSmiles = me.htmlCls.baseUrl + "openbabel/openbabel.cgi?smiles2pdb=" + smiles;
+            let pdbStr = await me.getAjaxPromise(urlSmiles, 'text');
+
+            ic.init();
+
+            ic.bInputfile = true;
+            ic.InputfileType = 'pdb';
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
+
+            await ic.pdbParserCls.loadPdbData(pdbStr);
         }
 
         async loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
@@ -63994,7 +64038,8 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d; ic.icn3dui;
+        getStructureId(id, moleculeNum, bMutation, bNMR) { let ic = this.icn3d; ic.icn3dui;
+            id = (bNMR && ic.idNMR) ? ic.idNMR : id;
             let structure = id;
         
             if(id == ic.defaultPdbId || bMutation || ic.structures.hasOwnProperty(id)) { // bMutation: side chain prediction
@@ -64061,6 +64106,7 @@ var icn3d = (function (exports) {
             //let chainMissingResidueArray = {}
 
             let id = (pdbid) ? pdbid : ic.defaultPdbId;
+            let oriId = id;
 
             let structure = id;
 
@@ -64080,6 +64126,7 @@ var icn3d = (function (exports) {
 
                     ///id = line.substr(62, 4).trim();
                     id = line.substr(62).trim();
+                    oriId = id;
 
                     if(id == '') {
                         if(bAppend) {
@@ -64091,7 +64138,7 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    structure = this.getStructureId(id, moleculeNum, bMutation);
+                    structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                     ic.molTitle = '';
                     ic.molTitleHash = {};
@@ -64162,6 +64209,7 @@ var icn3d = (function (exports) {
                      else if (remarkType == 210) {
                          if((line.substr(11, 32).trim() == 'EXPERIMENT TYPE') && line.substr(45).trim() == 'NMR') {
                             bNMR = true;
+                            ic.idNMR = oriId;
                          }
                      }
                      else if (remarkType == 350 && line.substr(13, 5) == 'BIOMT') {
@@ -64215,7 +64263,7 @@ var icn3d = (function (exports) {
                     ++moleculeNum;
                     id = ic.defaultPdbId;
 
-                    structure = this.getStructureId(id, moleculeNum, bMutation);
+                    structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
                     //helices = [];
                     //sheets = [];
                     if(!bNMR) {
@@ -64238,7 +64286,7 @@ var icn3d = (function (exports) {
                     segId = line.substr(72, 4).trim();
 
                     if(bFirstAtom) {
-                        structure = this.getStructureId(id, moleculeNum, bMutation);
+                        structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                         bFirstAtom = false;
                     }
@@ -64246,7 +64294,7 @@ var icn3d = (function (exports) {
                         ++moleculeNum;
                         id = ic.defaultPdbId;
         
-                        structure = this.getStructureId(id, moleculeNum, bMutation);
+                        structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
         
                         //helices = [];
                         //sheets = [];
@@ -69986,6 +70034,10 @@ var icn3d = (function (exports) {
             else if(command.indexOf('load cid') !== -1) {
               me.cfg.cid = id;
               await ic.sdfParserCls.downloadCid(id);
+            }
+            else if(command.indexOf('load smiles') !== -1) {
+              me.cfg.smiles = id;
+              await ic.sdfParserCls.downloadSmiles(id);
             }
             else if(command.indexOf('load alignment') !== -1) {
               me.cfg.align = id;
@@ -79401,7 +79453,7 @@ var icn3d = (function (exports) {
         }
 
         //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne) { let ic = this.icn3d, me = ic.icn3dui;
+        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bVastSearch) { let ic = this.icn3d, me = ic.icn3dui;
             let pdbStr = '';
 
             // get all phosphate groups in lipids
@@ -79478,7 +79530,7 @@ var icn3d = (function (exports) {
                 for(let i = 0, il = ssArray.length; i < il; ++i) {
                     let ssObj = ssArray[i];
 
-                    if(ssObj.ss != prevSs) {
+                    if(ssObj.ss != prevSs || ssObj.ssbegin) {
                         // print prev
                         stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
 
@@ -79676,6 +79728,7 @@ var icn3d = (function (exports) {
                     //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
                     if(atom.chain.length >= 2) {
                         let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
+                        if(bVastSearch) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
                         line += chainTmp;
                     }
                     else if(atom.chain.length == 1) {
@@ -79754,7 +79807,9 @@ var icn3d = (function (exports) {
                 }
                 else {
                     line += "1.00".padStart(6, ' ');
-                    line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                    // line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                    let defaultBFactor = (bVastSearch) ? "1.0" : " ";
+                    line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : defaultBFactor.padStart(6, ' ');
                     line += ' '.padStart(10, ' ');
                     line += atom.elem.padStart(2, ' ');
                     line += ' '.padStart(2, ' ');
@@ -83320,7 +83375,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.37.0';
+        this.REVISION = '3.38.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -83731,6 +83786,12 @@ var icn3d = (function (exports) {
             ic.loadCmd = 'load cid ' + me.cfg.cid;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
             await ic.sdfParserCls.downloadCid(me.cfg.cid);
+        }
+        else if(me.cfg.smiles !== undefined) {
+            ic.inputid = me.cfg.smiles;
+            ic.loadCmd = 'load smiles ' + me.cfg.smiles;
+            me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+            await ic.sdfParserCls.downloadSmiles(me.cfg.smiles);
         }
         else if(me.cfg.mmcifid !== undefined) {
             ic.inputid = me.cfg.mmcifid;

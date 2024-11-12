@@ -633,6 +633,10 @@ class LoadScript {
           me.cfg.cid = id;
           await ic.sdfParserCls.downloadCid(id);
         }
+        else if(command.indexOf('load smiles') !== -1) {
+          me.cfg.smiles = id;
+          await ic.sdfParserCls.downloadSmiles(id);
+        }
         else if(command.indexOf('load alignment') !== -1) {
           me.cfg.align = id;
 

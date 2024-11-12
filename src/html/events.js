@@ -1274,13 +1274,24 @@ class Events {
         });
 
 
-        me.myEventCls.onIds("#" + me.pre 
-        + "reload_cid", "click", function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), urlTarget);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_smiles", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            // thisClass.setLogCmd("load smiles " + $("#" + me.pre + "smiles").val(), false);
+            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+
+            urlTarget = '_blank';
+
+            console.log("smiles: " + $("#" + me.pre + "smiles").val() + " encode: " + encodeURIComponent($("#" + me.pre + "smiles").val()))
+            window.open(hostUrl + '?smiles=' + encodeURIComponent($("#" + me.pre + "smiles").val()), urlTarget);
         });
 
         me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { let ic = me.icn3d;

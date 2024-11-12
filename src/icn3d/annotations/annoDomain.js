@@ -202,8 +202,6 @@ class AnnoDomain {
                 }
             }
 
-            if(bNotShowDomain) continue;
-
             // save 3D domain info for node.js script
             if(me.bNode) {
                 let domainName = '3D domain ' +(index+1).toString();
@@ -218,12 +216,14 @@ class AnnoDomain {
                         // 0-based
                         let obj = {};
                         // let resi = ic.ParserUtilsCls.getResi(chnid, j);
-                        let resid = ic.ncbi2resid(chnid + '_' + j);
+                        let resid = ic.ncbi2resid[chnid + '_' + j];
                         obj[resid] = domainName;
                         ic.resid2domain[chnid].push(obj);
                     }
                 }
             }
+
+            if(bNotShowDomain) continue;
 
             let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' +(index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
             let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';

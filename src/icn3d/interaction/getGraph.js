@@ -210,6 +210,7 @@ class GetGraph {
                 nodeArray2.push(node);
             }
         }
+
         // sort array
         nodeArray1.sort(function(a,b) {
           return thisClass.compNode(a, b);
@@ -217,6 +218,7 @@ class GetGraph {
         nodeArray2.sort(function(a,b) {
           return thisClass.compNode(a, b, bReverseNode);
         });
+
         return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2, "name2node": name2nodeCommon};
     }
     updateGraphJson(struc, index, nodeArray1, nodeArray2, linkArray) { let ic = this.icn3d, me = ic.icn3dui;
@@ -522,7 +524,9 @@ class GetGraph {
         }
 
         for(let linkStr in linkstr2cnt) {
-            hbondStr += ', {' + linkStr + ', "n": ' + linkstr2cnt[linkStr] + '}';
+            // do not differentiate the number of contacts
+            let n = (value == me.htmlCls.contactInsideValue || value == me.htmlCls.contactValue) ? 1 : linkstr2cnt[linkStr];
+            hbondStr += ', {' + linkStr + ', "n": ' + n + '}';
         }
 
         return hbondStr;
