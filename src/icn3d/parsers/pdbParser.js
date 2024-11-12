@@ -108,8 +108,7 @@ class PdbParser {
             await ic.mmcifParserCls.loadMmcifData(data);
         }
         else if(type === 'icn3dpng') {
-            // await me.htmlCls.setHtmlCls.loadPng(data, command);
-            await me.htmlCls.setHtmlCls.loadPng(data);
+            await me.htmlCls.setHtmlCls.loadPng(data, command, true);
         }
         else if(type === 'pae') {
             me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
@@ -242,7 +241,7 @@ class PdbParser {
     }
 
     async execStatefile(structure, statefile) {let ic = this.icn3d, me = ic.icn3dui;
-        // if(!statefile) return;
+        if(!statefile) return;
 
         let commandArray = statefile.trim().split('\n');
         commandArray = ['select $' + structure].concat(commandArray);

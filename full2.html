@@ -220,12 +220,14 @@
 
         if(!bNopara) {
             var decodeSearch = decodeURIComponent(search).replace(/\+/g, ' ');
+            search = search.replace(/\+/g, ' ');
 
             // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
             var commandPos = decodeSearch.indexOf('&command=');
             if(commandPos != -1) {
                 cfg.command = decodeSearch.substr(commandPos + 9); // ";" separated commands
                 decodeSearch = decodeSearch.substr(0, commandPos);
+                search = search.substr(0, commandPos);
 
                 var paraPos = decodeSearch.indexOf(' | parameters ');
 
@@ -233,16 +235,18 @@
                     var tmpPos = cfg.command.indexOf('}}&');
                     if(tmpPos != -1) { // more parameters after the command
                       decodeSearch += cfg.command.substr(tmpPos + 2);
+                      search += cfg.command.substr(tmpPos + 2);
                       cfg.command = cfg.command.substr(0, tmpPos + 2);
                     }
                 }
                 else {
                     var paraPos = cfg.command.indexOf(' | parameters ');
 
-                    if(paraPos != -1) { //"&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
+                    if(paraPos != -1) { // "&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
                         var tmpPos = cfg.command.indexOf('}}&');
                         if(tmpPos != -1) { // more parameters after the command
                           decodeSearch += cfg.command.substr(tmpPos + 2);
+                          search += cfg.command.substr(tmpPos + 2);
                           cfg.command = cfg.command.substr(0, tmpPos + 2);
                         }
                     }
@@ -250,6 +254,7 @@
                         var tmpPos = cfg.command.indexOf('&');
                         if(tmpPos != -1) {
                           decodeSearch += cfg.command.substr(tmpPos);
+                          search += cfg.command.substr(tmpPos);
                           cfg.command = cfg.command.substr(0, tmpPos);
                         }
                     }
@@ -259,7 +264,8 @@
                 cfg.command = '';
             }
 
-            var hashes = decodeSearch.split('&');
+            // var hashes = decodeSearch.split('&');
+            var hashes = search.split('&');
             for (var i = 0; i < hashes.length; i++) {
                 var hash = hashes[i].split('=');
                 cfg[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;

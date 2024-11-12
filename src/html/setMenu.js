@@ -542,6 +542,7 @@ class SetMenu {
         //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
         html += this.getLink('mn1_cid', 'PubChem CID/Name/InchI ' + me.htmlCls.wifiStr, 1, 2);
+        html += this.getLink('mn1_smiles', 'Chemical SMILES ', undefined, 2);
         
         html += "</ul>";
         html += "</li>";

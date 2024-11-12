@@ -44,6 +44,19 @@ class SdfParser {
         }
     }
 
+    async downloadSmiles(smiles) { let ic = this.icn3d, me = ic.icn3dui;
+        let urlSmiles = me.htmlCls.baseUrl + "openbabel/openbabel.cgi?smiles2pdb=" + smiles;
+        let pdbStr = await me.getAjaxPromise(urlSmiles, 'text');
+
+        ic.init();
+
+        ic.bInputfile = true;
+        ic.InputfileType = 'pdb';
+        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
+
+        await ic.pdbParserCls.loadPdbData(pdbStr);
+    }
+
     async loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
         let bResult = this.loadSdfAtomData(data);
 

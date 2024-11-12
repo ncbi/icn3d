@@ -697,8 +697,8 @@ class SetHtml {
         });
     }
 
-    // async loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
-    async loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
+    async loadPng(imageStr, command, bRender) { let me = this.icn3dui, ic = me.icn3d;
+    // async loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
        let matchedStr = 'Share Link: ';
        let pos = imageStr.indexOf(matchedStr);
        let matchedStrState = "Start of state file======\n";
@@ -719,8 +719,8 @@ class SetHtml {
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
            ic.bInputPNGWithData = ic.bInputfile;
-        //    let commandStr = (command) ? command.replace(/;/g, "\n") : '';
-           let commandStr = '';
+           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+        //    let commandStr = '';
 
         //    let statefile;
         //    if(ic.bInputfile) {
@@ -741,31 +741,37 @@ class SetHtml {
                //statefile = decodeURIComponent(statefile);
                statefile = decodeURIComponent(statefile + "\n" + commandStr);
 
-/*
-                if(type === 'pdb') {
-                    await ic.pdbParserCls.loadPdbData(data);
+               if(bRender) {
+                    if(type === 'pdb') {
+                        await ic.pdbParserCls.loadPdbData(data);
 
-                    ic.commands = [];
-                    ic.optsHistory = [];
-                    //await ic.loadScriptCls.loadScript(statefile, true);
+                        ic.commands = [];
+                        ic.optsHistory = [];
+                        //await ic.loadScriptCls.loadScript(statefile, true);
+                    }
+                    else {
+                        if(type === 'mol2') {
+                            await ic.mol2ParserCls.loadMol2Data(data);
+                        }
+                        else if(type === 'sdf') {
+                            await ic.sdfParserCls.loadSdfData(data);
+                        }
+                        else if(type === 'xyz') {
+                            await ic.xyzParserCls.loadXyzData(data);
+                        }
+                        else if(type === 'mmcif') {
+                            await ic.mmcifParserCls.loadMmcifData(data);
+                        }
+                        ic.commands = [];
+                        ic.optsHistory = [];
+                        //await ic.loadScriptCls.loadScript(statefile, true);
+                    }
+
+                    await ic.loadScriptCls.loadScript(statefile, true);
+
+                    // me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                 }
-                else {
-                    if(type === 'mol2') {
-                        await ic.mol2ParserCls.loadMol2Data(data);
-                    }
-                    else if(type === 'sdf') {
-                        await ic.sdfParserCls.loadSdfData(data);
-                    }
-                    else if(type === 'xyz') {
-                        await ic.xyzParserCls.loadXyzData(data);
-                    }
-                    else if(type === 'mmcif') {
-                        await ic.mmcifParserCls.loadMmcifData(data);
-                    }
-                   ic.commands = [];
-                   ic.optsHistory = [];
-                   //await ic.loadScriptCls.loadScript(statefile, true);
-               }
+/*                   
            }
            else { // url length > 4000
                //var matchedStrState = "Start of state file======\n";

@@ -329,6 +329,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_cid', 'Please input PubChem Compound');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_smiles", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         me.htmlCls.dialogCls.openDlg('dl_smiles', 'Please input a chemical SMILES');
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_pngimage", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_pngimage', 'Please append PNG images');
         });
@@ -2364,9 +2368,9 @@ class ClickMenu {
 
         $("#" + me.pre + "newvs2").on('submit', function() {
             // fill the pdbstr
-            let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
+            let bVastSearch = true;
+            let pdbstr = ic.saveFileCls.getAtomPDB(ic.hAtoms, undefined, undefined, undefined, undefined, undefined, undefined, bVastSearch);
             $("#" + me.pre + "pdbstr").val(pdbstr);
-
             return true;
         });
 

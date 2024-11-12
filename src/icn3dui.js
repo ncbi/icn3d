@@ -168,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.37.0';
+    this.REVISION = '3.38.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -579,6 +579,12 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.loadCmd = 'load cid ' + me.cfg.cid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.sdfParserCls.downloadCid(me.cfg.cid);
+    }
+    else if(me.cfg.smiles !== undefined) {
+        ic.inputid = me.cfg.smiles;
+        ic.loadCmd = 'load smiles ' + me.cfg.smiles;
+        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+        await ic.sdfParserCls.downloadSmiles(me.cfg.smiles);
     }
     else if(me.cfg.mmcifid !== undefined) {
         ic.inputid = me.cfg.mmcifid;

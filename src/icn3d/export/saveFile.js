@@ -388,7 +388,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bVastSearch) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -467,7 +467,7 @@ class SaveFile {
             for(let i = 0, il = ssArray.length; i < il; ++i) {
                 let ssObj = ssArray[i];
 
-                if(ssObj.ss != prevSs) {
+                if(ssObj.ss != prevSs || ssObj.ssbegin) {
                     // print prev
                     stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
 
@@ -665,6 +665,7 @@ class SaveFile {
                 //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
                 if(atom.chain.length >= 2) {
                     let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
+                    if(bVastSearch) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
                     line += chainTmp;
                 }
                 else if(atom.chain.length == 1) {
@@ -743,7 +744,9 @@ class SaveFile {
             }
             else {
                 line += "1.00".padStart(6, ' ');
-                line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                // line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                let defaultBFactor = (bVastSearch) ? "1.0" : " ";
+                line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : defaultBFactor.padStart(6, ' ');
                 line += ' '.padStart(10, ' ');
                 line += atom.elem.padStart(2, ' ');
                 line += ' '.padStart(2, ' ');
@@ -752,7 +755,7 @@ class SaveFile {
             // connection info
             if(atom.het && atom.bonds.length > 0) {
                 connStr += 'CONECT' + i.toString().padStart(5, ' ');
-                let bondHash = {}
+                let bondHash = {};
                 for(let j = 0, jl = atom.bonds.length; j < jl; ++j) {
                     if(atom.bonds[j] && !bondHash.hasOwnProperty(atom.bonds[j])) { // could be null
                         connStr += atom.bonds[j].toString().padStart(5, ' ');

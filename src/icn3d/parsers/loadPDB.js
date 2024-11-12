@@ -7,7 +7,8 @@ class LoadPDB {
         this.icn3d = icn3d;
     }
 
-    getStructureId(id, moleculeNum, bMutation) { let ic = this.icn3d, me = ic.icn3dui;
+    getStructureId(id, moleculeNum, bMutation, bNMR) { let ic = this.icn3d, me = ic.icn3dui;
+        id = (bNMR && ic.idNMR) ? ic.idNMR : id;
         let structure = id;
     
         if(id == ic.defaultPdbId || bMutation || ic.structures.hasOwnProperty(id)) { // bMutation: side chain prediction
@@ -76,6 +77,7 @@ class LoadPDB {
         //let chainMissingResidueArray = {}
 
         let id = (pdbid) ? pdbid : ic.defaultPdbId;
+        let oriId = id;
 
         let structure = id;
 
@@ -95,6 +97,7 @@ class LoadPDB {
 
                 ///id = line.substr(62, 4).trim();
                 id = line.substr(62).trim();
+                oriId = id;
 
                 if(id == '') {
                     if(bAppend) {
@@ -106,7 +109,7 @@ class LoadPDB {
                     }
                 }
 
-                structure = this.getStructureId(id, moleculeNum, bMutation);
+                structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                 ic.molTitle = '';
                 ic.molTitleHash = {};
@@ -177,6 +180,7 @@ class LoadPDB {
                  else if (remarkType == 210) {
                      if((line.substr(11, 32).trim() == 'EXPERIMENT TYPE') && line.substr(45).trim() == 'NMR') {
                         bNMR = true;
+                        ic.idNMR = oriId;
                      }
                  }
                  else if (remarkType == 350 && line.substr(13, 5) == 'BIOMT') {
@@ -235,7 +239,7 @@ class LoadPDB {
                 ++moleculeNum;
                 id = ic.defaultPdbId;
 
-                structure = this.getStructureId(id, moleculeNum, bMutation);
+                structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
                 //helices = [];
                 //sheets = [];
                 if(!bNMR) {
@@ -258,7 +262,7 @@ class LoadPDB {
                 segId = line.substr(72, 4).trim();
 
                 if(bFirstAtom) {
-                    structure = this.getStructureId(id, moleculeNum, bMutation);
+                    structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                     bFirstAtom = false;
                 }
@@ -266,7 +270,7 @@ class LoadPDB {
                     ++moleculeNum;
                     id = ic.defaultPdbId;
     
-                    structure = this.getStructureId(id, moleculeNum, bMutation);
+                    structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
     
                     //helices = [];
                     //sheets = [];
