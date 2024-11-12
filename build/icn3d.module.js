@@ -83329,7 +83329,7 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
         this.opts['nucleotides'] = 'o3 trace';
     }
 
-    if(me.cfg.cid !== undefined) {
+    if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
         this.opts['color'] = 'atom';
 
         this.opts['pk'] = 'atom';

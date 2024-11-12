@@ -83332,7 +83332,7 @@ var icn3d = (function (exports) {
             this.opts['nucleotides'] = 'o3 trace';
         }
 
-        if(me.cfg.cid !== undefined) {
+        if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
             this.opts['color'] = 'atom';
 
             this.opts['pk'] = 'atom';
