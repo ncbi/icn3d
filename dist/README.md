@@ -106,7 +106,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 
 * **[DelPhi](http://honig.c2b2.columbia.edu/delphi)**: used to calculate electrostatic potential dynamically and is <b>licensed</b> from Columbia University.
 * **[DelPhiPKa](http://compbio.clemson.edu/pka_webserver)**: used to add hydrogens and partial charges to proteins and nucleotides.
-* **[Open Babel](http://openbabel.org/wiki/Main_Page)**: used to add hydrogens to ligands.
+* **[Open Babel](http://openbabel.org/wiki/Main_Page)**: used to add hydrogens to ligands, convert PDB to SVG, and convert SMILES to PDB.
 * **[Antechamber](http://ambermd.org/antechamber/ac.html)**: used to add partial charges to ligands.
 * **[SymD](https://symd.nci.nih.gov/)**: used to calculate symmetry dynamically.
 * **[scap/Jackal](http://honig.c2b2.columbia.edu/scap)**: used to predict side chain conformation dynamically.
