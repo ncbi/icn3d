@@ -22,6 +22,10 @@ class Contact {
         for(let i in atomlistTarget) {
             //var oriAtom = atomlistTarget[i];
             let oriAtom = ic.atoms[i];
+
+            // skip hydrogen atoms
+            if(bInteraction && oriAtom.elem == 'H') continue;
+
             let r1 = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()];
             let chainid1 = oriAtom.structure + '_' + oriAtom.chain;
             //var radius = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()] || ic.defaultRadius;
@@ -51,6 +55,10 @@ class Contact {
 
             for (let j in neighbors) {
                let atom = neighbors[j];
+
+               // skip hydrogen atoms
+               if(bInteraction && atom.elem == 'H') continue;
+
                let r2 = me.parasCls.vdwRadii[atom.elem.toUpperCase()];
                let chainid2 = atom.structure + '_' + atom.chain;
 

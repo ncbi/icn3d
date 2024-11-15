@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.38.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.38.1.zip) was release on November 14, 2024. Improved the conversion of chemical SMILES to 3D structure by showing double bonds.
+
 [icn3d-3.38.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.38.0.zip) was release on November 12, 2024. Enabled to convert chemical SMILES to 3D structure via the menu "File > Retrieve by ID > Chemical SMILES".
 
 [icn3d-3.37.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.37.0.zip) was release on October 16, 2024. Added a menu "Style > Clashed Residues > Hide" to hide clashed residues.

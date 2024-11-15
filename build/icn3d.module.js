@@ -37848,6 +37848,10 @@ class Contact {
         for(let i in atomlistTarget) {
             //var oriAtom = atomlistTarget[i];
             let oriAtom = ic.atoms[i];
+
+            // skip hydrogen atoms
+            if(bInteraction && oriAtom.elem == 'H') continue;
+
             let r1 = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()];
             let chainid1 = oriAtom.structure + '_' + oriAtom.chain;
 
@@ -37874,6 +37878,10 @@ class Contact {
 
             for (let j in neighbors) {
                let atom = neighbors[j];
+
+               // skip hydrogen atoms
+               if(bInteraction && atom.elem == 'H') continue;
+
                let r2 = me.parasCls.vdwRadii[atom.elem.toUpperCase()];
                let chainid2 = atom.structure + '_' + atom.chain;
 
@@ -58736,16 +58744,14 @@ class SdfParser {
     }
 
     async downloadSmiles(smiles) { let ic = this.icn3d, me = ic.icn3dui;
-        let urlSmiles = me.htmlCls.baseUrl + "openbabel/openbabel.cgi?smiles2pdb=" + smiles;
-        let pdbStr = await me.getAjaxPromise(urlSmiles, 'text');
+        let urlSmiles = me.htmlCls.baseUrl + "openbabel/openbabel.cgi?smiles2sdf=" + smiles;
+        let sdfStr = await me.getAjaxPromise(urlSmiles, 'text');
 
         ic.init();
-
         ic.bInputfile = true;
-        ic.InputfileType = 'pdb';
-        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
-
-        await ic.pdbParserCls.loadPdbData(pdbStr);
+        ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + sdfStr : sdfStr;
+        ic.InputfileType = 'sdf';
+        await ic.sdfParserCls.loadSdfData(sdfStr);
     }
 
     async loadSdfData(data) { let ic = this.icn3d, me = ic.icn3dui;
@@ -83372,7 +83378,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.38.0';
+    this.REVISION = '3.38.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
