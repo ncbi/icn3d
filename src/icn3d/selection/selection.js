@@ -540,6 +540,10 @@ class Selection {
     selectOneResid(idStr, bUnchecked) {var ic = this.icn3d, me = ic.icn3dui;
       //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP
       //change to: let idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or ASP $1KQ2.B:40
+      //change to: let idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or ASP $1KQ2.B:40, or $1KQ2.B:56@OH 130, or ASP $1KQ2.B:40 144
+      let idArray = idStr.split(' ');
+      idStr = idArray[1];
+
       let posStructure = idStr.indexOf('$');
       let posChain = idStr.indexOf('.');
       let posRes = idStr.indexOf(':');
