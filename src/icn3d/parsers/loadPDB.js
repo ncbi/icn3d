@@ -112,7 +112,9 @@ class LoadPDB {
                 structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                 ic.molTitle = '';
-                ic.molTitleHash = {};
+                if (ic.allData === undefined) {
+                    ic.molTitleHash = {};
+                }
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
