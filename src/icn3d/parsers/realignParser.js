@@ -766,7 +766,7 @@ class RealignParser {
         }
     }
 
-    getSeqCoorResid(resiArray, chainid, bNCBI) { let ic = this.icn3d, me = ic.icn3dui;
+    getSeqCoorResid(resiArray, chainid, bNCBIResi) { let ic = this.icn3d, me = ic.icn3dui;
         let seq = '', coorArray = [], residArray = [];
         let hAtoms = {};
 
@@ -774,16 +774,16 @@ class RealignParser {
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                    let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
+                    let seqIndex = (bNCBIResi) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                     // don't align solvent or chemicals
                     if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
 
                     seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
-                    coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
-
-                    residArray.push(chainid + '_' + k);
+                    let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
+                    coorArray = coorArray.concat(this.getResCoorArray(resid));
+                    residArray.push(resid);
                 }            
             }
             else if(resiArray[j] == 0) { // 0 means the whole chain
@@ -793,18 +793,19 @@ class RealignParser {
             else { // one residue
                 let k = resiArray[j];
 
-                let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
+                let seqIndex = (bNCBIResi) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                 if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
-                let resCoorArray = this.getResCoorArray(chainid + '_' + k);
+                let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
+                let resCoorArray = this.getResCoorArray(resid);
                 //if(resCoorArray.length == 1 && resCoorArray[0] === undefined) continue;
 
                 seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
                 coorArray = coorArray.concat(resCoorArray);
 
-                residArray.push(chainid + '_' + k);
+                residArray.push(resid);
             }
         }
 

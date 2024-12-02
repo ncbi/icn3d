@@ -54277,7 +54277,7 @@ var icn3d = (function (exports) {
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                     let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                    let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
+                    let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
 
                     for(let index in ic.afChainIndexHash) {
                         let idArray = ic.afChainIndexHash[index].split('_');
@@ -54302,9 +54302,10 @@ var icn3d = (function (exports) {
                     let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                     let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                    let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
+                    let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
                     // dynamically align pairs in all chainids
+                    // the resrange from VASTSrv or VAST search uses NCBI residue numbers!!!
                     let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
                     for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
                         let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
@@ -59845,7 +59846,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getSeqCoorResid(resiArray, chainid, bNCBI) { let ic = this.icn3d, me = ic.icn3dui;
+        getSeqCoorResid(resiArray, chainid, bNCBIResi) { let ic = this.icn3d, me = ic.icn3dui;
             let seq = '', coorArray = [], residArray = [];
             let hAtoms = {};
 
@@ -59853,16 +59854,16 @@ var icn3d = (function (exports) {
                 if(resiArray[j].indexOf('-') != -1) {
                     let startEnd = resiArray[j].split('-');
                     for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                        let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
+                        let seqIndex = (bNCBIResi) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                         // don't align solvent or chemicals
                         if(!ic.chainsSeq[chainid] || !ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
 
                         seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
-                        coorArray = coorArray.concat(this.getResCoorArray(chainid + '_' + k));
-
-                        residArray.push(chainid + '_' + k);
+                        let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
+                        coorArray = coorArray.concat(this.getResCoorArray(resid));
+                        residArray.push(resid);
                     }            
                 }
                 else if(resiArray[j] == 0) { // 0 means the whole chain
@@ -59872,18 +59873,19 @@ var icn3d = (function (exports) {
                 else { // one residue
                     let k = resiArray[j];
 
-                    let seqIndex = (bNCBI) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
+                    let seqIndex = (bNCBIResi) ? k : ic.setSeqAlignCls.getPosFromResi(chainid, k);
 
                     if(!ic.chainsSeq[chainid][seqIndex]) continue;
 
-                    let resCoorArray = this.getResCoorArray(chainid + '_' + k);
+                    let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
+                    let resCoorArray = this.getResCoorArray(resid);
                     //if(resCoorArray.length == 1 && resCoorArray[0] === undefined) continue;
 
                     seq += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
                     coorArray = coorArray.concat(resCoorArray);
 
-                    residArray.push(chainid + '_' + k);
+                    residArray.push(resid);
                 }
             }
 
