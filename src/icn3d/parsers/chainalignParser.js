@@ -71,7 +71,7 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');

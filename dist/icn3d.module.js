@@ -15153,7 +15153,7 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_collectionsMenu'>";
         html += '<b>Collection File</b>: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'dl_collection_file_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="' + me.pre + 'dl_collection_file_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div><br>';
         html += me.htmlCls.divStr + "dl_collection_file' style=''>";
-        html += "You can load a collection of structures via a file. Here is <a href='https://github.com/ncbi/icn3d/blob/master/example/collection.json' target='_blank'>one example file</a><br><br>";
+        html += "You can load a collection of structures via a file. Here are <a href='https://github.com/ncbi/icn3d/blob/master/example/collection/' target='_blank'>some example files</a><br><br>";
         html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
         html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
@@ -15161,7 +15161,26 @@ class SetDialog {
         html += '<br/><b>Structures</b>: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'dl_collection_structures_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'dl_collection_structures_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
         html += me.htmlCls.divStr + "dl_collection_structures' style='display: none'>";
         html += "<select id='" + me.pre + "collections_menu'multiple size='6' style='min-width:300px;'></select>";
+        html += '<br/>';
+        html += me.htmlCls.buttonStr + "opendl_export_collections'>Export</button>";
         html += "</div>";
+        html += '<br/>'; 
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_export_collections' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_export_collections', 'Export Collections');
+        html += "<label for='dl_collectionTitle'>Collection Title: </label>";
+        html += "<input type='text' id='dl_collectionTitle' name='collectionTitle' placeholder='Enter collection title' />";
+        html += '<br/>';
+        html += "<label for='dl_collectionDescription'>Collection Description: </label>";
+        html += "<input type='text' id='dl_collectionDescription' name='collectionDescription' placeholder='Enter collection description' />";
+        html += '<br/>';
+        html += "<input type='radio' id='dl_collectionExportSelected' name='exportOption' value='selected' />";
+        html += "<label for='dl_collectionExportSelected'>Selected</label>";
+        html += "<input type='radio' id='dl_collectionExportAll' name='exportOption' value='all' />";
+        html += "<label for='dl_collectionExportAll'>All</label>";
+        html += '<br/>';
+        html += me.htmlCls.buttonStr + "export_collections'>Export</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_menuloadpref' class='" + dialogClass + "'>";
@@ -17582,7 +17601,6 @@ class Events {
 
             urlTarget = '_blank';
 
-            console.log("smiles: " + $("#" + me.pre + "smiles").val() + " encode: " + encodeURIComponent($("#" + me.pre + "smiles").val()));
             window.open(hostUrl + '?smiles=' + encodeURIComponent($("#" + me.pre + "smiles").val()), urlTarget);
         });
 
@@ -17665,28 +17683,232 @@ class Events {
                 $(".ui-dialog-content").dialog("close");
             } else {
                 ic.resizeCanvasCls.closeDialogs();
-            }
-            me.htmlCls.setHtmlCls.fileSupport();
-                let reader = new FileReader();
-                
-                reader.onload = async function (e) {
-                let dataStr = JSON.parse(e.target.result);
-                let collection = [dataStr["structures"].map(({ id }) => id), dataStr["structures"].map(({ title }) => title)];
-                let collectionHtml = ic.selectCollectionsCls.setAtomMenu(collection[0], collection[1]);
-
-                $("#" + ic.pre + "collections_menu").html(collectionHtml);
-                ic.selectCollectionsCls.clickStructure();
-    
-                $("#" + ic.pre + "collections_menu").trigger("change");
-    
-                me.htmlCls.clickMenuCls.setLogCmd(
-                "load collection file " +
-                    $("#" + me.pre + "collectionfile").val(),
-                false
-                );
-                
+                }
+            ic.bInputfile = false;
+            ic.pdbCollection = [];
+            ic.allData = {};
+            ic.allData['all'] = {
+                'atoms': {},
+                'proteins': {},
+                'nucleotides': {},
+                'chemicals': {},
+                'ions': {},
+                'water': {},
+                'structures': {}, // getSSExpandedAtoms
+                'ssbondpnts': {},
+                'residues': {}, // getSSExpandedAtoms
+                'chains': {},
+                'chainsSeq': {}, //Sequences and Annotation
+                'defNames2Atoms': {},
+                'defNames2Residues': {}
             };
-            reader.readAsText(file);
+            ic.allData['prev'] = {};
+            ic.selectCollectionsCls.reset();
+
+            ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+            ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+            me.htmlCls.setHtmlCls.fileSupport();
+
+            let fileName = file.name;
+            let fileExtension = fileName.split('.').pop().toLowerCase();
+
+            $("#" + ic.pre + "collections_menu").empty();
+            $("#" + ic.pre + "collections_menu").off("change");
+
+            function parseJsonCollection(data) {
+                let dataStr = JSON.parse(data);
+                return dataStr["structures"].map(({ id, title, description, commands }) => {
+                    if (id && id.includes('.pdb')) {
+                        id = id.split('.pdb')[0];
+                    }
+                    return [id, title, description, commands, false];
+                });
+            }
+
+            function parsePdbCollection(data, description = '', commands = []) {         
+                let dataStr = data;
+                let lines = dataStr.split('\n');
+              
+                let sections = [];
+                let currentSection = [];
+              
+                lines.forEach(line => {
+                  if (line.startsWith('HEADER')) {
+                    currentSection = [];
+                    sections.push(currentSection);
+                  }
+                  currentSection.push(line);
+                });
+              
+                let ids = [];
+                let titles = [];
+              
+                sections.forEach((section) => {
+                    let headerLine = section[0];
+                    headerLine = headerLine.replace(/[\n\r]/g, '').trim();
+                    let header = headerLine.split(' ').filter(Boolean);
+                    let lastElement = header[header.length - 1];
+                    ids.push(lastElement);
+                    titles.push(section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : lastElement);
+                });
+              
+                if (sections.length > 0) {
+                    ic.pdbCollection.push(...sections);
+                }
+
+                return ids.map((id, index, description, commands) => [id, titles[index], description, commands, true]);
+            }
+
+            let collection = [];
+
+            if (fileExtension === 'json' || fileExtension === 'pdb') {
+                let reader = new FileReader();
+                reader.onload = async function (e) {
+                    if (fileExtension === 'json') {
+                        collection = parseJsonCollection(e.target.result);
+                    } else if (fileExtension === 'pdb') {
+                        ic.bInputfile = true;
+                        collection = parsePdbCollection(e.target.result);
+                    }
+
+                    let collectionHtml = await ic.selectCollectionsCls.setAtomMenu(collection);
+
+                    $("#" + ic.pre + "collections_menu").html(collectionHtml);
+                    await ic.selectCollectionsCls.clickStructure(collection);
+                    $("#" + ic.pre + "collections_menu").trigger("change");     
+
+                    me.htmlCls.clickMenuCls.setLogCmd(
+                        "load collection file " +
+                        $("#" + me.pre + "collectionfile").val(),
+                        false
+                    );
+                };
+
+                reader.readAsText(file);
+            } else if (fileExtension === 'zip' || fileExtension === 'gz') {
+                ic.bInputfile = true;
+                let reader2 = new FileReader();
+                reader2.onload = async function (e) {
+                    if (fileExtension === 'zip') {
+                        let url = './script/jszip.js';
+                        await me.getAjaxPromise(url, 'script');
+
+                        let jszip = new JSZip();
+                        try {
+                            let data = await jszip.loadAsync(e.target.result);
+
+                            let hasJson = false;
+                            let hasPdb = false;
+                            let hasGz = false;
+                            let jsonFiles = [];
+                            let pdbFiles = [];
+                            let gzFiles = [];
+
+                            for (let fileName in data.files) {
+                                let file = data.files[fileName];
+                                if (!file.dir) {
+                                    if (fileName.endsWith('.json')) {
+                                        hasJson = true;
+                                        jsonFiles.push(file);
+                                    } else if (fileName.endsWith('.pdb')) {
+                                        hasPdb = true;
+                                        pdbFiles.push(file);
+                                    } else if (fileName.endsWith('.gz')) {
+                                        hasGz = true;
+                                        gzFiles.push(file);
+                                    }
+                                }
+                            }
+
+                            if (hasJson && hasPdb) {
+                                let jsonCollection = [];
+                                for (const file of jsonFiles) {
+                                    let fileData = await file.async('text');
+                                    parseJsonCollection(fileData).forEach(element => {
+                                        jsonCollection.push(element);
+                                    });
+                                }
+
+                                // For each JSON object, check if a corresponding PDB file exists
+                                for (const [id, title, description, commands, _] of jsonCollection) {
+                                    let matchingPdbFile = pdbFiles.find(file => file.name.toLowerCase().includes(id.toLowerCase()));
+                                    if (matchingPdbFile) {
+                                        let pdbFileData = await matchingPdbFile.async('text');
+                                        parsePdbCollection(pdbFileData, description, commands).forEach(element => {
+                                            collection.push(element);
+                                        });
+                                    }
+                                }
+
+                            } else if (hasJson) {
+                                // Do something if only JSON files are present
+                                jsonFiles.forEach(async file => {
+                                    let fileData = await file.async('text');
+                                    parseJsonCollection(fileData).forEach(element => {
+                                        collection.push(element);
+                                    });
+                                });
+                            } else if (hasPdb) {
+                                // Do something if only PDB files are present
+                                pdbFiles.forEach(async file => {
+                                    let fileData = await file.async('text');
+                                    parsePdbCollection(fileData).forEach(element => {
+                                        collection.push(element);
+                                    });
+                                });
+                            } else if (hasGz) {
+                                let url = './script/pako.js';
+                                await me.getAjaxPromise(url, 'script');
+                                try {
+                                    for (const file of gzFiles) {
+                                        let compressed = await file.async('uint8array');
+                                        let decompressed = pako.inflate(compressed, { to: 'string' });
+                                        parsePdbCollection(decompressed).forEach(element => {
+                                            collection.push(element);
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('Error loading GZ file', error);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error loading ZIP file', error);
+                        }
+                    } else if (fileExtension === 'gz') {
+                        let url = './script/pako.js';
+                        await me.getAjaxPromise(url, 'script');
+                        
+                        try {
+                            const compressed = new Uint8Array(e.target.result);
+                            const decompressed = pako.inflate(compressed, { to: 'string' });
+                            collection = parsePdbCollection(decompressed);
+                        } catch (error) {
+                            console.error('Error loading GZ file', error);
+                        }
+                    }
+
+                    let collectionHtml = await ic.selectCollectionsCls.setAtomMenu(collection);
+
+                    $("#" + ic.pre + "collections_menu").html(collectionHtml);
+                    await ic.selectCollectionsCls.clickStructure(collection);
+
+                    $("#" + ic.pre + "collections_menu").trigger("change");
+
+                    me.htmlCls.clickMenuCls.setLogCmd(
+                        "load collection file " +
+                        $("#" + me.pre + "collectionfile").val(),
+                        false
+                    );
+                };
+
+                reader2.onerror = function(error) {
+                    console.error('Error reading file', error);
+                };
+
+                reader2.readAsArrayBuffer(file);
+            } else {
+                throw new Error('Invalid file type');
+            }
             
             if (Object.keys(me.utilsCls.getStructures(ic.dAtoms))){
                 $("#" + me.pre + "dl_collection_file").hide();
@@ -17707,6 +17929,90 @@ class Events {
               
             me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
             }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "opendl_export_collections", "click", function (e) {
+            me.htmlCls.dialogCls.openDlg("dl_export_collections", "Export Collections");
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "export_collections", "click", function (e) {
+            let ic = me.icn3d;
+
+            const selectElement = document.getElementById(me.pre + 'collections_menu');
+    
+            // Array to store parsed results
+            const structures = [];
+
+            const dl_collectionExportSelected = document.getElementById('dl_collectionExportSelected');
+            const dl_collectionExportAll = document.getElementById('dl_collectionExportAll');
+
+            if (dl_collectionExportSelected.checked) {
+
+                // Iterate over each <option> element
+                Array.from(selectElement.options)
+                    .filter(option => option.selected)
+                    .forEach(option => {
+                        const name = option.value;
+                        const title = option.textContent.trim();
+                        const description = option.getAttribute('data-description');
+
+                        // Push the extracted data into the array
+                        structures.push({
+                            id: name,
+                            title: title,
+                            description: description || '',
+                            commands: (ic.allData[name] && ic.allData[name].commands) ? ic.allData[name].commands : []
+                        });
+                    });
+            } else if (dl_collectionExportAll.checked) {
+                // Iterate over each <option> element
+                Array.from(selectElement.options)
+                    .forEach(option => {
+                        const name = option.value;
+                        const title = option.textContent.trim();
+                        const description = option.getAttribute('data-description');
+
+                        // Push the extracted data into the array
+                        structures.push({
+                            name: name,
+                            title: title,
+                            description: description || '',
+                            commands: (ic.allData[name] && ic.allData[name].commands) ? ic.allData[name].commands : []
+                        });
+                    });
+            }
+
+            
+            const now = new Date();
+            const month = now.getMonth() + 1; // Months are zero-based
+            const day = now.getDate();
+            const year = now.getFullYear();
+            const formattedDate = `${month}_${day}_${year}`;
+
+            const collection = {
+                collectionTitle: document.getElementById('dl_collectionTitle').value,
+                collectionDescription: document.getElementById('dl_collectionDescription').value,
+                structures: structures
+            };
+
+            const filename = `${collection.collectionTitle.replace(/\s+/g, '_')}_${formattedDate}.json`;
+
+            const jsonString = JSON.stringify(collection, null, 2);
+    
+            // Create a Blob with the JSON data
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // Create a temporary link element to trigger download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Revoke the object URL after download
+            URL.revokeObjectURL(url);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_dsn6file2fofc", "click", function(e) { let ic = me.icn3d;
@@ -54274,7 +54580,7 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(' | ') : [];
+                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -59654,7 +59960,7 @@ class RealignParser {
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(': ');
+            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
             
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
@@ -59860,6 +60166,7 @@ class RealignParser {
 
                     let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
                     coorArray = coorArray.concat(this.getResCoorArray(resid));
+
                     residArray.push(resid);
                 }            
             }
@@ -64146,7 +64453,9 @@ class LoadPDB {
                 structure = this.getStructureId(id, moleculeNum, bMutation, bNMR);
 
                 ic.molTitle = '';
-                ic.molTitleHash = {};
+                if (ic.allData === undefined) {
+                    ic.molTitleHash = {};
+                }
 
                 bHeader = true; // read the first header if there are multiple
             } else if (record === 'TITLE ') {
@@ -69170,15 +69479,15 @@ class SelectCollections {
   }
 
   //Set the menu of defined sets with an array of defined names "commandnameArray".
-  setAtomMenu(nameArray, titleArray) {
+  setAtomMenu(nameArray) {
     let ic = this.icn3d;
     ic.icn3dui;
     let html = "";
-    let commandnameArray = [nameArray[0]];
     //for(let i in ic.defNames2Atoms) {
     for (let i = 0, il = nameArray.length; i < il; ++i) {
-      let name = nameArray[i];
-      let title = titleArray[i];
+      let name = nameArray[i][0];
+      let title = nameArray[i][1];
+      let description = nameArray[i][2];
 
       let atomHash;
       if (
@@ -69201,16 +69510,11 @@ class SelectCollections {
         }
       }
 
-      if (commandnameArray.indexOf(name) != -1) {
-        html +=
-          "<option value='" +
-          name +
-          "' selected='selected'>" +
-          title +
-          "</option>";
-      } else {
-        html += "<option value='" + name + "'>" + title + "</option>";
-      }
+      if (i == 0) {
+        html += "<option value='" + nameArray[0][0] + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
+    } else {
+        html += "<option value='" + name + "' data-description='" + description + "'>" + title + "</option>";
+    }
     }
 
     return html;
@@ -69251,49 +69555,33 @@ class SelectCollections {
       }
 
       return difference;
-    }
+  }
 
-  clickStructure() {
+  clickStructure(collection) {
     let ic = this.icn3d,
       me = ic.icn3dui;
     let thisClass = this;
 
-    if (ic.allData == undefined) {
-      ic.allData = {};
-      ic.allData['all'] = {
-        'atoms': {},
-        'proteins': {},
-        'nucleotides': {},
-        'chemicals': {},
-        'ions': {},
-        'water': {},
-        'structures': {},
-        'ssbondpnts': {},
-        'residues': {},
-        'chains': {},
-        'chainsSeq': {}, //Sequences and Annotation
-        'defNames2Atoms': {},
-        'defNames2Residues': {}
-      };
-      ic.allData['prev'] = {};
-    }
-
     //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let  ic = thisClass.icn3d;
-    $("#" + ic.pre + "collections_menu").change(async function (e) {
+    $("#" + ic.pre + "collections_menu").on("change", async function (e) {
       let ic = thisClass.icn3d;
 
       let nameArray = $(this).val();
       let nameStructure = $(this).find("option:selected").text();
+      let selectedIndices = Array.from(this.selectedOptions).map(option => option.index);
+      let selectedIndicesMap = nameArray.reduce((map, name, i) => {
+        map[name] = selectedIndices[i];
+        return map;
+      }, {});
 
       ic.nameArray = nameArray;
-      if (nameArray !== null) {
-        // let chainIdHash = {};
 
+      if (nameArray !== null) {
         let bNoDuplicate = true;
         thisClass.reset();
         for (const name of nameArray) {
           if (!(name in ic.allData)) {
-            ic.allData['prev'] = JSON.parse(JSON.stringify(ic.allData['all']));//me.hashUtilsCls.cloneHash(ic.allData['all']);
+            ic.allData['prev'] = JSON.parse(JSON.stringify(ic.allData['all']));
 
             ic.atoms = ic.allData['all']['atoms'];
             
@@ -69310,7 +69598,21 @@ class SelectCollections {
             ic.chainsSeq = ic.allData['all']['chainsSeq'];
             ic.defalls2Atoms = ic.allData['all']['defalls2Atoms'];
             ic.defalls2Residues = ic.allData['all']['defalls2Residues'];
-            await ic.chainalignParserCls.downloadMmdbAf(name, undefined, undefined, bNoDuplicate).then(() => {
+
+            async function loadStructure(pdb) {
+              await ic.resetConfig();
+              if (pdb) {
+                let bAppend = true;
+                if (Object.keys(ic.structures).length == 0) {
+                  bAppend = false;
+                }
+                await ic.pdbParserCls.loadPdbData(ic.pdbCollection[selectedIndicesMap[name]].join('\n'), undefined, undefined, bAppend);
+              } else {
+                await ic.chainalignParserCls.downloadMmdbAf(name, undefined, undefined, bNoDuplicate);
+              }
+            }
+            
+            await loadStructure(collection[selectedIndicesMap[name]][4]).then(() => {
               ic.allData['all'] = {
                 'atoms': ic.atoms,
                 'proteins': ic.proteins,
@@ -69318,9 +69620,9 @@ class SelectCollections {
                 'chemicals': ic.chemicals,
                 'ions': ic.ions,
                 'water': ic.water,
-                'structures': ic.structures,
+                'structures': ic.structures, // getSSExpandedAtoms
                 'ssbondpnts': ic.ssbondpnts,
-                'residues': ic.residues,
+                'residues': ic.residues, // getSSExpandedAtoms
                 'chains': ic.chains,
                 'chainsSeq': ic.chainsSeq, //Sequences and Annotation
                 'defNames2Atoms': ic.defNames2Atoms,
@@ -69328,26 +69630,27 @@ class SelectCollections {
               };
 
               ic.allData[name] = {
+                'title': ic.molTitle,
                 'atoms': thisClass.dictionaryDifference(ic.allData['prev']['atoms'], ic.atoms),
                 'proteins': thisClass.dictionaryDifference(ic.allData['prev']['proteins'], ic.proteins),
                 'nucleotides': thisClass.dictionaryDifference(ic.allData['prev']['nucleotides'], ic.nucleotides),
                 'chemicals': thisClass.dictionaryDifference(ic.allData['prev']['chemicals'], ic.chemicals),
                 'ions': thisClass.dictionaryDifference(ic.allData['prev']['ions'], ic.ions),
                 'water': thisClass.dictionaryDifference(ic.allData['prev']['water'], ic.water),
-                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures),
+                'structures': thisClass.dictionaryDifference(ic.allData['prev']['structures'], ic.structures), // getSSExpandedAtoms
                 'ssbondpnts': thisClass.dictionaryDifference(ic.allData['prev']['ssbondpnts'], ic.ssbondpnts),
-                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues),
+                'residues': thisClass.dictionaryDifference(ic.allData['prev']['residues'], ic.residues), // getSSExpandedAtoms
                 'chains': thisClass.dictionaryDifference(ic.allData['prev']['chains'], ic.chains),
                 'chainsSeq': thisClass.dictionaryDifference(ic.allData['prev']['chainsSeq'], ic.chainsSeq), //Sequences and Annotation
                 'defNames2Atoms': thisClass.dictionaryDifference(ic.allData['prev']['defNames2Atoms'], ic.defNames2Atoms),
                 'defNames2Residues': thisClass.dictionaryDifference(ic.allData['prev']['defNames2Residues'], ic.defNames2Residues)
               };
 
-              // ic.atoms = Object.assign(ic.atoms, ic.atomsTemp);
               thisClass.reset();
             });
           }
         }
+
         for (const name of nameArray) {
             ic.atoms = Object.assign(ic.atoms, ic.allData[name]['atoms']);
             
@@ -69366,10 +69669,26 @@ class SelectCollections {
             ic.defNames2Residues = Object.assign(ic.defNames2Residues, ic.allData[name]['defNames2Residues']);
             ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
-          }
+            
+          ic.molTitle = ic.allData[name]['title'];
           
+          if (collection[selectedIndicesMap[name]][3] !== undefined && collection[selectedIndicesMap[name]][3].length > 0) {
+            if (ic.allData[name]['commands'] == undefined) {
+              let commands = collection[selectedIndicesMap[name]][3];
+              ic.allData[name]['commands'] = commands;
+            }
+          }
+
+           if (ic.allData[name]['commands'] !== undefined) {   
+              for (const command of ic.allData[name]['commands']) {
+                me.htmlCls.clickMenuCls.setLogCmd(command, true);
+                await ic.applyCommandCls.applyCommand(command);
+              }
+            }
+            
+        }
+        
         ic.opts["color"] = (Object.keys(ic.structures).length == 1) ? "chain" : "structure";
-        // ic.setStyleCls.setAtomStyleByOptions();
         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
 
         ic.transformCls.zoominSelection();
@@ -69383,14 +69702,12 @@ class SelectCollections {
           // show selected chains in annotation window
           ic.annotationCls.showAnnoSelectedChains();
         }
-
+        
         await ic.drawCls.draw();
         ic.saveFileCls.showTitle();
 
-        me.htmlCls.clickMenuCls.setLogCmd(
-          "select structure " + "[" + nameStructure + "]",
-          true
-        );
+        me.htmlCls.clickMenuCls.setLogCmd("select structure " + "[" + nameStructure + "]", false);
+        me.htmlCls.clickMenuCls.setLogCmd('load mmdbaf1 ' + nameArray, true);
       }
     });
 
@@ -83384,7 +83701,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.38.1';
+    this.REVISION = '3.39.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -83834,7 +84151,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
-        let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + me.cfg.resrange : '';
+        let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + decodeURIComponent(me.cfg.resrange) : '';
         let resdef = (me.cfg.resdef) ? me.cfg.resdef : '';
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);

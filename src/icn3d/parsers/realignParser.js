@@ -569,7 +569,7 @@ class RealignParser {
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(': ');
+            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
             
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");
@@ -783,6 +783,7 @@ class RealignParser {
 
                     let resid = (bNCBIResi) ? ic.ncbi2resid[chainid + '_' + k] : chainid + '_' + k;
                     coorArray = coorArray.concat(this.getResCoorArray(resid));
+
                     residArray.push(resid);
                 }            
             }
