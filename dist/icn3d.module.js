@@ -16511,8 +16511,8 @@ class Events {
 
     saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
         let html = '';
-        html += '<link rel="stylesheet" href="https:///www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
-        html += '<link rel="stylesheet" href="https:///www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">\n';
+        html += '<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
+        html += '<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">\n';
         html += $("#" + id).html();
         let idArray = id.split('_');
         let idStr =(idArray.length > 2) ? idArray[2] : id;
