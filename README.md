@@ -6,7 +6,7 @@
 
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>The complete package of iCn3D</b> including Three.js and jQuery is in the directory "dist" after you get the source code with the "Code" button. You can click the file "index.html" in the "dist" directory to launch a local version of iCn3D.
 * <b>View a 3D structure in iCn3D</b>: 
-    Open the link [https://structure.ncbi.nlm.nih.gov/icn3d](https://structure.ncbi.nlm.nih.gov/icn3d), input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
+    Open the link [https://www.ncbi.nlm.nih.gov/Structure/icn3d](https://www.ncbi.nlm.nih.gov/Structure/icn3d), input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
     As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. 
 
@@ -29,7 +29,7 @@
 
     The "iCn3D PNG Image" can also be stored in a web server (e.g., [https://figshare.com](https://figshare.com), [https://zenodo.org](https://zenodo.org)). The PNG image can then be loaded into iCn3D via the URL, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://api.figshare.com/v2/file/download/39125801), or [https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?type=icn3dpng&url=https://zenodo.org/api/files/1a3325c8-0c84-4f1e-be2c-c143b08c6563/3GVU-XCxR6fSTmXHxR3o1A.png), where the URL of the PNG image is retrieved from the JSON blob at https://zenodo.org/api/records/7599970. 
     
-    You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a [custom display](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA) was generated.
+    You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a [custom display](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?u7gp4xS9rn4hahcLA) was generated.
     
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 
@@ -40,33 +40,33 @@
     You can download [npm "icn3d" package](https://www.npmjs.com/package/icn3d) to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at [icn3dnode](https://github.com/ncbi/icn3d/tree/master/icn3dnode).
 
 * <b>Annotations for AlphaFold structures</b>: 
-    For any custom structures such as AlphaFold structures, you can show [conserved domain and 3D domain annotations](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bPSkpeshtiH1TxbP8). For AlphaFold structures, you can also show [SNP and ClinVar annotations](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?XSQ5oqDCTfEQ3iAY7).
+    For any custom structures such as AlphaFold structures, you can show [conserved domain and 3D domain annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?bPSkpeshtiH1TxbP8). For AlphaFold structures, you can also show [SNP and ClinVar annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?XSQ5oqDCTfEQ3iAY7).
 
 * <b>Align AlphaFold structures</b>: 
     You can align [AlphaFold structures or PDB structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&showalignseq=1&bu=0) with the menu "File > Align > Multiple Chains" or "File > Align > Protein Complexes > Two AlphaFold Structures". You can also load any structures as usual, then load your custom PDB file with the menu "File > Open File > PDB File (appendable)", then relaign these structures with the menu "File > Realign Selection > by Structure Alignment".
 
 * <b>Alternate SNPs in 3D</b>: 
-    You can [alternate in 3D wild type and mutant of SNPs](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8) by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.
+    You can [alternate in 3D wild type and mutant of SNPs](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?fNpzDuUE287SBFtz8) by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.
 
 * <b>DelPhi Electrostatic Potential</b>: 
-    You can view the [DelPhi Electrostatic Potential](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA) in the menu "Analysis > DelPhi Potential".
+    You can view the [DelPhi Electrostatic Potential](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?31DFceJiYw7SfStQA) in the menu "Analysis > DelPhi Potential".
 
 * <b>Isoforms and Exons</b>: 
-    You can view the [Isoforms and Exons](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pA3pPu7LxdiuZDVX7) by clicking the button "Add Track" in the "Sequences & Annotations" window via the menu "Analysis > Sequences & Annotations".
+    You can view the [Isoforms and Exons](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pA3pPu7LxdiuZDVX7) by clicking the button "Add Track" in the "Sequences & Annotations" window via the menu "Analysis > Sequences & Annotations".
 
 * <b>Symmetry</b>:
-    You can show [precalculated symmetry](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8), or calculate [symmetry dynamically](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6NvhQ45XrnbuXyGe6) using SymD.
+    You can show [precalculated symmetry](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?bGH1BfLsiGFhhTDn8), or calculate [symmetry dynamically](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?6NvhQ45XrnbuXyGe6) using SymD.
 
 * <b>Use iCn3D in Jupyter Notebook</b>: 
     You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at [pypi.org/project/icn3dpy](https://pypi.org/project/icn3dpy/).
 
 * <b>2D Cartoons in the chain, domain, and secondary structure levels</b>: 
-    You can use click "Analysis > 2D Cartoon" to show 2D Cartoons in the [chain](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pzmT7EMTAxXKVbZu7), [domain](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Arh4H9VTMuHQURY5A), and [secondary structure](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?5iZSHNbXcJisp7gQ6) levels.  
+    You can use click "Analysis > 2D Cartoon" to show 2D Cartoons in the [chain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pzmT7EMTAxXKVbZu7), [domain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?Arh4H9VTMuHQURY5A), and [secondary structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?5iZSHNbXcJisp7gQ6) levels.  
 
 * <b>Contact Map for any Selected Residues</b>:
-    You can click the menu "Analysis > Contact Map" to show the interactive [contact map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rnMbe26tNsAjJLGK9) for any selected residues. You can export the map in PNG or SVG.
+    You can click the menu "Analysis > Contact Map" to show the interactive [contact map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?rnMbe26tNsAjJLGK9) for any selected residues. You can export the map in PNG or SVG.
 
-* More features are listed at [www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html): [binding site](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?JR5B), [interaction interface](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?CuXYgGLCukDeUKnJ6), [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&command=export+stl+stabilizer+file), [transmembrane proteins](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?TuSd), [surface](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aYAjP4S3NbrBJX3x6), [EM map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?L4C4WYE85tYRiFeK7), [electron density map from MTZ, CCP4, or DSN6](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?QpqNZ3k65ToYFvUB6), 1D sequences and 2D interactions, [align two structures](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?PfsQFtZRTgFAW2LG6), [align multiple chains](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ijnf), [align a protein sequence to a structure](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9), [realign](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?UccFrXLDNeVB7Jk16), [custom tracks](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pUzP), [force-directed graph for interactions](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rshvjTFXpAFu8GDa9), [solvent accessible surface area](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xKSyfd1umbKstGh29), etc. 
+* More features are listed at [www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html): [binding site](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?JR5B), [interaction interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?CuXYgGLCukDeUKnJ6), [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&command=export+stl+stabilizer+file), [transmembrane proteins](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?TuSd), [surface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?aYAjP4S3NbrBJX3x6), [EM map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?L4C4WYE85tYRiFeK7), [electron density map from MTZ, CCP4, or DSN6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?QpqNZ3k65ToYFvUB6), 1D sequences and 2D interactions, [align two structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?PfsQFtZRTgFAW2LG6), [align multiple chains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?ijnf), [align a protein sequence to a structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?Mmm82craCwGMAxru9), [realign](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?UccFrXLDNeVB7Jk16), [custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pUzP), [force-directed graph for interactions](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?rshvjTFXpAFu8GDa9), [solvent accessible surface area](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?xKSyfd1umbKstGh29), etc. 
 
 ## Embed iCn3D with iframe or JavaScript libraries
 

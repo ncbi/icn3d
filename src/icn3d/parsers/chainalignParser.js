@@ -274,7 +274,8 @@ class ChainalignParser {
         if(!bFoundAlignment) {
             // sometimes VAST align works for the reversed pair
             if(!bReverse) {
-                ic.realignParserCls.realignOnStructAlign(true);
+                let bVastsearch = true;
+                ic.realignParserCls.realignOnStructAlign(true, bVastsearch);
                 return;
             }
             else {
@@ -1038,7 +1039,8 @@ class ChainalignParser {
                 // await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
 
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(ic.chainidArray);
-                await ic.realignParserCls.realignOnStructAlign();
+                let bVastsearch = true
+                await ic.realignParserCls.realignOnStructAlign(undefined, bVastsearch);
 
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");

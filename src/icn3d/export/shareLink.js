@@ -56,7 +56,7 @@ class ShareLink {
                     let shortName = strArray[strArray.length - 1];
                     ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
                     let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                    text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
+                    text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + shortName + '" target="_blank">';
                     text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                     text += '<!--Start of your comments==================-->\n';
                     let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
@@ -75,9 +75,9 @@ class ShareLink {
             //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
             let urlArray = shorturl.split('page.link/');
             //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
-            // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+            // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to pass posted data in Mac/iphone
             // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
-            if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+            if(urlArray.length == 2) shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + urlArray[1];
 
             $("#" + ic.pre + "short_url").val(shorturl);
             $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);

@@ -16514,8 +16514,8 @@ var icn3d = (function (exports) {
 
         saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
             let html = '';
-            html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
-            html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
+            html += '<link rel="stylesheet" href="https:///www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
+            html += '<link rel="stylesheet" href="https:///www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">\n';
             html += $("#" + id).html();
             let idArray = id.split('_');
             let idStr =(idArray.length > 2) ? idArray[2] : id;
@@ -20857,7 +20857,7 @@ var icn3d = (function (exports) {
         this.force = 4;
         this.simulation = undefined;
 
-        //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
+        //this.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
         this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
             ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
 
@@ -45898,8 +45898,9 @@ var icn3d = (function (exports) {
 
     			// if(fromPos >= start && toPos <= end) {
     				if(ssCnt > 0) jsonStr += ', ';
-    				jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
-    					+ substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
+    				jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
+    				// jsonStr += '[' + sstype + ',' + residFrom.split('_')[2] + ',' + residTo.split('_')[2] + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
+    				jsonStr += substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
     				++ssCnt;
     			// }
     		}				
@@ -45915,6 +45916,7 @@ var icn3d = (function (exports) {
     		for(let j = startAll; j <= endAll; ++j) {
     			let ncbiResid = chnid + '_' + j;
     			let resid = ic.ncbi2resid[ncbiResid];
+    			resid.split('_')[2];
 
     			let pos = j;
 
@@ -45922,6 +45924,7 @@ var icn3d = (function (exports) {
 
     			if(!residueHash.hasOwnProperty(resid)) {
     				jsonStr += '[' + pos + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
+    				// jsonStr += '[' + resi + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
     			}
     			else {
     				let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
@@ -45930,6 +45933,7 @@ var icn3d = (function (exports) {
     				let restype = (me.parasCls.resn2restype[atom.resn]) ? me.parasCls.resn2restype[atom.resn] : 0;
     				
     				jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
+    				// jsonStr += '[' + resi + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
     			}
 
     			++domainCnt;		
@@ -54786,7 +54790,8 @@ var icn3d = (function (exports) {
             if(!bFoundAlignment) {
                 // sometimes VAST align works for the reversed pair
                 if(!bReverse) {
-                    ic.realignParserCls.realignOnStructAlign(true);
+                    let bVastsearch = true;
+                    ic.realignParserCls.realignOnStructAlign(true, bVastsearch);
                     return;
                 }
                 else {
@@ -55542,7 +55547,8 @@ var icn3d = (function (exports) {
                     // await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
 
                     ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(ic.chainidArray);
-                    await ic.realignParserCls.realignOnStructAlign();
+                    let bVastsearch = true;
+                    await ic.realignParserCls.realignOnStructAlign(undefined, bVastsearch);
 
                     // reset annotations
                     $("#" + ic.pre + "dl_annotations").html("");
@@ -59778,76 +59784,114 @@ var icn3d = (function (exports) {
             await this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
         }
 
-        async realignOnStructAlign(bReverse) { let ic = this.icn3d, me = ic.icn3dui;
+        async realignOnStructAlign(bReverse, bVastsearch) { let ic = this.icn3d, me = ic.icn3dui;
             // each 3D domain should have at least 3 secondary structures
             let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
 
-            let struct2domain = {};
-            for(let struct in ic.structures) {
-                struct2domain[struct] = {};
-                let chainidArray = ic.structures[struct];
-                for(let i = 0, il = chainidArray.length; i < il; ++i) {
-                    let chainid = chainidArray[i];
-                    let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
-                    let sseCnt = 0;
-                    for(let serial in atoms) {
-                        if(ic.atoms[serial].ssbegin) ++sseCnt;
-                        if(sseCnt > minSseCnt) {
-                            struct2domain[struct][chainid] = atoms;
-                            break;
-                        }
-                    }
-                }
-            }
+            /*
+    let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
+                    let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
+                    for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+                        let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
+                    // end of new version to be done for VASTsrv ==============
+    */
             let ajaxArray = [], chainidPairArray = [];
             let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
             let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-            //let cnt = 0;
-            let structArray = Object.keys(struct2domain);
-            if(bReverse) structArray = structArray.reverse();
+            let struct2domain = {};
+            if(bVastsearch && me.cfg.resrange) {
+                let resRangeArray = decodeURIComponent(me.cfg.resrange).split(' | ');
 
-            for(let s = 0, sl = structArray.length; s < sl; ++s) {
-                let struct1 = structArray[s];
+                let atomSet_t = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms;
+                for(let index = 1, indexl = ic.chainidArray.length; index < indexl; ++index) {
+                    let atomSet_q = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms;
 
-                let chainidArray1 = Object.keys(struct2domain[struct1]);
-                if(chainidArray1.length == 0) continue;
+                    let alignAjax;
+                    if(me.cfg.aligntool != 'tmalign') {
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
+                            
+                        let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                        alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                    }
+                    else {
+                        let pdb_query = ic.saveFileCls.getAtomPDB(atomSet_q);
+                        let pdb_target= ic.saveFileCls.getAtomPDB(atomSet_t);
 
-                for(let i = 0, il = chainidArray1.length; i < il; ++i) {
-                    let chainid1 = chainidArray1[i];
-                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                        let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                        alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                
+                    }
 
-                    for(let t = s+1, tl = structArray.length; t < tl; ++t) {
-                        let struct2 = structArray[t];
-
-                        let chainidArray2 = Object.keys(struct2domain[struct2]);
-                        if(chainidArray2.length == 0) continue;
-
-                        for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
-                            let chainid2 = chainidArray2[j];
-
-                            let alignAjax;
-                            if(me.cfg.aligntool != 'tmalign') {
-                                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-               
-                                let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
-                                alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                    ajaxArray.push(alignAjax);
+                    
+                    chainidPairArray.push(ic.chainidArray[0] + ',' + ic.chainidArray[index]); 
+                }
+            }
+            else {
+                for(let struct in ic.structures) {
+                    struct2domain[struct] = {};
+                    let chainidArray = ic.structures[struct];
+                    for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                        let chainid = chainidArray[i];
+                        let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+                        let sseCnt = 0;
+                        for(let serial in atoms) {
+                            if(ic.atoms[serial].ssbegin) ++sseCnt;
+                            if(sseCnt > minSseCnt) {
+                                struct2domain[struct][chainid] = atoms;
+                                break;
                             }
-                            else {
-                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
-                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
-      
-                                // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
-                                // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+                        }
+                    }
+                }
+
+                //let cnt = 0;
+                let structArray = Object.keys(struct2domain);
+                if(bReverse) structArray = structArray.reverse();
+
+                for(let s = 0, sl = structArray.length; s < sl; ++s) {
+                    let struct1 = structArray[s];
+
+                    let chainidArray1 = Object.keys(struct2domain[struct1]);
+                    if(chainidArray1.length == 0) continue;
+
+                    for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                        let chainid1 = chainidArray1[i];
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+
+                        for(let t = s+1, tl = structArray.length; t < tl; ++t) {
+                            let struct2 = structArray[t];
+
+                            let chainidArray2 = Object.keys(struct2domain[struct2]);
+                            if(chainidArray2.length == 0) continue;
+
+                            for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                                let chainid2 = chainidArray2[j];
+
+                                let alignAjax;
+                                if(me.cfg.aligntool != 'tmalign') {
+                                    let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                
+                                    let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                                    alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                                }
+                                else {
+                                    let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
+                                    let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
         
-                                let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
-                                alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
-                            }
+                                    // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                                    // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+            
+                                    let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                                    alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
+                                }
 
-                            ajaxArray.push(alignAjax);
-                            chainidPairArray.push(chainid1 + ',' + chainid2); 
-                            //++cnt;
+                                ajaxArray.push(alignAjax);
+                                chainidPairArray.push(chainid1 + ',' + chainid2); 
+                                //++cnt;
+                            }
                         }
                     }
                 }
@@ -70622,7 +70666,7 @@ var icn3d = (function (exports) {
             if(steps === 1
               || (ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
               || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
-        // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+        // the following code caused problem for many links,e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?17g3r1JDvZ7ZL39e6
         //        if(steps === 1) {
                     // assign styles and color using the options at that stage
         //            ic.setStyleCls.setAtomStyleByOptions(ic.optsHistory[steps - 1]);
@@ -70644,7 +70688,7 @@ var icn3d = (function (exports) {
                         ic.pk = 3;
                     }
 
-        // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+        // the following code caused problem for many links,e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?17g3r1JDvZ7ZL39e6
         //            if(steps === 1) {
         //                ic.setColorCls.applyOriginalColor();
         //            }
@@ -80526,7 +80570,7 @@ var icn3d = (function (exports) {
                         let shortName = strArray[strArray.length - 1];
                         ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
                         let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                        text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
+                        text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + shortName + '" target="_blank">';
                         text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                         text += '<!--Start of your comments==================-->\n';
                         let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
@@ -80545,9 +80589,9 @@ var icn3d = (function (exports) {
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
                 let urlArray = shorturl.split('page.link/');
                 //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
-                // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+                // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to pass posted data in Mac/iphone
                 // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
-                if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
+                if(urlArray.length == 2) shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + urlArray[1];
 
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
@@ -83878,6 +83922,9 @@ var icn3d = (function (exports) {
             ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
 
             await ic.pdbParserCls.loadPdbData(pdbStr);
+
+            // // use NCBI residue numbers if using VAST
+            // me.icn3d.bUsePdbNum = 0;
 
             if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
                 let structureArray = Object.keys(ic.structures);
