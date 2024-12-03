@@ -343,6 +343,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
         await ic.pdbParserCls.loadPdbData(pdbStr);
 
+        // // use NCBI residue numbers if using VAST
+        // me.icn3d.bUsePdbNum = 0;
+
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
             let structureArray = Object.keys(ic.structures);
             let chainArray = me.cfg.chains.split(' | ');
