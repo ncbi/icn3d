@@ -102,7 +102,7 @@ class Html {
     this.force = 4;
     this.simulation = undefined;
 
-    //this.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
+    //this.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
     this.baseUrl = (window && window.location && window.location.hostname == 'structure.ncbi.nlm.nih.gov') 
         ? "https://structure.ncbi.nlm.nih.gov/Structure/" : "https://www.ncbi.nlm.nih.gov/Structure/";
 

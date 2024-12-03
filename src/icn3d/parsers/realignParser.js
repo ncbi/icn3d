@@ -381,76 +381,114 @@ class RealignParser {
         await this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
     }
 
-    async realignOnStructAlign(bReverse) { let ic = this.icn3d, me = ic.icn3dui;
+    async realignOnStructAlign(bReverse, bVastsearch) { let ic = this.icn3d, me = ic.icn3dui;
         // each 3D domain should have at least 3 secondary structures
         let minSseCnt = (me.cfg.aligntool != 'tmalign') ? 3 : 0;
 
-        let struct2domain = {};
-        for(let struct in ic.structures) {
-            struct2domain[struct] = {};
-            let chainidArray = ic.structures[struct];
-            for(let i = 0, il = chainidArray.length; i < il; ++i) {
-                let chainid = chainidArray[i];
-                let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
-                let sseCnt = 0;
-                for(let serial in atoms) {
-                    if(ic.atoms[serial].ssbegin) ++sseCnt;
-                    if(sseCnt > minSseCnt) {
-                        struct2domain[struct][chainid] = atoms;
-                        break;
-                    }
-                }
-            }
-        }
+        /*
+let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
+                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
+                for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
+                // end of new version to be done for VASTsrv ==============
+*/
         let ajaxArray = [], chainidPairArray = [], struArray = [];
         let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
         let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-        //let cnt = 0;
-        let structArray = Object.keys(struct2domain);
-        if(bReverse) structArray = structArray.reverse();
+        let struct2domain = {};
+        if(bVastsearch && me.cfg.resrange) {
+            let resRangeArray = decodeURIComponent(me.cfg.resrange).split(' | ');
 
-        for(let s = 0, sl = structArray.length; s < sl; ++s) {
-            let struct1 = structArray[s];
+            let atomSet_t = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms;
+            for(let index = 1, indexl = ic.chainidArray.length; index < indexl; ++index) {
+                let atomSet_q = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms;
 
-            let chainidArray1 = Object.keys(struct2domain[struct1]);
-            if(chainidArray1.length == 0) continue;
+                let alignAjax;
+                if(me.cfg.aligntool != 'tmalign') {
+                    let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
+                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
+                        
+                    let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                    alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                }
+                else {
+                    let pdb_query = ic.saveFileCls.getAtomPDB(atomSet_q);
+                    let pdb_target= ic.saveFileCls.getAtomPDB(atomSet_t);
 
-            for(let i = 0, il = chainidArray1.length; i < il; ++i) {
-                let chainid1 = chainidArray1[i];
-                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                    let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                    alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                
+                }
 
-                for(let t = s+1, tl = structArray.length; t < tl; ++t) {
-                    let struct2 = structArray[t];
-
-                    let chainidArray2 = Object.keys(struct2domain[struct2]);
-                    if(chainidArray2.length == 0) continue;
-
-                    for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
-                        let chainid2 = chainidArray2[j];
-
-                        let alignAjax;
-                        if(me.cfg.aligntool != 'tmalign') {
-                            let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-           
-                            let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
-                            alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                ajaxArray.push(alignAjax);
+                
+                chainidPairArray.push(ic.chainidArray[0] + ',' + ic.chainidArray[index]); 
+            }
+        }
+        else {
+            for(let struct in ic.structures) {
+                struct2domain[struct] = {};
+                let chainidArray = ic.structures[struct];
+                for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                    let chainid = chainidArray[i];
+                    let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+                    let sseCnt = 0;
+                    for(let serial in atoms) {
+                        if(ic.atoms[serial].ssbegin) ++sseCnt;
+                        if(sseCnt > minSseCnt) {
+                            struct2domain[struct][chainid] = atoms;
+                            break;
                         }
-                        else {
-                            let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
-                            let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
-  
-                            // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
-                            // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+                    }
+                }
+            }
+
+            //let cnt = 0;
+            let structArray = Object.keys(struct2domain);
+            if(bReverse) structArray = structArray.reverse();
+
+            for(let s = 0, sl = structArray.length; s < sl; ++s) {
+                let struct1 = structArray[s];
+
+                let chainidArray1 = Object.keys(struct2domain[struct1]);
+                if(chainidArray1.length == 0) continue;
+
+                for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                    let chainid1 = chainidArray1[i];
+                    let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+
+                    for(let t = s+1, tl = structArray.length; t < tl; ++t) {
+                        let struct2 = structArray[t];
+
+                        let chainidArray2 = Object.keys(struct2domain[struct2]);
+                        if(chainidArray2.length == 0) continue;
+
+                        for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                            let chainid2 = chainidArray2[j];
+
+                            let alignAjax;
+                            if(me.cfg.aligntool != 'tmalign') {
+                                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+            
+                                let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
+                                alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
+                            }
+                            else {
+                                let pdb_target = ic.saveFileCls.getAtomPDB(struct2domain[struct1][chainid1], undefined, undefined, undefined, undefined, struct1);
+                                let pdb_query = ic.saveFileCls.getAtomPDB(struct2domain[struct2][chainid2], undefined, undefined, undefined, undefined, struct2);
     
-                            let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
-                            alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
-                        }
+                                // let pdb_target = ic.saveFileCls.getAtomPDB(ic.chains[chainid1], undefined, undefined, undefined, undefined, struct1);
+                                // let pdb_query = ic.saveFileCls.getAtomPDB(ic.chains[chainid2], undefined, undefined, undefined, undefined, struct2);
+        
+                                let dataObj = {'pdb_query': pdb_query, 'pdb_target': pdb_target};
+                                alignAjax = me.getAjaxPostPromise(urltmalign, dataObj);                    
+                            }
 
-                        ajaxArray.push(alignAjax);
-                        chainidPairArray.push(chainid1 + ',' + chainid2); 
-                        //++cnt;
+                            ajaxArray.push(alignAjax);
+                            chainidPairArray.push(chainid1 + ',' + chainid2); 
+                            //++cnt;
+                        }
                     }
                 }
             }
