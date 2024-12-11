@@ -218,7 +218,9 @@ class LoadScript {
           }
           else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
               await thisClass.applyCommandViewinteraction(strArray[0].trim());
-
+          }
+          else if(command.indexOf('view 2d depiction') == 0) { // the command may have "|||{"factor"...
+            await ic.ligplotCls.drawLigplot(ic.atoms, true);
           }
           else if(command.indexOf('symmetry') == 0) {
             ic.bAxisOnly = false;
@@ -427,6 +429,9 @@ class LoadScript {
                     }
                     else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                         await thisClass.applyCommandViewinteraction(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('view 2d depiction') == 0) {
+                      await ic.ligplotCls.drawLigplot(ic.atoms, true);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
                         let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);

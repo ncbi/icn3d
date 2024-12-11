@@ -1586,6 +1586,10 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
+        if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
+            html += this.getLink('mn2_2ddepiction', '2D Depiction ' + me.htmlCls.wifiStr, 1, 1);
+        }
+
         if(me.cfg.cid === undefined) {
             html += this.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr, 1, 1);
 

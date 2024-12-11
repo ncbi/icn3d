@@ -13696,6 +13696,10 @@ var icn3d = (function (exports) {
 
             html += "<ul class='icn3d-mn-item'>";
 
+            if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
+                html += this.getLink('mn2_2ddepiction', '2D Depiction ' + me.htmlCls.wifiStr, 1, 1);
+            }
+
             if(me.cfg.cid === undefined) {
                 html += this.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr, 1, 1);
 
@@ -15520,24 +15524,30 @@ var icn3d = (function (exports) {
             html += "</div>";
 
 
-            html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
-            html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
+            html += me.htmlCls.divStr + "dl_ligplot' style='background-color:white' class='" + dialogClass + "'>";
 
-            html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
+            if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
+                html += this.addNotebookTitle('dl_ligplot', '2D Depiction for Chemicals');
+            }
+            else {
+                html += this.addNotebookTitle('dl_ligplot', '2D Interaction for One Ligand/Residue with Atom Details');
 
-            html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
-              + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
-              + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
+                html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
 
-            html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
+                html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+                + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
+                + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
 
-            // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
-            // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
-            html += "<b>Color legend</b> for interactions (dashed lines): <br>";
+                html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
 
-            html += me.htmlCls.setHtmlCls.setColorHints();
+                // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
+                // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
+                html += "<b>Color legend</b> for interactions (dashed lines): <br>";
 
-            html += "<br></div>";
+                html += me.htmlCls.setHtmlCls.setColorHints();
+
+                html += "<br></div>";
+            }
 
             me.ligplotid = me.pre + 'ligplot';
             html += me.htmlCls.divNowrapStr + buttonStrTmp + me.ligplotid + '_svg">SVG</button>' + me.htmlCls.space2;
@@ -16922,6 +16932,11 @@ var icn3d = (function (exports) {
                  await ic.viewInterPairsCls.retrieveInteractionData();
                  thisClass.setLogCmd("view interactions", true);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn2_2ddepiction", "click", async function(e) { let ic = me.icn3d;
+                await ic.ligplotCls.drawLigplot(ic.atoms, true);
+                thisClass.setLogCmd("view 2d depiction", true);
+           });
 
             me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", async function(e) { me.icn3d;
                e.stopImmediatePropagation();
@@ -28126,6 +28141,8 @@ var icn3d = (function (exports) {
                     }
                 }
 
+                // ic.cam.add(ic.directionalLight);
+
                 ic.cam.updateProjectionMatrix();
         //    }
         }
@@ -38061,6 +38078,11 @@ var icn3d = (function (exports) {
                 ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
                 ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
                 ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+
+                // adjust the light according to the position of camera
+                ic.directionalLight.applyMatrix4(cam.matrixWorld);
+                ic.directionalLight2.applyMatrix4(cam.matrixWorld);
+                ic.directionalLight3.applyMatrix4(cam.matrixWorld);
             }
 
             if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
@@ -52955,7 +52977,10 @@ var icn3d = (function (exports) {
                 cntHbond += result.cnt;
                 svgHtmlNode += result.svgHtmlNode;
                 svgHtmlLine += result.svgHtmlLine;
-                if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+                // if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+                // add hydrogen bond between main or side chains. result.mainside has value such as main,side,side,side  
+                // for two hydrogens between main and side, and side and side chains
+                if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + ":type_" + result.mainside + " ";
 
                 labels2dist = ic.resids2inter[resids]['ionic'];
                 result = this.getInteractionPairDetails(labels2dist, type, 'ionic', index2xy, xlen, ylen, xcenter, ycenter);
@@ -52963,7 +52988,7 @@ var icn3d = (function (exports) {
                 cntIonic += result.cnt;
                 svgHtmlNode += result.svgHtmlNode;
                 svgHtmlLine += result.svgHtmlLine;
-                if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
+                if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + ":type_" + result.mainside + " ";
 
                 labels2dist = ic.resids2inter[resids]['halogen'];
                 result = this.getInteractionPairDetails(labels2dist, type, 'halogen', index2xy, xlen, ylen, xcenter, ycenter);
@@ -52971,7 +52996,7 @@ var icn3d = (function (exports) {
                 cntHalegen += result.cnt;
                 svgHtmlNode += result.svgHtmlNode;
                 svgHtmlLine += result.svgHtmlLine;
-                if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
+                if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + ":type_" + result.mainside + " ";
 
                 labels2dist = ic.resids2inter[resids]['pi-cation'];
                 result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation', index2xy, xlen, ylen, xcenter, ycenter);
@@ -52979,7 +53004,7 @@ var icn3d = (function (exports) {
                 cntPication += result.cnt;
                 svgHtmlNode += result.svgHtmlNode;
                 svgHtmlLine += result.svgHtmlLine;
-                if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
+                if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + ":type_" + result.mainside + " ";
 
                 labels2dist = ic.resids2inter[resids]['pi-stacking'];
                 result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking', index2xy, xlen, ylen, xcenter, ycenter);
@@ -52987,7 +53012,7 @@ var icn3d = (function (exports) {
                 cntPistacking += result.cnt;
                 svgHtmlNode += result.svgHtmlNode;
                 svgHtmlLine += result.svgHtmlLine;
-                if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+                if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + ":type_" + result.mainside + " ";
 
                 // put contact as the last one since contact will use the same node as other interactions in ligand-protein interactoin
                 labels2dist = ic.resids2inter[resids]['contact'];
@@ -53041,7 +53066,7 @@ var icn3d = (function (exports) {
             return tmpText;
         }
         getInteractionPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d; ic.icn3dui;
-            let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
+            let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0, mainside= '';
             let colorText1 = ' <span style="background-color:#';
             let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
             if(labels2dist !== undefined) {
@@ -53057,6 +53082,12 @@ var icn3d = (function (exports) {
                     let pos2 = resid2Ori.lastIndexOf(' ');
                     let resid1 = resid1Ori.substr(0, pos1);
                     let resid2 = resid2Ori.substr(0, pos2);
+
+                    let atomName1 = resid1.substr(resid1.indexOf('@') + 1);
+                    resid2.substr(resid2.indexOf('@') + 1);
+                    let atomType1 = (atomName1 === "N" || atomName1 === "C" || atomName1 === "O" || atomName1 === "CA") ? 'main' : 'side';
+                    if(mainside) mainside += ';';
+                    mainside += atomType1 + ',' + atomType1;
 
                     let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                     let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
@@ -53079,7 +53110,7 @@ var icn3d = (function (exports) {
                     }
                 }
             }
-            return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine}
+            return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine, mainside: mainside}
         }
 
         getContactPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d; ic.icn3dui;
@@ -64485,6 +64516,9 @@ var icn3d = (function (exports) {
 
                     ///id = line.substr(62, 4).trim();
                     id = line.substr(62).trim();
+                    // remove "_" in the id
+                    id = id.replace(/_/g, '-');
+                    
                     oriId = id;
 
                     if(id == '') {
@@ -65395,6 +65429,8 @@ var icn3d = (function (exports) {
                 
                 if(block.getCategory("_entry")) {
                     id = block.getCategory("_entry").getColumn("id").getString(0);
+                    // remove "_" in the id
+                    id = id.replace(/_/g, '-');
 
                     if(id == '') {
                         if(bAppend) {
@@ -69990,7 +70026,9 @@ var icn3d = (function (exports) {
               }
               else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
                   await thisClass.applyCommandViewinteraction(strArray[0].trim());
-
+              }
+              else if(command.indexOf('view 2d depiction') == 0) { // the command may have "|||{"factor"...
+                await ic.ligplotCls.drawLigplot(ic.atoms, true);
               }
               else if(command.indexOf('symmetry') == 0) {
                 ic.bAxisOnly = false;
@@ -70199,6 +70237,9 @@ var icn3d = (function (exports) {
                         }
                         else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                             await thisClass.applyCommandViewinteraction(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('view 2d depiction') == 0) {
+                          await ic.ligplotCls.drawLigplot(ic.atoms, true);
                         }
                         else if(lastCommand.indexOf('symmetry') == 0) {
                             let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
@@ -73117,7 +73158,6 @@ var icn3d = (function (exports) {
                 if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
                   for(let chainNum in ic.chainsSeq) {
                       let pos = chainNum.indexOf('_');
-
                       // one structure at a time
                       if(chainNum.substr(0, pos) != struArray[index]) continue;
 
@@ -78584,8 +78624,13 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        async drawLigplot(atomSet1) { let ic = this.icn3d, me = ic.icn3dui;
-            me.htmlCls.dialogCls.openDlg('dl_ligplot', 'Show ligand interactions with atom details');
+        async drawLigplot(atomSet1, bDepiction) { let ic = this.icn3d, me = ic.icn3dui;
+            if(bDepiction) {
+                me.htmlCls.dialogCls.openDlg('dl_ligplot', '2D Depiction');
+            }
+            else {
+                me.htmlCls.dialogCls.openDlg('dl_ligplot', 'Show ligand interactions with atom details');
+            }
 
             let widthOri, heightOri, width = 100, height = 100;
             ic.len4ang = 80;
@@ -78667,19 +78712,28 @@ var icn3d = (function (exports) {
             let offset = - ic.len4ang;
             let svgHtml = "<svg id='" + id + "' viewBox='" + offset + "," + offset + "," + width + "," + heightAll + "' width='" + graphWidth + "px' font-family='sans-serif' stroke='rgb(0,0,0)' stroke-width='2' stroke-linecap='round'>";
 
-            let xlen = parseInt(widthOri / ic.svgGridSize), ylen = parseInt(heightOri / ic.svgGridSize);
-            let result = ic.viewInterPairsCls.getAllInteractionTable("save1", index2xy, xlen, ylen, xcenter, ycenter); // sort on the ligand/set1
-            ic.bLigplot = true;
+            if(bDepiction) {
+                svgHtml += lineSvg + nodeSvg;
+            }
+            else {
+                let xlen = parseInt(widthOri / ic.svgGridSize), ylen = parseInt(heightOri / ic.svgGridSize);
+                let result = ic.viewInterPairsCls.getAllInteractionTable("save1", index2xy, xlen, ylen, xcenter, ycenter); // sort on the ligand/set1
+                // ic.bLigplot = true;
 
-            svgHtml += lineSvg + result.svgHtmlLine;
+                svgHtml += lineSvg + result.svgHtmlLine;
 
-            svgHtml += nodeSvg + result.svgHtmlNode;
+                svgHtml += nodeSvg + result.svgHtmlNode;
+            }
 
             svgHtml += "</svg>";
 
-            $("#" + ic.pre + "ligplotDiv").html(svgHtml);
-
-            this.setEventsForLigplot();
+            if(bDepiction) {
+                $("#" + ic.pre + "ligplotDiv").html(svgHtml);
+            }
+            else {
+                $("#" + ic.pre + "ligplotDiv").html(svgHtml);
+                this.setEventsForLigplot();
+            }  
         }
 
         
@@ -80328,6 +80382,11 @@ var icn3d = (function (exports) {
                     let url = this.getLinkToStructureSummary();
 
                     $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
+                }
+                else if(me.cfg.smiles !== undefined) {
+                    let text = decodeURIComponent(me.cfg.smiles);
+                    if(text.length > 60) text = text.substr(0, 60) + "...";
+                    $("#" + ic.pre + "title").html("SMILES: " + text);
                 }
                 else if(me.cfg.align !== undefined) {
                     title = 'VAST+ alignment of ' + Object.keys(ic.structures);
@@ -83748,7 +83807,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.39.0';
+        this.REVISION = '3.40.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

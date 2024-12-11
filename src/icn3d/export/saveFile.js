@@ -893,6 +893,11 @@ class SaveFile {
 
                 $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
             }
+            else if(me.cfg.smiles !== undefined) {
+                let text = decodeURIComponent(me.cfg.smiles);
+                if(text.length > 60) text = text.substr(0, 60) + "...";
+                $("#" + ic.pre + "title").html("SMILES: " + text);
+            }
             else if(me.cfg.align !== undefined) {
                 title = 'VAST+ alignment of ' + Object.keys(ic.structures);
 
