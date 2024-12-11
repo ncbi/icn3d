@@ -216,6 +216,11 @@
             ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+
+            // adjust the light according to the position of camera
+            ic.directionalLight.applyMatrix4(cam.matrixWorld);
+            ic.directionalLight2.applyMatrix4(cam.matrixWorld);
+            ic.directionalLight3.applyMatrix4(cam.matrixWorld);
         }
 
         if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71

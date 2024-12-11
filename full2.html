@@ -266,9 +266,16 @@
 
             // var hashes = decodeSearch.split('&');
             var hashes = search.split('&');
+            var decodeHashes = decodeSearch.split('&');
             for (var i = 0; i < hashes.length; i++) {
                 var hash = hashes[i].split('=');
-                cfg[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
+                if(hash[0].trim() == 'smiles') {
+                  cfg[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
+                }
+                else {
+                  var decodeHash = decodeHashes[i].split('=');
+                  cfg[decodeHash[0].trim()] = (decodeHash[1] !== undefined) ? decodeHash[1].trim() : undefined;
+                }
             }
 
             // for mmdb structures, pass the parameters after the first "&" sign

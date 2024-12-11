@@ -97,6 +97,9 @@ class LoadPDB {
 
                 ///id = line.substr(62, 4).trim();
                 id = line.substr(62).trim();
+                // remove "_" in the id
+                id = id.replace(/_/g, '-');
+                
                 oriId = id;
 
                 if(id == '') {

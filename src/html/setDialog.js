@@ -851,24 +851,30 @@ class SetDialog {
         html += "</div>";
 
 
-        html += me.htmlCls.divStr + "dl_ligplot' sty2D Interaction for One Ligand/Residule='background-color:white' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_ligplot', 'e with Atom Details');
+        html += me.htmlCls.divStr + "dl_ligplot' style='background-color:white' class='" + dialogClass + "'>";
 
-        html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
+        if(me.cfg.cid !== undefined || me.cfg.smiles !== undefined) {
+            html += this.addNotebookTitle('dl_ligplot', '2D Depiction for Chemicals');
+        }
+        else {
+            html += this.addNotebookTitle('dl_ligplot', '2D Interaction for One Ligand/Residue with Atom Details');
 
-        html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
-          + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
-          + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
+            html += me.htmlCls.divNowrapStr + "<b>Note</b>: Nodes/Residues can be dragged. Both nodes and dashed lines/interactions can be clicked to select residues. " + me.htmlCls.space3;
 
-        html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
+            html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+            + me.pre + 'dl_ligplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
+            + me.pre + 'dl_ligplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div></div>';
 
-        // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
-        // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
-        html += "<b>Color legend</b> for interactions (dashed lines): <br>";
+            html += me.htmlCls.divStr + "dl_ligplotcolor' style='inline-block;'>";
 
-        html += me.htmlCls.setHtmlCls.setColorHints();
+            // html += "The real interaction distances are not in scale, and are about twice the distances of dashed line segments.<br>Some \"Contact\" lines are only shown partially to simplify the view.<br>";
+            // html += "Mouseover the dashed lines to see interaction types and distances.<br>";
+            html += "<b>Color legend</b> for interactions (dashed lines): <br>";
 
-        html += "<br></div>";
+            html += me.htmlCls.setHtmlCls.setColorHints();
+
+            html += "<br></div>";
+        }
 
         me.ligplotid = me.pre + 'ligplot';
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.ligplotid + '_svg">SVG</button>' + me.htmlCls.space2;

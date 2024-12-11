@@ -609,6 +609,11 @@ class Events {
              thisClass.setLogCmd("view interactions", true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn2_2ddepiction", "click", async function(e) { let ic = me.icn3d;
+            await ic.ligplotCls.drawLigplot(ic.atoms, true);
+            thisClass.setLogCmd("view 2d depiction", true);
+       });
+
         me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", async function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            await thisClass.searchSeq();

@@ -66,7 +66,6 @@ class Dssp {
             if(ssHash !== undefined && JSON.stringify(ssHash).indexOf('Oops there was a problem') === -1) {
               for(let chainNum in ic.chainsSeq) {
                   let pos = chainNum.indexOf('_');
-
                   // one structure at a time
                   if(chainNum.substr(0, pos) != struArray[index]) continue;
 

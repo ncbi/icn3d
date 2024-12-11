@@ -7,8 +7,13 @@ class Ligplot {
         this.icn3d = icn3d;
     }
 
-    async drawLigplot(atomSet1) { let ic = this.icn3d, me = ic.icn3dui;
-        me.htmlCls.dialogCls.openDlg('dl_ligplot', 'Show ligand interactions with atom details');
+    async drawLigplot(atomSet1, bDepiction) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bDepiction) {
+            me.htmlCls.dialogCls.openDlg('dl_ligplot', '2D Depiction');
+        }
+        else {
+            me.htmlCls.dialogCls.openDlg('dl_ligplot', 'Show ligand interactions with atom details');
+        }
 
         let widthOri, heightOri, width = 100, height = 100;
         ic.len4ang = 80;
@@ -97,19 +102,28 @@ class Ligplot {
         let offset = - ic.len4ang;
         let svgHtml = "<svg id='" + id + "' viewBox='" + offset + "," + offset + "," + width + "," + heightAll + "' width='" + graphWidth + "px' font-family='sans-serif' stroke='rgb(0,0,0)' stroke-width='2' stroke-linecap='round'>";
 
-        let xlen = parseInt(widthOri / ic.svgGridSize), ylen = parseInt(heightOri / ic.svgGridSize);
-        let result = ic.viewInterPairsCls.getAllInteractionTable("save1", index2xy, xlen, ylen, xcenter, ycenter); // sort on the ligand/set1
-        ic.bLigplot = true;
+        if(bDepiction) {
+            svgHtml += lineSvg + nodeSvg;
+        }
+        else {
+            let xlen = parseInt(widthOri / ic.svgGridSize), ylen = parseInt(heightOri / ic.svgGridSize);
+            let result = ic.viewInterPairsCls.getAllInteractionTable("save1", index2xy, xlen, ylen, xcenter, ycenter); // sort on the ligand/set1
+            // ic.bLigplot = true;
 
-        svgHtml += lineSvg + result.svgHtmlLine;
+            svgHtml += lineSvg + result.svgHtmlLine;
 
-        svgHtml += nodeSvg + result.svgHtmlNode;
+            svgHtml += nodeSvg + result.svgHtmlNode;
+        }
 
         svgHtml += "</svg>";
 
-        $("#" + ic.pre + "ligplotDiv").html(svgHtml);
-
-        this.setEventsForLigplot();
+        if(bDepiction) {
+            $("#" + ic.pre + "ligplotDiv").html(svgHtml);
+        }
+        else {
+            $("#" + ic.pre + "ligplotDiv").html(svgHtml);
+            this.setEventsForLigplot();
+        }  
     }
 
     
