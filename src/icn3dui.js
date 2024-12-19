@@ -330,7 +330,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     ic.molTitle = '';
     ic.loadCmd;
 
-    // set menus
+    // set menus 
     me.htmlCls.clickMenuCls.getHiddenMenusFromCache();
     me.htmlCls.clickMenuCls.applyShownMenus();
 

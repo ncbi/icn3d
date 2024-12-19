@@ -332,6 +332,14 @@ class Events {
         me.htmlCls.clickMenuCls.clickMenu5();
         me.htmlCls.clickMenuCls.clickMenu6();
 
+        me.myEventCls.onIds("#" + me.pre + "menumode", "change", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            let mode = $("#" + me.pre + "menumode").val();
+
+            me.htmlCls.setHtmlCls.setCookie('menumode', mode);
+            me.htmlCls.setMenuCls.resetMenu(mode);
+        });
+
         // back and forward arrows
         me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();

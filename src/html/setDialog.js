@@ -1201,13 +1201,15 @@ class SetDialog {
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref'>Apply</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref' style='margin-left:30px'>Reset to Simple Menus</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all' style='margin-left:30px'>Reset to All Menus</button></span>";
-        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span><br><br>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref' style='margin-left:30px'>Save Preferences</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "loadpref' style='margin-left:30px'>Load Preferences</button></span><br><br>";
 
         html += "<div id='" + me.pre + "menulist'></div><br><br>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_menupref2'>Apply</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref2' style='margin-left:30px'>Reset to Simple Menus</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_menupref_all2' style='margin-left:30px'>Reset to All Menus</button></span>";
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "savepref2' style='margin-left:30px'>Save Preferences</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "loadpref2' style='margin-left:30px'>Load Preferences</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addtrack' class='" + dialogClass + "'>";

@@ -41,6 +41,51 @@ class SetMenu {
         return me.htmlCls.setHtmlCls.getRadioColor(radioid, id, text, color, bChecked, bSimpleMenu, selType);
     }
 
+    resetMenu(mode) { let me = this.icn3dui;
+        if(!mode || mode == 'simple') {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+
+            me.htmlCls.clickMenuCls.applyShownMenus(); 
+        }
+        else if(mode == 'all') {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+
+            me.htmlCls.clickMenuCls.applyShownMenus(); 
+        }
+        else if(mode == 'custom') {
+            me.htmlCls.dialogCls.openDlg('dl_menupref', 'Select Menus');
+
+            me.htmlCls.clickMenuCls.getHiddenMenusFromCache();
+
+            me.htmlCls.clickMenuCls.displayShownMenus();
+        }
+    }
+
+    setMenuMode(bMobile) { let me = this.icn3dui;
+        let spaceCss = (bMobile) ? "; padding-left:6px; background-color:#eee" : "; margin:3px; background-color:white";
+        let spaceCss2 = (bMobile) ? "; font-size:14px!important" : ""; 
+
+        let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+
+        let html = '<div class="icn3d-text" style="color:#f8b84e; font-weight:bold' + spaceCss + '">';
+        html += '<select name="menumode" id="' + me.pre + 'menumode" class="icn3d-text" style="color:#f8b84e; font-weight:bold; border:0px' + spaceCss2 + '">';
+        html += (mode == 'simple' || !mode) ? '<option value="simple" selected>Simple</option>' : '<option value="simple">Simple</option>';
+        html += (mode == 'all') ? '<option value="all" selected>All</option>' : '<option value="all">All</option>';
+        html += (mode == 'custom') ? '<option value="custom" selected>Custom</option>' : '<option value="custom">Custom</option>';
+        html += '</select>';
+
+        if(bMobile) {
+            html += '<br><span style="font-size:12px">&nbsp;Menus</span>';
+        }
+        else {
+            html += '&nbsp;Menus';
+        }
+
+        html += '</div>';
+
+        return html;
+    }
+
     //Set the HTML code for the menus shown at the top of the viewer.
     setTopMenusHtml(id, str1, str2) { let me = this.icn3dui;
         if(me.bNode) return '';
@@ -60,6 +105,9 @@ class SetMenu {
         html += "<table border='0' cellpadding='0' cellspacing='0' width='100'><tr>";
 
         let tdStr = '<td valign="top">';
+
+        // html += tdStr + this.setMenuMode() + '</td>';
+
         html += tdStr + this.setMenu1() + '</td>';
 
         html += tdStr + this.setMenu2() + '</td>';
@@ -72,7 +120,11 @@ class SetMenu {
         //html += tdStr + this.setMenu5b() + '</td>';
         html += tdStr + this.setMenu6() + '</td>';
 
-        me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
+        // reset the menus at the end of the menus
+        // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+        // this.resetMenu(mode);
+
+        // me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
         html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
         html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
@@ -168,6 +220,7 @@ class SetMenu {
 
         //html += "<div class='icn3d-menu'>";
         html += "<div>";
+
         html += "<accordion id='" + me.pre + "accordion0' class='icn3d-accordion'>";
         if(me.cfg.notebook) {
             html += "<h3 style='width:20px; height:24px; position:relative; padding: 0'><span style='position:absolute; left:3px; top:4px;'>&#9776;</span></h3>";
@@ -176,6 +229,8 @@ class SetMenu {
             html += "<h3 style='width:30px; height:34px; position:relative; padding: 0; margin-top:7px!important; background-color:#f6f6f6;'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
         }
         html += "<div>";
+
+        // html += '<li>' + this.setMenuMode(true);
 
         let liStr = "<li><span class='icn3d-menu-color'";
 
@@ -195,7 +250,11 @@ class SetMenu {
         html += liStr + ">Help</span>";
         html += this.setMenu6_base();
 
-        me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
+        // reset the menus at the end of the menus
+        // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+        // this.resetMenu(mode);
+
+        // me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
         html += "<li><div style='position:relative; margin-top:-6px;'>" + str1;
         html += "<div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'>" + str2;
@@ -372,7 +431,7 @@ class SetMenu {
         // Analysis menu
         html += tdStrBorder + this.setIcon(iconType, 'tool_selectannotations', 'Sequences & Annotations', 'grip-lines') + "</td>";
         html += tdStr + this.setIcon(iconType, 'hbondsYes', 'Interactions', 'users') + "</td>";
-        html += tdStr + this.setIcon(iconType, 'tool_delphi', 'Delphi Potentials', 'cloud-meatball') + "</td>";
+        html += tdStr + this.setIcon(iconType, 'tool_delphi', 'DelPhi Potentials', 'cloud-meatball') + "</td>";
         html += tdStr + this.setIcon(iconType, 'removeLabels', 'Remove Labels', 'remove-format') + "</td>";
 
         // Help menu
