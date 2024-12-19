@@ -417,7 +417,7 @@ class Dialog {
                 width='50%';
             }
             else if(id === me.pre + 'dl_menupref') {
-                width = 600;
+                width = 800;
                 height = 500;
             }
             

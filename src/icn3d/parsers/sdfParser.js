@@ -49,7 +49,7 @@ class SdfParser {
         let sdfStr = await me.getAjaxPromise(urlSmiles, 'text');
 
         ic.init();
-        ic.bInputfile = true;
+        //ic.bInputfile = true;
         ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + sdfStr : sdfStr;
         ic.InputfileType = 'sdf';
         await ic.sdfParserCls.loadSdfData(sdfStr);

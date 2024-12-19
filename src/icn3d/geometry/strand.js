@@ -2,6 +2,17 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+//import * as THREE from 'three';
+
+import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
+import {UtilsCls} from '../../utils/utilsCls.js';
+
+import {FirstAtomObj} from '../selection/firstAtomObj.js';
+import {CurveStripArrow} from '../geometry/curveStripArrow.js';
+import {Curve} from '../geometry/curve.js';
+import {Strip} from '../geometry/strip.js';
+import {Tube} from '../geometry/tube.js';
+
 class Strand {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -19,13 +30,14 @@ class Strand {
 
         let bRibbon = fill ? true: false;
 
-        // when highlight, the input atoms may only include one rediue.
-        // add one extra residue to show the strand
+        // when highlight, the input atoms may only include part of sheet or helix
+        // include the whole sheet or helix when highlighting
         let atomsAdjust = {};
 
-        let residueHashTmp = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
-        if( Object.keys(residueHashTmp).length  == 1) {
-            atomsAdjust = this.getOneExtraResidue(residueHashTmp);
+        //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
+        //if( !ic.bAllAtoms) {
+        if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
+            atomsAdjust = this.getSSExpandedAtoms(atoms);
         }
         else {
             atomsAdjust = atoms;
@@ -62,22 +74,17 @@ class Strand {
         let calphaIdArray = []; // used to store one of the final positions drawn in 3D
         let colors = [];
         let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
-        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevAtomSelected = null, prevResi = null, calphaid = null, prevCalphaid = null;
+        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
         let atom, tubeAtoms = {};
 
-        // For each chain, test the first 30 atoms to see whether only C-alpha is available
-        let bCalphaOnlyHash = {};
-        for(let chainid in ic.chains) {
-            let atoms = me.hashUtilsCls.hash2Atoms(ic.chains[chainid], ic.atoms);
-            let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atoms); //, 'CA');
-            bCalphaOnlyHash[chainid] = bCalphaOnly;
-        }
+        // test the first 30 atoms to see whether only C-alpha is available
+        ic.bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atomsAdjust); //, 'CA');
 
         // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
         let residueHash = {};
         for(let i in atomsAdjust) {
-            let atom = ic.atoms[i];
+            let atom = atomsAdjust[i];
 
             let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residueHash[residueid] = 1;
@@ -91,26 +98,15 @@ class Strand {
 
         let caArray = []; // record all C-alpha atoms to predict the helix
 
-        let maxDist = 6.0;
-
-        //get the last residue
-        let atomArray = Object.keys(atomsAdjust);
-        let lastAtomSerial = atomArray[atomArray.length - 1];
-        let lastAtom = ic.atoms[lastAtomSerial];
-        let lastResid = lastAtom.structure + '_' + lastAtom.chain + '_' + lastAtom.resi;
-
         for (let i in atomsAdjust) {
-          let atom = ic.atoms[i];
-          let chainid = atom.structure + '_' + atom.chain;
-          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-
+          atom = atomsAdjust[i];
           let atomOxygen = undefined;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             // "CA" has to appear before "O"
 
             if (atom.name === 'CA') {
                 if ( atoms.hasOwnProperty(i) && ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) ) {
-                    // tubeAtoms[i] = atom;
+                    tubeAtoms[i] = atom;
                 }
 
                 currentCA = atom.coord;
@@ -120,7 +116,7 @@ class Strand {
                 caArray.push(atom.serial);
             }
 
-            if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA')) {
+            if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA')) {
                 if(currentCA === null || currentCA === undefined) {
                     currentCA = atom.coord;
                     currentColor = atom.color;
@@ -131,17 +127,16 @@ class Strand {
                     currentO = atom.coord;
                 }
                 // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
-               
-                // let bSameChain = true;
-                // if (currentChain !== atom.chain) {
-                // //if (currentChain !== atom.chain) {
-                //     bSameChain = false;
-                // }
+                let bSameChain = true;
+//                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+                if (currentChain !== atom.chain) {
+                    bSameChain = false;
+                }
 
                 if(atom.ssend && atom.ss === 'sheet') {
                     bSheetSegment = true;
                 }
-                else if( (atom.ssend && atom.ss === 'helix') || resid == lastResid) { // partial sheet will draw as helix
+                else if(atom.ssend && atom.ss === 'helix') {
                     bHelixSegment = true;
                 }
 
@@ -183,7 +178,7 @@ class Strand {
                             }
                         }
                     }
-                    else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
+                    else if(ic.bCalphaOnly && atom.name === 'CA') {
                         if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                             O = prevCoorCA.clone();
                             oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
@@ -224,21 +219,8 @@ class Strand {
                     ++drawnResidueCount;
                 }
 
-                //let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
-
-                let prevCoor = (prevAtomSelected) ? prevAtomSelected.coord : undefined;
-                
-                let bBrokenSs =  ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi) || (prevCoor && Math.abs(currentCA.x - prevCoor.x) > maxDist) || (prevCoor && Math.abs(currentCA.y - prevCoor.y) > maxDist) || (prevCoor && Math.abs(currentCA.z - prevCoor.z) > maxDist);
-
-                // check whether the atoms are continuous
-                // atomsAdjusted has all atoms in the secondary structure
-                // atoms has all selected atoms
-                // let bBrokenSs = false;
-                // if(prevAtomSelected && prevAtomid == prevAtomSelected.serial && !atoms.hasOwnProperty(atom.serial)) {
-                //     bBrokenSs = true;                  
-                // }
-
-
+                let maxDist = 6.0;
+                let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
                 // The following code didn't work to select one residue
                 // let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
@@ -249,12 +231,9 @@ class Strand {
                 //     bHelixSegment = true;
                 // }
 
-                //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                // if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || resid == lastResid) && pnts[0].length > 0) { // last coil was not drawn correctly, e.g., in 1TOP
-
-                if ((currentChain !== atom.chain || atom.ssbegin || atom.ssend || bBrokenSs || (resid == lastResid && atom.ss != 'coil')) && pnts[0].length > 0) {
+                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
                     let atomName = 'CA';
-                
+
                     let prevone = [], nexttwo = [];
 
                     if(isNaN(ic.atoms[prevAtomid].resi)) {
@@ -280,8 +259,7 @@ class Strand {
                         }
                     }
 
-                    // include the current residue
-                    if(!bBrokenSs) { 
+                    if(!bBrokenSs) { // include the current residue
                         // assign the current joint residue to the previous segment
                         if(bHighlight === 1 || bHighlight === 2) {
                             colors.push(ic.hColor);
@@ -309,7 +287,7 @@ class Strand {
                             O = currentO.clone();
                             O.sub(currentCA);
                         }
-                        else if(bCalphaOnlyHash[chainid] && atom.name === 'CA') {
+                        else if(ic.bCalphaOnly && atom.name === 'CA') {
                             if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                 O = currentCA.clone();
                                 oldCA = ic.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
@@ -395,14 +373,9 @@ class Strand {
                     bHelixSegment = false;
                 } // end if (atom.ssbegin || atom.ssend)
 
-                // end of a chain, or end of selection
-                if ((currentChain !== atom.chain 
-                    || ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 !== ic.ParserUtilsCls.getResiNCBI(chainid, atom.resi)
-                    // || (drawnResidueCount === totalResidueCount - 1) 
-                    // || bBrokenSs 
-                    || (resid == lastResid && atom.ss != 'coil')
-                    ) && pnts[0].length > 0) {
-                //if ((currentChain !== atom.chain) && pnts[0].length > 0) {
+                // end of a chain
+//                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
+                if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                     let atomName = 'CA';
 
@@ -460,7 +433,6 @@ class Strand {
                 ss = atom.ss;
                 ssend = atom.ssend;
                 prevAtomid = atom.serial;
-                if(atoms.hasOwnProperty(atom.serial)) prevAtomSelected = atom;
                 prevResi = atom.resi;
 
                 prevCalphaid = calphaid;
@@ -469,44 +441,18 @@ class Strand {
                 prevCoorCA = currentCA;
                 prevCoorO = atom.coord;
                 prevColor = currentColor;
-            } // end if (atom.name === 'O' || (bCalphaOnlyHash[chainid] && atom.name === 'CA') ) {
+            } // end if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA') ) {
           } // end if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
         } // end for
 
         caArray = [];
 
-        // ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
-        // draw all atoms in tubes and assign zero radius when the residue is not coil
-        ic.tubeCls.createTube(atomsAdjust, 'CA', coilWidth, bHighlight);
+        ic.tubeCls.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
 
         tubeAtoms = {};
         pnts = {};
     }
 
-    getOneExtraResidue(residueHash) { let ic = this.icn3d, me = ic.icn3dui;
-        let atomsAdjust = {};
-        
-        for(let resid in residueHash) {
-            atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[resid]);
-
-            let residNcbi = ic.resid2ncbi[resid];
-            let resiNcbi = residNcbi.substr(residNcbi.lastIndexOf('_') + 1);
-
-            let nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) + 1);
-            let nextResid = ic.ncbi2resid[nextResidNcbi];
-
-            if(!nextResid) {
-                nextResidNcbi = residNcbi.substr(0, residNcbi.lastIndexOf('_')) + '_' + (parseInt(resiNcbi) - 1);
-                nextResid = ic.ncbi2resid[nextResidNcbi];
-            }
-
-            if(nextResid) atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, ic.residues[nextResid]);
-        }
-
-        return atomsAdjust;
-    }
-
-    /*
     getSSExpandedAtoms(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         let currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
         let firstAtom, lastAtom;
@@ -521,9 +467,9 @@ class Strand {
           if(prevChain === undefined) firstAtom = atoms[serial];
 
           if( (currChain !== prevChain && prevChain !== undefined)
-           || (currResi !== prevResi && ic.resid2ncbi[currResi] !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) || index === length - 1) {
+           || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) || index === length - 1) {
             if( (currChain !== prevChain && prevChain !== undefined)
-              || (currResi !== prevResi && currResi !== ic.resid2ncbi[prevResi] + 1 && prevResi !== undefined) ) {
+              || (currResi !== prevResi && currResi !== parseInt(prevResi) + 1 && prevResi !== undefined) ) {
                 lastAtom = prevAtom;
             }
             else if(index === length - 1) {
@@ -613,7 +559,6 @@ class Strand {
 
         return atomsAdjust;
     }
-    */
 }
 
 export {Strand}
