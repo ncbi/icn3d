@@ -459,7 +459,10 @@ class ViewInterPairs {
             cntHbond += result.cnt;
             svgHtmlNode += result.svgHtmlNode;
             svgHtmlLine += result.svgHtmlLine;
-            if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+            // if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + " ";
+            // add hydrogen bond between main or side chains. result.mainside has value such as main,side,side,side  
+            // for two hydrogens between main and side, and side and side chains
+            if(result.cnt > 0) residname2List += residname2 + ":hbond_" + result.cnt + ":type_" + result.mainside + " ";
 
             labels2dist = ic.resids2inter[resids]['ionic'];
             result = this.getInteractionPairDetails(labels2dist, type, 'ionic', index2xy, xlen, ylen, xcenter, ycenter);
@@ -467,7 +470,7 @@ class ViewInterPairs {
             cntIonic += result.cnt;
             svgHtmlNode += result.svgHtmlNode;
             svgHtmlLine += result.svgHtmlLine;
-            if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + " ";
+            if(result.cnt > 0) residname2List += residname2 + ":ionic_" + result.cnt + ":type_" + result.mainside + " ";
 
             labels2dist = ic.resids2inter[resids]['halogen'];
             result = this.getInteractionPairDetails(labels2dist, type, 'halogen', index2xy, xlen, ylen, xcenter, ycenter);
@@ -475,7 +478,7 @@ class ViewInterPairs {
             cntHalegen += result.cnt;
             svgHtmlNode += result.svgHtmlNode;
             svgHtmlLine += result.svgHtmlLine;
-            if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + " ";
+            if(result.cnt > 0) residname2List += residname2 + ":halogen_" + result.cnt + ":type_" + result.mainside + " ";
 
             labels2dist = ic.resids2inter[resids]['pi-cation'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-cation', index2xy, xlen, ylen, xcenter, ycenter);
@@ -483,7 +486,7 @@ class ViewInterPairs {
             cntPication += result.cnt;
             svgHtmlNode += result.svgHtmlNode;
             svgHtmlLine += result.svgHtmlLine;
-            if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + " ";
+            if(result.cnt > 0) residname2List += residname2 + ":pi-cation_" + result.cnt + ":type_" + result.mainside + " ";
 
             labels2dist = ic.resids2inter[resids]['pi-stacking'];
             result = this.getInteractionPairDetails(labels2dist, type, 'pi-stacking', index2xy, xlen, ylen, xcenter, ycenter);
@@ -491,7 +494,7 @@ class ViewInterPairs {
             cntPistacking += result.cnt;
             svgHtmlNode += result.svgHtmlNode;
             svgHtmlLine += result.svgHtmlLine;
-            if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + " ";
+            if(result.cnt > 0) residname2List += residname2 + ":pi-stacking_" + result.cnt + ":type_" + result.mainside + " ";
 
             // put contact as the last one since contact will use the same node as other interactions in ligand-protein interactoin
             labels2dist = ic.resids2inter[resids]['contact'];
@@ -545,7 +548,7 @@ class ViewInterPairs {
         return tmpText;
     }
     getInteractionPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;
-        let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0;
+        let svgHtmlNode = '', svgHtmlLine = '', tmpText = '', cnt = 0, mainside= '';
         let colorText1 = ' <span style="background-color:#';
         let colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
         if(labels2dist !== undefined) {
@@ -561,6 +564,13 @@ class ViewInterPairs {
                 let pos2 = resid2Ori.lastIndexOf(' ');
                 let resid1 = resid1Ori.substr(0, pos1);
                 let resid2 = resid2Ori.substr(0, pos2);
+
+                let atomName1 = resid1.substr(resid1.indexOf('@') + 1);
+                let atomName2 = resid2.substr(resid2.indexOf('@') + 1);
+                let atomType1 = (atomName1 === "N" || atomName1 === "C" || atomName1 === "O" || atomName1 === "CA") ? 'main' : 'side';
+                let atomType2 = (atomName2 === "N" || atomName2 === "C" || atomName2 === "O" || atomName2 === "CA") ? 'main' : 'side';
+                if(mainside) mainside += ';';
+                mainside += atomType1 + ',' + atomType1;
 
                 let resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
                 let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1Real]);
@@ -583,7 +593,7 @@ class ViewInterPairs {
                 }
             }
         }
-        return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine}
+        return {html: tmpText, cnt: cnt, svgHtmlNode: svgHtmlNode, svgHtmlLine: svgHtmlLine, mainside: mainside}
     }
 
     getContactPairDetails(labels2dist, type, interactionType, index2xy, xlen, ylen, xcenter, ycenter) { let ic = this.icn3d, me = ic.icn3dui;

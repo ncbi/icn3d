@@ -95,6 +95,11 @@ class SelectCollections {
 
       let nameArray = $(this).val();
       let nameStructure = $(this).find("option:selected").text();
+      let selectedIndices = Array.from(this.selectedOptions).map(option => option.index);
+      let selectedIndicesMap = nameArray.reduce((map, name, i) => {
+        map[name] = selectedIndices[i];
+        return map;
+      }, {});
 
       ic.nameArray = nameArray;
 

@@ -82,6 +82,8 @@ class LoadCIF {
             
             if(block.getCategory("_entry")) {
                 id = block.getCategory("_entry").getColumn("id").getString(0);
+                // remove "_" in the id
+                id = id.replace(/_/g, '-');
 
                 if(id == '') {
                     if(bAppend) {

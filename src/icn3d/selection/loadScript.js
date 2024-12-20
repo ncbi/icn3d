@@ -218,7 +218,9 @@ class LoadScript {
           }
           else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
               await thisClass.applyCommandViewinteraction(strArray[0].trim());
-
+          }
+          else if(command.indexOf('view 2d depiction') == 0) { // the command may have "|||{"factor"...
+            await ic.ligplotCls.drawLigplot(ic.atoms, true);
           }
           else if(command.indexOf('symmetry') == 0) {
             ic.bAxisOnly = false;
@@ -427,6 +429,9 @@ class LoadScript {
                     }
                     else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                         await thisClass.applyCommandViewinteraction(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('view 2d depiction') == 0) {
+                      await ic.ligplotCls.drawLigplot(ic.atoms, true);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
                         let title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
@@ -897,7 +902,7 @@ class LoadScript {
         if(steps === 1
           || (ic.hAtoms && ic.atoms && Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
           || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
-    // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+    // the following code caused problem for many links,e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?17g3r1JDvZ7ZL39e6
     //        if(steps === 1) {
                 // assign styles and color using the options at that stage
     //            ic.setStyleCls.setAtomStyleByOptions(ic.optsHistory[steps - 1]);
@@ -919,7 +924,7 @@ class LoadScript {
                     ic.pk = 3;
                 }
 
-    // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+    // the following code caused problem for many links,e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?17g3r1JDvZ7ZL39e6
     //            if(steps === 1) {
     //                ic.setColorCls.applyOriginalColor();
     //            }

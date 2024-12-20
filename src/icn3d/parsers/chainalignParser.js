@@ -71,7 +71,7 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
+                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
                 for(let index in ic.afChainIndexHash) {
                     let idArray = ic.afChainIndexHash[index].split('_');
@@ -96,9 +96,10 @@ class ChainalignParser {
                 let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
                 let urltmalign = me.htmlCls.baseUrl + "tmalign/tmalign.cgi";
 
-                let resRangeArray = (me.cfg.resrange) ? me.cfg.resrange.split(',') : [];
+                let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).split(' | ') : [];
 
                 // dynamically align pairs in all chainids
+                // the resrange from VASTSrv or VAST search uses NCBI residue numbers!!!
                 let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
                 for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
                     let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
@@ -273,7 +274,8 @@ class ChainalignParser {
         if(!bFoundAlignment) {
             // sometimes VAST align works for the reversed pair
             if(!bReverse) {
-                ic.realignParserCls.realignOnStructAlign(true);
+                let bVastsearch = true;
+                ic.realignParserCls.realignOnStructAlign(true, bVastsearch);
                 return;
             }
             else {
@@ -1037,7 +1039,8 @@ class ChainalignParser {
                 // await ic.realignParserCls.realignChainOnSeqAlign(undefined, ic.chainidArray, bRealign, bPredefined);
 
                 ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(ic.chainidArray);
-                await ic.realignParserCls.realignOnStructAlign();
+                let bVastsearch = true
+                await ic.realignParserCls.realignOnStructAlign(undefined, bVastsearch);
 
                 // reset annotations
                 $("#" + ic.pre + "dl_annotations").html("");

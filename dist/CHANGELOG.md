@@ -205,7 +205,7 @@
 
 [icn3d-3.8.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.8.0.zip) was release on January 27, 2022. Enabled to show the map of AlphaFold Predicted Aligned Error (PAE) on the fly in the menu "File > Retrieve by ID > AlphaFold UniProt ID", and load custom PAE files in the menu "File > Open File > AlphaFold PAE File". Switched the parameter "buidx" to "bu" for asymmetric units and biological units.
 
-[icn3d-3.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.2.zip) was release on January 21, 2022. Now users can see all interactions, common interactions, and different interactions when several structures are aligned and their interactions are shown, e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?9FD78C7YsE9zKyi18.
+[icn3d-3.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.2.zip) was release on January 21, 2022. Now users can see all interactions, common interactions, and different interactions when several structures are aligned and their interactions are shown, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?9FD78C7YsE9zKyi18.
 
 [icn3d-3.7.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.1.zip) was release on January 19, 2022. Modified the Node.js example script to use the URL parameter "&bu=0" to get the asymmetric unit data from MMDB. Fixed the fog view when zooming in or out.
 
@@ -291,7 +291,7 @@
 
 [icn3d-2.24.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.2.zip) was release on February 3, 2021. Enabled to show multiple mutations together in the menu "Analysis > Mutation". 
 
-[icn3d-2.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.1.zip) was release on February 1, 2021. Enabled to show multiple mutations together ( https://structure.ncbi.nlm.nih.gov/icn3d/share.html?tKz5GiA2pTVQEWwy6). Fixed the alternation in multiple chain alignment. 
+[icn3d-2.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.1.zip) was release on February 1, 2021. Enabled to show multiple mutations together ( https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?tKz5GiA2pTVQEWwy6). Fixed the alternation in multiple chain alignment. 
 
 [icn3d-2.24.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.0.zip) was release on January 27, 2021. Converted the interaction part of iCn3D to Node.js (in the directory icn3dnode) to allow batch-mode analysis. Expanded the chain-chain alignment to multiple chain alignment in the menu "File > Align > Multiple Chains". You could focus on part of the chains for the multiple chain alignment.
 

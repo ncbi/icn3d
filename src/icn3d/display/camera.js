@@ -189,6 +189,8 @@ class Camera {
                 }
             }
 
+            // ic.cam.add(ic.directionalLight);
+
             ic.cam.updateProjectionMatrix();
     //    }
     }

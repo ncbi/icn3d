@@ -1427,8 +1427,9 @@ class Domain3d {
 
 			// if(fromPos >= start && toPos <= end) {
 				if(ssCnt > 0) jsonStr += ', ';
-				jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
-					+ substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
+				jsonStr += '[' + sstype + ',' + fromPos + ',' + toPos + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
+				// jsonStr += '[' + sstype + ',' + residFrom.split('_')[2] + ',' + residTo.split('_')[2] + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',';
+				jsonStr += substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
 				++ssCnt;
 			// }
 		}				
@@ -1444,6 +1445,7 @@ class Domain3d {
 		for(let j = startAll; j <= endAll; ++j) {
 			let ncbiResid = chnid + '_' + j;
 			let resid = ic.ncbi2resid[ncbiResid];
+			let resi = resid.split('_')[2];
 
 			let pos = j;
 
@@ -1451,6 +1453,7 @@ class Domain3d {
 
 			if(!residueHash.hasOwnProperty(resid)) {
 				jsonStr += '[' + pos + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
+				// jsonStr += '[' + resi + ',' + 0 + ',' + fakeCoord + ',' + fakeCoord + ',' + fakeCoord + ']';
 			}
 			else {
 				let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
@@ -1459,6 +1462,7 @@ class Domain3d {
 				let restype = (me.parasCls.resn2restype[atom.resn]) ? me.parasCls.resn2restype[atom.resn] : 0;
 				
 				jsonStr += '[' + pos + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
+				// jsonStr += '[' + resi + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' + atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
 			}
 
 			++domainCnt;		

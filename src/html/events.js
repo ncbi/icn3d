@@ -200,8 +200,8 @@ class Events {
 
     saveHtml(id) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let html = '';
-        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
-        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
+        html += '<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.13.2.min.css">\n';
+        html += '<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">\n';
         html += $("#" + id).html();
         let idArray = id.split('_');
         let idStr =(idArray.length > 2) ? idArray[2] : id;
@@ -331,6 +331,14 @@ class Events {
         me.htmlCls.clickMenuCls.clickMenu4();
         me.htmlCls.clickMenuCls.clickMenu5();
         me.htmlCls.clickMenuCls.clickMenu6();
+
+        me.myEventCls.onIds("#" + me.pre + "menumode", "change", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            let mode = $("#" + me.pre + "menumode").val();
+
+            me.htmlCls.setHtmlCls.setCookie('menumode', mode);
+            me.htmlCls.setMenuCls.resetMenu(mode);
+        });
 
         // back and forward arrows
         me.myEventCls.onIds(["#" + me.pre + "back", "#" + me.pre + "mn6_back"], "click", async function(e) { let ic = me.icn3d;
@@ -608,6 +616,11 @@ class Events {
              await ic.viewInterPairsCls.retrieveInteractionData();
              thisClass.setLogCmd("view interactions", true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_2ddepiction", "click", async function(e) { let ic = me.icn3d;
+            await ic.ligplotCls.drawLigplot(ic.atoms, true);
+            thisClass.setLogCmd("view 2d depiction", true);
+       });
 
         me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", async function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
@@ -1440,8 +1453,7 @@ class Events {
                     }
                     currentSection.push(line);
                 });
-                
-                console.log(sections)
+        
                 
                 let parsedCollection = {};
                 

@@ -87,25 +87,42 @@ class ClickMenu {
     }
 
     getHiddenMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
-        me.htmlCls.shownMenus = {};
+      // me.htmlCls.shownMenus = {};
 
-        let idArrayStr = (localStorage) ? localStorage.getItem('hiddenmenus') : '';
-        
-        if(idArrayStr && idArrayStr != '[]') {
-            let idArray = JSON.parse(idArrayStr);
+      // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
 
-            // for(let i = 0, il = idArray.length; i < il; ++i) {
-            //     me.htmlCls.shownMenus[idArray[i]] = 1;
-            // }
-            for(let menu in me.htmlCls.allMenus) {
-                if(idArray.indexOf(menu) == -1) {
-                    me.htmlCls.shownMenus[menu] = 1;
-                }
+      let idArrayStr = (localStorage) ? localStorage.getItem('hiddenmenus') : '';
+      
+      if(idArrayStr && idArrayStr != '[]') {
+         me.htmlCls.shownMenus = {};
+
+         let idArray = JSON.parse(idArrayStr);
+
+         // for(let i = 0, il = idArray.length; i < il; ++i) {
+         //     me.htmlCls.shownMenus[idArray[i]] = 1;
+         // }
+         for(let menu in me.htmlCls.allMenus) {
+            if(idArray.indexOf(menu) == -1) {
+               me.htmlCls.shownMenus[menu] = 1;
             }
-        }
-        else {
-            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
-        }
+         }
+      }
+      //###
+      else {
+         me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+      }
+
+      // else {
+      //    if(mode == 'all') {
+      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+      //    }
+      //    else if(!mode || mode == 'simple') {
+      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+      //    }
+      //    else {
+      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+      //    }
+      // }
     }
     
     displayShownMenus() { let me = this.icn3dui, ic = me.icn3d;
@@ -601,11 +618,14 @@ class ClickMenu {
                 me.htmlCls.shownMenus[checkbox.value] = 1;
             }
 
+            me.htmlCls.setHtmlCls.setCookie('menumode', 'custom');
+
             thisClass.applyShownMenus();
          });
 
          me.myEventCls.onIds(["#" + me.pre + "reset_menupref", "#" + me.pre + "reset_menupref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+            me.htmlCls.setHtmlCls.setCookie('menumode', 'simple');
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
@@ -613,6 +633,7 @@ class ClickMenu {
 
          me.myEventCls.onIds(["#" + me.pre + "reset_menupref_all", "#" + me.pre + "reset_menupref_all2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+            me.htmlCls.setHtmlCls.setCookie('menumode', 'all');
 
             thisClass.applyShownMenus();
             thisClass.displayShownMenus();
@@ -662,15 +683,16 @@ class ClickMenu {
 
                 thisClass.applyShownMenus();
                 thisClass.displayShownMenus();
+
+                me.htmlCls.setHtmlCls.setCookie('menumode', 'custom');
               }
               reader.readAsText(file);
             }
          });
 
-        me.myEventCls.onIds("#" + me.pre + "mn1_menuloadpref", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+        me.myEventCls.onIds(["#" + me.pre + "mn1_menuloadpref", "#" + me.pre + "loadpref", "#" + me.pre + "loadpref2"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             me.htmlCls.dialogCls.openDlg('dl_menuloadpref', 'Please input the menu preference file');
         });
-         
 
         me.myEventCls.onIds("#" + me.pre + "mn1_link_structure", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            let url = ic.saveFileCls.getLinkToStructureSummary(true);

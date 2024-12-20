@@ -168,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.39.0';
+    this.REVISION = '3.40.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -330,7 +330,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     ic.molTitle = '';
     ic.loadCmd;
 
-    // set menus
+    // set menus 
     me.htmlCls.clickMenuCls.getHiddenMenusFromCache();
     me.htmlCls.clickMenuCls.applyShownMenus();
 
@@ -342,6 +342,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + pdbStr : pdbStr;
 
         await ic.pdbParserCls.loadPdbData(pdbStr);
+
+        // // use NCBI residue numbers if using VAST
+        // me.icn3d.bUsePdbNum = 0;
 
         if(me.cfg.resdef !== undefined && me.cfg.chains !== undefined) {
             let structureArray = Object.keys(ic.structures);
@@ -618,7 +621,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
 
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
-        let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + me.cfg.resrange : '';
+        let resrangeStr = (me.cfg.resrange) ? ' | resrange ' + decodeURIComponent(me.cfg.resrange) : '';
         let resdef = (me.cfg.resdef) ? me.cfg.resdef : '';
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + resdef + ' | aligntool ' + me.cfg.aligntool + ' | parameters ' + me.cfg.inpara + resrangeStr;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);

@@ -33,6 +33,7 @@ class Tube {
                 let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
 
                 if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
+                  || (prevAtom.ssbegin) // e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?pdbid=7JO8 where a beta sheet has just two residues
 //                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
                   || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
                   ) ) {
@@ -125,7 +126,7 @@ class Tube {
                 }
                 
                 // draw all atoms in tubes and assign zero radius when the residue is not coil
-                if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
+                // if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
 
                 //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : ic.coilWidth));
                 radii.push(radiusFinal);
