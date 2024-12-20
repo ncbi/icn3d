@@ -15240,6 +15240,10 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_collection_file' style=''>";
         html += "You can load a collection of structures via a file. Here are <a href='https://github.com/ncbi/icn3d/blob/master/example/collection/' target='_blank'>some example files</a><br><br>";
         html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
+        html += "<input type='radio' id='dl_collectionAppendStructureNone' name='appendStructure' value='none' checked/>";
+        html += "<label for='dl_collectionAppendStructureNone'>Default</label>";
+        html += "<input type='radio' id='dl_collectionAppendStructure' name='appendStructure' value='append' />";
+        html += "<label for='dl_collectionAppendStructure'>Append</label><br/>";
         html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
         html += "</div>";
@@ -15247,7 +15251,8 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_collection_structures' style='display: none'>";
         html += "<select id='" + me.pre + "collections_menu'multiple size='6' style='min-width:300px;'></select>";
         html += '<br/>';
-        html += me.htmlCls.buttonStr + "opendl_export_collections'>Export</button>";
+        html += me.htmlCls.buttonStr + "collections_clear_commands' style='margin-top: 6px;'>Clear Commands</button>";
+        html += me.htmlCls.buttonStr + "opendl_export_collections'>Export JSON</button>";
         html += "</div>";
         html += '<br/>'; 
         html += "</div>";
@@ -17790,94 +17795,107 @@ class Events {
             } else {
                 ic.resizeCanvasCls.closeDialogs();
                 }
-            ic.bInputfile = false;
-            ic.pdbCollection = [];
-            ic.allData = {};
-            ic.allData['all'] = {
-                'atoms': {},
-                'proteins': {},
-                'nucleotides': {},
-                'chemicals': {},
-                'ions': {},
-                'water': {},
-                'structures': {}, // getSSExpandedAtoms
-                'ssbondpnts': {},
-                'residues': {}, // getSSExpandedAtoms
-                'chains': {},
-                'chainsSeq': {}, //Sequences and Annotation
-                'defNames2Atoms': {},
-                'defNames2Residues': {}
-            };
-            ic.allData['prev'] = {};
-            ic.selectCollectionsCls.reset();
-
+                
             ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             me.htmlCls.setHtmlCls.fileSupport();
 
             let fileName = file.name;
             let fileExtension = fileName.split('.').pop().toLowerCase();
-
+            let collection = {};
+            
             $("#" + ic.pre + "collections_menu").empty();
             $("#" + ic.pre + "collections_menu").off("change");
+                
+            if (dl_collectionAppendStructureNone.checked || ic.allData === undefined) {
+                ic.bInputfile = false;
+                ic.pdbCollection = {};
+                ic.allData = {};
+                ic.allData['all'] = {
+                    'atoms': {},
+                    'proteins': {},
+                    'nucleotides': {},
+                    'chemicals': {},
+                    'ions': {},
+                    'water': {},
+                    'structures': {}, // getSSExpandedAtoms
+                    'ssbondpnts': {},
+                    'residues': {}, // getSSExpandedAtoms
+                    'chains': {},
+                    'chainsSeq': {}, //Sequences and Annotation
+                    'defNames2Atoms': {},
+                    'defNames2Residues': {}
+                };
+                ic.allData['prev'] = {};
+                ic.selectCollectionsCls.reset();
+
+            } else {
+                if (ic.collections) {
+                    collection = ic.collections;
+                }
+            }
 
             function parseJsonCollection(data) {
                 let dataStr = JSON.parse(data);
-                return dataStr["structures"].map(({ id, title, description, commands }) => {
+                let parsedCollection = {};
+
+                dataStr["structures"].map(({ id, title, description, commands }) => {
                     if (id && id.includes('.pdb')) {
                         id = id.split('.pdb')[0];
                     }
-                    return [id, title, description, commands, false];
+                    parsedCollection[id] = [id, title, description, commands, false];
                 });
-            }
 
+                return parsedCollection;
+            }
+            
             function parsePdbCollection(data, description = '', commands = []) {         
                 let dataStr = data;
                 let lines = dataStr.split('\n');
-              
                 let sections = [];
                 let currentSection = [];
-              
+                
                 lines.forEach(line => {
-                  if (line.startsWith('HEADER')) {
+                    if (line.startsWith('HEADER')) {
                     currentSection = [];
                     sections.push(currentSection);
-                  }
-                  currentSection.push(line);
+                    }
+                    currentSection.push(line);
                 });
-              
-                let ids = [];
-                let titles = [];
-              
+        
+                
+                let parsedCollection = {};
+                
                 sections.forEach((section) => {
-                    let headerLine = section[0];
-                    headerLine = headerLine.replace(/[\n\r]/g, '').trim();
+                    let headerLine = section[0].replace(/[\n\r]/g, '').trim();
                     let header = headerLine.split(' ').filter(Boolean);
-                    let lastElement = header[header.length - 1];
-                    ids.push(lastElement);
-                    titles.push(section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : lastElement);
+                    let id = header[header.length - 1];
+                    let title = section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : id;
+
+                    parsedCollection[id] = [id, title, description, commands, true];
+
+                    const sanitizedSection = section.map(line => line.trim());
+                    ic.pdbCollection[id] = sanitizedSection;
                 });
-              
-                if (sections.length > 0) {
-                    ic.pdbCollection.push(...sections);
-                }
 
-                return ids.map((id, index, description, commands) => [id, titles[index], description, commands, true]);
+                return parsedCollection;
             }
-
-            let collection = [];
 
             if (fileExtension === 'json' || fileExtension === 'pdb') {
                 let reader = new FileReader();
                 reader.onload = async function (e) {
                     if (fileExtension === 'json') {
-                        collection = parseJsonCollection(e.target.result);
+                        let jsonCollection = parseJsonCollection(e.target.result);
+                        collection = { ...collection, ...jsonCollection };
                     } else if (fileExtension === 'pdb') {
                         ic.bInputfile = true;
-                        collection = parsePdbCollection(e.target.result);
+                        let pdbCollection = parsePdbCollection(e.target.result);
+                        collection = { ...collection, ...pdbCollection };
                     }
 
                     let collectionHtml = await ic.selectCollectionsCls.setAtomMenu(collection);
+
+                    ic.collections = collection;
 
                     $("#" + ic.pre + "collections_menu").html(collectionHtml);
                     await ic.selectCollectionsCls.clickStructure(collection);
@@ -17998,6 +18016,8 @@ class Events {
                     $("#" + ic.pre + "collections_menu").html(collectionHtml);
                     await ic.selectCollectionsCls.clickStructure(collection);
 
+                    ic.collections = collection;
+
                     $("#" + ic.pre + "collections_menu").trigger("change");
 
                     me.htmlCls.clickMenuCls.setLogCmd(
@@ -18016,7 +18036,7 @@ class Events {
                 throw new Error('Invalid file type');
             }
             
-            if (Object.keys(me.utilsCls.getStructures(ic.dAtoms))){
+            if (ic.allData && Object.keys(ic.allData).length > 0) {
                 $("#" + me.pre + "dl_collection_file").hide();
                 $("#" + me.pre + "dl_collection_structures").show();
                 $("#" + me.pre + "dl_collection_file_expand").show();
@@ -18035,6 +18055,17 @@ class Events {
               
             me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
             }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "collections_clear_commands", "click", function (e) {
+            var selectedValues = $("#" + ic.pre + "collections_menu").val();
+            selectedValues.forEach(function (selectedValue) {
+                if (ic.allData[selectedValue]) {
+                    ic.allData[selectedValue]['commands'] = [];
+                } else {
+                    console.warn("No data found for selectedValue:", selectedValue);
+                }
+            });
         });
 
         me.myEventCls.onIds("#" + me.pre + "opendl_export_collections", "click", function (e) {
@@ -28708,7 +28739,7 @@ class Curve {
 
             let offset = 0, color;
             if(bHighlight === 2 && bRibbon) {
-                for (let i = 0; i < pnts.length; ++i, offset += 3) {
+                for (let i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
                     // shift the highlight a little bit to avoid the overlap with ribbon
                     pnts[i].addScalar(0.6); // ic.ribbonthickness is 0.4
                     //geo.vertices.push(pnts[i]);
@@ -28728,7 +28759,7 @@ class Curve {
                 }
             }
             else {
-                for (let i = 0; i < pnts.length; ++i, offset += 3) {
+                for (let i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
                     //geo.vertices.push(pnts[i]);
                     //geo.colors.push(me.parasCls.thr(colors[i]));
 
@@ -30092,7 +30123,7 @@ class Strip {
             }
             let faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
 
-            for (let i = 1, lim = p0.length; i < lim; ++i) {
+            for (let i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
                 let offsetTmp = 8 * i;
                 //var color = me.parasCls.thr(colors[i - 1]);
                 for (let j = 0; j < 4; ++j) {
@@ -31114,6 +31145,7 @@ class Strand {
                 }
 
                 currentChain = atom.chain;
+                atom.resi;
                 ss = atom.ss;
                 ssend = atom.ssend;
                 prevAtomid = atom.serial;
@@ -35172,6 +35204,7 @@ class ApplyMissingRes {
     }
 
     applyMissingResOptions(options) { let ic = this.icn3d; ic.icn3dui;
+        if(options === undefined) options = ic.opts;
 
         if(!ic.bCalcMissingRes) {
             // find all bonds to chemicals
@@ -35284,6 +35317,7 @@ class ApplyDisplay {
 
     //Apply style and label options to a certain set of atoms.
     applyDisplayOptions(options, atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(options === undefined) options = ic.opts;
 
         // get parameters from cookies
         if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
@@ -43905,7 +43939,7 @@ class AnnoSnpClinVar {
         
         let pre = altName;
         let snpCnt = 0, clinvarCnt = 0;
-        let snpTypeHash = {}, currSnpTypeHash = {};
+        let snpTypeHash = {};
         let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chnid]);
         // for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
         for(let resid in residHash) {
@@ -43932,10 +43966,7 @@ class AnnoSnpClinVar {
                     if(diseaseTitle != '') {
                         snpTypeHash[i] = 'icn3d-clinvar';
                         if(j == line - 2) { // just check the current line, "line = 2" means the first SNP
-                            currSnpTypeHash[i] = 'icn3d-clinvar';
-                            if(diseaseTitle.indexOf('Pathogenic') != -1) {
-                                currSnpTypeHash[i] = 'icn3d-clinvar-path';
-                            }
+                            if(diseaseTitle.indexOf('Pathogenic') != -1) ;
                         }
                     }
                     
@@ -46318,14 +46349,14 @@ class AddTrack {
 
                           let strand, itemRgb;
 
-                          if(fieldArray.length > 4) ;
+                          if(fieldArray.length > 4) fieldArray[4];
                           if(fieldArray.length > 5) strand = fieldArray[5]; // ., +, or -
-                          if(fieldArray.length > 6) ;
-                          if(fieldArray.length > 7) ;
+                          if(fieldArray.length > 6) fieldArray[6];
+                          if(fieldArray.length > 7) fieldArray[7];
                           if(fieldArray.length > 8) itemRgb = fieldArray[8];
-                          if(fieldArray.length > 9) ;
-                          if(fieldArray.length > 10) ;
-                          if(fieldArray.length > 11) ;
+                          if(fieldArray.length > 9) fieldArray[9];
+                          if(fieldArray.length > 10) fieldArray[10];
+                          if(fieldArray.length > 11) fieldArray[11];
 
                        let title = trackName;
 
@@ -51019,6 +51050,7 @@ class HlObjects {
 
     //Show the highlight for the selected atoms: hAtoms.
     addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
+       if(color === undefined) color = ic.hColor;
        //if(atomsHash === undefined) atomsHash = ic.hAtoms;
        let atomsHashDisplay = (atomsHash) ? me.hashUtilsCls.intHash(atomsHash, ic.dAtoms) : me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
@@ -57662,7 +57694,7 @@ class MmdbParser {
         }
 
         let molid2rescount = data.moleculeInfor;
-        let molid2color = {}, chain2molid = {}, molid2chain = {};
+        let molid2chain = {};
         let chainNameHash = {};       
         for(let i in molid2rescount) {
           if(Object.keys(molid2rescount[i]).length === 0) continue;
@@ -57683,9 +57715,6 @@ class MmdbParser {
 
           let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
           let chain = id + '_' + chainNameFinal;
-
-          molid2color[i] = color;
-          chain2molid[chain] = i;
           molid2chain[i] = chain;
 
         //   ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
@@ -63553,28 +63582,19 @@ class SetSeqAlign {
           if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
           if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
 
-          let posChain1 = {}, posChain2 = {};
-
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
-            let start1, start2, end1, end2;
             if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored, could be "100a"
-                start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
-                start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
-                end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
-                end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end); 
+                parseInt(ic.qt_start_end[chainIndex][i].t_start);
+                parseInt(ic.qt_start_end[chainIndex][i].q_start);
+                parseInt(ic.qt_start_end[chainIndex][i].t_end);
+                parseInt(ic.qt_start_end[chainIndex][i].q_end); 
             }
             else {
-              start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
-              start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start - 1);
-              end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end - 1);
-              end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end - 1);  
+              parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
+              parseInt(ic.qt_start_end[chainIndex][i].q_start - 1);
+              parseInt(ic.qt_start_end[chainIndex][i].t_end - 1);
+              parseInt(ic.qt_start_end[chainIndex][i].q_end - 1);  
             }
-
-            posChain1[start1] = 1;
-            posChain1[end1] = 1;
-
-            posChain2[start2] = 1;
-            posChain2[end2] = 1;
           }
 
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -63596,8 +63616,6 @@ class SetSeqAlign {
                   let index1 = alignIndex;
                   
                   for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
-                      //if(posChain1[j]) continue;
-                      posChain1[j] = 1;
 
                       //if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
@@ -63619,8 +63637,6 @@ class SetSeqAlign {
                   let index2 = alignIndex;
 
                   for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
-                      //if(posChain2[j]) continue;
-                      posChain2[j] = 1;
 
                       //if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -69743,17 +69759,15 @@ class SelectCollections {
   }
 
   //Set the menu of defined sets with an array of defined names "commandnameArray".
-  setAtomMenu(nameArray) {
+  setAtomMenu(collection) {
     let ic = this.icn3d;
     ic.icn3dui;
     let html = "";
-    //for(let i in ic.defNames2Atoms) {
-    for (let i = 0, il = nameArray.length; i < il; ++i) {
-      let name = nameArray[i][0];
-      let title = nameArray[i][1];
-      let description = nameArray[i][2];
-
+    
+    Object.entries(collection).forEach(([name, structure], index) => {
       let atomHash;
+      let [id, title, description, commands, pdb] = structure;
+
       if (
         ic.defNames2Atoms !== undefined &&
         ic.defNames2Atoms.hasOwnProperty(name)
@@ -69774,12 +69788,12 @@ class SelectCollections {
         }
       }
 
-      if (i == 0) {
-        html += "<option value='" + nameArray[0][0] + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
-    } else {
+      if (index === 0) {
+        html += "<option value='" + name + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
+      } else {
         html += "<option value='" + name + "' data-description='" + description + "'>" + title + "</option>";
-    }
-    }
+      }
+    });
 
     return html;
   }
@@ -69833,7 +69847,7 @@ class SelectCollections {
       let nameArray = $(this).val();
       let nameStructure = $(this).find("option:selected").text();
       let selectedIndices = Array.from(this.selectedOptions).map(option => option.index);
-      let selectedIndicesMap = nameArray.reduce((map, name, i) => {
+      nameArray.reduce((map, name, i) => {
         map[name] = selectedIndices[i];
         return map;
       }, {});
@@ -69870,13 +69884,13 @@ class SelectCollections {
                 if (Object.keys(ic.structures).length == 0) {
                   bAppend = false;
                 }
-                await ic.pdbParserCls.loadPdbData(ic.pdbCollection[selectedIndicesMap[name]].join('\n'), undefined, undefined, bAppend);
+                await ic.pdbParserCls.loadPdbData(ic.pdbCollection[name].join('\n'), undefined, undefined, bAppend);
               } else {
                 await ic.chainalignParserCls.downloadMmdbAf(name, undefined, undefined, bNoDuplicate);
               }
             }
             
-            await loadStructure(collection[selectedIndicesMap[name]][4]).then(() => {
+            await loadStructure(collection[name][4]).then(() => {
               ic.allData['all'] = {
                 'atoms': ic.atoms,
                 'proteins': ic.proteins,
@@ -69936,9 +69950,9 @@ class SelectCollections {
             
           ic.molTitle = ic.allData[name]['title'];
           
-          if (collection[selectedIndicesMap[name]][3] !== undefined && collection[selectedIndicesMap[name]][3].length > 0) {
+          if (collection[name][3] !== undefined && collection[name][3].length > 0) {
             if (ic.allData[name]['commands'] == undefined) {
-              let commands = collection[selectedIndicesMap[name]][3];
+              let commands = collection[name][3];
               ic.allData[name]['commands'] = commands;
             }
           }
@@ -78999,6 +79013,8 @@ class Ligplot {
                         let idArray = idpair.split('--');
                         if(idArray.length == 2) {
                             let id2;
+
+                            idArray[1];
                             id2 = idArray[0];
 
                             let x2 = parseFloat($("#" + id2).attr('x'));
@@ -83839,7 +83855,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.40.0';
+    this.REVISION = '3.40.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

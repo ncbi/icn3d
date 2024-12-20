@@ -1,7 +1,7 @@
 ## Change Log
-[icn3d-3.40.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.0.zip) was release on December 11, 2024. Added the feature to show 2D Depiction/Diagram for chemical view with cid or smiles as input via the menu "Analysis > 2D Depiction"; fixed the positions of point lights relative to the camera.
+[icn3d-3.39.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.39.1.zip) was release on December 20, 2024. Collections update - added strucure append and clear commands, fix collections example directory.
 
-[icn3d-3.39.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.39.0.zip) was release on December 2, 2024. Collections update - added multi file format support for zip, command history and JSON export, gz&ent file support.
+[icn3d-3.39.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.39.0.zip) was release on November 25, 2024. Collections update - added multi file format support for zip, command history and JSON export, gz&ent file support.
 
 [icn3d-3.38.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.38.1.zip) was release on November 14, 2024. Improved the conversion of chemical SMILES to 3D structure by showing double bonds.
 
