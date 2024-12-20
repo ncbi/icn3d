@@ -1373,94 +1373,108 @@ class Events {
             } else {
                 ic.resizeCanvasCls.closeDialogs();
                 }
-            ic.bInputfile = false
-            ic.pdbCollection = [];
-            ic.allData = {}
-            ic.allData['all'] = {
-                'atoms': {},
-                'proteins': {},
-                'nucleotides': {},
-                'chemicals': {},
-                'ions': {},
-                'water': {},
-                'structures': {}, // getSSExpandedAtoms
-                'ssbondpnts': {},
-                'residues': {}, // getSSExpandedAtoms
-                'chains': {},
-                'chainsSeq': {}, //Sequences and Annotation
-                'defNames2Atoms': {},
-                'defNames2Residues': {}
-            };
-            ic.allData['prev'] = {}
-            ic.selectCollectionsCls.reset()
-
+                
             ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             me.htmlCls.setHtmlCls.fileSupport();
 
             let fileName = file.name;
             let fileExtension = fileName.split('.').pop().toLowerCase();
-
+            let collection = {};
+            
             $("#" + ic.pre + "collections_menu").empty();
             $("#" + ic.pre + "collections_menu").off("change");
+                
+            if (dl_collectionAppendStructureNone.checked || ic.allData === undefined) {
+                ic.bInputfile = false
+                ic.pdbCollection = {};
+                ic.allData = {}
+                ic.allData['all'] = {
+                    'atoms': {},
+                    'proteins': {},
+                    'nucleotides': {},
+                    'chemicals': {},
+                    'ions': {},
+                    'water': {},
+                    'structures': {}, // getSSExpandedAtoms
+                    'ssbondpnts': {},
+                    'residues': {}, // getSSExpandedAtoms
+                    'chains': {},
+                    'chainsSeq': {}, //Sequences and Annotation
+                    'defNames2Atoms': {},
+                    'defNames2Residues': {}
+                };
+                ic.allData['prev'] = {}
+                ic.selectCollectionsCls.reset()
+
+            } else {
+                if (ic.collections) {
+                    collection = ic.collections;
+                }
+            }
 
             function parseJsonCollection(data) {
                 let dataStr = JSON.parse(data);
-                return dataStr["structures"].map(({ id, title, description, commands }) => {
+                let parsedCollection = {};
+
+                dataStr["structures"].map(({ id, title, description, commands }) => {
                     if (id && id.includes('.pdb')) {
                         id = id.split('.pdb')[0];
                     }
-                    return [id, title, description, commands, false];
+                    parsedCollection[id] = [id, title, description, commands, false];
                 });
-            }
 
+                return parsedCollection;
+            }
+            
             function parsePdbCollection(data, description = '', commands = []) {         
                 let dataStr = data;
                 let lines = dataStr.split('\n');
-              
                 let sections = [];
                 let currentSection = [];
-              
+                
                 lines.forEach(line => {
-                  if (line.startsWith('HEADER')) {
+                    if (line.startsWith('HEADER')) {
                     currentSection = [];
                     sections.push(currentSection);
-                  }
-                  currentSection.push(line);
+                    }
+                    currentSection.push(line);
                 });
-              
-                let ids = [];
-                let titles = [];
-              
+                
+                console.log(sections)
+                
+                let parsedCollection = {};
+                
                 sections.forEach((section) => {
-                    let headerLine = section[0];
-                    headerLine = headerLine.replace(/[\n\r]/g, '').trim();
+                    let headerLine = section[0].replace(/[\n\r]/g, '').trim();
                     let header = headerLine.split(' ').filter(Boolean);
-                    let lastElement = header[header.length - 1];
-                    ids.push(lastElement);
-                    titles.push(section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : lastElement);
+                    let id = header[header.length - 1];
+                    let title = section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : id;
+
+                    parsedCollection[id] = [id, title, description, commands, true];
+
+                    const sanitizedSection = section.map(line => line.trim());
+                    ic.pdbCollection[id] = sanitizedSection;
                 });
-              
-                if (sections.length > 0) {
-                    ic.pdbCollection.push(...sections);
-                }
 
-                return ids.map((id, index, description, commands) => [id, titles[index], description, commands, true]);
+                return parsedCollection;
             }
-
-            let collection = [];
 
             if (fileExtension === 'json' || fileExtension === 'pdb') {
                 let reader = new FileReader();
                 reader.onload = async function (e) {
                     if (fileExtension === 'json') {
-                        collection = parseJsonCollection(e.target.result);
+                        let jsonCollection = parseJsonCollection(e.target.result);
+                        collection = { ...collection, ...jsonCollection };
                     } else if (fileExtension === 'pdb') {
                         ic.bInputfile = true
-                        collection = parsePdbCollection(e.target.result);
+                        let pdbCollection = parsePdbCollection(e.target.result);
+                        collection = { ...collection, ...pdbCollection };
                     }
 
                     let collectionHtml = await ic.selectCollectionsCls.setAtomMenu(collection);
+
+                    ic.collections = collection;
 
                     $("#" + ic.pre + "collections_menu").html(collectionHtml);
                     await ic.selectCollectionsCls.clickStructure(collection);
@@ -1581,6 +1595,8 @@ class Events {
                     $("#" + ic.pre + "collections_menu").html(collectionHtml);
                     await ic.selectCollectionsCls.clickStructure(collection);
 
+                    ic.collections = collection;
+
                     $("#" + ic.pre + "collections_menu").trigger("change");
 
                     me.htmlCls.clickMenuCls.setLogCmd(
@@ -1599,7 +1615,7 @@ class Events {
                 throw new Error('Invalid file type');
             }
             
-            if (Object.keys(me.utilsCls.getStructures(ic.dAtoms))){
+            if (ic.allData && Object.keys(ic.allData).length > 0) {
                 $("#" + me.pre + "dl_collection_file").hide()
                 $("#" + me.pre + "dl_collection_structures").show()
                 $("#" + me.pre + "dl_collection_file_expand").show()
@@ -1618,6 +1634,17 @@ class Events {
               
             me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
             }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "collections_clear_commands", "click", function (e) {
+            var selectedValues = $("#" + ic.pre + "collections_menu").val();
+            selectedValues.forEach(function (selectedValue) {
+                if (ic.allData[selectedValue]) {
+                    ic.allData[selectedValue]['commands'] = [];
+                } else {
+                    console.warn("No data found for selectedValue:", selectedValue);
+                }
+            });
         });
 
         me.myEventCls.onIds("#" + me.pre + "opendl_export_collections", "click", function (e) {

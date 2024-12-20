@@ -489,6 +489,10 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_collection_file' style=''>";
         html += "You can load a collection of structures via a file. Here are <a href='https://github.com/ncbi/icn3d/blob/master/example/collection/' target='_blank'>some example files</a><br><br>";
         html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
+        html += "<input type='radio' id='dl_collectionAppendStructureNone' name='appendStructure' value='none' checked/>";
+        html += "<label for='dl_collectionAppendStructureNone'>Default</label>";
+        html += "<input type='radio' id='dl_collectionAppendStructure' name='appendStructure' value='append' />";
+        html += "<label for='dl_collectionAppendStructure'>Append</label><br/>";
         html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
         html += "</div>";
@@ -496,7 +500,8 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_collection_structures' style='display: none'>";
         html += "<select id='" + me.pre + "collections_menu'multiple size='6' style='min-width:300px;'></select>";
         html += '<br/>';
-        html += me.htmlCls.buttonStr + "opendl_export_collections'>Export</button>";
+        html += me.htmlCls.buttonStr + "collections_clear_commands' style='margin-top: 6px;'>Clear Commands</button>";
+        html += me.htmlCls.buttonStr + "opendl_export_collections'>Export JSON</button>";
         html += "</div>";
         html += '<br/>'; 
         html += "</div>";

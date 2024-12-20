@@ -8,17 +8,15 @@ class SelectCollections {
   }
 
   //Set the menu of defined sets with an array of defined names "commandnameArray".
-  setAtomMenu(nameArray) {
+  setAtomMenu(collection) {
     let ic = this.icn3d,
     me = ic.icn3dui;
     let html = "";
-    //for(let i in ic.defNames2Atoms) {
-    for (let i = 0, il = nameArray.length; i < il; ++i) {
-      let name = nameArray[i][0];
-      let title = nameArray[i][1];
-      let description = nameArray[i][2];
-
+    
+    Object.entries(collection).forEach(([name, structure], index) => {
       let atom, atomHash;
+      let [id, title, description, commands, pdb] = structure;
+
       if (
         ic.defNames2Atoms !== undefined &&
         ic.defNames2Atoms.hasOwnProperty(name)
@@ -39,12 +37,12 @@ class SelectCollections {
         }
       }
 
-      if (i == 0) {
-        html += "<option value='" + nameArray[0][0] + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
-    } else {
+      if (index === 0) {
+        html += "<option value='" + name + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
+      } else {
         html += "<option value='" + name + "' data-description='" + description + "'>" + title + "</option>";
-    }
-    }
+      }
+    });
 
     return html;
   }
@@ -97,11 +95,6 @@ class SelectCollections {
 
       let nameArray = $(this).val();
       let nameStructure = $(this).find("option:selected").text();
-      let selectedIndices = Array.from(this.selectedOptions).map(option => option.index);
-      let selectedIndicesMap = nameArray.reduce((map, name, i) => {
-        map[name] = selectedIndices[i];
-        return map;
-      }, {});
 
       ic.nameArray = nameArray;
 
@@ -135,13 +128,13 @@ class SelectCollections {
                 if (Object.keys(ic.structures).length == 0) {
                   bAppend = false;
                 }
-                await ic.pdbParserCls.loadPdbData(ic.pdbCollection[selectedIndicesMap[name]].join('\n'), undefined, undefined, bAppend);
+                await ic.pdbParserCls.loadPdbData(ic.pdbCollection[name].join('\n'), undefined, undefined, bAppend);
               } else {
                 await ic.chainalignParserCls.downloadMmdbAf(name, undefined, undefined, bNoDuplicate);
               }
             }
             
-            await loadStructure(collection[selectedIndicesMap[name]][4]).then(() => {
+            await loadStructure(collection[name][4]).then(() => {
               ic.allData['all'] = {
                 'atoms': ic.atoms,
                 'proteins': ic.proteins,
@@ -201,9 +194,9 @@ class SelectCollections {
             
           ic.molTitle = ic.allData[name]['title'];
           
-          if (collection[selectedIndicesMap[name]][3] !== undefined && collection[selectedIndicesMap[name]][3].length > 0) {
+          if (collection[name][3] !== undefined && collection[name][3].length > 0) {
             if (ic.allData[name]['commands'] == undefined) {
-              let commands = collection[selectedIndicesMap[name]][3];
+              let commands = collection[name][3];
               ic.allData[name]['commands'] = commands;
             }
           }

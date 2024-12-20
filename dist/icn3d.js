@@ -15158,6 +15158,10 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_collection_file' style=''>";
             html += "You can load a collection of structures via a file. Here are <a href='https://github.com/ncbi/icn3d/blob/master/example/collection/' target='_blank'>some example files</a><br><br>";
             html += "Collection file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "collectionfile'><br/>";
+            html += "<input type='radio' id='dl_collectionAppendStructureNone' name='appendStructure' value='none' checked/>";
+            html += "<label for='dl_collectionAppendStructureNone'>Default</label>";
+            html += "<input type='radio' id='dl_collectionAppendStructure' name='appendStructure' value='append' />";
+            html += "<label for='dl_collectionAppendStructure'>Append</label><br/>";
             html += me.htmlCls.buttonStr + "reload_collectionfile' style='margin-top: 6px;'>Load</button>";
             html += "</div>";
             html += "</div>";
@@ -15165,7 +15169,8 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_collection_structures' style='display: none'>";
             html += "<select id='" + me.pre + "collections_menu'multiple size='6' style='min-width:300px;'></select>";
             html += '<br/>';
-            html += me.htmlCls.buttonStr + "opendl_export_collections'>Export</button>";
+            html += me.htmlCls.buttonStr + "collections_clear_commands' style='margin-top: 6px;'>Clear Commands</button>";
+            html += me.htmlCls.buttonStr + "opendl_export_collections'>Export JSON</button>";
             html += "</div>";
             html += '<br/>'; 
             html += "</div>";
@@ -17687,94 +17692,108 @@ var icn3d = (function (exports) {
                 } else {
                     ic.resizeCanvasCls.closeDialogs();
                     }
-                ic.bInputfile = false;
-                ic.pdbCollection = [];
-                ic.allData = {};
-                ic.allData['all'] = {
-                    'atoms': {},
-                    'proteins': {},
-                    'nucleotides': {},
-                    'chemicals': {},
-                    'ions': {},
-                    'water': {},
-                    'structures': {}, // getSSExpandedAtoms
-                    'ssbondpnts': {},
-                    'residues': {}, // getSSExpandedAtoms
-                    'chains': {},
-                    'chainsSeq': {}, //Sequences and Annotation
-                    'defNames2Atoms': {},
-                    'defNames2Residues': {}
-                };
-                ic.allData['prev'] = {};
-                ic.selectCollectionsCls.reset();
-
+                    
                 ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
                 ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
                 me.htmlCls.setHtmlCls.fileSupport();
 
                 let fileName = file.name;
                 let fileExtension = fileName.split('.').pop().toLowerCase();
-
+                let collection = {};
+                
                 $("#" + ic.pre + "collections_menu").empty();
                 $("#" + ic.pre + "collections_menu").off("change");
+                    
+                if (dl_collectionAppendStructureNone.checked || ic.allData === undefined) {
+                    ic.bInputfile = false;
+                    ic.pdbCollection = {};
+                    ic.allData = {};
+                    ic.allData['all'] = {
+                        'atoms': {},
+                        'proteins': {},
+                        'nucleotides': {},
+                        'chemicals': {},
+                        'ions': {},
+                        'water': {},
+                        'structures': {}, // getSSExpandedAtoms
+                        'ssbondpnts': {},
+                        'residues': {}, // getSSExpandedAtoms
+                        'chains': {},
+                        'chainsSeq': {}, //Sequences and Annotation
+                        'defNames2Atoms': {},
+                        'defNames2Residues': {}
+                    };
+                    ic.allData['prev'] = {};
+                    ic.selectCollectionsCls.reset();
+
+                } else {
+                    if (ic.collections) {
+                        collection = ic.collections;
+                    }
+                }
 
                 function parseJsonCollection(data) {
                     let dataStr = JSON.parse(data);
-                    return dataStr["structures"].map(({ id, title, description, commands }) => {
+                    let parsedCollection = {};
+
+                    dataStr["structures"].map(({ id, title, description, commands }) => {
                         if (id && id.includes('.pdb')) {
                             id = id.split('.pdb')[0];
                         }
-                        return [id, title, description, commands, false];
+                        parsedCollection[id] = [id, title, description, commands, false];
                     });
-                }
 
+                    return parsedCollection;
+                }
+                
                 function parsePdbCollection(data, description = '', commands = []) {         
                     let dataStr = data;
                     let lines = dataStr.split('\n');
-                  
                     let sections = [];
                     let currentSection = [];
-                  
+                    
                     lines.forEach(line => {
-                      if (line.startsWith('HEADER')) {
+                        if (line.startsWith('HEADER')) {
                         currentSection = [];
                         sections.push(currentSection);
-                      }
-                      currentSection.push(line);
+                        }
+                        currentSection.push(line);
                     });
-                  
-                    let ids = [];
-                    let titles = [];
-                  
+                    
+                    console.log(sections);
+                    
+                    let parsedCollection = {};
+                    
                     sections.forEach((section) => {
-                        let headerLine = section[0];
-                        headerLine = headerLine.replace(/[\n\r]/g, '').trim();
+                        let headerLine = section[0].replace(/[\n\r]/g, '').trim();
                         let header = headerLine.split(' ').filter(Boolean);
-                        let lastElement = header[header.length - 1];
-                        ids.push(lastElement);
-                        titles.push(section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : lastElement);
+                        let id = header[header.length - 1];
+                        let title = section[1].startsWith('TITLE') ? section[1].split('TITLE').pop().trim() : id;
+
+                        parsedCollection[id] = [id, title, description, commands, true];
+
+                        const sanitizedSection = section.map(line => line.trim());
+                        ic.pdbCollection[id] = sanitizedSection;
                     });
-                  
-                    if (sections.length > 0) {
-                        ic.pdbCollection.push(...sections);
-                    }
 
-                    return ids.map((id, index, description, commands) => [id, titles[index], description, commands, true]);
+                    return parsedCollection;
                 }
-
-                let collection = [];
 
                 if (fileExtension === 'json' || fileExtension === 'pdb') {
                     let reader = new FileReader();
                     reader.onload = async function (e) {
                         if (fileExtension === 'json') {
-                            collection = parseJsonCollection(e.target.result);
+                            let jsonCollection = parseJsonCollection(e.target.result);
+                            collection = { ...collection, ...jsonCollection };
                         } else if (fileExtension === 'pdb') {
                             ic.bInputfile = true;
-                            collection = parsePdbCollection(e.target.result);
+                            let pdbCollection = parsePdbCollection(e.target.result);
+                            collection = { ...collection, ...pdbCollection };
                         }
 
                         let collectionHtml = await ic.selectCollectionsCls.setAtomMenu(collection);
+
+                        ic.collections = collection;
 
                         $("#" + ic.pre + "collections_menu").html(collectionHtml);
                         await ic.selectCollectionsCls.clickStructure(collection);
@@ -17895,6 +17914,8 @@ var icn3d = (function (exports) {
                         $("#" + ic.pre + "collections_menu").html(collectionHtml);
                         await ic.selectCollectionsCls.clickStructure(collection);
 
+                        ic.collections = collection;
+
                         $("#" + ic.pre + "collections_menu").trigger("change");
 
                         me.htmlCls.clickMenuCls.setLogCmd(
@@ -17913,7 +17934,7 @@ var icn3d = (function (exports) {
                     throw new Error('Invalid file type');
                 }
                 
-                if (Object.keys(me.utilsCls.getStructures(ic.dAtoms))){
+                if (ic.allData && Object.keys(ic.allData).length > 0) {
                     $("#" + me.pre + "dl_collection_file").hide();
                     $("#" + me.pre + "dl_collection_structures").show();
                     $("#" + me.pre + "dl_collection_file_expand").show();
@@ -17932,6 +17953,17 @@ var icn3d = (function (exports) {
                   
                 me.htmlCls.dialogCls.openDlg("dl_selectCollections", "Select Collections");
                 }
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "collections_clear_commands", "click", function (e) {
+                var selectedValues = $("#" + ic.pre + "collections_menu").val();
+                selectedValues.forEach(function (selectedValue) {
+                    if (ic.allData[selectedValue]) {
+                        ic.allData[selectedValue]['commands'] = [];
+                    } else {
+                        console.warn("No data found for selectedValue:", selectedValue);
+                    }
+                });
             });
 
             me.myEventCls.onIds("#" + me.pre + "opendl_export_collections", "click", function (e) {
@@ -69463,17 +69495,15 @@ var icn3d = (function (exports) {
       }
 
       //Set the menu of defined sets with an array of defined names "commandnameArray".
-      setAtomMenu(nameArray) {
+      setAtomMenu(collection) {
         let ic = this.icn3d;
         ic.icn3dui;
         let html = "";
-        //for(let i in ic.defNames2Atoms) {
-        for (let i = 0, il = nameArray.length; i < il; ++i) {
-          let name = nameArray[i][0];
-          let title = nameArray[i][1];
-          let description = nameArray[i][2];
-
+        
+        Object.entries(collection).forEach(([name, structure], index) => {
           let atomHash;
+          let [id, title, description, commands, pdb] = structure;
+
           if (
             ic.defNames2Atoms !== undefined &&
             ic.defNames2Atoms.hasOwnProperty(name)
@@ -69494,12 +69524,12 @@ var icn3d = (function (exports) {
             }
           }
 
-          if (i == 0) {
-            html += "<option value='" + nameArray[0][0] + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
-        } else {
+          if (index === 0) {
+            html += "<option value='" + name + "' selected='selected' data-description='" + description + "'>" + title + "</option>";
+          } else {
             html += "<option value='" + name + "' data-description='" + description + "'>" + title + "</option>";
-        }
-        }
+          }
+        });
 
         return html;
       }
@@ -69552,11 +69582,6 @@ var icn3d = (function (exports) {
 
           let nameArray = $(this).val();
           let nameStructure = $(this).find("option:selected").text();
-          let selectedIndices = Array.from(this.selectedOptions).map(option => option.index);
-          let selectedIndicesMap = nameArray.reduce((map, name, i) => {
-            map[name] = selectedIndices[i];
-            return map;
-          }, {});
 
           ic.nameArray = nameArray;
 
@@ -69590,13 +69615,13 @@ var icn3d = (function (exports) {
                     if (Object.keys(ic.structures).length == 0) {
                       bAppend = false;
                     }
-                    await ic.pdbParserCls.loadPdbData(ic.pdbCollection[selectedIndicesMap[name]].join('\n'), undefined, undefined, bAppend);
+                    await ic.pdbParserCls.loadPdbData(ic.pdbCollection[name].join('\n'), undefined, undefined, bAppend);
                   } else {
                     await ic.chainalignParserCls.downloadMmdbAf(name, undefined, undefined, bNoDuplicate);
                   }
                 }
                 
-                await loadStructure(collection[selectedIndicesMap[name]][4]).then(() => {
+                await loadStructure(collection[name][4]).then(() => {
                   ic.allData['all'] = {
                     'atoms': ic.atoms,
                     'proteins': ic.proteins,
@@ -69656,9 +69681,9 @@ var icn3d = (function (exports) {
                 
               ic.molTitle = ic.allData[name]['title'];
               
-              if (collection[selectedIndicesMap[name]][3] !== undefined && collection[selectedIndicesMap[name]][3].length > 0) {
+              if (collection[name][3] !== undefined && collection[name][3].length > 0) {
                 if (ic.allData[name]['commands'] == undefined) {
-                  let commands = collection[selectedIndicesMap[name]][3];
+                  let commands = collection[name][3];
                   ic.allData[name]['commands'] = commands;
                 }
               }
