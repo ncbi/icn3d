@@ -1539,7 +1539,8 @@ class Events {
                                 let jsonCollection = [];
                                 for (const file of jsonFiles) {
                                     let fileData = await file.async('text');
-                                    parseJsonCollection(fileData).forEach(element => {
+                                    let parsedJson = Object.values(parseJsonCollection(fileData));
+                                    parsedJson.forEach(element => {
                                         jsonCollection.push(element);
                                     });
                                 }
@@ -1549,8 +1550,9 @@ class Events {
                                     let matchingPdbFile = pdbFiles.find(file => file.name.toLowerCase().includes(id.toLowerCase()));
                                     if (matchingPdbFile) {
                                         let pdbFileData = await matchingPdbFile.async('text');
-                                        parsePdbCollection(pdbFileData, description, commands).forEach(element => {
-                                            collection.push(element);
+                                        let parsedPdb = Object.values(parsePdbCollection(pdbFileData, description, commands));
+                                        parsedPdb.forEach(element => {
+                                            collection[id] = element;
                                         });
                                     }
                                 }
@@ -1559,16 +1561,18 @@ class Events {
                                 // Do something if only JSON files are present
                                 jsonFiles.forEach(async file => {
                                     let fileData = await file.async('text');
-                                    parseJsonCollection(fileData).forEach(element => {
-                                        collection.push(element);
+                                    const parsedJson = Object.values(parseJsonCollection(fileData));
+                                    parsedJson.forEach(element => {
+                                        collection[element[0]] = element;
                                     });
                                 });
                             } else if (hasPdb) {
                                 // Do something if only PDB files are present
                                 pdbFiles.forEach(async file => {
                                     let fileData = await file.async('text');
-                                    parsePdbCollection(fileData).forEach(element => {
-                                        collection.push(element);
+                                    const parsedPdb = Object.values(parsedPdbCollection(fileData));
+                                    parsedPdb.forEach(element => {
+                                        collection[element[0]] = element;
                                     });
                                 });
                             } else if (hasGz) {
@@ -1578,8 +1582,9 @@ class Events {
                                     for (const file of gzFiles) {
                                         let compressed = await file.async('uint8array');
                                         let decompressed = pako.inflate(compressed, { to: 'string' });
-                                        parsePdbCollection(decompressed).forEach(element => {
-                                            collection.push(element);
+                                        const parsedPdb = Object.values(parsePdbCollection(decompressed));
+                                        parsedPdb.forEach(element => {
+                                            collection[element[0]] = element;
                                         });
                                     }
                                 } catch (error) {
