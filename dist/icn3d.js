@@ -28747,7 +28747,7 @@ var icn3d = (function (exports) {
 
                 let offset = 0, color;
                 if(bHighlight === 2 && bRibbon) {
-                    for (let i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
+                    for (let i = 0; i < pnts.length; ++i, offset += 3) {
                         // shift the highlight a little bit to avoid the overlap with ribbon
                         pnts[i].addScalar(0.6); // ic.ribbonthickness is 0.4
                         //geo.vertices.push(pnts[i]);
@@ -28767,7 +28767,7 @@ var icn3d = (function (exports) {
                     }
                 }
                 else {
-                    for (let i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
+                    for (let i = 0; i < pnts.length; ++i, offset += 3) {
                         //geo.vertices.push(pnts[i]);
                         //geo.colors.push(me.parasCls.thr(colors[i]));
 
@@ -30131,7 +30131,7 @@ var icn3d = (function (exports) {
                 }
                 let faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
 
-                for (let i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
+                for (let i = 1, lim = p0.length; i < lim; ++i) {
                     let offsetTmp = 8 * i;
                     //var color = me.parasCls.thr(colors[i - 1]);
                     for (let j = 0; j < 4; ++j) {
@@ -31153,7 +31153,6 @@ var icn3d = (function (exports) {
                     }
 
                     currentChain = atom.chain;
-                    atom.resi;
                     ss = atom.ss;
                     ssend = atom.ssend;
                     prevAtomid = atom.serial;
@@ -35212,7 +35211,6 @@ var icn3d = (function (exports) {
         }
 
         applyMissingResOptions(options) { let ic = this.icn3d; ic.icn3dui;
-            if(options === undefined) options = ic.opts;
 
             if(!ic.bCalcMissingRes) {
                 // find all bonds to chemicals
@@ -35325,7 +35323,6 @@ var icn3d = (function (exports) {
 
         //Apply style and label options to a certain set of atoms.
         applyDisplayOptions(options, atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-            if(options === undefined) options = ic.opts;
 
             // get parameters from cookies
             if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
@@ -43947,7 +43944,7 @@ var icn3d = (function (exports) {
             
             let pre = altName;
             let snpCnt = 0, clinvarCnt = 0;
-            let snpTypeHash = {};
+            let snpTypeHash = {}, currSnpTypeHash = {};
             let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chnid]);
             // for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
             for(let resid in residHash) {
@@ -43974,7 +43971,10 @@ var icn3d = (function (exports) {
                         if(diseaseTitle != '') {
                             snpTypeHash[i] = 'icn3d-clinvar';
                             if(j == line - 2) { // just check the current line, "line = 2" means the first SNP
-                                if(diseaseTitle.indexOf('Pathogenic') != -1) ;
+                                currSnpTypeHash[i] = 'icn3d-clinvar';
+                                if(diseaseTitle.indexOf('Pathogenic') != -1) {
+                                    currSnpTypeHash[i] = 'icn3d-clinvar-path';
+                                }
                             }
                         }
                         
@@ -46357,14 +46357,14 @@ var icn3d = (function (exports) {
 
                               let strand, itemRgb;
 
-                              if(fieldArray.length > 4) fieldArray[4];
+                              if(fieldArray.length > 4) ;
                               if(fieldArray.length > 5) strand = fieldArray[5]; // ., +, or -
-                              if(fieldArray.length > 6) fieldArray[6];
-                              if(fieldArray.length > 7) fieldArray[7];
+                              if(fieldArray.length > 6) ;
+                              if(fieldArray.length > 7) ;
                               if(fieldArray.length > 8) itemRgb = fieldArray[8];
-                              if(fieldArray.length > 9) fieldArray[9];
-                              if(fieldArray.length > 10) fieldArray[10];
-                              if(fieldArray.length > 11) fieldArray[11];
+                              if(fieldArray.length > 9) ;
+                              if(fieldArray.length > 10) ;
+                              if(fieldArray.length > 11) ;
 
                            let title = trackName;
 
@@ -51058,7 +51058,6 @@ var icn3d = (function (exports) {
 
         //Show the highlight for the selected atoms: hAtoms.
         addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
-           if(color === undefined) color = ic.hColor;
            //if(atomsHash === undefined) atomsHash = ic.hAtoms;
            let atomsHashDisplay = (atomsHash) ? me.hashUtilsCls.intHash(atomsHash, ic.dAtoms) : me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
@@ -57702,7 +57701,7 @@ var icn3d = (function (exports) {
             }
 
             let molid2rescount = data.moleculeInfor;
-            let molid2chain = {};
+            let molid2color = {}, chain2molid = {}, molid2chain = {};
             let chainNameHash = {};       
             for(let i in molid2rescount) {
               if(Object.keys(molid2rescount[i]).length === 0) continue;
@@ -57723,6 +57722,9 @@ var icn3d = (function (exports) {
 
               let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let chain = id + '_' + chainNameFinal;
+
+              molid2color[i] = color;
+              chain2molid[chain] = i;
               molid2chain[i] = chain;
 
             //   ic.chainsColor[chain] = (type !== undefined && !me.cfg.mmdbafid) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
@@ -63590,19 +63592,28 @@ var icn3d = (function (exports) {
               if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
               if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
 
+              let posChain1 = {}, posChain2 = {};
+
               for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
+                let start1, start2, end1, end2;
                 if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored, could be "100a"
-                    parseInt(ic.qt_start_end[chainIndex][i].t_start);
-                    parseInt(ic.qt_start_end[chainIndex][i].q_start);
-                    parseInt(ic.qt_start_end[chainIndex][i].t_end);
-                    parseInt(ic.qt_start_end[chainIndex][i].q_end); 
+                    start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
+                    start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
+                    end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end);
+                    end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end); 
                 }
                 else {
-                  parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
-                  parseInt(ic.qt_start_end[chainIndex][i].q_start - 1);
-                  parseInt(ic.qt_start_end[chainIndex][i].t_end - 1);
-                  parseInt(ic.qt_start_end[chainIndex][i].q_end - 1);  
+                  start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start - 1);
+                  start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start - 1);
+                  end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end - 1);
+                  end2 = parseInt(ic.qt_start_end[chainIndex][i].q_end - 1);  
                 }
+
+                posChain1[start1] = 1;
+                posChain1[end1] = 1;
+
+                posChain2[start2] = 1;
+                posChain2[end2] = 1;
               }
 
               for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
@@ -63624,6 +63635,8 @@ var icn3d = (function (exports) {
                       let index1 = alignIndex;
                       
                       for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
+                          //if(posChain1[j]) continue;
+                          posChain1[j] = 1;
 
                           //if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid1][j] === undefined) break;
 
@@ -63645,6 +63658,8 @@ var icn3d = (function (exports) {
                       let index2 = alignIndex;
 
                       for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
+                          //if(posChain2[j]) continue;
+                          posChain2[j] = 1;
 
                           //if(ic.chainsSeq[chainid2] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -79021,8 +79036,6 @@ var icn3d = (function (exports) {
                             let idArray = idpair.split('--');
                             if(idArray.length == 2) {
                                 let id2;
-
-                                idArray[1];
                                 id2 = idArray[0];
 
                                 let x2 = parseFloat($("#" + id2).attr('x'));
