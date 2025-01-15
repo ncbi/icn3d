@@ -17914,7 +17914,7 @@ class Events {
                 let reader2 = new FileReader();
                 reader2.onload = async function (e) {
                     if (fileExtension === 'zip') {
-                        let url = './script/jszip.js';
+                        let url = './script/jszip.min.js';
                         await me.getAjaxPromise(url, 'script');
 
                         let jszip = new JSZip();
@@ -17985,7 +17985,7 @@ class Events {
                                     });
                                 });
                             } else if (hasGz) {
-                                let url = './script/pako.js';
+                                let url = './script/pako.min.js';
                                 await me.getAjaxPromise(url, 'script');
                                 try {
                                     for (const file of gzFiles) {
@@ -18004,7 +18004,7 @@ class Events {
                             console.error('Error loading ZIP file', error);
                         }
                     } else if (fileExtension === 'gz') {
-                        let url = './script/pako.js';
+                        let url = './script/pako.min.js';
                         await me.getAjaxPromise(url, 'script');
                         
                         try {
