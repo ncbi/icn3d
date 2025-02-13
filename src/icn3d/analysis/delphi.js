@@ -58,9 +58,9 @@ class Delphi {
        let pdbstr = '';
 ///       pdbstr += ic.saveFileCls.getPDBHeader();
 
-       let bMergeIntoOne = true;
-       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne);
-       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+       let bMergeIntoOne = true, bOneLetterChain = true;
+       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain);
+       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true, undefined, undefined, bMergeIntoOne, bOneLetterChain);
 
        return pdbstr;
     }

@@ -20,7 +20,8 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    async loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
+    // async loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;

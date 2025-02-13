@@ -253,6 +253,7 @@ class AlignParser {
 
     async downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
+
         ic.loadAtomDataCls.loadAtomDataIn(data, undefined, 'align', seqalign);
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -296,20 +297,21 @@ class AlignParser {
     async loadOpmDataForAlign(data, seqalign, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        let url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
-        let prms1 = me.getAjaxPromise(url, 'text');
-        let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
-        let prms2 = me.getAjaxPromise(url2, 'text');
-
-        let allPromise = Promise.allSettled([prms1, prms2]);
         try {
+            let url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+            let prms1 = me.getAjaxPromise(url, 'text');
+            let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+            let prms2 = me.getAjaxPromise(url2, 'text');
+
+            let allPromise = Promise.allSettled([prms1, prms2]);
+
             let dataArray = await allPromise;
-            
+
             let bFound = false;
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                //let opmdata = (me.bNode) ? dataArray[i] : dataArray[i].value;
-                let opmdata = dataArray[i].value;
+                // if(dataArray[i].status == 'rejected') continue;
 
+                let opmdata = dataArray[i].value;
                 if(!opmdata) continue;
 
                 ic.selectedPdbid = mmdbidArray[i];
@@ -325,6 +327,7 @@ class AlignParser {
                 $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
                 ic.init(); // remove all previously loaded data
+
                 await thisClass.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
 
                 bFound = true;
