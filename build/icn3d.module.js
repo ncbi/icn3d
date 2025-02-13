@@ -20559,9 +20559,9 @@ class SetHtml {
 
             let pdbstr = '';
 
-            let bMergeIntoOne = true;
-            pdbstr += ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne);
-            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+            let bMergeIntoOne = true, bOneLetterChain = true;
+            pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain);
+            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true, undefined, undefined, bMergeIntoOne, bOneLetterChain);
 
             let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
 
@@ -48931,6 +48931,13 @@ class ShowAnno {
              } // align seq to structure
         }
         //ic.bAnnoShown = true;
+
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
+            ic.bRunRefnumAgain = true;
+            await ic.annotationCls.setAnnoTabIg();
+
+            ic.bRunRefnumAgain = false;
+        }
     }
 
     async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;
@@ -54665,6 +54672,7 @@ class AlignParser {
 
     async downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
+
         ic.loadAtomDataCls.loadAtomDataIn(data, undefined, 'align', seqalign);
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -54708,20 +54716,21 @@ class AlignParser {
     async loadOpmDataForAlign(data, seqalign, mmdbidArray) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        let url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
-        let prms1 = me.getAjaxPromise(url, 'text');
-        let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
-        let prms2 = me.getAjaxPromise(url2, 'text');
-
-        let allPromise = Promise.allSettled([prms1, prms2]);
         try {
+            let url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+            let prms1 = me.getAjaxPromise(url, 'text');
+            let url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+            let prms2 = me.getAjaxPromise(url2, 'text');
+
+            let allPromise = Promise.allSettled([prms1, prms2]);
+
             let dataArray = await allPromise;
-            
+
             let bFound = false;
             for(let i = 0, il = dataArray.length; i < il; ++i) {
-                //let opmdata = (me.bNode) ? dataArray[i] : dataArray[i].value;
-                let opmdata = dataArray[i].value;
+                // if(dataArray[i].status == 'rejected') continue;
 
+                let opmdata = dataArray[i].value;
                 if(!opmdata) continue;
 
                 ic.selectedPdbid = mmdbidArray[i];
@@ -54737,6 +54746,7 @@ class AlignParser {
                 $("#" + ic.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
                 ic.init(); // remove all previously loaded data
+
                 await thisClass.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
 
                 bFound = true;
@@ -62121,6 +62131,7 @@ class ParserUtils {
               ic.selectionCls.oneStructurePerWindow(); // for alignment
               ic.drawCls.draw();
           }
+
           if(ic.bOpm) {
               let axis = new THREE.Vector3(1,0,0);
               let angle = -0.5 * Math.PI;
@@ -64658,7 +64669,8 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    async loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
+    // async loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bEsmfold) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
         let bNMR = false;
@@ -72674,9 +72686,9 @@ class Delphi {
        let pdbstr = '';
 ///       pdbstr += ic.saveFileCls.getPDBHeader();
 
-       let bMergeIntoOne = true;
-       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne);
-       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+       let bMergeIntoOne = true, bOneLetterChain = true;
+       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain);
+       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true, undefined, undefined, bMergeIntoOne, bOneLetterChain);
 
        return pdbstr;
     }
@@ -79946,7 +79958,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bVastSearch) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bOneLetterChain) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -80221,7 +80233,7 @@ class SaveFile {
                 //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
                 if(atom.chain.length >= 2) {
                     let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
-                    if(bVastSearch) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
+                    if(bOneLetterChain) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
                     line += chainTmp;
                 }
                 else if(atom.chain.length == 1) {
@@ -80300,8 +80312,8 @@ class SaveFile {
             }
             else {
                 line += "1.00".padStart(6, ' ');
-                // line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
-                let defaultBFactor = (bVastSearch) ? "1.0" : " ";
+                // let defaultBFactor = (bOneLetterChain) ? "1.0" : " ";
+                let defaultBFactor = " ";
                 line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : defaultBFactor.padStart(6, ' ');
                 line += ' '.padStart(10, ' ');
                 line += atom.elem.padStart(2, ' ');
@@ -80349,7 +80361,7 @@ class SaveFile {
             let resn = me.utilsCls.residueName2Abbr(atom.resn);
             let ss = this.secondary2Abbr(atom.ss);
 
-            if(chainid != prevChainid) {
+            if(chainid != prevChainid && !data[chainid]) {
                 data[chainid] = {"resi": [], "resn": [], "secondary": []};
             }
 
@@ -83873,7 +83885,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.40.2';
+    this.REVISION = '3.40.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-3.40.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.2.zip) was release on January 8, 2024. Collections update - fixed gz and zip functionality and collections parsing.
+[icn3d-3.40.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.3.zip) was release on February 13, 2025. Fixed DelPhi potential calculations for chains with more than one letter.
+
+[icn3d-3.40.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.2.zip) was release on January 8, 2025. Collections update - fixed gz and zip functionality and collections parsing.
 
 [icn3d-3.40.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.1.zip) was release on December 20, 2024. Collections update - added strucure append and clear commands, fix collections example directory.
 

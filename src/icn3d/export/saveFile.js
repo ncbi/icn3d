@@ -388,7 +388,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bVastSearch) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader, chainResi2pdb, pdbid, bMergeIntoOne, bOneLetterChain) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -665,7 +665,7 @@ class SaveFile {
                 //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
                 if(atom.chain.length >= 2) {
                     let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
-                    if(bVastSearch) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
+                    if(bOneLetterChain) chainTmp = ' ' + chainTmp.substr(0,1); // VAST search only support one lettter chain ID
                     line += chainTmp;
                 }
                 else if(atom.chain.length == 1) {
@@ -744,8 +744,8 @@ class SaveFile {
             }
             else {
                 line += "1.00".padStart(6, ' ');
-                // line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
-                let defaultBFactor = (bVastSearch) ? "1.0" : " ";
+                // let defaultBFactor = (bOneLetterChain) ? "1.0" : " ";
+                let defaultBFactor = " ";
                 line +=(atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : defaultBFactor.padStart(6, ' ');
                 line += ' '.padStart(10, ' ');
                 line += atom.elem.padStart(2, ' ');
@@ -793,7 +793,7 @@ class SaveFile {
             let resn = me.utilsCls.residueName2Abbr(atom.resn);
             let ss = this.secondary2Abbr(atom.ss);
 
-            if(chainid != prevChainid) {
+            if(chainid != prevChainid && !data[chainid]) {
                 data[chainid] = {"resi": [], "resn": [], "secondary": []};
             }
 

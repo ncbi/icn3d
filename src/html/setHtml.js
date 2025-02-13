@@ -616,9 +616,9 @@ class SetHtml {
 
             let pdbstr = '';
 
-            let bMergeIntoOne = true;
-            pdbstr += ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne);
-            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
+            let bMergeIntoOne = true, bOneLetterChain = true;
+            pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain) : ic.saveFileCls.getAtomPDB(atomHash, undefined, undefined, undefined, undefined, undefined, bMergeIntoOne, bOneLetterChain);
+            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true, undefined, undefined, bMergeIntoOne, bOneLetterChain);
 
             let url = me.htmlCls.baseUrl + "delphi/delphi.cgi";
 

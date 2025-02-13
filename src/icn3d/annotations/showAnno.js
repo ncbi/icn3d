@@ -246,6 +246,13 @@ class ShowAnno {
              } // align seq to structure
         }
         //ic.bAnnoShown = true;
+
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
+            ic.bRunRefnumAgain = true;
+            await ic.annotationCls.setAnnoTabIg();
+
+            ic.bRunRefnumAgain = false;
+        }
     }
 
     async showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set) { let ic = this.icn3d, me = ic.icn3dui;

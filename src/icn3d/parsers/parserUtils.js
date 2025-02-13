@@ -589,6 +589,7 @@ class ParserUtils {
               ic.selectionCls.oneStructurePerWindow(); // for alignment
               ic.drawCls.draw();
           }
+
           if(ic.bOpm) {
               let axis = new THREE.Vector3(1,0,0);
               let angle = -0.5 * Math.PI;
