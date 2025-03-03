@@ -5,8 +5,8 @@
  class Refnum {
     constructor(icn3d) {
         this.icn3d = icn3d;
-        this.TMThresholdIgType = 0.85
-        this.TMThresholdTemplate = 0.4
+        this.TMThresholdIgType = 0.85;
+        this.TMThresholdTemplate = 0.4;
         this.topClusters = 5;
     }
 
@@ -119,7 +119,7 @@
         // assign Ig types
         ic.ref2igtype = {};
 
-        ic.ref2igtype['ASF1A_2iijA_human'] = 'IgE';
+        ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
         ic.ref2igtype['B2Microglobulin_7phrL_human_C1'] = 'IgC1';
         ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
         ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
@@ -154,7 +154,7 @@
         ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
-        ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgE';
+        ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
         ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
         ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
         ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
@@ -167,7 +167,7 @@
         ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
-        ic.ref2igtype['TEAD1_3kysC_human'] = 'IgE';
+        ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
         ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
         ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
         ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';

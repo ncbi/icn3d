@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.40.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.4.zip) was release on March 3, 2025. Fixed the URL for the "Side by Side" view.
+
 [icn3d-3.40.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.3.zip) was release on February 13, 2025. Fixed DelPhi potential calculations for chains with more than one letter.
 
 [icn3d-3.40.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.40.2.zip) was release on January 8, 2025. Collections update - fixed gz and zip functionality and collections parsing.

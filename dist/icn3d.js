@@ -11726,7 +11726,8 @@ var icn3d = (function (exports) {
                //    alert("The url is more than 4000 characters and may not work.");
                //}
                //else {
-                   url = url.replace("icn3d/full.html?", "icn3d/full2.html?");
+                   // url = url.replace("icn3d/full.html?", "icn3d/full2.html?");
+                   url = url.replace(/icn3d\/full.*\.html?/, "icn3d/full2.html?");
                    url = url.replace("icn3d/?", "icn3d/full2.html?");
                    url += '&closepopup=1';
                    let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
@@ -73467,7 +73468,7 @@ var icn3d = (function (exports) {
             // assign Ig types
             ic.ref2igtype = {};
 
-            ic.ref2igtype['ASF1A_2iijA_human'] = 'IgE';
+            ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
             ic.ref2igtype['B2Microglobulin_7phrL_human_C1'] = 'IgC1';
             ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
             ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
@@ -73502,7 +73503,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
             ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
             ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
-            ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgE';
+            ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
             ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
             ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
             ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
@@ -73515,7 +73516,7 @@ var icn3d = (function (exports) {
             ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
             ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
             ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
-            ic.ref2igtype['TEAD1_3kysC_human'] = 'IgE';
+            ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
             ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
             ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
             ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
@@ -80363,6 +80364,8 @@ var icn3d = (function (exports) {
                 let resi = atom.resi;
                 let resn = me.utilsCls.residueName2Abbr(atom.resn);
                 let ss = this.secondary2Abbr(atom.ss);
+                if(atom.ssbegin) ss += ' begin';
+                else if(atom.ssend) ss += ' end';
 
                 if(chainid != prevChainid && !data[chainid]) {
                     data[chainid] = {"resi": [], "resn": [], "secondary": []};
@@ -80385,8 +80388,8 @@ var icn3d = (function (exports) {
                 json += '{"chain": "' + chainid + '",\n';
 
                 json += '"resi": "' + data[chainid]["resi"].join(',') + '",\n';
-                json += '"resn": "' + data[chainid]["resn"].join('') + '",\n';
-                json += '"secondary": "' + data[chainid]["secondary"].join('') + '"';
+                json += '"resn": "' + data[chainid]["resn"].join(',') + '",\n';
+                json += '"secondary": "' + data[chainid]["secondary"].join(',') + '"';
 
                 if(i < cnt - 1) {
                     json += '},\n';
@@ -83888,7 +83891,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.40.3';
+        this.REVISION = '3.40.4';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

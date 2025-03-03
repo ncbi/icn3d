@@ -792,6 +792,8 @@ class SaveFile {
             let resi = atom.resi;
             let resn = me.utilsCls.residueName2Abbr(atom.resn);
             let ss = this.secondary2Abbr(atom.ss);
+            if(atom.ssbegin) ss += ' begin';
+            else if(atom.ssend) ss += ' end';
 
             if(chainid != prevChainid && !data[chainid]) {
                 data[chainid] = {"resi": [], "resn": [], "secondary": []};
@@ -814,8 +816,8 @@ class SaveFile {
             json += '{"chain": "' + chainid + '",\n';
 
             json += '"resi": "' + data[chainid]["resi"].join(',') + '",\n';
-            json += '"resn": "' + data[chainid]["resn"].join('') + '",\n';
-            json += '"secondary": "' + data[chainid]["secondary"].join('') + '"';
+            json += '"resn": "' + data[chainid]["resn"].join(',') + '",\n';
+            json += '"secondary": "' + data[chainid]["secondary"].join(',') + '"';
 
             if(i < cnt - 1) {
                 json += '},\n';
