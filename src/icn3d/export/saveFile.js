@@ -337,6 +337,8 @@ class SaveFile {
                  for(let i = 0, il = residueArray.length; i < il; ++i) {
                      let resid = residueArray[i];
                      let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                     if(!atom) continue;
+                     
                      let chainid = atom.structure + '_' + atom.chain;
                      let resnAbbr = me.utilsCls.residueName2Abbr(atom.resn);
                      let resName = resnAbbr + atom.resi;
