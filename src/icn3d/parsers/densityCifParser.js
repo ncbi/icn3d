@@ -13,12 +13,15 @@ class DensityCifParser {
        let thisClass = this;
 
        let url;
-       let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0 : 4; //4;
+       let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 2 : 4; //0 : 4;
 
        //https://www.ebi.ac.uk/pdbe/densities/doc.html
        if(type == '2fofc' || type == 'fofc') {
-           detail = 0;
-           url = "https://www.ebi.ac.uk/pdbe/densities/x-ray/" + pdbid.toLowerCase() + "/cell?detail=" + detail;
+            //detail = 0;
+
+            //    url = "https://www.ebi.ac.uk/pdbe/densities/x-ray/" + pdbid.toLowerCase() + "/cell?detail=" + detail;
+            let min_max = ic.contactCls.getExtent(ic.atoms); 
+            url = "https://www.ebi.ac.uk/pdbe/volume-server/x-ray/" + pdbid.toLowerCase() + "/box/" + min_max[0][0] + "," + min_max[0][1] + "," + min_max[0][2] + "/" + min_max[1][0] + "," + min_max[1][1] + "," + min_max[1][2] + "?detail=" + detail;
        }
        else if(type == 'em') {
            url = "https://www.ebi.ac.uk/pdbe/densities/emd/" + emd.toLowerCase() + "/cell?detail=" + detail;
@@ -91,6 +94,37 @@ class DensityCifParser {
         // return sigma;
     }
 
+    setMatrix(density) { let ic = this.icn3d, me = ic.icn3dui;
+        let sampleCount = density.box.sampleCount;
+        let header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma, max: density.valuesInfo.max, min: density.valuesInfo.min};
+
+        let minValue = 999, maxValue = -999;
+        for(let i = 0; i < density.data.length; ++i) {
+            let value = density.data[i];
+            if(value > maxValue) maxValue = value;
+            if(value < minValue) minValue = value;
+        }
+
+        let origin = density.box.origin;
+        let dimensions = density.box.dimensions;
+        let basis = density.spacegroup.basis;
+        let scale = new THREE.Matrix4().makeScale(
+            dimensions[0] / (sampleCount[0] ),
+            dimensions[1] / (sampleCount[1] ),
+            dimensions[2] / (sampleCount[2] ));
+        let translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
+        let fromFrac = new THREE.Matrix4().set(
+            basis.x[0], basis.y[0], basis.z[0], 0.0,
+            0.0, basis.y[1], basis.z[1], 0.0,
+            0.0, 0.0, basis.z[2], 0.0,
+            0.0, 0.0, 0.0, 1.0);
+
+        //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
+        let matrix = fromFrac.multiply(translate).multiply(scale);
+
+        return {matrix: matrix, header: header};
+    }
+
     parseChannels(densitydata, type, sigma) { let ic = this.icn3d, me = ic.icn3dui;
         let cif = this.BinaryParse(densitydata);
 
@@ -100,97 +134,35 @@ class DensityCifParser {
 
             // '2fofc'
             let density = twoDensity;
-            let sampleCount = density.box.sampleCount;
-            let header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-            ic.mapData.header2 = header;
+            let result = this.setMatrix(density);
+
+            ic.mapData.matrix2 = result.matrix;
+            ic.mapData.header2 = result.header;
 
             ic.mapData.data2 = density.data;
-
-            
-            let minValue = 999, maxValue = -999;
-            for(let i = 0; i < density.data.length; ++i) {
-                let value = density.data[i];
-                if(value > maxValue) maxValue = value;
-                if(value < minValue) minValue = value;
-            }
-
-            let origin = density.box.origin;
-            let dimensions = density.box.dimensions;
-            let basis = density.spacegroup.basis;
-            let scale = new THREE.Matrix4().makeScale(
-                dimensions[0] / (sampleCount[0] ),
-                dimensions[1] / (sampleCount[1] ),
-                dimensions[2] / (sampleCount[2] ));
-            let translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
-            let fromFrac = new THREE.Matrix4().set(
-                basis.x[0], basis.y[0], basis.z[0], 0.0,
-                0.0, basis.y[1], basis.z[1], 0.0,
-                0.0, 0.0, basis.z[2], 0.0,
-                0.0, 0.0, 0.0, 1.0);
-
-            //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
-            let matrix = fromFrac.multiply(translate).multiply(scale);
-
-            ic.mapData.matrix2 = matrix;
-
             ic.mapData.type2 = type;
             ic.mapData.sigma2 = sigma;
 
             // 'fofc'
             density = oneDensity;
-            sampleCount = density.box.sampleCount;
-            header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-            ic.mapData.header = header;
+            result = this.setMatrix(density);
+
+            ic.mapData.matrix = result.matrix;
+            ic.mapData.header = result.header;
 
             ic.mapData.data = density.data;
-
-            origin = density.box.origin;
-            dimensions = density.box.dimensions;
-            basis = density.spacegroup.basis;
-
-            scale = new THREE.Matrix4().makeScale(
-                dimensions[0] / (sampleCount[0] ),
-                dimensions[1] / (sampleCount[1] ),
-                dimensions[2] / (sampleCount[2] ));
-            translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
-            fromFrac = new THREE.Matrix4().set(
-                basis.x[0], basis.y[0], basis.z[0], 0.0,
-                0.0, basis.y[1], basis.z[1], 0.0,
-                0.0, 0.0, basis.z[2], 0.0,
-                0.0, 0.0, 0.0, 1.0);
-            //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
-            matrix = fromFrac.multiply(translate).multiply(scale);
-            ic.mapData.matrix = matrix;
-
             ic.mapData.type = type;
             ic.mapData.sigma = sigma;
         }
         else if(type == 'em') {
             let density = this.getChannel(cif, 'EM');
 
-            let sampleCount = density.box.sampleCount;
-            let header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], max: density.valuesInfo.max, min: density.valuesInfo.min};
-            ic.mapData.headerEm = header;
+            let result = this.setMatrix(density);
+
+            ic.mapData.matrixEm = result.matrix;
+            ic.mapData.headerEm = result.header;
 
             ic.mapData.dataEm = density.data;
-
-            let origin = density.box.origin;
-            let dimensions = density.box.dimensions;
-            let basis = density.spacegroup.basis;
-            let scale = new THREE.Matrix4().makeScale(
-                dimensions[0] / (sampleCount[0] ),
-                dimensions[1] / (sampleCount[1] ),
-                dimensions[2] / (sampleCount[2] ));
-            let translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
-            let fromFrac = new THREE.Matrix4().set(
-                basis.x[0], basis.y[0], basis.z[0], 0.0,
-                0.0, basis.y[1], basis.z[1], 0.0,
-                0.0, 0.0, basis.z[2], 0.0,
-                0.0, 0.0, 0.0, 1.0);
-            //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
-            let matrix = fromFrac.multiply(translate).multiply(scale);
-            ic.mapData.matrixEm = matrix;
-
             ic.mapData.typeEm = type;
             ic.mapData.sigmaEm = sigma;
         }

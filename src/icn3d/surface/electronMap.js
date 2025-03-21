@@ -470,7 +470,6 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                     //this.vpAtomID[index] =(this.dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
                 }
             }
-            
         }
     }
 

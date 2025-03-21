@@ -2085,12 +2085,16 @@ class ClickMenu {
            //}
            //else {
                // url = url.replace("icn3d/full.html?", "icn3d/full2.html?");
-               url = url.replace(/icn3d\/full.*\.html?/, "icn3d/full2.html?");
+
+               url = url.replace(/icn3d\/full[_\d\.]*\.html\?/, "icn3d/full2.html?");
+
                url = url.replace("icn3d/?", "icn3d/full2.html?");
+
                url += '&closepopup=1';
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(url, urlTarget);
-               thisClass.setLogCmd('side by side | ' + url, true);
+               // thisClass.setLogCmd('side by side | ' + url, true);
+               thisClass.setLogCmd('side by side | ' + url, false);
            //}
         });
 
