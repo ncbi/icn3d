@@ -128,8 +128,8 @@ class Resid2spec {
          return spec;
     }
 
-    resi2range(resiArray) {var ic = this.icn3d, me = ic.icn3dui;
-        let range = [];
+    resi2range(resiArray, bString) {var ic = this.icn3d, me = ic.icn3dui;
+        let range = [], rangeStr = '';
     
         let resiArraySorted = resiArray.sort(function(a, b) {
            return parseInt(a) - parseInt(b);
@@ -140,9 +140,14 @@ class Resid2spec {
         for(let j = 0, jl = resiArraySorted.length; j < jl; ++j) {
             resi = resiArraySorted[j];
     
-            if(j != 0 && resi != prevResi + 1) {
+            if(j != 0 && parseInt(resi) != parseInt(prevResi) + 1) {
                 range.push(startResi);
                 range.push(prevResi);
+
+                if(rangeStr) rangeStr += ',';
+                if(startResi == prevResi) rangeStr += startResi;
+                else rangeStr += startResi + '-' + prevResi;
+
                 startResi = resi;
             }
     
@@ -152,8 +157,13 @@ class Resid2spec {
         // last residue
         range.push(startResi);
         range.push(prevResi);
-    
-        return range;
+
+        if(rangeStr) rangeStr += ',';
+        if(startResi == prevResi) rangeStr += startResi;
+        else rangeStr += startResi + '-' + prevResi;
+
+        if(bString) return rangeStr;
+        else return range;
     }
 
     atoms2spec(atomHash) {var ic = this.icn3d, me = ic.icn3dui;
