@@ -224,6 +224,13 @@ class Events {
         $("#" + me.pre + id).resizable();
     }
 
+    exportMsa(type) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        let text = ic.msa[type].join('\n\n');
+        let fileType = (type == 'fasta') ? '.fasta' : (type == 'clustal') ? '.aln' : '.txt';
+
+        ic.saveFileCls.saveFile(ic.inputid + '_align' + fileType, 'text', [text]);
+    }
+
     async launchMmdb(ids, bBiounit, hostUrl, bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         if(!me.cfg.notebook) dialog.dialog( "close" );
         
@@ -2974,6 +2981,24 @@ class Events {
            let name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
            //var description = $("#" + me.pre + "alignseq_command_desc").val();
            ic.selectionCls.saveSelection(name, name);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "saveFasta", "click", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            thisClass.exportMsa('fasta')
+            thisClass.setLogCmd('Save alignment in FASTA format', false);
+         });
+
+        me.myEventCls.onIds("#" + me.pre + "saveClustal", "click", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            thisClass.exportMsa('clustal')
+            thisClass.setLogCmd('Save alignment in CLUSTALW format', false);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "saveResbyres", "click", function(e) { let ic = me.icn3d;
+            e.stopImmediatePropagation();
+            thisClass.exportMsa('resbyres')
+            thisClass.setLogCmd('Save alignment in Residue by Residue format to be used in File > Align (or Realign) > Multiple Chain > Residue by Residue', false);
         });
 
         $(document).on("click", "." + me.pre + "outputselection", function(e) { let ic = me.icn3d;

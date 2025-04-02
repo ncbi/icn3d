@@ -299,7 +299,9 @@ class SetHtml {
 
       sequencesHtml += '<div style="width:20px; margin-left:3px; display:inline-block;"><span id="' + me.pre + 'alignseqguide' + suffix + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'alignseqguide' + suffix + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> ';
 
-      sequencesHtml += "<div style='min-width:200px; display:inline-block;''><b>Selection:</b> Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + index + "' size='10'> " + me.htmlCls.space2 + "<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+      sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + index + "' size='10'> " + me.htmlCls.space2 + "<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+
+      sequencesHtml += "<div style='min-width:200px; display:inline-block; margin-top:3px'><b>Save Alignment</b>: " + "<button style='white-space:nowrap;' id='" + me.pre + "saveFasta'>FASTA</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveClustal'>CLUSTAL</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveResbyres'>Residue by Residue</button></div><br/>";
 
       sequencesHtml += me.htmlCls.divStr + "alignseqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
 
@@ -308,7 +310,9 @@ class SetHtml {
       let resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
       let scroll =(me.utilsCls.isMac() && !me.utilsCls.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
 
-      sequencesHtml += resCategories + scroll + "<br/></div>";
+      sequencesHtml += resCategories + scroll + "<br/>";
+
+      sequencesHtml += "</div>";
 
       return sequencesHtml;
     }

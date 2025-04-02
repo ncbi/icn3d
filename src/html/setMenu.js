@@ -106,7 +106,7 @@ class SetMenu {
 
         let tdStr = '<td valign="top">';
 
-        // html += tdStr + this.setMenuMode() + '</td>';
+        html += tdStr + this.setMenuMode() + '</td>';
 
         html += tdStr + this.setMenu1() + '</td>';
 
@@ -117,12 +117,11 @@ class SetMenu {
         html += tdStr + this.setMenu4() + '</td>';
 
         html += tdStr + this.setMenu5() + '</td>';
-        //html += tdStr + this.setMenu5b() + '</td>';
         html += tdStr + this.setMenu6() + '</td>';
 
         // reset the menus at the end of the menus
-        // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
-        // this.resetMenu(mode);
+        let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+        this.resetMenu(mode);
 
         // me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
@@ -230,7 +229,7 @@ class SetMenu {
         }
         html += "<div>";
 
-        // html += '<li>' + this.setMenuMode(true);
+        html += '<li>' + this.setMenuMode(true);
 
         let liStr = "<li><span class='icn3d-menu-color'";
 
@@ -251,8 +250,8 @@ class SetMenu {
         html += this.setMenu6_base();
 
         // reset the menus at the end of the menus
-        // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
-        // this.resetMenu(mode);
+        let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+        this.resetMenu(mode);
 
         // me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus); 
 
@@ -342,7 +341,7 @@ class SetMenu {
 
         html += me.htmlCls.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 0px;'>";
         //html += "<table style='margin-top: 3px; width:100px;'>";
-        html += "<table style='margin-top: 3px; width:770px; background-color:#EEE;'>";
+        html += "<table style='margin: 3px 0px 0px 76px; width:770px; background-color:#EEE;'>";
 
         html += this.setTools_base();
 
@@ -658,9 +657,9 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += this.getMenuText('mn1_aligntwostru', 'Protein Complexes', undefined, undefined, 2);
+        html += this.getMenuText('mn1_aligntwostru', 'Protein Complexes', undefined, 1, 2);
         html += "<ul>";
-        html += this.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr, undefined, 3);
+        html += this.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr, 1, 3);
         html += this.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr, undefined, 3);
         html += "</ul>";
 
@@ -714,8 +713,8 @@ class SetMenu {
         html += "<ul>";
         html += this.getMenuText('mn1_savepngimage', 'iCn3D PNG Image', undefined, 1, 2);
         html += "<ul>";
-        html += this.getLink('mn1_exportCanvas', 'Original Size & HTML', 1, 3);
-        html += this.getLink('mn1_exportCanvas1', 'Original Size', undefined, 3);
+        html += this.getLink('mn1_exportCanvas', 'Original Size & HTML', undefined, 3);
+        html += this.getLink('mn1_exportCanvas1', 'Original Size', 1, 3);
 
         html += this.getLink('mn1_exportCanvas2', '2X Large', undefined, 3);
         html += this.getLink('mn1_exportCanvas4', '4X Large', undefined, 3);
@@ -802,7 +801,7 @@ class SetMenu {
         html += "<ul class='icn3d-mn-item'>";
 
         html += this.getLink('mn2_definedsets', 'Defined Sets', 1, 1);
-        html += this.getLink('mn2_selectall', 'All', undefined, 1);
+        html += this.getLink('mn2_selectall', 'All', 1, 1);
         html += this.getLink('mn2_selectdisplayed', 'Displayed Set', undefined, 1);
         html += this.getLink('mn2_aroundsphere', 'by Distance', 1, 1);
 
@@ -818,10 +817,10 @@ class SetMenu {
         html += "</li>";
 
         html += this.getLink('mn2_selectcomplement', 'Inverse', undefined, 1);
-        html += this.getLink('mn2_selectmainchains', 'Main Chains', undefined, 1);
-        html += this.getLink('mn2_selectsidechains', 'Side Chains', undefined, 1);
+        html += this.getLink('mn2_selectmainchains', 'Main Chains', 1, 1);
+        html += this.getLink('mn2_selectsidechains', 'Side Chains', 1, 1);
         html += this.getLink('mn2_selectmainsidechains', 'Main & Side Chains', undefined, 1);
-        html += this.getLink('mn2_command', 'Advanced', undefined, 1);
+        html += this.getLink('mn2_command', 'Advanced', 1, 1);
 
         if(me.cfg.cid === undefined) {
             html += this.getMenuText('mn2_selon3d', 'Select on 3D', undefined, 1, 1);
@@ -854,7 +853,7 @@ class SetMenu {
         html += this.getMenuSep();
 
         html += this.getLink('mn2_saveselection', 'Save Selection', 1, 1);
-        html += this.getLink('clearall', 'Clear Selection', undefined, 1);
+        html += this.getLink('clearall', 'Clear Selection', 1, 1);
         html += this.getLink('mn2_saveresidue', 'Save Res. in Sel.', 1, 1);
 
         html += this.getMenuSep();
@@ -919,7 +918,7 @@ class SetMenu {
         html += this.getLinkWrapper('mn2_alternate', 'Alternate(Key "a")', 'mn2_alternateWrap', undefined, 1)
 
         if(me.cfg.opmid !== undefined) {
-            html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', undefined, 1)
+            html += this.getLinkWrapper('togglemem', 'Toggle Membrane', 'togglememli', 1, 1)
         }
         //else if(me.cfg.mmdbafid !== undefined || me.cfg.afid !== undefined) {
         else if(me.cfg.cid === undefined) {
@@ -936,14 +935,14 @@ class SetMenu {
 
         let liStr = "<li><a href='";
 
-        html += this.getMenuText('mn2_vrarhints', 'VR & AR Hints', undefined, 1, 1);
+        html += this.getMenuText('mn2_vrarhints', 'VR & AR Hints', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getMenuUrl("vrhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#vr", "VR: VR Headsets", 1, 2);
-        html += this.getMenuUrl("arhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#ar", "AR: Chrome in Android", 1, 2);
+        html += this.getMenuUrl("vrhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#vr", "VR: VR Headsets", undefined, 2);
+        html += this.getMenuUrl("arhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#ar", "AR: Chrome in Android", undefined, 2);
         html += "</ul>";
         html += "</li>";
 
-        html += this.getLink('mn6_sidebyside', 'Side by Side', 1, 1);
+        html += this.getLink('mn6_sidebyside', 'Side by Side', undefined, 1);
 
         html += this.getMenuText('mn2_rotate', 'Rotate', undefined, 1, 1);
         html += "<ul>";
@@ -1055,7 +1054,7 @@ class SetMenu {
                 html += this.getRadio('mn3_proteins', 'mn3_proteinsRibbon', 'Ribbon', true, 1, 2);
             }
 
-            html += this.getRadio('mn3_proteins', 'mn3_proteinsStrand', 'Strand', undefined, undefined, 2);
+            html += this.getRadio('mn3_proteins', 'mn3_proteinsStrand', 'Strand', undefined, 1, 2);
             html += this.getRadio('mn3_proteins', 'mn3_proteinsCylinder', 'Cylinder and Plate', undefined, undefined, 2);
             html += this.getRadio('mn3_proteins', 'mn3_proteinsSchematic', 'Schematic', undefined, 1, 2);
 
@@ -1067,7 +1066,7 @@ class SetMenu {
             }
 
             html += this.getRadio('mn3_proteins', 'mn3_proteinsBackbone', 'Backbone', undefined, undefined, 2);
-            html += this.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube', undefined, 1, 2);
+            html += this.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube', undefined, undefined, 2);
             html += this.getRadio('mn3_proteins', 'mn3_proteinsLines', 'Lines', undefined, 1, 2);
             html += this.getRadio('mn3_proteins', 'mn3_proteinsStick', 'Stick', undefined, 1, 2);
             html += this.getRadio('mn3_proteins', 'mn3_proteinsBallstick', 'Ball and Stick', undefined, 1, 2);
@@ -1131,10 +1130,10 @@ class SetMenu {
         html += "</li>";
 
         //if(me.cfg.cid !== undefined) {
-            html += this.getMenuText('mn3_hydrogenswrap', 'Hydrogens', undefined, 1, 1);
+            html += this.getMenuText('mn3_hydrogenswrap', 'Hydrogens', undefined, undefined, 1);
             html += "<ul>";
-            html += this.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true, 1, 2);
-            html += this.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide', undefined, 1, 2);
+            html += this.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true, undefined, 2);
+            html += this.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide', undefined, undefined, 2);
             html += "</ul>";
             html += "</li>";
         //}
@@ -1509,7 +1508,7 @@ class SetMenu {
 
         html += "</ul>";
 
-        html += this.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker', undefined, undefined, 1);
+        html += this.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker', undefined, 1, 1);
         html += this.getMenuSep();
 
         if(me.cfg.cid === undefined) {
@@ -1550,7 +1549,7 @@ class SetMenu {
             html += this.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile', undefined, 1, 2);
             html += "</ul>";
 
-            html += this.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>', undefined, undefined, 1);
+            html += this.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>', undefined, 1, 1);
 
             html += this.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure', undefined, 1, 1);
 
@@ -1562,7 +1561,7 @@ class SetMenu {
             }
 
             //if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
-              html += this.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain', undefined, undefined, 1);
+              html += this.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain', undefined, 1, 1);
             //}
 
             if(me.cfg.cid === undefined) {
@@ -1582,16 +1581,16 @@ class SetMenu {
             html += this.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', undefined, 1, 1);
 
             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true, undefined, 2);
-              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 2);
+              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true, undefined, 1);
+              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 1);
             }
             else if(me.cfg.blast_rep_id !== undefined) {
-              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
-              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true, undefined, 2);
+              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 1);
+              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true, undefined, 1);
             }
             else {
-              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 2);
-              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 2);
+              html += this.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', undefined, undefined, 1);
+              html += this.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', undefined, undefined, 1);
             }
 
             //if(me.cfg.afid) html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
@@ -1599,8 +1598,8 @@ class SetMenu {
                 html += this.getRadio('mn4_clr', 'mn4_clrConfidence', 'pLDDT', undefined, 1, 1);
             //}
 
-            html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 2);
-            html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 2);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgstrand', 'Ig Strand', undefined, undefined, 1);
+            html += this.getRadio('mn4_clr', 'mn4_clrIgproto', 'Ig Protodomain', undefined, undefined, 1);
         }
         else {
             //if(!me.cfg.hidelicense) html += this.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
@@ -1653,7 +1652,7 @@ class SetMenu {
             html += this.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr, 1, 1);
 
             //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd || ic.bInputfile) {
-                html += this.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr, undefined, 1);
+                html += this.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr, 1, 1);
             //}
 
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
@@ -1723,27 +1722,27 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += this.getMenuText('mn6_anglewrap', 'Angle', undefined, 1, 1);
+        html += this.getMenuText('mn6_anglewrap', 'Angle', undefined, undefined, 1);
         html += "<ul>";
-        html += this.getRadio('mn6_angle', 'mn6_angleManySets', 'among Many Sets', undefined, 1, 2);
+        html += this.getRadio('mn6_angle', 'mn6_angleManySets', 'among Many Sets', undefined, undefined, 2);
         html += this.getRadio('mn6_angle', 'mn6_angleTwoSets', 'b/w Two Vectors', undefined, undefined, 2);
         html += "</ul>";
         html += "</li>";
 
-        html += this.getLink('mn6_area', 'Surface Area', 1, 1);
+        html += this.getLink('mn6_area', 'Surface Area', undefined, 1);
 
         html += this.getMenuText('mn6_addlabelwrap', 'Label', undefined, 1, 1);
         html += "<ul>";
         html += this.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms', undefined, undefined, 2);
         html += this.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection', undefined, undefined, 2);
         html += this.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom', undefined, undefined, 2);
-        html += this.getRadio('mn6_addlabel', 'mn6_addlabelElements', 'per Atom Element', undefined, 1, 2);
+        html += this.getRadio('mn6_addlabel', 'mn6_addlabelElements', 'per Atom Element', undefined, undefined, 2);
         if(me.cfg.cid === undefined) {
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue', undefined, 1, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number', undefined, 1, 2);
 
-            html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, 1, 2);
-            html += this.getRadio('mn6_addlabel', 'mn6_addlabelIg', 'per Ig Domain', undefined, 1, 2);
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelRefnum', 'per Reference Number', undefined, undefined, 2);
+            html += this.getRadio('mn6_addlabel', 'mn6_addlabelIg', 'per Ig Domain', undefined, undefined, 2);
 
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain', undefined, undefined, 2);
             html += this.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini', undefined, 1, 2);
@@ -1780,10 +1779,10 @@ class SetMenu {
         html += this.getMenuSep();
 
         if(me.cfg.cid === undefined) {
-            html += this.getMenuText('mn6_chemicalbindingwrap', 'Chem. Binding', undefined, undefined, 1);
+            html += this.getMenuText('mn6_chemicalbindingwrap', 'Chem. Binding', undefined, 1, 1);
             html += "<ul>";
-            html += this.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show', undefined, undefined, 2);
-            html += this.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true, undefined, 2);
+            html += this.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show', undefined, 1, 2);
+            html += this.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true, 1, 2);
             html += "</ul>";
             html += "</li>";
 
@@ -1944,7 +1943,7 @@ class SetMenu {
 
         //html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
         //html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
-        html += this.getMenuUrl('citing', me.htmlCls.baseUrl + "icn3d/icn3d.html#citing", "Citing iCn3D", undefined, 1);
+        html += this.getMenuUrl('citing', me.htmlCls.baseUrl + "icn3d/icn3d.html#citing", "Citing iCn3D", 1, 1);
 
         html += this.getMenuText('mn6_source', 'Source Code', undefined, 1, 1);
         html += "<ul>";

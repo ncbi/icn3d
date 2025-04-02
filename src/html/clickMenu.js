@@ -87,9 +87,9 @@ class ClickMenu {
     }
 
     getHiddenMenusFromCache() { let me = this.icn3dui, ic = me.icn3d;
-      // me.htmlCls.shownMenus = {};
+      me.htmlCls.shownMenus = {};
 
-      // let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
+      let mode = me.htmlCls.setHtmlCls.getCookie('menumode');
 
       let idArrayStr = (localStorage) ? localStorage.getItem('hiddenmenus') : '';
       
@@ -98,31 +98,23 @@ class ClickMenu {
 
          let idArray = JSON.parse(idArrayStr);
 
-         // for(let i = 0, il = idArray.length; i < il; ++i) {
-         //     me.htmlCls.shownMenus[idArray[i]] = 1;
-         // }
          for(let menu in me.htmlCls.allMenus) {
             if(idArray.indexOf(menu) == -1) {
                me.htmlCls.shownMenus[menu] = 1;
             }
          }
       }
-      //###
       else {
-         me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+         if(mode == 'all') {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
+         }
+         else if(!mode || mode == 'simple') {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+         }
+         else {
+            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+         }
       }
-
-      // else {
-      //    if(mode == 'all') {
-      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
-      //    }
-      //    else if(!mode || mode == 'simple') {
-      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
-      //    }
-      //    else {
-      //       me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
-      //    }
-      // }
     }
     
     displayShownMenus() { let me = this.icn3dui, ic = me.icn3d;

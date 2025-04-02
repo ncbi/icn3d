@@ -12,6 +12,7 @@ class SetSeqAlign {
           let alignedAtoms = {}
           let mmdbid1 = alignedStructures[0][0].pdbId;
           let mmdbid2 = alignedStructures[0][1].pdbId;
+          let chainid1, chainid2;
 
           ic.conservedName1 = mmdbid1 + '_cons';
           ic.nonConservedName1 = mmdbid1 + '_ncons';
@@ -35,7 +36,7 @@ class SetSeqAlign {
               let molid1 = alignData.moleculeId;
 
               let chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
-              let chainid1 = mmdbid1 + '_' + chain1;
+              chainid1 = mmdbid1 + '_' + chain1;
 
               let id2aligninfo = {};
               let start = alignData.sequence.length, end = -1;
@@ -67,7 +68,7 @@ class SetSeqAlign {
               let molid2 = alignData.moleculeId;
 
               let chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
-              let chainid2 = mmdbid2 + '_' + chain2;
+              chainid2 = mmdbid2 + '_' + chain2;
 
               // annotation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
@@ -235,7 +236,9 @@ class SetSeqAlign {
                   ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
                   ++alignIndex;
-              } // end for(let j           
+              } // end for(let j
+              
+              this.setMsaFormat([chainid1, chainid2]);
           } // end for(let i
 
           seqalign = {};
@@ -315,7 +318,7 @@ class SetSeqAlign {
     }
 
     setSeqAlignChain(chainid, chainIndex, chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
-        let hAtoms = {};
+          let hAtoms = {};
 
           let bRealign = (chainidArray) ? true : false;
 
@@ -547,23 +550,6 @@ class SetSeqAlign {
                   ///if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   let resi1, resi2, resn1, resn2;
-/*                 
-                  if(bRealign) { // tmalign: just one residue in this for loop
-                    if(me.cfg.aligntool == 'tmalign') {
-                        resi1 = ic.qt_start_end[chainIndex][i].t_start;
-                        resi2 = ic.qt_start_end[chainIndex][i].q_start;
-                    }
-                    else {
-                        resi1 = j + start1;
-                        resi2 = j + start2;
-                    }
-
-                    resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
-                    resn2 = this.getResnFromResi(chainid2, resi2).toUpperCase();
-
-                    if(resn1 == '?' || resn2 == '?') continue;
-                  }
-*/
                   if(bRealign && me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
                     resi1 = ic.qt_start_end[chainIndex][i].t_start;
                     resi2 = ic.qt_start_end[chainIndex][i].q_start;
@@ -574,15 +560,6 @@ class SetSeqAlign {
                     if(resn1 == '?' || resn2 == '?') continue;
                   }
                   else {
-                    ///if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
-
-                    // resi1 = ic.chainsSeq[chainid1][j + start1].resi;
-                    // resi2 = ic.chainsSeq[chainid2][j + start2].resi;
-                    // resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
-                    // resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
-
-                    // resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1 + 1);
-                    // resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2 + 1);
                     resi1 =  this.getResiAferAlign(chainid1, bRealign, j + start1);
                     resi2 =  this.getResiAferAlign(chainid2, bRealign, j + start2);
                     resn1 = this.getResnFromResi(chainid1, resi1).toUpperCase();
@@ -622,14 +599,15 @@ class SetSeqAlign {
 
               prevIndex1 = end1;
               prevIndex2 = end2;
-          } // end for(let i
+          } // end for(let i 
+
+          this.setMsaFormat([chainid1, chainid2]);
 
           return hAtoms;
     }
 
     setSeqAlignChainForAll(chainidArray, index_alignLen, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
-
         let chainid1 = chainidArray[0];
 
         ic.alnChainsAnno[chainid1] = [];
@@ -783,7 +761,8 @@ class SetSeqAlign {
             resObject.aligned = (resid2range_t[resid]) ? true : false;
             resObject.color = (resid2range_t[resid]) ? '#FF0000' : me.htmlCls.GREYC; // color by identity
             resObject.color2 = (resid2range_t[resid]) ? '#FF0000' : me.htmlCls.GREYC; // color by conservation
-            resObject.class = (resid2range_t[resid]) ? 'icn3d-align' : 'icn3d-nalign';
+            // resObject.class = (resid2range_t[resid]) ? 'icn3d-align' : 'icn3d-nalign';
+            resObject.class = (resid2range_t[resid]) ? 'icn3d-cons' : 'icn3d-nalign';
     
             ic.alnChainsSeq[chainid1].push(resObject);
 
@@ -802,7 +781,9 @@ class SetSeqAlign {
             let hAtomsTmp = this.mergeTwoSeqForAll(chainidArray, index, alignedChainIndice, resid2range_t, start_t, end_t, bRealign);
 
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
-        }      
+        }   
+
+        this.setMsaFormat(chainidArray);
           
         // 3. assign the variable ic.alnChainsAnno
         for(let i = 0; i < 3 + 2*n; ++i) {
@@ -873,7 +854,7 @@ class SetSeqAlign {
         resObject.aligned = (bGap) ? false : bAligned;
         resObject.color = (bGap || !bAligned) ? me.htmlCls.GREYC : ((resn == resn_t) ? "#FF0000" : "#0000FF"); // color by identity
         resObject.color2 = (bGap || !bAligned) ? me.htmlCls.GREYC : '#' + ic.showAnnoCls.getColorhexFromBlosum62(resn, resn_t); // color by conservation
-        resObject.class = (bGap || !bAligned) ? 'icn3d-nalign' : 'icn3d-align';
+        resObject.class = (bGap || !bAligned) ? 'icn3d-nalign' :  ((resn == resn_t) ? "icn3d-cons" : "icn3d-ncons");
 
         return resObject;
     }
@@ -1153,7 +1134,7 @@ class SetSeqAlign {
         pos2 = result.pos2;
         for(let i = pos1; i < pos2; ++i) {
         //for(let i = pos1; i <= pos2; ++i) {
-            ic.alnChainsSeq[chainid2].push(gapResObject2);           
+            ic.alnChainsSeq[chainid2].push(gapResObject2);      
         }     
 
         return hAtoms;
@@ -1482,6 +1463,107 @@ class SetSeqAlign {
             }
         }
     }   
+
+    setMsaFormat(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
+        //set MSA
+        let fastaFormat = '', clustalFormat = 'CLUSTALW\n\n', resbyresFormat = '';
+        let chainArrayClustal = [];
+        
+        let consArray = [], resiArrayTemplate = [];
+        let chainidTemplate = chainidArray[0];
+        for(let i = 0, il = chainidArray.length; i < il; ++i) { 
+            let chainid = chainidArray[i];
+            fastaFormat += '>' + chainid + '\n';
+
+            let clustalArray = [];
+            let clustalLine = chainid.padEnd(20, ' ');
+            let consLine = ''.padEnd(20, ' ');
+
+            let resiArrayTarget = [], resiArrayQuery = [];
+
+            let cnt = 0;
+            for(let j = 0, jl = ic.alnChainsSeq[chainid].length; j < jl; ++j) {
+                let resn = ic.alnChainsSeq[chainid][j].resn;
+                fastaFormat += resn;
+                clustalLine += resn;
+                if(i == il - 1) {
+                    let alignedClass = ic.alnChainsSeq[chainid][j].class;
+                    if(alignedClass == 'icn3d-cons') {
+                        consLine += '*';
+                    }
+                    else if(alignedClass == 'icn3d-ncons') {
+                        consLine += '.';
+                    }
+                    else {
+                        consLine += ' ';
+                    }
+                }
+
+                // residue by residue 
+                if(i == 0) {
+                    resiArrayTemplate.push(ic.alnChainsSeq[chainid][j].resi);
+                }
+                else {
+                    if(ic.alnChainsSeq[chainid][j].aligned) {
+                        resiArrayTarget.push(ic.alnChainsSeq[chainidTemplate][j].resi);
+                        resiArrayQuery.push(ic.alnChainsSeq[chainid][j].resi);
+                    }
+                }
+
+                ++cnt;
+
+                if(cnt % 60 == 0) {
+                    fastaFormat += '\n';
+                    clustalLine += ' ' + String(parseInt(cnt / 60) * 60);
+                    clustalArray.push(clustalLine);
+                    clustalLine = chainid.padEnd(20, ' ');
+
+                    if(i == il - 1) {
+                        consArray.push(consLine);
+                        consLine = ''.padEnd(20, ' ');
+                    }
+                }
+            }
+
+            // add last line
+            if(cnt % 60 != 0) {
+                clustalArray.push(clustalLine);
+                if(i == il - 1) {
+                    consArray.push(consLine);
+                }
+            }
+
+            fastaFormat += '\n';
+
+            chainArrayClustal.push(clustalArray);
+            if(i == il - 1) chainArrayClustal.push(consArray);
+
+            // residue by residue
+            let resiRangeStr1 = ic.resid2specCls.resi2range(resiArrayTarget, true);
+            let resiRangeStr2 = ic.resid2specCls.resi2range(resiArrayQuery, true);
+
+            if(i > 0) resbyresFormat += resiRangeStr1 + ' | ' + resiRangeStr2 + '\n';
+        }
+
+        // CLUSTALW
+        for(let j = 0, jl = chainArrayClustal[0].length; j < jl; ++j) {
+            for(let i = 0, il = chainArrayClustal.length; i < il; ++i) {
+                clustalFormat += chainArrayClustal[i][j] + '\n';
+            }
+            clustalFormat += '\n';
+        }
+        
+        // seq MSA
+        if(!ic.msa) ic.msa = {};
+
+        if(!ic.msa['fasta']) ic.msa['fasta'] = [];
+        if(!ic.msa['clustal']) ic.msa['clustal'] = [];
+        if(!ic.msa['resbyres']) ic.msa['resbyres'] = [];
+
+        ic.msa['fasta'].push(fastaFormat);
+        ic.msa['clustal'].push(clustalFormat);
+        ic.msa['resbyres'].push(resbyresFormat);
+    }
 }
 
 export {SetSeqAlign}
