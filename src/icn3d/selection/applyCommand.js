@@ -177,6 +177,12 @@ class ApplyCommand {
       else if(command == 'set slab off') {
         ic.opts['slab'] = 'no';
       }
+      else if(command == 'stereo on') {
+        ic.opts['effect'] = 'stereo';
+      }
+      else if(command == 'stereo off') {
+        ic.opts['effect'] = 'none';
+      }
       else if(command == 'set assembly on') {
         ic.bAssembly = true;
       }

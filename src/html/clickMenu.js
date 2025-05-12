@@ -65,6 +65,7 @@ class ClickMenu {
 
     applyShownMenus(bNoSave) { let me = this.icn3dui, ic = me.icn3d;
         let idArray = [];
+
         for(let id in me.htmlCls.allMenus) {
             if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
                 $("#" + me.pre + id).parent().show();
@@ -295,6 +296,14 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_clustalwfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_clustalwfile', 'Please input CLUSTALW MSA File');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_fastafile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_fastafile', 'Please input FASTA MSA File');
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
         });
@@ -394,6 +403,11 @@ class ClickMenu {
            let file_pref = Object.keys(ic.structures).join(',');
 
            ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportVideo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+         thisClass.setLogCmd("export video", false);
+         me.htmlCls.dialogCls.openDlg('dl_video', 'Save canvas changes in a video');
         });
 
 
@@ -2088,6 +2102,18 @@ class ClickMenu {
                // thisClass.setLogCmd('side by side | ' + url, true);
                thisClass.setLogCmd('side by side | ' + url, false);
            //}
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_stereoYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            ic.opts['effect'] = 'stereo';
+            ic.drawCls.draw();
+            thisClass.setLogCmd('stereo on', true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_stereoNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            ic.opts['effect'] = 'none';
+            ic.drawCls.draw();
+            thisClass.setLogCmd('stereo off', true);
         });
 
         $(document).on("click", "#" + me.pre + "mn2_translate", function(e) { let ic = me.icn3d; //e.preventDefault();

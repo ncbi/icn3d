@@ -350,6 +350,19 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_clustalwfile' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_clustalwfile', 'Please input a CLUSTALW MSA file');
+        html += "Note the sequence names are either UniProt ID (e.g., A4D1S0 or A4D1S0_A), RefSeq ID (e.g., NP_001743), or PDB chain ID (e.g., 1HHO_A).<br><br>";
+        html += "CLUSTALW File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "clustalwfile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_clustalwfile'>Load</button><br>";
+        html += "</div>";
+        html += me.htmlCls.divStr + "dl_fastafile' class='" + dialogClass + "' style='max-width:500px'>";
+        html += this.addNotebookTitle('dl_fastafile', 'Please input a FASTA file');
+        html += "Note the sequence IDs following the symbol \">\" contain either UniProt ID (e.g., sp| or tr|), RefSeq ID (e.g., ref|), PDB chain ID (e.g., pdb|1HHO|A), or iCn3D chain ID (e.g., A4D1S0_A, 1HHO_A).<br><br>";
+        html += "FASTA File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "fastafile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_fastafile'>Load</button><br>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_afmapfile', 'Please input an AlphaFold PAE file');
         html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
@@ -467,6 +480,12 @@ class SetDialog {
         html += this.addNotebookTitle('dl_state', 'Please input a state file');
         html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
         html += me.htmlCls.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
+        html += me.htmlCls.buttonStr + "video_start' style='margin-top: 6px;'>Video Start</button>";
+        html += me.htmlCls.buttonStr + "video_end' style='margin: 6px 0px 0px 30px;'>Video End</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_fixedversion' style='max-width:500px' class='" + dialogClass + "'>";

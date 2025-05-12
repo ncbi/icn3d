@@ -148,7 +148,7 @@ class RealignParser {
       // If rmsd from vastsrv is too large, realign the chains
       //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
       // redo algnment only for VAST serv page 
-      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {    
+      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5 && me.cfg.chainalign) {    
         console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align.") 
         //let nameArray = me.cfg.chainalign.split(',');
         let nameArray = Object.keys(chainidHash);
@@ -607,7 +607,8 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
+            // predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
+            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split('; ');
             
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");

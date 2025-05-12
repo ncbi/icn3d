@@ -614,9 +614,19 @@ class SetMenu {
         html += this.getLink('mn1_mol2file', 'Mol2 File', undefined, 2);
         html += this.getLink('mn1_sdffile', 'SDF File', undefined, 2);
         html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
+
+        html += this.getMenuSep();
+
+        html += this.getMenuText('mn1_msawrap', 'Multiple Seq. Alignment', undefined, undefined, 2);
+        html += "<ul>";
+        html += this.getLink('mn1_clustalwfile', 'CLUSTALW Format', undefined, 3);
+        html += this.getLink('mn1_fastafile', 'FASTA Format', undefined, 3);
+        html += "</ul>";
+
         html += this.getLink('mn1_afmapfile', 'AlphaFold PAE File', undefined, 2);
 
         html += this.getLink('mn1_urlfile', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 2);
+        
         html += this.getMenuSep();
         html += this.getLink('mn1_pngimage', 'iCn3D PNG (appendable)', 1, 2);
         html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
@@ -723,6 +733,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += this.getLink('mn1_exportVideo', 'Video', undefined, 2);
         html += this.getLink('mn1_exportState', 'State File', undefined, 2);
         html += this.getLink('mn1_exportSelections', 'Selection File', undefined, 2);
         html += this.getLink('mn1_exportSelDetails', 'Selection Details', undefined, 2);
@@ -939,6 +950,13 @@ class SetMenu {
         html += "<ul>";
         html += this.getMenuUrl("vrhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#vr", "VR: VR Headsets", undefined, 2);
         html += this.getMenuUrl("arhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#ar", "AR: Chrome in Android", undefined, 2);
+        html += "</ul>";
+        html += "</li>";
+
+        html += this.getMenuText('mn6_stereoWrapper', 'Stereo View', undefined, undefined, 1);
+        html += "<ul>";
+        html += this.getRadio('mn6_stereo', 'mn6_stereoYes', 'On', undefined, undefined, 2);
+        html += this.getRadio('mn6_stereo', 'mn6_stereoNo', 'Off', true, undefined, 2);
         html += "</ul>";
         html += "</li>";
 

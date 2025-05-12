@@ -28,7 +28,7 @@
 .ui-accordion .ui-accordion-icons { padding-left: 0; text-align: center; }
 
 .icn3d-menu {float:left; width:110px;}
-.icn3d-menu-color {color:#1c94c4; font-weight:bold; font-size: 14px!important;}
+.icn3d-menu-color {color:#369; font-weight:bold; font-size: 14px!important;}
 
 accordion {font-size: 14px!important; z-index:1999; }
 accordion h3 {width: 100px; font-size: 14px!important;}
@@ -280,11 +280,17 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-square { display:inline-block; width:15px;}
 
-.icn3d-distance {color:#1c94c4; cursor: pointer;}
+.icn3d-distance {color:#369; cursor: pointer;}
 
 .icn3d-menupd {padding-left:1.5em!important;}
 
 .icn3d-nbclose {cursor:pointer; background-color:white;}
+
+.ncbi-page-header {
+  background-color: #369;
+  color: #fff;
+  overflow: auto;
+}
 
 .color-picker,
 .color-picker:before,

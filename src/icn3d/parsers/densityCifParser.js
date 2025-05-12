@@ -13,7 +13,7 @@ class DensityCifParser {
        let thisClass = this;
 
        let url;
-       let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 2 : 4; //0 : 4;
+       let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0 : 4; // max 6
 
        //https://www.ebi.ac.uk/pdbe/densities/doc.html
        if(type == '2fofc' || type == 'fofc') {
@@ -24,6 +24,7 @@ class DensityCifParser {
             url = "https://www.ebi.ac.uk/pdbe/volume-server/x-ray/" + pdbid.toLowerCase() + "/box/" + min_max[0][0] + "," + min_max[0][1] + "," + min_max[0][2] + "/" + min_max[1][0] + "," + min_max[1][1] + "," + min_max[1][2] + "?detail=" + detail;
        }
        else if(type == 'em') {
+           detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0: 5; // max 6
            url = "https://www.ebi.ac.uk/pdbe/densities/emd/" + emd.toLowerCase() + "/cell?detail=" + detail;
        }
 

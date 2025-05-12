@@ -498,8 +498,9 @@ class Strand {
                 }
             }
 
-            // add one extra residue for coils between strands/helix
-            if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
+            // add one extra residue for coils between strands/helix if the style is NOT stick, ball and stick, lines, sphere, and dot
+            // if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
+            if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil' && firstAtom.style != 'stick' && firstAtom.style != 'ball and stick' && firstAtom.style != 'lines' && firstAtom.style != 'sphere' && firstAtom.style != 'dot') {
                     let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                     if(ic.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
@@ -534,8 +535,8 @@ class Strand {
                 }
             }
 
-            // add one extra residue for coils between strands/helix
-            if(ic.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
+            // add one extra residue for coils between strands/helix if the style is NOT stick, ball and stick, lines, sphere, and dot
+            if(ic.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil' && firstAtom.style != 'stick' && firstAtom.style != 'ball and stick' && firstAtom.style != 'lines' && firstAtom.style != 'sphere' && firstAtom.style != 'dot') {
                     let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (parseInt(lastAtom.resi) + 1).toString();
                     if(ic.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],

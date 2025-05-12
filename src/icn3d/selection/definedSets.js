@@ -408,12 +408,22 @@ class DefinedSets {
        for(let i = 0; i < nameArray.length; ++i) {
          let selectedSet = nameArray[i];
 
-         if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+         this.setHAtomsFromSets_base(selectedSet, type);
 
+         // sometimes the "resi" changed and thus the name changed
+         //"sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+         if(Object.keys(ic.hAtoms).length == 0 && (selectedSet.split('.')[0] == 'sphere' || selectedSet.split('.')[0] == 'interactions')) {
+            let pos = selectedSet.lastIndexOf('-');
+            selectedSet = selectedSet.split('.')[0] + selectedSet.substr(pos);
+            this.setHAtomsFromSets_base(selectedSet, type);
+         }
+       } // outer for
+    }
+
+    setHAtomsFromSets_base(selectedSet, type) { let ic = this.icn3d, me = ic.icn3dui;
          if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
 
              let atomArray = ic.defNames2Atoms[selectedSet];
-
              if(type === 'or') {
                  for(let j = 0, jl = atomArray.length; j < jl; ++j) {
                      ic.hAtoms[atomArray[j]] = 1;
@@ -459,7 +469,6 @@ class DefinedSets {
                  ic.hAtoms = me.hashUtilsCls.exclHash(ic.hAtoms, atomHash);
              }
          }
-       } // outer for
     }
 
     updateAdvancedCommands(nameArray, type) { let ic = this.icn3d, me = ic.icn3dui;
@@ -482,6 +491,7 @@ class DefinedSets {
 
     combineSets(orArray, andArray, notArray, commandname) { let ic = this.icn3d, me = ic.icn3dui;
        ic.hAtoms = {}
+       
        this.setHAtomsFromSets(orArray, 'or');
 
        if(Object.keys(ic.hAtoms).length == 0) {

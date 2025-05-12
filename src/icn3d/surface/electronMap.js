@@ -425,6 +425,7 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
         }
         else {
             // let index2ori = {};
+            let maxdist = this.maxdist;
             for(let serial in atomlist) {
                 let atom = atoms[atomlist[serial]];
 
@@ -441,11 +442,11 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                 }
 
                 // show map near the structure
-                for(i = Math.floor(r.x) - this.maxdist, il = Math.ceil(r.x) + this.maxdist; i <= il; ++i) {
+                for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
                     if(i < 0 || i > this.header.xExtent*this.scaleFactor - 1) continue;
-                    for(j = Math.floor(r.y) - this.maxdist, jl = Math.ceil(r.y) + this.maxdist; j<= jl; ++j) {
+                    for(j = Math.floor(r.y) - maxdist, jl = Math.ceil(r.y) + maxdist; j<= jl; ++j) {
                         if(j < 0 || j > this.header.yExtent*this.scaleFactor - 1) continue;
-                        for(k = Math.floor(r.z) - this.maxdist, kl = Math.ceil(r.z) + this.maxdist; k<= kl; ++k) {
+                        for(k = Math.floor(r.z) - maxdist, kl = Math.ceil(r.z) + maxdist; k<= kl; ++k) {
                             if(k < 0 || k > this.header.zExtent*this.scaleFactor - 1) continue;
                             let index = i * widthHeight + j * height + k;
                             indexArray.push(index);
@@ -453,6 +454,16 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
                     }
                 }
             }
+
+            // show all
+            // for(i = 0; i < this.pLength; ++i) {
+            //     for(j = 0; j < this.pWidth; ++j) {
+            //         for(k = 0; k < this.pHeight; ++k) {
+            //             let index = i * widthHeight + j * height + k;
+            //             indexArray.push(index);
+            //         }
+            //     }
+            // }
 
             for(i = 0, il = indexArray.length; i < il; ++i) {
                 let index = indexArray[i];

@@ -123,6 +123,7 @@ class ChainalignParser {
 
                     ajaxArray.push(alignAjax);
                     indexArray.push(index - 1);
+                    mmdbid_q = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
                     struArray.push(mmdbid_q);
                 }
 
@@ -151,7 +152,8 @@ class ChainalignParser {
             let mmdbid_q = struArray[i];
             let index = indexArray[i];
 
-            let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+            // let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+            let bEqualMmdbid = (mmdbid_q.substr(0,4) == mmdbid_t.substr(0,4));
             let bEqualChain = false;
 
             let queryData = {}; // check whether undefined
@@ -401,7 +403,7 @@ class ChainalignParser {
 
     transformStructure(mmdbid, index, alignType, bForce) { let ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
-
+        
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
@@ -537,6 +539,26 @@ class ChainalignParser {
         return chainidArray;
     }
 
+    addPostfixForStructureids(structArray) { let ic = this.icn3d, me = ic.icn3dui;
+        let struct2cnt = {};
+        for(let i = 0, il = structArray.length; i < il; ++i) {
+            let struct = structArray[i].toUpperCase(); 
+
+            if(!struct2cnt.hasOwnProperty(struct)) {
+                struct2cnt[struct] = 1;
+            }
+            else {
+                ++struct2cnt[struct];
+            }
+
+            struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
+
+            structArray[i] = struct;
+        }
+
+        return structArray;
+    }
+
     async downloadChainalignment(chainalign) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
@@ -578,6 +600,7 @@ class ChainalignParser {
 
         ic.afChainIndexHash = {};
         ic.pdbChainIndexHash = {};
+
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let pos2 = alignArray[index].indexOf('_');
             let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
@@ -686,7 +709,8 @@ class ChainalignParser {
 
             if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                 ) {
-                ic.mmdbidArray.push(mmdbid_q);
+                // ic.mmdbidArray.push(mmdbid_q);
+                ic.mmdbidArray.push(mmdbid_q.substr(0,4));
                 queryDataArray.push(queryData);
             }
             else {
@@ -725,7 +749,8 @@ class ChainalignParser {
                     // let align = (me.bNode) ? dataArray[index2 - missedChainCnt] : dataArray[index2 - missedChainCnt].value;//[0];
                     let align = dataArray[index2 - missedChainCnt].value;//[0];
 
-                    let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                    // let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                    let bEqualMmdbid = (mmdbid_q.substr(0,4) == mmdbid_t.substr(0,4));
                     let bEqualChain = (chain_q == chain_t);
 
                     me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
@@ -896,15 +921,14 @@ class ChainalignParser {
 
         let structArray = [];
 
-        for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-            let id = structArrayTmp[i].toUpperCase();
-            // sometimes we want to load same structure multiple times
-            if(!ic.structures.hasOwnProperty(id) && structArray.indexOf(id) == -1) {
-                structArray.push(structArrayTmp[i]);
-            }
-            else {
-                // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
-                if(!bNoDuplicate) structArray.push(structArrayTmp[i] + me.htmlCls.postfix);
+        // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
+        if(!bNoDuplicate) {
+            structArray =  this.addPostfixForStructureids(structArrayTmp);
+        }
+        else {
+            for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
+                let id = structArrayTmp[i].toUpperCase();
+                if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
             }
         }
         

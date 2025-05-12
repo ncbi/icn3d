@@ -442,9 +442,10 @@ class SaveFile {
                 ssObj.resn = atom.resn;
                 ssObj.resi = atom.resi;
 
-                if(parseInt(atom.resi) > parseInt(prevResi) + 1) {
-                    ssObj.ss = ' ';
-                    ssArray.push(ssObj);
+                if(parseInt(atom.resi) > parseInt(prevResi) + 1  || atom.ssbegin) {
+                    let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
+                    ssObj2.ss = ' ';
+                    ssArray.push(ssObj2);
                 }
 
                 if(atom.ss == 'helix') {
@@ -455,13 +456,13 @@ class SaveFile {
                     ssObj.ss = 'S';
                     ssArray.push(ssObj);
                 }
-
+/*
                 if(atom.ssend) {
                     let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
                     ssObj2.ss = ' ';
                     ssArray.push(ssObj2);
                 }
-
+*/
                 prevResi = atom.resi;
             }
 
@@ -469,9 +470,9 @@ class SaveFile {
             for(let i = 0, il = ssArray.length; i < il; ++i) {
                 let ssObj = ssArray[i];
 
-                if(ssObj.ss != prevSs || ssObj.ssbegin) {
+                if(ssObj.ss != prevSs) {
                     // print prev
-                    stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+                    if(prevSs !== ' ') stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
 
                     // print current
                     ssCnt = 0;
@@ -479,7 +480,7 @@ class SaveFile {
                     bSheet = false;
                     prevRealSsObj = undefined;
 
-                    if(ssObj.ss != ' ') {
+                    if(ssObj.ss !== ' ') {
                         if(ssObj.ss == 'H') {
                             bHelix = true;
                             prevRealSsObj = ssObj;
@@ -495,7 +496,7 @@ class SaveFile {
                     }
                 }
 
-                if(ssObj.ss != ' ') {
+                if(ssObj.ss !== ' ') {
                     ++ssCnt;
                     prevRealSsObj = ssObj;
                 }

@@ -253,11 +253,18 @@
         }
 
         if(ic.scene) {
+            ic.renderer.clear();
+            
             // https://github.com/gkjohnson/three-gpu-pathtracer/blob/main/example/basic.js
             ic.renderer.outputEncoding = THREE.sRGBEncoding;
             //ic.renderer.outputEncoding = THREE.LinearEncoding
 
-            ic.renderer.render(ic.scene, cam);
+            if(ic.opts['effect'] == 'stereo' && !window.icn3duiHash) {
+                ic.effect.render(ic.scene, cam);
+            }
+            else {
+                ic.renderer.render(ic.scene, cam);
+            }           
         }
     }
 

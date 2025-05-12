@@ -86,6 +86,7 @@ class ApplyDisplay {
                 for(let residueid in singletonResidueHash) {
                     // get calpha
                     let calpha = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                    let sideAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.selectionCls.getSideAtoms(ic.residues[residueid]));
                     let atom = calpha;
 
                     let prevResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
@@ -102,7 +103,7 @@ class ApplyDisplay {
                     }
                     else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'o3 trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
                         // do not add extra residue if the side chain is shown
-                        if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+                        if(sideAtom !== undefined && sideAtom.style2 !== undefined && sideAtom.style2 !== 'nothing') continue;
 
                         let bAddResidue = false;
                         // add the next residue with same style
@@ -137,7 +138,7 @@ class ApplyDisplay {
                     }
                     else if( (atom.style === 'ribbon' && atom.ss !== 'coil' && atom.ssend) || (atom.style === 'strand' && atom.ss !== 'coil' && atom.ssend)) {
                         // do not add extra residue if the side chain is shown
-                        if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+                        if(sideAtom !== undefined && sideAtom.style2 !== undefined && sideAtom.style2 !== 'nothing') continue;
 
                         let bAddResidue = false;
                         // add the next residue with same style

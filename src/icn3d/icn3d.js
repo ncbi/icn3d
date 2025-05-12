@@ -97,6 +97,7 @@ import {OpmParser} from './parsers/opmParser.js';
 import {PdbParser} from './parsers/pdbParser.js';
 import {SdfParser} from './parsers/sdfParser.js';
 import {XyzParser} from './parsers/xyzParser.js';
+import {MsaParser} from './parsers/msaParser.js';
 import {RealignParser} from './parsers/realignParser.js';
 import {DensityCifParser} from './parsers/densityCifParser.js';
 import {ParserUtils} from './parsers/parserUtils.js';
@@ -219,6 +220,14 @@ class iCn3D {
                     alpha: true
                 });
             }
+
+            this.effects = {
+                //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
+                //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
+                //'oculus rift': new THREE.OculusRiftEffect(this.renderer),
+                'stereo': new THREE.StereoEffect(this.renderer),
+                'none': this.renderer
+            };
 
             this.overdraw = 0;
         }
@@ -366,14 +375,6 @@ class iCn3D {
 
     this.bExtrude = true;
 
-    this.effects = {
-        //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
-        //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
-        //'oculus rift': new THREE.OculusRiftEffect(this.renderer),
-        //'stereo': new THREE.StereoEffect(this.renderer),
-        'none': this.renderer
-    };
-
     this.maxD = 500; // size of the molecule
     this.oriMaxD = this.maxD; // size of the molecule
     //this.cam_z = -150;
@@ -426,6 +427,7 @@ class iCn3D {
     //The default display options
     this.optsOri = {}
     this.optsOri['camera']             = 'perspective';        //perspective, orthographic
+    this.optsOri['effect']             = 'none';               //stereo, none
     this.optsOri['background']         = 'black';              //transparent, black, grey, white
     this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom, ig strand
     this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
@@ -619,6 +621,7 @@ class iCn3D {
     this.pdbParserCls = new PdbParser(this);
     this.sdfParserCls = new SdfParser(this);
     this.xyzParserCls = new XyzParser(this);
+    this.msaParserCls = new MsaParser(this);
     this.realignParserCls = new RealignParser(this);
     this.densityCifParserCls = new DensityCifParser(this);
     this.ParserUtilsCls = new ParserUtils(this);

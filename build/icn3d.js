@@ -2532,7 +2532,6 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
                     _this._panStart.add( mouseChange.subVectors( _this._panEnd, _this._panStart ).multiplyScalar( _this.dynamicDampingFactor ) );
 
                 }
-
             }
         }
 
@@ -3568,6 +3567,103 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
 THREE.OrthographicTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
 THREE.OrthographicTrackballControls.prototype.constructor = THREE.OrthographicTrackballControls;
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @authod mrdoob / http://mrdoob.com/
+ * @authod arodic / http://aleksandarrodic.com/
+ * modified by Jiyao Wang
+ */
+
+THREE.StereoEffect = function ( renderer ) {
+    var _this = this;
+    // API
+
+    _this.separation = 3; // 1;
+
+    // internals
+
+    // _this._width, _this._height;
+
+    _this._position = new THREE.Vector3();
+    _this._quaternion = new THREE.Quaternion();
+    _this._scale = new THREE.Vector3();
+
+    _this._cameraL = new THREE.PerspectiveCamera();
+    _this._cameraR = new THREE.PerspectiveCamera();
+
+    // initialization
+
+    renderer.autoClear = false;
+
+    _this.setSize = function ( width, height ) {
+
+        _this._width = width / 2;
+        _this._height = height;
+
+        renderer.setSize( width, height );
+
+    };
+
+    _this.render = function ( scene, camera ) {
+
+        scene.updateMatrixWorld();
+
+        if ( camera.parent === undefined ) camera.updateMatrixWorld();
+    
+        camera.matrixWorld.decompose( _this._position, _this._quaternion, _this._scale );
+
+        // left
+        _this._cameraL.copy(camera);
+        _this._cameraL.aspect = 0.5 * camera.aspect;
+        _this._cameraL.updateProjectionMatrix();
+        
+/*
+        _this._cameraL.fov = camera.fov;
+        _this._cameraL.aspect = 0.5 * camera.aspect;
+        _this._cameraL.near = camera.near;
+        _this._cameraL.far = camera.far;
+        _this._cameraL.updateProjectionMatrix();
+
+        _this._cameraL.position.copy( _this._position );
+        // _this._cameraL.quaternion.copy( _this._quaternion );
+*/
+        _this._cameraL.translateX( - _this.separation );
+
+        // right
+        _this._cameraR.copy(camera);
+        _this._cameraR.aspect = 0.5 * camera.aspect;
+        _this._cameraR.updateProjectionMatrix();
+
+/*
+        _this._cameraR.fov = camera.fov;
+        _this._cameraR.aspect = 0.5 * camera.aspect;
+        _this._cameraR.near = camera.near;
+        _this._cameraR.far = camera.far;
+        // _this._cameraR.projectionMatrix = _this._cameraL.projectionMatrix;
+        _this._cameraR.updateProjectionMatrix();
+
+        _this._cameraR.position.copy( _this._position );
+        // _this._cameraR.quaternion.copy( _this._quaternion );
+*/
+
+        _this._cameraR.translateX( _this.separation );
+
+        //
+
+        renderer.setViewport( 0, 0, _this._width * 2, _this._height );
+        renderer.clear();
+
+        renderer.setViewport( 0, 0, _this._width, _this._height );
+        renderer.render( scene, _this._cameraL );
+
+        renderer.setViewport( _this._width, 0, _this._width, _this._height );
+        renderer.render( scene, _this._cameraR );
+
+    };
+
+};
+
 
 
 // ; var __CIFTools = function () {
@@ -9709,6 +9805,7 @@ var icn3d = (function (exports) {
 
         applyShownMenus(bNoSave) { let me = this.icn3dui; me.icn3d;
             let idArray = [];
+
             for(let id in me.htmlCls.allMenus) {
                 if(me.htmlCls.shownMenus.hasOwnProperty(id)) {
                     $("#" + me.pre + id).parent().show();
@@ -9939,6 +10036,14 @@ var icn3d = (function (exports) {
                me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
             });
 
+            me.myEventCls.onIds("#" + me.pre + "mn1_clustalwfile", "click", function(e) { me.icn3d; //e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_clustalwfile', 'Please input CLUSTALW MSA File');
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_fastafile", "click", function(e) { me.icn3d; //e.preventDefault();
+                me.htmlCls.dialogCls.openDlg('dl_fastafile', 'Please input FASTA MSA File');
+            });
+
             me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { me.icn3d; //e.preventDefault();
                me.htmlCls.dialogCls.openDlg('dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
             });
@@ -10038,6 +10143,11 @@ var icn3d = (function (exports) {
                let file_pref = Object.keys(ic.structures).join(',');
 
                ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportVideo", "click", function(e) { me.icn3d; //e.preventDefault();
+             thisClass.setLogCmd("export video", false);
+             me.htmlCls.dialogCls.openDlg('dl_video', 'Save canvas changes in a video');
             });
 
 
@@ -11732,6 +11842,18 @@ var icn3d = (function (exports) {
                //}
             });
 
+            me.myEventCls.onIds("#" + me.pre + "mn6_stereoYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+                ic.opts['effect'] = 'stereo';
+                ic.drawCls.draw();
+                thisClass.setLogCmd('stereo on', true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn6_stereoNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+                ic.opts['effect'] = 'none';
+                ic.drawCls.draw();
+                thisClass.setLogCmd('stereo off', true);
+            });
+
             $(document).on("click", "#" + me.pre + "mn2_translate", function(e) { me.icn3d; //e.preventDefault();
                me.htmlCls.dialogCls.openDlg('dl_translate', 'Translate the X,Y,Z coordinates of the structure');
             });
@@ -12745,9 +12867,19 @@ var icn3d = (function (exports) {
             html += this.getLink('mn1_mol2file', 'Mol2 File', undefined, 2);
             html += this.getLink('mn1_sdffile', 'SDF File', undefined, 2);
             html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
+
+            html += this.getMenuSep();
+
+            html += this.getMenuText('mn1_msawrap', 'Multiple Seq. Alignment', undefined, undefined, 2);
+            html += "<ul>";
+            html += this.getLink('mn1_clustalwfile', 'CLUSTALW Format', undefined, 3);
+            html += this.getLink('mn1_fastafile', 'FASTA Format', undefined, 3);
+            html += "</ul>";
+
             html += this.getLink('mn1_afmapfile', 'AlphaFold PAE File', undefined, 2);
 
             html += this.getLink('mn1_urlfile', 'URL(CORS) ' + me.htmlCls.wifiStr, undefined, 2);
+            
             html += this.getMenuSep();
             html += this.getLink('mn1_pngimage', 'iCn3D PNG (appendable)', 1, 2);
             html += this.getLink('mn1_state', 'State/Script File', undefined, 2);
@@ -12854,6 +12986,7 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
+            html += this.getLink('mn1_exportVideo', 'Video', undefined, 2);
             html += this.getLink('mn1_exportState', 'State File', undefined, 2);
             html += this.getLink('mn1_exportSelections', 'Selection File', undefined, 2);
             html += this.getLink('mn1_exportSelDetails', 'Selection Details', undefined, 2);
@@ -13068,6 +13201,13 @@ var icn3d = (function (exports) {
             html += "<ul>";
             html += this.getMenuUrl("vrhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#vr", "VR: VR Headsets", undefined, 2);
             html += this.getMenuUrl("arhint", me.htmlCls.baseUrl + "icn3d/icn3d.html#ar", "AR: Chrome in Android", undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+
+            html += this.getMenuText('mn6_stereoWrapper', 'Stereo View', undefined, undefined, 1);
+            html += "<ul>";
+            html += this.getRadio('mn6_stereo', 'mn6_stereoYes', 'On', undefined, undefined, 2);
+            html += this.getRadio('mn6_stereo', 'mn6_stereoNo', 'Off', true, undefined, 2);
             html += "</ul>";
             html += "</li>";
 
@@ -15100,6 +15240,19 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_clustalwfile' class='" + dialogClass + "' style='max-width:500px'>";
+            html += this.addNotebookTitle('dl_clustalwfile', 'Please input a CLUSTALW MSA file');
+            html += "Note the sequence names are either UniProt ID (e.g., A4D1S0 or A4D1S0_A), RefSeq ID (e.g., NP_001743), or PDB chain ID (e.g., 1HHO_A).<br><br>";
+            html += "CLUSTALW File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "clustalwfile' size=8> ";
+            html += me.htmlCls.buttonStr + "reload_clustalwfile'>Load</button><br>";
+            html += "</div>";
+            html += me.htmlCls.divStr + "dl_fastafile' class='" + dialogClass + "' style='max-width:500px'>";
+            html += this.addNotebookTitle('dl_fastafile', 'Please input a FASTA file');
+            html += "Note the sequence IDs following the symbol \">\" contain either UniProt ID (e.g., sp| or tr|), RefSeq ID (e.g., ref|), PDB chain ID (e.g., pdb|1HHO|A), or iCn3D chain ID (e.g., A4D1S0_A, 1HHO_A).<br><br>";
+            html += "FASTA File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "fastafile' size=8> ";
+            html += me.htmlCls.buttonStr + "reload_fastafile'>Load</button><br>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
             html += this.addNotebookTitle('dl_afmapfile', 'Please input an AlphaFold PAE file');
             html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
@@ -15217,6 +15370,12 @@ var icn3d = (function (exports) {
             html += this.addNotebookTitle('dl_state', 'Please input a state file');
             html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
             html += me.htmlCls.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
+            html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
+            html += me.htmlCls.buttonStr + "video_start' style='margin-top: 6px;'>Video Start</button>";
+            html += me.htmlCls.buttonStr + "video_end' style='margin: 6px 0px 0px 30px;'>Video End</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_fixedversion' style='max-width:500px' class='" + dialogClass + "'>";
@@ -16578,17 +16737,10 @@ var icn3d = (function (exports) {
             }
         }
 
-        async loadPdbFile(bAppend, fileId, bmmCIF) { let me = this.icn3dui, ic = me.icn3d;
+        async loadPdbFile(bAppend, fileId, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
            //me = ic.setIcn3dui(this.id);
            ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            let files = $("#" + me.pre + fileId)[0].files;
            if(!files[0]) {
              alert("Please select a file before clicking 'Load'");
@@ -16634,9 +16786,20 @@ var icn3d = (function (exports) {
 
         exportMsa(type) { let me = this.icn3dui, ic = me.icn3d;
             let text = ic.msa[type].join('\n\n');
-            let fileType = (type == 'fasta') ? '.fasta' : (type == 'clustal') ? '.aln' : '.txt';
+            let fileType = (type == 'fasta') ? '.fasta' : (type == 'clustalw') ? '.aln' : '.txt';
 
             ic.saveFileCls.saveFile(ic.inputid + '_align' + fileType, 'text', [text]);
+        }
+
+        iniFileLoad() { let me = this.icn3dui, ic = me.icn3d;
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            //close all dialog
+            if(!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            }
+            else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
         }
 
         async launchMmdb(ids, bBiounit, hostUrl, bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
@@ -17734,16 +17897,40 @@ var icn3d = (function (exports) {
 
             me.htmlCls.setHtmlCls.clickReload_pngimage();
 
+            me.myEventCls.onIds("#" + me.pre + "video_start", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+
+                const canvas = document.getElementById(ic.pre + "canvas");
+                ic.videoRecorder = new MediaRecorder(canvas.captureStream());
+                const recordedChunks = [];
+
+                // Collect data chunks
+                ic.videoRecorder.ondataavailable = event => {
+                    recordedChunks.push(event.data);
+                };
+
+                ic.videoRecorder.onstop = event => {
+                    // Code to save the recordedChunks as a video file
+                    const blob = new Blob(recordedChunks, {type: ic.videoRecorder.mimeType});
+                    let fileName = ic.inputid + '_video';
+                    saveAs(blob, fileName);
+                };
+
+                // Start recording
+                ic.videoRecorder.start();
+                thisClass.setLogCmd('Video revording started', false);
+            });
+     
+            me.myEventCls.onIds("#" + me.pre + "video_end", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+
+                ic.videoRecorder.stop();
+                thisClass.setLogCmd('Video revording ended', false);
+            });
+
             me.myEventCls.onIds("#" + me.pre + "reload_state", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
+               thisClass.iniFileLoad();
                // initialize icn3dui
                //Do NOT clear data if iCn3D loads a pdb or other data file and then load a state file
                if(!ic.bInputfile) {
@@ -17795,12 +17982,7 @@ var icn3d = (function (exports) {
                 if (!file) {
                     alert("Please select a file before clicking 'Load'");
                 } else {
-                if (!me.cfg.notebook) dialog.dialog("close");
-                if (!me.cfg.notebook) {
-                    $(".ui-dialog-content").dialog("close");
-                } else {
-                    ic.resizeCanvasCls.closeDialogs();
-                    }
+                thisClass.iniFileLoad();
                     
                 ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
                 ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
@@ -18355,14 +18537,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                ic.bInitial = true;
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
+               thisClass.iniFileLoad();
                let file = $("#" + me.pre + "mol2file")[0].files[0];
                if(!file) {
                  alert("Please select a file before clicking 'Load'");
@@ -18389,14 +18564,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_sdffile", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                ic.bInitial = true;
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
+               thisClass.iniFileLoad();
                let file = $("#" + me.pre + "sdffile")[0].files[0];
                if(!file) {
                  alert("Please select a file before clicking 'Load'");
@@ -18423,14 +18591,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_xyzfile", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                ic.bInitial = true;
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
+               thisClass.iniFileLoad();
                let file = $("#" + me.pre + "xyzfile")[0].files[0];
                if(!file) {
                  alert("Please select a file before clicking 'Load'");
@@ -18454,17 +18615,64 @@ var icn3d = (function (exports) {
                }
             });
 
+            me.myEventCls.onIds("#" + me.pre + "reload_clustalwfile", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                ic.bInitial = true;
+                thisClass.iniFileLoad();
+
+                let file = $("#" + me.pre + "clustalwfile")[0].files[0];
+                if(!file) {
+                  alert("Please select a file before clicking 'Load'");
+                }
+                else {
+                  me.htmlCls.setHtmlCls.fileSupport();
+                  let reader = new FileReader();
+                  reader.onload = async function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    thisClass.setLogCmd('load CLUSTALW file ' + $("#" + me.pre + "clustalwfile").val(), false);
+                    ic.molTitle = "";
+                    ic.inputid = undefined;
+                    //ic.initUI();
+                    ic.init();
+                    ic.bInputfile = false; //true;
+                    ic.InputfileType = 'clustalw';
+                    await ic.msaParserCls.loadMsaData(dataStr, 'clustalw');
+                  };
+                  reader.readAsText(file);
+                }
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_fastafile", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                ic.bInitial = true;
+                thisClass.iniFileLoad();
+
+                let file = $("#" + me.pre + "fastafile")[0].files[0];
+                if(!file) {
+                  alert("Please select a file before clicking 'Load'");
+                }
+                else {
+                  me.htmlCls.setHtmlCls.fileSupport();
+                  let reader = new FileReader();
+                  reader.onload = async function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    thisClass.setLogCmd('load FASTA file ' + $("#" + me.pre + "fastafile").val(), false);
+                    ic.molTitle = "";
+                    ic.inputid = undefined;
+                    //ic.initUI();
+                    ic.init();
+                    ic.bInputfile = false; //true;
+                    ic.InputfileType = 'fasta';
+                    await ic.msaParserCls.loadMsaData(dataStr, 'fasta');
+                  };
+                  reader.readAsText(file);
+                }
+            });
+
             me.myEventCls.onIds("#" + me.pre + "reload_afmapfile", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 ic.bInitial = true;
-                if(!me.cfg.notebook) dialog.dialog( "close" );
-                //close all dialog
-                if(!me.cfg.notebook) {
-                    $(".ui-dialog-content").dialog("close");
-                }
-                else {
-                    ic.resizeCanvasCls.closeDialogs();
-                }
+                thisClass.iniFileLoad();
                 let file = $("#" + me.pre + "afmapfile")[0].files[0];
                 if(!file) {
                   alert("Please select a file before clicking 'Load'");
@@ -18486,14 +18694,7 @@ var icn3d = (function (exports) {
              me.myEventCls.onIds("#" + me.pre + "reload_afmapfilefull", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
                 ic.bInitial = true;
-                if(!me.cfg.notebook) dialog.dialog( "close" );
-                //close all dialog
-                if(!me.cfg.notebook) {
-                    $(".ui-dialog-content").dialog("close");
-                }
-                else {
-                    ic.resizeCanvasCls.closeDialogs();
-                }
+                thisClass.iniFileLoad();
                 let file = $("#" + me.pre + "afmapfile")[0].files[0];
                 if(!file) {
                   alert("Please select a file before clicking 'Load'");
@@ -18515,14 +18716,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", async function(e) { let ic = me.icn3d;
                e.preventDefault();
                ic.bInitial = true;
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
+               thisClass.iniFileLoad();
                let type = $("#" + me.pre + "filetype").val();
                let url = $("#" + me.pre + "urlfile").val();
                ic.inputurl = 'type=' + type + '&url=' + encodeURIComponent(url);
@@ -19397,8 +19591,8 @@ var icn3d = (function (exports) {
 
             me.myEventCls.onIds("#" + me.pre + "saveClustal", "click", function(e) { me.icn3d;
                 e.stopImmediatePropagation();
-                thisClass.exportMsa('clustal');
-                thisClass.setLogCmd('Save alignment in CLUSTALW format', false);
+                thisClass.exportMsa('clustalw');
+                thisClass.setLogCmd('Save alignment in CLUSTALWW format', false);
             });
 
             me.myEventCls.onIds("#" + me.pre + "saveResbyres", "click", function(e) { me.icn3d;
@@ -20268,7 +20462,7 @@ var icn3d = (function (exports) {
 
           sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + index + "' size='10'> " + me.htmlCls.space2 + "<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
 
-          sequencesHtml += "<div style='min-width:200px; display:inline-block; margin-top:3px'><b>Save Alignment</b>: " + "<button style='white-space:nowrap;' id='" + me.pre + "saveFasta'>FASTA</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveClustal'>CLUSTAL</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveResbyres'>Residue by Residue</button></div><br/>";
+          sequencesHtml += "<div style='min-width:200px; display:inline-block; margin-top:3px'><b>Save Alignment</b>: " + "<button style='white-space:nowrap;' id='" + me.pre + "saveFasta'>FASTA</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveClustal'>CLUSTALW</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveResbyres'>Residue by Residue</button></div><br/>";
 
           sequencesHtml += me.htmlCls.divStr + "alignseqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
 
@@ -27524,7 +27718,12 @@ var icn3d = (function (exports) {
             ic.cams = {
                 perspective: ic.perspectiveCamera,
                 orthographic: ic.orthographicCamera,
-            };       
+            };  
+            
+            if(!me.bNode && ic.opts['effect'] == 'stereo' && !window.icn3duiHash) {
+                ic.effect = ic.effects[options.effect];
+                ic.effect.setSize(ic.container.width(), ic.container.height());
+            }
         };
 
         setVrAr() { let ic = this.icn3d; ic.icn3dui;
@@ -31246,8 +31445,9 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                // add one extra residue for coils between strands/helix
-                if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
+                // add one extra residue for coils between strands/helix if the style is NOT stick, ball and stick, lines, sphere, and dot
+                // if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
+                if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil' && firstAtom.style != 'stick' && firstAtom.style != 'ball and stick' && firstAtom.style != 'lines' && firstAtom.style != 'sphere' && firstAtom.style != 'dot') {
                         let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                         if(ic.residues.hasOwnProperty(residueid)) {
                             atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
@@ -31282,8 +31482,8 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                // add one extra residue for coils between strands/helix
-                if(ic.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
+                // add one extra residue for coils between strands/helix if the style is NOT stick, ball and stick, lines, sphere, and dot
+                if(ic.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil' && firstAtom.style != 'stick' && firstAtom.style != 'ball and stick' && firstAtom.style != 'lines' && firstAtom.style != 'sphere' && firstAtom.style != 'dot') {
                         let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (parseInt(lastAtom.resi) + 1).toString();
                         if(ic.residues.hasOwnProperty(residueid)) {
                             atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
@@ -34133,6 +34333,7 @@ var icn3d = (function (exports) {
             }
             else {
                 // let index2ori = {};
+                let maxdist = this.maxdist;
                 for(let serial in atomlist) {
                     let atom = atoms[atomlist[serial]];
 
@@ -34149,11 +34350,11 @@ var icn3d = (function (exports) {
                     }
 
                     // show map near the structure
-                    for(i = Math.floor(r.x) - this.maxdist, il = Math.ceil(r.x) + this.maxdist; i <= il; ++i) {
+                    for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
                         if(i < 0 || i > this.header.xExtent*this.scaleFactor - 1) continue;
-                        for(j = Math.floor(r.y) - this.maxdist, jl = Math.ceil(r.y) + this.maxdist; j<= jl; ++j) {
+                        for(j = Math.floor(r.y) - maxdist, jl = Math.ceil(r.y) + maxdist; j<= jl; ++j) {
                             if(j < 0 || j > this.header.yExtent*this.scaleFactor - 1) continue;
-                            for(k = Math.floor(r.z) - this.maxdist, kl = Math.ceil(r.z) + this.maxdist; k<= kl; ++k) {
+                            for(k = Math.floor(r.z) - maxdist, kl = Math.ceil(r.z) + maxdist; k<= kl; ++k) {
                                 if(k < 0 || k > this.header.zExtent*this.scaleFactor - 1) continue;
                                 let index = i * widthHeight + j * height + k;
                                 indexArray.push(index);
@@ -34161,6 +34362,16 @@ var icn3d = (function (exports) {
                         }
                     }
                 }
+
+                // show all
+                // for(i = 0; i < this.pLength; ++i) {
+                //     for(j = 0; j < this.pWidth; ++j) {
+                //         for(k = 0; k < this.pHeight; ++k) {
+                //             let index = i * widthHeight + j * height + k;
+                //             indexArray.push(index);
+                //         }
+                //     }
+                // }
 
                 for(i = 0, il = indexArray.length; i < il; ++i) {
                     let index = indexArray[i];
@@ -35423,6 +35634,7 @@ var icn3d = (function (exports) {
                     for(let residueid in singletonResidueHash) {
                         // get calpha
                         let calpha = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                        let sideAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.selectionCls.getSideAtoms(ic.residues[residueid]));
                         let atom = calpha;
 
                         let prevResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
@@ -35439,7 +35651,7 @@ var icn3d = (function (exports) {
                         }
                         else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'o3 trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
                             // do not add extra residue if the side chain is shown
-                            if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+                            if(sideAtom !== undefined && sideAtom.style2 !== undefined && sideAtom.style2 !== 'nothing') continue;
 
                             let bAddResidue = false;
                             // add the next residue with same style
@@ -35474,7 +35686,7 @@ var icn3d = (function (exports) {
                         }
                         else if( (atom.style === 'ribbon' && atom.ss !== 'coil' && atom.ssend) || (atom.style === 'strand' && atom.ss !== 'coil' && atom.ssend)) {
                             // do not add extra residue if the side chain is shown
-                            if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+                            if(sideAtom !== undefined && sideAtom.style2 !== undefined && sideAtom.style2 !== 'nothing') continue;
 
                             let bAddResidue = false;
                             // add the next residue with same style
@@ -38359,11 +38571,18 @@ var icn3d = (function (exports) {
             }
 
             if(ic.scene) {
+                ic.renderer.clear();
+                
                 // https://github.com/gkjohnson/three-gpu-pathtracer/blob/main/example/basic.js
                 ic.renderer.outputEncoding = THREE.sRGBEncoding;
                 //ic.renderer.outputEncoding = THREE.LinearEncoding
 
-                ic.renderer.render(ic.scene, cam);
+                if(ic.opts['effect'] == 'stereo' && !window.icn3duiHash) {
+                    ic.effect.render(ic.scene, cam);
+                }
+                else {
+                    ic.renderer.render(ic.scene, cam);
+                }           
             }
         }
 
@@ -52740,13 +52959,20 @@ var icn3d = (function (exports) {
             }
             // do not change the set of displaying atoms
             //ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
-            let commandname, commanddesc;
+            let commandname, commanddesc, commandname2;
             let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomlistTarget);
+
             if(firstAtom !== undefined) {
                 commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
-                if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                //sometimes firstAtom.resi changed, thus we add a general name
+                commandname2 = "sphere-" + radius + "A";
+                if(bInteraction) {
+                    commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                    commandname2 = "interactions-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                }
                 commanddesc = commandname;
                 ic.selectionCls.addCustomSelection(residueArray, commandname, commanddesc, select, true);
+                ic.selectionCls.addCustomSelection(residueArray, commandname2, commanddesc, select, true);
             }
             ic.selectionCls.saveSelectionIfSelected();
             ic.drawCls.draw();
@@ -54924,6 +55150,7 @@ var icn3d = (function (exports) {
 
                         ajaxArray.push(alignAjax);
                         indexArray.push(index - 1);
+                        mmdbid_q = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
                         struArray.push(mmdbid_q);
                     }
 
@@ -54952,7 +55179,8 @@ var icn3d = (function (exports) {
                 let mmdbid_q = struArray[i];
                 let index = indexArray[i];
 
-                let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                // let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                let bEqualMmdbid = (mmdbid_q.substr(0,4) == mmdbid_t.substr(0,4));
                 let bEqualChain = false;
 
                 let queryData = {}; // check whether undefined
@@ -55202,7 +55430,7 @@ var icn3d = (function (exports) {
 
         transformStructure(mmdbid, index, alignType, bForce) { let ic = this.icn3d, me = ic.icn3dui;
             let chainidArray = ic.structures[mmdbid];
-
+            
             for(let i = 0, il = chainidArray.length; i < il; ++i) {
                 for(let serial in ic.chains[chainidArray[i]]) {
                     let atm = ic.atoms[serial];
@@ -55334,6 +55562,26 @@ var icn3d = (function (exports) {
             return chainidArray;
         }
 
+        addPostfixForStructureids(structArray) { let ic = this.icn3d; ic.icn3dui;
+            let struct2cnt = {};
+            for(let i = 0, il = structArray.length; i < il; ++i) {
+                let struct = structArray[i].toUpperCase(); 
+
+                if(!struct2cnt.hasOwnProperty(struct)) {
+                    struct2cnt[struct] = 1;
+                }
+                else {
+                    ++struct2cnt[struct];
+                }
+
+                struct = (struct2cnt[struct] == 1) ? struct : struct + struct2cnt[struct];
+
+                structArray[i] = struct;
+            }
+
+            return structArray;
+        }
+
         async downloadChainalignment(chainalign) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
@@ -55375,6 +55623,7 @@ var icn3d = (function (exports) {
 
             ic.afChainIndexHash = {};
             ic.pdbChainIndexHash = {};
+
             for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
                 let pos2 = alignArray[index].indexOf('_');
                 let mmdbid_q_tmp = alignArray[index].substr(0, pos2).toUpperCase();
@@ -55482,7 +55731,8 @@ var icn3d = (function (exports) {
 
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                     ) {
-                    ic.mmdbidArray.push(mmdbid_q);
+                    // ic.mmdbidArray.push(mmdbid_q);
+                    ic.mmdbidArray.push(mmdbid_q.substr(0,4));
                     queryDataArray.push(queryData);
                 }
                 else {
@@ -55521,7 +55771,8 @@ var icn3d = (function (exports) {
                         // let align = (me.bNode) ? dataArray[index2 - missedChainCnt] : dataArray[index2 - missedChainCnt].value;//[0];
                         let align = dataArray[index2 - missedChainCnt].value;//[0];
 
-                        let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                        // let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                        let bEqualMmdbid = (mmdbid_q.substr(0,4) == mmdbid_t.substr(0,4));
                         let bEqualChain = (chain_q == chain_t);
 
                         me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
@@ -55692,15 +55943,14 @@ var icn3d = (function (exports) {
 
             let structArray = [];
 
-            for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
-                let id = structArrayTmp[i].toUpperCase();
-                // sometimes we want to load same structure multiple times
-                if(!ic.structures.hasOwnProperty(id) && structArray.indexOf(id) == -1) {
-                    structArray.push(structArrayTmp[i]);
-                }
-                else {
-                    // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
-                    if(!bNoDuplicate) structArray.push(structArrayTmp[i] + me.htmlCls.postfix);
+            // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
+            if(!bNoDuplicate) {
+                structArray =  this.addPostfixForStructureids(structArrayTmp);
+            }
+            else {
+                for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
+                    let id = structArrayTmp[i].toUpperCase();
+                    if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
                 }
             }
             
@@ -59699,6 +59949,283 @@ var icn3d = (function (exports) {
      * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
      */
 
+    class MsaParser {
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        async loadMsaData(data, type) { let ic = this.icn3d, me = ic.icn3dui;
+            let bResult = await this.loadMsaSeqData(data, type);
+
+            if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+                $("#" + ic.pre + "alternateWrapper").hide();
+            }
+
+            let typeStr = type.toUpperCase();
+
+            if(!bResult) {
+              alert('The ' + typeStr + ' file has the wrong format...');
+            }
+            else {
+                // retrieve the structures
+                me.cfg.bu = 0; // show all chains
+                await ic.chainalignParserCls.downloadMmdbAf(ic.struArray.join(','));
+                me.htmlCls.clickMenuCls.setLogCmd('load mmdbaf0 ' + ic.struArray.join(','), true);
+
+                // get the position of the first MSA residue in the full sequence
+                let startPosArray = []; 
+                for(let i = 0, il = ic.inputChainidArray.length; i < il; ++i) {
+                    let chainid = ic.inputChainidArray[i];
+                    let inputSeqNoGap = ic.inputSeqArray[i].replace(/-/g, '');
+
+                    // get the full seq
+                    let fullSeq = '';
+                    for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                        fullSeq += ic.chainsSeq[chainid][j].name;
+                    }
+
+                    // find the starting position of "inputSeq" in "fullSeq" 
+                    let pos = fullSeq.toUpperCase().indexOf(inputSeqNoGap.substr(0, 20).toUpperCase());
+                    if(pos == -1) {
+                        console.log("The sequence of the aligned chain " + chainid + " (" + inputSeqNoGap.toUpperCase() + ") is different from the sequence from the structure (" + fullSeq.toUpperCase() + "), and is thus not aligned correctly...");
+                        pos = 0;
+                    }
+                    startPosArray.push(pos);
+                }
+
+                // define residue mapping
+                // The format is ": "-separated pairs: "1,5,10-50 | 1,5,10-50: 2,6,11-51 | 1,5,10-50"
+                let predefinedres = '';
+
+                let chainid1 = ic.inputChainidArray[0], inputSeq1 = ic.inputSeqArray[0], pos1 = startPosArray[0];
+                // loop through 2nd and forward
+                for(let i = 1, il = ic.inputChainidArray.length; i < il; ++i) {
+                    let chainid2 = ic.inputChainidArray[i];
+                    let inputSeq2 = ic.inputSeqArray[i];
+                    let pos2 = startPosArray[i];
+
+                    let index1 = pos1, index2 = pos2;
+                    let resiArray1 = [], resiArray2 = [];
+                    for(let j = 0, jl = inputSeq2.length; j < jl; ++j) {
+                        if(inputSeq1[j] != '-' && inputSeq2[j] != '-' && ic.chainsSeq[chainid1][index1] && ic.chainsSeq[chainid2][index2]) {
+                            let resi1 = ic.chainsSeq[chainid1][index1].resi;
+                            let resi2 = ic.chainsSeq[chainid2][index2].resi;
+                            if(ic.residues[chainid1 + '_' + resi1] && ic.residues[chainid2 + '_' + resi2]) {
+                                resiArray1.push(ic.chainsSeq[chainid1][index1].resi);
+                                resiArray2.push(ic.chainsSeq[chainid2][index2].resi);
+                            }
+                        }
+                        
+                        if(inputSeq1[j] != '-') ++index1;
+                        if(inputSeq2[j] != '-') ++index2;
+                    }
+                    let resiRangeStr1 = ic.resid2specCls.resi2range(resiArray1, true);
+                    let resiRangeStr2 = ic.resid2specCls.resi2range(resiArray2, true);
+
+                    predefinedres += resiRangeStr1 + ' | ' + resiRangeStr2;
+                    if(i < il -1) predefinedres += ': ';
+                }
+
+                // realign based on residue by residue
+                let alignment_final = ic.inputChainidArray.join(',');
+
+                if(predefinedres && (alignment_final.split(',').length - 1) != predefinedres.split(': ').length) {
+                    alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                    return;
+                }
+
+                me.cfg.resdef = predefinedres.replace(/:/gi, ';');
+
+                let bRealign = true, bPredefined = true;
+                let chainidArray = alignment_final.split(',');
+                await ic.realignParserCls.realignChainOnSeqAlign(undefined, chainidArray, bRealign, bPredefined);
+     
+                me.htmlCls.clickMenuCls.setLogCmd("realign predefined " + alignment_final + " " + predefinedres, true);
+
+
+                ic.opts['color'] = 'identity';
+                ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+                me.htmlCls.clickMenuCls.setLogCmd("color identity", true);
+
+                // show selection
+                ic.selectionCls.showSelection();
+                me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+            }
+        }
+
+        async loadMsaSeqData(data, type) { let ic = this.icn3d; ic.icn3dui;
+            let lines = data.split(/\r?\n|\r/);
+            if(lines.length < 2) return false;
+
+            ic.init();
+
+            ic.molTitle = "";
+
+            let seqHash = {};
+
+            let bStart = false, bSecBlock = false, chainid = '', seq = '', bFound = false;
+
+            if(type == 'clustalw' && lines[0].substr(0,7) != 'CLUSTAL') { // CLUSTAL W or CLUSTALW
+                return false;
+            }
+
+            let startLineNum = (type == 'clustalw') ? 1 : 0;
+
+            // 1. parse input msa
+            for(let i = startLineNum, il = lines.length; i < il; ++i) {
+                let line = lines[i].trim();
+                if(line === '') {
+                    if(bStart) bSecBlock = true;
+                    bStart = false;
+                    continue;
+                }
+
+                if(!bStart) { // first line
+                    if(type == 'fasta' && line.substr(0,1) != '>') {
+                        return false;
+                    }
+                    bStart = true;
+                }
+
+                if(type == 'clustalw') {
+                    if(line.substr(0, 1) != ' ' && line.substr(0, 1) != '\t') {
+                        let chainid_seq = line.split(/\s+/);
+                        let idArray = chainid_seq[0].split('|');
+                        let result = this.getChainid(idArray, bStart && !bSecBlock);
+                        bFound = result.bFound;
+                        chainid = result.chainid;
+
+                        if(bFound) {
+                            if(!seqHash.hasOwnProperty(chainid)) {
+                                seqHash[chainid] = chainid_seq[1];
+                            }
+                            else {
+                                seqHash[chainid] += chainid_seq[1];
+                            }
+                        }
+                    }
+                }
+                else if(type == 'fasta') {
+                    if(line.substr(0,1) == ">") {
+                        // add the previous seq
+                        if(chainid && seq && bFound) seqHash[chainid] = seq;
+                        chainid = '';
+                        seq = '';
+
+                        let pos = line.indexOf(' ');
+                        let idArray = line.substr(1, pos).split('|');
+                        
+                        if(idArray.length == 1) {
+                            chainid = idArray[0];
+                        }
+                        else {
+                            let result = this.getChainid(idArray, true);
+                            bFound = result.bFound;
+                            chainid = result.chainid;
+                        }
+                    }
+                    else {
+                        seq += line;
+                    }
+                }
+            }
+
+            // add the last seq
+            if(type == 'fasta' && chainid && seq && bFound) seqHash[chainid] = seq;
+
+            // 2. get the PDB ID or RefSeqID or AlphaFold ID
+            ic.inputChainidArray = [];
+            ic.inputSeqArray = [];
+            ic.struArray = [];
+
+            // find the tempate where the first residue is not gap
+            let template = '';
+            for(let chainid in seqHash) {
+                let seq = seqHash[chainid];
+                if(seq.substr(0,1) != '-') {
+                    template = chainid;
+                    await this.processOneChain(chainid, seqHash);
+                    break;
+                }
+            }
+            if(!template) template = Object.keys(seqHash)[0];
+
+            for(let chainid in seqHash) {
+                if(chainid != template) await this.processOneChain(chainid, seqHash);
+            }
+
+            return true;
+        }
+
+        async processOneChain(chainid, seqHash) { let ic = this.icn3d, me = ic.icn3dui;
+            ic.inputSeqArray.push(seqHash[chainid]);
+            // ic.inputSeqArray.push(seqHash[chainid].replace(/-/g, '')); // remove the gaps in seq
+
+            if(chainid.lastIndexOf('_') == 2) { // refseq ID
+                // convert refseq to uniprot id
+                let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?refseq2uniprot=" + chainid;
+        
+                let data = await me.getAjaxPromise(url, 'jsonp', false, 'The protein accession ' + chainid + ' can not be mapped to AlphaFold UniProt ID...');
+                if(data && data.uniprot) {
+                    if(!ic.uniprot2acc) ic.uniprot2acc = {};
+                    let uniprot = data.uniprot;
+                    ic.uniprot2acc[uniprot] = chainid;
+                    ic.struArray.push(uniprot);
+                    ic.inputChainidArray.push(uniprot + '_A');
+                }
+                else {
+                    console.log('The accession ' + refseqid + ' can not be mapped to AlphaFold UniProt ID. It will be treated as a UniProt ID instead.');
+                    ic.struArray.push(chainid);
+                    ic.inputChainidArray.push(chainid + '_A');
+                }
+            }
+            else if(chainid.indexOf('_') != -1) { // PDB ID
+                let stru = chainid.substr(0, chainid.indexOf('_')).substr(0, 4);
+                ic.struArray.push(stru);
+                ic.inputChainidArray.push(chainid);
+            }
+            else if(chainid.length > 5) { // UniProt ID
+                ic.struArray.push(chainid);
+                ic.inputChainidArray.push(chainid + '_A');
+            }
+        }
+
+        getChainid(idArray, bWarning) { let ic = this.icn3d; ic.icn3dui;
+            let bFound = false;
+            let chainid = idArray[0];
+
+            for(let j = 0, jl = idArray.length; j < jl; ++j) {
+                if(idArray[j] == 'pdb') {
+                    chainid = idArray[j+1] + '_' + idArray[j+2];
+                    bFound = true;
+                    break;
+                }
+                else if(idArray[j] == 'ref') { // refseq
+                    let refseq = idArray[j+1].split('.')[0];
+                    chainid = refseq; // + '_A';
+                    bFound = true;
+                    break;
+                }
+                else if(idArray[j] == 'sp' || idArray[j] == 'tr') { // uniprot
+                    let uniprot = idArray[j+1];
+                    chainid = uniprot;
+                    bFound = true;
+                    break;
+                }
+            }
+
+            if(!bFound && bWarning) {
+                alert("The sequence ID " + idArray.join('|') + " does not have the correctly formatted PDB, UniProt or RefSeq ID...");
+            }
+
+            return {chainid: chainid, bFound: bFound};
+        }
+    }
+
+    /**
+     * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+     */
+
     class RealignParser {
         constructor(icn3d) {
             this.icn3d = icn3d;
@@ -59836,7 +60363,7 @@ var icn3d = (function (exports) {
           // If rmsd from vastsrv is too large, realign the chains
           //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
           // redo algnment only for VAST serv page 
-          if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {    
+          if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5 && me.cfg.chainalign) {    
             console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align."); 
             //let nameArray = me.cfg.chainalign.split(',');
             let nameArray = Object.keys(chainidHash);
@@ -60292,7 +60819,8 @@ var icn3d = (function (exports) {
             let predefinedResArray, predefinedResPair;
 
             if(bPredefined) {
-                predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
+                // predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
+                predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split('; ');
                 
                 if(predefinedResArray.length != chainidArray.length - 1) {
                    alert("Please make sure the number of chains and the lines of predefined residues are the same...");
@@ -60569,7 +61097,7 @@ var icn3d = (function (exports) {
            let thisClass = this;
 
            let url;
-           let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 2 : 4; //0 : 4;
+           let detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0 : 4; // max 6
 
            //https://www.ebi.ac.uk/pdbe/densities/doc.html
            if(type == '2fofc' || type == 'fofc') {
@@ -60580,6 +61108,7 @@ var icn3d = (function (exports) {
                 url = "https://www.ebi.ac.uk/pdbe/volume-server/x-ray/" + pdbid.toLowerCase() + "/box/" + min_max[0][0] + "," + min_max[0][1] + "," + min_max[0][2] + "/" + min_max[1][0] + "," + min_max[1][1] + "," + min_max[1][2] + "?detail=" + detail;
            }
            else if(type == 'em') {
+               detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0: 5; // max 6
                url = "https://www.ebi.ac.uk/pdbe/densities/emd/" + emd.toLowerCase() + "/cell?detail=" + detail;
            }
 
@@ -62153,11 +62682,12 @@ var icn3d = (function (exports) {
           
           // set defined sets before loadScript
           if(ic.bInitial) {
-            if(me.cfg.mobilemenu) {
-                me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
-                let bNoSave = true;
-                me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
-            }
+            // if(me.cfg.mobilemenu) {
+            //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+            //     let bNoSave = true;
+            //     me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
+            // }
+
             // else {
             //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
             //     me.htmlCls.clickMenuCls.applyShownMenus();
@@ -64629,7 +65159,7 @@ var icn3d = (function (exports) {
 
         setMsaFormat(chainidArray) { let ic = this.icn3d; ic.icn3dui;
             //set MSA
-            let fastaFormat = '', clustalFormat = 'CLUSTALW\n\n', resbyresFormat = '';
+            let fastaFormat = '', clustalwFormat = 'CLUSTALWW\n\n', resbyresFormat = '';
             let chainArrayClustal = [];
             
             let consArray = [], resiArrayTemplate = [];
@@ -64638,8 +65168,8 @@ var icn3d = (function (exports) {
                 let chainid = chainidArray[i];
                 fastaFormat += '>' + chainid + '\n';
 
-                let clustalArray = [];
-                let clustalLine = chainid.padEnd(20, ' ');
+                let clustalwArray = [];
+                let clustalwLine = chainid.padEnd(20, ' ');
                 let consLine = ''.padEnd(20, ' ');
 
                 let resiArrayTarget = [], resiArrayQuery = [];
@@ -64648,7 +65178,7 @@ var icn3d = (function (exports) {
                 for(let j = 0, jl = ic.alnChainsSeq[chainid].length; j < jl; ++j) {
                     let resn = ic.alnChainsSeq[chainid][j].resn;
                     fastaFormat += resn;
-                    clustalLine += resn;
+                    clustalwLine += resn;
                     if(i == il - 1) {
                         let alignedClass = ic.alnChainsSeq[chainid][j].class;
                         if(alignedClass == 'icn3d-cons') {
@@ -64667,7 +65197,8 @@ var icn3d = (function (exports) {
                         resiArrayTemplate.push(ic.alnChainsSeq[chainid][j].resi);
                     }
                     else {
-                        if(ic.alnChainsSeq[chainid][j].aligned) {
+                        // if(ic.alnChainsSeq[chainid][j].aligned) {
+                        if(ic.alnChainsSeq[chainid][j].aligned && ic.alnChainsSeq[chainidTemplate][j] && ic.alnChainsSeq[chainid][j]) {
                             resiArrayTarget.push(ic.alnChainsSeq[chainidTemplate][j].resi);
                             resiArrayQuery.push(ic.alnChainsSeq[chainid][j].resi);
                         }
@@ -64677,9 +65208,9 @@ var icn3d = (function (exports) {
 
                     if(cnt % 60 == 0) {
                         fastaFormat += '\n';
-                        clustalLine += ' ' + String(parseInt(cnt / 60) * 60);
-                        clustalArray.push(clustalLine);
-                        clustalLine = chainid.padEnd(20, ' ');
+                        clustalwLine += ' ' + String(parseInt(cnt / 60) * 60);
+                        clustalwArray.push(clustalwLine);
+                        clustalwLine = chainid.padEnd(20, ' ');
 
                         if(i == il - 1) {
                             consArray.push(consLine);
@@ -64690,7 +65221,7 @@ var icn3d = (function (exports) {
 
                 // add last line
                 if(cnt % 60 != 0) {
-                    clustalArray.push(clustalLine);
+                    clustalwArray.push(clustalwLine);
                     if(i == il - 1) {
                         consArray.push(consLine);
                     }
@@ -64698,7 +65229,7 @@ var icn3d = (function (exports) {
 
                 fastaFormat += '\n';
 
-                chainArrayClustal.push(clustalArray);
+                chainArrayClustal.push(clustalwArray);
                 if(i == il - 1) chainArrayClustal.push(consArray);
 
                 // residue by residue
@@ -64708,23 +65239,23 @@ var icn3d = (function (exports) {
                 if(i > 0) resbyresFormat += resiRangeStr1 + ' | ' + resiRangeStr2 + '\n';
             }
 
-            // CLUSTALW
+            // CLUSTALWW
             for(let j = 0, jl = chainArrayClustal[0].length; j < jl; ++j) {
                 for(let i = 0, il = chainArrayClustal.length; i < il; ++i) {
-                    clustalFormat += chainArrayClustal[i][j] + '\n';
+                    clustalwFormat += chainArrayClustal[i][j] + '\n';
                 }
-                clustalFormat += '\n';
+                clustalwFormat += '\n';
             }
             
             // seq MSA
             if(!ic.msa) ic.msa = {};
 
             if(!ic.msa['fasta']) ic.msa['fasta'] = [];
-            if(!ic.msa['clustal']) ic.msa['clustal'] = [];
+            if(!ic.msa['clustalw']) ic.msa['clustalw'] = [];
             if(!ic.msa['resbyres']) ic.msa['resbyres'] = [];
 
             ic.msa['fasta'].push(fastaFormat);
-            ic.msa['clustal'].push(clustalFormat);
+            ic.msa['clustalw'].push(clustalwFormat);
             ic.msa['resbyres'].push(resbyresFormat);
         }
     }
@@ -67480,6 +68011,12 @@ var icn3d = (function (exports) {
           else if(command == 'set slab off') {
             ic.opts['slab'] = 'no';
           }
+          else if(command == 'stereo on') {
+            ic.opts['effect'] = 'stereo';
+          }
+          else if(command == 'stereo off') {
+            ic.opts['effect'] = 'none';
+          }
           else if(command == 'set assembly on') {
             ic.bAssembly = true;
           }
@@ -69553,16 +70090,26 @@ var icn3d = (function (exports) {
            } // outer for
         }
 
-        setHAtomsFromSets(nameArray, type) { let ic = this.icn3d, me = ic.icn3dui;
+        setHAtomsFromSets(nameArray, type) { let ic = this.icn3d; ic.icn3dui;
            for(let i = 0; i < nameArray.length; ++i) {
              let selectedSet = nameArray[i];
 
-             if((ic.defNames2Atoms === undefined || !ic.defNames2Atoms.hasOwnProperty(selectedSet)) &&(ic.defNames2Residues === undefined || !ic.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+             this.setHAtomsFromSets_base(selectedSet, type);
 
+             // sometimes the "resi" changed and thus the name changed
+             //"sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+             if(Object.keys(ic.hAtoms).length == 0 && (selectedSet.split('.')[0] == 'sphere' || selectedSet.split('.')[0] == 'interactions')) {
+                let pos = selectedSet.lastIndexOf('-');
+                selectedSet = selectedSet.split('.')[0] + selectedSet.substr(pos);
+                this.setHAtomsFromSets_base(selectedSet, type);
+             }
+           } // outer for
+        }
+
+        setHAtomsFromSets_base(selectedSet, type) { let ic = this.icn3d, me = ic.icn3dui;
              if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(selectedSet)) {
 
                  let atomArray = ic.defNames2Atoms[selectedSet];
-
                  if(type === 'or') {
                      for(let j = 0, jl = atomArray.length; j < jl; ++j) {
                          ic.hAtoms[atomArray[j]] = 1;
@@ -69608,7 +70155,6 @@ var icn3d = (function (exports) {
                      ic.hAtoms = me.hashUtilsCls.exclHash(ic.hAtoms, atomHash);
                  }
              }
-           } // outer for
         }
 
         updateAdvancedCommands(nameArray, type) { let ic = this.icn3d; ic.icn3dui;
@@ -69631,6 +70177,7 @@ var icn3d = (function (exports) {
 
         combineSets(orArray, andArray, notArray, commandname) { let ic = this.icn3d, me = ic.icn3dui;
            ic.hAtoms = {};
+           
            this.setHAtomsFromSets(orArray, 'or');
 
            if(Object.keys(ic.hAtoms).length == 0) {
@@ -71726,19 +72273,22 @@ var icn3d = (function (exports) {
         selectSideChains() { let ic = this.icn3d, me = ic.icn3dui;
             let currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-            //let nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+            ic.hAtoms = this.getSideAtoms(currHAtoms);
+            ic.hlUpdateCls.showHighlight();
+        }
 
-            ic.hAtoms = {};
-            for(let i in currHAtoms) {
+        getSideAtoms(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+            let sideAtoms = {};
+            for(let i in atoms) {
                 if((ic.proteins.hasOwnProperty(i) && ic.atoms[i].name !== "N" && ic.atoms[i].name !== "H" 
                   && ic.atoms[i].name !== "C" && ic.atoms[i].name !== "O"
                   && !(ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") && ic.atoms[i].name !== "HA")
                   ||(ic.nucleotides.hasOwnProperty(i) && me.parasCls.nuclMainArray.indexOf(ic.atoms[i].name) === -1) ) {
-                    ic.hAtoms[i] = 1;
+                    sideAtoms[i] = 1;
                 }
             }
 
-            ic.hlUpdateCls.showHighlight();
+            return sideAtoms;
         }
 
         selectMainSideChains() { let ic = this.icn3d, me = ic.icn3dui;
@@ -72354,9 +72904,12 @@ var icn3d = (function (exports) {
         resi2range(resiArray, bString) {var ic = this.icn3d; ic.icn3dui;
             let range = [], rangeStr = '';
         
-            let resiArraySorted = resiArray.sort(function(a, b) {
-               return parseInt(a) - parseInt(b);
-            });
+            // some chains such as 3SN6_R start with residues with high residue numbers, then end with residues with low residue numbers
+            // let resiArraySorted = resiArray.sort(function(a, b) {
+            //    return parseInt(a) - parseInt(b);
+            // });
+
+            let resiArraySorted = resiArray;
             
             let startResi = resiArraySorted[0];
             let prevResi, resi;
@@ -73641,18 +74194,29 @@ var icn3d = (function (exports) {
 
                     ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
-                    let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template);
                     let numRound = 0;
+                    let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, undefined, numRound);
+                     ++numRound;
 
                     //while(!bNoMoreIg) {
                     while(!bNoMoreIg && numRound < 15) {
                         let bRerun = true;
-                        bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun);
+                        bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun, numRound);
                         ++numRound;
                     }
                 }
                 else {
-                    await thisClass.parseRefPdbData(undefined, template);
+                    await thisClass.parseRefPdbData(undefined, template, undefined, numRound);
+                }
+
+                // refnum should be adjusted after all Ig are detected since sometimes the sheet extension may affect another Ig domain
+                if(!ic.chainid2igtrack) ic.chainid2igtrack = {};
+                for(let chainid in ic.chains) {
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        let giSeq = ic.showSeqCls.getSeq(chainid);
+                        ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
+                    }
                 }
             // }
             // catch(err) {
@@ -73661,7 +74225,7 @@ var icn3d = (function (exports) {
             // }
         }
 
-        async parseRefPdbData(dataArray, template, bRerun) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseRefPdbData(dataArray, template, bRerun, numRound) { let ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
             let struArray = Object.keys(ic.structures);
@@ -73755,7 +74319,7 @@ var icn3d = (function (exports) {
                     dataArray2 = await this.promiseWithFixedJobs(ajaxArray);
 
                     let bRound1 = true;
-                    bNoMoreIg = await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+                    bNoMoreIg = await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1, numRound);
 
                     /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
                 }
@@ -73801,7 +74365,7 @@ var icn3d = (function (exports) {
 
                     dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-                    bNoMoreIg = await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+                    bNoMoreIg = await thisClass.parseAlignData(dataArray3, domainidpairArray3, undefined, numRound);
                 }
 
                 return bNoMoreIg;
@@ -74029,7 +74593,7 @@ var icn3d = (function (exports) {
                                 delete ic.domainid2refpdbname[domainid];
                                 delete ic.domainid2score[domainid];
                             }
-                            continue;  
+                            continue;                          
                       }
                     // }
                 }
@@ -74093,7 +74657,7 @@ var icn3d = (function (exports) {
             return domainid2segs; // only used in round 2
         }
 
-        async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+        async parseAlignData(dataArray, domainidpairArray, bRound1, numRound) { let ic = this.icn3d, me = ic.icn3dui;
             let bNoMoreIg = false;
 
             let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
@@ -74118,7 +74682,8 @@ var icn3d = (function (exports) {
                     //let pdbid = domainid.substr(0, domainid.indexOf('_'));
                     let chainid = domainid.substr(0, domainid.indexOf(','));
 
-                    if(ic.refpdbHash.hasOwnProperty(chainid)) {
+                    // Adjusted refpdbname in the first try
+                    if(ic.refpdbHash.hasOwnProperty(chainid) && numRound == 0) {
                         refpdbnameList = [chainid];
 
                         if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + chainid);
@@ -74171,7 +74736,7 @@ var icn3d = (function (exports) {
 
                 dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-                bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false);
+                bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false, numRound);
 
                 // end of round 2
                 return bNoMoreIg;
@@ -74416,6 +74981,8 @@ var icn3d = (function (exports) {
                 }
             }
 
+            // refnum should be adjusted after all Ig are detected since sometimes the sheet extension may affect another Ig domain
+            /*
             if(!ic.chainid2igtrack) ic.chainid2igtrack = {};
             for(let chainid in ic.chains) {
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
@@ -74424,6 +74991,7 @@ var icn3d = (function (exports) {
                     ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
                 }
             }
+            */
         }
 
         getStrandFromRefnum(oriRefnum, finalStrand) { let ic = this.icn3d; ic.icn3dui;
@@ -79356,7 +79924,7 @@ var icn3d = (function (exports) {
             //let itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
             //    'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
             //    'dl_symmetry', 'dl_symd', 'dl_rmsd', 'dl_legend', 'dl_disttable'];
-            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_proteinname', 'dl_refseqid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteracton', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterploitcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable', 'dl_translate'];
+            let itemArray = ['dl_2ddgm', 'dl_2dctn', 'dl_alignment', 'dl_sequence2', 'dl_definedsets', 'dl_setsmenu', 'dl_command', 'dl_setoperations', 'dl_vast', 'dl_foldseek', 'dl_mmtfid', 'dl_pdbid', 'dl_afid', 'dl_opmid', 'dl_pdbfile', 'dl_pdbfile_app', 'dl_rescolorfile', 'dl_customcolor', 'dl_align', 'dl_alignaf', 'dl_chainalign', 'dl_chainalign2', 'dl_chainalign3', 'dl_mutation', 'dl_mol2file', 'dl_sdffile', 'dl_xyzfile', 'dl_clustalwfile', 'dl_fastafile', 'dl_afmapfile', 'dl_urlfile', 'dl_mmciffile', 'dl_mmcifid', 'dl_mmdbid', 'dl_mmdbafid', 'dl_blast_rep_id', 'dl_yournote', 'dl_proteinname', 'dl_refseqid', 'dl_cid', 'dl_pngimage', 'dl_state', 'dl_fixedversion', 'dl_selection', 'dl_dsn6', 'dl_dsn6url', 'dl_clr', 'dl_symmetry', 'dl_symd', 'dl_contact', 'dl_hbonds', 'dl_realign', 'dl_realignbystruct', 'dl_allinteracton', 'dl_interactionsorted', 'dl_linegraph', 'dl_linegraphcolor', 'dl_scatterplot', 'dl_scatterploitcolor', 'dl_contactmap', 'dl_alignerrormap', 'dl_elecmap2fofc', 'dl_elecmapfofc', 'dl_emmap', 'dl_aroundsphere', 'dl_adjustmem', 'dl_selectplane', 'dl_addlabel', 'dl_addlabelselection', 'dl_labelColor', 'dl_distance', 'dl_stabilizer', 'dl_disttwosets', 'dl_distmanysets', 'dl_stabilizer_rm', 'dl_thickness', 'dl_thickness2', 'dl_addtrack', 'dl_addtrack_tabs', 'dl_saveselection', 'dl_copyurl', 'dl_selectannotations', 'dl_annotations_tabs', 'dl_anno_view_tabs', 'dl_annotations', 'dl_graph', 'dl_svgcolor', 'dl_area', 'dl_colorbyarea', 'dl_rmsd', 'dl_buriedarea', 'dl_propbypercentout', 'dl_propbybfactor', 'dl_legend', 'dl_disttable', 'dl_translate'];
 
             for(let i in itemArray) {
                 let item = itemArray[i];
@@ -80102,9 +80670,10 @@ var icn3d = (function (exports) {
                     ssObj.resn = atom.resn;
                     ssObj.resi = atom.resi;
 
-                    if(parseInt(atom.resi) > parseInt(prevResi) + 1) {
-                        ssObj.ss = ' ';
-                        ssArray.push(ssObj);
+                    if(parseInt(atom.resi) > parseInt(prevResi) + 1  || atom.ssbegin) {
+                        let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
+                        ssObj2.ss = ' ';
+                        ssArray.push(ssObj2);
                     }
 
                     if(atom.ss == 'helix') {
@@ -80115,13 +80684,13 @@ var icn3d = (function (exports) {
                         ssObj.ss = 'S';
                         ssArray.push(ssObj);
                     }
-
+    /*
                     if(atom.ssend) {
                         let ssObj2 = me.hashUtilsCls.cloneHash(ssObj);
                         ssObj2.ss = ' ';
                         ssArray.push(ssObj2);
                     }
-
+    */
                     prevResi = atom.resi;
                 }
 
@@ -80129,9 +80698,9 @@ var icn3d = (function (exports) {
                 for(let i = 0, il = ssArray.length; i < il; ++i) {
                     let ssObj = ssArray[i];
 
-                    if(ssObj.ss != prevSs || ssObj.ssbegin) {
+                    if(ssObj.ss != prevSs) {
                         // print prev
-                        stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
+                        if(prevSs !== ' ') stru2header[stru] += this.printPrevSecondary(bHelix, bSheet, prevRealSsObj, ssCnt);
 
                         // print current
                         ssCnt = 0;
@@ -80139,7 +80708,7 @@ var icn3d = (function (exports) {
                         bSheet = false;
                         prevRealSsObj = undefined;
 
-                        if(ssObj.ss != ' ') {
+                        if(ssObj.ss !== ' ') {
                             if(ssObj.ss == 'H') {
                                 bHelix = true;
                                 prevRealSsObj = ssObj;
@@ -80155,7 +80724,7 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    if(ssObj.ss != ' ') {
+                    if(ssObj.ss !== ' ') {
                         ++ssCnt;
                         prevRealSsObj = ssObj;
                     }
@@ -82004,8 +82573,10 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        rayCaster(e, bClick) {
+        rayCaster(e, bClick) { let ic = this.icn3d; ic.icn3dui;
+          if(!ic.opts || ic.opts['effect'] == 'none') {
             this.rayCasterBase(e, bClick);
+          }
         }
 
         rayCasterBase(e, bClick) { let ic = this.icn3d; ic.icn3dui;
@@ -83326,6 +83897,14 @@ var icn3d = (function (exports) {
                     });
                 }
 
+                this.effects = {
+                    //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
+                    //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
+                    //'oculus rift': new THREE.OculusRiftEffect(this.renderer),
+                    'stereo': new THREE.StereoEffect(this.renderer),
+                    'none': this.renderer
+                };
+
                 this.overdraw = 0;
             }
             else {
@@ -83472,14 +84051,6 @@ var icn3d = (function (exports) {
 
         this.bExtrude = true;
 
-        this.effects = {
-            //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
-            //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
-            //'oculus rift': new THREE.OculusRiftEffect(this.renderer),
-            //'stereo': new THREE.StereoEffect(this.renderer),
-            'none': this.renderer
-        };
-
         this.maxD = 500; // size of the molecule
         this.oriMaxD = this.maxD; // size of the molecule
         //this.cam_z = -150;
@@ -83532,6 +84103,7 @@ var icn3d = (function (exports) {
         //The default display options
         this.optsOri = {};
         this.optsOri['camera']             = 'perspective';        //perspective, orthographic
+        this.optsOri['effect']             = 'none';               //stereo, none
         this.optsOri['background']         = 'black';              //transparent, black, grey, white
         this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom, ig strand
         this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
@@ -83725,6 +84297,7 @@ var icn3d = (function (exports) {
         this.pdbParserCls = new PdbParser(this);
         this.sdfParserCls = new SdfParser(this);
         this.xyzParserCls = new XyzParser(this);
+        this.msaParserCls = new MsaParser(this);
         this.realignParserCls = new RealignParser(this);
         this.densityCifParserCls = new DensityCifParser(this);
         this.ParserUtilsCls = new ParserUtils(this);
@@ -83981,7 +84554,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.41.0';
+        this.REVISION = '3.42.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -84804,6 +85377,7 @@ var icn3d = (function (exports) {
     exports.MmcifParser = MmcifParser;
     exports.MmdbParser = MmdbParser;
     exports.Mol2Parser = Mol2Parser;
+    exports.MsaParser = MsaParser;
     exports.MyEventCls = MyEventCls;
     exports.OpmParser = OpmParser;
     exports.ParasCls = ParasCls;

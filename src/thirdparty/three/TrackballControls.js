@@ -324,7 +324,6 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
                     _this._panStart.add( mouseChange.subVectors( _this._panEnd, _this._panStart ).multiplyScalar( _this.dynamicDampingFactor ) );
 
                 }
-
             }
         }
 
