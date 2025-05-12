@@ -611,11 +611,12 @@ class ParserUtils {
       
       // set defined sets before loadScript
       if(ic.bInitial) {
-        if(me.cfg.mobilemenu) {
-            me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
-            let bNoSave = true;
-            me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
-        }
+        // if(me.cfg.mobilemenu) {
+        //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
+        //     let bNoSave = true;
+        //     me.htmlCls.clickMenuCls.applyShownMenus(bNoSave);
+        // }
+
         // else {
         //     me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.allMenus);
         //     me.htmlCls.clickMenuCls.applyShownMenus();

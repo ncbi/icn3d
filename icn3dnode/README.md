@@ -86,13 +86,22 @@ Examples
 
 * <b>Detect Ig domains and assign IgStrand reference numbers</b>
 
-    You can download the folders "refpdb" and "tmalign-icn3dnode" to your local directoy, compile "tmalign-icn3dnode", and modify the script "refnum.js" to set up the path to the local program "tmalign-icn3dnode", then run the following:
+    You can download the folders "refpdb" and "tmalign-icn3dnode" to your local directoy "dir_test", compile "tmalign-icn3dnode" with the following commands:
+
+        cd dir_test/tmalign-icn3dnode
+        make
+        cp ./tmalign-icn3dnode ..
+        cd ..
+
+    then run the following:
     
         node refnum.js [a list of comma-separated PDB or UniProt IDs (no space)]
+        or node refnum_file.js [path/filename] [filetype]
     
     The output JSON file contains the Ig domain detection, templates, reference numbers, etc. You could also specify a template in the folder "refpdb" to detect the Ig domains:
 
         node refnum.js [a list of comma-separated PDB or UniProt IDs (no space)] [a template, e.g., CD28_1yjdC_human_V.pdb]
+        or node refnum_file.js [path/filename] [filetype] [a template, e.g., CD28_1yjdC_human_V.pdb]
 
 * <b>Output Secondary Structure in PDB or JSON</b>
 

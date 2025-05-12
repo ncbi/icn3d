@@ -7,7 +7,7 @@ var del = require('del');
 var dom  = require('gulp-dom');
 //var gh_pages = require('gulp-gh-pages');
 var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify'); //require('gulp-uglify');
 var zip = require('gulp-zip');
 
 var rollup = require('rollup');
@@ -200,7 +200,8 @@ var common_js = [
     "src/thirdparty/three/Projector.js",
     "src/thirdparty/three/TrackballControls.js",
     "src/thirdparty/three/OrthographicTrackballControls.js",
-
+    "src/thirdparty/three/StereoEffect.js",
+    
     //"src/thirdparty/mmtfRcsbMod.js"
     "src/thirdparty/CIFToolsMod.js"
 ];

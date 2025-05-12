@@ -173,14 +173,7 @@ class Events {
     async loadPdbFile(bAppend, fileId, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        //me = ic.setIcn3dui(this.id);
        ic.bInitial = true;
-       if(!me.cfg.notebook) dialog.dialog( "close" );
-       //close all dialog
-       if(!me.cfg.notebook) {
-           $(".ui-dialog-content").dialog("close");
-       }
-       else {
-           ic.resizeCanvasCls.closeDialogs();
-       }
+       thisClass.iniFileLoad();
        let files = $("#" + me.pre + fileId)[0].files;
        if(!files[0]) {
          alert("Please select a file before clicking 'Load'");
@@ -226,9 +219,20 @@ class Events {
 
     exportMsa(type) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let text = ic.msa[type].join('\n\n');
-        let fileType = (type == 'fasta') ? '.fasta' : (type == 'clustal') ? '.aln' : '.txt';
+        let fileType = (type == 'fasta') ? '.fasta' : (type == 'clustalw') ? '.aln' : '.txt';
 
         ic.saveFileCls.saveFile(ic.inputid + '_align' + fileType, 'text', [text]);
+    }
+
+    iniFileLoad() { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        if(!me.cfg.notebook) dialog.dialog( "close" );
+        //close all dialog
+        if(!me.cfg.notebook) {
+            $(".ui-dialog-content").dialog("close");
+        }
+        else {
+            ic.resizeCanvasCls.closeDialogs();
+        }
     }
 
     async launchMmdb(ids, bBiounit, hostUrl, bAppend) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
@@ -1326,16 +1330,40 @@ class Events {
 
         me.htmlCls.setHtmlCls.clickReload_pngimage();
 
+        me.myEventCls.onIds("#" + me.pre + "video_start", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            const canvas = document.getElementById(ic.pre + "canvas");
+            ic.videoRecorder = new MediaRecorder(canvas.captureStream());
+            const recordedChunks = [];
+
+            // Collect data chunks
+            ic.videoRecorder.ondataavailable = event => {
+                recordedChunks.push(event.data);
+            };
+
+            ic.videoRecorder.onstop = event => {
+                // Code to save the recordedChunks as a video file
+                const blob = new Blob(recordedChunks, {type: ic.videoRecorder.mimeType});
+                let fileName = ic.inputid + '_video';
+                saveAs(blob, fileName);
+            };
+
+            // Start recording
+            ic.videoRecorder.start();
+            thisClass.setLogCmd('Video revording started', false);
+        });
+ 
+        me.myEventCls.onIds("#" + me.pre + "video_end", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            ic.videoRecorder.stop();
+            thisClass.setLogCmd('Video revording ended', false);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_state", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            // initialize icn3dui
            //Do NOT clear data if iCn3D loads a pdb or other data file and then load a state file
            if(!ic.bInputfile) {
@@ -1387,12 +1415,7 @@ class Events {
             if (!file) {
                 alert("Please select a file before clicking 'Load'");
             } else {
-            if (!me.cfg.notebook) dialog.dialog("close");
-            if (!me.cfg.notebook) {
-                $(".ui-dialog-content").dialog("close");
-            } else {
-                ic.resizeCanvasCls.closeDialogs();
-                }
+            thisClass.iniFileLoad();
                 
             ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
             ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
@@ -1947,14 +1970,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            let file = $("#" + me.pre + "mol2file")[0].files[0];
            if(!file) {
              alert("Please select a file before clicking 'Load'");
@@ -1981,14 +1997,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_sdffile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            let file = $("#" + me.pre + "sdffile")[0].files[0];
            if(!file) {
              alert("Please select a file before clicking 'Load'");
@@ -2015,14 +2024,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_xyzfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            let file = $("#" + me.pre + "xyzfile")[0].files[0];
            if(!file) {
              alert("Please select a file before clicking 'Load'");
@@ -2046,17 +2048,64 @@ class Events {
            }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_clustalwfile", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bInitial = true;
+            thisClass.iniFileLoad();
+
+            let file = $("#" + me.pre + "clustalwfile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = async function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                thisClass.setLogCmd('load CLUSTALW file ' + $("#" + me.pre + "clustalwfile").val(), false);
+                ic.molTitle = "";
+                ic.inputid = undefined;
+                //ic.initUI();
+                ic.init();
+                ic.bInputfile = false; //true;
+                ic.InputfileType = 'clustalw';
+                await ic.msaParserCls.loadMsaData(dataStr, 'clustalw');
+              }
+              reader.readAsText(file);
+            }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_fastafile", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bInitial = true;
+            thisClass.iniFileLoad();
+
+            let file = $("#" + me.pre + "fastafile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = async function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                thisClass.setLogCmd('load FASTA file ' + $("#" + me.pre + "fastafile").val(), false);
+                ic.molTitle = "";
+                ic.inputid = undefined;
+                //ic.initUI();
+                ic.init();
+                ic.bInputfile = false; //true;
+                ic.InputfileType = 'fasta';
+                await ic.msaParserCls.loadMsaData(dataStr, 'fasta');
+              }
+              reader.readAsText(file);
+            }
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_afmapfile", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.bInitial = true;
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            //close all dialog
-            if(!me.cfg.notebook) {
-                $(".ui-dialog-content").dialog("close");
-            }
-            else {
-                ic.resizeCanvasCls.closeDialogs();
-            }
+            thisClass.iniFileLoad();
             let file = $("#" + me.pre + "afmapfile")[0].files[0];
             if(!file) {
               alert("Please select a file before clicking 'Load'");
@@ -2078,14 +2127,7 @@ class Events {
          me.myEventCls.onIds("#" + me.pre + "reload_afmapfilefull", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             ic.bInitial = true;
-            if(!me.cfg.notebook) dialog.dialog( "close" );
-            //close all dialog
-            if(!me.cfg.notebook) {
-                $(".ui-dialog-content").dialog("close");
-            }
-            else {
-                ic.resizeCanvasCls.closeDialogs();
-            }
+            thisClass.iniFileLoad();
             let file = $("#" + me.pre + "afmapfile")[0].files[0];
             if(!file) {
               alert("Please select a file before clicking 'Load'");
@@ -2107,14 +2149,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
+           thisClass.iniFileLoad();
            let type = $("#" + me.pre + "filetype").val();
            let url = $("#" + me.pre + "urlfile").val();
            ic.inputurl = 'type=' + type + '&url=' + encodeURIComponent(url);
@@ -2991,8 +3026,8 @@ class Events {
 
         me.myEventCls.onIds("#" + me.pre + "saveClustal", "click", function(e) { let ic = me.icn3d;
             e.stopImmediatePropagation();
-            thisClass.exportMsa('clustal')
-            thisClass.setLogCmd('Save alignment in CLUSTALW format', false);
+            thisClass.exportMsa('clustalw')
+            thisClass.setLogCmd('Save alignment in CLUSTALWW format', false);
         });
 
         me.myEventCls.onIds("#" + me.pre + "saveResbyres", "click", function(e) { let ic = me.icn3d;

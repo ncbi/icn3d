@@ -1466,7 +1466,7 @@ class SetSeqAlign {
 
     setMsaFormat(chainidArray) { let ic = this.icn3d, me = ic.icn3dui;
         //set MSA
-        let fastaFormat = '', clustalFormat = 'CLUSTALW\n\n', resbyresFormat = '';
+        let fastaFormat = '', clustalwFormat = 'CLUSTALWW\n\n', resbyresFormat = '';
         let chainArrayClustal = [];
         
         let consArray = [], resiArrayTemplate = [];
@@ -1475,8 +1475,8 @@ class SetSeqAlign {
             let chainid = chainidArray[i];
             fastaFormat += '>' + chainid + '\n';
 
-            let clustalArray = [];
-            let clustalLine = chainid.padEnd(20, ' ');
+            let clustalwArray = [];
+            let clustalwLine = chainid.padEnd(20, ' ');
             let consLine = ''.padEnd(20, ' ');
 
             let resiArrayTarget = [], resiArrayQuery = [];
@@ -1485,7 +1485,7 @@ class SetSeqAlign {
             for(let j = 0, jl = ic.alnChainsSeq[chainid].length; j < jl; ++j) {
                 let resn = ic.alnChainsSeq[chainid][j].resn;
                 fastaFormat += resn;
-                clustalLine += resn;
+                clustalwLine += resn;
                 if(i == il - 1) {
                     let alignedClass = ic.alnChainsSeq[chainid][j].class;
                     if(alignedClass == 'icn3d-cons') {
@@ -1504,7 +1504,8 @@ class SetSeqAlign {
                     resiArrayTemplate.push(ic.alnChainsSeq[chainid][j].resi);
                 }
                 else {
-                    if(ic.alnChainsSeq[chainid][j].aligned) {
+                    // if(ic.alnChainsSeq[chainid][j].aligned) {
+                    if(ic.alnChainsSeq[chainid][j].aligned && ic.alnChainsSeq[chainidTemplate][j] && ic.alnChainsSeq[chainid][j]) {
                         resiArrayTarget.push(ic.alnChainsSeq[chainidTemplate][j].resi);
                         resiArrayQuery.push(ic.alnChainsSeq[chainid][j].resi);
                     }
@@ -1514,9 +1515,9 @@ class SetSeqAlign {
 
                 if(cnt % 60 == 0) {
                     fastaFormat += '\n';
-                    clustalLine += ' ' + String(parseInt(cnt / 60) * 60);
-                    clustalArray.push(clustalLine);
-                    clustalLine = chainid.padEnd(20, ' ');
+                    clustalwLine += ' ' + String(parseInt(cnt / 60) * 60);
+                    clustalwArray.push(clustalwLine);
+                    clustalwLine = chainid.padEnd(20, ' ');
 
                     if(i == il - 1) {
                         consArray.push(consLine);
@@ -1527,7 +1528,7 @@ class SetSeqAlign {
 
             // add last line
             if(cnt % 60 != 0) {
-                clustalArray.push(clustalLine);
+                clustalwArray.push(clustalwLine);
                 if(i == il - 1) {
                     consArray.push(consLine);
                 }
@@ -1535,7 +1536,7 @@ class SetSeqAlign {
 
             fastaFormat += '\n';
 
-            chainArrayClustal.push(clustalArray);
+            chainArrayClustal.push(clustalwArray);
             if(i == il - 1) chainArrayClustal.push(consArray);
 
             // residue by residue
@@ -1545,23 +1546,23 @@ class SetSeqAlign {
             if(i > 0) resbyresFormat += resiRangeStr1 + ' | ' + resiRangeStr2 + '\n';
         }
 
-        // CLUSTALW
+        // CLUSTALWW
         for(let j = 0, jl = chainArrayClustal[0].length; j < jl; ++j) {
             for(let i = 0, il = chainArrayClustal.length; i < il; ++i) {
-                clustalFormat += chainArrayClustal[i][j] + '\n';
+                clustalwFormat += chainArrayClustal[i][j] + '\n';
             }
-            clustalFormat += '\n';
+            clustalwFormat += '\n';
         }
         
         // seq MSA
         if(!ic.msa) ic.msa = {};
 
         if(!ic.msa['fasta']) ic.msa['fasta'] = [];
-        if(!ic.msa['clustal']) ic.msa['clustal'] = [];
+        if(!ic.msa['clustalw']) ic.msa['clustalw'] = [];
         if(!ic.msa['resbyres']) ic.msa['resbyres'] = [];
 
         ic.msa['fasta'].push(fastaFormat);
-        ic.msa['clustal'].push(clustalFormat);
+        ic.msa['clustalw'].push(clustalwFormat);
         ic.msa['resbyres'].push(resbyresFormat);
     }
 }

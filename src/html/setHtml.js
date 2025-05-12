@@ -301,7 +301,7 @@ class SetHtml {
 
       sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + index + "' size='10'> " + me.htmlCls.space2 + "<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
 
-      sequencesHtml += "<div style='min-width:200px; display:inline-block; margin-top:3px'><b>Save Alignment</b>: " + "<button style='white-space:nowrap;' id='" + me.pre + "saveFasta'>FASTA</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveClustal'>CLUSTAL</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveResbyres'>Residue by Residue</button></div><br/>";
+      sequencesHtml += "<div style='min-width:200px; display:inline-block; margin-top:3px'><b>Save Alignment</b>: " + "<button style='white-space:nowrap;' id='" + me.pre + "saveFasta'>FASTA</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveClustal'>CLUSTALW</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "saveResbyres'>Residue by Residue</button></div><br/>";
 
       sequencesHtml += me.htmlCls.divStr + "alignseqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
 

@@ -219,7 +219,12 @@ class Scene {
         ic.cams = {
             perspective: ic.perspectiveCamera,
             orthographic: ic.orthographicCamera,
-        };       
+        };  
+        
+        if(!me.bNode && ic.opts['effect'] == 'stereo' && !window.icn3duiHash) {
+            ic.effect = ic.effects[options.effect];
+            ic.effect.setSize(ic.container.width(), ic.container.height());
+        }
     };
 
     setVrAr() { let ic = this.icn3d, me = ic.icn3dui;

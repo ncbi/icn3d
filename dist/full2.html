@@ -16,15 +16,28 @@
 </script>
 </head>
 <body>
+  <div class="us" style="width:100%; height:40px; margin:-5px 0px 3px 0px;">
+    <!--a class="skipnav" href="#maincontent">Skip to main page content</a-->
+    <header class="ncbi-page-header" role="banner">
+        <div style="background:initial; float:initial;">
+            <span class="nih" title="National Center for Biotechnology Information">
+                <a href="https://www.ncbi.nlm.nih.gov/" title="To NCBI homepage">
+                    <img style="padding:3px; height:30px" alt="NCBI"
+                            src="https://www.ncbi.nlm.nih.gov/coreutils/nwds/img/logos/AgencyLogo.svg">
+                </a>
+            </span>
+        </div>
+    </header>
+  </div>
   <div id="div0" style="float:left; padding-right:5px;"></div>
   <div id="div1" style="float:left;"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.41.0.css">
+  <link rel="stylesheet" href="icn3d_3.42.0.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <script src="lib/three_0.151.0.min.js"></script>
-  <script src="icn3d_3.41.0.min.js"></script>
+  <script src="icn3d_3.42.0.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(async function() {
@@ -41,7 +54,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.41.0.min.js', function() {
+          //$.getScript('icn3d_3.42.0.min.js', function() {
             var version = 3;
             await launchIcn3d(version);
           //});

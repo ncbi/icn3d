@@ -204,18 +204,29 @@
 
                 ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
-                let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template);
                 let numRound = 0;
+                let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, undefined, numRound);
+                 ++numRound;
 
                 //while(!bNoMoreIg) {
                 while(!bNoMoreIg && numRound < 15) {
                     let bRerun = true;
-                    bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun);
+                    bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, bRerun, numRound);
                     ++numRound;
                 }
             }
             else {
-                await thisClass.parseRefPdbData(undefined, template);
+                await thisClass.parseRefPdbData(undefined, template, undefined, numRound);
+            }
+
+            // refnum should be adjusted after all Ig are detected since sometimes the sheet extension may affect another Ig domain
+            if(!ic.chainid2igtrack) ic.chainid2igtrack = {};
+            for(let chainid in ic.chains) {
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                if(ic.proteins.hasOwnProperty(atom.serial)) {
+                    let giSeq = ic.showSeqCls.getSeq(chainid);
+                    ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
+                }
             }
         // }
         // catch(err) {
@@ -224,7 +235,7 @@
         // }
     }
 
-    async parseRefPdbData(dataArray, template, bRerun) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseRefPdbData(dataArray, template, bRerun, numRound) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let struArray = Object.keys(ic.structures);
@@ -318,7 +329,7 @@
                 dataArray2 = await this.promiseWithFixedJobs(ajaxArray);
 
                 let bRound1 = true;
-                bNoMoreIg = await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1);
+                bNoMoreIg = await thisClass.parseAlignData(dataArray2, domainidpairArray, bRound1, numRound);
 
                 /// if(ic.deferredRefnum !== undefined) ic.deferredRefnum.resolve();
             }
@@ -364,7 +375,7 @@
 
                 dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-                bNoMoreIg = await thisClass.parseAlignData(dataArray3, domainidpairArray3);
+                bNoMoreIg = await thisClass.parseAlignData(dataArray3, domainidpairArray3, undefined, numRound);
             }
 
             return bNoMoreIg;
@@ -593,7 +604,7 @@
                             delete ic.domainid2refpdbname[domainid];
                             delete ic.domainid2score[domainid];
                         }
-                        continue;  
+                        continue;                          
                   }
                 // }
             }
@@ -657,7 +668,7 @@
         return domainid2segs; // only used in round 2
     }
 
-    async parseAlignData(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
+    async parseAlignData(dataArray, domainidpairArray, bRound1, numRound) { let ic = this.icn3d, me = ic.icn3dui;
         let bNoMoreIg = false;
 
         let domainid2segs = this.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
@@ -682,7 +693,8 @@
                 //let pdbid = domainid.substr(0, domainid.indexOf('_'));
                 let chainid = domainid.substr(0, domainid.indexOf(','));
 
-                if(ic.refpdbHash.hasOwnProperty(chainid)) {
+                // Adjusted refpdbname in the first try
+                if(ic.refpdbHash.hasOwnProperty(chainid) && numRound == 0) {
                     refpdbnameList = [chainid];
 
                     if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + chainid);
@@ -735,7 +747,7 @@
 
             dataArray3 = await this.promiseWithFixedJobs(ajaxArray);
 
-            bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false);
+            bNoMoreIg = await this.parseAlignData(dataArray3, domainidpairArray3, false, numRound);
 
             // end of round 2
             return bNoMoreIg;
@@ -981,6 +993,8 @@
             }
         }
 
+        // refnum should be adjusted after all Ig are detected since sometimes the sheet extension may affect another Ig domain
+        /*
         if(!ic.chainid2igtrack) ic.chainid2igtrack = {};
         for(let chainid in ic.chains) {
             let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
@@ -989,6 +1003,7 @@
                 ic.chainid2igtrack[chainid] = this.ajdustRefnum(giSeq, chainid);
             }
         }
+        */
     }
 
     getStrandFromRefnum(oriRefnum, finalStrand) { let ic = this.icn3d, me = ic.icn3dui;

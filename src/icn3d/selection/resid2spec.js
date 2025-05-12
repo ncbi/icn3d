@@ -131,9 +131,12 @@ class Resid2spec {
     resi2range(resiArray, bString) {var ic = this.icn3d, me = ic.icn3dui;
         let range = [], rangeStr = '';
     
-        let resiArraySorted = resiArray.sort(function(a, b) {
-           return parseInt(a) - parseInt(b);
-        });
+        // some chains such as 3SN6_R start with residues with high residue numbers, then end with residues with low residue numbers
+        // let resiArraySorted = resiArray.sort(function(a, b) {
+        //    return parseInt(a) - parseInt(b);
+        // });
+
+        let resiArraySorted = resiArray;
         
         let startResi = resiArraySorted[0];
         let prevResi, resi;

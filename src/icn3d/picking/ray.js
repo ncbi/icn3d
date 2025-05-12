@@ -7,8 +7,10 @@ class Ray {
         this.icn3d = icn3d;
     }
 
-    rayCaster(e, bClick) {
+    rayCaster(e, bClick) { let ic = this.icn3d, me = ic.icn3dui;
+      if(!ic.opts || ic.opts['effect'] == 'none') {
         this.rayCasterBase(e, bClick);
+      }
     }
 
     rayCasterBase(e, bClick) { let ic = this.icn3d, me = ic.icn3dui;

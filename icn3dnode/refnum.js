@@ -125,14 +125,20 @@ async function processData(inputid, dataStr, template) {
         await ic.mmdbParserCls.parseMmdbData(dataJson);
     }
 
-    let bNoMoreIg = await parseRefPdbData(template);
-    let numRound = 0;
-
-    //while(!bNoMoreIg) {
-    while(!bNoMoreIg && numRound < 10) {
-        let bRerun = true;
-        bNoMoreIg = await parseRefPdbData(template, bRerun);
+    if(!template) {
+        let numRound = 0;
+        let bNoMoreIg = await parseRefPdbData(template, undefined, numRound);
         ++numRound;
+
+        //while(!bNoMoreIg) {
+        while(!bNoMoreIg && numRound < 15) {
+            let bRerun = true;
+            bNoMoreIg = await parseRefPdbData(template, bRerun, numRound);
+            ++numRound;
+        }
+    }
+    else {
+        await parseRefPdbData(template, undefined, numRound);
     }
 
     let bNoArraySymbol = true;
@@ -143,7 +149,7 @@ async function processData(inputid, dataStr, template) {
 }
 
 
-async function parseRefPdbData(template, bRerun) {
+async function parseRefPdbData(template, bRerun, numRound) {
     let struArray = Object.keys(ic.structures);
 
     // let ajaxArray = [];
@@ -226,7 +232,7 @@ async function parseRefPdbData(template, bRerun) {
 
     if(!template) {
         let bRound1 = true;
-        bNoMoreIg = await parseAlignData(dataArray2, domainidpairArray, bRound1);
+        bNoMoreIg = await parseAlignData(dataArray2, domainidpairArray, bRound1, numRound);
     }
     else {
         // if(!me.bNode) console.log("Start alignment with the reference culsters " + JSON.stringify(ic.domainid2refpdbname));
@@ -259,7 +265,7 @@ async function parseRefPdbData(template, bRerun) {
             }
         }
 
-        bNoMoreIg = await parseAlignData(dataArray3, domainidpairArray3);
+        bNoMoreIg = await parseAlignData(dataArray3, domainidpairArray3, undefined, numRound);
     }
 
     return bNoMoreIg;
@@ -291,7 +297,7 @@ function getTmalignPromise(pdbAll) {
     });
 };
 
-async function parseAlignData(dataArray, domainidpairArray, bRound1) {
+async function parseAlignData(dataArray, domainidpairArray, bRound1, numRound) {
     let bNoMoreIg = false;
 
     let domainid2segs = ic.refnumCls.parseAlignData_part1(dataArray, domainidpairArray, bRound1);
@@ -316,10 +322,11 @@ async function parseAlignData(dataArray, domainidpairArray, bRound1) {
             //let pdbid = domainid.substr(0, domainid.indexOf('_'));
             let chainid = domainid.substr(0, domainid.indexOf(','));
 
-            if(ic.refpdbHash.hasOwnProperty(chainid)) {
+            // Adjusted refpdbname in the first try
+            if(ic.refpdbHash.hasOwnProperty(chainid) && numRound == 0) {
                 refpdbnameList = [chainid];
 
-                if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + chainid);   
+                if(!me.bNode) console.log("Adjusted refpdbname for domainid " + domainid + ": " + chainid);
             }
 
             let templates = [];
@@ -368,7 +375,7 @@ async function parseAlignData(dataArray, domainidpairArray, bRound1) {
             }
         }
 
-        bNoMoreIg = await parseAlignData(dataArray3, domainidpairArray3, false);
+        bNoMoreIg = await parseAlignData(dataArray3, domainidpairArray3, false, numRound);
         
         // end of round 2
         return bNoMoreIg;
