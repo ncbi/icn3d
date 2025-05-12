@@ -21152,9 +21152,9 @@ class Html {
     this.MENU_WIDTH = 750;
     //The width (in px) that was left empty by the 3D viewer. The default is 20px.
     this.LESSWIDTH = 20;
-    this.LESSWIDTH_RESIZE = 20;
+    this.LESSWIDTH_RESIZE = 30; //20;
     //The height (in px) that was left empty by the 3D viewer. The default is 20px.
-    this.LESSHEIGHT = 20;
+    this.LESSHEIGHT = 60; //20; // NCBI log is 40px high
 
     // size of 2D cartoons
     this.width2d = 200;
