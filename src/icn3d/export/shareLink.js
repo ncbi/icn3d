@@ -145,6 +145,7 @@ class ShareLink {
                 if(key === 'height' && value === '100%') continue;
 
                 if(key === 'resize' && value === true) continue;
+                if(key === 'showlogo' && value === true) continue;
                 if(key === 'showmenu' && value === true) continue;
                 if(key === 'showtitle' && value === true) continue;
                 if(key === 'showcommand' && value === true) continue;

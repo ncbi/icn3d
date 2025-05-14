@@ -178,6 +178,7 @@ class iCn3DUI {
     if(this.cfg.width === undefined) this.cfg.width = '100%';
     if(this.cfg.height === undefined) this.cfg.height = '100%';
     if(this.cfg.resize === undefined) this.cfg.resize = true;
+    if(this.cfg.showlogo === undefined) this.cfg.showlogo = true;
     if(this.cfg.showmenu === undefined) this.cfg.showmenu = true;
     if(this.cfg.showtitle === undefined) this.cfg.showtitle = true;
     if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;
