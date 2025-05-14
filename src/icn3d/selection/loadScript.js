@@ -955,6 +955,10 @@ class LoadScript {
             ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
         }
 
+        if(!me.cfg.showlogo) {
+          $("#ncbi_logo").hide();
+        }
+
         // an extra render to remove artifacts in transparent surface
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 

@@ -21154,7 +21154,7 @@ class Html {
     this.LESSWIDTH = 20;
     this.LESSWIDTH_RESIZE = 30; //20;
     //The height (in px) that was left empty by the 3D viewer. The default is 20px.
-    this.LESSHEIGHT = 60; //20; // NCBI log is 40px high
+    this.LESSHEIGHT = (me.cfg.showlogo) ? 60 : 20; //20; // NCBI log is 40px high
 
     // size of 2D cartoons
     this.width2d = 200;
@@ -62741,6 +62741,10 @@ class ParserUtils {
               if(me.cfg.closepopup || me.cfg.imageonly) {
                   ic.resizeCanvasCls.closeDialogs();
               }
+
+              if(!me.cfg.showlogo) {
+                $("#ncbi_logo").hide();
+              }
           }
           else {
               ic.hlUpdateCls.updateHlAll();
@@ -71611,6 +71615,10 @@ class LoadScript {
             }, 100);
 
             ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
+        }
+
+        if(!me.cfg.showlogo) {
+          $("#ncbi_logo").hide();
         }
 
         // an extra render to remove artifacts in transparent surface
@@ -81458,6 +81466,7 @@ class ShareLink {
                 if(key === 'height' && value === '100%') continue;
 
                 if(key === 'resize' && value === true) continue;
+                if(key === 'showlogo' && value === true) continue;
                 if(key === 'showmenu' && value === true) continue;
                 if(key === 'showtitle' && value === true) continue;
                 if(key === 'showcommand' && value === true) continue;
@@ -84560,6 +84569,7 @@ class iCn3DUI {
     if(this.cfg.width === undefined) this.cfg.width = '100%';
     if(this.cfg.height === undefined) this.cfg.height = '100%';
     if(this.cfg.resize === undefined) this.cfg.resize = true;
+    if(this.cfg.showlogo === undefined) this.cfg.showlogo = true;
     if(this.cfg.showmenu === undefined) this.cfg.showmenu = true;
     if(this.cfg.showtitle === undefined) this.cfg.showtitle = true;
     if(this.cfg.showcommand === undefined) this.cfg.showcommand = true;

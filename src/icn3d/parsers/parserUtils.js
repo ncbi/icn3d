@@ -677,6 +677,10 @@ class ParserUtils {
               if(me.cfg.closepopup || me.cfg.imageonly) {
                   ic.resizeCanvasCls.closeDialogs();
               }
+
+              if(!me.cfg.showlogo) {
+                $("#ncbi_logo").hide();
+              }
           }
           else {
               ic.hlUpdateCls.updateHlAll();
