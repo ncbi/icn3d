@@ -55,7 +55,7 @@
     You can view the [Isoforms and Exons](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pA3pPu7LxdiuZDVX7) by clicking the button "Add Track" in the "Sequences & Annotations" window via the menu "Analysis > Sequences & Annotations".
 
 * <b>Multiple Sequence Alignment (MSA) Input</b>: 
-    You can input a MSA file (CLUSTALW or FASTA format) into iCn3D via the menu "File > Open File > Muleiple Seq. Alignment" in the "All Menus" mode. THe view can be shared with others, e.g., [GPCR MSA](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?zvKpsn7PPJG4QEXY6).
+    You can input a MSA file (CLUSTALW or FASTA format) into iCn3D via the menu "File > Open File > Muleiple Seq. Alignment" in the "All Menus" mode. The view can be shared with others, e.g., [GPCR MSA](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?zvKpsn7PPJG4QEXY6).
 
 * <b>Symmetry</b>:
     You can show [precalculated symmetry](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?bGH1BfLsiGFhhTDn8), or calculate [symmetry dynamically](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?6NvhQ45XrnbuXyGe6) using SymD.

@@ -394,7 +394,8 @@ class ParserUtils {
               ic.rmsd_supr = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
 
               // apply matrix for each atom
-              if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
+            //   if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
+              if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 1) { // 6M17 has some coordinates change and rmsd is 0.3
                   let rot = ic.rmsd_supr.rot;
                   let centerFrom = ic.rmsd_supr.trans1;
                   let centerTo = ic.rmsd_supr.trans2;
