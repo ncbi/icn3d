@@ -380,7 +380,7 @@ gulp.task("html2",
 
 gulp.task("html3",
   function() {
-    return gulp.src(['icn3d.html', 'share.html', 'share2.html'])
+    return gulp.src(['icn3d.html', 'share.html', 'share2.html', 'notfound.html'])
       .pipe(gulp.dest(dist));
   });
 
