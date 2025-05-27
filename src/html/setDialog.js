@@ -484,6 +484,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
+        html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
         html += me.htmlCls.buttonStr + "video_start' style='margin-top: 6px;'>Video Start</button>";
         html += me.htmlCls.buttonStr + "video_end' style='margin: 6px 0px 0px 30px;'>Video End</button>";
         html += "</div>";

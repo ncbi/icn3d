@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.43.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.43.0.zip) was release on May 27, 2025. Replaced Google Firebase dynamic links with our own short URL service.
+
 [icn3d-3.42.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.42.0.zip) was release on May 12, 2025. Allowed to input MSA files (CLUSTALW or FASTA formats) to show both MSA and structure alignment via the menu "File > Open File > Multiple Seq. Alignment" in the "All Menus" mode; Added the "Stereo View" option in the menu "View"; allowed to save canvas video via the menu "File > Save File > Video"; added "NCBI" logo.
 
 [icn3d-3.41.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.41.0.zip) was release on April 2, 2025. Added a menu at the top-left corner to allow users to choose simple or complete menus; added buttons at the top of the aligned sequences (menu Analysis > Aligned Seq.) to allow users to save the alignemnts in FASTA, CLUSTALW, or Residue by Residue formats. 

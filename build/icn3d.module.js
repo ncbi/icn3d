@@ -15371,6 +15371,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
+        html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
         html += me.htmlCls.buttonStr + "video_start' style='margin-top: 6px;'>Video Start</button>";
         html += me.htmlCls.buttonStr + "video_end' style='margin: 6px 0px 0px 30px;'>Video End</button>";
         html += "</div>";
@@ -62465,7 +62466,8 @@ class ParserUtils {
               ic.rmsd_supr = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
 
               // apply matrix for each atom
-              if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
+            //   if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
+              if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 1) { // 6M17 has some coordinates change and rmsd is 0.3
                   let rot = ic.rmsd_supr.rot;
                   let centerFrom = ic.rmsd_supr.trans1;
                   let centerTo = ic.rmsd_supr.trans2;
@@ -81377,7 +81379,7 @@ class ShareLink {
                     let shortName = strArray[strArray.length - 1];
                     ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
                     let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                    text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + shortName + '" target="_blank">';
+                    text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?' + shortName + '" target="_blank">';
                     text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                     text += '<!--Start of your comments==================-->\n';
                     let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
@@ -81392,13 +81394,14 @@ class ShareLink {
             if(bPngHtml && data.shortLink === undefined) {
                 ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
             }
-
+/*
             //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
             let urlArray = shorturl.split('page.link/');
-            //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
             // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to pass posted data in Mac/iphone
             // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
             if(urlArray.length == 2) shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + urlArray[1];
+*/
+            shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?' + shorturl;
 
             $("#" + ic.pre + "short_url").val(shorturl);
             $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
@@ -81417,6 +81420,7 @@ class ShareLink {
     }
 
     getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
+        /*
         //https://firebase.google.com/docs/dynamic-links/rest
         //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
         let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
@@ -81428,6 +81432,26 @@ class ShareLink {
                 //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
                 data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
                 dataType: 'json',
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    let shorturl = 'Problem in getting shortened URL';
+                    $("#" + ic.pre + "ori_url").val(url);
+                    $("#" + ic.pre + "short_url").val(shorturl);
+                    $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+                    if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                }
+            });
+        });
+        */
+
+        let serviceUrl = "https://icn3d.link/?longurl=" + encodeURIComponent(url);
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: serviceUrl,
+                dataType: 'json',
+                cache: true,
                 success: function(data) {
                     resolve(data);
                 },
@@ -84560,7 +84584,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.42.0';
+    this.REVISION = '3.43.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -84990,8 +85014,12 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.align !== undefined) {
         // ic.bNCBI = true;
-
+        if(me.cfg.align.indexOf('185055,') != -1) {
+            me.cfg.align = me.cfg.align.replace('185055,', '199731,'); //the mmdbid of PDB 6M17 was changed from 185055 to 199731
+        }
+ 
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
+        
         if(alignArray.length === 6) {
             ic.inputid = alignArray[0] + "_" + alignArray[3];
         }

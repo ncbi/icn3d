@@ -169,7 +169,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.42.0';
+    this.REVISION = '3.43.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -599,8 +599,12 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
     }
     else if(me.cfg.align !== undefined) {
         // ic.bNCBI = true;
-
+        if(me.cfg.align.indexOf('185055,') != -1) {
+            me.cfg.align = me.cfg.align.replace('185055,', '199731,'); //the mmdbid of PDB 6M17 was changed from 185055 to 199731
+        }
+ 
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
+        
         if(alignArray.length === 6) {
             ic.inputid = alignArray[0] + "_" + alignArray[3];
         }

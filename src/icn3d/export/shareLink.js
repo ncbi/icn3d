@@ -56,7 +56,7 @@ class ShareLink {
                     let shortName = strArray[strArray.length - 1];
                     ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
                     let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                    text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + shortName + '" target="_blank">';
+                    text += '<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?' + shortName + '" target="_blank">';
                     text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                     text += '<!--Start of your comments==================-->\n';
                     let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
@@ -71,13 +71,14 @@ class ShareLink {
             if(bPngHtml && data.shortLink === undefined) {
                 ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
             }
-
+/*
             //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
             let urlArray = shorturl.split('page.link/');
-            //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
             // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to pass posted data in Mac/iphone
             // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
             if(urlArray.length == 2) shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?' + urlArray[1];
+*/
+            shorturl = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?' + shorturl;
 
             $("#" + ic.pre + "short_url").val(shorturl);
             $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
@@ -96,6 +97,7 @@ class ShareLink {
     }
 
     getShareLinkPrms(url, bPngHtml) { let ic = this.icn3d, me = ic.icn3dui;
+        /*
         //https://firebase.google.com/docs/dynamic-links/rest
         //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
         let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
@@ -107,6 +109,26 @@ class ShareLink {
                 //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
                 data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
                 dataType: 'json',
+                success: function(data) {
+                    resolve(data);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    let shorturl = 'Problem in getting shortened URL';
+                    $("#" + ic.pre + "ori_url").val(url);
+                    $("#" + ic.pre + "short_url").val(shorturl);
+                    $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
+                    if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                }
+            });
+        });
+        */
+
+        let serviceUrl = "https://icn3d.link/?longurl=" + encodeURIComponent(url);
+        return new Promise(function(resolve, reject) {
+            $.ajax({
+                url: serviceUrl,
+                dataType: 'json',
+                cache: true,
                 success: function(data) {
                     resolve(data);
                 },
