@@ -2,6 +2,10 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+import {TrackballControls} from "../../thirdparty/three/TrackballControls.js";
+import {OrthographicTrackballControls} from "../../thirdparty/three/OrthographicTrackballControls.js";
+
 class Camera {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -52,14 +56,14 @@ class Camera {
                 window.cam.far = 10000;
 
                 if(ic.bControlGl && !me.bNode) {
-                    window.controls = new THREE.TrackballControls( window.cam, undefined, ic );
+                    window.controls = new TrackballControls( window.cam, undefined, ic );
                 }
                 else {
                     if(!me.bNode) {
-                        ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
+                        ic.controls = new TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
-                        ic.controls = new THREE.TrackballControls( ic.cam, document, ic );
+                        ic.controls = new TrackballControls( ic.cam, document, ic );
                     }
                 }
             }
@@ -85,14 +89,14 @@ class Camera {
                   window.cam.far = 10000;
 
                 if(ic.bControlGl && !me.bNode) {
-                    window.controls = new THREE.OrthographicTrackballControls( window.cam, undefined, ic );
+                    window.controls = new OrthographicTrackballControls( window.cam, undefined, ic );
                 }
                 else {
                     if(!me.bNode) {
-                        ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
+                        ic.controls = new OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
-                        ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document, ic );
+                        ic.controls = new OrthographicTrackballControls( ic.cam, document, ic );
                     }
                 }
             }
@@ -144,14 +148,14 @@ class Camera {
                 ic.cam.far = 10000;
 
                 if(ic.bControlGl && !me.bNode) {
-                    window.controls = new THREE.TrackballControls( ic.cam, undefined, ic );
+                    window.controls = new TrackballControls( ic.cam, undefined, ic );
                 }
                 else {
                     if(!me.bNode) {
-                        ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
+                        ic.controls = new TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
-                        ic.controls = new THREE.TrackballControls( ic.cam, document, ic );
+                        ic.controls = new TrackballControls( ic.cam, document, ic );
                     }
                 }
             }
@@ -177,14 +181,14 @@ class Camera {
                   ic.cam.far = 10000;
 
                 if(ic.bControlGl && !me.bNode) {
-                    window.controls = new THREE.OrthographicTrackballControls( ic.cam, undefined, ic );
+                    window.controls = new OrthographicTrackballControls( ic.cam, undefined, ic );
                 }
                 else {
                     if(!me.bNode) {
-                        ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
+                        ic.controls = new OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
-                        ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document, ic );
+                        ic.controls = new OrthographicTrackballControls( ic.cam, document, ic );
                     }
                 }
             }

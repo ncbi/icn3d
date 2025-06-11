@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
  class Draw {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -255,9 +257,8 @@
         if(ic.scene) {
             ic.renderer.clear();
             
-            // https://github.com/gkjohnson/three-gpu-pathtracer/blob/main/example/basic.js
-            ic.renderer.outputEncoding = THREE.sRGBEncoding;
-            //ic.renderer.outputEncoding = THREE.LinearEncoding
+            // ic.renderer.outputEncoding = THREE.sRGBEncoding;
+            ic.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
             if(ic.opts['effect'] == 'stereo' && !window.icn3duiHash) {
                 ic.effect.render(ic.scene, cam);

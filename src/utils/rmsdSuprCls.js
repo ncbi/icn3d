@@ -8,7 +8,7 @@
  *  Chymotrypsin", J. Mol. Biol. 128 (1979) 49-79.
  */
 
-
+import * as THREE from 'three';
 
 class RmsdSuprCls {
     constructor(icn3dui) {

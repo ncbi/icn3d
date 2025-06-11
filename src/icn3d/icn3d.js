@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 // import {HashUtilsCls} from '../utils/hashUtilsCls.js';
 
 import {Scene} from './display/scene.js';
@@ -143,6 +145,8 @@ import {Picking} from './picking/picking.js';
 import {VRButton} from "../thirdparty/three/vr/VRButton.js";
 import {ARButton} from "../thirdparty/three/vr/ARButton.js";
 
+import {StereoEffect} from "../thirdparty/three/StereoEffect.js";
+
 class iCn3D {
   constructor(icn3dui) { let me = icn3dui;
     this.icn3dui = icn3dui;
@@ -198,7 +202,7 @@ class iCn3D {
         if(bWebGL){
             //https://discourse.threejs.org/t/three-js-r128-ext-frag-depth-and-angle-instanced-arrays-extensions-are-not-supported/26037
             //this.renderer = new THREE.WebGL1Renderer({
-            if ( bWebGL2 && bVR) {                
+            if ( bWebGL2) {                
                 this.renderer = new THREE.WebGLRenderer({
                     canvas: this.oriContainer.get(0), //this.container.get(0),
                     antialias: true,
@@ -207,25 +211,28 @@ class iCn3D {
                     alpha: true
                 });
                 // Enable VR
-                this.renderer.xr.enabled = true;
+                if(bVR) this.renderer.xr.enabled = true;
                 //https://www.udemy.com/course/learn-webxr/learn/lecture/20512848#questions/18941376
                 //this.renderer.getContext().makeXRCompatible();
             }
             else {
-                this.renderer = new THREE.WebGL1Renderer({
-                    canvas: this.oriContainer.get(0), //this.container.get(0),
-                    antialias: true,
-                    preserveDrawingBuffer: true,
-                    sortObjects: false,
-                    alpha: true
-                });
+                // this.renderer = new THREE.WebGL1Renderer({
+                //     canvas: this.oriContainer.get(0), //this.container.get(0),
+                //     antialias: true,
+                //     preserveDrawingBuffer: true,
+                //     sortObjects: false,
+                //     alpha: true
+                // });
+
+                alert("Please use a modern browser that supports WebGL2...");
+                return;
             }
 
             this.effects = {
                 //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
                 //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
                 //'oculus rift': new THREE.OculusRiftEffect(this.renderer),
-                'stereo': new THREE.StereoEffect(this.renderer),
+                'stereo': new StereoEffect(this.renderer),
                 'none': this.renderer
             };
 
@@ -237,12 +244,13 @@ class iCn3D {
     }
 
     this.frac = new THREE.Color(0.1, 0.1, 0.1);
+    // this.frac = new THREE.Color(0.3, 0.3, 0.3);
     this.shininess = 40; //30
-    this.emissive = 0x111111; //0x000000
+    this.emissive = 0x333333; //0x111111; //0x000000
 
-    this.light1 = 0.8; //0.6; //1
-    this.light2 = 0.4;
-    this.light3 = 0.2;
+    this.light1 = 2; //0.8; //0.6; //1
+    this.light2 = 1; //0.4;
+    this.light3 = 1; //0.2;
 
     //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
     this.lineRadius = 0.1; // hbonds, distance lines

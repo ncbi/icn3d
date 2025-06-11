@@ -4,9 +4,9 @@
  * modified by Jiyao Wang
  */
 
+import * as THREE from 'three';
 
-
-THREE.TrackballControls = function ( object, domElement, icn3d ) {
+function TrackballControls( object, domElement, icn3d ) {
     "use strict";
 
     var _this = this;
@@ -681,5 +681,10 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
 };
 
-THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.TrackballControls.prototype.constructor = THREE.TrackballControls;
+// THREE.TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+// THREE.TrackballControls.prototype.constructor = THREE.TrackballControls;
+
+TrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+TrackballControls.prototype.constructor = TrackballControls;
+
+export {TrackballControls}

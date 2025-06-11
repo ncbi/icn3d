@@ -5,6 +5,8 @@
 
 //var $3Dmol = $3Dmol || {};
 
+import * as THREE from 'three';
+
 class MarchingCube {
     constructor(icn3d) {
         this.icn3d = icn3d;

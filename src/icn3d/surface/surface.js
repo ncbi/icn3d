@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 import {ProteinSurface} from './proteinSurface.js';
 import {ElectronMap} from './electronMap.js';
 

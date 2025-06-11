@@ -5,7 +5,9 @@
  * modified by Jiyao Wang
  */
 
-THREE.StereoEffect = function ( renderer ) {
+import * as THREE from 'three';
+
+function StereoEffect( renderer ) {
     var _this = this;
     // API
 
@@ -94,3 +96,4 @@ THREE.StereoEffect = function ( renderer ) {
 
 };
 
+export {StereoEffect}
