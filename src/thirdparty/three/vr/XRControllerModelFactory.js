@@ -7,6 +7,7 @@ import {
 } from 'three';
 */
 
+import * as THREE from 'three';
 import { GLTFLoader } from './GLTFLoader.js';
 
 import {

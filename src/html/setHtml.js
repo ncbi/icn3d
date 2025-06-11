@@ -168,9 +168,9 @@ class SetHtml {
         let nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
 
         let shininess = 40;
-        let light1 = 0.8;
-        let light2 = 0.4;
-        let light3 = 0.2;
+        let light1 = 2;
+        let light2 = 1;
+        let light3 = 1;
         let bGlycansCartoon = 0;
         let bMembrane = 1;
         let bCmdWindow = 0;
@@ -216,9 +216,9 @@ class SetHtml {
 
             html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
             html += "<b>2. Three directional lights</b>: <br>";
-            html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 0.8)<br/>";
-            html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 0.4)<br/>";
-            html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 0.2)<br/><br/>";
+            html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 2)<br/>";
+            html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 1)<br/>";
+            html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 1)<br/><br/>";
             html += "<b>3. Thickness</b>: <br>";
         }
 
@@ -850,9 +850,9 @@ class SetHtml {
         if(postfix == 'style') {
             if(bReset) {
                 $("#" + me.pre + "shininess").val('40');
-                $("#" + me.pre + "light1").val('0.8');
-                $("#" + me.pre + "light2").val('0.4');
-                $("#" + me.pre + "light3").val('0.2');
+                $("#" + me.pre + "light1").val('2');
+                $("#" + me.pre + "light2").val('1');
+                $("#" + me.pre + "light3").val('1');
                 $("#" + me.pre + "glycan").val('0');
                 $("#" + me.pre + "membrane").val('1');
                 $("#" + me.pre + "cmdwindow").val('0');

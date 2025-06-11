@@ -5,6 +5,8 @@
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 class Dsn6Parser {
     constructor(icn3d) {
         this.icn3d = icn3d;

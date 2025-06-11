@@ -65,6 +65,8 @@ import {
 } from 'three';
 */
 
+import * as THREE from 'three';
+
 class GLTFLoader extends THREE.Loader {
 
     constructor( manager ) {

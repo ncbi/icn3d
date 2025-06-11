@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 // html and iCn3D
 import {HashUtilsCls} from './utils/hashUtilsCls.js';
 import {UtilsCls} from './utils/utilsCls.js';
@@ -169,7 +171,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.43.0';
+    this.REVISION = '3.44.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

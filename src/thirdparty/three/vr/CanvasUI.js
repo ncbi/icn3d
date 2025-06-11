@@ -1,5 +1,6 @@
 // from https://github.com/NikLever/Learn-WebXR/tree/master/libs, by Nik Lever
 
+import * as THREE from 'three';
 import { CanvasKeyboard } from './CanvasKeyboard.js';
 
 /*An element is defined by 
@@ -207,7 +208,8 @@ class CanvasUI{
           
         if ( this.scene ){
             const radius = 0.015;
-            const geometry = new THREE.IcosahedronBufferGeometry( radius );
+            // const geometry = new THREE.IcosahedronBufferGeometry( radius );
+            const geometry = new THREE.IcosahedronGeometry( radius );
             const material = new THREE.MeshBasicMaterial( {color: 0x0000aa } );
 
             const mesh1 = new THREE.Mesh( geometry, material );
@@ -508,7 +510,8 @@ class CanvasUI{
 	
     loadImage(src) {
       return new Promise((resolve, reject) => {
-        const img = new THREE.Image();
+        // const img = new THREE.Image();
+        const img = new Image();
         img.addEventListener("load", () => resolve(img));
         img.addEventListener("error", err => reject(err));
         img.src = src;

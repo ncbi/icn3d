@@ -3,6 +3,8 @@
 // copied from https://github.com/NikLever/Learn-WebXR/blob/master/libs/ControllerGestures.js
 // created by Nik Lever
 
+import * as THREE from 'three';
+
 class ControllerGestures extends THREE.EventDispatcher{
     constructor( renderer ){
         super();

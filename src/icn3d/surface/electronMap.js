@@ -26,6 +26,8 @@ TODO: Improved performance on Firefox
       Refactor!
  */
 
+import * as THREE from 'three';
+
 import {MarchingCube} from './marchingCube.js';
 
 // dkoes

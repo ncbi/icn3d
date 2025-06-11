@@ -28,6 +28,7 @@ gulp.task('clean',
     return del([dist]);
   });
 
+  /*
 //  'Copy three.min.js into dist/libs',
 gulp.task('libs-three',
   //gulp.series('clean'),
@@ -50,6 +51,7 @@ function() {
       ])
       .pipe(gulp.dest(icn3dnpm));
 });
+*/
 
 //  'Copy jquery.min.js into dist/libs',
 gulp.task('libs-jquery',
@@ -197,12 +199,11 @@ var common_js = [
     "src/thirdparty/shader/Instancing.frag",
     "src/thirdparty/shader/Instancing.vert",
 
-    "src/thirdparty/three/Projector.js",
-    "src/thirdparty/three/TrackballControls.js",
-    "src/thirdparty/three/OrthographicTrackballControls.js",
-    "src/thirdparty/three/StereoEffect.js",
+    // "src/thirdparty/three/Projector.js",
+    // "src/thirdparty/three/TrackballControls.js",
+    // "src/thirdparty/three/OrthographicTrackballControls.js",
+    // "src/thirdparty/three/StereoEffect.js",
     
-    //"src/thirdparty/mmtfRcsbMod.js"
     "src/thirdparty/CIFToolsMod.js"
 ];
 
@@ -297,13 +298,11 @@ gulp.task('rollupmodule', () => {
 });
 
 var alljs = [
-    //"tmpdir/icn3d_rollup_vr.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup.js"
 ];
 
 var allminjs = [
-    //"tmpdir/icn3d_rollup_vr.min.js",
     "tmpdir/third.min.js",
     "tmpdir/icn3d_rollup.min.js"
 ];
@@ -314,11 +313,8 @@ var allnodejs = [
 ];
 
 var allmodulejs = [
-    //"tmpdir/icn3d_rollup_vr_module.js",
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup_module.js"
-    //,
-    //"src/thirdparty/moduleExport.js"
 ];
 
 // Create the gulp tasks for simple and full:
@@ -326,6 +322,7 @@ gulp.task("all",
   function() {
     return gulp.src(alljs)
         .pipe(concat('icn3d.js'))
+        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build));
   });
@@ -334,6 +331,7 @@ gulp.task("allmin",
   function() {
     return gulp.src(allminjs)
         .pipe(concat('icn3d.min.js'))
+        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build))
         .pipe(gulp.dest(icn3dnpm))
@@ -344,8 +342,9 @@ gulp.task("allmin",
 gulp.task("allnode",
   function() {
     return gulp.src(allnodejs)
-        .pipe(replace('alert(', 'var aaa = 1; //alert('))
         .pipe(concat('icn3d.js'))
+        .pipe(replace('alert(', 'var aaa = 1; //alert('))
+        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
         .pipe(gulp.dest(icn3dnpm));
   });
 
@@ -353,6 +352,8 @@ gulp.task("allmodule",
   function() {
     return gulp.src(allmodulejs)
         .pipe(concat('icn3d.module.js'))
+        .pipe(replace('alert(', 'var aaa = 1; //alert('))
+        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build))
         .pipe(gulp.dest(icn3dnpm));
@@ -392,7 +393,7 @@ gulp.task("html4",
 
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
-  gulp.series('clean', 'libs-three','libs-three-module','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
+  gulp.series('clean','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','libs-line-awesome-fonts','ssimages','script','wasm','copy','mod-line-awesome','copy-rename2','third','third_node','rollup','rollupmin',
     'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
     'html','html2','html3','html4')

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.44.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.0.zip) was release on June 11, 2025. Upgraded three.js to version 177 and compiled three.js directly into iCn3D library. No need to include three.js as a separate library.
+
 [icn3d-3.43.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.43.0.zip) was release on May 27, 2025. Replaced Google Firebase dynamic links with our own short URL service.
 
 [icn3d-3.42.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.42.0.zip) was release on May 12, 2025. Allowed to input MSA files (CLUSTALW or FASTA formats) to show both MSA and structure alignment via the menu "File > Open File > Multiple Seq. Alignment" in the "All Menus" mode; Added the "Stereo View" option in the menu "View"; allowed to save canvas video via the menu "File > Save File > Video"; added "NCBI" logo.

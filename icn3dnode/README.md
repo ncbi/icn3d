@@ -10,7 +10,6 @@ Installation
 
 Install the following packages (The version of node should be 16 or later):
 
-    npm install three
     npm install jquery
     npm install jsdom
     npm install icn3d

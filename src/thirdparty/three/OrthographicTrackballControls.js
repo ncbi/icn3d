@@ -5,9 +5,9 @@
  * modified by Jiyao Wang
  */
 
+import * as THREE from 'three';
 
-
-THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { var me = this, ic = me.icn3d; "use strict";
+function OrthographicTrackballControls( object, domElement, icn3d ) { var me = this, ic = me.icn3d; "use strict";
     var _this = this;
     var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
 
@@ -671,5 +671,10 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
 };
 
-THREE.OrthographicTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.OrthographicTrackballControls.prototype.constructor = THREE.OrthographicTrackballControls;
+// THREE.OrthographicTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+// THREE.OrthographicTrackballControls.prototype.constructor = THREE.OrthographicTrackballControls;
+
+OrthographicTrackballControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+OrthographicTrackballControls.prototype.constructor = OrthographicTrackballControls;
+
+export {OrthographicTrackballControls}

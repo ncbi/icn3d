@@ -2,10 +2,12 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 // // The following four files are for VR view:
 // import {VRButton} from "../../thirdparty/three/vr/VRButton.js";
 // import {ARButton} from "../../thirdparty/three/vr/ARButton.js";
-import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
+// import {GLTFLoader} from "../../thirdparty/three/vr/GLTFLoader.js";
 import {Constants, MotionController, fetchProfile, fetchProfilesList} from "../../thirdparty/three/vr/motion-controllers.module.js";
 import {XRControllerModelFactory} from "../../thirdparty/three/vr/XRControllerModelFactory.js";
 import {ControllerGestures} from "../../thirdparty/three/vr/ControllerGestures.js";
@@ -150,7 +152,8 @@ class Scene {
           ic.lightPos3 = new THREE.Vector3(1, 1, 1); //(0, 1, 1);
         }
 
-        let ambientLight = new THREE.AmbientLight(0x404040); //(0x888888); //(0x404040);
+        // let ambientLight = new THREE.AmbientLight(0x404040); //(0x888888); //(0x404040);
+        let ambientLight = new THREE.AmbientLight(0xFFFFFF); //(0x888888); //(0x404040);
 
         ic.scene.add(ic.directionalLight);
         ic.scene.add(ambientLight);
@@ -194,7 +197,7 @@ class Scene {
         ic.objects_ghost = []; // define objects for pk, not all elements are used for pk
 
         ic.raycaster = new THREE.Raycaster();
-        ic.projector = new THREE.Projector();
+        // ic.projector = new THREE.Projector();
         ic.mouse = new THREE.Vector2();
 
         let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
@@ -251,7 +254,7 @@ class Scene {
             ic.origin = new THREE.Vector3();
 
             let radius = 0.08;
-            //let geometry = new THREE.IcosahedronBufferGeometry( radius, 2 );
+            //let geometry = new THREE.IcosahedronGeometry( radius, 2 );
 
             // modified from https://github.com/NikLever/Learn-WebXR/blob/master/complete/lecture3_7/app.js
             // add dolly to move camera
