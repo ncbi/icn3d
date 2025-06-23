@@ -1350,9 +1350,12 @@ class Domain3d {
 
 		// let subdomains = result.subdomains;
 		// let substruct = result.substruct;
+		let jsonStr = '{"data": [';
 
 		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
 		let residueArray = Object.keys(residueHash);
+		if(residueArray.length == 0) return jsonStr + ']}';
+
 		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
 
 		// let resid1 = residueArray[0];
@@ -1403,7 +1406,7 @@ class Domain3d {
 		substruct = this.standardizeSubstruct(chnid, substruct, pos2resi);
 
 		// m_domains1: {"data": [ {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]], "domain": [[1,43,x,y,z],[2,58,x,y,z], ...]}, {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]],"domain": [[1,43,x,y,z],[2,58,x,y,z], ...]} ] }
-		let jsonStr = '{"data": [';
+
 		//merge all subdomains into one domain
 		jsonStr += '{"ss": ['; //secondary structure
 

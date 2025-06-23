@@ -1973,6 +1973,7 @@ class SetMenu {
 
         html += this.getMenuText('mn6_develop', 'Develop', undefined, undefined, 1);
         html += "<ul>";
+        html += this.getMenuUrl('dev_contribute', me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToContribute", "Become a Contributor", undefined, 2);
         html += this.getMenuUrl('dev_embedicn3d2', me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse", "Embed iCn3D", undefined, 2);
         html += this.getMenuUrl('dev_urlpara', me.htmlCls.baseUrl + "icn3d/icn3d.html#parameters", "URL Parameters", undefined, 2);
         html += this.getMenuUrl('dev_command', me.htmlCls.baseUrl + "icn3d/icn3d.html#commands", "Commands", undefined, 2);
