@@ -75,11 +75,11 @@ class DefinedSets {
     }
 
     setPredefinedInMenu() { let ic = this.icn3d, me = ic.icn3dui;
-          // predefined sets: all chains
-          this.setChainsInMenu();
-
           // predefined sets: proteins,nucleotides, chemicals
           this.setProtNuclLigInMenu();
+
+          // predefined sets: all chains
+          this.setChainsInMenu();
 
           // show 3d domains for mmdbid
           if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined  || me.cfg.chainalign !== undefined || me.cfg.mmdbafid !== undefined) {
@@ -179,9 +179,14 @@ class DefinedSets {
     }
 
     setChainsInMenu() { let ic = this.icn3d, me = ic.icn3dui;
+        let nonProtNuclResHash = {};
+
         for(let chainid in ic.chains) {
-            // skip chains with one residue/chemical
-            if(ic.chainsSeq[chainid] && ic.chainsSeq[chainid].length > 1) {
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+
+            // protein or nucleotide
+            // if(ic.chainsSeq[chainid] && ic.chainsSeq[chainid].length > 1) {
+            if(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial)) {
               //ic.defNames2Atoms[chainid] = Object.keys(ic.chains[chainid]);
               ic.defNames2Residues[chainid] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]));
               ic.defNames2Descr[chainid] = chainid;
@@ -192,6 +197,25 @@ class DefinedSets {
 
               ic.defNames2Command[chainid] = 'select $' + structure + '.' + chain;
             }
+            else { // chemicals, etc
+              let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+              let resn = atom.resn.substr(0, 3);
+
+              if(!nonProtNuclResHash[resn]) {
+                nonProtNuclResHash[resn] = ic.residues[resid];
+              }
+              else {
+                nonProtNuclResHash[resn] = me.hashUtilsCls.unionHash(nonProtNuclResHash[atom.resn], ic.residues[resid]);
+              }
+            }
+        }
+
+        // chemicals etc
+        for(let resn in nonProtNuclResHash) {
+            ic.defNames2Residues[resn] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(nonProtNuclResHash[resn]));
+            ic.defNames2Descr[resn] = resn;
+
+            ic.defNames2Command[resn] = 'select :3' + resn;
         }
 
         // select whole structure

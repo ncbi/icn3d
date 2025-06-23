@@ -156,7 +156,8 @@ gulp.task('copy',
     return gulp.src([
             'LICENSE.md',
             'CHANGELOG.md',
-            'README.md'
+            'README.md',
+            'CODE_OF_CONDUCT.md'
         ])
         .pipe(gulp.dest(dist));
   });
