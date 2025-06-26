@@ -755,6 +755,7 @@ class SetMenu {
         html += this.getLink('mn1_exportKabat', 'Kabat', undefined, 3);
         html += this.getLink('mn1_exportImgt', 'IMGT', undefined, 3);
         html += "</ul>";
+        html += this.getLink('mn1_exportCamera', 'BCF Viewpoint', undefined, 2);
 
         html += "<li><br/></li>";
 
