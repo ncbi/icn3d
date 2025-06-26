@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 class SaveFile {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -13,7 +15,7 @@ class SaveFile {
     //The type "png" is used to save the current canvas image. The type "html" is used to save html file with the
     //"data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is
     //actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
-    saveFile(filename, type, text, bBlob) { let ic = this.icn3d, me = ic.icn3dui;
+    async saveFile(filename, type, text, bBlob, bReturnBlobOnly) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         //Save file
@@ -55,7 +57,12 @@ class SaveFile {
 
             if(me.utilsCls.isIE()) {
                 blob = ic.renderer.domElement.msToBlob();
+            }
+            else {
+                blob = await this.getBlobFromNonIE();
+            }
 
+            if(!bReturnBlobOnly) {
                 if(bAddURL) {
                     let reader = new FileReader();
                     reader.onload = function(e) {
@@ -81,33 +88,7 @@ class SaveFile {
                 }
             }
             else {
-                ic.renderer.domElement.toBlob(function(data) {
-                    if(bAddURL) {
-                        let reader = new FileReader();
-                        reader.onload = function(e) {
-                            let arrayBuffer = e.target.result; // or = reader.result;
-
-                            let text = ic.shareLinkCls.getPngText();
-
-                            blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
-
-                            //ic.createLinkForBlob(blob, filename);
-                            thisClass.saveBlob(blob, filename, bBlob, width, height);
-
-                            return blob;
-                        }
-
-                        reader.readAsArrayBuffer(data);
-                    }
-                    else {
-                        blob = data;
-
-                        //ic.createLinkForBlob(blob, filename);
-                        thisClass.saveBlob(blob, filename, bBlob, width, height);
-
-                        return blob;
-                    }
-                });
+                return blob;
             }
 
             // reset the image size
@@ -141,10 +122,18 @@ class SaveFile {
 
         if(type !== 'png') {
             //https://github.com/eligrey/FileSaver.js/
-            saveAs(blob, filename);
+            if(!bReturnBlobOnly) saveAs(blob, filename);
         }
 
         return blob;
+    }
+
+    getBlobFromNonIE() { let ic = this.icn3d, me = ic.icn3dui;
+        return new Promise(function(resolve, reject) {
+            ic.renderer.domElement.toBlob(function(data) {
+                resolve(data);
+            })
+        })
     }
 
     saveBlob(blob, filename, bBlob, width, height) { let ic = this.icn3d, me = ic.icn3dui;

@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 class ClickMenu {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -116,6 +118,13 @@ class ClickMenu {
             me.htmlCls.shownMenus = me.hashUtilsCls.cloneHash(me.htmlCls.simpleMenus);
          }
       }
+    }
+
+    //https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
+    uuidv4() {
+      return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+         (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+      );
     }
     
     displayShownMenus() { let me = this.icn3dui, ic = me.icn3d;
@@ -403,6 +412,132 @@ class ClickMenu {
            let file_pref = Object.keys(ic.structures).join(',');
 
            ic.saveFileCls.saveFile(file_pref + '_statefile.txt', 'command');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCamera", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+            thisClass.setLogCmd("export bcf viewpoint", false);
+            let file_pref = Object.keys(ic.structures).join(',');
+            //ic.saveFileCls.saveFile(file_pref + '_camera.bcf', 'bcf');
+
+            let url = './script/jszip.min.js';
+            await me.getAjaxPromise(url, 'script');
+
+            let data, jszip = new JSZip();
+
+            let uuid1 = thisClass.uuidv4();
+            let uuid2 = thisClass.uuidv4();
+
+            data = '';
+            data += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+            data += '    <Version VersionId="3.0"/>\n';
+
+            jszip.file("bcf.version", data);
+
+            data = '';
+            data += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+            data += '    <Extensions>\n';
+            data += '        <TopicTypes>\n';
+            data += '          <TopicType>ERROR</TopicType>\n';
+            data += '          <TopicType>WARNING</TopicType>\n';
+            data += '          <TopicType>INFORMATION</TopicType>\n';
+            data += '          <TopicType>CLASH</TopicType>\n';
+            data += '          <TopicType>OTHER</TopicType>\n';
+            data += '        </TopicTypes>\n';
+            data += '          <TopicStatuses>\n';
+            data += '          <TopicStatus>OPEN</TopicStatus>\n';
+            data += '          <TopicStatus>IN_PROGRESS</TopicStatus>\n';
+            data += '          <TopicStatus>SOLVED</TopicStatus>\n';
+            data += '          <TopicStatus>CLOSED</TopicStatus>\n';
+            data += '        </TopicStatuses>\n';
+            data += '        <Priorities>\n';
+            data += '          <Priority>LOW</Priority>\n';
+            data += '          <Priority>MEDIUM</Priority>\n';
+            data += '          <Priority>HIGH</Priority>\n';
+            data += '          <Priority>CRITICAL</Priority>\n';
+            data += '        </Priorities>\n';
+            data += '        <TopicLabels/>\n';
+            data += '        <Users/>\n';
+            data += '        <SnippetTypes/>\n';
+            data += '        <Stages/>\n';
+            data += '    </Extensions>\n';
+
+            jszip.file("extensions.xml", data);
+
+            let folder = jszip.folder(uuid1);
+
+            data = '';
+            data += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+            data += '    <Markup>\n';
+            data += '        <Header>\n';
+            data += '          <Files/>\n';
+            data += '        </Header>		\n';
+            data += '        <Topic Guid="' + uuid1 + '">\n';
+            data += '        <Title>Perspective camera</Title>\n';
+
+            let now = new Date();
+            const isoString = now.toISOString();
+
+            data += '        <CreationDate>' + isoString + '</CreationDate>\n';
+            data += '        <CreationAuthor>https://www.ncbi.nlm.nih.gov/Structure/icn3d</CreationAuthor>\n';
+            data += '        <DocumentReferences/>\n';
+            data += '        <RelatedTopics/>\n';
+            data += '        <Comments/>\n';
+            data += '        <Viewpoints>\n';
+            data += '          <ViewPoint Guid="' + uuid2 + '">\n';
+            data += '            <Viewpoint>viewpoint-' + uuid2 + '.bcfv</Viewpoint>\n';
+            data += '            <Snapshot>snapshot-' + uuid2 + '.png</Snapshot>\n';
+            data += '          </ViewPoint>\n';
+            data += '        </Viewpoints>\n';
+            data += '      </Topic>\n';
+            data += '    </Markup>\n';
+
+            folder.file("markup.bcf", data);
+            let blob = await ic.saveFileCls.saveFile('any', 'png', undefined, undefined, true);
+
+            folder.file("snapshot-" + uuid2 + ".png", blob);
+
+            data = '';
+            
+            data += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+            data += '    <VisualizationInfo Guid="' + uuid2 + '">\n';
+            data += '      <Components>\n';
+            data += '        <Selection/>\n';
+            data += '        <Visibility DefaultVisibility="true" />\n';
+            data += '        <Coloring/>\n';
+            data += '      </Components>\n';
+            data += '      <PerspectiveCamera>\n';
+            data += '        <CameraViewPoint>\n';
+            data += '          <X>' + ic.cam.position.x + '</X>\n';
+            data += '          <Y>' + ic.cam.position.y + '</Y>\n';
+            data += '          <Z>' + ic.cam.position.z + '</Z>\n';
+            data += '        </CameraViewPoint>\n';
+
+            let direction = (new THREE.Vector3(0, 0, -1)).applyQuaternion(ic.cam.quaternion);
+
+            data += '        <CameraDirection>\n';
+            data += '          <X>' + direction.x + '</X>\n';
+            data += '          <Y>' + direction.y + '</Y>\n';
+            data += '          <Z>' + direction.z + '</Z>\n';
+            data += '        </CameraDirection>\n';
+            data += '        <CameraUpVector>\n';
+            data += '          <X>' + ic.cam.up.x + '</X>\n';
+            data += '          <Y>' + ic.cam.up.y + '</Y>\n';
+            data += '          <Z>' + ic.cam.up.z + '</Z>\n';
+            data += '        </CameraUpVector>\n';
+            data += '        <FieldOfView>' + ic.cam.fov + '</FieldOfView>\n'; // 20
+            data += '        <AspectRatio>' + ic.container.whratio + '</AspectRatio>\n';
+            data += '      </PerspectiveCamera>\n';
+            data += '      <Lines/>\n';
+            data += '      <ClippingPlanes/>\n';
+            data += '      <Bitmaps/>  \n';
+            data += '    </VisualizationInfo>\n';
+
+            folder.file("viewpoint-" + uuid2 + ".bcfv", data);
+
+            jszip.generateAsync({type:"blob"})
+               .then(function(content) {
+                  saveAs(content, file_pref + "_viewpoint.bcf");
+               });
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportVideo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();

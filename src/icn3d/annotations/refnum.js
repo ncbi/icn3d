@@ -162,7 +162,7 @@
         ic.ref2igtype['PDL1_4z18B_human_V-n1'] = 'IgV';
         ic.ref2igtype['Palladin_2dm3A_human_Iset-n1'] = 'IgI';
         ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
-        ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
+        //ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
         ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
         ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';

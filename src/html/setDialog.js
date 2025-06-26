@@ -1561,9 +1561,9 @@ class SetDialog {
 
         group2tpl['IgFN3'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'Sidekick2_1wf5A_human_FN3-n7'];
 
-        group2tpl['IgFN3-like'] = ['ASF1A_2iijA_human', 'BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'TEAD1_3kysC_human'];
+        group2tpl['IgFN3-like'] = ['ASF1A_2iijA_human', 'BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'RBPJ_6py8C_human_Unk-n1', 'TEAD1_3kysC_human'];
 
-        group2tpl['Other Ig'] = ['CD19_6al5A_human-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus'];  
+        group2tpl['Other Ig'] = ['CD19_6al5A_human-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus', 'RBPJ_6py8C_human_Unk-n2'];  
 
         let tpl2strandsig = {};
         tpl2strandsig['ASF1A_2iijA_human']                          = "A A' B C C' E F G G+";
