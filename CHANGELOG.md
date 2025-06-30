@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.44.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.2.zip) was release on June 30, 2025. Enabled to drag and drop to open mmCIF, PDB, PNG, and BCF files.
+
 [icn3d-3.44.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.1.zip) was release on June 26, 2025. Output BCF viewpoint file via the menu "File > Save File > BCF Viewpoint".
 
 [icn3d-3.44.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.0.zip) was release on June 11, 2025. Upgraded three.js to version 177 and compiled three.js directly into iCn3D library. No need to include three.js as a separate library.
