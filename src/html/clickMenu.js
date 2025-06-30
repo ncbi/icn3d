@@ -368,6 +368,10 @@ class ClickMenu {
            me.htmlCls.dialogCls.openDlg('dl_state', 'Please input the state file');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_bcfviewpoint", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_bcfviewpoint', 'Please input the BCF viewpoint file');
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn1_selection", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_selection', 'Please input the selection file');
         });

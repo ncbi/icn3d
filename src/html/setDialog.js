@@ -482,6 +482,12 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_bcfviewpoint' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_bcfviewpoint', 'Please input a BCF viewpoint file');
+        html += "BCF viewpoint file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "bcfviewpoint'><br/>";
+        html += me.htmlCls.buttonStr + "reload_bcfviewpoint' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
         html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";

@@ -2,6 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+import * as THREE from 'three';
+
 class Events {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -296,6 +298,67 @@ class Events {
                 }
             }
         }
+    }
+
+    async openBcf(file) {  let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+        let url = './script/jszip.min.js';
+        await me.getAjaxPromise(url, 'script');
+
+        let jszip = new JSZip();
+
+        me.htmlCls.setHtmlCls.fileSupport();
+
+        jszip.loadAsync(file).then(function(zip) {
+            zip.forEach(function (relativePath, zipEntry) {
+                if (zipEntry.dir) {
+                    // Handle directory creation
+                    let folder = jszip.folder(relativePath);
+                    folder.forEach(function (filename, zipEntry2) {
+                        if(filename.substr(0, 9) == 'viewpoint') {
+                            zipEntry2.async('string') // or 'blob', 'arraybuffer'
+                                .then(function(fileData) {
+            let parser = new DOMParser();
+            let xmlDoc = parser.parseFromString(fileData, "text/xml");
+
+            // Accessing elements
+            //const author = xmlDoc.getElementsByTagName("author")[0].textContent;
+            //const author = xmlDoc.querySelector("author").textContent;
+            let viewpoint = xmlDoc.querySelector("CameraViewPoint");
+            let direction = xmlDoc.querySelector("CameraDirection");
+            let upvector = xmlDoc.querySelector("CameraUpVector");
+            let fov = xmlDoc.querySelector("FieldOfView").textContent;
+            let aspect = xmlDoc.querySelector("AspectRatio").textContent;
+
+            let childNodes, viewpointArray = [], directionArray = [], upvectorArray = [];
+            
+            childNodes = viewpoint.children;
+            viewpointArray = [childNodes[0].textContent, childNodes[1].textContent, childNodes[2].textContent];
+            childNodes = direction.children;
+            directionArray = [childNodes[0].textContent, childNodes[1].textContent, childNodes[2].textContent];
+            childNodes = upvector.children;
+            upvectorArray = [childNodes[0].textContent, childNodes[1].textContent, childNodes[2].textContent];
+
+            ic.cam.position.set(viewpointArray[0], viewpointArray[1], viewpointArray[2]);
+            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(directionArray[0], directionArray[1], directionArray[2]));
+            ic.cam.up.set(upvectorArray[0], upvectorArray[1], upvectorArray[2]);
+            ic.cam.fov = fov;
+            //ic.container.whratio = aspect;
+
+            ic.drawCls.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+            ic.drawCls.render();
+                                });
+                        }
+                    });
+                } 
+                // else {
+                //     // Handle file extraction
+                //     zipEntry.async("string").then(function (content) {
+                //     });
+                // }
+            });
+        }, function (e) {
+            console.error("Error loading BCF viewpoint file:", e);
+        });
     }
 
     //Hold all functions related to click events.
@@ -1387,6 +1450,19 @@ class Events {
                await ic.loadScriptCls.loadScript(dataStr, true);
              }
              reader.readAsText(file);
+           }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_bcfviewpoint", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let file = $("#" + me.pre + "bcfviewpoint")[0].files[0];
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             await thisClass.openBcf(file);
            }
         });
 
@@ -3311,6 +3387,32 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mn6_themeBlack", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.setMenuCls.setTheme('black');
            thisClass.setLogCmd("set theme black", true);
+        });
+
+        // dragover and drop
+        me.myEventCls.onIds("#" + me.pre + "viewer", "dragover", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           $("#" + me.pre + "viewer")[0].style.border = "5px solid blue";
+        });
+        me.myEventCls.onIds("#" + me.pre + "viewer", "drop", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+
+           let files = e.dataTransfer.files;
+
+           for(let i = 0, il = e.dataTransfer.files.length; i < il; ++i) {
+              let file = e.dataTransfer.files[i];
+              let fileName = file.name;
+
+              let fileType = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
+              if(fileType == 'pdb' || fileType == 'mmcif' || fileType == 'png') {
+                await me.htmlCls.eventsCls.readFile(true, files, i, '', (fileType == 'mmcif'), (fileType == 'png'));
+              }
+              else if(fileType == 'bcf') {
+                await thisClass.openBcf(file);
+              }
+           }
+
+           $("#" + me.pre + "viewer")[0].style.border = "0px solid black";
         });
 
         $(document).on("click", "." + me.pre + "snpin3d", async function(e) { let ic = me.icn3d;
