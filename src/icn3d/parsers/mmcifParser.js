@@ -62,11 +62,14 @@ class MmcifParser {
                 let mat4 = new THREE.Matrix4();
                 mat4.fromArray(data.assembly[i]);
     
-                ic.biomtMatrices[i] = mat4;
+                // sometimes an extra matrix as included, e.g., PDb ID 2GTL
+                if(i == 0 && data.assembly[i][0] != 1) continue;
+
+                ic.biomtMatrices.push(mat4);
             }
     
             ic.asuCnt = ic.biomtMatrices.length;
-    
+
             // show bioassembly 
             if(me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.asuCnt > ic.maxatomcnt) {
                 ic.bAssembly = true;
