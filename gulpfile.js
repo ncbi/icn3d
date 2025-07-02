@@ -323,7 +323,7 @@ gulp.task("all",
   function() {
     return gulp.src(alljs)
         .pipe(concat('icn3d.js'))
-        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
+        .pipe(replace('\\nvec3 dxy = max( abs( dFdx( nonPerturbedNormal ) ), abs( dFdy( nonPerturbedNormal ) ) );\\nfloat geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );', '\\nfloat geometryRoughness = 0.0;'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build));
   });
@@ -332,7 +332,7 @@ gulp.task("allmin",
   function() {
     return gulp.src(allminjs)
         .pipe(concat('icn3d.min.js'))
-        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
+        .pipe(replace('\\nvec3 dxy = max( abs( dFdx( nonPerturbedNormal ) ), abs( dFdy( nonPerturbedNormal ) ) );\\nfloat geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );', '\\nfloat geometryRoughness = 0.0;'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build))
         .pipe(gulp.dest(icn3dnpm))
@@ -345,7 +345,7 @@ gulp.task("allnode",
     return gulp.src(allnodejs)
         .pipe(concat('icn3d.js'))
         .pipe(replace('alert(', 'var aaa = 1; //alert('))
-        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
+        .pipe(replace('\\nvec3 dxy = max( abs( dFdx( nonPerturbedNormal ) ), abs( dFdy( nonPerturbedNormal ) ) );\\nfloat geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );', '\\nfloat geometryRoughness = 0.0;'))
         .pipe(gulp.dest(icn3dnpm));
   });
 
@@ -354,7 +354,7 @@ gulp.task("allmodule",
     return gulp.src(allmodulejs)
         .pipe(concat('icn3d.module.js'))
         .pipe(replace('alert(', 'var aaa = 1; //alert('))
-        .pipe(replace('\\nvec3 dxy = max', '\\nvec3 fdx = dFdx( vViewPosition );\\nvec3 fdy = dFdy( vViewPosition );\\nvec3 nonPerturbedNormal = normalize( cross( fdx, fdy ) );\\nvec3 dxy = max'))
+        .pipe(replace('\\nvec3 dxy = max( abs( dFdx( nonPerturbedNormal ) ), abs( dFdy( nonPerturbedNormal ) ) );\\nfloat geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );', '\\nfloat geometryRoughness = 0.0;'))
         .pipe(gulp.dest(dist))
         .pipe(gulp.dest(build))
         .pipe(gulp.dest(icn3dnpm));
