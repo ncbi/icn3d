@@ -611,7 +611,7 @@ class AnnoSnpClinVar {
           let snpResn = snpStr.substr(posSymbol - 1, 1);
           let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chnid + '_' + realResi]);
           let oneLetterRes = (atom) ? me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)) : '';
-          if(!bFromClinVarDb) {
+          if(!bFromClinVarDb && ic.chainsSeq[chnid][resi - 1]) {
             oneLetterRes = ic.chainsSeq[chnid][resi - 1].name;
           }
 

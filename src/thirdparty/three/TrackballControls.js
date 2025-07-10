@@ -426,7 +426,7 @@ function TrackballControls( object, domElement, icn3d ) {
     function keydown( event ) {
 //console.log("keydown");
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         window.removeEventListener( 'keydown', keydown );
 
@@ -457,7 +457,7 @@ function TrackballControls( object, domElement, icn3d ) {
     function keyup( event ) {
 //console.log("keyup");
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         _this._state = _prevState;
 
@@ -467,7 +467,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function mousedown( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -504,7 +504,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function mousemove( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -527,7 +527,7 @@ function TrackballControls( object, domElement, icn3d ) {
     }
 
     function mouseup( event ) {
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -542,7 +542,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function mousewheel( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -569,7 +569,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function touchstart( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         switch ( event.touches.length ) {
             case 1:
@@ -601,7 +601,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function touchmove( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -631,7 +631,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     function touchend( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         switch ( event.touches.length ) {
 
@@ -656,7 +656,7 @@ function TrackballControls( object, domElement, icn3d ) {
 
     }
 
-    if(Object.keys(window).length >= 2 && this.domElement) {
+    if(Object.keys(window).length >= 3 && this.domElement) {
         this.domElement.addEventListener( 'contextmn', function ( event ) {
             //event.preventDefault();
         }, false );
@@ -670,8 +670,8 @@ function TrackballControls( object, domElement, icn3d ) {
         this.domElement.addEventListener( 'touchend', touchend, false );
         this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-        if(Object.keys(window).length >= 2) window.addEventListener( 'keydown', keydown, false );
-        if(Object.keys(window).length >= 2) window.addEventListener( 'keyup', keyup, false );
+        if(Object.keys(window).length >= 3) window.addEventListener( 'keydown', keydown, false );
+        if(Object.keys(window).length >= 3) window.addEventListener( 'keyup', keyup, false );
     }
 
     this.handleResize();

@@ -9,13 +9,9 @@ class Transform {
         this.icn3d = icn3d;
     }
 
-    //Set the orientation to the original one, but leave the style, color, etc alone.
-    resetOrientation() { let ic = this.icn3d, me = ic.icn3dui;
-        let bSet = false;
-        if(ic.commands.length > 0) {
-            let commandTransformation = ic.commands[0].split('|||');
-
-            if(commandTransformation.length == 2) {
+    resetOrientation_base(commandTransformation) { let ic = this.icn3d, me = ic.icn3dui;
+        if(commandTransformation.length == 2 && commandTransformation[1].length > 0) {
+            if(ic.bSetCamera) { // |||{"factor"...}
                 let transformation = JSON.parse(commandTransformation[1]);
 
                 ic._zoomFactor = transformation.factor;
@@ -27,15 +23,45 @@ class Transform {
                 ic.quaternion._y = transformation.quaternion._y;
                 ic.quaternion._z = transformation.quaternion._z;
                 ic.quaternion._w = transformation.quaternion._w;
+                bSet1 = true;
+            }
+            else { // |||pos:a,b,c|dir:a,b,c|up:a,b,c|fov:a
+                let bcfArray = commandTransformation[1].split('|');
+                bcfArray.forEach(item => {
+                    let itemArray = item.split(':');
+                    if(itemArray[0] == 'fov') {
+                        ic.cam.fov = parseFloat(itemArray[1]);
+                    }
+                    else {
+                        let abc = itemArray[1].split(',');
+                        if(itemArray[0] == 'pos') {
+                            ic.cam.position.set(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2]));
+                        }
+                        else if(itemArray[0] == 'dir') {
+                            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2])));
+                        }
+                        else if(itemArray[0] == 'up') {
+                            ic.cam.up.set(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2]));
+                        }
+                    }
+                });
 
-                bSet = true;
+
             }
         }
-
-        if(!bSet) {
+        else {
             ic._zoomFactor = 1.0;
             ic.mouseChange = new THREE.Vector2(0,0);
             ic.quaternion = new THREE.Quaternion(0,0,0,1);
+        }
+    }
+
+    //Set the orientation to the original one, but leave the style, color, etc alone.
+    resetOrientation() { let ic = this.icn3d, me = ic.icn3dui;
+        if(ic.commands.length > 0) {
+            let commandTransformation = ic.commands[0].split('|||');
+
+            this.resetOrientation_base(commandTransformation);
         }
 
         //reset ic.maxD
@@ -266,25 +292,43 @@ class Transform {
     }
 
     getTransformationStr(transformation) {var ic = this.icn3d, me = ic.icn3dui;
-        let transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} }
-        transformation2.factor = parseFloat(transformation.factor).toPrecision(4);
-        transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(4);
-        transformation2.mouseChange.y = parseFloat(transformation.mouseChange.y).toPrecision(4);
-        transformation2.quaternion._x = parseFloat(transformation.quaternion._x).toPrecision(4);
-        transformation2.quaternion._y = parseFloat(transformation.quaternion._y).toPrecision(4);
-        transformation2.quaternion._z = parseFloat(transformation.quaternion._z).toPrecision(4);
-        transformation2.quaternion._w = parseFloat(transformation.quaternion._w).toPrecision(4);
+        if(ic.bTransformation) {
+            let transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} }
+            transformation2.factor = parseFloat(transformation.factor).toPrecision(4);
+            transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(4);
+            transformation2.mouseChange.y = parseFloat(transformation.mouseChange.y).toPrecision(4);
+            transformation2.quaternion._x = parseFloat(transformation.quaternion._x).toPrecision(4);
+            transformation2.quaternion._y = parseFloat(transformation.quaternion._y).toPrecision(4);
+            transformation2.quaternion._z = parseFloat(transformation.quaternion._z).toPrecision(4);
+            transformation2.quaternion._w = parseFloat(transformation.quaternion._w).toPrecision(4);
 
-        if(transformation2.factor == '1.0000') transformation2.factor = 1;
-        if(transformation2.mouseChange.x == '0.0000') transformation2.mouseChange.x = 0;
-        if(transformation2.mouseChange.y == '0.0000') transformation2.mouseChange.y = 0;
+            if(transformation2.factor == '1.0000') transformation2.factor = 1;
+            if(transformation2.mouseChange.x == '0.0000') transformation2.mouseChange.x = 0;
+            if(transformation2.mouseChange.y == '0.0000') transformation2.mouseChange.y = 0;
 
-        if(transformation2.quaternion._x == '0.0000') transformation2.quaternion._x = 0;
-        if(transformation2.quaternion._y == '0.0000') transformation2.quaternion._y = 0;
-        if(transformation2.quaternion._z == '0.0000') transformation2.quaternion._z = 0;
-        if(transformation2.quaternion._w == '1.0000') transformation2.quaternion._w = 1;
+            if(transformation2.quaternion._x == '0.0000') transformation2.quaternion._x = 0;
+            if(transformation2.quaternion._y == '0.0000') transformation2.quaternion._y = 0;
+            if(transformation2.quaternion._z == '0.0000') transformation2.quaternion._z = 0;
+            if(transformation2.quaternion._w == '1.0000') transformation2.quaternion._w = 1;
 
-        return JSON.stringify(transformation2);
+            return JSON.stringify(transformation2);
+        }
+        else if(ic.cam) {
+            // |||pos:a,b,c|dir:a,b,c|up:a,b,c|fov:a
+            let str = '';
+            str += 'pos:' + ic.cam.position.x.toPrecision(4) + ',' + ic.cam.position.y.toPrecision(4) + ',' + ic.cam.position.z.toPrecision(4);
+
+            let direction = (new THREE.Vector3(0, 0, -1)).applyQuaternion(ic.cam.quaternion);
+            str += '|dir:' + direction.x.toPrecision(4) + ',' + direction.y.toPrecision(4) + ',' + direction.z.toPrecision(4);
+
+            str += '|up:' + ic.cam.up.x.toPrecision(4) + ',' + ic.cam.up.y.toPrecision(4) + ',' + ic.cam.up.z.toPrecision(4);
+            str += '|fov:' + ic.cam.fov.toPrecision(4);
+
+            return str;
+        }
+        else {
+            return '';
+        }
     }
 }
 

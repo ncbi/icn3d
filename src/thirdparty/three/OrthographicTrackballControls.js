@@ -419,7 +419,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function keydown( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         window.removeEventListener( 'keydown', keydown );
 
@@ -447,7 +447,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function keyup( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         _this._state = _prevState;
 
@@ -457,7 +457,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function mousedown( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -494,7 +494,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function mousemove( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -517,7 +517,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function mouseup( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -532,7 +532,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function mousewheel( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -558,7 +558,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function touchstart( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         switch ( event.touches.length ) {
 
@@ -591,7 +591,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function touchmove( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         //event.preventDefault();
         event.stopPropagation();
@@ -621,7 +621,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     function touchend( event ) {
 
-        if ( _this.enabled === false || Object.keys(window).length < 2)  return;
+        if ( _this.enabled === false || Object.keys(window).length < 3)  return;
 
         switch ( event.touches.length ) {
 
@@ -646,7 +646,7 @@ function OrthographicTrackballControls( object, domElement, icn3d ) { var me = t
 
     }
 
-    if(Object.keys(window).length >= 2 && this.domElement) {
+    if(Object.keys(window).length >= 3 && this.domElement) {
         this.domElement.addEventListener( 'contextmn', function ( event ) {
             //event.preventDefault();
         }, false );

@@ -187,6 +187,8 @@ class iCn3D {
 
     this.bUsePdbNum = true;
 
+    this.bSetCamera = true; 
+
     let bWebGL, bWebGL2, bVR;
     if(!this.icn3dui.bNode) {
         let canvas = document.createElement( 'canvas' );

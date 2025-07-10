@@ -84,19 +84,7 @@ class LoadScript {
     updateTransformation(steps) { let ic = this.icn3d, me = ic.icn3dui;
       let commandTransformation = (ic.commands[steps-1]) ? ic.commands[steps-1].split('|||') : [];
 
-      if(commandTransformation.length == 2) {
-          let transformation = JSON.parse(commandTransformation[1]);
-
-          ic._zoomFactor = transformation.factor;
-
-          ic.mouseChange.x = transformation.mouseChange.x;
-          ic.mouseChange.y = transformation.mouseChange.y;
-
-          ic.quaternion._x = transformation.quaternion._x;
-          ic.quaternion._y = transformation.quaternion._y;
-          ic.quaternion._z = transformation.quaternion._z;
-          ic.quaternion._w = transformation.quaternion._w;
-      }
+      ic.transformCls.resetOrientation_base(commandTransformation);
 
       // ic.bRender = true;
       ic.drawCls.draw();
@@ -881,19 +869,17 @@ class LoadScript {
 
         let commandTransformation = (ic.commands[steps-1]) ? ic.commands[steps-1].split('|||') : [];
 
-        if(commandTransformation.length == 2) {
-            let transformation = JSON.parse(commandTransformation[1]);
-
-            ic._zoomFactor = transformation.factor;
-
-            ic.mouseChange.x = transformation.mouseChange.x;
-            ic.mouseChange.y = transformation.mouseChange.y;
-
-            ic.quaternion._x = transformation.quaternion._x;
-            ic.quaternion._y = transformation.quaternion._y;
-            ic.quaternion._z = transformation.quaternion._z;
-            ic.quaternion._w = transformation.quaternion._w;
+        // load a URL with trackball transformation, or no info after "|||"
+        if(commandTransformation.length != 2 || (commandTransformation.length == 2 && commandTransformation[1].substr(0,1) == '{')) {
+          ic.bSetCamera = true;
+        } 
+        else {
+          ic.bSetCamera = false;
         }
+
+        if(commandTransformation.length == 2 && commandTransformation[1].substr(0,1) == '{') ic.bTransformation = true;
+
+        ic.transformCls.resetOrientation_base(commandTransformation);
 
         ic.selectionCls.oneStructurePerWindow();
 

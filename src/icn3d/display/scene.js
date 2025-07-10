@@ -24,13 +24,21 @@ class Scene {
     rebuildScene(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
+        // whether camera was set
+        me.bCamera = (ic.cam) ? true : false;
+
         this.rebuildSceneBase(options);
 
         ic.fogCls.setFog();
 
-        // if(!ic.bVr && !ic.bAr) { // first time
+        if(ic.bSetCamera) { // load a URL with trackball transformation, or no info after "|||"
             ic.cameraCls.setCamera();
-        // }
+        }
+        else { // load a URL with camera viewpoint
+            // camera was set in ic.transformCls.resetOrientation_base
+        }
+
+        if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();
 
         // if(!ic.bSetVrArButtons) { // call once
         if(!me.cfg.imageonly) this.setVrArButtons();
