@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.45.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.0.zip) was release on July 10, 2025. Switched the transformation description in share links from trackball parameters to camera parameters used in BCF files. Fixed a bug in using node.js script.
+
 [icn3d-3.44.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.2.zip) was release on June 30, 2025. Enabled to drag and drop to open mmCIF, PDB, PNG, and BCF files.
 
 [icn3d-3.44.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.44.1.zip) was release on June 26, 2025. Output BCF viewpoint file via the menu "File > Save File > BCF Viewpoint".

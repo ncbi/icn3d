@@ -8,7 +8,7 @@ class MyEventCls {
     }
 
     onId(id, eventName, myFunction) { let me = this.icn3dui;
-        if(Object.keys(window).length < 2) return;
+        if(Object.keys(window).length < 3) return;
 
         if(id.substr(0, 1) == '#') id = id.substr(1);
         if(document.getElementById(id)) {
