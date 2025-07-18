@@ -123,7 +123,7 @@ class Scene {
             ic.shininess = shininess;
         }
 
-        if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('light1') != '') {
+        if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('light1') != '' && !me.bNode && me.htmlCls.setHtmlCls.getCookie('light2') != '' && !me.bNode && me.htmlCls.setHtmlCls.getCookie('light3') != '') {
             let light1 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light1'));
             let light2 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light2'));
             let light3 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light3'));

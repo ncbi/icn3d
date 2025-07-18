@@ -139,7 +139,7 @@ class SetMenu {
         html += this.setTools();
 
         // show title at the top left corner
-        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + titleColor + "; width:" + me.htmlCls.WIDTH + "px'></div>";
+        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle icn3d-title' style='display:table-row; margin: 85px 0px 0px 5px; color:" + titleColor + "; width:" + me.htmlCls.WIDTH + "px'></div>";
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
@@ -273,7 +273,7 @@ class SetMenu {
         //html += me.htmlCls.setMenuCls.setTools();
 
         // show title at the top left corner
-        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
+        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle icn3d-title' style='display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
         // don't show legend in mobile
         //html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";

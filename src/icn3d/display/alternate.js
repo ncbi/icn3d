@@ -134,7 +134,7 @@ class Alternate {
 
         //ic.glycanCls.showGlycans();
 
-        ic.opts['rotationcenter'] = 'highlight center';
+        // ic.opts['rotationcenter'] = 'highlight center';
         
         ic.drawCls.draw();
 

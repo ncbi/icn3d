@@ -448,24 +448,27 @@ class Instancing {
            let normalArray2 = (baseGeometry.attributes.normal) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.normal.array) : [];
            let colorArray2 = (baseGeometry.attributes.color) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array) : [];
            let indexArray2 = (baseGeometry.index) ? me.hashUtilsCls.hashvalue2array(baseGeometry.index.array) : [];
+          
+           if(colorArray2.length > 0) { // avoid an black object in the center of of assembly, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?pdbid=1qqp
+                positionArray = positionArray.concat(positionArray2);
+                normalArray = normalArray.concat(normalArray2);
+                colorArray = colorArray.concat(colorArray2);
+                indexArray = indexArray.concat(indexArray2);
 
-           positionArray = positionArray.concat(positionArray2);
-           normalArray = normalArray.concat(normalArray2);
-           colorArray = colorArray.concat(colorArray2);
-           indexArray = indexArray.concat(indexArray2);
+                let bCylinderArray = [];
+                let bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
+                //    let bCylinder = (baseGeometry.geometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
+                for(let i = 0, il = positionArray.length / 3; i < il; ++i) {
+                    bCylinderArray.push(bCylinder);
+                }
 
-           let bCylinderArray = [];
-           let bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
-           for(let i = 0, il = positionArray.length / 3; i < il; ++i) {
-               bCylinderArray.push(bCylinder);
+                geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positionArray), 3));
+                geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalArray), 3) );
+                geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), 3) );
+
+                geometry.setAttribute('cylinder', new THREE.BufferAttribute(new Float32Array(bCylinderArray), 1) );
+                geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
            }
-
-           geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positionArray), 3));
-           geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalArray), 3) );
-           geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), 3) );
-
-           geometry.setAttribute('cylinder', new THREE.BufferAttribute(new Float32Array(bCylinderArray), 1) );
-           geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
 
            positionArray2 = null;
            normalArray2 = null;
@@ -527,7 +530,7 @@ class Instancing {
 
            let mesh2 = new THREE.Mesh(geometry, ic.instancedMaterial);
 
-           mesh2.onBeforeRender = ic.impostorCls.onBeforeRender;
+           if(ic.bImpo) mesh2.onBeforeRender = ic.impostorCls.onBeforeRender;
            //mesh2.onBeforeRender = this.onBeforeRender;
 
            // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
