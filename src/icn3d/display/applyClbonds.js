@@ -12,7 +12,11 @@ class ApplyClbonds {
     applyClbondsOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
        if(options === undefined) options = ic.opts;
 
-       if(!ic.bCalcCrossLink) {
+       ic.lines['clbond'] = [];
+
+       if(options.chemicals == 'nothing') return {};
+       
+    //    if(!ic.bCalcCrossLink) {
          // find all bonds to chemicals
          ic.clbondpnts = {};
          ic.clbondResid2serial = {};
@@ -23,10 +27,11 @@ class ApplyClbonds {
          // chemical to protein/nucleotide
          this.applyClbondsOptions_base('all');
 
-         ic.bCalcCrossLink = true;
-       }
+        //  ic.bCalcCrossLink = true;
+    //    }
 
-       if (options.clbonds.toLowerCase() === 'yes' && options.chemicals !== 'nothing') {
+    //    if (options.clbonds.toLowerCase() === 'yes' && options.chemicals !== 'nothing') {
+       if (options.clbonds.toLowerCase() === 'yes') {
          let color = '#006400';
          let colorObj = me.parasCls.thr(0x006400);
 
@@ -52,7 +57,8 @@ class ApplyClbonds {
                     line.serial1 = ic.clbondResid2serial[resid0 + ',' + resid1];
                     line.serial2 = ic.clbondResid2serial[resid1 + ',' + resid0];
 
-                    if(!ic.dAtoms.hasOwnProperty(line.serial1) || !ic.dAtoms.hasOwnProperty(line.serial2)) continue;
+                    // only apply to displayed atoms
+                    // if(!ic.dAtoms.hasOwnProperty(line.serial1) || !ic.dAtoms.hasOwnProperty(line.serial2)) continue;
 
                     line.position1 = ic.atoms[line.serial1].coord;
                     line.position2 = ic.atoms[line.serial2].coord;
@@ -85,8 +91,13 @@ class ApplyClbonds {
     }
 
     applyClbondsOptions_base(type) { let ic = this.icn3d, me = ic.icn3dui;
+         // only apply to displayed atoms
+         let atomHash = me.hashUtilsCls.cloneHash(ic.chemicals);
+         atomHash = me.hashUtilsCls.intHash(atomHash, ic.dAtoms);
+
          // chemical to chemical first
-         for (let i in ic.chemicals) {
+        //   for (let i in ic.chemicals) {
+         for (let i in atomHash) {
             let atom0 = ic.atoms[i];
 
             let chain0 = atom0.structure + '_' + atom0.chain;

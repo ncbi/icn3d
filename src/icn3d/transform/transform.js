@@ -23,7 +23,6 @@ class Transform {
                 ic.quaternion._y = transformation.quaternion._y;
                 ic.quaternion._z = transformation.quaternion._z;
                 ic.quaternion._w = transformation.quaternion._w;
-                bSet1 = true;
             }
             else { // |||pos:a,b,c|dir:a,b,c|up:a,b,c|fov:a
                 let bcfArray = commandTransformation[1].split('|');
@@ -45,8 +44,6 @@ class Transform {
                         }
                     }
                 });
-
-
             }
         }
         else {

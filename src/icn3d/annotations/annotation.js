@@ -242,7 +242,12 @@ class Annotation {
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
     }
     async setAnnoTabIg(bSelection, template) {  let ic = this.icn3d, me = ic.icn3dui;
+        let selAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
         await this.updateIg(bSelection, template);
+
+        // preserve previous selection
+        ic.hAtoms = me.hashUtilsCls.cloneHash(selAtoms);
 
         $("[id^=" + ic.pre + "ig]").show();
         if($("#" + ic.pre + "anno_ig").length) $("#" + ic.pre + "anno_ig")[0].checked = true;

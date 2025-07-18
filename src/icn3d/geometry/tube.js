@@ -449,19 +449,25 @@ class Tube {
           //mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
           mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: true, side: THREE.DoubleSide }));
 
-          if(ic.mdl) ic.mdl.add(mesh);
+          if(ic.mdl) {
+            ic.mdl.add(mesh);
+          }
         }
         else if(bHighlight === 1) {
           mesh = new THREE.Mesh(geo, ic.matShader);
           mesh.renderOrder = ic.renderOrderPicking;
           //ic.mdlPicking.add(mesh);
-          if(ic.mdl) ic.mdl.add(mesh);
+          if(ic.mdl) {
+            ic.mdl.add(mesh);
+          }
         }
         else {
           //mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
           mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: true, side: THREE.DoubleSide }));
 
-          if(ic.mdl) ic.mdl.add(mesh);
+          if(ic.mdl) {
+            ic.mdl.add(mesh);
+          }
         }
 
         if(bHighlight === 1 || bHighlight === 2) {
