@@ -171,7 +171,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.45.0';
+    this.REVISION = '3.45.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -753,7 +753,7 @@ iCn3DUI.prototype.getXMLHttpRqstPromise = function(url, dataType, responseType, 
                        alert("RCSB server has no corresponding electron density map for this structure.");
                    }
                    else {
-                       alert("The " + mapType + " file is unavailable...");
+                       console.log("The " + mapType + " file is unavailable...");
                    }
 
                    reject('error');

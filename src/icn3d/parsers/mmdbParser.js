@@ -28,7 +28,7 @@ class MmdbParser {
             this.getNoData(mmdbid, bGi);
             return;
         }
-        
+
         if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;

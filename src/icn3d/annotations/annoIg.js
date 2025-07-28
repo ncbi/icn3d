@@ -458,6 +458,7 @@ class AnnoIg {
             html2 += htmlCnt + '<span class="icn3d-seqLine">';
 
             if(ic.seqStartLen && ic.seqStartLen[chnid]) html2 += ic.showSeqCls.insertMulGapOverview(chnid, ic.seqStartLen[chnid]);
+            // if(ic.seqStartLen && ic.seqStartLen[chnid]) html += ic.showSeqCls.insertMulGap(ic.seqStartLen[chnid], '-');
 
             let prevDomainindex, color;
             for(let i = 0, il = fromArray.length; i < il; ++i) {
