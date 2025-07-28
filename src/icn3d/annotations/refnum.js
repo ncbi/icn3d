@@ -198,15 +198,16 @@
         let pdbAjaxArray = this.getPdbAjaxArray();
 
         // try {
+            let numRound = 0;
+            
             if(!template) {
                 //let allPromise = Promise.allSettled(pdbAjaxArray);
                 //ic.pdbDataArray = await allPromise;
 
                 ic.pdbDataArray = await this.promiseWithFixedJobs(pdbAjaxArray);
 
-                let numRound = 0;
                 let bNoMoreIg = await thisClass.parseRefPdbData(ic.pdbDataArray, template, undefined, numRound);
-                 ++numRound;
+                ++numRound;
 
                 //while(!bNoMoreIg) {
                 while(!bNoMoreIg && numRound < 15) {

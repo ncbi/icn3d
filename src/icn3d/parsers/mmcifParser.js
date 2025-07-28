@@ -111,7 +111,7 @@ class MmcifParser {
         ///// if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
       }
       catch (err) {
-        if(!me.bNode) console.log("mmcifparser.cgi issues: " + err);
+        if(!me.bNode) console.log("downloadMmcifSymmetry issues: " + err);
         return;
       }
     }

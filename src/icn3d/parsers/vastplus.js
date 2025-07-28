@@ -71,7 +71,7 @@ class Vastplus {
         }
 
         let allPromise = Promise.allSettled(ajaxArray);
-        try {
+        // try {
             let dataArray = await allPromise;
 
             // 2. cluster pairs
@@ -83,10 +83,10 @@ class Vastplus {
             await ic.pdbParserCls.loadPdbDataRender(true);
 
             /// if(ic.deferredRealignByVastplus !== undefined) ic.deferredRealignByVastplus.resolve();
-        }
-        catch(err) {
-            alert("There are some problems in aligning the chains...");
-        }          
+        // }
+        // catch(err) {
+        //     alert("There are some problems in aligning the chains...");
+        // }          
     }
 
     setAlignment(struct1, struct2, chainid1, chainid2, bRealign) { let ic = this.icn3d, me = ic.icn3dui;

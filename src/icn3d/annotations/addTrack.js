@@ -1590,7 +1590,7 @@ class AddTrack {
 
         // adjust the total length
         if(ic.maxAnnoLength < ic.maxAnnoLengthOri + ic.seqStartLen[chainid] + ic.seqEndLen[chainid]) {
-                ic.maxAnnoLength = ic.maxAnnoLengthOri + ic.seqStartLen[chainid] + ic.seqEndLen[chainid];
+            ic.maxAnnoLength = ic.maxAnnoLengthOri + ic.seqStartLen[chainid] + ic.seqEndLen[chainid];
         }
 
         // do not remove other tracks
@@ -1891,6 +1891,9 @@ class AddTrack {
 
         me.htmlCls.clickMenuCls.setLogCmd("add exon track | chainid " + chainid + " | geneid " + geneid + " | startpos " + startpos + " | type " + type, true);
         me.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
+        
+        // reset annotation tracks since exons may add extra space to the N-terminal
+        ic.annotationCls.resetAnnoTabAll();
     }
 
     async addMsaTracks(chainid, startpos, type, fastaList) { let ic = this.icn3d, me = ic.icn3dui;

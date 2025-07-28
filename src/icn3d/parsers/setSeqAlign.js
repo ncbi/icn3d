@@ -658,34 +658,25 @@ class SetSeqAlign {
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                 let start1, end1;
                 
-                // if(bRealign) { // real residue numbers are stored
-                //     start1 = ic.qt_start_end[chainIndex][i].t_start;
-                //     end1 = ic.qt_start_end[chainIndex][i].t_end;
-                // }
-                // else {
-                    //ic.qt_start_end is zero-based
-                    start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
-                    end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
-                // }
+                // start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
+                // end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
+
+                start1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_start) - 1;
+                end1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_end) - 1;
+
                 for(let j = start1; j <= end1; ++j) {
                     let resi, resid;
 
-                    // if(me.cfg.aligntool == 'tmalign') { // tmalign: just one residue in this for loop
-                    //     resi = ic.qt_start_end[chainIndex][i].t_start;
+                    // let resiPos;
+                    // if(me.cfg.aligntool == 'tmalign') {
+                    //     resiPos = j - baseResi;
                     // }
                     // else {
-                        // let resiPos = (bRealign || me.cfg.aligntool != 'tmalign') ? j : j - baseResi;
-                        let resiPos;
-                        if(me.cfg.aligntool == 'tmalign') {
-                            resiPos = j - baseResi;
-                        }
-                        else {
-                            // resiPos = (bRealign) ? j : j - baseResi;
-                            resiPos = j;
-                        }
-                        resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
-                        resid = chainidArray[0] + '_' + resi;
+                    //     resiPos = j;
                     // }
+                    let resiPos = j;
+                    resi = ic.ParserUtilsCls.getResi(chainidArray[0], resiPos);
+                    resid = chainidArray[0] + '_' + resi;
 
                     resid2range_t[resid] = 1;
                     if(j < start_t) start_t = j;
@@ -745,7 +736,8 @@ class SetSeqAlign {
             let resi = ic.chainsSeq[chainid1][j].resi;
             let resid = chainid1 + '_' + resi;
 
-            let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
+            // let jAdjusted = (me.cfg.aligntool != 'tmalign') ? j : j + baseResi;
+            let jAdjusted = ic.ParserUtilsCls.getResiNCBI(chainid1, resi) - 1;
 
             //if(j + baseResi < start_t || j + baseResi > end_t) {
             if(jAdjusted < start_t || jAdjusted > end_t) {    
@@ -934,8 +926,10 @@ class SetSeqAlign {
     insertNotAlignRes(chainid, start, len, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         // insert non-aligned residues in query seq
         for(let j = 0, jl = len; j < jl; ++j) {
-            let resi2 = ic.ParserUtilsCls.getResi(chainid, start + j);
-            let resn2 = this.getResn(chainid, start + j);
+            // let resi2 = ic.ParserUtilsCls.getResi(chainid, start + j);
+            // let resn2 = this.getResn(chainid, start + j);
+            let resi2 = start + j;
+            let resn2 = this.getResnFromResi(chainid, resi2);
             let resn1 = '-';
             let bAlign = false;
             let resObject = this.getResObject(chainid, false, bAlign, resi2, resn2, resn1)
@@ -943,13 +937,15 @@ class SetSeqAlign {
         }
     }
 
-    getTemplatePosFromOriPos(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
-        let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
-        let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
-            
+    getTemplatePosFromOriResi(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
+        // let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
+        // let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
+        let startResi = start;
+        let endResi = end;
+
         let result1 = this.getResiPosInTemplate(chainid1, startResi);
         let result2 = this.getResiPosInTemplate(chainid1, endResi);
-        
+ 
         return {"pos1": result1.pos, "pos2": result2.pos};
     }
 
@@ -1021,6 +1017,7 @@ class SetSeqAlign {
 
         for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
+            
             if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
@@ -1049,14 +1046,14 @@ class SetSeqAlign {
                 end1Pos = end1;
             }
             //let range = resid2range_t[chainid1 + '_' + resiStart1];
-  
+
             // if the mapping does not start from start_t, add gaps to the query seq
             if(i == 0) {
-                //result = this.getTemplatePosFromOriPos(chainid1, start_t, start1, bRealign);
-                result = this.getTemplatePosFromOriPos(chainid1, start_t, start1Pos, bRealign);
+                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
+                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
                 pos1 = result.pos1;
                 pos2 = result.pos2;
-                
+
                 //if(start1 > start_t) {
                 if(start1Pos > start_t) {
                     for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
@@ -1066,7 +1063,7 @@ class SetSeqAlign {
             }
             else {
                 //let notAlnLen1 = start1 - (prevIndex1 + 1);
-                result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, start1, bRealign);
+                result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, start1, bRealign);
                 pos1 = result.pos1;
                 pos2 = result.pos2;
                 let notAlnLen1 = pos2 - (pos1 + 1);
@@ -1079,7 +1076,7 @@ class SetSeqAlign {
                     // add gaps before the query sequence
                     for(let j = 0, jl = notAlnLen1 - notAlnLen2; j < jl; ++j) {
                         ic.alnChainsSeq[chainid2].push(gapResObject2);
-                    }                       
+                    }
                 }
                 else {
                     // check the number of gaps before resiStart1 (n), and insert 'notAlnLen2 - notAlnLen1 - n' gaps
@@ -1088,8 +1085,8 @@ class SetSeqAlign {
             }
 
             // 2. In the mapped residues
-            //result = this.getTemplatePosFromOriPos(chainid1, start1, end1, bRealign);
-            result = this.getTemplatePosFromOriPos(chainid1, start1Pos, end1Pos, bRealign);
+            result = this.getTemplatePosFromOriResi(chainid1, start1, end1, bRealign);
+            //result = this.getTemplatePosFromOriResi(chainid1, start1Pos, end1Pos, bRealign);
             pos1 = result.pos1;
             pos2 = result.pos2;
             
@@ -1106,7 +1103,7 @@ class SetSeqAlign {
                     let resi2 = (bRealign) ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
                     let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
                     let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
-                    
+
                     let bAlign = true;
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1)
                     ic.alnChainsSeq[chainid2].push(resObject);
@@ -1129,7 +1126,7 @@ class SetSeqAlign {
         } 
 
         // add gaps at the end
-        result = this.getTemplatePosFromOriPos(chainid1, prevIndex1, end_t, bRealign);
+        result = this.getTemplatePosFromOriResi(chainid1, prevIndex1, end_t, bRealign);
         pos1 = result.pos1;
         pos2 = result.pos2;
         for(let i = pos1; i < pos2; ++i) {
