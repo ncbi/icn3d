@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.45.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.2.zip) was release on August 20, 2025. Removed the line "global.THREE = require('three')" in iCn3D node.js scripts since three.js was compiled into icn3d.js since iCn3D 3.44.0.
+
 [icn3d-3.45.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.1.zip) was release on July 28, 2025. Fixed bugs in assigning specific template and VAST+ alignment sequence display.
 
 [icn3d-3.45.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.0.zip) was release on July 10, 2025. Switched the transformation description in share links from trackball parameters to camera parameters used in BCF files. Fixed a bug in using node.js script.
