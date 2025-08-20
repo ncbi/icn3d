@@ -1,6 +1,6 @@
 /*
 Please install the following three packages in your directory with the file interaction.js
-npm install three
+
 npm install jquery
 npm install icn3d
 
@@ -9,7 +9,7 @@ npm install querystring
 */
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('three');
+//global.THREE = require('three');
 let jsdom = require('jsdom');
 global.$ = require('jquery')(new jsdom.JSDOM().window);
 
@@ -130,10 +130,9 @@ async function main() {
                 allSeq = chnidBaseArray;
             }
             else {
-                let urlSeq = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + inputid;
+                let urlSeq = "https://rest.uniprot.org/uniprotkb/" + inputid + ".fasta";
 
                 let dataStrSeq = await getAjaxPromise(urlSeq);
-                //console.log("dataStrSeq: " + dataStrSeq);
             
                 let strArray = dataStrSeq.split('\n');
                 strArray.shift();
@@ -150,6 +149,9 @@ async function main() {
 
             ic.annoCddSiteCls.parseCddData([data4], chnidArray);
             if(annoType == 3) {
+                for(let chainid in ic.chainid2cdd) {
+                    console.log(chainid + ' domains\t' + JSON.stringify(ic.chainid2cdd[chainid]));
+                }
                 for(let chainid in ic.resid2cdd) {
                     console.log(chainid + '\t' + JSON.stringify(ic.resid2cdd[chainid]));
                 }
@@ -271,6 +273,8 @@ async function main() {
         // 2: ClinVar
         else if(annoType == 1 || annoType == 2) {
             for(let chainid in ic.protein_chainid) {
+                if(!ic.chainid2uniport) await ic.annoSnpClinVarCls.getUniprotForAllStructures();
+
                 let url3 = 'https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid=' + chainid;
 
                 let dataStr3 = await getAjaxPromise(url3);
@@ -281,7 +285,7 @@ async function main() {
                 let snpgi = data2.snpgi;
                 let gi = data2.gi;
                 if(annoType == 1 && snpgi) {
-                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chainid;
+                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chainid + "&uniprot=" + ic.chainid2uniport[chainid];
                     let dataStr4 = await getAjaxPromise(url4);
 
                     let data4 = JSON.parse(dataStr4);
@@ -299,7 +303,7 @@ async function main() {
                     let specialGiArray = [6137708,1942289,224510717,2624886,253723219,2554905,75765331,3660278,312207882,319443632,342350956,1827805,109157826,1065265,40889086,6730307,163931185,494469,163931091,60594093,55669745,18655489,17942684,6980537,166235465,6435586,4139398,4389047,364506122,78101667,262118402,20664221,2624640,158430173,494395,28948777,34810587,13399647,3660342,261278854,342350965,384482350,378792570,15988303,213424334,4558333,2098365,10835631,3318817,374074330,332639529,122919696,4389286,319443573,2781341,67464020,194709238,210061039,364506106,28949044,40889076,161172338,17943181,4557976,62738484,365813173,6137343,350610552,17942703,576308,223674070,15826518,1310997,93279697,4139395,255311799,157837067,361132363,357380836,146387678,383280379,1127268,299856826,13786789,1311054,46015217,3402130,381353319,30750059,218766885,340707375,27065817,355333104,2624634,62738384,241913553,304446010];
                     let giUsed = snpgi;
                     if(specialGiArray.includes(gi)) giUsed = gi;
-                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chainid;
+                    let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chainid + "&uniprot=" + ic.chainid2uniport[chainid];
 
                     let dataStr4 = await getAjaxPromise(url4);
 

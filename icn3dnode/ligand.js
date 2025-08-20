@@ -2,7 +2,7 @@
 
 /*
 Please install the following three packages in your directory with the file interaction.js
-npm install three
+
 npm install jquery
 npm install icn3d
 
@@ -11,7 +11,7 @@ npm install querystring
 */
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('three');
+//global.THREE = require('three');
 let jsdom = require('jsdom');
 global.$ = require('jquery')(new jsdom.JSDOM().window);
 
@@ -36,9 +36,9 @@ let ligName = myArgs[1];
 let baseUrlMmdb = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=";
 let urlMmdb = baseUrlMmdb + pdbid;
 
-getLigandInteractio(urlMmdb, pdbid, ligName);
+getLigandInteraction(urlMmdb, pdbid, ligName);
 
-function getLigandInteractio(url, pdbid, ligName) {
+function getLigandInteraction(url, pdbid, ligName) {
     https.get(url, function(res1) {
         let response1 = [];
         res1.on('data', function (chunk) {

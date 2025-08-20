@@ -1,7 +1,7 @@
 // usage: node refnum_file.js filename.cif cif
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('three');
+//global.THREE = require('three');
 let jsdom = require('jsdom');
 global.$ = require('jquery')(new jsdom.JSDOM().window);
 

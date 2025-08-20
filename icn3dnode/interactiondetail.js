@@ -3,7 +3,7 @@
 
 /*
 Please install the following three packages in your directory with the file interaction.js
-npm install three
+
 npm install jquery
 npm install icn3d
 
@@ -12,7 +12,7 @@ npm install querystring
 */
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('three');
+//global.THREE = require('three');
 let jsdom = require('jsdom');
 global.$ = require('jquery')(new jsdom.JSDOM().window);
 
