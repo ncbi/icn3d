@@ -447,7 +447,8 @@ class Annotation {
             
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
             if(atom && atom.resn !== undefined) {
-                let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                // let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn);
                 $("#" + ic.pre + "anno_" + oneLetterRes).show();
             }
         }

@@ -1217,7 +1217,8 @@
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                 if(!atom) continue;
 
-                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                // let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let resn = me.utilsCls.residueName2Abbr(atom.resn);
 
                 let domainid = ic.resid2domainid[resid];
                 let refnumStr, refnumLabel = ic.resid2refnum[resid];
@@ -1294,7 +1295,8 @@
 
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                 if(!atom) continue;
-                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                // let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let resn = me.utilsCls.residueName2Abbr(atom.resn);
 
                 if(refnumLabel) {
                     let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
@@ -1317,7 +1319,8 @@
 
                 let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                 if(!atom) continue;
-                let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                // let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let resn = me.utilsCls.residueName2Abbr(atom.resn);
 
                 if(refnumLabel) {
                     let refnumStr_ori = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);

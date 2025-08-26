@@ -356,7 +356,8 @@ class LoadAtomData {
                 atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
             }
 
-            let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
+            // let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
+            let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn);
 
             if((type === 'mmdbid' || type === 'align') && ic.bFullUi ) {
                 // set ic.mmdbMolidResid2mmdbChainResi
@@ -487,7 +488,6 @@ class LoadAtomData {
             let residueid = chainid + '_' + atm.resi;
             if(ic.residues[residueid] === undefined) ic.residues[residueid] = {}
             ic.residues[residueid][serial] = 1;
-
             residueNum = chainNum + '_' + atm.resi;
 
             // different residue
@@ -660,7 +660,6 @@ class LoadAtomData {
         }
         // remove the reference
         data.atoms = {};
-
         //ic.cnt =(alignType === undefined || alignType === 'target') ? serial : serial - ic.lastTargetSerial;
         ic.cnt = serial;
 

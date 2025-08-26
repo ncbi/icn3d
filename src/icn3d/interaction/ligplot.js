@@ -226,7 +226,8 @@ class Ligplot {
             }
         }
 
-        let oneLetterRes = me.utilsCls.residueName2Abbr(atom2.resn.substr(0, 3));
+        // let oneLetterRes = me.utilsCls.residueName2Abbr(atom2.resn.substr(0, 3));
+        let oneLetterRes = me.utilsCls.residueName2Abbr(atom2.resn);
         let resName2 = oneLetterRes + atom2.resi;
         let textColor2 = (atom2.color) ? atom2.color.getHexString() : '000';
         let lineColor = ic.lineGraphCls.getStrokecolor(undefined, interactionType);
