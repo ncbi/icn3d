@@ -2258,7 +2258,6 @@ class Events {
         });
         me.myEventCls.onIds("#" + me.pre + "applypick_aroundsphere", "click", function(e) { let ic = me.icn3d;
             //e.preventDefault();
-            
             let radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
             let nameArray = $("#" + me.pre + "atomsCustomSphere").val();
             let nameArray2 = $("#" + me.pre + "atomsCustomSphere2").val();

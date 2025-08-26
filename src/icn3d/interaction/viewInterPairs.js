@@ -213,7 +213,7 @@ class ViewInterPairs {
 
                     ic.resid2ResidhashInteractions = resid2ResidhashInteractions;
                     let residueArray = Object.keys(residues);
-                    ic.hAtoms = {}
+                    ic.hAtoms = {};
                     for(let index = 0, indexl = residueArray.length; index < indexl; ++index) {
                       let residueid = residueArray[index];
                       for(let i in ic.residues[residueid]) {
@@ -225,8 +225,10 @@ class ViewInterPairs {
                     let commandname, commanddesc;
                     let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(residues);
                     if(firstAtom !== undefined) {
-                        commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
-                        if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                        // commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+                        commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn).trim() + firstAtom.resi + "-" + radius + "A";
+                        // if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                        if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
                         commanddesc = commandname;
                         ic.selectionCls.addCustomSelection(residueArray, commandname, commanddesc, select, true);
                     }
@@ -237,6 +239,7 @@ class ViewInterPairs {
                 tableHtml += this.exportSpherePairs(true, type, labelType);
            } // same set
        }
+
        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtoms);
        ic.bRender = true;
        //ic.hlUpdateCls.updateHlAll();

@@ -903,7 +903,8 @@ class LoadPDB {
                   || (ic.nucleotides.hasOwnProperty(serialArray[i]) && (atom.name == "O3'" || atom.name == "O3*")) ) {
                     if(atom.resi == lastResi) continue; // e.g., Alt A and B
 
-                    let resn = (atom.resn.trim().length > 3) ? atom.resn.trim().substr(0, 3) : atom.resn.trim();
+                    // let resn = (atom.resn.trim().length > 3) ? atom.resn.trim().substr(0, 3) : atom.resn.trim();
+                    let resn = atom.resn.trim();
                     if(!me.parasCls.chargeColors.hasOwnProperty(resn)) {
                         continue; // regular residues
                     }

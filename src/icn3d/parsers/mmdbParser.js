@@ -217,7 +217,6 @@ class MmdbParser {
 
             hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
         }
-
         // show ligand-protein interaction
         if(me.cfg.ligand) { // sid123059722
             for(let chainid in ic.chainid2sid) {
@@ -289,7 +288,6 @@ class MmdbParser {
                 }
             } // for each domainArray
         } // for each molid
-
         // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
         ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
         if(type !== undefined) {
@@ -442,7 +440,6 @@ class MmdbParser {
         //ic.molid2color = molid2color;
         //ic.chain2molid = chain2molid;
         ic.molid2chain = molid2chain;
-
         // small structure with all atoms
         // show surface options
         $("#" + ic.pre + "accordion5").show();

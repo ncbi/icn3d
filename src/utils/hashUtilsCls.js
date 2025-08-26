@@ -67,7 +67,7 @@ class HashUtilsCls {
     //Get the union of two hashes "atoms1" and "atoms2". The returned hash has atom index as key and 1 as value.
     unionHash(atoms1, atoms2) { let me = this.icn3dui;
         // much slower
-        //return me.hashUtilsCls.unionHashNotInPlace(atoms1, atoms2);
+        // return me.hashUtilsCls.unionHashNotInPlace(atoms1, atoms2);
 
         // much faster
         return me.hashUtilsCls.unionHashInPlace(atoms1, atoms2);

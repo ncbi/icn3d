@@ -53,7 +53,6 @@ import * as THREE from 'three';
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
           this.render(bVrAr);
         }
-
         //ic.impostorCls.clearImpostors();
 
         // show membranes

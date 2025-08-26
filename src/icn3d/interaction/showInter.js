@@ -426,23 +426,27 @@ class ShowInter {
             ic.hAtoms[i] = 1;
           }
         }
+
         // do not change the set of displaying atoms
         //ic.dAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
         let commandname, commanddesc, commandname2;
         let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomlistTarget);
 
         if(firstAtom !== undefined) {
-            commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+            // commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+            commandname = "sphere." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn).trim() + firstAtom.resi + "-" + radius + "A";
             //sometimes firstAtom.resi changed, thus we add a general name
             commandname2 = "sphere-" + radius + "A";
             if(bInteraction) {
-                commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                // commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
+                commandname = "interactions." + firstAtom.chain + ":" + me.utilsCls.residueName2Abbr(firstAtom.resn).trim() + firstAtom.resi + "-" + $("#" + ic.pre + "contactthreshold").val() + "A";
                 commandname2 = "interactions-" + $("#" + ic.pre + "contactthreshold").val() + "A";
             }
             commanddesc = commandname;
             ic.selectionCls.addCustomSelection(residueArray, commandname, commanddesc, select, true);
             ic.selectionCls.addCustomSelection(residueArray, commandname2, commanddesc, select, true);
         }
+
         ic.selectionCls.saveSelectionIfSelected();
         ic.drawCls.draw();
     }

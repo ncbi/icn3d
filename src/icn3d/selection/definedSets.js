@@ -120,12 +120,10 @@ class DefinedSets {
     //Set the menu of defined sets with an array of defined names "commandnameArray".
     setAtomMenu(commandnameArray) { let ic = this.icn3d, me = ic.icn3dui;
       let html = "";
-
       let nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
       let nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
 
       let nameArrayTmp = nameArray1.concat(nameArray2).sort();
-
       let nameArray = [];
         //  $.each(nameArrayTmp, function(i, el){
         //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
@@ -143,7 +141,6 @@ class DefinedSets {
         //         }
         //     });
         // });
-
       //for(let i in ic.defNames2Atoms) {
       for(let i = 0, il = nameArray.length; i < il; ++i) {
           let name = nameArray[i];
@@ -174,7 +171,6 @@ class DefinedSets {
             html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
           }
       }
-
       return html;
     }
 
@@ -199,17 +195,18 @@ class DefinedSets {
             }
             else { // chemicals, etc
               let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-              let resn = atom.resn.substr(0, 3);
+            //   let resn = atom.resn.substr(0, 3);
+              let resn = atom.resn;
 
               if(!nonProtNuclResHash[resn]) {
-                nonProtNuclResHash[resn] = ic.residues[resid];
+                nonProtNuclResHash[resn] = me.hashUtilsCls.cloneHash(ic.residues[resid]);
               }
               else {
                 nonProtNuclResHash[resn] = me.hashUtilsCls.unionHash(nonProtNuclResHash[atom.resn], ic.residues[resid]);
               }
             }
         }
-
+        
         // chemicals etc
         for(let resn in nonProtNuclResHash) {
             ic.defNames2Residues[resn] = Object.keys(ic.firstAtomObjCls.getResiduesFromAtoms(nonProtNuclResHash[resn]));
@@ -217,7 +214,7 @@ class DefinedSets {
 
             ic.defNames2Command[resn] = 'select :3' + resn;
         }
-
+        
         // select whole structure
         if(ic.structures && Object.keys(ic.structures) == 1) {
           let structure = Object.keys(ic.structures)[0];
@@ -310,10 +307,8 @@ class DefinedSets {
 
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu || ic.bResetSets) {
            this.setPredefinedInMenu();
-
            ic.bSetChainsAdvancedMenu = true;
         }
-
         ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
         ic.dAtoms = me.hashUtilsCls.cloneHash(prevDAtoms);
 

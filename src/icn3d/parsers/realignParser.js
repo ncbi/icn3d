@@ -39,7 +39,8 @@ class RealignParser {
                     ic.realignResid[chainid] = [];
                 }
 
-                ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
+                // ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
+                 ic.realignResid[chainid].push({'resid': chainid + '_' + atom.resi, 'resn': me.utilsCls.residueName2Abbr(atom.resn).substr(0, 1)});
 
                 struct2chain[atom.structure] = atom.structure + '_' + atom.chain;
 
