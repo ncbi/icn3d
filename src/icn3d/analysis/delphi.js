@@ -367,14 +367,22 @@ class Delphi {
           let paraArray = command.split(" | ");
 
           let typeArray = paraArray[0].split(" ");
-          let contourArray = paraArray[1].split(" ");
-          let gsizeArray = paraArray[2].split(" ");
-          let saltArray = paraArray[3].split(" ");
-
           let type = typeArray[2];
-          let contour = contourArray[1]; //parseFloat(contourArray[1]);
-          let gsize = gsizeArray[1]; //parseInt(gsizeArray[1]);
-          let salt = saltArray[1]; //parseFloat(saltArray[1]);
+
+          let contour = 2, gsize = 65, salt = 0.15; // default values for contour, gsize, salt 
+          ic.phisurftype = 22; // default value for surface type
+          ic.phisurfop = 1.0; // default value for surface opacity
+          ic.phisurfwf = "no"; // default value for surface wireframe
+
+          if(paraArray.length == 7) {
+            let contourArray = paraArray[1].split(" ");
+            let gsizeArray = paraArray[2].split(" ");
+            let saltArray = paraArray[3].split(" ");
+
+            contour = contourArray[1]; //parseFloat(contourArray[1]);
+            gsize = gsizeArray[1]; //parseInt(gsizeArray[1]);
+            salt = saltArray[1]; //parseFloat(saltArray[1]);
+          }
 
           // The values should be string
           $("#" + ic.pre + "delphi1gsize").val(gsize);
@@ -391,11 +399,11 @@ class Delphi {
               ic.phisurftype = surfaceArray[1];
               ic.phisurfop = opacityArray[1]; //parseFloat(opacityArray[1]);
               ic.phisurfwf = wireframeArray[1];
-
-              $("#" + ic.pre + "delphi" + "surftype").val(ic.phisurftype);
-              $("#" + ic.pre + "delphi" + "surfop").val(ic.phisurfop);
-              $("#" + ic.pre + "delphi" + "surfwf").val(ic.phisurfwf);
           }
+
+            $("#" + ic.pre + "delphi" + "surftype").val(ic.phisurftype);
+            $("#" + ic.pre + "delphi" + "surfop").val(ic.phisurfop);
+            $("#" + ic.pre + "delphi" + "surfwf").val(ic.phisurfwf);
 
           let bSurface =(type == 'surface') ? true : false;
 

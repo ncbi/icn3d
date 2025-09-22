@@ -172,7 +172,6 @@ class ChainalignParser {
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             let mmdbid_q = struArray[i];
             let index = indexArray[i];
-
             this.transformStructure(mmdbid_q, index, 'query');
         }
 
@@ -403,7 +402,8 @@ class ChainalignParser {
 
     transformStructure(mmdbid, index, alignType, bForce) { let ic = this.icn3d, me = ic.icn3dui;
         let chainidArray = ic.structures[mmdbid];
-        
+        if(!chainidArray) return;
+
         for(let i = 0, il = chainidArray.length; i < il; ++i) {
             for(let serial in ic.chains[chainidArray[i]]) {
                 let atm = ic.atoms[serial];
@@ -542,6 +542,8 @@ class ChainalignParser {
     addPostfixForStructureids(structArray) { let ic = this.icn3d, me = ic.icn3dui;
         let struct2cnt = {};
         for(let i = 0, il = structArray.length; i < il; ++i) {
+            if(structArray[i].toLowerCase().toLowerCase().substr(0,8) == 'pdb_0000') structArray[i] = structArray[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+
             let struct = structArray[i].toUpperCase(); 
 
             if(!struct2cnt.hasOwnProperty(struct)) {
@@ -927,6 +929,8 @@ class ChainalignParser {
         }
         else {
             for(let i = 0, il = structArrayTmp.length; i < il; ++i) {
+                if(structArrayTmp[i].toLowerCase().substr(0,8) == 'pdb_0000') structArrayTmp[i] = structArrayTmp[i].substr(8); // temperary support long PDB ID such as pdb_00001tup
+
                 let id = structArrayTmp[i].toUpperCase();
                 if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
             }

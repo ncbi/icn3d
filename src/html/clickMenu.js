@@ -1881,7 +1881,7 @@ class ClickMenu {
            let sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
            let type = 'fofc';
            //await ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigmafofc);
-           await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigma2fofc);
+           await ic.densityCifParserCls.densityCifParser(ic.inputid, type, sigmafofc);
            //ic.setOptionCls.setOption('map', 'fofc');
            thisClass.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });

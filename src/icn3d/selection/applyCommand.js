@@ -1036,20 +1036,23 @@ class ApplyCommand {
           || commandOri.indexOf('ligplot interaction pairs') == 0
           ) {
         let paraArray = commandOri.split(' | ');
-        if(paraArray.length >= 3) {
+        if(paraArray.length >= 2) {
             let setNameArray = paraArray[1].split(' ');
 
             if(setNameArray.length == 2) {
                 let nameArray2 = setNameArray[0].split(',');
                 let nameArray = setNameArray[1].split(',');
 
-                let bHbond = paraArray[2].indexOf('hbonds') !== -1;
-                let bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-                let bInteraction = paraArray[2].indexOf('interactions') !== -1;
+                let bHbond = 1, bSaltbridge = 1, bInteraction = 1, bHalogen = 1, bPication = 1, bPistacking = 1;
+                if(paraArray.length >= 3) {
+                    bHbond = paraArray[2].indexOf('hbonds') !== -1;
+                    bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+                    bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
-                let bHalogen = paraArray[2].indexOf('halogen') !== -1;
-                let bPication = paraArray[2].indexOf('pi-cation') !== -1;
-                let bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+                    bHalogen = paraArray[2].indexOf('halogen') !== -1;
+                    bPication = paraArray[2].indexOf('pi-cation') !== -1;
+                    bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+                }
 
                 let bHbondCalc;
                 if(paraArray.length >= 4) {

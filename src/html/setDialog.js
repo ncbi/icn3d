@@ -413,7 +413,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_mmdbafid' class='" + dialogClass + "' style='max-width:600px'>";
         html += this.addNotebookTitle('dl_mmdbafid', 'Please input a list of PDB/AlphaFold IDs');
-        html += "List of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,4N7N,P69905,P01942' size=30> <br><br>";
+        html += "List of PDB, MMDB, or AlphaFold UniProt structures: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbafid' placeholder='e.g., 1HHO,pdb_00004n7n,P69905,P01942' size=30> <br><br>";
         html += "<div style='display:inline-block; width:20px'></div>" + me.htmlCls.buttonStr + "reload_mmdbaf' style='width:150px'>Load Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym' style='margin-left:30px; width:250px'>Load Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
         html += "<div style='display:inline-block; width:20px'>or</div>" + me.htmlCls.buttonStr + "reload_mmdbaf_append' style='width:150px'>Append Biological Unit</button>" + me.htmlCls.buttonStr + "reload_mmdbaf_asym_append' style='margin-left:30px; width:250px'>Append Asymmetric Unit (All Chains)</button>" + "<br/><br/>";
 
@@ -460,7 +460,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_cid', 'Please input a PubChem Compound');
-        html += "PubChem CID/Name/InchI: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
+        html += "PubChem CID/Name/InChI: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
         html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";
         html += "</div>";
 
@@ -490,7 +490,6 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_video' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_video', 'Save canvas changes in a video');
-        html += "State file: " + me.htmlCls.inputFileStr + "id='" + me.pre + "state'><br/>";
         html += me.htmlCls.buttonStr + "video_start' style='margin-top: 6px;'>Video Start</button>";
         html += me.htmlCls.buttonStr + "video_end' style='margin: 6px 0px 0px 30px;'>Video End</button>";
         html += "</div>";

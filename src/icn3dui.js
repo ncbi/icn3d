@@ -171,7 +171,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.45.2';
+    this.REVISION = '3.45.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -422,18 +422,21 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         await ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
     }
     else if(me.cfg.mmtfid !== undefined) {
+        if(me.cfg.mmtfid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmtfid = me.cfg.mmtfid.substr(8); // temperary support long PDB ID such as pdb_00001tup
        ic.inputid = me.cfg.mmtfid;
        ic.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        await ic.bcifParserCls.downloadBcif(me.cfg.mmtfid);
     }
     else if(me.cfg.bcifid !== undefined) {
+        if(me.cfg.bcifid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.bcifid = me.cfg.bcifid.substr(8); // temperary support long PDB ID such as pdb_00001tup
         ic.inputid = me.cfg.bcifid;
         ic.loadCmd = 'load bcif ' + me.cfg.bcifid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         await ic.bcifParserCls.downloadBcif(me.cfg.bcifid);
      }
     else if(me.cfg.pdbid !== undefined) {
+        if(me.cfg.pdbid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.pdbid = me.cfg.pdbid.substr(8); // temperary support long PDB ID such as pdb_00001tup
        ic.inputid = me.cfg.pdbid;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
@@ -456,6 +459,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
        await ic.opmParserCls.downloadOpm(me.cfg.opmid);
     }
     else if(me.cfg.mmdbid !== undefined) {
+        if(me.cfg.mmdbid.toLowerCase().substr(0,8) == 'pdb_0000') me.cfg.mmdbid = me.cfg.mmdbid.substr(8); // temperary support long PDB ID such as pdb_00001tup
        ic.inputid = me.cfg.mmdbid;
        // ic.bNCBI = true;
        ic.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
@@ -594,6 +598,7 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         await ic.sdfParserCls.downloadSmiles(me.cfg.smiles);
     }
     else if(me.cfg.mmcifid !== undefined) {
+        // long PDB ID was supported with mmcifid
         ic.inputid = me.cfg.mmcifid;
         ic.loadCmd = 'load mmcif ' + me.cfg.mmcifid;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);

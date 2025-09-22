@@ -986,447 +986,15 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <tr valign='top'><td>shownote</td><td>Set "true" or "1" to show the content in "Analysis > Window Title" as the window title. The default is "false".</td></tr>
 <tr valign='top'><td>menuicon</td><td>Set "true" or "1" to show icons for those menus requiring internet or license. The default is "false".</td></tr>
 </table>
-
-<span class="anchor" id="commands"></span>
-<a name="commands"></a>
-<h3>Menus, Commands, and Functions of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
-    <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
-</h3>
-To find icn3d commands and functions, you can first generate a custom view in iCn3D interactively. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands". Most commands are processed with functions in the file "src/icn3d/selection/applyCommand.js". Other commands with asynchronized retrieval are processed with functions in the file "src/icn3d/selection/loadScript.js".<br><br>
-
-<a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
-    <tr>
-        <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Function</b></td>
-    </tr>
-    <tbody>
-        <tr>
-            <td colspan="3">a) Retrieve by ID</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">MMDB ID:</span></td>
-            <td valign='top'>load mmdb0 [1GPK]</td>
-            <td valign='top'>ic.mmdbParserCls.downloadMmdb</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">Binary CIF ID:</span></td>
-            <td valign='top'>load bcif [1GPK]</td>
-            <td valign='top'>ic.bcifParserCls.downloadBcif</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">PDB ID:</span></td>
-            <td valign='top'>load pdb [1GPK]</td>
-            <td valign='top'>ic.pdbParserCls.downloadPdb</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">OPM PDB ID:</span></td>
-            <td valign='top'>load opm [6JXR]</td>
-            <td valign='top'>ic.opmParserCls.downloadOpm</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">mmCIF ID:</span></td>
-            <td valign='top'>load mmcif [1GPK]</td>
-            <td valign='top'>ic.mmcifParserCls.downloadMmcif</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">PubChem CID:</span></td>
-            <td valign='top'>load cid [2244]</td>
-            <td valign='top'>ic.sdfParserCls.downloadCid</td>
-        </tr>
-
-        <tr>
-            <td colspan="3">b) Open File</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">PDB File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">mmCIF File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Mol2 File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">SDF File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">XYZ File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">URL (CORS):</span></td>
-            <td valign='top'>load url [https://files.rcsb.org/download/1gpk.pdb]</td>
-            <td valign='top'>ic.pdbParserCls.downloadUrl</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">State/Script File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.loadScriptCls.loadScript</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Selection File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Electron Density (DSN6) - Local File:</span></td>
-            <td valign='top'>set map 2fofc sigma 1.5</td>
-            <td valign='top'>ic.dsn6ParserCls.loadDsn6Data()</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Electron Density (DSN6) - URL (CORS):</span></td>
-            <td valign='top'>set map 2fofc sigma 1.5 | [URL]</td>
-            <td valign='top'>ic.dsn6ParserCls.dsn6ParserBase()</td>
-        </tr>
-
-        <tr>
-            <td colspan="3">c) Align</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sequence to Structure:</span></td>
-            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td>
-            <td valign='top'>ic.mmdbParserCls.downloadBlast_rep_id</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Protein Complexes - Invariant Substructure Superposed:</span></td>
-            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=1</td>
-            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Protein Complexes - All Matching Molecules Superposed:</span></td>
-            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td>
-            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Chain to Chain:</span></td>
-            <td valign='top'>load chainalignment [1HHO_A,4N7N_A]</td>
-            <td valign='top'>ic.chainalignParserCls.downloadChainAlignment</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>d) Realign Selection</td>
-            <td valign='top'>realign on seq align</td>
-            <td valign='top'>ic.realignParserCls.realignOnSeqAlign</td>
-        </tr>
-
-        <tr>
-            <td colspan="3">e) 3D Printing</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>
-            <td valign='top'>export vrml stabilizer file</td>
-            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">STL (W/ Stabilizers):</span></td>
-            <td valign='top'>export stl stabilizer file</td>
-            <td valign='top'>ic.export3DCls.saveStlFile</td>
-        </tr>
-
-        <tr>
-            <td valign='top'><span class="indent">VRML (Color):</span></td>
-            <td valign='top'>export vrml file</td>
-            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">STL:</span></td>
-            <td valign='top'>export stl file</td>
-            <td valign='top'>ic.export3DCls.saveStlFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Add All Stabilizers:</span></td>
-            <td valign='top'>stabilizer</td>
-            <td valign='top'>ic.threeDPrintCls.addStabilizer</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Remove All Stabilizers:</span></td>
-            <td valign='top'>set stabilizer off</td>
-            <td valign='top'>ic.threeDPrintCls.hideStabilizer</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Add One Stabilizer:</span></td>
-            <td valign='top'>add one stabilizer | [atom serial] [atom serial]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Remove One Stabilizer:</span></td>
-            <td valign='top'>remove one stabilizer | [atom serial] [atom serial]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Set Thickness:</span></td>
-            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | crosslinkrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Reset Thickness:</span></td>
-            <td valign='top'>reset thickness</td>
-            <td valign='top'>ic.threeDPrintCls.resetAfter3Dprint</td>
-        </tr>
-
-        <tr>
-            <td colspan="3">f) Save File</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
-            <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1top&command=export%20canvas</a>)</td>
-            <td valign='top'>ic.saveFileCls.saveFile([filename], 'png')</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">State File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.saveFileCls.saveFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">All Selections:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.saveFileCls.saveFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Residue Counts:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.saveFileCls.saveFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">PDB:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.saveFileCls.getAtomPDB</td>
-        </tr>
-        </tr>
-
-        <tr>
-            <td valign='top'>g) Share Link:</td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.shareLinkCls.shareLink</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>g) Replay Each Step:</td>
-            <td valign='top'>replay on</td>
-            <td valign='top'>replayon</td>
-        </tr>
-
-    </tbody>
-</table>
-<br>
-<a name="select"></a><b>2. Select</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
-    <tr>
-        <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
-    </tr>
-    <tr>
-        <td valign='top'>a) Defined Sets:</td>
-        <td valign='top'>defined sets</td>
-        <td valign='top'>ic.definedSetsCls.showSets</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Select sets:</span></td>
-        <td valign='top'>select saved atoms [name1] or/and/not [name2]</td>
-        <td valign='top'>ic.definedSetsCls.changeCustomAtoms</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Delete selected sets:</span></td>
-        <td valign='top'>delete selected sets</td>
-        <td valign='top'>ic.definedSetsCls.deleteSelectedSets</td>
-    </tr>
-
-    <tr>
-        <td valign='top'>b) All:</td>
-        <td valign='top'>select all</td>
-        <td valign='top'>ic.selectionCls.selectAll</td>
-    </tr>
-    <tr>
-        <td valign='top'>c) Displayed Set:</td>
-        <td valign='top'>select displayed set</td>
-        <td valign='top'>ic.hAtoms = me.HashUtilsCls.cloneHash(ic.dAtoms)</td>
-    </tr>
-
-    <tr>
-        <td colspan="3">d) by Distance</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Display:</span></td>
-        <td valign='top'>select zone cutoff [cutoff in angstrom]</td>
-        <td valign='top'>ic.showInterCls.pickCustomSphere</td>
-    </tr>
-
-    <tr>
-        <td colspan="3"><br>e) by Property</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Positive:</span></td>
-        <td valign='top'>select prop positive</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Negative:</span></td>
-        <td valign='top'>select prop negative</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Hydrophobic:</span></td>
-        <td valign='top'>select prop hydrophobic</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Polar:</span></td>
-        <td valign='top'>select prop polar</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">B-factor:</span></td>
-        <td valign='top'>select prop b factor</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Solvent Accessibility:</span></td>
-        <td valign='top'>select prop percent out</td>
-        <td valign='top'>ic.resid2specCls.selectProperty</td>
-    </tr>
-
-    <tr>
-        <td valign='top'>f) Inverse:</td>
-        <td valign='top'>select complement</td>
-        <td valign='top'>ic.resid2specCls.selectComplement</td>
-    </tr>
-    <tr>
-        <td valign='top'>g) Main Chains:</td>
-        <td valign='top'>select main chains</td>
-        <td valign='top'>ic.selectionCls.selectMainChains</td>
-    </tr>
-    <tr>
-        <td valign='top'>h) Side Chains:</td>
-        <td valign='top'>select side chains</td>
-        <td valign='top'>ic.selectionCls.selectSideChains</td>
-    </tr>
-
-    <tr>
-        <td valign='top'>i) Advanced</td>
-        <td valign='top'>select [command] | name [commandname]</td>
-        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
-    </tr>
-
-    <tr>
-        <td colspan="3"><br>j) Select on 3D</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Chain (Alt):</span></td>
-        <td valign='top'>set pk chain</td>
-        <td valign='top'>ic.pk = 5; ic.opts['pk'] = 'chain';</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">3D Domain (Alt):</span></td>
-        <td valign='top'>set pk domain</td>
-        <td valign='top'>ic.pk = 4; ic.opts['pk'] = 'domain';</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>
-        <td valign='top'>set pk strand</td>
-        <td valign='top'>ic.pk = 3; ic.opts['pk'] = 'strand';</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Residue (Alt):</span></td>
-        <td valign='top'>set pk residue</td>
-        <td valign='top'>ic.pk = 2; ic.opts['pk'] = 'residue';</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Atom (Alt):</span></td>
-        <td valign='top'>set pk atom</td>
-        <td valign='top'>ic.pk = 1; ic.opts['pk'] = 'atom';</td>
-    </tr>
-
-    <tr>
-        <td valign='top'>k) Save Selection:</td>
-        <td valign='top'>select [command] | name [commandname]</td>
-        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
-    </tr>
-    <tr>
-        <td valign='top'>l) Clear Selection:</td>
-        <td valign='top'>clear all</td>
-        <td valign='top'>ic.selectionCls.selectAll</td>
-    </tr>
-
-    <tr>
-        <td colspan="3"><br>m) Highlight Color</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Yellow:</span></td>
-        <td valign='top'>set highlight color yellow</td>
-        <td valign='top'></td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Green:</span></td>
-        <td valign='top'>set highlight color green</td>
-        <td valign='top'></td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Red:</span></td>
-        <td valign='top'>set highlight color red</td>
-        <td valign='top'></td>
-    </tr>
-
-    <tr>
-        <td colspan="3"><br>n) Highlight Style</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">Outline:</span></td>
-        <td valign='top'>set highlight style outline</td>
-        <td valign='top'>ic.bHighlight = 1;</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">3D Objects:</span></td>
-        <td valign='top'>set highlight style 3d</td>
-        <td valign='top'>ic.bHighlight = 2;</td>
-    </tr>
-
-    <tr>
-        <td valign='top'>o) Toggle Highlight</td>
-        <td valign='top'>toggle highlight</td>
-        <td valign='top'>ic.hlUpdateCls.toggleHighlight</td>
-    </tr>
-
-    <tr>
-        <td colspan="3"><br>p) Switch Highlight Level</td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">&uarr;:</span></td>
-        <td valign='top'>highlight level up</td>
-        <td valign='top'>ic.resid2specCls.switchHighlightLevelUp
-            <a></td>
-    </tr>
-    <tr>
-        <td valign='top'><span class="indent">&darr;:</span></td>
-        <td valign='top'>highlight level down</td>
-        <td valign='top'>ic.resid2specCls.switchHighlightLevelDown</td>
-    </tr>
-
-    </tbody>
-</table>
 <br>
 
 <span class="anchor" id="selectb"></span>
 <a name="selectb"></a>
-<b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<h3>iCn3D Selection Definition<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
+    <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
+</h3>
 <div>
-    In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
+    In the dialog Select &gt; Advanced, users can use simple specification to select atoms: <br/><br/>
     <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,LV,3LeuVal,chemicals@CA,C,C*":
     <ul>
         <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
@@ -1447,1117 +1015,1137 @@ To find icn3d commands and functions, you can first generate a custom view in iC
     <b>Full commands in url or command window:</b>
     <ul>
         <li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C*<br/>
-            <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C* | name my_name
+            <li>Select and save with a name using the separator "+|+": select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C,C*+|+name my_name
     </ul>
 </div>
-<br>
-<a name="view"></a><b>3. View</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+
+<span class="anchor" id="commands"></span>
+<a name="commands"></a>
+<h3>iCn3D Menus and Commands used to Construct Sharable URLs<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
+    <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
+</h3>
+There are two ways to generate a custom view in iCn3D. The first method is to use the iCn3D web interface (https://www.ncbi.nlm.nih.gov/Structure/icn3d/) interactively to select a set as described in the "iCn3D Selection Definition" section above, apply some features on the set, and possibly do some analysis. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands". The second method is to generate an iCn3D URL with commands corresponding to the interactive steps, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbafid=[PDB or AlphaFold ID]&command=[a list of commands], where the URL parameter "mmdbafid" has to be specified with a PDB or AlphaFold ID to load a structure, and "command" can have a list of commands separated by ";+", not "+|+". Each command corresponds to a menu item in the iCn3D web interface. The commands are listed in the table below.
+
+(A third way to analyze a structure is to use iCn3D Node.js scripts with functions. Most functions corresponding to commands are in the file "src/icn3d/selection/applyCommand.js". Other functions related to asynchronized retrieval are in the file "src/icn3d/selection/loadScript.js".)<br><br>
+
 <table width='100%'>
+    <thead>
     <tr>
         <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
+        <td valign='top' width='30%'><b>Command</b></td>
+        <td valign='top'><b>Description</b></td>
     </tr>
+    </thead>
     <tbody>
-
-        <tr>
-            <td valign='top'>a) View -&gt; View Only Selection:</td>
-            <td valign='top'>show selection</td>
-            <td valign='top'>ic.selectionCls.showSelection</td>
-        </tr>
-        <tr>
-            <td valign='top'>b) View -&gt; Zoom in Selection:</td>
-            <td valign='top'>zoom selection</td>
-            <td valign='top'>ic.resizeCanvasCls.zoominSelection</td>
-        </tr>
-        <tr>
-            <td valign='top'>c) View -&gt; Center Selection:</td>
-            <td valign='top'>center selection</td>
-            <td valign='top'>ic.applyCenterCls.centerSelection</td>
-        </tr>
-        <tr>
-            <td valign='top'>d) View -&gt; View Full Structure:</td>
-            <td valign='top'>show all</td>
-            <td valign='top'>ic.selectionCls.showAll</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>e) View -&gt; Show Side by Side:</td>
-            <td valign='top'>side by side | [url]</td>
-            <td valign='top'>window.open()</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>f) View -&gt; Rotate</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br><span class="indent">f1) Rotate 90&deg;</span></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">X-axis:</span></td>
-            <td valign='top'>rotate x</td>
-            <td valign='top'>ic.transformCls.setRotation</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Y-axis:</span></td>
-            <td valign='top'>rotate y</td>
-            <td valign='top'>ic.transformCls.setRotation</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Z-axis:</span></td>
-            <td valign='top'>rotate z</td>
-            <td valign='top'>ic.transformCls.setRotation</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br><span class="indent">f2) Auto Rotation</span></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Rotate Left:</span></td>
-            <td valign='top'>rotate left</td>
-            <td valign='top'>ic.transformCls.rotStruc</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Rotate Right:</span></td>
-            <td valign='top'>rotate right</td>
-            <td valign='top'>ic.transformCls.rotStruc</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Rotate Up:</span></td>
-            <td valign='top'>rotate up</td>
-            <td valign='top'>ic.transformCls.rotStruc</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Rotate Down:</span></td>
-            <td valign='top'>rotate down</td>
-            <td valign='top'>ic.transformCls.rotStruc</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>g) View -&gt; Camera</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Perspective:</span></td>
-            <td valign='top'>set camera perspective</td>
-            <td valign='top'>ic.opts['camera'] = 'perspective';</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Orthographic:</span></td>
-            <td valign='top'>set camera orthographic</td>
-            <td valign='top'>ic.opts['camera'] = 'orthographic';</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>h) View -&gt; Fog for Selection</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">On:</span></td>
-            <td valign='top'>set fog on</td>
-            <td valign='top'>ic.opts['fog'] = 'yes';</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Off:</span></td>
-            <td valign='top'>set fog off</td>
-            <td valign='top'>ic.opts['fog'] = 'no';</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>i) View -&gt; Slab for Selection</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">On:</span></td>
-            <td valign='top'>set slab on</td>
-            <td valign='top'>ic.opts['slab'] = 'yes';</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Off:</span></td>
-            <td valign='top'>set slab off</td>
-            <td valign='top'>ic.opts['slab'] = 'no';</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>j) View -&gt; XYZ-axes</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Show:</span></td>
-            <td valign='top'>set axis on</td>
-            <td valign='top'>ic.opts['axis'] = 'yes';</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set axis off</td>
-            <td valign='top'>ic.opts['axis'] = 'no';</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>k) View -&gt; Reset:</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">All:</span></td>
-            <td valign='top'>reset</td>
-            <td valign='top'>ic.loadScriptCls.renderFinalStep</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Orientation:</span></td>
-            <td valign='top'>reset orientation</td>
-            <td valign='top'>ic.transformCls.resetOrientation</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>l) View -&gt; Undo:</td>
-            <td valign='top'>back</td>
-            <td valign='top'>ic.resizeCanvasCls.back</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>m) View -&gt; Redo:</td>
-            <td valign='top'>forward</td>
-            <td valign='top'>ic.resizeCanvasCls.forward</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>n) View -&gt; Full Screen:</td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-
-    </tbody>
-</table>
-
-<br>
-<a name="style"></a><b>4. Style</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
     <tr>
-        <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
-    </tr>
-    <tbody>
-        <tr>
-            <td colspan="3">a) Style -&gt; Protein</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">Ribbon:</span></td>
-            <td valign='top'>style proteins ribbon</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Strand:</span></td>
-            <td valign='top'>style proteins strand</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Cylinder and Plate:</span></td>
-            <td valign='top'>style proteins cylinder and plate</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Schematic:</span></td>
-            <td valign='top'>style proteins schematic</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">C Alpha Trace:</span></td>
-            <td valign='top'>style proteins c alpha trace</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Backbone:</span></td>
-            <td valign='top'>style proteins backbone</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">B-factor Tube:</span></td>
-            <td valign='top'>style proteins b factor tube</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Lines:</span></td>
-            <td valign='top'>style proteins lines</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Stick:</span></td>
-            <td valign='top'>style proteins stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Ball and Stick:</span></td>
-            <td valign='top'>style proteins ball and stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style proteins sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style proteins nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>b) Style -&gt; Side Chains</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Lines:</span></td>
-            <td valign='top'>style sidec lines</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Stick:</span></td>
-            <td valign='top'>style sidec stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Ball and Stick:</span></td>
-            <td valign='top'>style sidec ball and stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style sidec sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style sidec nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>c) Style -&gt; Nucleotides</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Nucleotide Cartoon:</span></td>
-            <td valign='top'>style nucleotides nucleotide cartoon</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">O3' Trace:</span></td>
-            <td valign='top'>style nucleotides o3 trace</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Backbone:</span></td>
-            <td valign='top'>style nucleotides backbone</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Schematic:</span></td>
-            <td valign='top'>style nucleotides schematic</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Lines:</span></td>
-            <td valign='top'>style nucleotides lines</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Stick:</span></td>
-            <td valign='top'>style nucleotides stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Ball and Stick:</span></td>
-            <td valign='top'>style nucleotides ball and stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style nucleotides sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style nucleotides nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>d) Style -&gt; Chemicals</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Lines:</span></td>
-            <td valign='top'>style chemicals lines</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Stick:</span></td>
-            <td valign='top'>style chemicals stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Ball and Stick:</span></td>
-            <td valign='top'>style chemicals ball and stick</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Schematic:</span></td>
-            <td valign='top'>style chemicals schematic</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style chemicals sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style chemicals nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>d2) Style -&gt; Hydrogens</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Show:</span></td>
-            <td valign='top'>hydrogens</td>
-            <td valign='top'>ic.setOptionCls.showHydrogens</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set hydrogens off</td>
-            <td valign='top'>ic.setOptionCls.hideHydrogens</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>e) Style -&gt; Ions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style ions sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Dot:</span></td>
-            <td valign='top'>style ions dot</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style ions nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>f) Style -&gt; Water</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Sphere:</span></td>
-            <td valign='top'>style water sphere</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Dot:</span></td>
-            <td valign='top'>style water dot</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>style water nothing</td>
-            <td valign='top'>ic.setOptionCls.setStyle</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>g) Style -&gt; Set Thickness:</td>
-            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | crosslinkrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
-            <td valign='top'></td>
-        </tr>
-
-        <tr>
-            <td valign='top'>h) Style -&gt; Save Style:</td>
-            <td valign='top'>save style</td>
-            <td valign='top'>ic.setOptionCls.saveStyle</td>
-        </tr>
-        <tr>
-            <td valign='top'>i) Style -&gt; Apply Saved Style:</td>
-            <td valign='top'>apply saved style</td>
-            <td valign='top'>ic.setOptionCls.applySavedStyle</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>j) Style -&gt; Surface Type</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">Van der Waals:</span></td>
-            <td valign='top'>set surface Van der Waals surface</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">VDW with Context:</span></td>
-            <td valign='top'>set surface Van der Waals surface with context</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Molecular Surface:</span></td>
-            <td valign='top'>set surface molecular surface</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">MS with Context:</span></td>
-            <td valign='top'>set surface molecular surface with context</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Solvent Accessible:</span></td>
-            <td valign='top'>set surface solvent accessible surface</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">SA with Context:</span></td>
-            <td valign='top'>set surface solvent accessible surface with context</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>k) Style -&gt; Remove Surface:</td>
-            <td valign='top'>set surface nothing</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>l) Style -&gt; Surface Opacity</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">1.0:</span></td>
-            <td valign='top'>set surface opacity 1.0</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.9:</span></td>
-            <td valign='top'>set surface opacity 0.9</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.8:</span></td>
-            <td valign='top'>set surface opacity 0.8</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.7:</span></td>
-            <td valign='top'>set surface opacity 0.7</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.6:</span></td>
-            <td valign='top'>set surface opacity 0.6</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.5:</span></td>
-            <td valign='top'>set surface opacity 0.5</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.4:</span></td>
-            <td valign='top'>set surface opacity 0.4</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.3:</span></td>
-            <td valign='top'>set surface opacity 0.3</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.2:</span></td>
-            <td valign='top'>set surface opacity 0.2</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.1:</span></td>
-            <td valign='top'>set surface opacity 0.1</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>m) Style -&gt; Surface Wireframe</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Yes</span></td>
-            <td valign='top'>set surface wireframe on</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">No</span></td>
-            <td valign='top'>set surface wireframe off</td>
-            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>n) Style -&gt; Electron Density</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">2Fo-Fc Map:</span></td>
-            <td valign='top'>set map 2fofc sigma 1.5</td>
-            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
-        </tr>
-        <tr>
-            <td width="240"><span class="indent">Fo-Fc Map:</span></td>
-            <td valign='top'>set map 2fofc sigma 3</td>
-            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>o) Style -&gt; Remove Map:</td>
-            <td valign='top'>set map nothing</td>
-            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>p) Style -&gt; Map Wireframe</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Yes</span></td>
-            <td valign='top'>set map wireframe on</td>
-            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">No</span></td>
-            <td valign='top'>set map wireframe off</td>
-            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>q) Style -&gt; EM Density Map:</td>
-            <td valign='top'>set emmap percentage 20</td>
-            <td valign='top'>ic.loadScriptCls.applyCommandEmmap</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>r) Style -&gt; Remove EM Map:</td>
-            <td valign='top'>set emmap nothing</td>
-            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>s) Style -&gt; EM Map Wireframe</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Yes</span></td>
-            <td valign='top'>set emmap wireframe on</td>
-            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">No</span></td>
-            <td valign='top'>set emmap wireframe off</td>
-            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>t) Style -&gt; Background</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Transparent:</span></td>
-            <td valign='top'>set background transparent</td>
-            <td valign='top'>ic.opts['background'] = 'transparent'</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Black:</span></td>
-            <td valign='top'>set background black</td>
-            <td valign='top'>ic.opts['background'] = 'black'</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Grey:</span></td>
-            <td valign='top'>set background grey</td>
-            <td valign='top'>ic.opts['background'] = 'grey'</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">White:</span></td>
-            <td valign='top'>set background white</td>
-            <td valign='top'>ic.opts['background'] = 'white'</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>u) Style -&gt; Dialog Color</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Blue:</span></td>
-            <td valign='top'>set theme blue</td>
-            <td valign='top'>ic.setMenuCls.setTheme</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Orange:</span></td>
-            <td valign='top'>set theme orange</td>
-            <td valign='top'>ic.setMenuCls.setTheme</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Black:</span></td>
-            <td valign='top'>set theme black</td>
-            <td valign='top'>ic.setMenuCls.setTheme</td>
-        </tr>
-
-        <!--tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
-<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set double color on</td> <td valign='top'>ic.bDoublecolor = true</td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr-->
-
-
-    </tbody>
-</table>
-<br>
-<a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
-    <tr>
-        <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
-    </tr>
-    <tbody>
-        <tr>
-            <td colspan="3">a)</td>
-        </tr>
-        <tr>
-            <td width="240">Color -&gt; Spectrum:</td>
-            <td valign='top'>color spectrum</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td width="240">Color -&gt; Secondary (Sheet in Green):</td>
-            <td valign='top'>color secondary structure</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td width="240">Color -&gt; Secondary (Sheet in Yellow):</td>
-            <td valign='top'>color secondary structure yellow</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td width="240">Color -&gt; Secondary (Spectrum):</td>
-            <td valign='top'>color secondary structure spectrum</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Charge:</td>
-            <td valign='top'>color charge</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Wimley-White Hydrophobicity:</td>
-            <td valign='top'>color hydrophobic</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; B-factor (Original):</td>
-            <td valign='top'>color b factor</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; B-factor (Percentile):</td>
-            <td valign='top'>color b factor percentile</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Solvent Accessibility:</td>
-            <td valign='top'>color area | 35</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Chain:</td>
-            <td valign='top'>color chain</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; 3D Domain:</td>
-            <td valign='top'>color 3ddomain</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Residue - Default:</td>
-            <td valign='top'>color residue</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Residue - Custom:</td>
-            <td valign='top'>color residue custom</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Atom:</td>
-            <td valign='top'>color atom</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>b) Color -&gt; Unicolor</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Red:</span></td>
-            <td valign='top'>color red</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Green:</span></td>
-            <td valign='top'>color green</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Blue:</span></td>
-            <td valign='top'>color blue</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Magenta:</span></td>
-            <td valign='top'>color magenta</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Yellow:</span></td>
-            <td valign='top'>color yellow</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Cyan:</span></td>
-            <td valign='top'>color cyan</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">White:</span></td>
-            <td valign='top'>color white</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Grey:</span></td>
-            <td valign='top'>color grey</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>c) Color -&gt; Color Picker</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Apply:</span></td>
-            <td valign='top'>color [e.g., FF0000]</td>
-            <td valign='top'>ic.setColorCls.setColorByOptions</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>Color -&gt; Save Color:</td>
-            <td valign='top'>save color</td>
-            <td valign='top'>ic.setOptionCls.saveColor</td>
-        </tr>
-        <tr>
-            <td valign='top'>Color -&gt; Apply Saved Color:</td>
-            <td valign='top'>apply saved color</td>
-            <td valign='top'>ic.setOptionCls.applySavedColor</td>
-        </tr>
-
-    </tbody>
-</table>
-<br>
-
-<a name="analysis"></a><b>6. Analysis</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
-    <tr>
-        <td valign='top' width='30%'><b>Menu</b></td>
-        <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
-    </tr>
-    <tbody>
-
-        <tr>
-            <td width="240">a) Analysis -&gt; View Sequences & Annotations:</td>
-            <td valign='top'>view annotations</td>
-            <td valign='top'>ic.loadScriptCls.applyCommandAnnotationsAndCddSite</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>b) Analysis -&gt; View 2D Diagram</td>
-            <td valign='top'>view interactions</td>
-            <td valign='top'>ic.parserUtilsCls.set2DDiagrams</td>
-        </tr>
-        <tr>
-            <td valign='top'>c) Analysis -&gt; Defined Sets</td>
-            <td valign='top'>defined sets</td>
-            <td valign='top'>ic.definedSetsCls.showSets</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>
-            <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td>
-            <td valign='top'>ic.showInterCls.showHbonds;ic.showInterCls.showSaltbridge;ic.showInterCls.pickCustomSphere</td>
-        </tr>
-        <tr>
-            <td valign='top'>e) Analysis -&gt; Bring to Front:</td>
-            <td valign='top'>window ...</td>
-            <td valign='top'>ic.dialogCls.openDlg</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>f) Analysis -&gt; DelPhi Potential</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Local Phi/Cube File:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'>ic.delphiCls.loadPhiFile</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">URL (CORS) Phi/Cube:</span></td>
-            <td valign='top'>set phimap cubeurl contour 1 | [url]</td>
-            <td valign='top'>ic.delphiCls.loadPhiFileUrl</td>
-        </tr>
-        <tr>
-            <td valign='top'>g) Analysis -&gt; Remove Potential:</td>
-            <td valign='top'>setoption phimap nothing</td>
-            <td valign='top'>ic.setOptionCls.setOption('phimap', 'nothing')</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>h) Analysis -&gt; Chemical Binding</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Show:</span></td>
-            <td valign='top'>set chemicalbinding show</td>
-            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'show');</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set hbonds off</td>
-            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'hide');</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>i) Analysis -&gt; Disulfide Bonds</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Show:</span></td>
-            <td valign='top'>disulfide bonds</td>
-            <td valign='top'>ic.showInterCls.showSsbonds</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Export Pairs:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set disulfide bonds off</td>
-            <td valign='top'>ic.opts["ssbonds"] = "no</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>j) Analysis -&gt; Cross-Linkages</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Show:</span></td>
-            <td valign='top'>cross linkage</td>
-            <td valign='top'>ic.bShowCrossResidueBond = true;</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set cross linkage off</td>
-            <td valign='top'>ic.bShowCrossResidueBond = false;</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>k) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">yes:</span></td>
-            <td valign='top'>set assembly on</td>
-            <td valign='top'>ic.bAssembly = true;</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">no:</span></td>
-            <td valign='top'>set assembly off</td>
-            <td valign='top'>ic.bAssembly = false;</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>l) Analysis -&gt; Symmetry:</td>
-            <td valign='top'>symmetry C6 (global)</td>
-            <td valign='top'>ic.symdCls.retrieveSymmetry; ic.applySymdCls.applySymmetry</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>m) Analysis -&gt; Distance</td>
-        </tr>
-        <tr>
-            <td valign='top' rowspan="2"><span class="indent">between Two Atoms:</span></td>
-            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
-            <td valign='top'>ic.analysisCls.addLabel</td>
-        </tr>
-        <tr>
-            <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td>
-            <td valign='top'>ic.analysisCls.addLine</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">between Two Sets:</span></td>
-            <td valign='top'>dist | [set1] [set2]</td>
-            <td valign='top'>ic.analysisCls.measureDistTwoSets</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Hide:</span></td>
-            <td valign='top'>set lines off</td>
-            <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>n) Analysis -&gt; Label</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">by Picking Atoms:</span></td>
-            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
-            <td valign='top'>ic.analysisCls.addLabel</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">per Selection:</span></td>
-            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td>
-            <td valign='top'>ic.analysisCls.addLabel</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">per Atom:</span></td>
-            <td valign='top'>add atom labels</td>
-            <td valign='top'>ic.residueLabelsCls.addAtomLabels</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">per Residue:</span></td>
-            <td valign='top'>add residue labels</td>
-            <td valign='top'>ic.residueLabelsCls.addResiudeLabels</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">per Chain:</span></td>
-            <td valign='top'>add chain labels</td>
-            <td valign='top'>ic.analysisCls.addLabel</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">N- & C- Termini:</span></td>
-            <td valign='top'>add terminal labels</td>
-            <td valign='top'>ic.residueLabelsCls.addTerminiLabels</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Remove:</span></td>
-            <td valign='top'>set labels off</td>
-            <td valign='top'>ic.residueLabelsCls.addChainLabels</td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>o) Analysis -&gt; Label Scale</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.1:</span></td>
-            <td valign='top'>set label scale 0.1</td>
-            <td valign='top'>ic.labelScale=0.1</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.2:</span></td>
-            <td valign='top'>set label scale 0.2</td>
-            <td valign='top'>ic.labelScale=0.2</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.4:</span></td>
-            <td valign='top'>set label scale 0.4</td>
-            <td valign='top'>ic.labelScale=0.4</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.6:</span></td>
-            <td valign='top'>set label scale 0.6</td>
-            <td valign='top'>ic.labelScale=0.6</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">0.8:</span></td>
-            <td valign='top'>set label scale 0.8</td>
-            <td valign='top'>ic.labelScale=0.8</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">1.0:</span></td>
-            <td valign='top'>set label scale 1.0</td>
-            <td valign='top'>ic.labelScale=1.0</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">2.0:</span></td>
-            <td valign='top'>set label scale 2.0</td>
-            <td valign='top'>ic.labelScale=2.0</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">4.0:</span></td>
-            <td valign='top'>set label scale 4.0</td>
-            <td valign='top'>ic.labelScale=4.0</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">6.0:</span></td>
-            <td valign='top'>set label scale 6.0</td>
-            <td valign='top'>ic.labelScale=6.0</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">8.0:</span></td>
-            <td valign='top'>set label scale 8.0</td>
-            <td valign='top'>ic.labelScale=8.0</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">10.0:</span></td>
-            <td valign='top'>set label scale 10.0</td>
-            <td valign='top'>ic.labelScale=10.0</td>
-        </tr>
-
-        <tr>
-            <td valign='top'>p) Analysis -&gt; Your Note / Window Title</td>
-            <td valign='top'>your note | [text]</td>
-            <td valign='top'></td>
-        </tr>
-
-        <tr>
-            <td colspan="3"><br>q) Analysis -&gt; View Links</td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Structure Summary:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Find Similar Structures:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Literature:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-        <tr>
-            <td valign='top'><span class="indent">Protein:</span></td>
-            <td valign='top'>[no command available]</td>
-            <td valign='top'></td>
-        </tr>
-
-    </tbody>
-</table>
-<br>
-
-<a name="help"></a><b>7. Help</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'>
-    <tr>
-        <td width='30%'><b>Menu</b></td>
-        <td width='40%'><b>Command</b></td>
-        <td></td>
+        <td valign='top'>File &gt; Search Structure &gt; PDB Structures</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Search PDB structures at NCBI Structure page</td>
     </tr>
     <tr>
-        <td valign='top'>a) Help -&gt; About iCn3D:</td>
-        <td valign='top'>[no command available]</td>
-        <td></td>
+        <td valign='top'>File &gt; Search Structure &gt; AlphaFold Structures</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Search AlphaFold structures with AlphaFold ID, protein names, or gene names</td>
     </tr>
     <tr>
-        <td valign='top'>b) Help -&gt; Help Doc:</td>
-        <td valign='top'>[no command available]</td>
-        <td></td>
+        <td valign='top'>File &gt; Search Structure &gt; AlphaFold UniProt Database</td>
+        <td valign='top'>URL: https://alphafold.ebi.ac.uk/</td>
+        <td valign='top'>Search AlphaFold structures at AlphaFold UniProt Database</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>File &gt; Search Similar &gt; NCBI VAST+ (PDB Complex)</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=6VXX</td>
+        <td valign='top'>Search similar PDB complexes with the tool VAST+</td>
     </tr>
     <tr>
-        <td valign='top'>c) Help -&gt; Web Methods:</td>
-        <td valign='top'>[no command available]</td>
-        <td></td>
+        <td valign='top'>File &gt; Search Similar &gt; NCBI VAST (PDB Chain)</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/vast/vastsrv.cgi?pdbid=4N7N&chain=A</td>
+        <td valign='top'>Search similar PDB chains with the tool VAST</td>
     </tr>
     <tr>
-        <td valign='top'>d) Help -&gt; Transform Hints:</td>
-        <td valign='top'>[no command available]</td>
-        <td></td>
+        <td valign='top'>File &gt; Search Similar &gt; Foldseek (PDB & AlphaFold)</td>
+        <td valign='top'>https://search.foldseek.com/</td>
+        <td valign='top'>Search similar PDB and AlphaFold structures with the tool Foldseek</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>File &gt; Retrieve by ID &gt; PDB/MMDB/AlphaFold IDs</td>
+        <td valign='top'>load mmdbaf0 [1GPK,P69905]</td>
+        <td valign='top'>Load a list of comma-separated PDB IDs, MMDB IDs, or AlphaFold IDs</td>
     </tr>
     <tr>
-        <td valign='top'>e) Help -&gt; Selection Hints:</td>
-        <td valign='top'>[no command available]</td>
-        <td></td>
+        <td valign='top'>File &gt; Retrieve by ID &gt; AlphaFold Structures &gt; NCBI Protein Accession</td>
+        <td valign='top'>load refseq NP_001743.1</td>
+        <td valign='top'>Load an AlphaFold structure with an NCBI protein accession</td>
     </tr>
+    <tr>
+        <td valign='top'>File &gt; Retrieve by ID &gt; RCSB mmCIF ID</td>
+        <td valign='top'>load mmcif pdb_00001tup</td>
+        <td valign='top'>Load a structure with an RCSB mmCIF ID</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Retrieve by ID &gt; PubChem CID/Name/InChI</td>
+        <td valign='top'>load cid [2244]</td>
+        <td valign='top'>Load a compound with PubChem CID, name, or InChI</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Retrieve by ID &gt; Chemical SMILES</td>
+        <td valign='top'>load smiles CC(=O)OC1=CC=CC=C1C(=O)O</td>
+        <td valign='top'>Load a compound with SMILES</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; PDB Files (appendable)</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one or more PDB files</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; mmCIF Files (appendable)</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one or more mmCIF files</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; SDF File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one chemical SDF file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Multiple Seq. Alignment &gt; CLUSTALW Format</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one multiple sequence alignment file in CLUSTALW format to show the MSA and the structural alignment</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Multiple Seq. Alignment &gt; FASTA Format</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one multiple sequence alignment file in FASTA format to show the MSA and the structural alignment</td>
+    </tr>  
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; AlphaFold PAE File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one AlphaFold PAE (Predicted Aligned Error) file to show the PAE heatmap</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; iCn3D PNG (appendable)</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one or more iCn3D PNG files</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Selection File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one iCn3D selection file with defined sets such as "1TUP_A    select .A:94-289"</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Collection File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one iCn3D collection file with a list of IDs. The examples are at https://github.com/ncbi/icn3d/tree/master/example/collection.</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Electron Density &gt; Local File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one local electron density map file in CCP4 or MTZ format</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; Predict by Seq. &gt; ESMFold</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Predict a structure from a protein sequence with the tool ESMFold</td>
+    </tr>  
+    <tr>
+        <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; by Structure Alignment</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&aligntool=tmalign</td>
+        <td valign='top'>Align a list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) with the tool TM-align or VAST align</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; by Sequence Alignment</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&resnum=1-10,20-50&showalignseq=1</td>
+        <td valign='top'>Align a list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) based on a list of residue numbers (e.g., 1-10,20-50) in the first chain</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; Residue by Residue</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&resdef=1,5,10-50 | 1,5,10-50:+2,6,11-51 | 1,5,10-50&showalignseq=1</td>
+        <td valign='top'>Align a list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) based on a list of ":+"-separated residue mapping (e.g., 1,5,10-50 | 1,5,10-50, where " | " is used to separate the residues in the first chain and in the current chain) for each pair of chains</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Align &gt; Protein Complexes &gt; Two PDB Structures</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?align=2DN3,4N7N</td>
+        <td valign='top'>Align all chains of two PDB structures  with the tool VAST+</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Align &gt; Sequence to Structure</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?from=icn3d&alg=blast&blast_rep_id=1TSR_A&query_id=NP_001108451.1</td>
+        <td valign='top'>Show the sequence alignment of a protein sequence with a PDB chain using BLAST in the context of 3D structure</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>File &gt; Realign Selection &gt; Multiple Chains &gt; by Structure Alignment</td>
+        <td valign='top'>realign on tmalign | 1HHO_A,P01942_A,P69905_A</td>
+        <td valign='top'>Realign the selected list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) with the tool TM-align or VAST align</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Realign Selection &gt; Multiple Chains &gt; by Sequence Alignment</td>
+        <td valign='top'>realign on seq align | 1HHO_A,P01942_A,P69905_A</td>
+        <td valign='top'>Realign the selected list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) based on the sequence alignment with the tool BLAST</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Realign Selection &gt; Multiple Chains &gt; Residue by Residue</td>
+        <td valign='top'>realign predefined P69905_A,P01942_A,1HHO_A 1,5,10-50 | 1,5,10-50:+2,6,11-51 | 1,5,10-50</td>
+        <td valign='top'>Realign the selected list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) based on a list of ":+"-separated residue mapping (e.g., 1,5,10-50 | 1,5,10-50, where " | " is used to separate the residues in the first chain and in the current chain) for each pair of chains</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Realign Selection &gt; Protein Complexes</td>
+        <td valign='top'>realign on vastplus | 1HHO,P01942</td>
+        <td valign='top'>Realign the selected list of structures with the tool VAST+</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>File &gt; 3D Printing &gt; WRL/VRML (Color, W/ Stabilizers)</td>
+        <td valign='top'>export vrml stabilizer file</td>
+        <td valign='top'>Export the current 3D structure in WRL/VRML file format with original color for 3D printing</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; 3D Printing &gt; STL (W/ Stabilizers)</td>
+        <td valign='top'>export stl stabilizer file</td>
+        <td valign='top'>Export the current 3D structure in STL file format with black/white color for 3D printing</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; iCn3D PNG Image &gt; Original Size</td>
+        <td valign='top'>export canvas</td>
+        <td valign='top'>Export the canvas as an iCn3D PNG image with all involved commands appended at the end of the PNG file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; iCn3D PNG Image &gt; 4X Large</td>
+        <td valign='top'>export canvas 4</td>
+        <td valign='top'>Export the canvas as an 4 times large iCn3D PNG image with all involved commands appended at the end of the PNG file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; Video</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Export the canvas as a MP4 video as the structure changes its orientation by the user or automatically</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; Selection File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Export the current defined sets in a selection file. Each set contains the name and the selection command, e.g., "1TUP_A    select .A:94-289".</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; PDB</td>
+        <td valign='top'>export pdb</td>
+        <td valign='top'>Export the current 3D coordinates in a PDB file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Save File &gt; Secondary Structure</td>
+        <td valign='top'>export secondary structure</td>
+        <td valign='top'>Export the secondary structure and residue number information in a JSON file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Share Link</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Generate a URL with all commands, a shortened URL, and commands used in Jupyter Notebook.</td>
+    </tr>
+
+
+    <tr>
+        <td valign='top'>Select &gt; Defined Sets</td>
+        <td valign='top'>defined sets</td>
+        <td valign='top'>Show all defined sets to make a selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; All</td>
+        <td valign='top'>select all</td>
+        <td valign='top'>Select all atoms of the structures</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Displayed Set</td>
+        <td valign='top'>select displayed set</td>
+        <td valign='top'>Select all atoms currently displayed</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Distance</td>
+        <td valign='top'>select zone cutoff [cutoff value in angstrom]</td>
+        <td valign='top'>Select all residues within a certain distance from the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; Positive</td>
+        <td valign='top'>select prop positive</td>
+        <td valign='top'>Select all positively charged residues (Arg, Lys, and His) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; Negative</td>
+        <td valign='top'>select prop negative</td>
+        <td valign='top'>Select all negatively charged residues (Asp and Glu) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; Hydrophobic</td>
+        <td valign='top'>select prop hydrophobic</td>
+        <td valign='top'>Select all hydrophobic residues (Val, Leu, Ile, Met, Phe, Tyr, Trp, and Cys) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; Polar</td>
+        <td valign='top'>select prop polar</td>
+        <td valign='top'>Select all polar residues (Ser, Thr, Asn, Gln, Pro, Ala, and Gly) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; B-factor/pLDDT</td>
+        <td valign='top'>select prop b factor | 90_100</td>
+        <td valign='top'>Select all residues with B-factor or pLDDT value in a certain range (e.g., 90_100) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; by Property &gt; Solvent Accessibility</td>
+        <td valign='top'>select prop percent out | 0_50</td>
+        <td valign='top'>Select all residues with solvent accessibility in a certain range (e.g., 0_50) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Inverse</td>
+        <td valign='top'>select complement</td>
+        <td valign='top'>Select all atoms not in the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Main Chains</td>
+        <td valign='top'>select main chains</td>
+        <td valign='top'>Select the main chain atoms (C-alpha, C, N, and O) for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Side Chains</td>
+        <td valign='top'>select side chains</td>
+        <td valign='top'>Select the side chain atoms (i.e., all atoms except main chain atoms) for the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Select &gt; Advanced</td>
+        <td valign='top'>select [specification] | name [name of the set]</td>
+        <td valign='top'>Use a simple specification (e.g., $1HHO.A:5-10@CA) specified at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb to select a set of atoms and name the set</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Select on 3D &gt; Chain</td>
+        <td valign='top'>set pk chain</td>
+        <td valign='top'>Press the Alt key and click on 3D structure to select a chain</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Select on 3D &gt; Strand/Helix</td>
+        <td valign='top'>set pk strand</td>
+        <td valign='top'>Press the Alt key and click on 3D structure to select a secondary structure (strand or helix)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Select on 3D &gt; Residue</td>
+        <td valign='top'>set pk residue</td>
+        <td valign='top'>Press the Alt key and click on 3D structure to select a residue</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Select on 3D &gt; Atom</td>
+        <td valign='top'>set pk atom</td>
+        <td valign='top'>Press the Alt key and click on 3D structure to select an atom</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Select &gt; Save Selection</td>
+        <td valign='top'>select [specification] | name [name of the set]</td>
+        <td valign='top'>Save the current selection with a name in the Defined Sets menu</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Clear Selection</td>
+        <td valign='top'>clear all</td>
+        <td valign='top'>Reset the selection to all atoms</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Highlight Style &gt; Outline</td>
+        <td valign='top'>set highlight style outline</td>
+        <td valign='top'>Set the highlight style as outline</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Highlight Style &gt; 3D Objects</td>
+        <td valign='top'>set highlight style 3d</td>
+        <td valign='top'>Set the highlight style as 3D objects (e.g., cubes)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Select &gt; Toggle Highlight</td>
+        <td valign='top'>toggle highlight</td>
+        <td valign='top'>Toggle between the current selection and all atoms</td>
+    </tr>
+
+
+    <tr>
+        <td valign='top'>View &gt; View Selection</td>
+        <td valign='top'>show selection</td>
+        <td valign='top'>View only the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Hide Selection</td>
+        <td valign='top'>hide selection</td>
+        <td valign='top'>Hide the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Zoom in Selection</td>
+        <td valign='top'>zoom selection</td>
+        <td valign='top'>Zoom into the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Center Selection</td>
+        <td valign='top'>center selection</td>
+        <td valign='top'>Set the current selection to the center</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Alternate(Key "a")</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Alternate the structures one by one</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Stereo View &gt; On</td>
+        <td valign='top'>stereo on</td>
+        <td valign='top'>Turn on stereo view</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Stereo View &gt; Off</td>
+        <td valign='top'>stereo off</td>
+        <td valign='top'>Turn off stereo view</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Side by Side</td>
+        <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/full2.html?...</td>
+        <td valign='top'>Show the first structure in the first window and the second (if available, otherwise the same structure) in the second window to compare side by side. THis is achieved by replace "icn3d/?" or "icn3d/full.html?" with "icn3d/full2.html?".</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Rotate &gt; Auto Rotation &gt; Rotate Left</td>
+        <td valign='top'>rotate left</td>
+        <td valign='top'>Rotate the structure continuously to the left until a mouse click is made</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Rotate &gt; Auto Rotation &gt; Rotate Right</td>
+        <td valign='top'>rotate right</td>
+        <td valign='top'>Rotate the structure continuously to the right until a mouse click is made</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Rotate &gt; Auto Rotation &gt; Rotate Up</td>
+        <td valign='top'>rotate up</td>
+        <td valign='top'>Rotate the structure continuously upward until a mouse click is made</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Rotate &gt; Auto Rotation &gt; Rotate Down</td>
+        <td valign='top'>rotate down</td>
+        <td valign='top'>Rotate the structure continuously downward until a mouse click is made</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Fog for Selection &gt; On</td>
+        <td valign='top'>set fog on</td>
+        <td valign='top'>Set fog on for the current selection to hide objects in the back</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Fog for Selection &gt; Off</td>
+        <td valign='top'>set fog off</td>
+        <td valign='top'>Set fog off for the current selection to show objects in the back</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Slab for Selection &gt; On</td>
+        <td valign='top'>set slab on</td>
+        <td valign='top'>Set slab on for the current selection to hide objects in the front</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Slab for Selection &gt; Off</td>
+        <td valign='top'>set slab off</td>
+        <td valign='top'>Set slab off for the current selection to show objects in the front</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; XYZ-axes &gt; Original</td>
+        <td valign='top'>set axis on</td>
+        <td valign='top'>Show the original XYZ axes</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; XYZ-axes &gt; Prin. Axes on Sel.</td>
+        <td valign='top'>set pc1 axis</td>
+        <td valign='top'>Show the principal axes for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; XYZ-axes &gt; Hide</td>
+        <td valign='top'>set axis off</td>
+        <td valign='top'>Remove the axes</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>View &gt; Reset &gt; All</td>
+        <td valign='top'>reset</td>
+        <td valign='top'>Reset everything to the default</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Reset &gt; Orientation</td>
+        <td valign='top'>reset orientation</td>
+        <td valign='top'>Reset just the orientation of the structures</td>
+    </tr>
+    <tr>
+        <td valign='top'>View &gt; Full Screen</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Show the canvas in full screen mode</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Ribbon</td>
+        <td valign='top'>style proteins ribbon</td>
+        <td valign='top'>Show the secondary structures of proteins as ribbon and coils as thin tubes</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Strand</td>
+        <td valign='top'>style proteins strand</td>
+        <td valign='top'>Show the secondary structures of proteins as six curves and coils as thin tubes</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Cylinder and Plate</td>
+        <td valign='top'>style proteins cylinder and plate</td>
+        <td valign='top'>Show the helices as cylinders, the strands as ribbons, and coils as thin tubes</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Schematic</td>
+        <td valign='top'>style proteins schematic</td>
+        <td valign='top'>Show each residue in proteins as a single-letter label, and connect the residues with sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; C Alpha Trace</td>
+        <td valign='top'>style proteins c alpha trace</td>
+        <td valign='top'>Connect all residues in proteins with sticks through C-alpha atoms</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Backbone</td>
+        <td valign='top'>style proteins backbone</td>
+        <td valign='top'>Show the backbone atoms (C-alpha, C, N, and O) of the proteins as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; B-factor Tube</td>
+        <td valign='top'>style proteins b factor tube</td>
+        <td valign='top'>Connect all residues in proteins with a tube, where the thickness of the tube is proportional to the B-factor or pLDDT value of each residue</td>  
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Lines</td>
+        <td valign='top'>style proteins lines</td>
+        <td valign='top'>Show all bonds in proteins as lines</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Stick</td>
+        <td valign='top'>style proteins stick</td>
+        <td valign='top'>Show all bonds in proteins as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Ball and Stick</td>
+        <td valign='top'>style proteins ball and stick</td>
+        <td valign='top'>Show all atoms in proteins as spheres and all bonds as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Sphere</td>
+        <td valign='top'>style proteins sphere</td>
+        <td valign='top'>Show all atoms in proteins as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Protein &gt; Hide</td>
+        <td valign='top'>style proteins nothing</td>
+        <td valign='top'>Hide the proteins</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Side Chains &gt; Lines</td>
+        <td valign='top'>style sidec lines</td>
+        <td valign='top'>Show all bonds in side chains as lines</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Side Chains &gt; Stick</td>
+        <td valign='top'>style sidec stick</td>
+        <td valign='top'>Show all bonds in side chains as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Side Chains &gt; Ball and Stick</td>
+        <td valign='top'>style sidec ball and stick</td>
+        <td valign='top'>Show all atoms as spheres and all bonds as sticks for the side chains</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Side Chains &gt; Sphere</td>
+        <td valign='top'>style sidec sphere</td>
+        <td valign='top'>Show all atoms in side chains as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Side Chains &gt; Hide</td>
+        <td valign='top'>style sidec nothing</td>
+        <td valign='top'>Hide the protein side chains</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Nucleotide Cartoon</td>
+        <td valign='top'>style nucleotides nucleotide cartoon</td>
+        <td valign='top'>Show nucleotides as nucleotide cartoon</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; O3' Trace</td>
+        <td valign='top'>style nucleotides o3 trace</td>
+        <td valign='top'>Connect all residues in nucleotides with sticks through O3 atoms</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Backbone</td>
+        <td valign='top'>style nucleotides o3 trace</td>
+        <td valign='top'>Show the backbone atoms of the nucleotides as sticks and hide the nucleotide bases</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Schematic</td>
+        <td valign='top'>style nucleotides schematic</td>
+        <td valign='top'>Show each residue in nucleotides as a single-letter label, and connect the residues with sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Lines</td>
+        <td valign='top'>style nucleotides lines</td>
+        <td valign='top'>Show all bonds in nucleotides as lines</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Stick</td>
+        <td valign='top'>style nucleotides stick</td>
+        <td valign='top'>Show all bonds in nucleotides as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Ball and Stick</td>
+        <td valign='top'>style nucleotides ball and stick</td>
+        <td valign='top'>Show all atoms in nucleotides as spheres and all bonds as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Sphere</td>
+        <td valign='top'>style nucleotides sphere</td>
+        <td valign='top'>Show all atoms in nucleotides as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucleotides &gt; Hide</td>
+        <td valign='top'>style nucleotides nothing</td>
+        <td valign='top'>Hide the nucleotides</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Nucl. Bases &gt; Lines</td>
+        <td valign='top'>style ntbase lines2</td>
+        <td valign='top'>Show all bonds in the bases of nucleotides as lines</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucl. Bases &gt; Stick</td>
+        <td valign='top'>style ntbase stick2</td>
+        <td valign='top'>Show all bonds in the bases of nucleotides as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucl. Bases &gt; Ball and Stick</td>
+        <td valign='top'>style ntbase ball and stick2</td>
+        <td valign='top'>Show all atoms as spheres and all bonds as sticks for the bases of nucleotides</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucl. Bases &gt; Sphere</td>
+        <td valign='top'>style ntbase sphere2</td>
+        <td valign='top'>Show all atoms in the bases of nucleotides as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Nucl. Bases &gt; Hide</td>
+        <td valign='top'>style ntbase nothing</td>
+        <td valign='top'>Hide the bases of the nucleotides</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Lines</td>
+        <td valign='top'>style chemicals lines</td>
+        <td valign='top'>Show all bonds in Chemicals as lines</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Stick</td>
+        <td valign='top'>style chemicals stick</td>
+        <td valign='top'>Show all bonds in Chemicals as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Ball and Stick</td>
+        <td valign='top'>style chemicals ball and stick</td>
+        <td valign='top'>Show all atoms in Chemicals as spheres and all bonds as sticks</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Schematic</td>
+        <td valign='top'>style chemicals schematic</td>
+        <td valign='top'>Show each non-carbon and non-hydrogen atom in chemicals as a single-letter label</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Sphere</td>
+        <td valign='top'>style chemicals sphere</td>
+        <td valign='top'>Show all atoms in Chemicals as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Chemicals &gt; Hide</td>
+        <td valign='top'>style chemicals nothing</td>
+        <td valign='top'>Hide the chemicals</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Glycans &gt; Show Cartoon</td>
+        <td valign='top'>glycans cartoon yes</td>
+        <td valign='top'>Show glycans as transparent 3D objects (e.g., cubes, spheres)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Glycans &gt; Hide Cartoon</td>
+        <td valign='top'>glycans cartoon no</td>
+        <td valign='top'>Show glycans as chemicals</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Ions &gt; Sphere</td>
+        <td valign='top'>style ions sphere</td>
+        <td valign='top'>Show all ions as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Ions &gt; Dot</td>
+        <td valign='top'>style ions dot</td>
+        <td valign='top'>Show all ions as small spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Ions &gt; Hide</td>
+        <td valign='top'>style ions nothing</td>
+        <td valign='top'>Hide the ions</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Water &gt; Sphere</td>
+        <td valign='top'>style water sphere</td>
+        <td valign='top'>Show all water as spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Water &gt; Dot</td>
+        <td valign='top'>style water dot</td>
+        <td valign='top'>Show all water as small spheres</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Water &gt; Hide</td>
+        <td valign='top'>style water nothing</td>
+        <td valign='top'>Hide the water</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Save Style</td>
+        <td valign='top'>save style</td>
+        <td valign='top'>Save the current style to be used later</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Apply Saved Style</td>
+        <td valign='top'>apply saved style</td>
+        <td valign='top'>Apply the previously saved style to the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Surface Type &gt; Van der Waals</td>
+        <td valign='top'>set surface Van der Waals surface</td>
+        <td valign='top'>Show the Van der Waals surface for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Surface Type &gt; Molecular Surface</td>
+        <td valign='top'>set surface molecular surface</td>
+        <td valign='top'>Show the molecular surface for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Surface Type &gt; Solvent Accessible</td>
+        <td valign='top'>set surface solvent accessible surface</td>
+        <td valign='top'>Show the solvent accessible surface for the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Remove Surface</td>
+        <td valign='top'>set surface nothing</td>
+        <td valign='top'>Remove all surfaces</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Surface Opacity &gt; Fast Transparency</td>
+        <td valign='top'>set surface opacity [opacity value]</td>
+        <td valign='top'>Set the opacity of the surface for the current selection. The opacity value can be between 0 (fully transparent) and 1 (fully opaque).</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Surface Wireframe &gt; Yes</td>
+        <td valign='top'>set surface wireframe on</td>
+        <td valign='top'>Use wireframe to show the surface for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Surface Wireframe &gt; No</td>
+        <td valign='top'>set surface wireframe off</td>
+        <td valign='top'>Show the regular surface for the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Line btw. Two Sets</td>
+        <td valign='top'>add line | x1 204.4 y1 192.8 z1 207.3 | x2 197.9 y2 223.4 z2 207.3 | color #ffff00 | dashed false | type cylinder | radius 0.4 | opacity 0.3</td>
+        <td valign='top'>Add a line between two sets specified by the coordinates of the center of masses of the two sets. Additional parameters include color (hex color code), dashed (true/false), radius (for cylinder), and opacity (0 to 1)</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Electron Density &gt; 2Fo-Fc Map</td>
+        <td valign='top'>set map 2fofc sigma 1.5</td>
+        <td valign='top'>Show the 2Fo-Fc electron density map at a certain sigma level (e.g., 1.5) for crystal structures</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Electron Density &gt; Fo-Fc Map</td>
+        <td valign='top'>set map fofc sigma 3</td>
+        <td valign='top'>Show the Fo-Fc electron density map at a certain sigma level (e.g., 3) for crystal structures</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Electron Density &gt; Remove Map</td>
+        <td valign='top'>setoption map nothing</td>
+        <td valign='top'>Remove all electron density maps</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Map Wireframe &gt; Yes</td>
+        <td valign='top'>set map wireframe on</td>
+        <td valign='top'>Show the electron density map in wireframe style</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Map Wireframe &gt; No</td>
+        <td valign='top'>set map wireframe off</td>
+        <td valign='top'>Show the electron density map as surface</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; EM Density Map</td>
+        <td valign='top'>set emmap percentage 30</td>
+        <td valign='top'>Show the EM density map at a certain percentage (e.g., 30) of maximum EM values for Cryo-EM structures</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Remove EM Map</td>
+        <td valign='top'>setoption emmap nothing</td>
+        <td valign='top'>Remove all EM density maps</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; EM Map Wireframe &gt; Yes</td>
+        <td valign='top'>set emmap wireframe on</td>
+        <td valign='top'>Show the EM density map in wireframe style</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; EM Map Wireframe &gt; No</td>
+        <td valign='top'>set emmap wireframe off</td>
+        <td valign='top'>Show the EM density map as surface</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Style &gt; Background &gt; Transparent</td>
+        <td valign='top'>set background transparent</td>
+        <td valign='top'>Set the backgrouond of the canvas to transparent</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Background &gt; Black</td>
+        <td valign='top'>set background black</td>
+        <td valign='top'>Set the backgrouond of the canvas to black</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Background &gt; Grey</td>
+        <td valign='top'>set background grey</td>
+        <td valign='top'>Set the backgrouond of the canvas to grey</td>
+    </tr>
+    <tr>
+        <td valign='top'>Style &gt; Background &gt; White</td>
+        <td valign='top'>set background white</td>
+        <td valign='top'>Set the backgrouond of the canvas to white</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Color &gt; Unicolor</td>
+        <td valign='top'>color [color name or hex color code]</td>
+        <td valign='top'>Color the current selection with a single color specified by the color name (e.g., red, green, blue) or hex color code (e.g., FF0000 for red)</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Color &gt; Color Picker</td>
+        <td valign='top'>color [hex color code]</td>
+        <td valign='top'>Color the current selection with a picked color specified by the hex color code (e.g., FF0000 for red)</td>
+    </tr>
+
+    
+    <tr>
+        <td valign='top'>Color &gt; Rainbow (R-V) &gt; for Selection</td>
+        <td valign='top'>color rainbow</td>
+        <td valign='top'>Color the current selection with a rainbow color scheme from red to violet</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Rainbow (R-V) &gt; for Chains</td>
+        <td valign='top'>color rainbow for chains</td>
+        <td valign='top'>Color each chain in the current selection with a rainbow color scheme from red to violet</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Color &gt; Spectrum (V-R) &gt; for Selection</td>
+        <td valign='top'>color spectrum</td>
+        <td valign='top'>Color the current selection with a spectrum color scheme from violet to red</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Spectrum (V-R) &gt; for Chains</td>
+        <td valign='top'>color spectrum for chains</td>
+        <td valign='top'>Color each chain in the current selection with a spectrum color scheme from violet to red</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Color &gt; Secondary &gt; Sheet in Green</td>
+        <td valign='top'>color secondary structure</td>
+        <td valign='top'>Color the secondary structure of the current selection with a color scheme (helix in red, strand in green, coil in light blue)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Secondary &gt; Sheet in Yellow</td>
+        <td valign='top'>color secondary structure yellow</td>
+        <td valign='top'>Color the secondary structure of the current selection with a default color scheme (helix in red, strand in yellow, coil in light blue)</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Color &gt; Charge</td>
+        <td valign='top'>color charge</td>
+        <td valign='top'>Color the current selection based on the charge of the residues (positive in blue, negative in red, neutral in gray)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Hydrophobicity &gt; Normalized</td>
+        <td valign='top'>color normalized hydrophobic</td>
+        <td valign='top'>Color the current selection based on the normalized Wimley-White hydrophobicity (https://en.wikipedia.org/wiki/Hydrophobicity_scales) of the residues (hydrophobic in green, hydrophilic in gray)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; B-factor &gt; Original</td>
+        <td valign='top'>color b factor</td>
+        <td valign='top'>Color the current selection based on the original B-factor values of the residues (low in blue, high in red)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; B-factor &gt; Percentile</td>
+        <td valign='top'>color b factor percentile</td>
+        <td valign='top'>Color the current selection based on the percentile of the B-factor values of the residues (low in blue, high in red)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Solvent Accessibility</td>
+        <td valign='top'>color area | 35</td>
+        <td valign='top'>Color each residue based on the percentage of solvent accessilbe surface area. The color ranges from blue, to white, to red for a percentage of 0, 35(variable), and 100, respectively.</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Structure</td>
+        <td valign='top'>color structure</td>
+        <td valign='top'>Color each structure in the current selection with a different color</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Chain</td>
+        <td valign='top'>color chain</td>
+        <td valign='top'>Color each chain in the current selection with a different color</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; 3D Domain</td>
+        <td valign='top'>color 3ddomain</td>
+        <td valign='top'>Color each 3D domain in the current selection with a different color based on the 3D domain definition in iCn3D</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Residue &gt; Default</td>
+        <td valign='top'>color residue</td>
+        <td valign='top'>Color each residue in the current selection with a different default color</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Atom</td>
+        <td valign='top'>color atom</td>
+        <td valign='top'>Color each atom in the current selection with a different default color based on the atom type</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Identity</td>
+        <td valign='top'>color identity</td>
+        <td valign='top'>For aligned structures, color aligned residues in red if the residues are identical, in blue if the residues are different</td> 
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Conservation</td>
+        <td valign='top'>color conservation</td>
+        <td valign='top'>For aligned structures, assign the conservation color based on the BLOSUM62 matrix</td> 
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; pLDDT</td>
+        <td valign='top'>color confidence</td>
+        <td valign='top'>Color the current selection based on the pLDDT confidence score of the atoms. Atoms with very high pLDDT (> 90) are colored in blue, high (90 > pLDDT > 70) in light blue, low (70 > pLDDT > 50) in yellow, and very low (pLDDT < 50) in orange.</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Ig Strand</td>
+        <td valign='top'>color ig strand</td>
+        <td valign='top'>When Ig domains are identified for the structures, assign the Ig strands (strands A, B, C, C', D, E, F, G) with predefined color.</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Save Color</td>
+        <td valign='top'>save color</td>
+        <td valign='top'>Save the current color scheme to be used later</td>
+    </tr>
+    <tr>
+        <td valign='top'>Color &gt; Apply Saved Color</td>
+        <td valign='top'>apply saved color</td>
+        <td valign='top'>Apply the previously saved color scheme to the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Seq. & Annotations</td>
+        <td valign='top'>view annotations</td>
+        <td valign='top'>View the sequences and annotations of the current selection in the 1D sequence viewer</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Aligned Seq.</td>
+        <td valign='top'>window aligned sequence</td>
+        <td valign='top'>View the aligned sequences of the current selection in a separate window</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; 2D Diagram</td>
+        <td valign='top'>view interactions</td>
+        <td valign='top'>View the 2D diagram of the current selection in a separate window. This command is not required to show the interactions, which can be done via the menu "Analysis > Interactions".</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; 2D Cartoon &gt; Chain Level</td>
+        <td valign='top'>cartoon 2d chain</td>
+        <td valign='top'>Show each chain as an oval with a gradient color for the current selection in a separate window</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; 2D Cartoon &gt; Domain Level</td>
+        <td valign='top'>cartoon 2d domain</td>
+        <td valign='top'>Show each domain as an oval with a gradient color for the current selection in a separate window</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; 2D Cartoon &gt; Helix/Sheet Level</td>
+        <td valign='top'>cartoon 2d secondary</td>
+        <td valign='top'>Show each helix as a filled cylinder and sheet as an empty rectangle for the current selection in a separate window</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Defined Sets</td>
+        <td valign='top'>defined sets</td>
+        <td valign='top'>View all defined sets to make a selection in a separate window</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Interactions</td>
+        <td valign='top'>line graph interaction pairs | [1st set] [2nd set]<br>or<br>line graph interaction pairs | [1st set] [2nd set] | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5</td>
+        <td valign='top'>Show the interactions between two sets in a separate window based on the specified interaction types and thresholds. By default, 2D Interaction Network is used with the prefix "line graph interaction pairs", not "view interaction pairs".</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Contact Map</td>
+        <td valign='top'>contact map | dist 8 | type cbeta</td>
+        <td valign='top'>Show the contact map for the current selection in a separate window based on the specified distance cutoff (e.g., 8 Angstrom) and atom type (e.g., c-alpha, c-beta, and heavy atoms)</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Mutation</td>
+        <td valign='top'>scap interaction [mutation, e.g., 6M0J_E_501_Y]</td>
+        <td valign='top'>Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[uppercase PDB ID or AlphaFold UniProt ID]_[Chain Name]_[Residue Number]_[One Letter Mutant Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". For AlphaFold structures, the "Chain ID" is "A".</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; DelPhi Potential &gt; DelPhi Potential</td>
+        <td valign='top'>set delphi surface<br>or<br>set delphi surface | contour 2 | gsize 65 | salt 0.15 | surface 22 | opacity 1.0 | wireframe no</td>
+        <td valign='top'>Show the DelPhi potential surface for the current selection with the specified contour level (e.g., max potential 2 kT/e), grid size, salt concentration, surface type, opacity, and wireframe option</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Distance &gt; between Two Atoms</td>
+        <td valign='top'>add line | x1 44.74 y1 -2.248 z1 95.95 | x2 50.62 y2 -4.272 z2 99.41 | color #ffff00 | dashed true | type distance; add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+        <td valign='top'>Show the distance between two atoms with a dashed line between the atoms and a label with the specified position, text, size, color, and background color</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Distance &gt; between Two Sets</td>
+        <td valign='top'>dist | 6ENY_B 6ENY_C</td>
+        <td valign='top'>Show the distance between two sets with a dashed line between the center of masses and a label with the distance</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Distance &gt; among Many Sets</td>
+        <td valign='top'>disttable | [1st comma-separated sets] [2nd comma-separated sets]</td>
+        <td valign='top'>Show the distances among many set in a table</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Distance &gt; Hide</td>
+        <td valign='top'>set lines off</td>
+        <td valign='top'>Hide all distance lines and labels</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Surface Area</td>
+        <td valign='top'>area</td>
+        <td valign='top'>Calculate the solvent accessible surface area (SASA) for each residue in the current selection and show the result in a popup window</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; by Picking Atoms</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Add a label to the center of two picked atoms in the 3D viewer</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; per Selection</td>
+        <td valign='top'>select sets 6ENY_B; add label [my text] | x 125.6 y 98.76 z 87.23 | size 18 | color #ffff00 | background undefined | type custom</td>
+        <td valign='top'>Add a custom label to the center of the current selection with the specified text, size, color, and background color</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; per Atom</td>
+        <td valign='top'>add atom labels</td>
+        <td valign='top'>Add labels of atom name for each atom in the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; per Atom Element</td>
+        <td valign='top'>add element labels</td>
+        <td valign='top'>Add labels of atom elements for each atom in the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; per Residue</td>
+        <td valign='top'>add residue labels</td>
+        <td valign='top'>Show one-letter residue labels for the current selection</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; per Residue & Number</td>
+        <td valign='top'>add residue number labels</td>
+        <td valign='top'>Show labels for residues in the current selection with the one-letter residue name followed by the residue number, e.g., R273</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; N- & C- Termini</td>
+        <td valign='top'>add terminal labels</td>
+        <td valign='top'>Show labels for the N- and C- termini of each chain in the current selection</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; Change Label Color</td>
+        <td valign='top'>set label color ffff00</td>
+        <td valign='top'>Change the color of all labels to the specified color (e.g., yellow with hex color code ffff00)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Label &gt; Remove</td>
+        <td valign='top'>set labels off</td>
+        <td valign='top'>Remove all labels</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Label Scale</td>
+        <td valign='top'>set label scale [scale value]</td>
+        <td valign='top'>Set the scale of all labels to the specified scale value (e.g., 2.0)</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Chem. Binding &gt; Show</td>
+        <td valign='top'>set chemicalbinding show</td>
+        <td valign='top'>Show the chemical binding interactions in 3D</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Chem. Binding &gt; Hide</td>
+        <td valign='top'>set chemicalbinding hide</td>
+        <td valign='top'>Remove the chemical binding interactions from 3D</td>
+    </tr>
+
+    <tr>
+        <td valign='top'>Analysis &gt; Assembly &gt; Biological Assembly</td>
+        <td valign='top'>set assembly on</td>
+        <td valign='top'>Show the biological assembly for the current structure based on the assembly information provided in the PDB or mmCIF file</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Assembly &gt; Asymmetric Unit</td>
+        <td valign='top'>set assembly off</td>
+        <td valign='top'>Show the asymmetric unit for the current structure based on the assembly information provided in the PDB or mmCIF file</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Symmetry &gt; from PDB(precalculated)</td>
+        <td valign='top'>symmetry C3 (global)</td>
+        <td valign='top'>Show the symmetry (a prism and its central axis) for the current structure based on the symmetry information provided in the PDB or mmCIF file. The point group (e.g., C3) and scope (global or local) need to be specified.</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Symmetry &gt; from SymD(Dynamic)</td>
+        <td valign='top'>symd symmetry</td>
+        <td valign='top'>Show the symmetry (a prism and its central axis) for the current structure based on the symmetry information calculated by SymD (http://symd.nci.nih.gov/). The alignment used in SymD is also shown.</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Symmetry &gt; Show Axes Only</td>
+        <td valign='top'>show axis</td>
+        <td valign='top'>Show only the symmetry axes without the prisms</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Ref. Number &gt; Show Ig for Selection</td>
+        <td valign='top'>ig refnum on</td>
+        <td valign='top'>Identify Ig domains and show the reference numbering for the identified Ig domains in the current selection based on the IgStrand numbering scheme for Ig domains (https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012813)</td>
+    </tr>
+    <tr>
+        <td valign='top'>Analysis &gt; Window Title</td>
+        <td valign='top'>your note | 2POR(MMDB) in iCn3D</td>
+        <td valign='top'>Set the title of the iCn3D window to a custom text (e.g., "2POR(MMDB) in iCn3D")</td>
+    </tr>
+
     </tbody>
 </table>
 
@@ -2959,7 +2547,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <h3>Add New Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 To contribute new classes to iCn3D, you can follow the example of <a href="https://github.com/ncbi/icn3d/blob/master/example/module/module.html">"module.html"</a>. You need to do the following steps:<br>
 <ol>
-<li>Comment out icn3d library: &lt;!--script src="icn3d.min.js"&gt;&lt;/script--&gt;</li>
+<li>Comment out icn3d library: &lt;!--script src="icn3d.min.js"&gt;&lt;/script-&gt;</li>
 <li>Script type should be "module": &lt;script type="module"&gt; </li>
 <li>Import iCn3D module: "import * as icn3d from './icn3d.module.js';"</li>
 <li>Import your custom class (e.g., "LoadStateFile"): "import {LoadStateFile} from './loadStateFile.js';"</li>
