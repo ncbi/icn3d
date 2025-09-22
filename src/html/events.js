@@ -342,7 +342,7 @@ class Events {
             ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(directionArray[0], directionArray[1], directionArray[2]));
             ic.cam.up.set(upvectorArray[0], upvectorArray[1], upvectorArray[2]);
             ic.cam.fov = fov;
-            //ic.container.whratio = aspect;
+            // ic.container.whratio = aspect;
 
             ic.drawCls.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
             ic.drawCls.render();
@@ -926,7 +926,7 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
 
-           let alignment = $("#" + me.pre + "chainalignids").val();
+           let alignment = $("#" + me.pre + "chainalignids").val().replace(/\s/g, '');
            let alignment_final = thisClass.convertUniProtInChains(alignment);
 
            thisClass.setLogCmd("load chains " + alignment_final + " on asymmetric unit | residues | resdef ", false);
@@ -938,7 +938,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
-            let alignment = $("#" + me.pre + "chainalignids2").val();
+            let alignment = $("#" + me.pre + "chainalignids2").val().replace(/\s/g, '');
             let alignment_final = thisClass.convertUniProtInChains(alignment);
             let resalign = $("#" + me.pre + "resalignids").val();
  
@@ -951,7 +951,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
-            let alignment = $("#" + me.pre + "chainalignids3").val();
+            let alignment = $("#" + me.pre + "chainalignids3").val().replace(/\s/g, '');
             let alignment_final = thisClass.convertUniProtInChains(alignment);
 
             let predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ': ');
@@ -969,7 +969,7 @@ class Events {
             e.preventDefault();
             if(!me.cfg.notebook) dialog.dialog( "close" );
  
-            let alignment = $("#" + me.pre + "chainalignids4").val();
+            let alignment = $("#" + me.pre + "chainalignids4").val().replace(/\s/g, '');
             let alignment_final = thisClass.convertUniProtInChains(alignment);
 
             let predefinedres = $("#" + me.pre + "predefinedres2").val().trim().replace(/\n/g, ': ');
@@ -978,7 +978,8 @@ class Events {
                 return;
             }
 
-            me.cfg.resdef = predefinedres.replace(/:/gi, ';');
+            // me.cfg.resdef = predefinedres.replace(/:/gi, ';');
+            me.cfg.resdef = predefinedres;
 
             let bRealign = true, bPredefined = true;
             let chainidArray = alignment_final.split(',');

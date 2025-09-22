@@ -473,7 +473,9 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
                             let alignAjax;
                             if(me.cfg.aligntool != 'tmalign') {
                                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-            
+console.log("@@@ realign " + struct1 + " " + chainid1 + " and " + struct2 + " " + chainid2);
+console.log("@@@ jsonStr_q " + jsonStr_q);
+console.log("@@@ jsonStr_t " + jsonStr_t);            
                                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                                 alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                             }
@@ -610,8 +612,9 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
         let predefinedResArray, predefinedResPair;
 
         if(bPredefined) {
-            // predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
-            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split('; ');
+            me.cfg.resdef.replace(/; /gi, ': ')
+            predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split(': ');
+            // predefinedResArray = decodeURIComponent(me.cfg.resdef).trim().replace(/\+/gi, ' ').split('; ');
             
             if(predefinedResArray.length != chainidArray.length - 1) {
                alert("Please make sure the number of chains and the lines of predefined residues are the same...");

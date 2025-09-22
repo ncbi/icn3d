@@ -435,7 +435,7 @@ class SetSeqAlign {
           let posChain1 = {}, posChain2 = {};
 
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
-            let start1, start2, end1, end2;
+            let start1, start2, end1, end2; // resi or pos used in ic.qt_start_end
             if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored, could be "100a"
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
@@ -545,7 +545,7 @@ class SetSeqAlign {
                       }
                   }
               }
-            
+
               for(let j = 0; j <= end1 - start1; ++j) {
                   ///if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
@@ -658,11 +658,15 @@ class SetSeqAlign {
             for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
                 let start1, end1;
                 
-                // start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
-                // end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
-
-                start1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_start) - 1;
-                end1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_end) - 1;
+                //ic.qt_start_end is zero-based
+                if(!bRealign && me.cfg.aligntool != 'tmalign') { // vast alignment
+                    start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start) - 1;
+                    end1 = parseInt(ic.qt_start_end[chainIndex][i].t_end) - 1;
+                }
+                else {
+                    start1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_start) - 1;
+                    end1 = ic.ParserUtilsCls.getResiNCBI(chainid1, ic.qt_start_end[chainIndex][i].t_end) - 1;
+                }
 
                 for(let j = start1; j <= end1; ++j) {
                     let resi, resid;
@@ -755,7 +759,6 @@ class SetSeqAlign {
             resObject.color2 = (resid2range_t[resid]) ? '#FF0000' : me.htmlCls.GREYC; // color by conservation
             // resObject.class = (resid2range_t[resid]) ? 'icn3d-align' : 'icn3d-nalign';
             resObject.class = (resid2range_t[resid]) ? 'icn3d-cons' : 'icn3d-nalign';
-    
             ic.alnChainsSeq[chainid1].push(resObject);
 
             if(resid2range_t[resid]) {
@@ -914,6 +917,7 @@ class SetSeqAlign {
         for(let j = 0, jl = alignedChainIndice.length - 1; j < jl; ++j) {
             let chainidTmp = chainidArray[alignedChainIndice[j]];
             let gapResObject = this.getResObject(chainidTmp, true);
+            
             //for(let k = 0, kl = len - nGap; k < kl; ++k) {
             for(let k = 0, kl = len; k < kl; ++k) {
                 ic.alnChainsSeq[chainidTmp].splice(pos_t, 0, gapResObject);
@@ -928,7 +932,7 @@ class SetSeqAlign {
         for(let j = 0, jl = len; j < jl; ++j) {
             // let resi2 = ic.ParserUtilsCls.getResi(chainid, start + j);
             // let resn2 = this.getResn(chainid, start + j);
-            let resi2 = start + j;
+            let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start + j : ic.ParserUtilsCls.getResi(chainid, start + j);
             let resn2 = this.getResnFromResi(chainid, resi2);
             let resn1 = '-';
             let bAlign = false;
@@ -940,13 +944,18 @@ class SetSeqAlign {
     getTemplatePosFromOriResi(chainid1, start, end, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
         // let startResi = ic.ParserUtilsCls.getResi(chainid1, start);
         // let endResi = ic.ParserUtilsCls.getResi(chainid1, end);
-        let startResi = start;
-        let endResi = end;
+        if(bRealign && me.cfg.aligntool == 'tmalign') { // vast alignment
+            let startResi = start;
+            let endResi = end;
 
-        let result1 = this.getResiPosInTemplate(chainid1, startResi);
-        let result2 = this.getResiPosInTemplate(chainid1, endResi);
- 
-        return {"pos1": result1.pos, "pos2": result2.pos};
+            let result1 = this.getResiPosInTemplate(chainid1, startResi);
+            let result2 = this.getResiPosInTemplate(chainid1, endResi);
+    
+            return {"pos1": result1.pos, "pos2": result2.pos};
+        }
+        else {
+            return {"pos1": start, "pos2": end};
+        }
     }
 
     mergeTwoSeqForAll(chainidArray, index, alignedChainIndice, resid2range_t, start_t, end_t, bRealign) { let ic = this.icn3d, me = ic.icn3dui;
@@ -1015,6 +1024,9 @@ class SetSeqAlign {
 
         let result, result1, result2;
 
+        let nGapInTemplate = 0; // number of gaps inserted into the template sequence
+        let startPosInTemplate = 0; // position in the template sequence to start the mapping
+
         for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
             
@@ -1049,6 +1061,8 @@ class SetSeqAlign {
 
             // if the mapping does not start from start_t, add gaps to the query seq
             if(i == 0) {
+                startPosInTemplate = start1Pos;
+
                 //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
                 result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
                 pos1 = result.pos1;
@@ -1071,7 +1085,6 @@ class SetSeqAlign {
 
                 // insert non-aligned residues in query seq
                 this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
-
                 if(notAlnLen1 >= notAlnLen2) {
                     // add gaps before the query sequence
                     for(let j = 0, jl = notAlnLen1 - notAlnLen2; j < jl; ++j) {
@@ -1081,6 +1094,7 @@ class SetSeqAlign {
                 else {
                     // check the number of gaps before resiStart1 (n), and insert 'notAlnLen2 - notAlnLen1 - n' gaps
                     this.addGapAllAlnChains(chainidArray, alignedChainIndice, chainid1, resiStart1, notAlnLen2 - notAlnLen1);
+                    nGapInTemplate += (notAlnLen2 - notAlnLen1);
                 }                           
             }
 
@@ -1089,18 +1103,19 @@ class SetSeqAlign {
             //result = this.getTemplatePosFromOriResi(chainid1, start1Pos, end1Pos, bRealign);
             pos1 = result.pos1;
             pos2 = result.pos2;
-            
+
             let k = 0;    
             if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
             if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
+            let resiAdjust = (bRealign && me.cfg.aligntool == 'tmalign') ? 0 : - startPosInTemplate + nGapInTemplate; 
             for(let j = pos1; j <= pos2; ++j) {
                 // inherit the gaps from the template
-                if(ic.alnChainsSeq[chainid1][j].resn == '-') {
+                if(ic.alnChainsSeq[chainid1][j + resiAdjust].resn == '-') {
                     ic.alnChainsSeq[chainid2].push(gapResObject2);
                 }
                 else {                   
-                    let resi1 = (bRealign) ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
-                    let resi2 = (bRealign) ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+                    let resi1 = (bRealign && me.cfg.aligntool == 'tmalign') ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
+                    let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
                     let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
                     let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
 
@@ -1108,7 +1123,7 @@ class SetSeqAlign {
                     let resObject = this.getResObject(chainid2, false, bAlign, resi2, resn2, resn1)
                     ic.alnChainsSeq[chainid2].push(resObject);
                     // update color in the template
-                    ic.alnChainsSeq[chainid1][j].color = resObject.color;
+                    ic.alnChainsSeq[chainid1][j + resiAdjust].color = resObject.color;
 
                     ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
                     ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;  

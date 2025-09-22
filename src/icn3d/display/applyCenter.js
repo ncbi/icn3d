@@ -126,8 +126,10 @@ class ApplyCenter {
 
         //ic.container.widthInv  = 1 / (ic.scaleFactor*width);
         //ic.container.heightInv = 1 / (ic.scaleFactor*height);
-
-        ic.container.whratio = width / height;
+        if(ic.cam) {
+            ic.container.whratio = width / height;
+            ic.cam.aspect = ic.container.whratio;
+        }
     }
 }
 

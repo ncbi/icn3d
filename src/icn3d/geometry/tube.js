@@ -66,8 +66,8 @@ class Tube {
                                 }
                             }
 
-                            // add one more residue if only one residue is available
-                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                            // add one more residue if only one residue is available and it's not part of helix/sheet
+                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid) && atom.ss == 'coil') {
                                 let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
 
                                 if(nextAtom) {

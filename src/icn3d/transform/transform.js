@@ -11,9 +11,10 @@ class Transform {
 
     resetOrientation_base(commandTransformation) { let ic = this.icn3d, me = ic.icn3dui;
         if(commandTransformation.length == 2 && commandTransformation[1].length > 0) {
+            if(commandTransformation[1].substr(0, 4) == 'pos:') ic.bSetCamera = false;
+
             if(ic.bSetCamera) { // |||{"factor"...}
                 let transformation = JSON.parse(commandTransformation[1]);
-
                 ic._zoomFactor = transformation.factor;
 
                 ic.mouseChange.x = transformation.mouseChange.x;
@@ -44,6 +45,12 @@ class Transform {
                         }
                     }
                 });
+
+                // set the aspect ratio
+                if(!ic.container.whratio) {
+                    ic.container.whratio = me.htmlCls.WIDTH / me.htmlCls.HEIGHT; 
+                    ic.cam.aspect = ic.container.whratio;
+                }
             }
         }
         else {

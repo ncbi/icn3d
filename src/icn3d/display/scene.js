@@ -31,11 +31,11 @@ class Scene {
 
         ic.fogCls.setFog();
 
-        if(ic.bSetCamera) { // load a URL with trackball transformation, or no info after "|||"
-            ic.cameraCls.setCamera();
-        }
-        else { // load a URL with camera viewpoint
-            // camera was set in ic.transformCls.resetOrientation_base
+        ic.cameraCls.setCamera();
+        // set the ratio for view point, which was set in ic.transformCls.resetOrientation_base
+        if(!ic.container.whratio) {
+            ic.container.whratio = me.htmlCls.WIDTH / me.htmlCls.HEIGHT; 
+            ic.cam.aspect = ic.container.whratio;
         }
 
         if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();

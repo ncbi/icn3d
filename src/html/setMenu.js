@@ -599,7 +599,7 @@ class SetMenu {
         html += this.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
         //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
 
-        html += this.getLink('mn1_cid', 'PubChem CID/Name/InchI ' + me.htmlCls.wifiStr, 1, 2);
+        html += this.getLink('mn1_cid', 'PubChem CID/Name/InChI ' + me.htmlCls.wifiStr, 1, 2);
         html += this.getLink('mn1_smiles', 'Chemical SMILES ', undefined, 2);
         
         html += "</ul>";
@@ -969,9 +969,9 @@ class SetMenu {
 
         html += this.getMenuText('mn2_rotate90', 'Rotate 90&deg;', undefined, undefined, 2);
         html += "<ul>";
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatex', 'rotate x', undefined, undefined, 2);
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatey', 'rotate y', undefined, undefined, 2);
-        html += this.getRadio('mn6_rotate90', 'mn6_rotatez', 'rotate z', undefined, undefined, 2);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatex', 'rotate x', undefined, undefined, 3);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatey', 'rotate y', undefined, undefined, 3);
+        html += this.getRadio('mn6_rotate90', 'mn6_rotatez', 'rotate z', undefined, undefined, 3);
         html += "</ul>";
         html += "</li>";
         html += this.getMenuText('mn2_rotateauto', 'Auto Rotation', undefined, 1, 2);
