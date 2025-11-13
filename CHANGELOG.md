@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.45.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.4.zip) was release on November 13, 2025. AlphaFold models were upgraded from version 4 to version 6, e.g., AF-Q12860-F1-model_v6.pdb.
+
 [icn3d-3.45.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.3.zip) was release on September 22, 2025. Enabled to input long PDB IDs starting with pdb_0000. Fixed sequence alignment view and camera viewpoint-related issues.
 
 [icn3d-3.45.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.2.zip) was release on August 20, 2025. Switched from Google Firebase Dynamic Link to our own short URL service; removed the line "global.THREE = require('three')" in iCn3D node.js scripts since three.js has been compiled into icn3d.js since iCn3D 3.44.0.

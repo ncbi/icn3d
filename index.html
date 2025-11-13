@@ -29,6 +29,9 @@
         </div>
     </header>
   </div>
+
+  <div id="governmentshutdown"></div>
+
   <div id="div0"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
@@ -322,6 +325,10 @@
       }
     }); // document ready
   </script>
+
+  <!-- ========== BEGIN_GOVT_SHUTDOWN_NOTICE_added_20130927 =========== -->
+  <script type="text/javascript"> jQuery.getScript("/core/alerts/alerts.js", function () { galert(['div#governmentshutdown', 'body > *:nth-child(1)']) }); </script>
+  <!-- ========== END_GOVT_SHUTDOWN_NOTICE_added_20130927 =========== -->
 
   <!-- log & Google Analytics -->
   <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>

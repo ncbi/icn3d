@@ -94,7 +94,7 @@ class Alternate {
             }
             
             ic.bShowHighlight = false;
-//            ic.opts['rotationcenter'] = 'highlight center';
+            ic.opts['rotationcenter'] = 'highlight center';
         }
 
         // also alternating the surfaces

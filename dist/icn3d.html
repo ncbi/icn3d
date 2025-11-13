@@ -304,8 +304,8 @@ If the protein is a transmembrane protein, you can click "File > Retrieve by ID 
 You can click "Style > Surface Type", "Style > EM Density Map", or "Style > Electron Density". You can load electron density files at "File > Open File > Electron Density".<br/>
 <br/>
 <li><b>View 1D sequences and 2D interactions</b><br/>
-In the page https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1TUP, you can click in "Windows" menu to "View Sequences & Annotations",
-"View Interactions", and see all "Defined Sets", which can be clicked to see any of your selections.<br/>
+In the page https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1TUP, you can click in "Analysis" menu to "Seq. & Annotations",
+"2D Diagram", and see all "Defined Sets", which can be clicked to see any of your selections.<br/>
 <br/>
 <li><b>Select on 3D, 1D and 2D</b><br/>
 To select on 3D structures: hold "Alt" and use mouse to pick, hold "Ctrl" to union selection, hold "Shift" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure. Click "Save Selection" in "Select" menu to save the current selection.<br/>
@@ -1024,7 +1024,11 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <h3>iCn3D Menus and Commands used to Construct Sharable URLs<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
     <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
 </h3>
-There are two ways to generate a custom view in iCn3D. The first method is to use the iCn3D web interface (https://www.ncbi.nlm.nih.gov/Structure/icn3d/) interactively to select a set as described in the "iCn3D Selection Definition" section above, apply some features on the set, and possibly do some analysis. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands". The second method is to generate an iCn3D URL with commands corresponding to the interactive steps, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbafid=[PDB or AlphaFold ID]&command=[a list of commands], where the URL parameter "mmdbafid" has to be specified with a PDB or AlphaFold ID to load a structure, and "command" can have a list of commands separated by ";+", not "+|+". Each command corresponds to a menu item in the iCn3D web interface. The commands are listed in the table below.
+There are two methods to generate a custom view in iCn3D.<br><br>
+
+The first method is to use the iCn3D web interface (https://www.ncbi.nlm.nih.gov/Structure/icn3d/) interactively to select a set with the menu "Analysis > Defined Sets", or the menu "Select > Advanced" using specifications described in the "iCn3D Selection Definition" section above, and apply some features on the set. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands".<br><br>
+
+The second method is to generate an iCn3D URL with a series of commands corresponding to the interactive steps, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbafid=[PDB or AlphaFold ID]&command=[a list of commands], where the URL parameter "mmdbafid" has to be specified with a PDB or AlphaFold ID to load a structure, and "command" can have a list of commands separated by ";+", not "+|+". Each command corresponds to a menu item in the iCn3D web interface. The commands are listed in the table below.<br><br>
 
 (A third way to analyze a structure is to use iCn3D Node.js scripts with functions. Most functions corresponding to commands are in the file "src/icn3d/selection/applyCommand.js". Other functions related to asynchronized retrieval are in the file "src/icn3d/selection/loadScript.js".)<br><br>
 
@@ -1152,7 +1156,7 @@ There are two ways to generate a custom view in iCn3D. The first method is to us
     <tr>
         <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; by Structure Alignment</td>
         <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&aligntool=tmalign</td>
-        <td valign='top'>Align a list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) with the tool TM-align or VAST align</td>
+        <td valign='top'>Align a list of comma-separated  PDB chains (e.g., 1HHO_A) or AlphaFold IDs (e.g., P69905) with the tool TM-align or VAST align. This is different from aligning two structures.</td>
     </tr>
     <tr>
         <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; by Sequence Alignment</td>
@@ -1167,7 +1171,7 @@ There are two ways to generate a custom view in iCn3D. The first method is to us
     <tr>
         <td valign='top'>File &gt; Align &gt; Protein Complexes &gt; Two PDB Structures</td>
         <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?align=2DN3,4N7N</td>
-        <td valign='top'>Align all chains of two PDB structures  with the tool VAST+</td>
+        <td valign='top'>Align two PDB structures with the tool VAST+. This is different from aligning two chains.</td>
     </tr>
     <tr>
         <td valign='top'>File &gt; Align &gt; Sequence to Structure</td>
@@ -1969,7 +1973,7 @@ There are two ways to generate a custom view in iCn3D. The first method is to us
     </tr>
     <tr>
         <td valign='top'>Analysis &gt; 2D Diagram</td>
-        <td valign='top'>view interactions</td>
+        <td valign='top'>view 2d diagram</td>
         <td valign='top'>View the 2D diagram of the current selection in a separate window. This command is not required to show the interactions, which can be done via the menu "Analysis > Interactions".</td>
     </tr>
 

@@ -43,7 +43,7 @@ main()
 async function main() {
     let inputid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
     let annoType = myArgs[1];
-    let AFUniprotVersion = 'v4';
+    let AFUniprotVersion = 'v6';
 
     let url = (inputid.length == 4) ? "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=" + inputid
         : "https://alphafold.ebi.ac.uk/files/AF-" + inputid + "-F1-model_" + AFUniprotVersion + ".pdb";
