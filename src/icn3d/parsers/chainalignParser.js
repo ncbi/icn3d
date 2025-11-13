@@ -1025,7 +1025,7 @@ class ChainalignParser {
                 targetOrQuery = 'query';
                 bAppend = true; 
             }
-console.log("### i " + i + " structArray[i] " + structArray[i]);
+
             //if(structArray[i].length > 4) {
             if(isNaN(structArray[i]) && structArray[i].length > 5) {  // PDB ID plus postfix could be 5 
                 //let bNoDssp = true;
@@ -1045,8 +1045,8 @@ console.log("### i " + i + " structArray[i] " + structArray[i]);
 
         let opts = {};
 
-        let structArrayAll = structArray; //Object.keys(ic.structures);
-console.log("### ic.chains: " + JSON.stringify(ic.chains) + " ic.structures " + JSON.stringify(ic.structures));
+        let structArrayAll = Object.keys(ic.structures);
+
         ic.opts['color'] = (structArrayAll.length > 1) ? 'structure' : ((structArrayAll[0].length > 5) ? 'confidence' : 'chain');
 
         // add color for all structures
