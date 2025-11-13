@@ -204,7 +204,7 @@ class LoadScript {
 
             await ic.annotationCls.setAnnoTabAll();
           }
-          else if(command.indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
+          else if((command.indexOf('view interactions') == 0 || command.indexOf('view 2d diagram') == 0) && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
               await thisClass.applyCommandViewinteraction(strArray[0].trim());
           }
           else if(command.indexOf('view 2d depiction') == 0) { // the command may have "|||{"factor"...
@@ -415,7 +415,7 @@ class LoadScript {
                         thisClass.applyCommand3ddomain(lastCommand);
                         await ic.annotationCls.setAnnoTabAll();
                     }
-                    else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
+                    else if((lastCommand.indexOf('view interactions') == 0 || lastCommand.indexOf('view 2d diagram') == 0) && me.cfg.align !== undefined) {
                         await thisClass.applyCommandViewinteraction(lastCommand);
                     }
                     else if(lastCommand.indexOf('view 2d depiction') == 0) {
@@ -879,7 +879,7 @@ class LoadScript {
 
         if(commandTransformation.length == 2 && commandTransformation[1].substr(0,1) == '{') ic.bTransformation = true;
 
-        ic.transformCls.resetOrientation_base(commandTransformation);
+        // ic.transformCls.resetOrientation_base(commandTransformation);
 
         ic.selectionCls.oneStructurePerWindow();
 
@@ -945,8 +945,12 @@ class LoadScript {
           $("#ncbi_logo").hide();
         }
 
+        ic.transformCls.resetOrientation_base(commandTransformation);
+
         // an extra render to remove artifacts in transparent surface
-        if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
+        // if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
+        ic.drawCls.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+        ic.drawCls.render();
 
         if(me.cfg.imageonly) ic.saveFileCls.saveFile(undefined, 'png', undefined, true);
 

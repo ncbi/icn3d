@@ -29,14 +29,17 @@
         </div>
     </header>
   </div>
+
+  <div id="governmentshutdown"></div>
+
   <div id="div0"></div>
 
   <link rel="stylesheet" href="lib/jquery-ui-1.13.2.min.css">
-  <link rel="stylesheet" href="icn3d_3.45.3.css">
+  <link rel="stylesheet" href="icn3d_3.45.4.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
   <!---script src="lib/three_0.151.0.min.js"></script-->
-  <script src="icn3d_3.45.3.min.js"></script>
+  <script src="icn3d_3.45.4.min.js"></script>
 
   <script type="text/javascript">
 
@@ -54,7 +57,7 @@
           alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
-          //$.getScript('icn3d_3.45.3.min.js', function() {
+          //$.getScript('icn3d_3.45.4.min.js', function() {
             var version = 3;
             await launchIcn3d(version); //await 
           //});
@@ -322,6 +325,10 @@
       }
     }); // document ready
   </script>
+
+  <!-- ========== BEGIN_GOVT_SHUTDOWN_NOTICE_added_20130927 =========== -->
+  <script type="text/javascript"> jQuery.getScript("/core/alerts/alerts.js", function () { galert(['div#governmentshutdown', 'body > *:nth-child(1)']) }); </script>
+  <!-- ========== END_GOVT_SHUTDOWN_NOTICE_added_20130927 =========== -->
 
   <!-- log & Google Analytics -->
   <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>

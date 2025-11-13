@@ -2299,11 +2299,13 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_cameraPers", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           ic.bChangeCamera = true;
            ic.setOptionCls.setOption('camera', 'perspective');
            thisClass.setLogCmd('set camera perspective', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_cameraOrth", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           ic.bChangeCamera = true;
            ic.setOptionCls.setOption('camera', 'orthographic');
            thisClass.setLogCmd('set camera orthographic', true);
         });

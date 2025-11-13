@@ -688,7 +688,7 @@ class Events {
         me.myEventCls.onIds(["#" + me.pre + "show_2ddgm", "#" + me.pre + "mn2_2ddgm"], "click", async function(e) { let ic = me.icn3d;
              me.htmlCls.dialogCls.openDlg('dl_2ddgm', '2D Diagram');
              await ic.viewInterPairsCls.retrieveInteractionData();
-             thisClass.setLogCmd("view interactions", true);
+             thisClass.setLogCmd("view 2d diagram", true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn2_2ddepiction", "click", async function(e) { let ic = me.icn3d;

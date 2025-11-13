@@ -31,11 +31,13 @@ class Scene {
 
         ic.fogCls.setFog();
 
-        ic.cameraCls.setCamera();
-        // set the ratio for view point, which was set in ic.transformCls.resetOrientation_base
-        if(!ic.container.whratio) {
-            ic.container.whratio = me.htmlCls.WIDTH / me.htmlCls.HEIGHT; 
-            ic.cam.aspect = ic.container.whratio;
+        if(!ic.cam || ic.bChangeCamera) {
+            ic.cameraCls.setCamera();
+            // set the ratio for view point, which was set in ic.transformCls.resetOrientation_base
+            if(!ic.container.whratio) {
+                ic.container.whratio = me.htmlCls.WIDTH / me.htmlCls.HEIGHT; 
+                ic.cam.aspect = ic.container.whratio;
+            }
         }
 
         if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();

@@ -90,7 +90,7 @@ class ApplyCommand {
          ic.selectionCls.selectAll();
          //ic.hlObjectsCls.addHlObjects();
       }
-      else if(command == 'show all') {
+      else if(command == 'show all' || command == 'view all') {
          ic.selectionCls.showAll();
       }
       else if(command == 'select complement') {
@@ -470,7 +470,7 @@ class ApplyCommand {
         ic.applyCenterCls.centerSelection();
         ic.drawCls.draw();
       }
-      else if(command == 'show selection') {
+      else if(command == 'show selection' || command == 'view selection') {
         ic.selectionCls.showSelection();
       }
       else if(command == 'hide selection') {
@@ -513,12 +513,12 @@ class ApplyCommand {
       else if(command == 'delete selected sets') {
          ic.definedSetsCls.deleteSelectedSets();
       }
-      else if(command == 'view interactions') {
+      else if(command == 'view interactions' || command == 'view 2d diagram') {
          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
              ic.ParserUtilsCls.set2DDiagrams(ic.inputid);
          }
       }
-      else if(command == 'show annotations all chains') {
+      else if(command == 'show annotations all chains' || command == 'view annotations all chains') {
          ic.annotationCls.showAnnoAllChains();
       }
 
@@ -580,7 +580,7 @@ class ApplyCommand {
       else if(command == 'clear symd symmetry') {
          ic.symdArray = [];
       }
-      else if(command == 'show axis') {
+      else if(command == 'show axis' || command == 'view axis') {
          ic.bAxisOnly = true;
       }
 
@@ -1028,7 +1028,7 @@ class ApplyCommand {
         }
       }
       else if(commandOri.indexOf('display interaction 3d') == 0
-          || commandOri.indexOf('view interaction pairs') == 0
+          || commandOri.indexOf('view interaction pairs') == 0 || commandOri.indexOf('show interaction pairs') == 0
           || commandOri.indexOf('save1 interaction pairs') == 0
           || commandOri.indexOf('save2 interaction pairs') == 0
           || commandOri.indexOf('line graph interaction pairs') == 0
@@ -1079,7 +1079,7 @@ class ApplyCommand {
                 if(commandOri.indexOf('display interaction 3d') == 0) {
                     type = '3d';
                 }
-                else if(commandOri.indexOf('view interaction pairs') == 0) {
+                else if(commandOri.indexOf('view interaction pairs') == 0 || commandOri.indexOf('show interaction pairs') == 0) {
                     type = 'view';
                 }
                 else if(commandOri.indexOf('save1 interaction pairs') == 0) {
@@ -1439,7 +1439,7 @@ class ApplyCommand {
         let dataStr = paraArray[1].replace(/\\n/g, '\n');
         await ic.refnumCls.parseCustomRefFile(dataStr);
       }
-      else if(command.indexOf('show ref number') == 0) {
+      else if(command.indexOf('show ref number') == 0 || command.indexOf('view ref number') == 0) {
         ic.bShownRefnum = true;
       }
       else if(command.indexOf('hide ref number') == 0) {
@@ -1695,7 +1695,7 @@ class ApplyCommand {
         else if(cmd.indexOf('set annotation clinvar') == 0) return seqAnnoStr + ': "ClinVar" checkbox';
         else if(cmd.indexOf('set annotation snp') == 0) return seqAnnoStr + ': "SNP" checkbox';
         else if(cmd.indexOf('set annotation 3ddomain') == 0) return seqAnnoStr + ': "3D Domains" checkbox';
-        else if(cmd.indexOf('view interactions') == 0) return 'Windows > View 2D Diagram';
+        else if(cmd.indexOf('view interactions') == 0 || cmd.indexOf('view 2d diagram') == 0) return 'Windows > View 2D Diagram';
         else if(cmd.indexOf('symmetry') == 0) return 'Analysis > Symmetry';
         else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
         else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
@@ -1787,7 +1787,7 @@ class ApplyCommand {
         else if(cmd == 'clear all') return 'Select > Clear Selection';
         else if(cmd == 'defined sets') return 'Windows > Defined Sets';
         else if(cmd == 'delete selected sets') return 'Windows > Defined Sets: "Delete Selected Sets" button';
-        else if(cmd == 'view interactions') return 'Windows > View Interactions';
+        else if(cmd == 'view interactions' || cmd == 'view 2d diagram') return 'Windows > View Interactions';
         else if(cmd == 'show annotations all chains') return seqAnnoStr + ': "Show All Chains" button';
         else if(cmd == 'save color') return 'Color > Save Color';
         else if(cmd == 'apply saved color') return 'Color > Apply Saved Color';
