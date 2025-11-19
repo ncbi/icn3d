@@ -53,7 +53,7 @@ def wait_for_download(driver):
 def del_ncbi_survey_box( driver ):
 
 	''' Removes NCBI survey box that occasionally 
-		pops up when icn3d webiste is accessed '''
+		pops up when icn3d website is accessed '''
 
 	driver.implicitly_wait(10)
 	

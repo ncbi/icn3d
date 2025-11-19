@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="icn3d.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.13.2.min.js"></script>
-  <script src="lib/three_0.137.0.min.js"></script>
+  <script src="lib/three_0.151.0.min.js"></script>
   <!--script src="icn3d.min.js"></script-->
 
   <script type="module">
@@ -50,7 +50,10 @@
           var params = (cfg_params.params) ? cfg_params.params : {};
           params.version = version;
 
-          if(params.mmtfid !== undefined) {
+          if(params.bcifid !== undefined) {
+              await setupViewer('bcifid', params.bcifid, cfg, params);
+          }
+          else if(params.mmtfid !== undefined) {
               await setupViewer('mmtfid', params.mmtfid, cfg, params);
           }
           else if(params.pdbid !== undefined) {
@@ -171,7 +174,7 @@
         }
 
         var getParams = url.split("?");
-        // transforming the GET parameters into a dictionnary
+        // transforming the GET parameters into a dictionary
         var search = getParams[getParams.length - 1];
         var params = {};
         var inpara = "";
