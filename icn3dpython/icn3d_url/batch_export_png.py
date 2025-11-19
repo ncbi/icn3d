@@ -39,7 +39,7 @@ options.add_argument("--disable-extensions") # disable extensions
 options.add_argument("--window-size=320,320") # start with specific window size (300x300 viewport/image size)
 options.binary_location = "/usr/local/chrome/114.0.5735.106/bin/chrome" # chrome binary location (required if chrome is not in the default path)
 
-# start a broser
+# start a browser
 #browser = webdriver.Chrome(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver', options=options)
 #service = ChromeService(executable_path='/usr/local/chromedriver/114.0.5735.90/bin/chromedriver')
 service = ChromeService(ChromeDriverManager().install())
@@ -51,7 +51,7 @@ pngfile = Path(f"{downdir}/{Path(pdbfile).stem}_icn3d_loadable.png")
 
 try:
     # send web request to icn3d
-    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mobilemenu=1&showcommand=0&type=pdb&url=https://files.rcsb.org/view/{pdbfile}&command=color+spectrum;+set+background+transparent;+export+canvas+1"
+    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mobilemenu=1&showcommand=0&type=pdb&url=https://files.rcsb.org/download/{pdbfile}&command=color+spectrum;+set+background+transparent;+export+canvas+1"
     browser.get(url)
 
     ok = False

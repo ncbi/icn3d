@@ -6,7 +6,7 @@ class view(object):
     '''A class for constructing embedded iCn3D viewer in ipython notebooks.
        The 3D view of icn3dpy in Jupyter Notebook is interactive, 
        just like in any browser. The popup windows will appear 
-       under the 3D view. If you have a predefined cutom view, 
+       under the 3D view. If you have a predefined custom view, 
        you can use the predefined commands in icn3dpy.
     '''
     def __init__(self,width=640,height=480,q="",para="",command="",v=""):

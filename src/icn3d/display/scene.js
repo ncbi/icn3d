@@ -221,13 +221,17 @@ class Scene {
             }
         }
 
-        ic.perspectiveCamera = new THREE.PerspectiveCamera(20, ic.container.whratio, 0.1, 10000);
-        ic.perspectiveCamera.position.set(0, 0, ic.cam_z);
-        ic.perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
+        if(!ic.perspectiveCamera) {
+            ic.perspectiveCamera = new THREE.PerspectiveCamera(20, ic.container.whratio, 0.1, 10000);
+            ic.perspectiveCamera.position.set(0, 0, ic.cam_z);
+            ic.perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
+        }
 
-        ic.orthographicCamera = new THREE.OrthographicCamera();
-        ic.orthographicCamera.position.set(0, 0, ic.cam_z);
-        ic.orthographicCamera.lookAt(new THREE.Vector3(0, 0, 0));
+        if(!ic.orthographicCamera) {
+            ic.orthographicCamera = new THREE.OrthographicCamera();
+            ic.orthographicCamera.position.set(0, 0, ic.cam_z);
+            ic.orthographicCamera.lookAt(new THREE.Vector3(0, 0, 0));
+        }
 
         ic.cams = {
             perspective: ic.perspectiveCamera,
