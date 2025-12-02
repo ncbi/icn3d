@@ -94,7 +94,7 @@ class Alternate {
             }
             
             ic.bShowHighlight = false;
-            ic.opts['rotationcenter'] = 'highlight center';
+//            ic.opts['rotationcenter'] = 'highlight center';
         }
 
         // also alternating the surfaces
@@ -134,9 +134,20 @@ class Alternate {
 
         //ic.glycanCls.showGlycans();
 
-        // ic.opts['rotationcenter'] = 'highlight center';
-        
+        // ic.opts['rotationcenter'] = 'highlight center';              
+
+        // zoomin at the beginning
+
+        if(ic.ALTERNATE_STRUCTURE == 0) { // default -1, so when it is 0, it is the first time
+            ic.transformCls.zoominSelection();
+        }
+
+        //ic.transformCls.resetOrientation(); // reset camera view point
+        // ic.drawCls.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+
+        // ic.bNotSetCamera = true;
         ic.drawCls.draw();
+        // ic.bNotSetCamera = false;
 
         ic.bShowHighlight = true; //reset
     }

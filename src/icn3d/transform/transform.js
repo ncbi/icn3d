@@ -63,7 +63,8 @@ class Transform {
     //Set the orientation to the original one, but leave the style, color, etc alone.
     resetOrientation() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.commands.length > 0) {
-            let commandTransformation = ic.commands[0].split('|||');
+            // let commandTransformation = ic.commands[0].split('|||');
+            let commandTransformation = ic.commands[ic.commands.length-1].split('|||');
 
             this.resetOrientation_base(commandTransformation);
         }

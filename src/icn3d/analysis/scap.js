@@ -341,6 +341,7 @@ console.log("free energy: " + energy + " kcal/mol");
         ic.saveFileCls.saveFile(file_pref + '_icn3d_' + postfix + '.pdb', 'text', [data]);
       }
       else {
+        console.log(data)
         return data;
       }
    }

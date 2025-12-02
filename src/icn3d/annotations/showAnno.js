@@ -151,6 +151,8 @@ class ShowAnno {
         let chemical_chainid = result.chemical_chainid;
         let chemical_set = result.chemical_set;
 
+        let bAnnoShownPrev = ic.bAnnoShown;
+
         if(!ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             // assign early to avoid load annotations twice
             ic.bAnnoShown = true;
@@ -247,7 +249,7 @@ class ShowAnno {
         }
         //ic.bAnnoShown = true;
 
-        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked) {
+        if($("#" + ic.pre + "anno_ig").length && $("#" + ic.pre + "anno_ig")[0].checked && !bAnnoShownPrev) {
             ic.bRunRefnumAgain = true;
             await ic.annotationCls.setAnnoTabIg();
 

@@ -1161,7 +1161,7 @@ class SetSeqAlign {
 
         for(let i = 0, il = ic.qt_start_end[index].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
-            
+
             start1 = ic.qt_start_end[index][i].t_start;
             start2 = ic.qt_start_end[index][i].q_start;
             end1 = ic.qt_start_end[index][i].t_end;

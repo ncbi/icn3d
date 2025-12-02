@@ -1612,6 +1612,7 @@ class AddTrack {
         for(let j = 0, jl = trackSeqArray.length; j < jl; ++j) {
             let resi = startpos;
             let text = '';
+  
             for(let k = 0; k < ic.startposGiSeq; ++k) {
                 if(ic.targetGapHash.hasOwnProperty(k)) {
                     for(let m = 0; m < ic.targetGapHash[k].to - ic.targetGapHash[k].from + 1; ++m) {

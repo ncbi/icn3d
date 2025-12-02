@@ -25,20 +25,20 @@ class Scene {
         if(options === undefined) options = ic.opts;
 
         // whether camera was set
-        me.bCamera = (ic.cam) ? true : false;
+        // me.bCamera = (ic.cam) ? true : false;
 
         this.rebuildSceneBase(options);
 
         ic.fogCls.setFog();
 
-        if(!ic.cam || ic.bChangeCamera) {
-            ic.cameraCls.setCamera();
+        // if(!ic.cam || ic.bChangeCamera) {
+            if(!ic.bNotSetCamera) ic.cameraCls.setCamera();
             // set the ratio for view point, which was set in ic.transformCls.resetOrientation_base
             if(!ic.container.whratio) {
                 ic.container.whratio = me.htmlCls.WIDTH / me.htmlCls.HEIGHT; 
                 ic.cam.aspect = ic.container.whratio;
             }
-        }
+        // }
 
         if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();
 
@@ -221,17 +221,17 @@ class Scene {
             }
         }
 
-        if(!ic.perspectiveCamera) {
+        // if(!ic.perspectiveCamera) {
             ic.perspectiveCamera = new THREE.PerspectiveCamera(20, ic.container.whratio, 0.1, 10000);
             ic.perspectiveCamera.position.set(0, 0, ic.cam_z);
             ic.perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
-        }
+        // }
 
-        if(!ic.orthographicCamera) {
+        // if(!ic.orthographicCamera) {
             ic.orthographicCamera = new THREE.OrthographicCamera();
             ic.orthographicCamera.position.set(0, 0, ic.cam_z);
             ic.orthographicCamera.lookAt(new THREE.Vector3(0, 0, 0));
-        }
+        // }
 
         ic.cams = {
             perspective: ic.perspectiveCamera,

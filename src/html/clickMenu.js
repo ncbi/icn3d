@@ -160,6 +160,7 @@ class ClickMenu {
                 html += "</td><td valign='top'>";
             }
             else if(id == 'abouticn3d') {
+            //!!!else if(id == 'ai_help') {
                 html += "</td><td valign='top'>";
             }
 

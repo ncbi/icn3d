@@ -32,6 +32,8 @@ class SetHtml {
         if(selType) me.htmlCls.allMenusSel[id] = selType;
         if(bSimpleMenu) me.htmlCls.simpleMenus[id] = 1;
 
+        if(id == 'ai_help') text = "<span style='color:#f8b84e'>" + text + "</span>";
+
         return "<li><a id='" + me.pre + id + "' href='" + url + "' target='_blank'>" + text + "</a></li>";
     }
 
@@ -943,6 +945,9 @@ class SetHtml {
             let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
         }
+        else {
+            console.log(pdbStr);
+        }
         
         return pdbStr;
     }
@@ -955,6 +960,9 @@ class SetHtml {
         if(!me.bNode) {
             let file_pref = Object.keys(me.utilsCls.getHlStructures()).join(',');
             ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
+        }
+        else {
+            console.log(secondaryStr);
         }
         
         return secondaryStr;
