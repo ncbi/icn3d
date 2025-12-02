@@ -22,6 +22,7 @@ class ResizeCanvas {
 
         if(ic.structures && Object.keys(ic.structures).length > 0 && (bDraw === undefined || bDraw)) {
             ic.drawCls.draw();
+            // ic.drawCls.render();
         }
       }
     }

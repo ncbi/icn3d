@@ -23,17 +23,17 @@ class AnnoPTM {
         else if( structure.length > 5 ) {
             let url =  "https://www.ebi.ac.uk/proteins/api/features/" + structure; 
             let data;
-            try {
+            // try {
                 data = await me.getAjaxPromise(url, 'json');
 
                 thisClass.parsePTM(data, chnid, type);
                 /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-            }
-            catch {
-                thisClass.getNoPTM(chnid, type);
+            // }
+            // catch {
+            //     thisClass.getNoPTM(chnid, type);
 
-                return;
-            }
+            //     return;
+            // }
         }
         else { // PDB
             // get PDB to UniProt mapping
@@ -43,7 +43,7 @@ class AnnoPTM {
             let urlMap = "https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/" + structLower;
 
             let dataMap;
-            try {
+            // try {
                 dataMap = await me.getAjaxPromise(urlMap, 'json');
 
                 let UniProtID = '';
@@ -94,24 +94,24 @@ class AnnoPTM {
                         
                         let url =  "https://www.ebi.ac.uk/proteins/api/features/" + UniProtID;     
                         let data;
-                        try {
+                        // try {
                             data = await me.getAjaxPromise(url, 'json');
                             ic.annoPtmData[UniProtID] = data;
 
                             thisClass.parsePTM(data, chnid, type);
                             /// if(ic.deferredPTM !== undefined) ic.deferredPTM.resolve();
-                        }
-                        catch(err) {
-                            thisClass.getNoPTM(chnid, type);
-                            return;
-                        }
+                        // }
+                        // catch(err) {
+                        //     thisClass.getNoPTM(chnid, type);
+                        //     return;
+                        // }
                     }
                 }
-            }
-            catch(err) {
-                thisClass.getNoPTM(chnid, type);
-                return;
-            }
+            // }
+            // catch(err) {
+            //     thisClass.getNoPTM(chnid, type);
+            //     return;
+            // }
         }
     }
 
@@ -190,7 +190,7 @@ class AnnoPTM {
                 let end = parseInt(ptmArray[i].end);
 
                 for(let j = begin; j <= end; ++j) {
-                    if(stucture.length > 5) { // UniProt
+                    if(structure.length > 5) { // UniProt
                         resPosArray.push(j - 1); // 0-based
                     } 
                     else { // PDB                       

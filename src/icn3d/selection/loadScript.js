@@ -370,16 +370,16 @@ class LoadScript {
                     if(lastCommand.indexOf('load') !== -1) {
                         await thisClass.applyCommandLoad(lastCommand);
                     }
-                    else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
+                    else if(lastCommand.indexOf('set map') == 0 && lastCommand.indexOf('set map wireframe') == 0) {
                         await thisClass.applyCommandMap(lastCommand);
                     }
-                    else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
+                    else if(lastCommand.indexOf('set emmap') == 0 && lastCommand.indexOf('set emmap wireframe') == 0) {
                         await thisClass.applyCommandEmmap(lastCommand);
                     }
-                    else if(lastCommand.indexOf('set phi') !== -1) {
+                    else if(lastCommand.indexOf('set phi') == 0) {
                         await ic.delphiCls.applyCommandPhi(lastCommand);
                     }
-                    else if(lastCommand.indexOf('set delphi') !== -1) {
+                    else if(lastCommand.indexOf('set delphi') == 0) {
                         await ic.delphiCls.applyCommandDelphi(lastCommand);
                     }
                     else if(lastCommand.indexOf('view annotations') == 0

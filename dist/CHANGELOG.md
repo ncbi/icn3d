@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.45.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.5.zip) was release on December 2, 2025. Fixed alternation display for aligned structures. Added a general Node.js script "general_id_cmd.js" to output results based on PDB/AlphaFold ID and commands from sharable URLs.
+
 [icn3d-3.45.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.4.zip) was release on November 13, 2025. AlphaFold models were upgraded from version 4 to version 6, e.g., AF-Q12860-F1-model_v6.pdb.
 
 [icn3d-3.45.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.3.zip) was release on September 22, 2025. Enabled to input long PDB IDs starting with pdb_0000. Fixed sequence alignment view and camera viewpoint-related issues.
