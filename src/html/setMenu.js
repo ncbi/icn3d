@@ -128,7 +128,7 @@ class SetMenu {
         html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
         html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
 
-        //!!!html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<a href="https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn" target="_blank" style="color:#f8b84e" title="AI-powered Help & URL">Help by AI</a>' + me.htmlCls.space2 + '</div></td>';
+        //!!!html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<a href="https://vizomics.org/icn3d-platform.html#ai_help" target="_blank" style="color:#f8b84e" title="AI-powered step-by-step instructions">AI Tutor</a>' + me.htmlCls.space2 + '</div></td>';
 
         html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" style="display:block;" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
 
@@ -260,7 +260,7 @@ class SetMenu {
         html += "<li><div style='position:relative; margin-top:-6px;'>" + str1;
         html += "<div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'>" + str2;
 
-        //!!!html += "<li><a href='https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn' target='_blank' id='" + me.pre + "ai_help' class='icn3d-menu-color' style='color:#f8b84e' title='AI-powered Help & URL'>Help by AI</a>";
+        //!!!html += "<li><a href='https://vizomics.org/icn3d-platform.html#ai_help' target='_blank' id='" + me.pre + "ai_help' class='icn3d-menu-color' style='color:#f8b84e' title='AI-powered step-by-step instructions'>AI Tutor</a>";
 
         //if(me.cfg.align !== undefined) {
             html += "<li><span id='" + me.pre + "alternate2' class='icn3d-menu-color' title='Alternate the structures'>Alternate</span>";
@@ -1145,7 +1145,7 @@ class SetMenu {
         }
         else {
             html += this.getRadio('mn3_lig', 'mn3_ligStick', 'Stick', undefined, 1, 2);
-            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'BalHydrogensl and Stick', true, 1, 2);
+            html += this.getRadio('mn3_lig', 'mn3_ligBallstick', 'Ball and Stick', true, 1, 2);
         }
         html += this.getRadio('mn3_lig', 'mn3_ligSchematic', 'Schematic', undefined, 1, 2);
         html += this.getRadio('mn3_lig', 'mn3_ligSphere', 'Sphere', undefined, 1, 2);
@@ -1938,7 +1938,8 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
-        //!!!html += this.getMenuUrl('ai_help', "https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn", "Help by AI" + me.htmlCls.wifiStr, 1, 1);
+        //!!!
+        html += this.getMenuUrl('ai_help', "https://vizomics.org/icn3d-platform.html#ai_help", "AI Tutor" + me.htmlCls.wifiStr, 1, 1);
 
         html += this.getMenuUrl('abouticn3d', me.htmlCls.baseUrl + "icn3d/icn3d.html#about", "About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span>", 1, 1);
 

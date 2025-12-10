@@ -84,6 +84,14 @@ class SelectByCommand {
            // wild card * can be used to select all
            //var currHighlightAtoms = {}
 
+           // convert 1TOP_A:20 to $1TOP.A:20
+           if(commandArray[i].indexOf('_') !== -1) {
+             let itemArray = commandArray[i].split('_');
+             if(itemArray.length ==2 ) {
+              commandArray[i] = '$' + itemArray[0] + '.' + itemArray[1];
+             }
+           }
+
            let dollarPos = commandArray[i].indexOf('$');
            let periodPos = commandArray[i].indexOf('.');
            let colonPos = commandArray[i].indexOf(':');

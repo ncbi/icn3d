@@ -136,7 +136,7 @@ pre span {color: red;}
 <h3>Menu</h3>
 <div>
 <ul class='icn3d-mn-item'>
-<li><a href="https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn" target="_blank"><span style="color:#f8b84e">Help by AI</span></a></li>
+<li><a href="https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn" target="_blank"><span style="color:#f8b84e">AI Tutor</span></a></li>
 <li><a href="#about"><span>About iCn3D</span></a></li>
 <li><a href="#gallery"><span>Live Gallery</span></a></li>
 <li><a href="#videos"><span>Videos & Tutorials</span></a></li>
@@ -205,8 +205,6 @@ pre span {color: red;}
 
 <span class="anchor" id="about"></span>
 <a name="about"></a>
-
-<h3><a href="https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn" target="_blank">Help by AI</a>: AI-powered step-by-step instructions and sharable URLs</h3>
 
 <h3>What is iCn3D Structure Viewer?</h3>
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
@@ -743,6 +741,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D-tutorial-sep-2022-v4.mp4">iCn3D Tutorial Video (2022)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_v4.pptx">Slide</a></li><br>
 -->
 
+<li><a href="https://vizomics.org/icn3d-platform.html#ai_help">AI Tutor for iCn3D (2025)</a> shows step-by-step instructions about how to build a custom view with five methods: Interactive, Sharable URL, Jupyter Notebook, Node.js script, and Python script
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/iCn3D-tutorial-aug-2023-v5.mp4">iCn3D Tutorial Video (2023)</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_v5-Aug-2023.pptx">Slide</a></li><br>
 <li><a href="https://education.molssi.org/python-scripting-biochemistry/chapters/MolVis_with_iCN3D.html">Use iCn3D in Jupyter Notebook (2023)</a></li><br>
 <li><a href="https://youtu.be/XvjiK5bOtd0">Virtual Reality (VR) views in iCn3D (2023)</a></li><br>
@@ -1044,7 +1043,7 @@ The second method is to generate an iCn3D URL with a series of commands correspo
     </tr>
     </thead>
     <tbody>
-    <!--tr>
+    <tr>
         <td valign='top'>File &gt; Search Structure &gt; PDB Structures</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Search PDB structures at NCBI Structure page</td>
@@ -1053,7 +1052,7 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>File &gt; Search Structure &gt; AlphaFold Structures</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Search AlphaFold structures with AlphaFold ID, protein names, or gene names</td>
-    </tr-->
+    </tr>
     <tr>
         <td valign='top'>File &gt; Search Structure &gt; AlphaFold UniProt Database</td>
         <td valign='top'>URL: https://alphafold.ebi.ac.uk/</td>
@@ -1101,7 +1100,7 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>load smiles CC(=O)OC1=CC=CC=C1C(=O)O<br>or URL parameter:<br>&smiles=CC(%3DO)OC1%3DCC%3DCC%3DC1C(%3DO)O</td>
         <td valign='top'>Load a compound with SMILES</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>File &gt; Open File &gt; PDB Files (appendable)</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Open one or more PDB files</td>
@@ -1155,7 +1154,7 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>File &gt; Open File &gt; Predict by Seq. &gt; ESMFold</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Predict a structure from a protein sequence with the tool ESMFold</td>
-    </tr-->  
+    </tr>  
     <tr>
         <td valign='top'>File &gt; Align &gt; Multiple Chains &gt; by Structure Alignment</td>
         <td valign='top'>URL: https://www.ncbi.nlm.nih.gov/Structure/icn3d/?chainalign=P69905_A,P01942_A,1HHO_A&aligntool=tmalign</td>
@@ -1224,7 +1223,7 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>export canvas 4</td>
         <td valign='top'>Export the canvas as an 4 times large iCn3D PNG image with all involved commands appended at the end of the PNG file</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>File &gt; Save File &gt; Video</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Export the canvas as a MP4 video as the structure changes its orientation by the user or automatically</td>
@@ -1244,11 +1243,11 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>export secondary structure</td>
         <td valign='top'>Export the secondary structure and residue number information in a JSON file</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>File &gt; Share Link</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Generate a URL with all commands, a shortened URL, and commands used in Jupyter Notebook.</td>
-    </tr-->
+    </tr>
 
 
     <tr>
@@ -1390,11 +1389,11 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>center selection</td>
         <td valign='top'>Set the current selection to the center</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>View &gt; Alternate(Key "a")</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Alternate the structures one by one</td>
-    </tr-->
+    </tr>
     <tr>
         <td valign='top'>View &gt; Stereo View &gt; On</td>
         <td valign='top'>stereo on</td>
@@ -1476,11 +1475,11 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>reset orientation</td>
         <td valign='top'>Reset just the orientation of the structures</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>View &gt; Full Screen</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Show the canvas in full screen mode</td>
-    </tr-->
+    </tr>
 
     <tr>
         <td valign='top'>Style &gt; Protein &gt; Ribbon</td>
@@ -2051,11 +2050,11 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>area</td>
         <td valign='top'>Calculate the solvent accessible surface area (SASA) for each residue in the current selection and show the result in a popup window</td>
     </tr>
-    <!--tr>
+    <tr>
         <td valign='top'>Analysis &gt; Label &gt; by Picking Atoms</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Add a label to the center of two picked atoms in the 3D viewer</td>
-    </tr-->
+    </tr>
     <tr>
         <td valign='top'>Analysis &gt; Label &gt; per Selection</td>
         <td valign='top'>select sets 6ENY_B; add label [my text] | x 125.6 y 98.76 z 87.23 | size 18 | color #ffff00 | background undefined | type custom</td>
@@ -2732,13 +2731,6 @@ The "cdannots.fcgi" backend returns conserved domains and binding sites informat
 </li>
 
 </ul>
-<br>
-
-<span class="anchor" id="ai_help"></span>
-<a name="ai_help"></a>
-
-<h3>AI-powered Help & URL:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
-<a href="https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn">https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn</a>
 <br>
 
 <!--span class="anchor" id="helpdoc"></span>
