@@ -300,10 +300,18 @@ class ViewInterPairs {
 
            $("#" + ic.pre + "dl_interactionsorted_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
+
+           if(me.bNode) {
+            console.log(html);
+           }
        }
        else if(type == 'view') {
            $("#" + ic.pre + "dl_allinteraction_html").html(html);
            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+
+           if(me.bNode) {
+            console.log(html);
+           }
        }
        else if(type == 'linegraph') {
            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
@@ -313,6 +321,12 @@ class ViewInterPairs {
            // draw SVG
            let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr);
            $("#" + ic.pre + "linegraphDiv").html(svgHtml);
+
+            if(me.bNode) {
+                let graphStr2 = ic.lineGraphStr.substr(0, ic.lineGraphStr.lastIndexOf('}'));
+                graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+                console.log(graphStr2)
+            }
        }
        else if(type == 'scatterplot') {
            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
@@ -322,6 +336,12 @@ class ViewInterPairs {
            // draw SVG
            let svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
+
+            if(me.bNode) {
+                let graphStr2 = ic.scatterplotStr.substr(0, ic.scatterplotStr.lastIndexOf('}'));
+                graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+                console.log(graphStr2);
+            }
        }
        else if(type == 'ligplot') {
             await ic.ligplotCls.drawLigplot(atomSet1);

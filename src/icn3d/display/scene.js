@@ -417,10 +417,10 @@ class Scene {
 
         if(!me.bNode) {
             $("#" + me.pre + "VRButton").remove();
-            $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
+            if($("#" + me.pre + "viewer").get(0)) $("#" + me.pre + "viewer").get(0).appendChild( ic.VRButtonCls.createButton( ic.renderer ) );
 
             $("#" + me.pre + "ARButton").remove();
-            $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
+            if($("#" + me.pre + "viewer").get(0)) $("#" + me.pre + "viewer").get(0).appendChild( ic.ARButtonCls.createButton( ic.renderer ) );
         }
     }
 

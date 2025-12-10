@@ -159,8 +159,8 @@ class ClickMenu {
             else if(id == 'mn6_selectannotations') {
                 html += "</td><td valign='top'>";
             }
-            else if(id == 'abouticn3d') {
-            //!!!else if(id == 'ai_help') {
+            //!!!else if(id == 'abouticn3d') {
+            else if(id == 'ai_help') {
                 html += "</td><td valign='top'>";
             }
 

@@ -4,7 +4,7 @@
 ## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery), [Tutorial](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos)
 -->
 
-## [Help by AI](https://accounts.google.com/v3/signin/accountchooser?continue=https%3A%2F%2Fgemini.google.com%2Fgem%2Fd7c3fd9b47db&flowName=GlifWebSignIn): AI-powered step-by-step instructions and sharable URLs
+## [AI Tutor for iCn3D](https://vizomics.org/icn3d-platform.html#ai_help): shows step-by-step instructions about how to build a custom view
 
 ## About iCn3D
 
