@@ -23,7 +23,6 @@ let bChemical = !isNaN(inputid);
 
 if(bChemical) {
   ic.inputid = inputid;
-  me.cfg.cid = inputid;
 
   let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
 
@@ -31,9 +30,9 @@ if(bChemical) {
 
   if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
 
-  await ic.sdfParserCls.downloadCid(me.cfg.cid);
+  await ic.sdfParserCls.downloadCid(ic.inputid);
 
-  await ic.loadScriptCls.loadScript(me.cfg.command, undefined, true);
+  await ic.loadScriptCls.loadScript(commands, undefined, true);
 }
 else {
   let url = (inputid.length == 4) ? "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=0&complexity=2&uid=" + inputid
