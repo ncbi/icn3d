@@ -4,7 +4,7 @@
 ## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery), [Tutorial](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#videos)
 -->
 
-## [AI Tutor for iCn3D](https://vizomics.org/icn3d-platform.html#ai_help): shows step-by-step instructions about how to build a custom view
+## [AI Tutor for iCn3D](https://vizomics.org/ai-tutor): shows step-by-step instructions about how to build a custom view
 
 ## About iCn3D
 

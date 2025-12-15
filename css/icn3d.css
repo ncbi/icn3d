@@ -53,9 +53,14 @@
     background: #eee;
     color: #333;
 }
-
+/*
 .icn3d-menu .ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
     padding-left: 0.4em!important;
+}
+*/
+
+.ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
+    padding-left: 3px!important;
 }
 
 .icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
