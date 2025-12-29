@@ -364,8 +364,11 @@ class DcdParser {
                 let chainid = chainArray[j];
                 for(let k in ic.chains[chainid]) {
                     let atom = ic.atoms[k];
-                    coord.push(atom.coord);
-                    ++nAtoms;
+                    // only align proteins
+                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                        coord.push(atom.coord);
+                        ++nAtoms;
+                    }
                 }
             }
 
