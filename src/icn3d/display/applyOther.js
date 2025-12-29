@@ -44,6 +44,8 @@ class ApplyOther {
             }
 
             ic.lineCls.createLines(ic.lines);
+            if(!ic.planes) ic.planes = [];
+            ic.cylinderCls.createPlanes(ic.planes);
     //    }
 
         // distance sets

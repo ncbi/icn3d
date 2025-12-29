@@ -110,6 +110,37 @@ class Cylinder {
         }
     }
 
+    //Create planes for a list of "planes", each of which has the properties 'position1', 'position2', 'position2', 'color', 'thickness', 'opacity',
+    createPlanes(planes) {  let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
+
+        for(let i = 0, il = planes.length; i < il; ++i) {
+            let plane = planes[i];
+
+            let p1 = plane.position1;
+            let p2 = plane.position2;
+            let p3 = plane.position3;
+
+            let thickness = (plane.thickness) ? plane.thickness : 2;
+            let opacity = (plane.opacity) ? plane.opacity : 0.3;
+            let colorStr = '#' + plane.color.replace(/\#/g, '');
+            let color = me.parasCls.thr(colorStr);
+
+            let planeGeo = new THREE.Plane();
+            planeGeo.setFromCoplanarPoints(p1, p2, p3);
+            let planeNormal = planeGeo.normal;
+
+            const projectedPoint = new THREE.Vector3();
+            // Project the center onto the plane
+            planeGeo.projectPoint(ic.center, projectedPoint);
+
+            let c0 = projectedPoint.clone().sub(planeNormal.clone().multiplyScalar(thickness * 0.5));
+            let c1 = projectedPoint.clone().add(planeNormal.clone().multiplyScalar(thickness * 0.5));
+            let radius = ic.maxD / 2; 
+            ic.cylinderCls.createCylinder(c0, c1, radius, color, undefined, color, undefined, undefined, opacity);
+         }
+    }
+
     createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 

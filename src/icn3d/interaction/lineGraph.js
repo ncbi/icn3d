@@ -372,7 +372,7 @@ class LineGraph {
         }
 
         for(let i = 0, il = structureArray.length; i < il; ++i) {  
-            let labelFinal = label;
+            let labelFinal = (i+1).toString() + '. ' + label;
             if(bMutation) {
                 if(i == 0) {
                     labelFinal += "Wild Type ";

@@ -172,10 +172,10 @@ class Events {
         }
     }
 
-    async loadPdbFile(bAppend, fileId, bmmCIF) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async loadPdbFile(bAppend, fileId, bmmCIF, bOpenDialog) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
        //me = ic.setIcn3dui(this.id);
        ic.bInitial = true;
-       thisClass.iniFileLoad();
+       if(!bOpenDialog) thisClass.iniFileLoad();
        let files = $("#" + me.pre + fileId)[0].files;
        if(!files[0]) {
          alert("Please select a file before clicking 'Load'");
@@ -493,7 +493,7 @@ class Events {
 
         me.myEventCls.onIds(["#" + me.pre + "alternate", "#" + me.pre + "mn2_alternate", "#" + me.pre + "alternate2"], "click", async function(e) { let ic = me.icn3d;
            ic.bAlternate = true;
-           await ic.alternateCls.alternateStructures();
+           ic.alternateCls.alternateStructures();
            ic.bAlternate = false;
 
            thisClass.setLogCmd("alternate structures", false);
@@ -1415,14 +1415,53 @@ class Events {
 
             // Start recording
             ic.videoRecorder.start();
-            thisClass.setLogCmd('Video revording started', false);
+            thisClass.setLogCmd('Video recording started', false);
         });
  
         me.myEventCls.onIds("#" + me.pre + "video_end", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
 
             ic.videoRecorder.stop();
-            thisClass.setLogCmd('Video revording ended', false);
+            thisClass.setLogCmd('Video recording ended', false);
+        });
+        
+        me.myEventCls.onIds("#" + me.pre + "video_frame", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let fps = $("#" + me.pre + "videofps").val();
+            let interval = 1000 / fps; // ms
+            let duratinon = (ic.frames + 3) * interval; // make the video a little longer than the number of frames    
+
+            const canvas = document.getElementById(ic.pre + "canvas");
+            // ic.videoFrameRecorder = new MediaRecorder(canvas.captureStream(fps));
+            ic.videoFrameRecorder = new MediaRecorder(canvas.captureStream());
+            const recordedChunks = [];
+
+            // Collect data chunks
+            ic.videoFrameRecorder.ondataavailable = event => {
+                recordedChunks.push(event.data);
+            };
+
+            ic.videoFrameRecorder.onstop = event => {
+                // Code to save the recordedChunks as a video file
+                const blob = new Blob(recordedChunks, {type: ic.videoFrameRecorder.mimeType});
+                let fileName = ic.inputid + '_video_frame';
+                saveAs(blob, fileName);
+            };
+
+            // Start recording
+            ic.videoFrameRecorder.start();
+            thisClass.setLogCmd('Video recording started', false);
+
+            const intervalId = setInterval(function() {
+                ic.alternateCls.alternateStructures();
+            }, interval);
+
+            setTimeout(() => {
+                clearInterval(intervalId);
+                ic.videoFrameRecorder.stop();
+                thisClass.setLogCmd('Video recording ended', false);
+            }, duratinon);
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_state", "click", function(e) { let ic = me.icn3d;
@@ -2044,6 +2083,22 @@ class Events {
            await thisClass.loadPdbFile(ic.bAppend, 'pdbfile_app');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_dcdpdbfile", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+
+           let bAppend = false;
+        //    ic.bRender = false;
+           await thisClass.loadPdbFile(bAppend, 'dcdpdbfile', undefined, true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_xtcpdbfile", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+
+           let bAppend = false;
+        //    ic.bRender = false;
+           await thisClass.loadPdbFile(bAppend, 'xtcpdbfile', undefined, true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            ic.bInitial = true;
@@ -2122,6 +2177,62 @@ class Events {
                await ic.xyzParserCls.loadXyzData(dataStr);
              }
              reader.readAsText(file);
+           }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_dcdfile", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           ic.bInitial = true;
+
+           //thisClass.iniFileLoad();
+           let file = $("#" + me.pre + "dcdfile")[0].files[0];
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             me.htmlCls.setHtmlCls.fileSupport();
+             let reader = new FileReader();
+             reader.onload = async function(e) {
+               let arrayBuffer = e.target.result;
+               thisClass.setLogCmd('load dcd file ' + $("#" + me.pre + "dcdfile").val(), false);
+               ic.molTitle = "";
+               ic.inputid = undefined;
+
+            //    ic.init();
+               ic.bInputfile = true;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + arrayBuffer : arrayBuffer;
+               ic.InputfileType = 'dcd';
+               await ic.dcdParserCls.loadDcdData(arrayBuffer);
+             }
+             reader.readAsArrayBuffer(file);
+           }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_xtcfile", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           ic.bInitial = true;
+
+           //thisClass.iniFileLoad();
+           let file = $("#" + me.pre + "xtcfile")[0].files[0];
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             me.htmlCls.setHtmlCls.fileSupport();
+             let reader = new FileReader();
+             reader.onload = async function(e) {
+               let arrayBuffer = e.target.result;
+               thisClass.setLogCmd('load xtc file ' + $("#" + me.pre + "xtcfile").val(), false);
+               ic.molTitle = "";
+               ic.inputid = undefined;
+
+            //    ic.init();
+               ic.bInputfile = true;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + arrayBuffer : arrayBuffer;
+               ic.InputfileType = 'xtc';
+               await ic.xtcParserCls.loadXtcData(arrayBuffer);
+             }
+             reader.readAsArrayBuffer(file);
            }
         });
 
@@ -2377,6 +2488,11 @@ class Events {
            
            await ic.showInterCls.showInteractions('graph');
         });
+        me.myEventCls.onIds("#" + me.pre + "rmsd_plot", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           await ic.dcdParserCls.showRmsdPlot();
+        });
         me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
@@ -2520,6 +2636,12 @@ class Events {
            let scale = $("#" + me.scatterplotid + "_scale").val();
            $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
            thisClass.setLogCmd("scatterplot scale " + scale, true);
+        });
+
+        me.myEventCls.onIds("#" + me.rmsdplotid + "_json", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            ic.saveFileCls.saveFile(ic.inputid + "_rmsdplot.json", "text", [JSON.stringify(ic.mdDataSet)]);
         });
 
         me.myEventCls.onIds("#" + me.ligplotid + "_svg", "click", function(e) { let ic = me.icn3d;
@@ -2920,6 +3042,39 @@ class Events {
             ic.drawCls.draw();
         });
 
+        me.myEventCls.onIds("#" + me.pre + "applyplane3sets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            ic.bLinebtwsets = false;
+ 
+            let nameArray = $("#" + me.pre + "plane3sets").val();
+            let nameArray2 = $("#" + me.pre + "plane3sets2").val();
+            let nameArray3 = $("#" + me.pre + "plane3sets3").val();
+ 
+            let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+            let atomSet3 = ic.definedSetsCls.getAtomsFromNameArray(nameArray3);
+
+            let posArray1 = ic.contactCls.getExtent(atomSet1);
+            let posArray2 = ic.contactCls.getExtent(atomSet2);
+            let posArray3 = ic.contactCls.getExtent(atomSet3);
+
+            let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+            let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+            let pos3 = new THREE.Vector3(posArray3[2][0], posArray3[2][1], posArray3[2][2]);
+
+            let thickness = $("#" + me.pre + "plane3sets_thickness").val(); 
+            let color = $("#" + me.pre + "plane3sets_customcolor").val(); 
+            let opacity = $("#" + me.pre + "plane3sets_opacity").val();
+
+            let command = 'add plane | x1 ' + pos1.x.toPrecision(4)  + ' y1 ' + pos1.y.toPrecision(4) + ' z1 ' + pos1.z.toPrecision(4) + ' | x2 ' + pos2.x.toPrecision(4)  + ' y2 ' + pos2.y.toPrecision(4) + ' z2 ' + pos2.z.toPrecision(4) + ' | x3 ' + pos3.x.toPrecision(4)  + ' y3 ' + pos3.y.toPrecision(4) + ' z3 ' + pos3.z.toPrecision(4) + ' | color ' + color + ' | thickness ' + thickness + ' | opacity ' + opacity;
+
+            thisClass.setLogCmd(command, true);
+
+            ic.analysisCls.addPlane(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, pos3.x, pos3.y, pos3.z, color, thickness, opacity);
+            ic.drawCls.draw();
+        });
+
         me.myEventCls.onIds("#" + me.pre + "applycartoonshape", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             
@@ -2963,6 +3118,16 @@ class Events {
 
             ic.lines['cylinder'] = [];
             thisClass.setLogCmd('clear line between sets', true);
+
+            ic.drawCls.draw();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "clearplane3sets", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+
+            ic.planes = [];
+            thisClass.setLogCmd('clear plane among sets', true);
 
             ic.drawCls.draw();
         });

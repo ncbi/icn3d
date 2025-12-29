@@ -618,6 +618,7 @@ class SetMenu {
         html += this.getLink('mn1_mol2file', 'Mol2 File', undefined, 2);
         html += this.getLink('mn1_sdffile', 'SDF File', undefined, 2);
         html += this.getLink('mn1_xyzfile', 'XYZ File', undefined, 2);
+        html += this.getLink('mn1_dcdfile', 'MD Trajectory File', undefined, 2);
 
         html += this.getMenuSep();
 
@@ -1253,6 +1254,7 @@ class SetMenu {
 
         html += this.getLink('mn5_cartoonshape', 'Cartoon for a Set', undefined, 1);
         html += this.getLink('mn5_linebtwsets', 'Line btw. Two Sets', undefined, 1);
+        html += this.getLink('mn5_plane3sets', 'Plane among 3 Sets', undefined, 1);
 
         if(me.cfg.cid === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined && me.cfg.mmdbaf === undefined) {
             html += this.getMenuSep();

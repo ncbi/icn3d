@@ -350,6 +350,23 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_dcdfile' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_dcdfile', 'Please input an MD trajectory file');
+        html += "Step 1. <b>PDB File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdpdbfile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_dcdpdbfile'>Load PDB File</button><br><br>";
+
+        html += "Step 2. <b>DCD File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdfile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_dcdfile'>Load DCD File</button><br>";
+
+        html += "or <b>XTC File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "xtcfile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_xtcfile' style='margin-left:28px'>Load XTC File</button><br><br>";
+
+        html += "<hr><br>";
+        html += "<b>Analysis</b>: " + me.htmlCls.buttonStr + "rmsd_plot'>RMSD Plot</button><br><br>";
+        html += "<b>Video from Frames</b>: " + me.htmlCls.buttonStr + "video_frame'>Make Video</button> with " + me.htmlCls.inputTextStr + "id='" + me.pre + "videofps' value='2' size=2> FPS (Frame per Sec)<br><br>";
+
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_clustalwfile' class='" + dialogClass + "' style='max-width:500px'>";
         html += this.addNotebookTitle('dl_clustalwfile', 'Please input a CLUSTALW MSA file');
         html += "Note the sequence names are either UniProt ID (e.g., A4D1S0 or A4D1S0_A), RefSeq ID (e.g., NP_001743), or PDB chain ID (e.g., 1HHO_A).<br><br>";
@@ -880,6 +897,15 @@ class SetDialog {
 
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_rmsdplot' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_rmsdplot', 'RMSD Plot');
+
+        me.rmsdplotid = me.pre + 'rmsdplot';
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.rmsdplotid + '_json">JSON</button>' + me.htmlCls.space2 + " The image below can be saved via right click.<br></div>";
+
+        html += '<canvas id="' + me.rmsdplotid + '"></canvas>';
+
+        html += "</div>";
 
         html += me.htmlCls.divStr + "dl_ligplot' style='background-color:white' class='" + dialogClass + "'>";
 
@@ -1134,6 +1160,42 @@ class SetDialog {
 
         html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applylinebtwsets'>Display</button></span>";
         html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearlinebtwsets'>Clear</button></span>";
+        html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_plane3sets' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_plane3sets', 'Add a plane among three sets');
+        html += me.htmlCls.spanNowrapStr + "1. Select three sets</span><br/>";
+        html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+        html += me.htmlCls.divNowrapStr + "First set:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "plane3sets' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td><td>";
+
+        html += me.htmlCls.divNowrapStr + "Second set:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "plane3sets2' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td><td>";
+
+        html += me.htmlCls.divNowrapStr + "Third set:</div>";
+        html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "plane3sets3' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "</td></tr></table>";
+
+        html += "2. Thickness (&#197;): " + me.htmlCls.inputTextStr + "id='" + me.pre + "plane3sets_thickness' value='2' size=4><br/><br/>";
+        
+        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "plane3sets_customcolor' value='" + defaultColor + "' size=4><br/><br/>";
+
+        html += me.htmlCls.divNowrapStr + "4. Opacity: <select id='" + me.pre + "plane3sets_opacity'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'], 7);
+        html += "</select></div><br>";
+
+        html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applyplane3sets'>Display</button></span>";
+        html += me.htmlCls.space3 + me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "clearplane3sets'>Clear</button></span>";
         html += "</div>";
 
 

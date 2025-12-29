@@ -908,12 +908,13 @@ class SaveFile {
                 let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
 
                 if(structureArray.length > 1) {
-                    title = 'Multiple structures: ';
-                    for(let i = 0, il = structureArray.length; i < il; ++i) {
+                    title = structureArray.length + ' structures: ';
+                    for(let i = 0, il = structureArray.length; i < il && i < 5; ++i) {
                         let url = (isNaN(structureArray[i]) && structureArray[i].length > 5) ? 'https://alphafold.ebi.ac.uk/entry/' + structureArray[i] : 'https://www.ncbi.nlm.nih.gov/structure/?term=' + structureArray[i];
                         title += '<a href="' + url + '" style="color:' + titlelinkColor + '" target="_blank">' + structureArray[i] + '</a>';
                         if(i < il - 1) title += ', ';
                     }
+                    if(structureArray.length > 5) title += '...';
                     $("#" + ic.pre + "title").html(title);
                 }
                 else if(structureArray.length == 1) {

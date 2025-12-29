@@ -211,6 +211,8 @@ class RmsdSuprCls {
             supr = undefined;
         }
 
+        if(me.bNode) console.log("RMSD: " + supr);
+
         return {'rot': rot, 'trans1': xc1, 'trans2': xc2, 'rmsd': supr};
 
     }; // end rmsd_supr

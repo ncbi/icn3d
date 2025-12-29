@@ -625,7 +625,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
 <div class="gallery">
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?17g3r1JDvZ7ZL39e6" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2kod-17g3r1JDvZ7ZL39e6.png"><br>Multiple Structures (PDB 2KOD, press "a" to alternate)
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/2kod-17g3r1JDvZ7ZL39e6.png"><br>Multiple Structures (PDB 2KOD, press "a" or <u>Shift</u> + "a" to alternate)
 </a>
 </div>
 
@@ -1114,6 +1114,11 @@ The second method is to generate an iCn3D URL with a series of commands correspo
         <td valign='top'>File &gt; Open File &gt; SDF File</td>
         <td valign='top'>N/A</td>
         <td valign='top'>Open one chemical SDF file</td>
+    </tr>
+    <tr>
+        <td valign='top'>File &gt; Open File &gt; MD Trajectory File</td>
+        <td valign='top'>N/A</td>
+        <td valign='top'>Open one MD trajectory file (DCD or XTC)</td>
     </tr>
     <tr>
         <td valign='top'>File &gt; Open File &gt; Multiple Seq. Alignment &gt; CLUSTALW Format</td>
@@ -1764,8 +1769,13 @@ The second method is to generate an iCn3D URL with a series of commands correspo
     </tr>
     <tr>
         <td valign='top'>Style &gt; Line btw. Two Sets</td>
-        <td valign='top'>add line | x1 204.4 y1 192.8 z1 207.3 | x2 197.9 y2 223.4 z2 207.3 | color #ffff00 | dashed false | type cylinder | radius 0.4 | opacity 0.3</td>
+        <td valign='top'>add line | x1 4.4 y1 2.8 z1 7.3 | x2 7.9 y2 3.4 z2 7.3 | color #ffff00 | dashed false | type cylinder | radius 0.4 | opacity 0.3</td>
         <td valign='top'>Add a line between two sets specified by the coordinates of the center of masses of the two sets. Additional parameters include color (hex color code), dashed (true/false), radius (for cylinder), and opacity (0 to 1)</td>
+    </tr>   
+    <tr>
+        <td valign='top'>Style &gt; Plane among 3 Sets</td>
+        <td valign='top'>add plane | x1 4.4 y1 2.8 z1 7.3 | x2 7.9 y2 3.4 z2 7.3 | x3 97.9 y3 23.4 z3 07.3 | color #ffff00 | thickness 2 | opacity 0.3</td>
+        <td valign='top'>Add a plane among three sets specified by the coordinates of the center of masses of the three sets. Additional parameters include color (hex color code), thickness, and opacity (0 to 1)</td>
     </tr>
 
     <tr>
@@ -2523,6 +2533,8 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sdfParserCls (parsers)</td><td>downloadCid, loadSdfData, loadSdfAtomData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setSeqAlignCls (parsers)</td><td>setSeqAlign, setSeqAlignChain, setSeqAlignForRealign, setSeqPerResi</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>xyzParserCls (parsers)</td><td>loadXyzData, setXyzAtomSeq, loadXyzAtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dcdParserCls (parsers)</td><td>loadDcdData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>xtcParserCls (parsers)</td><td>loadXtcData</td></tr>
 
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>controlCls (picking)</td><td>setControl, mouseMove</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pickingCls (picking)</td><td>showPicking, showPickingBase, showPickingHilight, select3ddomainFromAtom, selectStrandHelixFromAtom</td></tr>

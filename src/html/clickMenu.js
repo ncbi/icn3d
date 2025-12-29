@@ -47,11 +47,12 @@ class ClickMenu {
         }
     }
 
-    setSetsMenus(id, bOneset) { let me = this.icn3dui, ic = me.icn3d;
+    setSetsMenus(id, bOneset, bThreeset) { let me = this.icn3dui, ic = me.icn3d;
         this.SetChainsAdvancedMenu();
 
         let id1 = id;
         let id2 = id + '2';
+        let id3 = id + '3';
 
         let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
         if($("#" + me.pre + id1).length) {
@@ -60,9 +61,13 @@ class ClickMenu {
         if(!bOneset && $("#" + me.pre + id2).length) {
             $("#" + me.pre + id2).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
         }
+        if(bThreeset && $("#" + me.pre + id3).length) {
+            $("#" + me.pre + id3).html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
+        }
 
         $("#" + me.pre + id1).resizable();
         if(!bOneset) $("#" + me.pre + id2).resizable();
+        if(bThreeset) $("#" + me.pre + id3).resizable();
     }
 
     applyShownMenus(bNoSave) { let me = this.icn3dui, ic = me.icn3d;
@@ -279,27 +284,31 @@ class ClickMenu {
 
         me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
-           me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
+           me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB file');
         });
         me.myEventCls.onIds(["#" + me.pre + "mn1_pdbfile_app", "#" + me.pre + "tool_pdbfile"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //me = me.setIcn3dui($(this).attr('id'));
-           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB Files');
+           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB files');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_mol2file', 'Please input Mol2 File');
+           me.htmlCls.dialogCls.openDlg('dl_mol2file', 'Please input Mol2 file');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_sdffile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_sdffile', 'Please input SDF File');
+           me.htmlCls.dialogCls.openDlg('dl_sdffile', 'Please input SDF file');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-           me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ File');
+           me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ file');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_dcdfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_dcdfile', 'Please input MD trajectory file');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE File');
+            me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE file');
          });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -307,11 +316,11 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_clustalwfile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            me.htmlCls.dialogCls.openDlg('dl_clustalwfile', 'Please input CLUSTALW MSA File');
+            me.htmlCls.dialogCls.openDlg('dl_clustalwfile', 'Please input CLUSTALW MSA file');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_fastafile", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
-            me.htmlCls.dialogCls.openDlg('dl_fastafile', 'Please input FASTA MSA File');
+            me.htmlCls.dialogCls.openDlg('dl_fastafile', 'Please input FASTA MSA file');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -2185,6 +2194,13 @@ class ClickMenu {
            ic.bLinebtwsets = true;
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn5_plane3sets", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            me.htmlCls.dialogCls.openDlg('dl_plane3sets', 'Draw a plane among three sets');
+
+            thisClass.setSetsMenus('plane3sets', undefined, true);
+
+           ic.bPlane3sets = true;
+        });
 
         me.myEventCls.onIds(["#" + me.pre + "mn2_selectedcenter", "#" + me.pre + "zoomin_selection", "#" + me.pre + "tool_selectedcenter"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            //thisClass.setLogCmd('zoom selection', true);

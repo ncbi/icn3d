@@ -765,6 +765,12 @@ class SetHtml {
                         else if(type === 'xyz') {
                             await ic.xyzParserCls.loadXyzData(data);
                         }
+                        else if(type === 'dcd') {
+                            await ic.dcdParserCls.loadDcdData(data);
+                        }
+                        else if(type === 'xtc') {
+                            await ic.xtcParserCls.loadXtcData(data);
+                        }
                         else if(type === 'mmcif') {
                             await ic.mmcifParserCls.loadMmcifData(data);
                         }

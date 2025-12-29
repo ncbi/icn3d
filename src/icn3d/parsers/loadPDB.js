@@ -589,7 +589,15 @@ class LoadPDB {
                 prevCarbonArray.push(atom);
             }
 
-            if(!atom.het) {
+            if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
+                ic.water[atom.serial] = 1;
+                atom.color = me.parasCls.atomColors[atom.elem];
+            }
+            else if($.inArray(atom.resn.trim(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+                ic.ions[atom.serial] = 1;
+                atom.color = me.parasCls.atomColors[atom.elem];
+            }
+            else if(!atom.het) {
               if($.inArray(atom.resn, me.parasCls.nucleotidesArray) !== -1) {
                 ic.nucleotides[atom.serial] = 1;
                 //if (atom.name === 'P') {
@@ -614,19 +622,7 @@ class LoadPDB {
               }
             }
             else if(atom.het) {
-              if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
-                ic.water[atom.serial] = 1;
-              }
-              //else if(bOpm && atom.resn === 'DUM') {
-              //  ic.mem[atom.serial] = 1;
-              //}
-              else if($.inArray(atom.resn, me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
-                ic.ions[atom.serial] = 1;
-              }
-              else {
-                ic.chemicals[atom.serial] = 1;
-              }
-
+              ic.chemicals[atom.serial] = 1;
               atom.color = me.parasCls.atomColors[atom.elem];
             }
 

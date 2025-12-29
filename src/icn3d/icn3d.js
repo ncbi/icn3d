@@ -99,6 +99,8 @@ import {OpmParser} from './parsers/opmParser.js';
 import {PdbParser} from './parsers/pdbParser.js';
 import {SdfParser} from './parsers/sdfParser.js';
 import {XyzParser} from './parsers/xyzParser.js';
+import {DcdParser} from './parsers/dcdParser.js';
+import {XtcParser} from './parsers/xtcParser.js';
 import {MsaParser} from './parsers/msaParser.js';
 import {RealignParser} from './parsers/realignParser.js';
 import {DensityCifParser} from './parsers/densityCifParser.js';
@@ -631,6 +633,8 @@ class iCn3D {
     this.pdbParserCls = new PdbParser(this);
     this.sdfParserCls = new SdfParser(this);
     this.xyzParserCls = new XyzParser(this);
+    this.dcdParserCls = new DcdParser(this);
+    this.xtcParserCls = new XtcParser(this);
     this.msaParserCls = new MsaParser(this);
     this.realignParserCls = new RealignParser(this);
     this.densityCifParserCls = new DensityCifParser(this);
