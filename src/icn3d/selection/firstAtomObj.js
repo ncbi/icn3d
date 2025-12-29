@@ -39,7 +39,7 @@ class FirstAtomObj {
         let firstIndex;
 
         for(let i in atomsHash) {
-            if(ic.atoms[i].name == 'CA') {
+            if(ic.atoms[i] && ic.atoms[i].name == 'CA') {
                 firstIndex = i;
                 break;
             }
@@ -47,7 +47,7 @@ class FirstAtomObj {
 
         if(!firstIndex) {
             for(let i in atomsHash) {
-                if(ic.atoms[i].name == "O3'" || ic.atoms[i].name == "O3*") {
+                if(ic.atoms[i] && (ic.atoms[i].name == "O3'" || ic.atoms[i].name == "O3*")) {
                     firstIndex = i;
                     break;
                 }
@@ -126,7 +126,7 @@ class FirstAtomObj {
     getAtomFromResi(resid, atomName) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.residues.hasOwnProperty(resid)) {
             for(let i in ic.residues[resid]) {
-                if(ic.atoms[i].name === atomName && !ic.atoms[i].het) {
+                if(ic.atoms[i] && ic.atoms[i].name === atomName && !ic.atoms[i].het) {
                     return ic.atoms[i];
                 }
             }

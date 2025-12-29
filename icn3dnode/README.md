@@ -83,6 +83,22 @@ Examples
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
 
+* <b>Align two structures locally</b>
+
+    You can download the folders "tmalign-icn3dnode" to your local directoy "dir_test", compile "tmalign-icn3dnode" with the following commands:
+
+        cd dir_test/tmalign-icn3dnode
+        make
+        cp ./tmalign-icn3dnode ..
+        cd ..
+
+    then run the following:
+    
+        node tmalign.js [path/query.pdb] [path/target.pdb]
+        or node tmalign.js [PDB1/AF1] [PDB2/AF2]
+    
+    The output text file contains the information about "Domains", "TM-score", "RMSD", and "aligned residues".
+
 * <b>Detect Ig domains and assign IgStrand reference numbers</b>
 
     You can download the folders "refpdb" and "tmalign-icn3dnode" to your local directoy "dir_test", compile "tmalign-icn3dnode" with the following commands:

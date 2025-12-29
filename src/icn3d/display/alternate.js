@@ -9,7 +9,7 @@ class Alternate {
 
     // change the display atom when alternating
     //Show structures one by one.
-    async alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+    alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
         ic.bAlternate = true;
 
         //ic.transformCls.zoominSelection();
@@ -154,7 +154,7 @@ class Alternate {
 
     async alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;
        ic.bAlternate = true;
-       await this.alternateStructures();
+       this.alternateStructures();
        ic.bAlternate = false;
     }
 

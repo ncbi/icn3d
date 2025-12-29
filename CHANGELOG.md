@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.47.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.47.0.zip) was release on December 29, 2025. Added the support to load trajectory file (DCD or XTC) via the menu "File > Open File > MD Trajectory File", and draw a plane among three sets with the menu "Style > Plane among 3 Sets".
+
 [icn3d-3.46.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.46.0.zip) was release on December 10, 2025. Added an external link "AI Tutor" in the Help menu to use AI as a tutor to show users step-by-step instructions about how to build a custom view with five methods: Interactive, Sharable URL, Jupyter Notebook, Node.js script, and Python script. 
 
 [icn3d-3.45.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.45.5.zip) was release on December 2, 2025. Fixed alternation display for aligned structures. Added a general Node.js script "general_id_cmd.js" to output results based on PDB/AlphaFold ID and commands from sharable URLs.

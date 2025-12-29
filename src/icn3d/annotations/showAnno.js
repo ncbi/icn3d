@@ -61,6 +61,8 @@ class ShowAnno {
             ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
             
             for(let i = 0, il = chainArray.length; i < il; ++i) {
+                if(!ic.chainsSeq[chainArray[i]]) continue; // skip empty chain
+
                 let pos = Math.round(chainArray[i].indexOf('_'));
                 //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
                 // let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);

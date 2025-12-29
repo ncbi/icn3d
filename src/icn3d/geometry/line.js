@@ -254,7 +254,7 @@ class Line {
        }
 
        // do not add the artificial lines to raycasting objects
-    };
+    }
 
 }
 

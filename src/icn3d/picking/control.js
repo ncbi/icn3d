@@ -185,12 +185,11 @@ class Control {
               ic.transformCls.setRotation(axis, angle);
             }
 
-            else if(e.keyCode === 65 ) { // A, alternate
+            else if(e.keyCode === 65 ) { // A, alternate forward
                if(Object.keys(ic.structures).length > 1) {
                  await ic.alternateCls.alternateWrapper();
                }
             }
-
           }
         });
 

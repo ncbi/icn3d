@@ -835,6 +835,18 @@ class ApplyCommand {
         ic.analysisCls.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type, parseFloat(radius), parseFloat(opacity));
         ic.drawCls.draw();
       }
+      else if(command.indexOf('add plane') == 0) {
+        let paraArray = command.split(' | ');
+        let p1Array = paraArray[1].split(' ');
+        let p2Array = paraArray[2].split(' ');
+        let p3Array = paraArray[3].split(' ');
+        let color = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+        let thickness = (paraArray.length > 5) ? paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1) : 2;
+        let opacity = (paraArray.length > 6) ? paraArray[6].substr(paraArray[6].lastIndexOf(' ') + 1) : 0.3;
+
+        ic.analysisCls.addPlane(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), parseFloat(p3Array[1]), parseFloat(p3Array[3]), parseFloat(p3Array[5]), color, parseFloat(thickness), parseFloat(opacity));
+        ic.drawCls.draw();
+      }
       else if(command.indexOf('add sphere') == 0) {
         this.addShape(commandOri, 'sphere');
         ic.shapeCmdHash[commandOri] = 1;
@@ -851,6 +863,10 @@ class ApplyCommand {
       }
       else if(command.indexOf('clear line between sets') == 0) {
         ic.lines['cylinder'] = []; // reset
+        //ic.drawCls.draw();
+      }
+      else if(command.indexOf('clear plane among sets') == 0) {
+        ic.planes = []; // reset
         //ic.drawCls.draw();
       }
       else if(commandOri.indexOf('add label') == 0) {

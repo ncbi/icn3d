@@ -269,6 +269,21 @@ class Analysis {
         //ic.drawCls.draw();
     }
 
+    //Add a plane among the positions (x1, y1, z1), (x2, y2, z2) and (x3, y3, z3) with the input "color".
+    addPlane(x1, y1, z1, x2, y2, z2, x3, y3, z3, color, thickness, opacity) {var ic = this.icn3d, me = ic.icn3dui;
+        let plane = {}; // Each plane contains 'position1', 'position2', 'position3', 'color', and 'thickness'
+        plane.position1 = new THREE.Vector3(x1, y1, z1);
+        plane.position2 = new THREE.Vector3(x2, y2, z2);
+        plane.position3 = new THREE.Vector3(x3, y3, z3);
+        plane.color = color;
+        plane.thickness = thickness;
+        plane.opacity = opacity;
+        if(ic.planes === undefined) ic.planes = [];
+        ic.planes.push(plane);
+
+        ic.hlObjectsCls.removeHlObjects();
+    }
+
     addLineFromPicking(type) {var ic = this.icn3d, me = ic.icn3dui;
         let size = 0, background = 0;
         let color = $("#" + ic.pre + type + "color" ).val();
