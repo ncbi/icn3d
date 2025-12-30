@@ -355,7 +355,9 @@ class SetDialog {
         html += "Step 1. <b>PDB File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdpdbfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_dcdpdbfile'>Load PDB File</button><br><br>";
 
-        html += "Step 2. <b>DCD File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdfile' size=8> ";
+        html += "Step 2. <b>Stride</b>: Load one frame per every " + me.htmlCls.inputTextStr + "id='" + me.pre + "md_stride' value='1' size=2>frame(s)<br><br>";
+
+        html += "Step 3. <b>DCD File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_dcdfile'>Load DCD File</button><br>";
 
         html += "or <b>XTC File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "xtcfile' size=8> ";
@@ -363,7 +365,10 @@ class SetDialog {
 
         html += "<hr><br>";
         html += "<b>Analysis</b>: " + me.htmlCls.buttonStr + "rmsd_plot'>RMSD Plot</button><br><br>";
-        html += "<b>Video from Frames</b>: " + me.htmlCls.buttonStr + "video_frame'>Make Video</button> with " + me.htmlCls.inputTextStr + "id='" + me.pre + "videofps' value='2' size=2> FPS (Frame per Sec)<br><br>";
+
+        html += "<b>Playback</b>: " + me.htmlCls.buttonStr + "md_playback'>Play</button> every " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_step' value='1' size=2> step with " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_fps' value='24' size=2> FPS (Frame per Sec)<br><br>";
+
+        html += "<b>Video from Frames</b>: " + me.htmlCls.buttonStr + "video_frame'>Make Video</button> with " + me.htmlCls.inputTextStr + "id='" + me.pre + "videofps' value='24' size=2> FPS (Frame per Sec)<br><br>";
 
         html += "</div>";
 
