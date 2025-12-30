@@ -113,14 +113,11 @@ class DcdParser {
         header.NSAVC = intView[4];
         header.NAMNF = intView[10];
 
-        ic.frames = header.NSET;
-
         if (isCharmm) {
             header.DELTA = dv.getFloat32(44, ef);
         } else {
             header.DELTA = dv.getFloat64(44, ef);
         }
-        this.DELTA = header.DELTA;
 
         if (intView[22] !== 84) {
             console.error('dcd bad format, header block end');
@@ -186,8 +183,24 @@ class DcdParser {
         let ionsOri = me.hashUtilsCls.cloneHash(ic.ions);
         let chemicalsOri = me.hashUtilsCls.cloneHash(ic.chemicals);    
 
+        let stride = parseInt($("#" + me.pre + "md_stride").val());
+        if(isNaN(stride) || stride < 1) stride = 1;
+
+        ic.frames = header.NSET / stride + 1; // including the first frame from PDB
+        ic.DELTA = header.DELTA * stride;
+
         let serial = natom + 1; // a preloaded PDB structure would have atom serial from 1 to natom
-        for (let i = 0, n = header.NSET; i < n; ++i) {
+        for (let index = 0, n = header.NSET; index < n; ++index) {
+            if(index == 0 || index % stride != 0) { // skip the first structure since it was read from PDB already
+                // skip this frame
+                nextPos += extraBlock ? 4 + 48 + 4 : 0; // unit cell
+                nextPos += 3 * (4 + natom4 + 4); // xyz
+                nextPos += fourDims ? 4 + dv.getInt32(nextPos, ef) + 4 : 0;
+                continue;
+            }
+
+            let i = index / stride;
+
             const frame = {};
             frame.elementCount = natom;
 
@@ -229,9 +242,6 @@ class DcdParser {
                 const bytes = dv.getInt32(nextPos, ef);
                 nextPos += 4 + bytes + 4; // block start + skip + block end
             }
-
-            // skip the first structure since it was read from PDB already
-            if(i == 0) continue;
 
             let molNum = i + 1; // to avoid the same molNum as the PDB structure
             for(let j = 0; j < natom; ++j) {
@@ -364,8 +374,8 @@ class DcdParser {
                 let chainid = chainArray[j];
                 for(let k in ic.chains[chainid]) {
                     let atom = ic.atoms[k];
-                    // only align proteins
-                    if(ic.proteins.hasOwnProperty(atom.serial)) {
+                    // only align proteins, nucleotides, or chemicals
+                    if(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial) || ic.chemicals.hasOwnProperty(atom.serial)) {
                         coord.push(atom.coord);
                         ++nAtoms;
                     }

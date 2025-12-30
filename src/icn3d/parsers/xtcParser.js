@@ -93,12 +93,43 @@ class XtcParser {
 
         let offset = 0, natom;
 
+        let stride = parseInt($("#" + me.pre + "md_stride").val());
+	    if(isNaN(stride) || stride < 1) stride = 1;
+
+        let nFrames = 0;
         while (true) {
+            // skip some frames
+            if(nFrames % stride != 0) {
+                natom = dv.getInt32(offset + 4);
+
+                // skip this frame
+                offset += 12; // header
+                offset += 4; // time
+                offset += 9*4; // box
+
+                if (natom <= 9) { // no compression
+                    offset += 4;
+                    offset += natom * 12;
+                } else {
+                    offset += 4; // lsize
+                    offset += 4; // precision
+                    offset += 24; // min/max int
+                    offset += 4; // smallidx
+                    const adz = Math.ceil(dv.getInt32(offset) / 4) * 4;
+                    offset += 4; // adz
+                    offset += adz;
+                }
+
+                ++nFrames;
+
+                if (offset >= dv.byteLength) break;
+
+                continue;
+            }
+
             let frameCoords;
 
-            // const magicnum = dv.getInt32(offset)
             natom = dv.getInt32(offset + 4);
-            // const step = dv.getInt32(offset + 8)
             offset += 12;
 
             if(natom != Object.keys(ic.atoms).length) {
@@ -294,6 +325,7 @@ class XtcParser {
             }
 
             coordinates.push(frameCoords);
+            ++nFrames
 
             // if (ctx.shouldUpdate) {
             //     await ctx.update({ current: offset, max: data.length });

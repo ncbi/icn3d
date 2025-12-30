@@ -1464,6 +1464,29 @@ class Events {
             }, duratinon);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "md_playback", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let fps = $("#" + me.pre + "play_fps").val();
+            let step = $("#" + me.pre + "play_step").val();
+            let interval = 1000 / fps; // ms
+            let duratinon = (ic.frames + 3) * interval / step; // make the video a little longer than the number of frames    
+
+            const intervalId = setInterval(function() {
+                if(ic.bShift) {
+                    ic.ALTERNATE_STRUCTURE -= parseInt(step) - 1;
+                }
+                else {
+                    ic.ALTERNATE_STRUCTURE += parseInt(step) - 1;
+                }
+                ic.alternateCls.alternateStructures();
+            }, interval);
+
+            setTimeout(() => {
+                clearInterval(intervalId);
+            }, duratinon);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_state", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            thisClass.iniFileLoad();
@@ -2072,6 +2095,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
 
+           ic.init();
            let bAppend = false;
            await thisClass.loadPdbFile(bAppend, 'pdbfile');
         });
