@@ -115,6 +115,17 @@ class Scene {
         }
 
         // get parameters from cookies
+        if(me.htmlCls.setHtmlCls.getCookie('bkgdcolor') != '') {
+            let bkgdcolor = me.htmlCls.setHtmlCls.getCookie('bkgdcolor');
+
+            if(ic.bkgdcolor != bkgdcolor) {
+                me.htmlCls.clickMenuCls.setLogCmd('set background ' + bkgdcolor, true);
+            }
+
+            ic.bkgdcolor = bkgdcolor;
+            ic.opts['background'] = ic.bkgdcolor;
+        }
+
         if(me.htmlCls.setHtmlCls.getCookie('shininess') != '') {
             let shininess = parseFloat(me.htmlCls.setHtmlCls.getCookie('shininess'));
 

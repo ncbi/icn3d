@@ -98,6 +98,11 @@ class UtilsCls {
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //Determine whether atom1 and atom2 have covalent bond.
     hasCovalentBond(atom0, atom1) { let me = this.icn3dui;
+        // no bonds between metals
+        if($.inArray(atom0.elem, me.parasCls.ionsArray) !== -1 && $.inArray(atom1.elem, me.parasCls.ionsArray) !== -1) {
+            return false;
+        }
+
         let r = me.parasCls.covalentRadii[atom0.elem.toUpperCase()] + me.parasCls.covalentRadii[atom1.elem.toUpperCase()];
 
         //return atom0.coord.distanceToSquared(atom1.coord) < 1.3 * r * r;

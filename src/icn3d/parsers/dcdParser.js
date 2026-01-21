@@ -351,7 +351,7 @@ class DcdParser {
         return true;
     }
 
-    async showRmsdPlot() { let ic = this.icn3d, me = ic.icn3dui;
+    async showRmsdHbondPlot(bHbondPlot) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bChartjs === undefined) {
             let url = "https://cdn.jsdelivr.net/npm/chart.js";
             await me.getAjaxPromise(url, 'script');
@@ -359,42 +359,87 @@ class DcdParser {
             ic.bChartjs = true;
         }
 
-        $("#" + me.rmsdplotid).empty();
-        me.htmlCls.dialogCls.openDlg('dl_rmsdplot', 'RMSD Plot');
+        if(bHbondPlot) {
+            $("#" + me.hbondplotid).empty();
+            me.htmlCls.dialogCls.openDlg('dl_hbondplot', 'H-bond Plot');
+        }
+        else {
+            $("#" + me.rmsdplotid).empty();
+            me.htmlCls.dialogCls.openDlg('dl_rmsdplot', 'RMSD Plot');
+        }
 
         let dataSet = [];
         let structureArray = Object.keys(ic.structures);
-        let coord1 = [], coord2 = [];
-        for(let i = 0, il = structureArray.length; i < il; ++i) {
-            let chainArray = ic.structures[structureArray[i]];
-
-            let coord = [];
-            let nAtoms = 0;
-            for(let j = 0, jl = chainArray.length; j < jl; ++j) {
-                let chainid = chainArray[j];
-                for(let k in ic.chains[chainid]) {
-                    let atom = ic.atoms[k];
-                    // only align proteins, nucleotides, or chemicals
-                    if(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial) || ic.chemicals.hasOwnProperty(atom.serial)) {
-                        coord.push(atom.coord);
-                        ++nAtoms;
+        if(bHbondPlot) {
+            for(let i = 0, il = structureArray.length; i < il; ++i) {
+                if(i > 0) {
+                    let type = 'save1';
+                    let stru = structureArray[i];
+                    let atomSet = {};
+                    for(let j = 0, jl = ic.structures[stru].length; j < jl; ++j) {
+                        let chainid = ic.structures[stru][j];
+                        for(let k in ic.chains[chainid]) {
+                            let atom = ic.atoms[k];
+                            if(!ic.water.hasOwnProperty(atom.serial) && !ic.ions.hasOwnProperty(atom.serial)) atomSet[k] = 1;
+                        }
                     }
+
+                    let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomSet);
+                    let command = structureArray[i] + '_nonSol'; // exclude solvent and ions 
+                    let residArray = Object.keys(residueHash);
+                    ic.selectionCls.addCustomSelection(residArray, command, command, 'select ' + command, true);
+                    let nameArray = [command];
+                    let nameArray2 = [command];
+
+                    let result = await ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+                        true, false, false, false, false, false, undefined, bHbondPlot);
+                    let bondCnt = result.bondCnt;
+
+                    let hBondCnt = 0;
+                    for(let j = 0, jl = bondCnt.length; j < jl; ++j) {
+                        hBondCnt += bondCnt[j].cntHbond; // + bondCnt[j].cntIonic + bondCnt[j].cntHalegen + bondCnt[j].cntPication + bondCnt[j].cntPistacking;
+                    }
+
+                    let time = ic.TIMEOFFSET + (i * ic.DELTA).toPrecision(4);
+                    dataSet.push({x: time, y: hBondCnt});
                 }
             }
 
-            if(i == 0) {
-                coord1 = [].concat(coord);
-            }
-            else {
-                coord2 = coord;
-            }
+            ic.viewInterPairsCls.resetInteractionPairs();
+        }
+        else {
+            let coord1 = [], coord2 = [];
+            for(let i = 0, il = structureArray.length; i < il; ++i) {
+                let chainArray = ic.structures[structureArray[i]];
 
-            if(i > 0) {
-                let result = me.rmsdSuprCls.getRmsdSuprCls(coord1, coord2, nAtoms);
-                let rmsd = (result.rmsd * 0.1).toPrecision(4); // convert from Å to nm
+                let coord = [];
+                let nAtoms = 0;
+                for(let j = 0, jl = chainArray.length; j < jl; ++j) {
+                    let chainid = chainArray[j];
+                    for(let k in ic.chains[chainid]) {
+                        let atom = ic.atoms[k];
+                        // only align proteins, nucleotides, or chemicals
+                        if(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial) || ic.chemicals.hasOwnProperty(atom.serial)) {
+                            coord.push(atom.coord);
+                            ++nAtoms;
+                        }
+                    }
+                }
 
-                let time = ic.TIMEOFFSET + (i * ic.DELTA).toPrecision(4);
-                dataSet.push({x: time, y: rmsd});
+                if(i == 0) {
+                    coord1 = [].concat(coord);
+                }
+                else {
+                    coord2 = coord;
+                }
+
+                if(i > 0) {
+                    let result = me.rmsdSuprCls.getRmsdSuprCls(coord1, coord2, nAtoms);
+                    let rmsd = (result.rmsd * 0.1).toPrecision(4); // convert from Å to nm
+
+                    let time = ic.TIMEOFFSET + (i * ic.DELTA).toPrecision(4);
+                    dataSet.push({x: time, y: rmsd});
+                }
             }
         }
 
@@ -405,13 +450,13 @@ class DcdParser {
 
         // https://www.chartjs.org/docs/latest/samples/line/line.html
         // const ctx = $("#" + me.rmsdplotid)[0].getContext('2d');
-        const ctx = $("#" + me.rmsdplotid)[0];
+        const ctx = (bHbondPlot) ? $("#" + me.hbondplotid)[0] : $("#" + me.rmsdplotid)[0];
 
         const myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 datasets: [{
-                    label: 'RMSD',
+                    label: (bHbondPlot) ? 'H-bonds' : 'RMSD',
                     data: dataSet
                 }]
             },
@@ -432,7 +477,7 @@ class DcdParser {
                     y: { // Y-axis configuration (defaults to numeric scale)
                         title: {
                             display: true, // Show the Y-axis label
-                            text: 'RMSD (nm)'  // Text for the Y-axis label
+                            text: (bHbondPlot) ? 'Number of H-bonds' : 'RMSD (nm)'  // Text for the Y-axis label
                         }
                     }
                 }

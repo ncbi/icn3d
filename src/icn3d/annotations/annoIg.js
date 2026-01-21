@@ -433,10 +433,29 @@ class AnnoIg {
             if(!info) continue;
 
             let tmscore = info.score;
+            let tmscore2 = info.score2;
 
             let igType = (parseFloat(tmscore) < ic.refnumCls.TMThresholdIgType ) ? 'Ig' : ic.ref2igtype[info.refpdbname];
+            let deltaTmscoreStr = ''; 
+/*
+            // check how many sheets are matched to decide if it is a jelly roll
+            let matchedSheetCnt = 0, totalSheetCnt = 0;
+            for(let resid in ic.domainid2sheetEnds[domainid]) {
+                if(ic.resid2refnum[resid] && !ic.residIgLoop.hasOwnProperty(resid)) { // assigned and not loop
+                    ++matchedSheetCnt;
+                }
+                ++totalSheetCnt;
+            }
+            let notMatchedSheetCnt = totalSheetCnt - matchedSheetCnt;
+
+            if(tmscore - tmscore2 > 0.1 && notMatchedSheetCnt >= 4) {
+                igType = 'Jelly roll';
+                deltaTmscoreStr = ', ' + notMatchedSheetCnt + ' sheets not assigned';
+            }
+*/
+
             titleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + ')');
-            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign + ', label in 3D: ' + chain + '-Ig' + (i+1).toString());
+            fullTitleArray.push(igType + ' (TM:' + parseFloat(tmscore).toFixed(2) + deltaTmscoreStr + '), template: ' + info.refpdbname + ', type: ' + ic.ref2igtype[info.refpdbname] + ', Seq. identity: ' + parseFloat(info.seqid).toFixed(2) + ', aligned residues: ' + info.nresAlign + ', label in 3D: ' + chain + '-Ig' + (i+1).toString());
 
             domainArray.push(igType);
 

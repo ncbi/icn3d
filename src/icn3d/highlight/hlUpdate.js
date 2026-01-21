@@ -307,6 +307,8 @@ class HlUpdate {
     }
 
     hlSeqInChain(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+       if(!ic.chainsSeq[chainid]) return;
+       
        // update annotation windows and alignment sequences
        for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
            let resi = ic.chainsSeq[chainid][i].resi;

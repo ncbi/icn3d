@@ -286,7 +286,7 @@ console.log("free energy: " + energy + " kcal/mol");
                 me.alertAlt = true;
 
                 //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
-                alert('Please press the letter "a" to alternate between wild type and mutant.');
+                alert('Please press the letter "a" or SHIFT + "a" to alternate between wild type and mutant.');
               }
           }
 

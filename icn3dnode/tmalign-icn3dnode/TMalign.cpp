@@ -3878,12 +3878,14 @@ resi_vec1: residue number for each residue with coordinates, e.g., SNQ... in the
 		segStr += "]";
 
 		double tm = (TM1 > TM2) ? TM1 : TM2;
+		double tm2 = (TM1 > TM2) ? TM2 : TM1;
 
         // chain 1 is query, chain 2 is target
         m_output = "[{\"super_rmsd\":" + to_string(rmsd)
         	+ ", \"ref_stru\": \"" + m_queryid + "\""
         	+ ", \"num_res\":" + to_string(n_ali8)
         	+ ", \"score\":" + to_string(tm)
+        	+ ", \"score2\":" + to_string(tm2)
         	+ ", \"frac_identical\":" + to_string((n_ali8>0)?Liden/n_ali8:0)
         	+ ", \"q_trans_add\":{\"x\":" + to_string(t[0])
         		+ ", \"y\":" + to_string(t[1])

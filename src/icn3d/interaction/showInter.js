@@ -107,7 +107,7 @@ class ShowInter {
     // between the highlighted and atoms in nameArray
     //Show the hydrogen bonds between chemicals and proteins/nucleotides with dashed-lines.
     //"threshold" defines the distance of hydrogen bonds.
-    showHbonds(threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type) { let ic = this.icn3d, me = ic.icn3dui;
+    showHbonds(threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type, bHbondPlot) { let ic = this.icn3d, me = ic.icn3dui;
         if(bHbondCalc) return;
         let hbonds_saltbridge, select;
         if(bSaltbridge) {
@@ -118,8 +118,7 @@ class ShowInter {
             hbonds_saltbridge = 'hbonds';
             select = 'hbonds ' + threshold + ' | sets ' + nameArray2 + " " + nameArray + " | " + bHbondCalc;
         }
-        ic.opts[hbonds_saltbridge] = "yes";
-        ic.opts["water"] = "dot";
+
         let firstSetAtoms, complement;
         firstSetAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
         complement = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
@@ -129,35 +128,40 @@ class ShowInter {
             // let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
             let selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.hash2Atoms(complement, ic.atoms), me.hashUtilsCls.hash2Atoms(firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge );
 
-            let commanddesc;
-            if(bSaltbridge) {
-                ic.resid2ResidhashSaltbridge = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
-                commanddesc = 'all atoms that have salt bridges with the selected atoms';
-            }
-            else {
-                ic.resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
-                commanddesc = 'all atoms that are hydrogen-bonded with the selected atoms';
-            }
-            let residues = {}, atomArray = undefined;
-            for(let i in selectedAtoms) {
-                let residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
-                residues[residueid] = 1;
-            }
-            ic.hAtoms = {}
-            for(let resid in residues) {
-                for(let i in ic.residues[resid]) {
-                    ic.hAtoms[i] = 1;
-                    ic.atoms[i].style2 = 'stick';
-                    //ic.atoms[i].style2 = 'lines';
+            if(!bHbondPlot) {
+                let commanddesc;
+                if(bSaltbridge) {
+                    ic.resid2ResidhashSaltbridge = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
+                    commanddesc = 'all atoms that have salt bridges with the selected atoms';
                 }
-            }
+                else {
+                    ic.resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
+                    commanddesc = 'all atoms that are hydrogen-bonded with the selected atoms';
+                }
+                let residues = {}, atomArray = undefined;
+                for(let i in selectedAtoms) {
+                    let residueid = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
+                    residues[residueid] = 1;
+                }
+                ic.hAtoms = {}
+                for(let resid in residues) {
+                    for(let i in ic.residues[resid]) {
+                        ic.hAtoms[i] = 1;
+                        ic.atoms[i].style2 = 'stick';
+                        //ic.atoms[i].style2 = 'lines';
+                    }
+                }
 
-            //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
-            let commandname = hbonds_saltbridge + '_auto';
-            ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
-            let nameArray = [commandname];
-            ic.selectionCls.saveSelectionIfSelected();
-            ic.drawCls.draw();
+                ic.opts[hbonds_saltbridge] = "yes";
+                ic.opts["water"] = "dot";
+
+                //let commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+                let commandname = hbonds_saltbridge + '_auto';
+                ic.selectionCls.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
+                let nameArray = [commandname];
+                ic.selectionCls.saveSelectionIfSelected();
+                ic.drawCls.draw();
+            }
         }
     }
 

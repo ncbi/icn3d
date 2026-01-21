@@ -702,6 +702,7 @@ class LoadPDB {
     // refresh for atoms in each residue
     refreshBonds(curResAtoms, prevCarbon) { let ic = this.icn3d, me = ic.icn3dui;
         let n = curResAtoms.length;
+
         for (let j = 0; j < n; ++j) {
             let atom0 = curResAtoms[j];
             for (let k = j + 1; k < n; ++k) {

@@ -250,6 +250,7 @@
         if(!ic.resid2domainid) ic.resid2domainid = {};
         //ic.resid2domainid = {};
         ic.domainid2pdb = {};
+        if(!ic.domainid2sheetEnds) ic.domainid2sheetEnds = {}; // record the end of sheets to check for jellyRoll
 
         let bNoMoreIg = true;
         let bFoundDomain = false;
@@ -288,6 +289,15 @@
                     delete ic.domainid2score[domainid];
 
                     ic.domainid2pdb[domainid] = pdb_target;
+
+                    ic.domainid2sheetEnds[domainid] = {};
+                    for(let m in domainAtomsArray[k]) {
+                        let atom = ic.atoms[m];
+                        if(atom.ss == 'sheet' && atom.ssend) {
+                            let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                            ic.domainid2sheetEnds[domainid][resid] = 1;
+                        }
+                    }
 
                     if(!template) {
                         for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
@@ -476,7 +486,7 @@
     }
 
     getTemplateList(domainid) { let ic = this.icn3d, me = ic.icn3dui;
-        let refpdbname = '', score = '', seqid = '', nresAlign = '';
+        let refpdbname = '', score = '', score2 = '', seqid = '', nresAlign = '';
 
         refpdbname = ic.domainid2refpdbname[domainid][0]; // one template in round 2
 
@@ -486,9 +496,10 @@
             score = itemArray[0];
             seqid = itemArray[1];
             nresAlign = itemArray[2];
+            score2 = itemArray[3];
         }
 
-        return {'refpdbname': refpdbname, 'score': score, 'seqid': seqid, 'nresAlign': nresAlign};
+        return {'refpdbname': refpdbname, 'score': score, 'score2': score2, 'seqid': seqid, 'nresAlign': nresAlign};
     }
 
     parseAlignData_part1(dataArray, domainidpairArray, bRound1) { let ic = this.icn3d, me = ic.icn3dui;
@@ -634,7 +645,7 @@
 
             // use TM-score alone
             if(!domainid2segs.hasOwnProperty(domainid) || score >= parseFloat(ic.domainid2score[domainid].split('_')[0])) {      
-                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res ;
+                ic.domainid2score[domainid] = queryData[0].score + '_' + queryData[0].frac_identical + '_' + queryData[0].num_res + '_' + queryData[0].score2;
 
                 if(bRound1) {
                     ic.domainid2refpdbname[domainid] = score >= this.TMThresholdIgType ? [refpdbname] : ['all_templates'];
@@ -815,6 +826,7 @@
             let result = this.getTemplateList(domainid);
             let refpdbname = result.refpdbname;
             let score = result.score;
+            let score2 = result.score2;
             let seqid = result.seqid;
             let nresAlign = result.nresAlign;
 
@@ -827,7 +839,7 @@
                 }
 
                 // ic.refPdbList.push(message);
-                ic.domainid2info[domainid] = {'refpdbname': refpdbname, 'score': score, 'seqid': seqid, 'nresAlign': nresAlign};
+                ic.domainid2info[domainid] = {'refpdbname': refpdbname, 'score': score, 'score2': score2, 'seqid': seqid, 'nresAlign': nresAlign};
             }
 
             // adjust C' and D strands ======start
