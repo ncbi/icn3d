@@ -576,6 +576,16 @@ class LoadAtomData {
                     }
                 }
             }
+
+            // no bonds between metals, e.g., in PDB 4HEA
+            if($.inArray(atom.elem, me.parasCls.ionsArray) !== -1) {
+                for(let j = atom.bonds.length - 1; j >= 0; --j) {
+                    let atom2 = ic.atoms[atom.bonds[j]];
+                    if(atom2 && $.inArray(atom2.elem, me.parasCls.ionsArray) !== -1) {
+                        atom.bonds.splice(j, 1);
+                    }
+                }
+            }
         }
 
         // adjust biopolymer type

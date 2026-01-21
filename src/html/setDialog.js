@@ -355,7 +355,7 @@ class SetDialog {
         html += "Step 1. <b>PDB File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdpdbfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_dcdpdbfile'>Load PDB File</button><br><br>";
 
-        html += "Step 2. <b>Stride</b>: Load one frame per every " + me.htmlCls.inputTextStr + "id='" + me.pre + "md_stride' value='1' size=2>frame(s)<br><br>";
+        html += "Step 2. <b>Stride</b>: Load one frame per every " + me.htmlCls.inputTextStr + "id='" + me.pre + "md_stride' value='1' size=2> frame(s)<br><br>";
 
         html += "Step 3. <b>DCD File</b>: " + me.htmlCls.inputFileStr + "id='" + me.pre + "dcdfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_dcdfile'>Load DCD File</button><br>";
@@ -364,9 +364,9 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_xtcfile' style='margin-left:28px'>Load XTC File</button><br><br>";
 
         html += "<hr><br>";
-        html += "<b>Analysis</b>: " + me.htmlCls.buttonStr + "rmsd_plot'>RMSD Plot</button><br><br>";
+        html += "<b>Analysis</b>: " + me.htmlCls.buttonStr + "rmsd_plot'>RMSD Plot</button>" +  me.htmlCls.buttonStr + "hbond_plot' style='margin-left:12px'>H-bond Plot</button><br><br>";
 
-        html += "<b>Playback</b>: " + me.htmlCls.buttonStr + "md_playback'>Play</button> every " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_step' value='1' size=2> step with " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_fps' value='24' size=2> FPS (Frame per Sec)<br><br>";
+        html += "<b>Playback</b>: " + me.htmlCls.buttonStr + "md_playback'>Play</button> every " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_step' value='1' size=2> step(s) with " + me.htmlCls.inputTextStr + "id='" + me.pre + "play_fps' value='24' size=2> FPS (Frame per Sec)<br><br>";
 
         html += "<b>Video from Frames</b>: " + me.htmlCls.buttonStr + "video_frame'>Make Video</button> with " + me.htmlCls.inputTextStr + "id='" + me.pre + "videofps' value='24' size=2> FPS (Frame per Sec)<br><br>";
 
@@ -911,6 +911,17 @@ class SetDialog {
         html += '<canvas id="' + me.rmsdplotid + '"></canvas>';
 
         html += "</div>";
+
+
+        html += me.htmlCls.divStr + "dl_hbondplot' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_hbondplot', 'H-bond Plot');
+
+        me.hbondplotid = me.pre + 'hbondplot';
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.hbondplotid + '_json">JSON</button>' + me.htmlCls.space2 + " The image below can be saved via right click.<br></div>";
+        html += '<canvas id="' + me.hbondplotid + '"></canvas>';
+
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_ligplot' style='background-color:white' class='" + dialogClass + "'>";
 

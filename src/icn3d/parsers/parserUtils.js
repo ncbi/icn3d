@@ -753,7 +753,7 @@ class ParserUtils {
             let data = await me.getAjaxPromise(url, 'jsonp');
 
             if(data && data.pdbid) {
-              let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" to alternate the structures.";
+              let question = "This is a single-spanning (bitopic) transmembrane protein according to the Membranome database. Do you want to align the protein with the model from Membranome? If you click \"OK\", you can press the letter \"a\" or SHIFT + \"a\" to alternate the structures.";
 
               if (me.bNode) return;
 

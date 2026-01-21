@@ -159,7 +159,7 @@ class BcifParser {
 
         if(block.getCategory("_struct")) {
             title = block.getCategory("_struct").getColumn("title").getString(0);
-            title = title.replace(/"/, "'");
+            title = title.replace(/"/g, "'");
         }
 
         if(block.getCategory("_struct_keywords")) {

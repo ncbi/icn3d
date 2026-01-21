@@ -64,6 +64,7 @@ class Dialog {
         let bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
         let bScatterplot = $('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content'); // initialized
         let bRmsdplot = $('#' + me.pre + 'dl_rmsdplot').hasClass('ui-dialog-content'); // initialized
+        let bHbondplot = $('#' + me.pre + 'dl_hbondplot').hasClass('ui-dialog-content'); // initialized
         let bLigplot = $('#' + me.pre + 'dl_ligplot').hasClass('ui-dialog-content'); // initialized
         let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
         let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
@@ -75,13 +76,14 @@ class Dialog {
 
         status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
         status.bScatterplot2 = false, status.bLigplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
-        status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
+        status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false, status.bHbondplot2 = false;
 
         id2flag.dl_selectannotations = 'bSelectannotationsInit2';
         id2flag.dl_graph = 'bGraph2';
         id2flag.dl_linegraph = 'bLineGraph2';
         id2flag.dl_scatterplot = 'bScatterplot2';
         id2flag.dl_rmsdplot = 'bRmsdplot2';
+        id2flag.dl_hbondplot = 'bHbondplot2';
         id2flag.dl_ligplot = 'bLigplot2';	
         id2flag.dl_contactmap = 'bContactmap2';
         id2flag.dl_alignerrormap = 'bAlignerrormap2';
@@ -96,6 +98,7 @@ class Dialog {
         if(bLineGraph) status.bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
         if(bScatterplot) status.bScatterplot2 = $('#' + me.pre + 'dl_scatterplot').dialog( 'isOpen' );
         if(bRmsdplot) status.bRmsdplot2 = $('#' + me.pre + 'dl_rmsdplot').dialog( 'isOpen' );
+        if(bHbondplot) status.bHbondplot2 = $('#' + me.pre + 'dl_hbondplot').dialog( 'isOpen' );
         if(bLigplot) status.bLigplot2 = $('#' + me.pre + 'dl_ligplot').dialog( 'isOpen' );
         if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
         if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
@@ -256,7 +259,7 @@ class Dialog {
           close: function(e) {
               let status = thisClass.getDialogStatus().status;
 
-              if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
+              if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bHbondplot2) &&(!status.bLigplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
               }
@@ -285,7 +288,7 @@ class Dialog {
 
         let status = this.getDialogStatus().status;
 
-        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
             let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
@@ -321,15 +324,16 @@ class Dialog {
                   modal: false,
                   position: position,
                   close: function(e) {
-                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2))
-                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2))
+                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bHbondplot2))
+                        ||(id === me.pre + 'dl_hbondplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
                         ) {
                           if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                               let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -392,7 +396,7 @@ class Dialog {
 
             //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
             if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
-                if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
+                if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bHbondplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
                     //tmpWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                     tmpWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
                 }
@@ -431,7 +435,7 @@ class Dialog {
 
                 //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
                 if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
-                    if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
+                    if(status.bSelectannotationsInit2 || status.bGraph2 || status.bLineGraph2 || status.bScatterplot2 || status.bHbondplot2 || status.bLigplot2 || status.bTable2 || status.bAlignmentInit2) {
                         //tmpWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                         tmpWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
                     }
@@ -511,7 +515,7 @@ class Dialog {
         let width = 400, height = 150;
         let twoddgmWidth = me.htmlCls.width2d + 20;
 
-        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot'  || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
             $( "#" + id + "_nb").show();
             $( "#" + id + "_title").html(title);

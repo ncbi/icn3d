@@ -169,6 +169,7 @@ class SetHtml {
         let prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
         let nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
 
+        let bkgdcolor = 'black'
         let shininess = 40;
         let light1 = 2;
         let light2 = 1;
@@ -179,6 +180,13 @@ class SetHtml {
 
         // retrieve from cache
         if(type == 'style') {
+            if(this.getCookie('bkgdcolor') != '') {
+                bkgdcolor = this.getCookie('bkgdcolor').toLowerCase();
+                if(bkgdcolor != 'transparent' && bkgdcolor != 'white' && bkgdcolor != 'black' && bkgdcolor != 'gray' && bkgdcolor != 'grey') {
+                    bkgdcolor = 'black';
+                }
+            }
+
             if(this.getCookie('shininess') != '') {
                 shininess = parseFloat(this.getCookie('shininess'));
             }
@@ -216,12 +224,13 @@ class SetHtml {
 
             html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
-            html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
-            html += "<b>2. Three directional lights</b>: <br>";
+            html += "<b>1. Background Color</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "bkgdcolor' value='" + bkgdcolor + "' size=4>" + me.htmlCls.space3 + "(for canvas background, either transparent/white, black, or gray/grey, default black)<br/><br/>";
+            html += "<b>2. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
+            html += "<b>3. Three directional lights</b>: <br>";
             html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 2)<br/>";
             html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 1)<br/>";
             html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 1)<br/><br/>";
-            html += "<b>3. Thickness</b>: <br>";
+            html += "<b>4. Thickness</b>: <br>";
         }
 
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
@@ -237,11 +246,11 @@ class SetHtml {
         html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
         if(type == 'style') {
-            html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
+            html += "<br><b>5. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
 
-            html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/>";
+            html += "<br><b>7. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/>";
 
-            html += "<br><b>6. Enlarge Command Window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cmdwindow' value='" + bCmdWindow + "' size=4>" + me.htmlCls.space3 + "(0: Regular, 1: Large, default 0)<br/><br/>";
+            html += "<br><b>7. Enlarge Command Window</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cmdwindow' value='" + bCmdWindow + "' size=4>" + me.htmlCls.space3 + "(0: Regular, 1: Large, default 0)<br/><br/>";
         }
 
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
@@ -857,6 +866,7 @@ class SetHtml {
 
         if(postfix == 'style') {
             if(bReset) {
+                $("#" + me.pre + "bkgdcolor").val('black');
                 $("#" + me.pre + "shininess").val('40');
                 $("#" + me.pre + "light1").val('2');
                 $("#" + me.pre + "light2").val('1');
@@ -865,6 +875,12 @@ class SetHtml {
                 $("#" + me.pre + "membrane").val('1');
                 $("#" + me.pre + "cmdwindow").val('0');
             }
+
+            ic.bkgdcolor = $("#" + me.pre + "bkgdcolor").val(); //black
+            if(ic.bkgdcolor != 'transparent' && ic.bkgdcolor != 'white' && ic.bkgdcolor != 'black' && ic.bkgdcolor != 'gray' && ic.bkgdcolor != 'grey') {
+                ic.bkgdcolor = 'black';
+            }
+            ic.opts['background'] = ic.bkgdcolor;
 
             ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
             ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
@@ -900,6 +916,7 @@ class SetHtml {
         // save to cache
         if(!me.bNode) { // && postfix == 'style') {
             let exdays = 3650; // 10 years
+            this.setCookie('bkgdcolor', ic.bkgdcolor, exdays);
             this.setCookie('shininess', ic.shininess, exdays);
             this.setCookie('light1', ic.light1, exdays);
             this.setCookie('light2', ic.light2, exdays);

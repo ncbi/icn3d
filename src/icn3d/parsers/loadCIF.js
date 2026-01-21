@@ -107,7 +107,7 @@ class LoadCIF {
             
             if(block.getCategory("_struct")) {
                 let title = block.getCategory("_struct").getColumn("title").getString(0);
-                title = title.replace(/"/, "'");
+                title = title.replace(/"/g, "'");
                 let name = title.replace(/ALPHAFOLD MONOMER V2.0 PREDICTION FOR /gi, '');
                 ic.molTitle += name.trim() + " ";
                 // if(bEsmfold && ic.esmTitle) ic.molTitle = ic.esmTitle;

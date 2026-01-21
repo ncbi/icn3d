@@ -2515,7 +2515,13 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "rmsd_plot", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            
-           await ic.dcdParserCls.showRmsdPlot();
+           await ic.dcdParserCls.showRmsdHbondPlot();
+        });
+        me.myEventCls.onIds("#" + me.pre + "hbond_plot", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           let bHbondPlot = true;
+           
+           await ic.dcdParserCls.showRmsdHbondPlot(bHbondPlot);
         });
         me.myEventCls.onIds("#" + me.pre + "hbondLineGraph", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -2666,6 +2672,12 @@ class Events {
             e.preventDefault();
 
             ic.saveFileCls.saveFile(ic.inputid + "_rmsdplot.json", "text", [JSON.stringify(ic.mdDataSet)]);
+        });
+
+        me.myEventCls.onIds("#" + me.hbondplotid + "_json", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            ic.saveFileCls.saveFile(ic.inputid + "_hbondplot.json", "text", [JSON.stringify(ic.mdDataSet)]);
         });
 
         me.myEventCls.onIds("#" + me.ligplotid + "_svg", "click", function(e) { let ic = me.icn3d;
