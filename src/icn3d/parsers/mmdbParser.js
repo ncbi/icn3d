@@ -29,7 +29,7 @@ class MmdbParser {
             return;
         }
 
-        if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+        if(!data.atoms || Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;
             await ic.bcifParserCls.downloadBcif(pdbid);
@@ -39,6 +39,7 @@ class MmdbParser {
 
         let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
 
+        //if(!data.pdbId) data.pdbId = mmdbid;
         if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
             await this.parseMmdbData(data);
         }
@@ -200,7 +201,17 @@ class MmdbParser {
     async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign, pdbidIn) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms;
         let pdbid = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        if(!pdbid && chainid) {
+            pdbid = chainid.substr(0, chainid.lastIndexOf('_')); 
+        }
+
         if(pdbidIn) pdbid = pdbidIn;
+
+        // if(!data.atoms || Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+        //     ic.bRender = false;
+        //     await ic.bcifParserCls.downloadBcif(pdbid);
+        //     return;
+        // }
 
         this.parseMmdbDataPart1(data, type);
 

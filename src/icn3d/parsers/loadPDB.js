@@ -934,7 +934,8 @@ class LoadPDB {
     }
 
     isSecondary(resid, residArray, bNMR, bNonFull) { let ic = this.icn3d, me = ic.icn3dui;
-        if(bNonFull) return false;
+        // still need to get the secondary info
+        //if(bNonFull) return false;
 
         if(!bNMR) {
             return $.inArray(resid, residArray) != -1;

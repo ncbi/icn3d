@@ -23,7 +23,7 @@ class HlUpdate {
           if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[0].toUpperCase(), 1, true);
           }
-          else {
+          else if(ic.mmdbidArray.length > 1) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[1].toUpperCase(), 1, true);
           }
           html2ddgm += ic.diagram2dCls.set2DdgmNote(true);

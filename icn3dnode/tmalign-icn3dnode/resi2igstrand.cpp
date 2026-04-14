@@ -4,6 +4,7 @@ void CTmalignCgi::resi2igstrand()
 {
   map< string, string > mResi2Igstrand;
 
+  /*
   //ASF1A_2iijA_human
   mResi2Igstrand.insert(make_pair("1", "997"));
   mResi2Igstrand.insert(make_pair("2", "998"));
@@ -165,7 +166,8 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("ASF1A_2iijA_human", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1ASF1A_2iijA_human", mResi2Igstrand));
   mResi2Igstrand.clear();
-
+*/
+/*
   //BArrestin1_4jqiA_rat_n1
   mResi2Igstrand.insert(make_pair("6", "999"));
   mResi2Igstrand.insert(make_pair("7", "1446"));
@@ -339,6 +341,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("BArrestin1_4jqiA_rat_n1", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1BArrestin1_4jqiA_rat_n1", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //BTLA_2aw2A_human_Iset
   mResi2Igstrand.insert(make_pair("34", "997"));
@@ -450,6 +453,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1BTLA_2aw2A_human_Iset", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //C3_2qkiD_human_n1
   mResi2Igstrand.insert(make_pair("1", "998"));
   mResi2Igstrand.insert(make_pair("2", "999"));
@@ -558,6 +562,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("C3_2qkiD_human_n1", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1C3_2qkiD_human_n1", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //CD19_6al5A_human-n1
   mResi2Igstrand.insert(make_pair("21", "997a"));
@@ -1139,6 +1144,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1CD8a_1cd8A_human_V", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //CoAtomerGamma1_1r4xA_human
   mResi2Igstrand.insert(make_pair("608", "977"));
   mResi2Igstrand.insert(make_pair("609", "978"));
@@ -1301,6 +1307,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("CoAtomerGamma1_1r4xA_human", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1CoAtomerGamma1_1r4xA_human", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //Contactin1_3s97C_human_Iset-n2
   mResi2Igstrand.insert(make_pair("236", "996"));
@@ -1402,6 +1409,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1Contactin1_3s97C_human_Iset-n2", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+/*
   //CuZnSuperoxideDismutase_1hl5C_human
   mResi2Igstrand.insert(make_pair("1", "999"));
   mResi2Igstrand.insert(make_pair("2", "1446"));
@@ -1560,6 +1568,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("CuZnSuperoxideDismutase_1hl5C_human", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1CuZnSuperoxideDismutase_1hl5C_human", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //ECadherin_4zt1A_human_n2
   mResi2Igstrand.insert(make_pair("5", "998"));
@@ -1664,6 +1673,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1ECadherin_4zt1A_human_n2", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4
   mResi2Igstrand.insert(make_pair("0", "999"));
   mResi2Igstrand.insert(make_pair("1", "1247"));
@@ -1858,6 +1868,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //FAB-HEAVY_5esv_C1-n2
   mResi2Igstrand.insert(make_pair("114", "994"));
@@ -2868,6 +2879,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1InsulinR_8guyE_human_FN3-n2", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //IsdA_2iteA_bacteria
   mResi2Igstrand.insert(make_pair("62", "997"));
   mResi2Igstrand.insert(make_pair("63", "998"));
@@ -2996,6 +3008,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("IsdA_2iteA_bacteria", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1IsdA_2iteA_bacteria", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //LAG3_7tzgD_human_C1-n2
   mResi2Igstrand.insert(make_pair("167", "998"));
@@ -3466,6 +3479,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1MHCIa_7phrH_human_C1", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //MPT63_1lmiA_bacteria
   mResi2Igstrand.insert(make_pair("2", "999"));
   mResi2Igstrand.insert(make_pair("3", "1350"));
@@ -3601,7 +3615,8 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("MPT63_1lmiA_bacteria", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1MPT63_1lmiA_bacteria", mResi2Igstrand));
   mResi2Igstrand.clear();
-
+*/
+/*
   //NaKATPaseTransporterBeta_2zxeB_spurdogshark
   mResi2Igstrand.insert(make_pair("76", "998"));
   mResi2Igstrand.insert(make_pair("77", "999"));
@@ -3837,6 +3852,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("NaKATPaseTransporterBeta_2zxeB_spurdogshark", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1NaKATPaseTransporterBeta_2zxeB_spurdogshark", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //PD1_4zqkB_human_V
   mResi2Igstrand.insert(make_pair("32", "996"));
@@ -4184,6 +4200,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1Palladin_2dm3A_human_Iset-n1", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //RBPJ_6py8C_human_Unk-n1
   mResi2Igstrand.insert(make_pair("29", "995"));
   mResi2Igstrand.insert(make_pair("30", "996"));
@@ -4314,7 +4331,8 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("RBPJ_6py8C_human_Unk-n1", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1RBPJ_6py8C_human_Unk-n1", mResi2Igstrand));
   mResi2Igstrand.clear();
-
+*/
+  /*
   //RBPJ_6py8C_human_Unk-n2
   mResi2Igstrand.insert(make_pair("314", "972"));
   mResi2Igstrand.insert(make_pair("315", "973"));
@@ -4459,6 +4477,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("RBPJ_6py8C_human_Unk-n2", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1RBPJ_6py8C_human_Unk-n2", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //TCRa_6jxrm_human_C1-n2
   mResi2Igstrand.insert(make_pair("133", "993"));
@@ -4674,6 +4693,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1TCRa_6jxrm_human_V-n1", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //TEAD1_3kysC_human
   mResi2Igstrand.insert(make_pair("194", "994"));
   mResi2Igstrand.insert(make_pair("195", "995"));
@@ -4897,7 +4917,8 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("TEAD1_3kysC_human", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1TEAD1_3kysC_human", mResi2Igstrand));
   mResi2Igstrand.clear();
-
+*/
+/*
   //TP34_2o6cA_bacteria
   mResi2Igstrand.insert(make_pair("28", "998"));
   mResi2Igstrand.insert(make_pair("29", "999"));
@@ -5061,6 +5082,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("TP34_2o6cA_bacteria", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1TP34_2o6cA_bacteria", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //Titin_4uowM_human_Iset-n152
   mResi2Igstrand.insert(make_pair("98", "9901"));
@@ -6133,6 +6155,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1JAM1_1nbqA_human_Iset-n2", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+/*
   //NaCaExchanger_2fwuA_dog_n2
   mResi2Igstrand.insert(make_pair("501", "997"));
   mResi2Igstrand.insert(make_pair("502", "998"));
@@ -6295,7 +6318,8 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("NaCaExchanger_2fwuA_dog_n2", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1NaCaExchanger_2fwuA_dog_n2", mResi2Igstrand));
   mResi2Igstrand.clear();
-
+*/
+/*
   //ORF7a_1xakA_virus
   mResi2Igstrand.insert(make_pair("-2", "998"));
   mResi2Igstrand.insert(make_pair("-1", "999"));
@@ -6370,6 +6394,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("ORF7a_1xakA_virus", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1ORF7a_1xakA_virus", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //Sidekick2_1wf5A_human_FN3-n7
   mResi2Igstrand.insert(make_pair("8", "984"));
@@ -6583,6 +6608,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("1Siglec3_5j0bB_human_C1-n2", mResi2Igstrand));
   mResi2Igstrand.clear();
 
+  /*
   //TP47_1o75A_bacteria
   mResi2Igstrand.insert(make_pair("206", "994"));
   mResi2Igstrand.insert(make_pair("207", "995"));
@@ -6718,6 +6744,7 @@ void CTmalignCgi::resi2igstrand()
   mmResi2Igstrand.insert(make_pair("TP47_1o75A_bacteria", mResi2Igstrand));
   mmResi2Igstrand.insert(make_pair("1TP47_1o75A_bacteria", mResi2Igstrand));
   mResi2Igstrand.clear();
+*/
 
   //CD28_1yjdC_human_V
   mResi2Igstrand.insert(make_pair("1", "996"));

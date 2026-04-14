@@ -173,7 +173,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.47.1';
+    this.REVISION = '3.48.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -375,14 +375,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let domainidArray = me.cfg.matchedchains.split(',');
             let chainidArray = [];
             for(let i = 0, il = domainidArray.length; i  < il; ++i) {
-                let pos = domainidArray[i].lastIndexOf('_');
-                let lastId = domainidArray[i].substr(pos + 1);
-                if(!isNaN(lastId)) { // lastId is domain id
-                    chainidArray.push(domainidArray[i].substr(0, pos));
-                }
-                else {
-                    chainidArray.push(domainidArray[i]);
-                }
+                let idArray = domainidArray[i].split('_');
+                chainidArray.push(idArray[0] + '_' + idArray[1]);
             }
 
             // get the matched structures, do not include the template
@@ -610,6 +604,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         // ic.bNCBI = true;
         if(me.cfg.align.indexOf('185055,') != -1) {
             me.cfg.align = me.cfg.align.replace('185055,', '199731,'); //the mmdbid of PDB 6M17 was changed from 185055 to 199731
+        }
+        else if(me.cfg.align == '54567,1,12161,1,2,1') {
+            me.cfg.align = '3HHR,1BQU'; // somehow the VAST+ data for this published alignment were not there anymore
         }
  
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
