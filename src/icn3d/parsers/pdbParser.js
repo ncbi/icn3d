@@ -187,7 +187,7 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {    
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {  
             await this.applyCommandDssp(bAppend);
         }
         else {

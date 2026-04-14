@@ -42,29 +42,29 @@
 
     setRefPdbs() { let ic = this.icn3d, me = ic.icn3dui;
         // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_C2', '1CD28_1yjdC_human_V', '1CD19_6al5A_human-n1'];
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1ICOS_6x4gA_human_V', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1ECadherin_4zt1A_human_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_C2', '1CD28_1yjdC_human_V', '1CD19_6al5A_human-n1'];
 
         // round 2
         ic.refpdbHash = {};
         ic.refpdbHash['1InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'ICOS_6x4gA_human_V'];
-        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria'];
-        ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
-        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
+        ic.refpdbHash['1ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V'];
+        //ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria'];
+        //ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
+        //ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['TEAD1_3kysC_human'];
+        //ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'TP47_1o75A_bacteria'];
         ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_C1-n1', 'VTCN1_Q7Z7D3_human_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
         ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C1-n2'];
-        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1ECadherin_4zt1A_human_n2'] = ['ECadherin_4zt1A_human_n2'];
+        //ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
         ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
         ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
         ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Iset-n152', 'LAG3_7tzgD_human_C1-n2', 'JAM1_1nbqA_human_Iset-n2', 'Contactin1_3s97C_human_Iset-n2'];
         ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_C1'];
-        ic.refpdbHash['1CD3g_6jxrg_human_C2'] = ['CD3g_6jxrg_human_C2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_C1'];
+        ic.refpdbHash['1CD3g_6jxrg_human_C2'] = ['CD3g_6jxrg_human_C2', 'TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'CD3e_6jxrf_human_C1'];
         ic.refpdbHash['1CD19_6al5A_human-n1'] = ['CD19_6al5A_human-n1'];
 
-        ic.refpdbHash['all_templates'] = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'CD3g_6jxrg_human_C2', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_Iset-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_C1-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_Iset-n2', 'LAG3_7tzgD_human_C1-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Iset-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_C1-n2'];
+        ic.refpdbHash['all_templates'] = ['B2Microglobulin_7phrL_human_C1', 'BTLA_2aw2A_human_Iset', 'CD19_6al5A_human-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'CD3g_6jxrg_human_C2', 'CD8a_1cd8A_human_V', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_Iset-n2', 'ECadherin_4zt1A_human_n2', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_C1-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'JAM1_1nbqA_human_Iset-n2', 'LAG3_7tzgD_human_C1-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'Titin_4uowM_human_Iset-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_C1-n2'];
 
         // use known ref structure
         ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
@@ -73,36 +73,36 @@
         ic.refpdbHash['6JXR_m'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
         ic.refpdbHash['1HNF_A'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
         ic.refpdbHash['7TZG_D'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C1-n2'];
-        ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+        //ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1'];
         ic.refpdbHash['1BQU_B'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
 
-        ic.refpdbHash['1R4X_A'] = ['CoAtomerGamma1_1r4xA_human'];
+        //ic.refpdbHash['1R4X_A'] = ['CoAtomerGamma1_1r4xA_human'];
         ic.refpdbHash['6OIL_A'] = ['VISTA_6oilA_human_V'];
-        ic.refpdbHash['2ZXE_B'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
-        ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
+        //ic.refpdbHash['2ZXE_B'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        //ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        //ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
+        //ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
         ic.refpdbHash['1NBQ_A'] = ['JAM1_1nbqA_human_Iset-n2'];
-        ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
+        //ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
         ic.refpdbHash['7PHR_H'] = ['MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
+        //ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
         ic.refpdbHash['4Z18_B'] = ['PDL1_4z18B_human_V-n1'];
         ic.refpdbHash['1T6V_N'] = ['VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['2O6C_A'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['3KYS_C'] = ['TEAD1_3kysC_human'];
+        //ic.refpdbHash['2O6C_A'] = ['TP34_2o6cA_bacteria'];
+        //ic.refpdbHash['3KYS_C'] = ['TEAD1_3kysC_human'];
         ic.refpdbHash['7PHR_L'] = ['B2Microglobulin_7phrL_human_C1'];
         ic.refpdbHash['2AW2_A'] = ['BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
+        //ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
         ic.refpdbHash['1WF5_A'] = ['Sidekick2_1wf5A_human_FN3-n7'];
         ic.refpdbHash['5J0B_B'] = ['Siglec3_5j0bB_human_C1-n2'];
         ic.refpdbHash['1IFR_A'] = ['LaminAC_1ifrA_human'];
         ic.refpdbHash['Q7Z7D3_A'] = ['VTCN1_Q7Z7D3_human_C1-n2'];
         ic.refpdbHash['4ZQK_B'] = ['PD1_4zqkB_human_V'];
         ic.refpdbHash['2DM3_A'] = ['Palladin_2dm3A_human_Iset-n1'];
-        ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1XAK_A'] = ['ORF7a_1xakA_virus'];
+        //ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
+        //ic.refpdbHash['1XAK_A'] = ['ORF7a_1xakA_virus'];
         ic.refpdbHash['4ZT1_A'] = ['ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
+        //ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
         ic.refpdbHash['1CD8_A'] = ['CD8a_1cd8A_human_V'];
         ic.refpdbHash['3S97_C'] = ['Contactin1_3s97C_human_Iset-n2'];
         ic.refpdbHash['1AXI_B'] = ['GHR_1axiB_human_C1-n1'];
@@ -110,7 +110,7 @@
         ic.refpdbHash['2EE2_A'] = ['Contactin1_2ee2A_human_FN3-n9'];
         ic.refpdbHash['4UOW_M'] = ['Titin_4uowM_human_Iset-n152'];
         ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human-n1'];
-        ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
+        //ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
         ic.refpdbHash['1YJD_C'] = ['CD28_1yjdC_human_V'];
         ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_C1'];
         ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_C1'];
@@ -119,11 +119,11 @@
         // assign Ig types
         ic.ref2igtype = {};
 
-        ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
+        //ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
         ic.ref2igtype['B2Microglobulin_7phrL_human_C1'] = 'IgC1';
-        ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
+        //ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
         ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
-        ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
+        //ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
         ic.ref2igtype['CD19_6al5A_human-n1'] = 'CD19';
         ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
         ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
@@ -132,12 +132,12 @@
         ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgC1';
         ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgC2';
         ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
-        ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
+        //ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
         ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
         ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgI';
-        ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
+        //ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
         ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'Cadherin';
-        ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
+        //ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
         ic.ref2igtype['FAB-HEAVY_5esv_C1-n2'] = 'IgC1';
         ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
         ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
@@ -148,28 +148,28 @@
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n1'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
-        ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
+        //ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
         ic.ref2igtype['JAM1_1nbqA_human_Iset-n2'] = 'IgI';
         ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
-        ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
-        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
-        ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
-        ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
+        //ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
+        //ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
+        //ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
+        //ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
         ic.ref2igtype['PD1_4zqkB_human_V'] = 'IgV';
         ic.ref2igtype['PDL1_4z18B_human_V-n1'] = 'IgV';
         ic.ref2igtype['Palladin_2dm3A_human_Iset-n1'] = 'IgI';
-        ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
+        //ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
         //ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
         ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
         ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
-        ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
-        ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
-        ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
+        //ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
+        //ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
+        //ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
         ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
         ic.ref2igtype['VISTA_6oilA_human_V'] = 'IgV';
         ic.ref2igtype['VNAR_1t6vN_shark_V'] = 'IgV';
@@ -1730,6 +1730,7 @@
                 }
                 else {
                     let bBefore = false, bInRange= false, bAfter = false;
+                    /*
                     // 100, 100A
                     if(parseInt(currResi) == parseInt(strandArray[strandCnt].startResi) && currResi != strandArray[strandCnt].startResi) {
                         bBefore = currResi < strandArray[strandCnt].startResi;
@@ -1745,6 +1746,14 @@
                     else {
                         bAfter = parseInt(currResi) > parseInt(strandArray[strandCnt].endResi);
                     }
+                    */
+                    
+                    let currResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, currResi);
+                    let startResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, strandArray[strandCnt].startResi); 
+                    let endResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, strandArray[strandCnt].endResi);
+
+                    bBefore = parseInt(currResiNcbi) < parseInt(startResiNcbi);
+                    bAfter = parseInt(currResiNcbi) > parseInt(endResiNcbi);
 
                     bInRange = (!bBefore && !bAfter) ? true : false;
 

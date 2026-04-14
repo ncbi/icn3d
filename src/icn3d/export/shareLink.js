@@ -154,8 +154,9 @@ class ShareLink {
            }
 
            let paraHash = {};
-           for(let key in ic.cfg) {
-               let value = ic.cfg[key];
+/*           
+           for(let key in me.cfg) {
+               let value = me.cfg[key];
                //if(key === 'inpara' || ic.key === 'command' || value === undefined) continue;
                if(key === 'inpara' || key === 'command' || key === 'usepdbnum'
                  || key === 'date' || key === 'v' || value === undefined) continue;
@@ -205,7 +206,7 @@ class ShareLink {
                    paraHash[key] = value;
                }
            }
-
+*/
            if(ic.bAfMem) {
             paraHash['afmem'] = 'on';
            }
@@ -227,6 +228,12 @@ class ShareLink {
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
+               // BLAST RID is usually added at the end of the URL. It should be included.
+               if(me.cfg.rid && !paraHash['RID']) {
+                    url += 'RID=' + me.cfg.rid + '&';
+               }
+
+               // sometimes idname is not part of the URL
                if(me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
                     url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
                }

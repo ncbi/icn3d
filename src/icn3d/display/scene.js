@@ -43,7 +43,7 @@ class Scene {
         if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();
 
         // if(!ic.bSetVrArButtons) { // call once
-        if(!me.cfg.imageonly) this.setVrArButtons();
+        if(!me.cfg.imageonly && ( 'xr' in navigator )) this.setVrArButtons();
         // }
 
         // if((ic.bVr || ic.bAr) && !ic.bSetVrAr) { // call once

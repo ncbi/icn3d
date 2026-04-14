@@ -63994,20 +63994,20 @@ class SetDialog {
         group2tpl['IgC1'] = ['B2Microglobulin_7phrL_human_C1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-HEAVY_5esv_C1-n2', 'GHR_1axiB_human_C1-n1', 'LAG3_7tzgD_human_C1-n2', 'MHCIa_7phrH_human_C1', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'VTCN1_Q7Z7D3_human_C1-n2'];
         group2tpl['IgC2'] = ['CD2_1hnfA_human_C2-n2', 'CD3g_6jxrg_human_C2'];
         group2tpl['IgI'] = ['BTLA_2aw2A_human_Iset', 'Contactin1_3s97C_human_Iset-n2', 'JAM1_1nbqA_human_Iset-n2', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Iset-n152'];
-        group2tpl['IgE'] = ['CoAtomerGamma1_1r4xA_human', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'IsdA_2iteA_bacteria', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria'];
+        //group2tpl['IgE'] = ['CoAtomerGamma1_1r4xA_human', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'IsdA_2iteA_bacteria', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria'];
 
         group2tpl['IgFN3'] = ['Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'Sidekick2_1wf5A_human_FN3-n7'];
 
-        group2tpl['IgFN3-like'] = ['ASF1A_2iijA_human', 'BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'RBPJ_6py8C_human_Unk-n1', 'TEAD1_3kysC_human'];
+        //group2tpl['IgFN3-like'] = ['ASF1A_2iijA_human', 'BArrestin1_4jqiA_rat_n1', 'C3_2qkiD_human_n1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'RBPJ_6py8C_human_Unk-n1', 'TEAD1_3kysC_human'];
 
-        group2tpl['Other Ig'] = ['CD19_6al5A_human-n1', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human', 'ORF7a_1xakA_virus', 'RBPJ_6py8C_human_Unk-n2'];  
+        group2tpl['Other Ig'] = ['CD19_6al5A_human-n1', 'ECadherin_4zt1A_human_n2', 'LaminAC_1ifrA_human'];  
 
         let tpl2strandsig = {};
-        tpl2strandsig['ASF1A_2iijA_human']                          = "A A' B C C' E F G G+";
+        //tpl2strandsig['ASF1A_2iijA_human']                          = "A A' B C C' E F G G+";
         tpl2strandsig['B2Microglobulin_7phrL_human_C1']             = "A B C C' D E F G";
-        tpl2strandsig['BArrestin1_4jqiA_rat_n1']                    = "A- A A' B C C' E F G";
+        //tpl2strandsig['BArrestin1_4jqiA_rat_n1']                    = "A- A A' B C C' E F G";
         tpl2strandsig['BTLA_2aw2A_human_Iset']                      = "A A' B C C' D E F G";
-        tpl2strandsig['C3_2qkiD_human_n1']                          = "A A' B C C' E F G";
+        //tpl2strandsig['C3_2qkiD_human_n1']                          = "A A' B C C' E F G";
         tpl2strandsig['CD19_6al5A_human-n1']                  = "A' B C C' D E F G";
         tpl2strandsig['CD28_1yjdC_human_V']                         = "A A' B C C' C'' D E F G";
         tpl2strandsig['CD2_1hnfA_human_C2-n2']                      = "A B C C' E F G";
@@ -64016,12 +64016,12 @@ class SetDialog {
         tpl2strandsig['CD3e_6jxrf_human_C1']                      = "A B C C' D E F G";
         tpl2strandsig['CD3g_6jxrg_human_C2']                      = "A B C C' E F G G+";
         tpl2strandsig['CD8a_1cd8A_human_V']                         = "A A' B C C' C'' D E F G";
-        tpl2strandsig['CoAtomerGamma1_1r4xA_human']                 = "A- A B C D E F G";
+        //tpl2strandsig['CoAtomerGamma1_1r4xA_human']                 = "A- A B C D E F G";
         tpl2strandsig['Contactin1_2ee2A_human_FN3-n9']              = "A A' B C C' E F G";
         tpl2strandsig['Contactin1_3s97C_human_Iset-n2']               = "A A' B C D E F G";
-        tpl2strandsig['CuZnSuperoxideDismutase_1hl5C_human']        = "A- A B C C' E F G";
+        //tpl2strandsig['CuZnSuperoxideDismutase_1hl5C_human']        = "A- A B C C' E F G";
         tpl2strandsig['ECadherin_4zt1A_human_n2']                   = "A' B C D E F G";
-        tpl2strandsig['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = "A--- A-- A- A B C C' C'' D E F G";
+        //tpl2strandsig['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = "A--- A-- A- A B C C' C'' D E F G";
         tpl2strandsig['FAB-HEAVY_5esv_C1-n2']                       = "A B C D E F G";
         tpl2strandsig['FAB-HEAVY_5esv_V-n1']                        = "A B C C' C'' D E F G";
         tpl2strandsig['FAB-LIGHT_5esv_C1-n2']                       = "A B C C' D E F G";
@@ -64032,28 +64032,28 @@ class SetDialog {
         tpl2strandsig['IL6Rb_1bquB_human_FN3-n3']                   = "A B C C' E F G";
         tpl2strandsig['InsulinR_8guyE_human_FN3-n1']                = "A B C C' E F G";
         tpl2strandsig['InsulinR_8guyE_human_FN3-n2']                = "A B C C' E F G";
-        tpl2strandsig['IsdA_2iteA_bacteria']                        = "A- A B C C' D E F G";
+        //tpl2strandsig['IsdA_2iteA_bacteria']                        = "A- A B C C' D E F G";
         tpl2strandsig['JAM1_1nbqA_human_Iset-n2']                = "A A' B C C' D E F G";
         tpl2strandsig['LAG3_7tzgD_human_C1-n2']                     = "A A' B C C' D E F G";
         tpl2strandsig['LAG3_7tzgD_human_V-n1']                      = "A' B C C' D E F G";
         tpl2strandsig['LaminAC_1ifrA_human']                        = "A- A B C C' E E+ F G";
         tpl2strandsig['MHCIa_7phrH_human_C1']                       = "A B C C' D E F G";
-        tpl2strandsig['MPT63_1lmiA_bacteria']                       = "A-- A- A BC C' E F G";
-        tpl2strandsig['NaCaExchanger_2fwuA_dog_n2']                 = "A A' B C C' E F G";
-        tpl2strandsig['NaKATPaseTransporterBeta_2zxeB_spurdogshark']= "A A' B C D E F G";
-        tpl2strandsig['ORF7a_1xakA_virus']                          = "A' B C D E F G";
+        //tpl2strandsig['MPT63_1lmiA_bacteria']                       = "A-- A- A BC C' E F G";
+        //tpl2strandsig['NaCaExchanger_2fwuA_dog_n2']                 = "A A' B C C' E F G";
+        //tpl2strandsig['NaKATPaseTransporterBeta_2zxeB_spurdogshark']= "A A' B C D E F G";
+        //tpl2strandsig['ORF7a_1xakA_virus']                          = "A' B C D E F G";
         tpl2strandsig['PD1_4zqkB_human_V']                          = "A A' B C C' D E F G";
         tpl2strandsig['PDL1_4z18B_human_V-n1']                      = "A A' B C C' C'' D E F G";
         tpl2strandsig['Palladin_2dm3A_human_Iset-n1']               = "A A' B C C' D E F G";
-        tpl2strandsig['RBPJ_6py8C_human_Unk-n1']                    = "A A' B C C' E F G";
-        tpl2strandsig['RBPJ_6py8C_human_Unk-n2']                    = "A B C D E F G";
+        //tpl2strandsig['RBPJ_6py8C_human_Unk-n1']                    = "A A' B C C' E F G";
+        //tpl2strandsig['RBPJ_6py8C_human_Unk-n2']                    = "A B C D E F G";
         tpl2strandsig['Sidekick2_1wf5A_human_FN3-n7']               = "A B C C' E F G";
         tpl2strandsig['Siglec3_5j0bB_human_C1-n2']                  = "A A' B C D E F G";
         tpl2strandsig['TCRa_6jxrm_human_C1-n2']                     = "A B C D E F G";
         tpl2strandsig['TCRa_6jxrm_human_V-n1']                      = "A A' B C C' C'' D E F G";
-        tpl2strandsig['TEAD1_3kysC_human']                          = "A A+ A' B C C' E F G G+";
-        tpl2strandsig['TP34_2o6cA_bacteria']                        = "A- A B C C' D E F G";
-        tpl2strandsig['TP47_1o75A_bacteria']                        = "A B C C' D E F G";
+        //tpl2strandsig['TEAD1_3kysC_human']                          = "A A+ A' B C C' E F G G+";
+        //tpl2strandsig['TP34_2o6cA_bacteria']                        = "A- A B C C' D E F G";
+        //tpl2strandsig['TP47_1o75A_bacteria']                        = "A B C C' D E F G";
         tpl2strandsig['Titin_4uowM_human_Iset-n152']                 = "A A' B C C' D E F G";
         tpl2strandsig['VISTA_6oilA_human_V']                        = "A A' B C C' C'' D E F G G+";
         tpl2strandsig['VNAR_1t6vN_shark_V']                         = "A A' B C C' D E F G";
@@ -75419,7 +75419,7 @@ class Scene {
         if(ic.opts['slab'] === 'yes') ic.cameraCls.setSlab();
 
         // if(!ic.bSetVrArButtons) { // call once
-        if(!me.cfg.imageonly) this.setVrArButtons();
+        if(!me.cfg.imageonly && ( 'xr' in navigator )) this.setVrArButtons();
         // }
 
         // if((ic.bVr || ic.bAr) && !ic.bSetVrAr) { // call once
@@ -84874,7 +84874,7 @@ class ApplyMissingRes {
                     line.serial1 = ic.missingResResid2serial[resid0 + ',' + resid1];
                     line.serial2 = ic.missingResResid2serial[resid1 + ',' + resid0];
 
-                    line.color = "#" + ic.atoms[line.serial1].color.getHexString();
+                    line.color = (ic.atoms[line.serial1]) ? "#" + ic.atoms[line.serial1].color.getHexString() : undefined;
 
                     line.radius = ic.coilWidth;
 
@@ -100331,7 +100331,7 @@ class HlUpdate {
           if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[0].toUpperCase(), 1, true);
           }
-          else {
+          else if(ic.mmdbidArray.length > 1) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[1].toUpperCase(), 1, true);
           }
           html2ddgm += ic.diagram2dCls.set2DdgmNote(true);
@@ -104613,16 +104613,31 @@ class ChainalignParser {
 
                 // dynamically align pairs in all chainids
                 // the resrange from VASTSrv or VAST search uses NCBI residue numbers!!!
-                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
+                let atomSet_t;
+                if(me.cfg.resrange) {
+                    let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true);
+                    atomSet_t = result.hAtoms;
+                }
+                else {
+                    atomSet_t = ic.chains[chainidArray[0]];
+                }
+
                 for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
+                    let atomSet_q;
+                    if(me.cfg.resrange) {
+                        let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true);
+                        atomSet_q = result.hAtoms;
+                    }
+                    else {
+                        atomSet_q = ic.chains[chainidArray[index]];
+                    }
                 // end of new version to be done for VASTsrv ==============
 
                     let alignAjax;
                     if(me.cfg.aligntool != 'tmalign') {
                         let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
                         let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
-                            
+
                         let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                         alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                     }
@@ -104658,6 +104673,7 @@ class ChainalignParser {
         //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
         // modify the previous trans and rotation matrix
+        let bAligned = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
             let align = dataArray[i].value;//[0];
@@ -104673,7 +104689,7 @@ class ChainalignParser {
 
             me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
 
-            this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
+            bAligned =await this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, undefined);
         }
        
         // do not transform the target
@@ -104681,28 +104697,34 @@ class ChainalignParser {
         //    this.transformStructure(mmdbid_t, indexArray[0], 'target');
         //}
 
-        // transform the rest
-        for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let mmdbid_q = struArray[i];
-            let index = indexArray[i];
-            this.transformStructure(mmdbid_q, index, 'query');
+        if(bAligned) {
+            // transform the rest
+            for(let i = 0, il = dataArray.length; i < il; ++i) {
+                let mmdbid_q = struArray[i];
+                let index = indexArray[i];
+                this.transformStructure(mmdbid_q, index, 'query');
+            }
+
+            let hAtomsAll = {};
+
+            if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+                // set multiple sequence alignment from ic.qt_start_end
+                hAtomsAll = this.setMsa(chainidArray);
+            }
+
+            // highlight all aligned atoms
+            //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+            ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsAll);
+
+            ic.transformCls.zoominSelection();
+
+            // do the rest
+            await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
         }
-
-        let hAtomsAll = {};
-
-        if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-            // set multiple sequence alignment from ic.qt_start_end
-            hAtomsAll = this.setMsa(chainidArray);
+        else {
+            me.cfg.aligntool = 'tmalign';
+            await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
         }
-
-        // highlight all aligned atoms
-        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
-        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsAll);
-
-        ic.transformCls.zoominSelection();
-
-        // do the rest
-        await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
     setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;        
@@ -104773,7 +104795,7 @@ class ChainalignParser {
 
             let bNoAlert = true;
 
-            let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
+            let bAligned = await this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
                 bFoundAlignment = true;
@@ -105265,7 +105287,7 @@ class ChainalignParser {
 
                     me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
 
-                    this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain);
+                    await this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain, undefined);
                 }
             }
         }
@@ -105275,13 +105297,13 @@ class ChainalignParser {
         await this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
     }
 
-    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
+    async processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
 
-        if((!align || align.length == 0) && !bNoAlert) {
-            let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
-        
-            if(ic.bRender) var aaa = 1; //alert("These chains can not be aligned by " + serverName + ".");
+        if((align === "error" || align === undefined || align.length == 0) && !bNoAlert) {
+            // let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+       
+            // if(ic.bRender) var aaa = 1; //alert("These chains can not be aligned by " + serverName + ".");
             return bAligned;
         }
 
@@ -105430,7 +105452,6 @@ class ChainalignParser {
         let structArrayTmp = idlist.split(',');
 
         let structArray = [];
-
         // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
         if(!bNoDuplicate) {
             structArray =  this.addPostfixForStructureids(structArrayTmp);
@@ -105443,7 +105464,7 @@ class ChainalignParser {
                 if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
             }
         }
-        
+   
         if(structArray.length == 0) return;
         
         ic.structArray = ic.structArray.concat(structArray);
@@ -105542,6 +105563,8 @@ class ChainalignParser {
             else {
                 let bNoSeqalign = true;
                 let pdbid = structArray[i];
+
+                if(queryDataArray[i].pdbId) queryDataArray[i].pdbId = pdbid;
 
                 //hAtomsTmp contains all atoms
                 await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign, pdbid);
@@ -107119,7 +107142,7 @@ class MmdbParser {
             return;
         }
 
-        if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+        if(!data.atoms || Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
             // use mmtfid
             let pdbid = data.pdbId;
             await ic.bcifParserCls.downloadBcif(pdbid);
@@ -107129,6 +107152,7 @@ class MmdbParser {
 
         let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
 
+        //if(!data.pdbId) data.pdbId = mmdbid;
         if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
             await this.parseMmdbData(data);
         }
@@ -107290,7 +107314,17 @@ class MmdbParser {
     async parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign, pdbidIn) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms;
         let pdbid = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        if(!pdbid && chainid) {
+            pdbid = chainid.substr(0, chainid.lastIndexOf('_')); 
+        }
+
         if(pdbidIn) pdbid = pdbidIn;
+
+        // if(!data.atoms || Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
+        //     ic.bRender = false;
+        //     await ic.bcifParserCls.downloadBcif(pdbid);
+        //     return;
+        // }
 
         this.parseMmdbDataPart1(data, type);
 
@@ -108958,7 +108992,7 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {    
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {  
             await this.applyCommandDssp(bAppend);
         }
         else {
@@ -110933,8 +110967,7 @@ class RealignParser {
       // If rmsd from vastsrv is too large, realign the chains
       //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
       // redo algnment only for VAST serv page 
-      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5 && me.cfg.chainalign) {    
-        console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align."); 
+      if(!me.cfg.usepdbnum && (me.cfg.resdef || me.cfg.resrange) && rmsd > 5 && me.cfg.chainalign) {    
         //let nameArray = me.cfg.chainalign.split(',');
         let nameArray = Object.keys(chainidHash);
         if(nameArray.length > 0) {
@@ -111186,15 +111219,30 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
         if(bVastsearch && me.cfg.resrange) {
             let resRangeArray = decodeURIComponent(me.cfg.resrange).split(' | ');
 
-            let atomSet_t = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms;
+            let atomSet_t;
+            if(me.cfg.resrange) {
+                let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true);
+                atomSet_t = result.hAtoms;
+            }
+            else {
+                atomSet_t = ic.chains[ic.chainidArray[0]];
+            }
+
             for(let index = 1, indexl = ic.chainidArray.length; index < indexl; ++index) {
-                let atomSet_q = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms;
+                let atomSet_q;
+                if(me.cfg.resrange) {
+                    let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true);
+                    atomSet_q = result.hAtoms;
+                }
+                else {
+                    atomSet_q = ic.chains[ic.chainidArray[index]];
+                }
 
                 let alignAjax;
                 if(me.cfg.aligntool != 'tmalign') {
                     let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
                     let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
-                        
+                      
                     let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                     alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                 }
@@ -111255,9 +111303,7 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
                             let alignAjax;
                             if(me.cfg.aligntool != 'tmalign') {
                                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-console.log("@@@ realign " + struct1 + " " + chainid1 + " and " + struct2 + " " + chainid2);
-console.log("@@@ jsonStr_q " + jsonStr_q);
-console.log("@@@ jsonStr_t " + jsonStr_t);            
+
                                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                                 alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                             }
@@ -111327,7 +111373,7 @@ console.log("@@@ jsonStr_t " + jsonStr_t);
 
             if(me.cfg.aligntool != 'tmalign') {
                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid2]);
-            
+ 
                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                 alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
             }
@@ -111587,6 +111633,8 @@ console.log("@@@ jsonStr_t " + jsonStr_t);
         let hAtoms = {};
 
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
+            if(!resiArray[j]) continue;
+
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
@@ -116757,7 +116805,8 @@ class LoadPDB {
     }
 
     isSecondary(resid, residArray, bNMR, bNonFull) { let ic = this.icn3d; ic.icn3dui;
-        if(bNonFull) return false;
+        // still need to get the secondary info
+        //if(bNonFull) return false;
 
         if(!bNMR) {
             return $.inArray(resid, residArray) != -1;
@@ -124663,29 +124712,29 @@ class Dssp {
 
     setRefPdbs() { let ic = this.icn3d; ic.icn3dui;
         // round 1, 16 templates
-        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', '1CoAtomerGamma1_1r4xA_human', '1C3_2qkiD_human_n1', '1CuZnSuperoxideDismutase_1hl5C_human', '1ASF1A_2iijA_human', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1NaCaExchanger_2fwuA_dog_n2', '1NaKATPaseTransporterBeta_2zxeB_spurdogshark', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_C2', '1CD28_1yjdC_human_V', '1CD19_6al5A_human-n1'];
+        ic.refpdbArray = ['1InsulinR_8guyE_human_FN3-n1', '1ICOS_6x4gA_human_V', '1FAB-LIGHT_5esv_C1-n2', '1CD2_1hnfA_human_C2-n2', '1ECadherin_4zt1A_human_n2', '1FAB-HEAVY_5esv_V-n1', '1PDL1_4z18B_human_V-n1', '1BTLA_2aw2A_human_Iset', '1LaminAC_1ifrA_human', '1CD3g_6jxrg_human_C2', '1CD28_1yjdC_human_V', '1CD19_6al5A_human-n1'];
 
         // round 2
         ic.refpdbHash = {};
         ic.refpdbHash['1InsulinR_8guyE_human_FN3-n1'] = ['InsulinR_8guyE_human_FN3-n1', 'IL6Rb_1bquB_human_FN3-n3', 'Sidekick2_1wf5A_human_FN3-n7', 'InsulinR_8guyE_human_FN3-n2', 'Contactin1_2ee2A_human_FN3-n9', 'IL6Rb_1bquB_human_FN3-n2'];
-        ic.refpdbHash['1Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'ICOS_6x4gA_human_V'];
-        ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria'];
-        ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'BArrestin1_4jqiA_rat_n1', 'RBPJ_6py8C_human_Unk-n1'];
-        ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['CuZnSuperoxideDismutase_1hl5C_human', 'TEAD1_3kysC_human'];
-        ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'RBPJ_6py8C_human_Unk-n2', 'TP47_1o75A_bacteria'];
+        ic.refpdbHash['1ICOS_6x4gA_human_V'] = ['ICOS_6x4gA_human_V'];
+        //ic.refpdbHash['1CoAtomerGamma1_1r4xA_human'] = ['CoAtomerGamma1_1r4xA_human', 'TP34_2o6cA_bacteria'];
+        //ic.refpdbHash['1C3_2qkiD_human_n1'] = ['C3_2qkiD_human_n1', 'RBPJ_6py8C_human_Unk-n1'];
+        //ic.refpdbHash['1CuZnSuperoxideDismutase_1hl5C_human'] = ['TEAD1_3kysC_human'];
+        //ic.refpdbHash['1ASF1A_2iijA_human'] = ['ASF1A_2iijA_human', 'TP47_1o75A_bacteria'];
         ic.refpdbHash['1FAB-LIGHT_5esv_C1-n2'] = ['FAB-LIGHT_5esv_C1-n2', 'GHR_1axiB_human_C1-n1', 'VTCN1_Q7Z7D3_human_C1-n2', 'B2Microglobulin_7phrL_human_C1', 'FAB-HEAVY_5esv_C1-n2', 'MHCIa_7phrH_human_C1'];
         ic.refpdbHash['1CD2_1hnfA_human_C2-n2'] = ['CD2_1hnfA_human_C2-n2', 'Siglec3_5j0bB_human_C1-n2'];
-        ic.refpdbHash['1NaCaExchanger_2fwuA_dog_n2'] = ['NaCaExchanger_2fwuA_dog_n2', 'ORF7a_1xakA_virus', 'ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        ic.refpdbHash['1ECadherin_4zt1A_human_n2'] = ['ECadherin_4zt1A_human_n2'];
+        //ic.refpdbHash['1NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
         ic.refpdbHash['1FAB-HEAVY_5esv_V-n1'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_V-n1', 'VNAR_1t6vN_shark_V', 'TCRa_6jxrm_human_V-n1', 'VISTA_6oilA_human_V', 'CD8a_1cd8A_human_V', 'PD1_4zqkB_human_V'];
         ic.refpdbHash['1PDL1_4z18B_human_V-n1'] = ['PDL1_4z18B_human_V-n1', 'CD2_1hnfA_human_V-n1', 'LAG3_7tzgD_human_V-n1'];
         ic.refpdbHash['1BTLA_2aw2A_human_Iset'] = ['BTLA_2aw2A_human_Iset', 'Palladin_2dm3A_human_Iset-n1', 'Titin_4uowM_human_Iset-n152', 'LAG3_7tzgD_human_C1-n2', 'JAM1_1nbqA_human_Iset-n2', 'Contactin1_3s97C_human_Iset-n2'];
         ic.refpdbHash['1LaminAC_1ifrA_human'] = ['LaminAC_1ifrA_human', 'CD3d_6jxrd_human_C1'];
-        ic.refpdbHash['1CD3g_6jxrg_human_C2'] = ['CD3g_6jxrg_human_C2', 'TCRa_6jxrm_human_C1-n2', 'IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'MPT63_1lmiA_bacteria', 'CD3e_6jxrf_human_C1'];
+        ic.refpdbHash['1CD3g_6jxrg_human_C2'] = ['CD3g_6jxrg_human_C2', 'TCRa_6jxrm_human_C1-n2'];
+        ic.refpdbHash['1CD28_1yjdC_human_V'] = ['CD28_1yjdC_human_V', 'CD3e_6jxrf_human_C1'];
         ic.refpdbHash['1CD19_6al5A_human-n1'] = ['CD19_6al5A_human-n1'];
 
-        ic.refpdbHash['all_templates'] = ['ASF1A_2iijA_human', 'B2Microglobulin_7phrL_human_C1', 'BArrestin1_4jqiA_rat_n1', 'BTLA_2aw2A_human_Iset', 'C3_2qkiD_human_n1', 'CD19_6al5A_human-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'CD3g_6jxrg_human_C2', 'CD8a_1cd8A_human_V', 'CoAtomerGamma1_1r4xA_human', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_Iset-n2', 'CuZnSuperoxideDismutase_1hl5C_human', 'ECadherin_4zt1A_human_n2', 'Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_C1-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'IsdA_2iteA_bacteria', 'JAM1_1nbqA_human_Iset-n2', 'LAG3_7tzgD_human_C1-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'MPT63_1lmiA_bacteria', 'NaCaExchanger_2fwuA_dog_n2', 'NaKATPaseTransporterBeta_2zxeB_spurdogshark', 'ORF7a_1xakA_virus', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'TEAD1_3kysC_human', 'TP34_2o6cA_bacteria', 'TP47_1o75A_bacteria', 'Titin_4uowM_human_Iset-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_C1-n2'];
+        ic.refpdbHash['all_templates'] = ['B2Microglobulin_7phrL_human_C1', 'BTLA_2aw2A_human_Iset', 'CD19_6al5A_human-n1', 'CD28_1yjdC_human_V', 'CD2_1hnfA_human_C2-n2', 'CD2_1hnfA_human_V-n1', 'CD3d_6jxrd_human_C1', 'CD3e_6jxrf_human_C1', 'CD3g_6jxrg_human_C2', 'CD8a_1cd8A_human_V', 'Contactin1_2ee2A_human_FN3-n9', 'Contactin1_3s97C_human_Iset-n2', 'ECadherin_4zt1A_human_n2', 'FAB-HEAVY_5esv_C1-n2', 'FAB-HEAVY_5esv_V-n1', 'FAB-LIGHT_5esv_C1-n2', 'FAB-LIGHT_5esv_V-n1', 'GHR_1axiB_human_C1-n1', 'ICOS_6x4gA_human_V', 'IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3', 'InsulinR_8guyE_human_FN3-n1', 'InsulinR_8guyE_human_FN3-n2', 'JAM1_1nbqA_human_Iset-n2', 'LAG3_7tzgD_human_C1-n2', 'LAG3_7tzgD_human_V-n1', 'LaminAC_1ifrA_human', 'MHCIa_7phrH_human_C1', 'PD1_4zqkB_human_V', 'PDL1_4z18B_human_V-n1', 'Palladin_2dm3A_human_Iset-n1', 'Sidekick2_1wf5A_human_FN3-n7', 'Siglec3_5j0bB_human_C1-n2', 'TCRa_6jxrm_human_C1-n2', 'TCRa_6jxrm_human_V-n1', 'Titin_4uowM_human_Iset-n152', 'VISTA_6oilA_human_V', 'VNAR_1t6vN_shark_V', 'VTCN1_Q7Z7D3_human_C1-n2'];
 
         // use known ref structure
         ic.refpdbHash['5ESV_C'] = ['FAB-HEAVY_5esv_V-n1', 'FAB-HEAVY_5esv_C1-n2'];
@@ -124694,36 +124743,36 @@ class Dssp {
         ic.refpdbHash['6JXR_m'] = ['TCRa_6jxrm_human_V-n1', 'TCRa_6jxrm_human_C1-n2'];
         ic.refpdbHash['1HNF_A'] = ['CD2_1hnfA_human_V-n1', 'CD2_1hnfA_human_C2-n2'];
         ic.refpdbHash['7TZG_D'] = ['LAG3_7tzgD_human_V-n1', 'LAG3_7tzgD_human_C1-n2'];
-        ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1', 'RBPJ_6py8C_human_Unk-n2'];
+        //ic.refpdbHash['6PY8_C'] = ['RBPJ_6py8C_human_Unk-n1'];
         ic.refpdbHash['1BQU_B'] = ['IL6Rb_1bquB_human_FN3-n2', 'IL6Rb_1bquB_human_FN3-n3'];
 
-        ic.refpdbHash['1R4X_A'] = ['CoAtomerGamma1_1r4xA_human'];
+        //ic.refpdbHash['1R4X_A'] = ['CoAtomerGamma1_1r4xA_human'];
         ic.refpdbHash['6OIL_A'] = ['VISTA_6oilA_human_V'];
-        ic.refpdbHash['2ZXE_B'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
-        ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
-        ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
-        ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
+        //ic.refpdbHash['2ZXE_B'] = ['NaKATPaseTransporterBeta_2zxeB_spurdogshark'];
+        //ic.refpdbHash['1I8A_A'] = ['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'];
+        //ic.refpdbHash['2FWU_A'] = ['NaCaExchanger_2fwuA_dog_n2'];
+        //ic.refpdbHash['4JQI_A'] = ['BArrestin1_4jqiA_rat_n1'];
         ic.refpdbHash['1NBQ_A'] = ['JAM1_1nbqA_human_Iset-n2'];
-        ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
+        //ic.refpdbHash['1O75_A'] = ['TP47_1o75A_bacteria'];
         ic.refpdbHash['7PHR_H'] = ['MHCIa_7phrH_human_C1'];
-        ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
+        //ic.refpdbHash['2IIJ_A'] = ['ASF1A_2iijA_human'];
         ic.refpdbHash['4Z18_B'] = ['PDL1_4z18B_human_V-n1'];
         ic.refpdbHash['1T6V_N'] = ['VNAR_1t6vN_shark_V'];
-        ic.refpdbHash['2O6C_A'] = ['TP34_2o6cA_bacteria'];
-        ic.refpdbHash['3KYS_C'] = ['TEAD1_3kysC_human'];
+        //ic.refpdbHash['2O6C_A'] = ['TP34_2o6cA_bacteria'];
+        //ic.refpdbHash['3KYS_C'] = ['TEAD1_3kysC_human'];
         ic.refpdbHash['7PHR_L'] = ['B2Microglobulin_7phrL_human_C1'];
         ic.refpdbHash['2AW2_A'] = ['BTLA_2aw2A_human_Iset'];
-        ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
+        //ic.refpdbHash['1HL5_C'] = ['CuZnSuperoxideDismutase_1hl5C_human'];
         ic.refpdbHash['1WF5_A'] = ['Sidekick2_1wf5A_human_FN3-n7'];
         ic.refpdbHash['5J0B_B'] = ['Siglec3_5j0bB_human_C1-n2'];
         ic.refpdbHash['1IFR_A'] = ['LaminAC_1ifrA_human'];
         ic.refpdbHash['Q7Z7D3_A'] = ['VTCN1_Q7Z7D3_human_C1-n2'];
         ic.refpdbHash['4ZQK_B'] = ['PD1_4zqkB_human_V'];
         ic.refpdbHash['2DM3_A'] = ['Palladin_2dm3A_human_Iset-n1'];
-        ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
-        ic.refpdbHash['1XAK_A'] = ['ORF7a_1xakA_virus'];
+        //ic.refpdbHash['2ITE_A'] = ['IsdA_2iteA_bacteria'];
+        //ic.refpdbHash['1XAK_A'] = ['ORF7a_1xakA_virus'];
         ic.refpdbHash['4ZT1_A'] = ['ECadherin_4zt1A_human_n2'];
-        ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
+        //ic.refpdbHash['1LMI_A'] = ['MPT63_1lmiA_bacteria'];
         ic.refpdbHash['1CD8_A'] = ['CD8a_1cd8A_human_V'];
         ic.refpdbHash['3S97_C'] = ['Contactin1_3s97C_human_Iset-n2'];
         ic.refpdbHash['1AXI_B'] = ['GHR_1axiB_human_C1-n1'];
@@ -124731,7 +124780,7 @@ class Dssp {
         ic.refpdbHash['2EE2_A'] = ['Contactin1_2ee2A_human_FN3-n9'];
         ic.refpdbHash['4UOW_M'] = ['Titin_4uowM_human_Iset-n152'];
         ic.refpdbHash['6A15_A'] = ['CD19_6al5A_human-n1'];
-        ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
+        //ic.refpdbHash['2QKI_D'] = ['C3_2qkiD_human_n1'];
         ic.refpdbHash['1YJD_C'] = ['CD28_1yjdC_human_V'];
         ic.refpdbHash['6JXR_d'] = ['CD3d_6jxrd_human_C1'];
         ic.refpdbHash['6JXR_f'] = ['CD3e_6jxrf_human_C1'];
@@ -124740,11 +124789,11 @@ class Dssp {
         // assign Ig types
         ic.ref2igtype = {};
 
-        ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
+        //ic.ref2igtype['ASF1A_2iijA_human'] = 'IgFN3-like';
         ic.ref2igtype['B2Microglobulin_7phrL_human_C1'] = 'IgC1';
-        ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
+        //ic.ref2igtype['BArrestin1_4jqiA_rat_n1'] = 'IgFN3-like';
         ic.ref2igtype['BTLA_2aw2A_human_Iset'] = 'IgI';
-        ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
+        //ic.ref2igtype['C3_2qkiD_human_n1'] = 'IgFN3-like';
         ic.ref2igtype['CD19_6al5A_human-n1'] = 'CD19';
         ic.ref2igtype['CD28_1yjdC_human_V'] = 'IgV';
         ic.ref2igtype['CD2_1hnfA_human_C2-n2'] = 'IgC2';
@@ -124753,12 +124802,12 @@ class Dssp {
         ic.ref2igtype['CD3e_6jxrf_human_C1'] = 'IgC1';
         ic.ref2igtype['CD3g_6jxrg_human_C2'] = 'IgC2';
         ic.ref2igtype['CD8a_1cd8A_human_V'] = 'IgV';
-        ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
+        //ic.ref2igtype['CoAtomerGamma1_1r4xA_human'] = 'IgE';
         ic.ref2igtype['Contactin1_2ee2A_human_FN3-n9'] = 'IgFN3';
         ic.ref2igtype['Contactin1_3s97C_human_Iset-n2'] = 'IgI';
-        ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
+        //ic.ref2igtype['CuZnSuperoxideDismutase_1hl5C_human'] = 'SOD';
         ic.ref2igtype['ECadherin_4zt1A_human_n2'] = 'Cadherin';
-        ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
+        //ic.ref2igtype['Endo-1,4-BetaXylanase10A_1i8aA_bacteria_n4'] = 'IgE';
         ic.ref2igtype['FAB-HEAVY_5esv_C1-n2'] = 'IgC1';
         ic.ref2igtype['FAB-HEAVY_5esv_V-n1'] = 'IgV';
         ic.ref2igtype['FAB-LIGHT_5esv_C1-n2'] = 'IgC1';
@@ -124769,28 +124818,28 @@ class Dssp {
         ic.ref2igtype['IL6Rb_1bquB_human_FN3-n3'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n1'] = 'IgFN3';
         ic.ref2igtype['InsulinR_8guyE_human_FN3-n2'] = 'IgFN3';
-        ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
+        //ic.ref2igtype['IsdA_2iteA_bacteria'] = 'IgE';
         ic.ref2igtype['JAM1_1nbqA_human_Iset-n2'] = 'IgI';
         ic.ref2igtype['LAG3_7tzgD_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['LAG3_7tzgD_human_V-n1'] = 'IgV';
         ic.ref2igtype['LaminAC_1ifrA_human'] = 'Lamin';
         ic.ref2igtype['MHCIa_7phrH_human_C1'] = 'IgC1';
-        ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
-        ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
-        ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
-        ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
+        //ic.ref2igtype['MPT63_1lmiA_bacteria'] = 'IgFN3-like';
+        //ic.ref2igtype['NaCaExchanger_2fwuA_dog_n2'] = 'IgFN3-like';
+        //ic.ref2igtype['NaKATPaseTransporterBeta_2zxeB_spurdogshark'] = 'IgE';
+        //ic.ref2igtype['ORF7a_1xakA_virus'] = 'ORF';
         ic.ref2igtype['PD1_4zqkB_human_V'] = 'IgV';
         ic.ref2igtype['PDL1_4z18B_human_V-n1'] = 'IgV';
         ic.ref2igtype['Palladin_2dm3A_human_Iset-n1'] = 'IgI';
-        ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
+        //ic.ref2igtype['RBPJ_6py8C_human_Unk-n1'] = 'IgFN3-like';
         //ic.ref2igtype['RBPJ_6py8C_human_Unk-n2'] = 'IgFN3-like';
         ic.ref2igtype['Sidekick2_1wf5A_human_FN3-n7'] = 'IgFN3';
         ic.ref2igtype['Siglec3_5j0bB_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_C1-n2'] = 'IgC1';
         ic.ref2igtype['TCRa_6jxrm_human_V-n1'] = 'IgV';
-        ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
-        ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
-        ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
+        //ic.ref2igtype['TEAD1_3kysC_human'] = 'IgFN3-like';
+        //ic.ref2igtype['TP34_2o6cA_bacteria'] = 'IgE';
+        //ic.ref2igtype['TP47_1o75A_bacteria'] = 'IgE';
         ic.ref2igtype['Titin_4uowM_human_Iset-n152'] = 'IgI';
         ic.ref2igtype['VISTA_6oilA_human_V'] = 'IgV';
         ic.ref2igtype['VNAR_1t6vN_shark_V'] = 'IgV';
@@ -126341,6 +126390,7 @@ class Dssp {
                 }
                 else {
                     let bBefore = false, bInRange= false, bAfter = false;
+                    /*
                     // 100, 100A
                     if(parseInt(currResi) == parseInt(strandArray[strandCnt].startResi) && currResi != strandArray[strandCnt].startResi) {
                         bBefore = currResi < strandArray[strandCnt].startResi;
@@ -126356,6 +126406,14 @@ class Dssp {
                     else {
                         bAfter = parseInt(currResi) > parseInt(strandArray[strandCnt].endResi);
                     }
+                    */
+                    
+                    let currResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, currResi);
+                    let startResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, strandArray[strandCnt].startResi); 
+                    let endResiNcbi = ic.ParserUtilsCls.getResiNCBI(chnid, strandArray[strandCnt].endResi);
+
+                    bBefore = parseInt(currResiNcbi) < parseInt(startResiNcbi);
+                    bAfter = parseInt(currResiNcbi) > parseInt(endResiNcbi);
 
                     bInRange = (!bBefore && !bAfter) ? true : false;
 
@@ -132174,8 +132232,9 @@ class ShareLink {
            }
 
            let paraHash = {};
-           for(let key in ic.cfg) {
-               let value = ic.cfg[key];
+/*           
+           for(let key in me.cfg) {
+               let value = me.cfg[key];
                //if(key === 'inpara' || ic.key === 'command' || value === undefined) continue;
                if(key === 'inpara' || key === 'command' || key === 'usepdbnum'
                  || key === 'date' || key === 'v' || value === undefined) continue;
@@ -132225,7 +132284,7 @@ class ShareLink {
                    paraHash[key] = value;
                }
            }
-
+*/
            if(ic.bAfMem) {
             paraHash['afmem'] = 'on';
            }
@@ -132247,6 +132306,12 @@ class ShareLink {
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
+               // BLAST RID is usually added at the end of the URL. It should be included.
+               if(me.cfg.rid && !paraHash['RID']) {
+                    url += 'RID=' + me.cfg.rid + '&';
+               }
+
+               // sometimes idname is not part of the URL
                if(me.cfg.idname && !paraHash[me.cfg.idname]) { // somehow it is not included
                     url += me.cfg.idname + '=' + me.cfg.idvalue + '&';
                }
@@ -135360,7 +135425,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.47.1';
+    this.REVISION = '3.48.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
@@ -135562,14 +135627,8 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
             let domainidArray = me.cfg.matchedchains.split(',');
             let chainidArray = [];
             for(let i = 0, il = domainidArray.length; i  < il; ++i) {
-                let pos = domainidArray[i].lastIndexOf('_');
-                let lastId = domainidArray[i].substr(pos + 1);
-                if(!isNaN(lastId)) { // lastId is domain id
-                    chainidArray.push(domainidArray[i].substr(0, pos));
-                }
-                else {
-                    chainidArray.push(domainidArray[i]);
-                }
+                let idArray = domainidArray[i].split('_');
+                chainidArray.push(idArray[0] + '_' + idArray[1]);
             }
 
             // get the matched structures, do not include the template
@@ -135797,6 +135856,9 @@ iCn3DUI.prototype.show3DStructure = async function(pdbStr) { let me = this;
         // ic.bNCBI = true;
         if(me.cfg.align.indexOf('185055,') != -1) {
             me.cfg.align = me.cfg.align.replace('185055,', '199731,'); //the mmdbid of PDB 6M17 was changed from 185055 to 199731
+        }
+        else if(me.cfg.align == '54567,1,12161,1,2,1') {
+            me.cfg.align = '3HHR,1BQU'; // somehow the VAST+ data for this published alignment were not there anymore
         }
  
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]

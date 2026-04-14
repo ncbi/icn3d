@@ -151,8 +151,7 @@ class RealignParser {
       // If rmsd from vastsrv is too large, realign the chains
       //if(me.cfg.chainalign && !me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5) {  
       // redo algnment only for VAST serv page 
-      if(!me.cfg.usepdbnum && me.cfg.resdef && rmsd > 5 && me.cfg.chainalign) {    
-        console.log("RMSD from VAST is larger than 5. Realign the chains with TM-align.") 
+      if(!me.cfg.usepdbnum && (me.cfg.resdef || me.cfg.resrange) && rmsd > 5 && me.cfg.chainalign) {    
         //let nameArray = me.cfg.chainalign.split(',');
         let nameArray = Object.keys(chainidHash);
         if(nameArray.length > 0) {
@@ -404,15 +403,30 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
         if(bVastsearch && me.cfg.resrange) {
             let resRangeArray = decodeURIComponent(me.cfg.resrange).split(' | ');
 
-            let atomSet_t = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true).hAtoms;
+            let atomSet_t;
+            if(me.cfg.resrange) {
+                let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], ic.chainidArray[0], true);
+                atomSet_t = result.hAtoms;
+            }
+            else {
+                atomSet_t = ic.chains[ic.chainidArray[0]];
+            }
+
             for(let index = 1, indexl = ic.chainidArray.length; index < indexl; ++index) {
-                let atomSet_q = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true).hAtoms;
+                let atomSet_q;
+                if(me.cfg.resrange) {
+                    let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], ic.chainidArray[index], true);
+                    atomSet_q = result.hAtoms;
+                }
+                else {
+                    atomSet_q = ic.chains[ic.chainidArray[index]];
+                }
 
                 let alignAjax;
                 if(me.cfg.aligntool != 'tmalign') {
                     let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
                     let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
-                        
+                      
                     let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                     alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                 }
@@ -473,9 +487,7 @@ let resRangeArray = (me.cfg.resrange) ? decodeURIComponent(me.cfg.resrange).spli
                             let alignAjax;
                             if(me.cfg.aligntool != 'tmalign') {
                                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
-console.log("@@@ realign " + struct1 + " " + chainid1 + " and " + struct2 + " " + chainid2);
-console.log("@@@ jsonStr_q " + jsonStr_q);
-console.log("@@@ jsonStr_t " + jsonStr_t);            
+
                                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                                 alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                             }
@@ -545,7 +557,7 @@ console.log("@@@ jsonStr_t " + jsonStr_t);
 
             if(me.cfg.aligntool != 'tmalign') {
                 let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(chainid2domain[chainid2]);
-            
+ 
                 let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                 alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
             }
@@ -816,6 +828,8 @@ console.log("@@@ jsonStr_t " + jsonStr_t);
         let hAtoms = {};
 
         for(let j = 0, jl = resiArray.length; j < jl; ++j) {
+            if(!resiArray[j]) continue;
+
             if(resiArray[j].indexOf('-') != -1) {
                 let startEnd = resiArray[j].split('-');
                 for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {

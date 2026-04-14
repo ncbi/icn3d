@@ -100,16 +100,31 @@ class ChainalignParser {
 
                 // dynamically align pairs in all chainids
                 // the resrange from VASTSrv or VAST search uses NCBI residue numbers!!!
-                let atomSet_t = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true).hAtoms : ic.chains[chainidArray[0]];
+                let atomSet_t;
+                if(me.cfg.resrange) {
+                    let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[0]], chainidArray[0], true);
+                    atomSet_t = result.hAtoms;
+                }
+                else {
+                    atomSet_t = ic.chains[chainidArray[0]];
+                }
+
                 for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
-                    let atomSet_q = (me.cfg.resrange) ? ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true).hAtoms : ic.chains[chainidArray[index]];
+                    let atomSet_q;
+                    if(me.cfg.resrange) {
+                        let result = ic.realignParserCls.getSeqCoorResid([resRangeArray[index]], chainidArray[index], true);
+                        atomSet_q = result.hAtoms;
+                    }
+                    else {
+                        atomSet_q = ic.chains[chainidArray[index]];
+                    }
                 // end of new version to be done for VASTsrv ==============
 
                     let alignAjax;
                     if(me.cfg.aligntool != 'tmalign') {
                         let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(atomSet_q);
                         let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(atomSet_t);
-                            
+
                         let dataObj = {'domains1': jsonStr_q, 'domains2': jsonStr_t};
                         alignAjax = me.getAjaxPostPromise(urlalign, dataObj);
                     }
@@ -145,6 +160,7 @@ class ChainalignParser {
         //let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
 
         // modify the previous trans and rotation matrix
+        let bAligned = false;
         for(let i = 0, il = dataArray.length; i < il; ++i) {
             // let align = (me.bNode) ? dataArray[i] : dataArray[i].value;//[0];
             let align = dataArray[i].value;//[0];
@@ -160,7 +176,7 @@ class ChainalignParser {
 
             me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
 
-            this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
+            bAligned =await this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, undefined);
         }
        
         // do not transform the target
@@ -168,28 +184,34 @@ class ChainalignParser {
         //    this.transformStructure(mmdbid_t, indexArray[0], 'target');
         //}
 
-        // transform the rest
-        for(let i = 0, il = dataArray.length; i < il; ++i) {
-            let mmdbid_q = struArray[i];
-            let index = indexArray[i];
-            this.transformStructure(mmdbid_q, index, 'query');
+        if(bAligned) {
+            // transform the rest
+            for(let i = 0, il = dataArray.length; i < il; ++i) {
+                let mmdbid_q = struArray[i];
+                let index = indexArray[i];
+                this.transformStructure(mmdbid_q, index, 'query');
+            }
+
+            let hAtomsTmp = {}, hAtomsAll = {};
+
+            if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+                // set multiple sequence alignment from ic.qt_start_end
+                hAtomsAll = this.setMsa(chainidArray);
+            }
+
+            // highlight all aligned atoms
+            //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+            ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsAll);
+
+            ic.transformCls.zoominSelection();
+
+            // do the rest
+            await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
         }
-
-        let hAtomsTmp = {}, hAtomsAll = {};
-
-        if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
-            // set multiple sequence alignment from ic.qt_start_end
-            hAtomsAll = this.setMsa(chainidArray);
+        else {
+            me.cfg.aligntool = 'tmalign';
+            await ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign);
         }
-
-        // highlight all aligned atoms
-        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
-        ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsAll);
-
-        ic.transformCls.zoominSelection();
-
-        // do the rest
-        await this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, ic.hAtoms);
     }
 
     setMsa(chainidArray, bVastplus, bRealign) { let ic = this.icn3d, me = ic.icn3dui;        
@@ -260,7 +282,7 @@ class ChainalignParser {
 
             let bNoAlert = true;
 
-            let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
+            let bAligned = await this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
 
             if(bAligned) {
                 bFoundAlignment = true;
@@ -757,7 +779,7 @@ class ChainalignParser {
 
                     me.htmlCls.clickMenuCls.setLogCmd("Align " + mmdbid_t + " with " + mmdbid_q, false);
 
-                    this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain);
+                    await this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain, undefined);
                 }
             }
         }
@@ -767,13 +789,13 @@ class ChainalignParser {
         await this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
     }
 
-    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
+    async processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let ic = this.icn3d, me = ic.icn3dui;
         let bAligned = false;
 
-        if((!align || align.length == 0) && !bNoAlert) {
-            let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
-        
-            if(ic.bRender) alert("These chains can not be aligned by " + serverName + ".");
+        if((align === "error" || align === undefined || align.length == 0) && !bNoAlert) {
+            // let serverName = (me.cfg.aligntool == 'tmalign') ? 'TM-align' : 'VAST';
+       
+            // if(ic.bRender) alert("These chains can not be aligned by " + serverName + ".");
             return bAligned;
         }
 
@@ -922,7 +944,6 @@ class ChainalignParser {
         let structArrayTmp = idlist.split(',');
 
         let structArray = [];
-
         // only when bNoDuplicate is undefined/false, it's allowed to load multiple copies of the same structure
         if(!bNoDuplicate) {
             structArray =  this.addPostfixForStructureids(structArrayTmp);
@@ -935,7 +956,7 @@ class ChainalignParser {
                 if(!ic.structures.hasOwnProperty(id)) structArray.push(structArrayTmp[i]);
             }
         }
-        
+   
         if(structArray.length == 0) return;
         
         ic.structArray = ic.structArray.concat(structArray);
@@ -1035,6 +1056,8 @@ class ChainalignParser {
             else {
                 let bNoSeqalign = true;
                 let pdbid = structArray[i];
+
+                if(queryDataArray[i].pdbId) queryDataArray[i].pdbId = pdbid;
 
                 //hAtomsTmp contains all atoms
                 hAtomsTmp = await ic.mmdbParserCls.parseMmdbData(queryDataArray[i], targetOrQuery, undefined, undefined, bLastQuery, bNoSeqalign, pdbid);

@@ -10,7 +10,7 @@
 
 "I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using NodeJS scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>The complete package of iCn3D</b> including Three.js and jQuery is in the directory "dist" after you get the source code with the "Code" button. You can click the file "index.html" in the "dist" directory to launch a local version of iCn3D.
 * <b>View a 3D structure in iCn3D</b>: 
-    Open the link [https://www.ncbi.nlm.nih.gov/Structure/icn3d](https://www.ncbi.nlm.nih.gov/Structure/icn3d), input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
+    Open the link [https://www.ncbi.nlm.nih.gov/Structure/icn3d](https://www.ncbi.nlm.nih.gov/Structure/icn3d), input a PDB ID, and click "Load". You can also click "File" menu to "Open File"  to load PDB files or MD trajectories, or input other IDs.
 
     As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. 
 
@@ -77,7 +77,7 @@
 
 ## Embed iCn3D with iframe or JavaScript libraries
 
-iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&width=300&height=300&showcommand=0&mobilemenu=1&showtitle=0" width="320" height="320" style="border:none"></iframe>. This method always shows the most recent version of iCn3D.
+iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe allow="xr-spatial-tracking *" src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmdbid=1tup&width=300&height=300&showcommand=0&mobilemenu=1&showtitle=0" width="320" height="320" style="border:none"></iframe>. This method always shows the most recent version of iCn3D.
 
 To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "let icn3dui = new icn3d.iCn3DUI(cfg); await icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example-simple.html) for reference.
 
@@ -160,10 +160,6 @@ gulp
 Please send all comments to wangjiy@ncbi.nlm.nih.gov. 
 
 ## Citing
-Bioinformatics. 2020 Jan 1;36(1):131-135. doi: 10.1093/bioinformatics/btz502.
-
-To cite iCn3D, please reference:
-
 Wang J, Youkharibache P, Zhang D, Lanczycki CJ, Geer RC, Madej T, Phan L, Ward M, Lu S, Marchler GH, Wang Y, Bryant SH, Geer LY, Marchler-Bauer A. *iCn3D, a Web-based 3D Viewer for Sharing 1D/2D/3D Representations of Biomolecular Structures.* **_Bioinformatics_. 2020** Jan 1; 36(1):131-135. (Epub 2019 June 20.) [doi: 10.1093/bioinformatics/btz502](https://dx.doi.org/10.1093/bioinformatics/btz502). [PubMed PMID: 31218344](https://www.ncbi.nlm.nih.gov/pubmed/31218344), [Full Text at Oxford Academic](https://academic.oup.com/bioinformatics/article/36/1/131/5520951)
 
 Wang J, Youkharibache P, Marchler-Bauer A, Lanczycki C, Zhang D, Lu S, Madej T, Marchler GH, Cheng T, Chong LC, Zhao S, Yang K, Lin J, Cheng Z, Dunn R, Malkaram SA, Tai C-H, Enoma D, Busby B, Johnson NL, Tabaro F, Song G, Ge Y. *iCn3D: From Web-Based 3D Viewer to Structural Analysis Tool in Batch Mode.* **_Front. Mol. Biosci._ 2022** 9:831740. (Epub 2022 Feb 17.) [doi: 10.3389/fmolb.2022.831740](https://dx.doi.org/10.3389/fmolb.2022.831740). [PubMed PMID: 35252351](https://www.ncbi.nlm.nih.gov/pubmed/35252351), [Full Text at Frontiers](https://www.frontiersin.org/articles/10.3389/fmolb.2022.831740/full)
