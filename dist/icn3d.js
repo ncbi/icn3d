@@ -135431,7 +135431,7 @@ void main() {
 	    //even when multiple iCn3D viewers are shown together.
 	    this.pre = this.cfg.divid + "_";
 
-	    this.REVISION = '3.48.0';
+	    this.REVISION = '3.48.1';
 
 	    // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
 	    this.bNode = (Object.keys(window).length < 3) ? true : false;

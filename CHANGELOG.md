@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.48.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.48.1.zip) was release on April 15, 2026. Fixed the issue in changing backgroound color.
+
 [icn3d-3.48.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.48.0.zip) was release on April 14, 2026. The IgStrand numbering scheme for Ig-fold has been upgraded to version 1.2 by removing the templates for six IgE, seven IgFN3-like, and three other Igs.
 
 [icn3d-3.47.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.47.1.zip) was release on January 21, 2026. Showed the count of hydrogen bonds over time for MD trajectories.
