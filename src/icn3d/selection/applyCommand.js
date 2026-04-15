@@ -712,16 +712,18 @@ class ApplyCommand {
       }
       else if(command.indexOf('set background') == 0) {
         let value = command.substr(command.lastIndexOf(' ') + 1);
-        ic.opts['background'] = value;
+        ic.setStyleCls.setBackground(value);
 
-        if(value == 'black') {
-          $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
-          $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
-        }
-        else {
-          $("#" + ic.pre + "title").css("color", "black");
-          $("#" + ic.pre + "titlelink").css("color", "black");
-        }
+        // ic.opts['background'] = value;
+
+        // if(value == 'black') {
+        //   $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+        //   $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
+        // }
+        // else {
+        //   $("#" + ic.pre + "title").css("color", "black");
+        //   $("#" + ic.pre + "titlelink").css("color", "black");
+        // }
       }
       else if(command.indexOf('set label color') == 0) {
         ic.labelcolor = command.substr(command.lastIndexOf(' ') + 1);
