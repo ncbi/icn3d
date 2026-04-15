@@ -80414,7 +80414,7 @@ void main() {
 	        let bShowArray = [];
 	        let calphaIdArray = []; // used to store one of the final positions drawn in 3D
 	        let colors = [];
-	        let currentChain, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
+	        let currentChain, currentStyle, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
 	        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
 	        let strandWidth, bSheetSegment = false, bHelixSegment = false;
 	        let atom, tubeAtoms = {};
@@ -80467,15 +80467,15 @@ void main() {
 	                }
 	                // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
 	                let bSameChain = true;
-	//                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+
 	                if (currentChain !== atom.chain) {
 	                    bSameChain = false;
 	                }
 
-	                if(atom.ssend && atom.ss === 'sheet') {
+	                if((atom.ssend || currentStyle != atom.style)&& atom.ss === 'sheet') {
 	                    bSheetSegment = true;
 	                }
-	                else if(atom.ssend && atom.ss === 'helix') {
+	                else if((atom.ssend || currentStyle != atom.style) && atom.ss === 'helix') {
 	                    bHelixSegment = true;
 	                }
 
@@ -80568,7 +80568,7 @@ void main() {
 	                //     bHelixSegment = true;
 	                // }
 
-	                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+	                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || currentStyle != atom.style) && pnts[0].length > 0 && bSameChain) {
 	                    let atomName = 'CA';
 
 	                    let prevone = [], nexttwo = [];
@@ -80711,9 +80711,7 @@ void main() {
 	                } // end if (atom.ssbegin || atom.ssend)
 
 	                // end of a chain
-	//                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
-	                if ((currentChain !== atom.chain) && pnts[0].length > 0) {
-
+	                if ((currentChain !== atom.chain || currentStyle != atom.style) && pnts[0].length > 0) {
 	                    let atomName = 'CA';
 
 	                    let prevone = [], nexttwo = [];
@@ -80765,7 +80763,7 @@ void main() {
 	                }
 
 	                currentChain = atom.chain;
-	                atom.resi;
+	                currentStyle = atom.style;
 	                ss = atom.ss;
 	                ssend = atom.ssend;
 	                prevAtomid = atom.serial;
@@ -89732,6 +89730,9 @@ void main() {
 	    setBackground(color) {var ic = this.icn3d, me = ic.icn3dui;
 	      
 	       ic.setOptionCls.setOption('background', color);
+	       let exdays = 3650;
+	       me.htmlCls.setHtmlCls.setCookie('bkgdcolor', color, exdays);
+
 	       me.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
 	       //let titleColor =(color == 'black' || color == 'transparent') ? me.htmlCls.GREYD : 'black';
 	       let titleColor = (color == 'black') ? me.htmlCls.GREYD : 'black';
@@ -119179,16 +119180,18 @@ void main() {
 	      }
 	      else if(command.indexOf('set background') == 0) {
 	        let value = command.substr(command.lastIndexOf(' ') + 1);
-	        ic.opts['background'] = value;
+	        ic.setStyleCls.setBackground(value);
 
-	        if(value == 'black') {
-	          $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
-	          $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
-	        }
-	        else {
-	          $("#" + ic.pre + "title").css("color", "black");
-	          $("#" + ic.pre + "titlelink").css("color", "black");
-	        }
+	        // ic.opts['background'] = value;
+
+	        // if(value == 'black') {
+	        //   $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+	        //   $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
+	        // }
+	        // else {
+	        //   $("#" + ic.pre + "title").css("color", "black");
+	        //   $("#" + ic.pre + "titlelink").css("color", "black");
+	        // }
 	      }
 	      else if(command.indexOf('set label color') == 0) {
 	        ic.labelcolor = command.substr(command.lastIndexOf(' ') + 1);

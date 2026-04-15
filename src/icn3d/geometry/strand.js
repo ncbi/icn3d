@@ -74,7 +74,7 @@ class Strand {
         let bShowArray = [];
         let calphaIdArray = []; // used to store one of the final positions drawn in 3D
         let colors = [];
-        let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
+        let currentChain, currentStyle, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
         let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
         let atom, tubeAtoms = {};
@@ -129,15 +129,15 @@ class Strand {
                 }
                 // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
                 let bSameChain = true;
-//                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+
                 if (currentChain !== atom.chain) {
                     bSameChain = false;
                 }
 
-                if(atom.ssend && atom.ss === 'sheet') {
+                if((atom.ssend || currentStyle != atom.style)&& atom.ss === 'sheet') {
                     bSheetSegment = true;
                 }
-                else if(atom.ssend && atom.ss === 'helix') {
+                else if((atom.ssend || currentStyle != atom.style) && atom.ss === 'helix') {
                     bHelixSegment = true;
                 }
 
@@ -232,7 +232,7 @@ class Strand {
                 //     bHelixSegment = true;
                 // }
 
-                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
+                if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs || currentStyle != atom.style) && pnts[0].length > 0 && bSameChain) {
                     let atomName = 'CA';
 
                     let prevone = [], nexttwo = [];
@@ -375,9 +375,7 @@ class Strand {
                 } // end if (atom.ssbegin || atom.ssend)
 
                 // end of a chain
-//                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
-                if ((currentChain !== atom.chain) && pnts[0].length > 0) {
-
+                if ((currentChain !== atom.chain || currentStyle != atom.style) && pnts[0].length > 0) {
                     let atomName = 'CA';
 
                     let prevone = [], nexttwo = [];
@@ -430,7 +428,7 @@ class Strand {
                 }
 
                 currentChain = atom.chain;
-                currentResi = atom.resi;
+                currentStyle = atom.style;
                 ss = atom.ss;
                 ssend = atom.ssend;
                 prevAtomid = atom.serial;
