@@ -119,7 +119,12 @@ class SaveFile {
             //blob = new Blob([data],{ type: "application/octet-stream"});
             blob = new Blob(data,{ type: "application/octet-stream"});
         }
+        else if(type === 'xlsx') {
+            let data = text; // here text is an array of blobs
 
+            //blob = new Blob([data],{ type: "application/octet-stream"});
+            blob = new Blob([data], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"} );
+        }
         if(type !== 'png') {
             //https://github.com/eligrey/FileSaver.js/
             if(!bReturnBlobOnly) saveAs(blob, filename);

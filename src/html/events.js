@@ -2474,6 +2474,24 @@ class Events {
            await ic.contactMapCls.contactMap(contactdist, contacttype);
            thisClass.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
         });
+        me.myEventCls.onIds("#" + me.pre + "applyr2dt", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+
+           await ic.diagram2dCls.drawR2dt(chainid);
+           thisClass.setLogCmd('diagram 2d nucleotide | ' + chainid, true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let chainid = $("#" + ic.pre + "atomsCustomProtein").val();
+
+           await ic.diagram2dCls.drawIgdgm(chainid);
+           thisClass.setLogCmd('diagram 2d ig | ' + chainid, true);
+        });
         me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            

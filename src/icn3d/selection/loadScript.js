@@ -296,6 +296,22 @@ class LoadScript {
             await ic.cartoon2dCls.draw2Dcartoon(type);
             ic.bRender = false;
           }
+          else if(command.indexOf('diagram 2d nucleotide') == 0) {
+            let paraArray = command.split(' | ');
+            let chainid = paraArray[1];
+
+            ic.bRender = true;
+            await ic.diagram2dCls.drawR2dt(chainid);
+            ic.bRender = false;
+          }
+          else if(command.indexOf('diagram 2d ig') == 0) {
+            let paraArray = command.split(' | ');
+            let chainid = paraArray[1];
+
+            ic.bRender = true;
+            await ic.diagram2dCls.drawIgdgm(chainid);
+            ic.bRender = false;
+          }
           else if(command.indexOf('add msa track') == 0) {
             //add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList 
             let paraArray = command.split(' | ');

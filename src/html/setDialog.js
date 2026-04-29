@@ -655,6 +655,22 @@ class SetDialog {
         html += "<span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "applycontactmap'>Display</button></span><br>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_2ddgm_r2dt' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for Nucleotides (R2DT)');
+        html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
+        html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
+        html += "</select><br>";
+        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button><br>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_2ddgm_igdgm', '2D Diagram for Ig Domains (R2DT)');
+        html += "1. Select a protein chain to show Ig diagram. An Excel file containing <br>the Ig diagram will be saved to your computer.<br>";
+        html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomProtein' size='5' style='min-width:130px;'>";
+        html += "</select><br>";
+        html += me.htmlCls.buttonStr + "applyigdgm'>Show Ig Diagram</button><br>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_hbonds', 'Interaction Analysis');
         html += "1. Choose interaction types and their thresholds:<br>";
@@ -980,6 +996,11 @@ class SetDialog {
         html += "</select></div><br>";
         html += '<div id="' + me.pre + 'contactmapDiv"></div>';
 
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_2ddiagram' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_2ddiagram', '2D Diagram');
+        html += '<div id="' + me.pre + '2ddiagramDiv"></div>';
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";

@@ -118,30 +118,19 @@ class DefinedSets {
     }
 
     //Set the menu of defined sets with an array of defined names "commandnameArray".
-    setAtomMenu(commandnameArray) { let ic = this.icn3d, me = ic.icn3dui;
+    setAtomMenu(commandnameArray, bNucleotide, bProtein) { let ic = this.icn3d, me = ic.icn3dui;
       let html = "";
       let nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
       let nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
 
       let nameArrayTmp = nameArray1.concat(nameArray2).sort();
       let nameArray = [];
-        //  $.each(nameArrayTmp, function(i, el){
-        //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
-        //  });
+
       nameArrayTmp.forEach(elem => {
         if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
       });
         
-        // let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
-
-        // nameArrayTmp.forEach((elem) => {
-        //     structureArray.forEach((structure) => {
-        //         if (ic.defNames2Residues[elem] && ic.defNames2Residues[elem][0] && ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
-        //             if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
-        //         }
-        //     });
-        // });
-      //for(let i in ic.defNames2Atoms) {
+      let bFoundNucleotide = false, bFoundProtein = false;
       for(let i = 0, il = nameArray.length; i < il; ++i) {
           let name = nameArray[i];
 
@@ -164,13 +153,38 @@ class DefinedSets {
           let colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
           let color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
-          if(commandnameArray.indexOf(name) != -1) {
-            html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
+          if(bNucleotide) {
+            // Handle nucleotide-specific logic
+            if(ic.nucleotides.hasOwnProperty(atom.serial) && name != 'nucleotides' && !ic.structures.hasOwnProperty(name)) {
+                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+                bFoundNucleotide = true;
+            }
+          }
+          else if(bProtein) {
+            // Handle protein-specific logic
+            if(ic.proteins.hasOwnProperty(atom.serial) && name != 'proteins' && !ic.structures.hasOwnProperty(name)) {
+                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+                bFoundProtein = true;
+            }
           }
           else {
-            html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            if(commandnameArray.indexOf(name) != -1) {
+                html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
+            }
+            else {
+                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            }
           }
       }
+
+      if(bNucleotide && !bFoundNucleotide) {
+          html = "";
+      }
+
+      if(bProtein && !bFoundProtein) {
+          html = "";
+      }
+
       return html;
     }
 
@@ -315,24 +329,34 @@ class DefinedSets {
         ic.hlUpdateCls.updateHlMenus();
     }
 
+    selectSets(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.nameArray = nameArray;
+
+        if(nameArray !== null) {
+            // log the selection
+            //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
+
+            let bUpdateHlMenus = false;
+            this.changeCustomAtoms(nameArray, bUpdateHlMenus);
+            //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+            me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+
+            ic.bSelectResidue = false;
+        }
+    }
+
     clickCustomAtoms() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let ic = thisClass.icn3d;
         $("#" + ic.pre + "atomsCustom").change(function(e) { let ic = thisClass.icn3d;
            let nameArray = $(this).val();
-           ic.nameArray = nameArray;
+           thisClass.selectSets(nameArray);
+        });
 
-           if(nameArray !== null) {
-             // log the selection
-             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
-
-             let bUpdateHlMenus = false;
-             thisClass.changeCustomAtoms(nameArray, bUpdateHlMenus);
-             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-             me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-
-             ic.bSelectResidue = false;
-           }
+        me.myEventCls.onIds(["#" + ic.pre + "atomsCustomNucleotide", "#" + ic.pre + "atomsCustomProtein"], "change", function(e) { let ic = thisClass.icn3d;
+        //$("#" + ic.pre + "atomsCustomNucleotide").change(function(e) { let ic = thisClass.icn3d;
+           let chainid = $(this).val();
+           thisClass.selectSets([chainid]);
         });
 
         me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "focus", function(e) { let ic = thisClass.icn3d;
