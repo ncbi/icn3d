@@ -948,6 +948,118 @@ class Diagram2d {
 
         return html;
     }
+
+    async drawR2dt(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid2rnaid=" + chainid;
+
+        let data = await me.getAjaxPromise(url, 'jsonp');
+
+        let html = '';
+        if(data && data.rnaid) {
+            html += '<r2dt-web search=\'{"urs": "' + data.rnaid + '"}\' />';
+            html += '<script type="text/javascript" src="https://rnacentral.github.io/r2dt-web/dist/r2dt-web.js"></script>';
+            $("#" + me.pre + "2ddiagramDiv").html(html);
+            me.htmlCls.dialogCls.openDlg('dl_2ddiagram', 'Show R2DT Diagram for chain ' + chainid);
+        }
+        else {
+            alert("No R2DT diagram can be found for chain " + chainid);
+        }
+    }
+
+    async drawIgdgm(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        // select the current chain
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
+
+        // run ig detection
+        ic.bRunRefnumAgain = true;
+        if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+        await ic.annotationCls.setAnnoTabIg(true);
+        ic.bRunRefnumAgain = false;
+
+        if(!ic.chain2igArray) {
+            alert("No Ig domain was found for chain " + chainid);
+            return;
+        }
+
+        let igArray = ic.chain2igArray[chainid]; 
+
+        let igType = '', bFound = false;
+        for(let i = 0, il = igArray.length; i < il; ++i) {
+            let domainid = igArray[i].domainid;
+            if(!ic.domainid2info) continue;
+
+            let info = ic.domainid2info[domainid];
+            if(!info) continue;
+            
+            igType = ic.ref2igtype[info.refpdbname];
+
+            if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI') {
+                bFound = true;
+                break;
+            }
+        }
+
+        if(!bFound) {
+            alert("The Ig type for chain " + chainid + " is " + igType + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
+            return;
+        }
+
+        // get the hash of refnum to resn
+        let refnum2resn = {};
+        for(let resid in ic.resid2refnum) {
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+            if(!atom) continue;
+
+            // let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+            let resn = me.utilsCls.residueName2Abbr(atom.resn);
+
+            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+
+            if(refnumLabel) {
+                refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+                refnum2resn[refnumStr] = resn;
+            }
+        }
+
+        if(ic.bXlsx === undefined) {
+            let urlScript = "/Structure/icn3d/script/exceljs.min.js";
+            await me.getAjaxPromise(urlScript, 'script');
+
+            ic.bXlsx = true;
+        }
+
+        let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
+        let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
+
+        const workbook = new ExcelJS.Workbook();
+        // Load the workbook from the buffer
+        await workbook.xlsx.load(arrayBuffer);
+        const worksheet = workbook.getWorksheet(1);
+
+        // Iterate over all rows that have values
+        worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+            // Iterate over all cells in the row
+            row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
+                if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
+                    if(refnum2resn.hasOwnProperty(cell.value)) {
+                        cell.value = refnum2resn[cell.value];
+                    }
+                    else {
+                        cell.value = '';
+                    }
+                }
+            });
+        });
+
+        // Generate the workbook as a Buffer
+        const data = await workbook.xlsx.writeBuffer();
+
+        // Access the underlying ArrayBuffer
+        ic.saveFileCls.saveFile(ic.inputid + '_ig_diagram.xlsx', 'xlsx', data);
+
+        ic.drawCls.draw();
+    }
 }
 
 export {Diagram2d}

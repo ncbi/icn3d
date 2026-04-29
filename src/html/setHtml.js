@@ -928,13 +928,15 @@ class SetHtml {
 
         this.setCookieForThickness();
 
-        if(postfix = '3dprint' && bReset) {
+        // if(postfix = '3dprint' && bReset) {
+        if(bReset) {
            let select = "reset thickness";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.bSetThickness = false;
            ic.threeDPrintCls.resetAfter3Dprint();
         }
         else {
+            me.htmlCls.clickMenuCls.setLogCmd('set background ' + ic.bkgdcolor, true);
             me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | crosslinkrad ' + ic.crosslinkRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
 
             me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);

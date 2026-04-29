@@ -2447,6 +2447,34 @@ class ClickMenu {
            thisClass.setLogCmd('symmetry ' + title, true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "2ddgm_r2dt", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            thisClass.SetChainsAdvancedMenu();
+
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], true);
+            if($("#" + me.pre + "atomsCustomNucleotide").length && definedAtomsHtml) {
+                $("#" + me.pre + "atomsCustomNucleotide").html(definedAtomsHtml);
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for Nucleotides');
+                $("#" + me.pre + "atomsCustomNucleotide").resizable();
+            }
+            else {
+                alert("No nucleotide chain is found.");
+            }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "2ddgm_igdgm", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+            thisClass.SetChainsAdvancedMenu();
+
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], false, true);
+            if($("#" + me.pre + "atomsCustomProtein").length && definedAtomsHtml) {
+                $("#" + me.pre + "atomsCustomProtein").html(definedAtomsHtml);
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm_igdgm', 'Show Ig Diagram for Proteins');
+                $("#" + me.pre + "atomsCustomProtein").resizable();
+            }
+            else {
+                alert("No protein chain is found.");
+            }
+        });
+
         me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 

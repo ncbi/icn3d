@@ -118,7 +118,8 @@ class Scene {
         if(me.htmlCls.setHtmlCls.getCookie('bkgdcolor') != '') {
             let bkgdcolor = me.htmlCls.setHtmlCls.getCookie('bkgdcolor');
 
-            if(ic.bkgdcolor != bkgdcolor) {
+            // if(ic.bkgdcolor != bkgdcolor) {
+            if(bkgdcolor != 'black') {
                 me.htmlCls.clickMenuCls.setLogCmd('set background ' + bkgdcolor, true);
             }
 

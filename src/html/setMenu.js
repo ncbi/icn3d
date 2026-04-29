@@ -1681,9 +1681,15 @@ class SetMenu {
                 html += this.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr, 1, 1);
             //}
 
+            html += this.getMenuText('2ddgmwrap', '2D Diagram', undefined, 1, 1);
+            html += "<ul>";
+            html += this.getLink('2ddgm_r2dt', 'for Nucleotides (R2DT)' + me.htmlCls.wifiStr, 1, 2);
+            html += this.getLink('2ddgm_igdgm', 'for Ig Domains' + me.htmlCls.wifiStr, 1, 2);
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-              html += this.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr, 1, 1);
+              html += this.getLink('mn2_2ddgm', 'for Chains ' + me.htmlCls.wifiStr, 1, 2);
             }
+            html += "</ul>";
+            html += "</li>";
 
             html += this.getMenuText('2dctnwrap', '2D Cartoon', undefined, undefined, 1);
             html += "<ul>";

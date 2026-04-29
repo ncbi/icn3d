@@ -59475,6 +59475,34 @@ void main() {
 	           thisClass.setLogCmd('symmetry ' + title, true);
 	        });
 
+	        me.myEventCls.onIds("#" + me.pre + "2ddgm_r2dt", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+	            thisClass.SetChainsAdvancedMenu();
+
+	            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], true);
+	            if($("#" + me.pre + "atomsCustomNucleotide").length && definedAtomsHtml) {
+	                $("#" + me.pre + "atomsCustomNucleotide").html(definedAtomsHtml);
+	                me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for Nucleotides');
+	                $("#" + me.pre + "atomsCustomNucleotide").resizable();
+	            }
+	            else {
+	                alert("No nucleotide chain is found.");
+	            }
+	        });
+
+	        me.myEventCls.onIds("#" + me.pre + "2ddgm_igdgm", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+	            thisClass.SetChainsAdvancedMenu();
+
+	            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], false, true);
+	            if($("#" + me.pre + "atomsCustomProtein").length && definedAtomsHtml) {
+	                $("#" + me.pre + "atomsCustomProtein").html(definedAtomsHtml);
+	                me.htmlCls.dialogCls.openDlg('dl_2ddgm_igdgm', 'Show Ig Diagram for Proteins');
+	                $("#" + me.pre + "atomsCustomProtein").resizable();
+	            }
+	            else {
+	                alert("No protein chain is found.");
+	            }
+	        });
+
 	        me.myEventCls.onIds(["#" + me.pre + "mn6_hbondsYes", "#" + me.pre + "hbondsYes"], "click", function(e) { let ic = me.icn3d; //e.preventDefault();
 	            thisClass.SetChainsAdvancedMenu();
 
@@ -61380,9 +61408,15 @@ void main() {
 	                html += this.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr, 1, 1);
 	            //}
 
+	            html += this.getMenuText('2ddgmwrap', '2D Diagram', undefined, 1, 1);
+	            html += "<ul>";
+	            html += this.getLink('2ddgm_r2dt', 'for Nucleotides (R2DT)' + me.htmlCls.wifiStr, 1, 2);
+	            html += this.getLink('2ddgm_igdgm', 'for Ig Domains' + me.htmlCls.wifiStr, 1, 2);
 	            if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-	              html += this.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr, 1, 1);
+	              html += this.getLink('mn2_2ddgm', 'for Chains ' + me.htmlCls.wifiStr, 1, 2);
 	            }
+	            html += "</ul>";
+	            html += "</li>";
 
 	            html += this.getMenuText('2dctnwrap', '2D Cartoon', undefined, undefined, 1);
 	            html += "<ul>";
@@ -61828,6 +61862,7 @@ void main() {
 	        let bHbondplot = $('#' + me.pre + 'dl_hbondplot').hasClass('ui-dialog-content'); // initialized
 	        let bLigplot = $('#' + me.pre + 'dl_ligplot').hasClass('ui-dialog-content'); // initialized
 	        let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
+	        let b2ddiagram = $('#' + me.pre + 'dl_2ddiagram').hasClass('ui-dialog-content'); // initialized
 	        let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
 	        let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
 	        let bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
@@ -61847,6 +61882,7 @@ void main() {
 	        id2flag.dl_hbondplot = 'bHbondplot2';
 	        id2flag.dl_ligplot = 'bLigplot2';	
 	        id2flag.dl_contactmap = 'bContactmap2';
+	        id2flag.dl_2ddiagram = 'b2ddiagram2';
 	        id2flag.dl_alignerrormap = 'bAlignerrormap2';
 	        id2flag.dl_interactionsorted = 'bTable2';
 	        id2flag.dl_alignment = 'bAlignmentInit2';
@@ -61862,6 +61898,7 @@ void main() {
 	        if(bHbondplot) status.bHbondplot2 = $('#' + me.pre + 'dl_hbondplot').dialog( 'isOpen' );
 	        if(bLigplot) status.bLigplot2 = $('#' + me.pre + 'dl_ligplot').dialog( 'isOpen' );
 	        if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
+	        if(b2ddiagram) status.b2ddiagram2 = $('#' + me.pre + 'dl_2ddiagram').dialog( 'isOpen' );
 	        if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
 	        if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
 	        if(bAlignmentInit) status.bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
@@ -61947,7 +61984,7 @@ void main() {
 
 	                  d3.select("#" + me.svgid).attr("width", width).attr("height", height);
 	              }
-	              else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
+	              else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_2ddiagram' || id == me.pre + 'dl_alignerrormap') {
 	                  let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
 	                  let ratio = $("#" + id).width() / oriWidth;
 
@@ -61971,6 +62008,10 @@ void main() {
 	                      let width = ic.contactmapWidth * ratio;
 	                      $("#" + me.contactmapid).attr("width", width);
 	                  }
+	                //   else if(id == me.pre + 'dl_2ddiagram') {
+	                //     let width = ic.twoddiagramWidth * ratio;
+	                //     $("#" + me.twoddiagramid).attr("width", width);
+	                // }
 	                  else if(id == me.pre + 'dl_alignerrormap') {
 	                    let width = ic.alignerrormapWidth * ratio;
 	                    $("#" + me.alignerrormapid).attr("width", width);
@@ -62049,7 +62090,7 @@ void main() {
 
 	        let status = this.getDialogStatus().status;
 
-	        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+	        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_2ddiagram'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
 	            //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
 	            let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
@@ -62085,16 +62126,17 @@ void main() {
 	                  modal: false,
 	                  position: position,
 	                  close: function(e) {
-	                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bHbondplot2))
-	                        ||(id === me.pre + 'dl_hbondplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+	                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_hbondplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.b2ddiagram2))
+	                        ||(id === me.pre + 'dl_2ddiagram' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
 	                        ) {
 	                          if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
 	                              let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -62120,7 +62162,7 @@ void main() {
 
 	                          d3.select("#" + me.svgid).attr("width", width).attr("height", height);
 	                      }
-	                      else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
+	                      else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_2ddiagram' || id == me.pre + 'dl_alignerrormap') {
 	                          let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
 	                          let ratio = $("#" + id).width() / oriWidth;
 
@@ -62140,6 +62182,10 @@ void main() {
 	                              let width = ic.contactmapWidth * ratio;
 	                              $("#" + me.contactmapid).attr("width", width);
 	                          }
+	                        //   else if(id == me.pre + 'dl_2ddiagram') {
+	                        //     let width = ic.twoddiagramWidth * ratio;
+	                        //     $("#" + me.twoddiagramid).attr("width", width);
+	                        // }
 	                          else if(id == me.pre + 'dl_alignerrormap') {
 	                            let width = ic.alignerrormapWidth * ratio;
 	                            $("#" + me.alignerrormapid).attr("width", width);
@@ -62276,7 +62322,7 @@ void main() {
 	        let width = 400, height = 150;
 	        let twoddgmWidth = me.htmlCls.width2d + 20;
 
-	        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot'  || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+	        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot'  || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_2ddiagram' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
 	            $( "#" + id ).show();
 	            $( "#" + id + "_nb").show();
 	            $( "#" + id + "_title").html(title);
@@ -62321,6 +62367,11 @@ void main() {
 
 	                      $("#" + me.contactmapid).attr("width", width);
 	                  }
+	                //   else if(id == me.pre + 'dl_2ddiagram') {
+	                //       let width = ic.twoddiagramWidth * ratio;
+
+	                //       $("#" + me.twoddiagramid).attr("width", width);
+	                //   }
 	                  else if(id == me.pre + 'dl_alignerrormap') {
 	                    let width = ic.alignerrormapWidth * ratio;
 
@@ -63012,6 +63063,22 @@ void main() {
 	        html += "<span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "applycontactmap'>Display</button></span><br>";
 	        html += "</div>";
 
+	        html += me.htmlCls.divStr + "dl_2ddgm_r2dt' class='" + dialogClass + "'>";
+	        html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for Nucleotides (R2DT)');
+	        html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
+	        html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
+	        html += "</select><br>";
+	        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button><br>";
+	        html += "</div>";
+
+	        html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
+	        html += this.addNotebookTitle('dl_2ddgm_igdgm', '2D Diagram for Ig Domains (R2DT)');
+	        html += "1. Select a protein chain to show Ig diagram. An Excel file containing <br>the Ig diagram will be saved to your computer.<br>";
+	        html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomProtein' size='5' style='min-width:130px;'>";
+	        html += "</select><br>";
+	        html += me.htmlCls.buttonStr + "applyigdgm'>Show Ig Diagram</button><br>";
+	        html += "</div>";
+
 	        html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
 	        html += this.addNotebookTitle('dl_hbonds', 'Interaction Analysis');
 	        html += "1. Choose interaction types and their thresholds:<br>";
@@ -63337,6 +63404,11 @@ void main() {
 	        html += "</select></div><br>";
 	        html += '<div id="' + me.pre + 'contactmapDiv"></div>';
 
+	        html += "</div>";
+
+	        html += me.htmlCls.divStr + "dl_2ddiagram' style='background-color:white' class='" + dialogClass + "'>";
+	        html += this.addNotebookTitle('dl_2ddiagram', '2D Diagram');
+	        html += '<div id="' + me.pre + '2ddiagramDiv"></div>';
 	        html += "</div>";
 
 	        html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
@@ -66590,6 +66662,24 @@ void main() {
 	           await ic.contactMapCls.contactMap(contactdist, contacttype);
 	           thisClass.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
 	        });
+	        me.myEventCls.onIds("#" + me.pre + "applyr2dt", "click", async function(e) { let ic = me.icn3d;
+	           e.preventDefault();
+	           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+	           let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+
+	           await ic.diagram2dCls.drawR2dt(chainid);
+	           thisClass.setLogCmd('diagram 2d nucleotide | ' + chainid, true);
+	        });
+	        me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
+	           e.preventDefault();
+	           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+	           let chainid = $("#" + ic.pre + "atomsCustomProtein").val();
+
+	           await ic.diagram2dCls.drawIgdgm(chainid);
+	           thisClass.setLogCmd('diagram 2d ig | ' + chainid, true);
+	        });
 	        me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", async function(e) { let ic = me.icn3d;
 	           e.preventDefault();
 	           
@@ -68941,13 +69031,15 @@ void main() {
 
 	        this.setCookieForThickness();
 
-	        if(postfix = bReset) {
+	        // if(postfix = '3dprint' && bReset) {
+	        if(bReset) {
 	           let select = "reset thickness";
 	           me.htmlCls.clickMenuCls.setLogCmd(select, true);
 	           ic.bSetThickness = false;
 	           ic.threeDPrintCls.resetAfter3Dprint();
 	        }
 	        else {
+	            me.htmlCls.clickMenuCls.setLogCmd('set background ' + ic.bkgdcolor, true);
 	            me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | crosslinkrad ' + ic.crosslinkRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
 
 	            me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);
@@ -75497,7 +75589,8 @@ void main() {
 	        if(me.htmlCls.setHtmlCls.getCookie('bkgdcolor') != '') {
 	            let bkgdcolor = me.htmlCls.setHtmlCls.getCookie('bkgdcolor');
 
-	            if(ic.bkgdcolor != bkgdcolor) {
+	            // if(ic.bkgdcolor != bkgdcolor) {
+	            if(bkgdcolor != 'black') {
 	                me.htmlCls.clickMenuCls.setLogCmd('set background ' + bkgdcolor, true);
 	            }
 
@@ -120461,30 +120554,19 @@ void main() {
 	    }
 
 	    //Set the menu of defined sets with an array of defined names "commandnameArray".
-	    setAtomMenu(commandnameArray) { let ic = this.icn3d; ic.icn3dui;
+	    setAtomMenu(commandnameArray, bNucleotide, bProtein) { let ic = this.icn3d; ic.icn3dui;
 	      let html = "";
 	      let nameArray1 =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
 	      let nameArray2 =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
 
 	      let nameArrayTmp = nameArray1.concat(nameArray2).sort();
 	      let nameArray = [];
-	        //  $.each(nameArrayTmp, function(i, el){
-	        //       if($.inArray(el, nameArray) === -1) nameArray.push(el);
-	        //  });
+
 	      nameArrayTmp.forEach(elem => {
 	        if($.inArray(elem, nameArray) === -1) nameArray.push(elem);
 	      });
 	        
-	        // let structureArray = Object.keys(me.utilsCls.getStructures(ic.dAtoms));
-
-	        // nameArrayTmp.forEach((elem) => {
-	        //     structureArray.forEach((structure) => {
-	        //         if (ic.defNames2Residues[elem] && ic.defNames2Residues[elem][0] && ic.defNames2Residues[elem][0].split("_")[0].includes(structure.split("_")[0])){
-	        //             if ($.inArray(elem, nameArray) === -1) nameArray.push(elem);
-	        //         }
-	        //     });
-	        // });
-	      //for(let i in ic.defNames2Atoms) {
+	      let bFoundNucleotide = false, bFoundProtein = false;
 	      for(let i = 0, il = nameArray.length; i < il; ++i) {
 	          let name = nameArray[i];
 
@@ -120507,13 +120589,38 @@ void main() {
 	          let colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
 	          let color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
-	          if(commandnameArray.indexOf(name) != -1) {
-	            html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
+	          if(bNucleotide) {
+	            // Handle nucleotide-specific logic
+	            if(ic.nucleotides.hasOwnProperty(atom.serial) && name != 'nucleotides' && !ic.structures.hasOwnProperty(name)) {
+	                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+	                bFoundNucleotide = true;
+	            }
+	          }
+	          else if(bProtein) {
+	            // Handle protein-specific logic
+	            if(ic.proteins.hasOwnProperty(atom.serial) && name != 'proteins' && !ic.structures.hasOwnProperty(name)) {
+	                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+	                bFoundProtein = true;
+	            }
 	          }
 	          else {
-	            html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+	            if(commandnameArray.indexOf(name) != -1) {
+	                html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
+	            }
+	            else {
+	                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+	            }
 	          }
 	      }
+
+	      if(bNucleotide && !bFoundNucleotide) {
+	          html = "";
+	      }
+
+	      if(bProtein && !bFoundProtein) {
+	          html = "";
+	      }
+
 	      return html;
 	    }
 
@@ -120658,24 +120765,34 @@ void main() {
 	        ic.hlUpdateCls.updateHlMenus();
 	    }
 
+	    selectSets(nameArray) { let ic = this.icn3d, me = ic.icn3dui;
+	        ic.nameArray = nameArray;
+
+	        if(nameArray !== null) {
+	            // log the selection
+	            //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
+
+	            let bUpdateHlMenus = false;
+	            this.changeCustomAtoms(nameArray, bUpdateHlMenus);
+	            //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+	            me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+
+	            ic.bSelectResidue = false;
+	        }
+	    }
+
 	    clickCustomAtoms() { let ic = this.icn3d, me = ic.icn3dui;
 	        let thisClass = this;
 	        //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let ic = thisClass.icn3d;
-	        $("#" + ic.pre + "atomsCustom").change(function(e) { let ic = thisClass.icn3d;
+	        $("#" + ic.pre + "atomsCustom").change(function(e) { thisClass.icn3d;
 	           let nameArray = $(this).val();
-	           ic.nameArray = nameArray;
+	           thisClass.selectSets(nameArray);
+	        });
 
-	           if(nameArray !== null) {
-	             // log the selection
-	             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
-
-	             let bUpdateHlMenus = false;
-	             thisClass.changeCustomAtoms(nameArray, bUpdateHlMenus);
-	             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-	             me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-
-	             ic.bSelectResidue = false;
-	           }
+	        me.myEventCls.onIds(["#" + ic.pre + "atomsCustomNucleotide", "#" + ic.pre + "atomsCustomProtein"], "change", function(e) { thisClass.icn3d;
+	        //$("#" + ic.pre + "atomsCustomNucleotide").change(function(e) { let ic = thisClass.icn3d;
+	           let chainid = $(this).val();
+	           thisClass.selectSets([chainid]);
 	        });
 
 	        me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "focus", function(e) { let ic = thisClass.icn3d;
@@ -121634,6 +121751,22 @@ void main() {
 	            ic.bRender = true;
 	            thisClass.updateTransformation(steps);
 	            await ic.cartoon2dCls.draw2Dcartoon(type);
+	            ic.bRender = false;
+	          }
+	          else if(command.indexOf('diagram 2d nucleotide') == 0) {
+	            let paraArray = command.split(' | ');
+	            let chainid = paraArray[1];
+
+	            ic.bRender = true;
+	            await ic.diagram2dCls.drawR2dt(chainid);
+	            ic.bRender = false;
+	          }
+	          else if(command.indexOf('diagram 2d ig') == 0) {
+	            let paraArray = command.split(' | ');
+	            let chainid = paraArray[1];
+
+	            ic.bRender = true;
+	            await ic.diagram2dCls.drawIgdgm(chainid);
 	            ic.bRender = false;
 	          }
 	          else if(command.indexOf('add msa track') == 0) {
@@ -129169,6 +129302,118 @@ void main() {
 
 	        return html;
 	    }
+
+	    async drawR2dt(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+	        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid2rnaid=" + chainid;
+
+	        let data = await me.getAjaxPromise(url, 'jsonp');
+
+	        let html = '';
+	        if(data && data.rnaid) {
+	            html += '<r2dt-web search=\'{"urs": "' + data.rnaid + '"}\' />';
+	            html += '<script type="text/javascript" src="https://rnacentral.github.io/r2dt-web/dist/r2dt-web.js"></script>';
+	            $("#" + me.pre + "2ddiagramDiv").html(html);
+	            me.htmlCls.dialogCls.openDlg('dl_2ddiagram', 'Show R2DT Diagram for chain ' + chainid);
+	        }
+	        else {
+	            alert("No R2DT diagram can be found for chain " + chainid);
+	        }
+	    }
+
+	    async drawIgdgm(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+	        // select the current chain
+	        //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
+
+	        // run ig detection
+	        ic.bRunRefnumAgain = true;
+	        if(!ic.bAnnoShown) await ic.showAnnoCls.showAnnotations();
+	        await ic.annotationCls.setAnnoTabIg(true);
+	        ic.bRunRefnumAgain = false;
+
+	        if(!ic.chain2igArray) {
+	            alert("No Ig domain was found for chain " + chainid);
+	            return;
+	        }
+
+	        let igArray = ic.chain2igArray[chainid]; 
+
+	        let igType = '', bFound = false;
+	        for(let i = 0, il = igArray.length; i < il; ++i) {
+	            let domainid = igArray[i].domainid;
+	            if(!ic.domainid2info) continue;
+
+	            let info = ic.domainid2info[domainid];
+	            if(!info) continue;
+	            
+	            igType = ic.ref2igtype[info.refpdbname];
+
+	            if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI') {
+	                bFound = true;
+	                break;
+	            }
+	        }
+
+	        if(!bFound) {
+	            alert("The Ig type for chain " + chainid + " is " + igType + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
+	            return;
+	        }
+
+	        // get the hash of refnum to resn
+	        let refnum2resn = {};
+	        for(let resid in ic.resid2refnum) {
+	            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+	            if(!atom) continue;
+
+	            // let resn = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+	            let resn = me.utilsCls.residueName2Abbr(atom.resn);
+
+	            let refnumStr, refnumLabel = ic.resid2refnum[resid];
+
+	            if(refnumLabel) {
+	                refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+	                refnum2resn[refnumStr] = resn;
+	            }
+	        }
+
+	        if(ic.bXlsx === undefined) {
+	            let urlScript = "/Structure/icn3d/script/exceljs.min.js";
+	            await me.getAjaxPromise(urlScript, 'script');
+
+	            ic.bXlsx = true;
+	        }
+
+	        let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
+	        let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
+
+	        const workbook = new ExcelJS.Workbook();
+	        // Load the workbook from the buffer
+	        await workbook.xlsx.load(arrayBuffer);
+	        const worksheet = workbook.getWorksheet(1);
+
+	        // Iterate over all rows that have values
+	        worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+	            // Iterate over all cells in the row
+	            row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+	                //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
+	                if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
+	                    if(refnum2resn.hasOwnProperty(cell.value)) {
+	                        cell.value = refnum2resn[cell.value];
+	                    }
+	                    else {
+	                        cell.value = '';
+	                    }
+	                }
+	            });
+	        });
+
+	        // Generate the workbook as a Buffer
+	        const data = await workbook.xlsx.writeBuffer();
+
+	        // Access the underlying ArrayBuffer
+	        ic.saveFileCls.saveFile(ic.inputid + '_ig_diagram.xlsx', 'xlsx', data);
+
+	        ic.drawCls.draw();
+	    }
 	}
 
 	/**
@@ -131128,7 +131373,12 @@ void main() {
 	            //blob = new Blob([data],{ type: "application/octet-stream"});
 	            blob = new Blob(data,{ type: "application/octet-stream"});
 	        }
+	        else if(type === 'xlsx') {
+	            let data = text; // here text is an array of blobs
 
+	            //blob = new Blob([data],{ type: "application/octet-stream"});
+	            blob = new Blob([data], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"} );
+	        }
 	        if(type !== 'png') {
 	            //https://github.com/eligrey/FileSaver.js/
 	            if(!bReturnBlobOnly) saveAs(blob, filename);
@@ -135431,7 +135681,7 @@ void main() {
 	    //even when multiple iCn3D viewers are shown together.
 	    this.pre = this.cfg.divid + "_";
 
-	    this.REVISION = '3.48.1';
+	    this.REVISION = '3.49.0';
 
 	    // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
 	    this.bNode = (Object.keys(window).length < 3) ? true : false;
