@@ -983,7 +983,7 @@ class Diagram2d {
 
         let igArray = ic.chain2igArray[chainid]; 
 
-        let igType = '', bFound = false;
+        let igTypeArray = [], bFound = false;
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             if(!ic.domainid2info) continue;
@@ -991,11 +991,14 @@ class Diagram2d {
             let info = ic.domainid2info[domainid];
             if(!info) continue;
             
-            igType = ic.ref2igtype[info.refpdbname];
+            let igType = ic.ref2igtype[info.refpdbname];
 
             if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI') {
                 bFound = true;
-                break;
+                igTypeArray.push(igType);
+            }
+            else {
+                igTypeArray.push('');
             }
         }
 
@@ -1014,10 +1017,12 @@ class Diagram2d {
             let resn = me.utilsCls.residueName2Abbr(atom.resn);
 
             let refnumStr, refnumLabel = ic.resid2refnum[resid];
+            let domainid = ic.resid2domainid[resid];
 
             if(refnumLabel) {
                 refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                refnum2resn[refnumStr] = resn;
+                if(!refnum2resn[domainid]) refnum2resn[domainid] = {};
+                refnum2resn[domainid][refnumStr] = resn;
             }
         }
 
@@ -1028,32 +1033,50 @@ class Diagram2d {
             ic.bXlsx = true;
         }
 
-        let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
-        let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
+        const mainWorkbook = new ExcelJS.Workbook();
 
-        const workbook = new ExcelJS.Workbook();
-        // Load the workbook from the buffer
-        await workbook.xlsx.load(arrayBuffer);
-        const worksheet = workbook.getWorksheet(1);
+        for(let i = 0, il = igArray.length; i < il; ++i) {
+            let domainid = igArray[i].domainid;
+            let igType = igTypeArray[i];
+            if(!igType) {
+                const newSheet = mainWorkbook.addWorksheet(`Sheet_${i + 1}`);
+            }
+            else {
+                let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
+                let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
 
-        // Iterate over all rows that have values
-        worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-            // Iterate over all cells in the row
-            row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
-                if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
-                    if(refnum2resn.hasOwnProperty(cell.value)) {
-                        cell.value = refnum2resn[cell.value];
-                    }
-                    else {
-                        cell.value = '';
-                    }
-                }
-            });
-        });
+                const workbook = new ExcelJS.Workbook();
+                // Load the workbook from the buffer
+                await workbook.xlsx.load(arrayBuffer);
+                const worksheet = workbook.getWorksheet(1);
+
+                const newSheet = mainWorkbook.addWorksheet();
+                // Clone the model to transfer styles and data
+                newSheet.model = { 
+                    ...worksheet.model, 
+                    name: "Ig Domain " + (i + 1) 
+                };
+
+                // Iterate over all rows that have values
+                newSheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+                    // Iterate over all cells in the row
+                    row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                        //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
+                        if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
+                            if(refnum2resn[domainid].hasOwnProperty(cell.value)) {
+                                cell.value = refnum2resn[domainid][cell.value];
+                            }
+                            else {
+                                cell.value = '';
+                            }
+                        }
+                    });
+                });
+            }
+        }
 
         // Generate the workbook as a Buffer
-        const data = await workbook.xlsx.writeBuffer();
+        const data = await mainWorkbook.xlsx.writeBuffer();
 
         // Access the underlying ArrayBuffer
         ic.saveFileCls.saveFile(ic.inputid + '_ig_diagram.xlsx', 'xlsx', data);
