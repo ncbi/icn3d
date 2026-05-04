@@ -153,14 +153,14 @@ class DefinedSets {
           let colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
           let color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
-          if(bNucleotide) {
+          if(bNucleotide && atom) {
             // Handle nucleotide-specific logic
             if(ic.nucleotides.hasOwnProperty(atom.serial) && name != 'nucleotides' && !ic.structures.hasOwnProperty(name)) {
                 html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
                 bFoundNucleotide = true;
             }
           }
-          else if(bProtein) {
+          else if(bProtein && atom) {
             // Handle protein-specific logic
             if(ic.proteins.hasOwnProperty(atom.serial) && name != 'proteins' && !ic.structures.hasOwnProperty(name)) {
                 html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
