@@ -129346,15 +129346,13 @@ class Diagram2d {
 
             if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI') {
                 bFound = true;
-                igTypeArray.push(igType);
             }
-            else {
-                igTypeArray.push('');
-            }
+
+            igTypeArray.push(igType);
         }
 
         if(!bFound) {
-            var aaa = 1; //alert("The Ig type for chain " + chainid + " is " + igType + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
+            var aaa = 1; //alert("The Ig type for chain " + chainid + " is " + igTypeArray + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
             return;
         }
 
@@ -129389,8 +129387,8 @@ class Diagram2d {
         for(let i = 0, il = igArray.length; i < il; ++i) {
             let domainid = igArray[i].domainid;
             let igType = igTypeArray[i];
-            if(!igType) {
-                mainWorkbook.addWorksheet(`Sheet_${i + 1}`);
+            if(!(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI')) {
+                mainWorkbook.addWorksheet((i + 1) + ". " + igType);
             }
             else {
                 let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
@@ -129405,7 +129403,7 @@ class Diagram2d {
                 // Clone the model to transfer styles and data
                 newSheet.model = { 
                     ...worksheet.model, 
-                    name: "Ig Domain " + (i + 1) 
+                    name: (i + 1) + ". " + igType
                 };
 
                 // Iterate over all rows that have values
