@@ -129075,6 +129075,68 @@ class Diagram2d {
 
             thisClass.clickNode(this);
         });
+
+        // event for R2DT
+        //document.addEventListener('click', (event) => {
+        $(document).on("click", "r2dt-web", function(e) { let ic = thisClass.icn3d;
+            // The 2nd element in the path is the actual clicked g element
+            const path = e.originalEvent.composedPath();
+            const clickedElement = path[1];
+            let titleElem = clickedElement.querySelector('title');
+
+            if(titleElem) {
+                titleElem.style.cursor = "pointer";
+                let title = titleElem.textContent; // e.g., 14 (position.label in template: 14.A)
+                let textArray = title.split(' ');
+                let position_resn = textArray[textArray.length - 1].split('.');
+                let pos = position_resn[0];
+                let resn = position_resn[1].substr(0, position_resn[1].length - 1);
+
+                let resid = ic.ncbi2resid[ic.r2dt_chainid + '_' + pos];
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+                if(!atom) {
+                    var aaa = 1; //alert("This residue has no 3D coordinates...");
+                }
+                else {
+                    let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn);
+
+                    let realResn = (resn == 'T') ? 'U' : resn;
+
+                    if(resn != oneLetterRes && realResn != oneLetterRes) {
+                        var aaa = 1; //alert("The mouseover text in R2DT didn't match the residue number in 3D view...");
+                    }
+                    else {
+                        // highlight the selected residue
+                        if(ic.bCtrl || ic.bShift) {
+                            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
+                        }
+                        else {
+                            ic.hAtoms = ic.residues[resid];
+                        }
+
+                        ic.hlUpdateCls.showHighlight();
+                    }
+                }
+
+                // highlight the selected residue in 2D
+                let textElem = clickedElement.querySelector('text');
+                textElem.setAttribute("stroke", "#f8b84e");
+                textElem.setAttribute("stroke-width", "0.5px");
+            }
+
+            // set cursor for all nodes
+            if(!ic.bSetCursor) {
+                ic.bSetCursor = true;
+                let r2dt = document.querySelector('r2dt-web').shadowRoot;
+                let elemArray = r2dt.querySelectorAll('g:has(title)');
+                for(let i = 0, il = elemArray.length; i < il; ++i) {
+                    if(!elemArray[i].hasAttribute('id')) { // skip the main g element
+                        elemArray[i].style.cursor = "pointer";
+                    }
+                }
+            }
+        }); 
     }
 
     clickNode(node) {  let ic = this.icn3d, me = ic.icn3dui;
@@ -129301,12 +129363,16 @@ class Diagram2d {
     }
 
     async drawR2dt(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.r2dt_chainid = chainid;
+
         let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid2rnaid=" + chainid;
 
         let data = await me.getAjaxPromise(url, 'jsonp');
 
         let html = '';
         if(data && data.rnaid) {
+            ic.bSetCursor = false;
+
             html += '<r2dt-web search=\'{"urs": "' + data.rnaid + '"}\' />';
             html += '<script type="text/javascript" src="https://rnacentral.github.io/r2dt-web/dist/r2dt-web.js"></script>';
             $("#" + me.pre + "2ddiagramDiv").html(html);
@@ -129352,7 +129418,7 @@ class Diagram2d {
         }
 
         if(!bFound) {
-            var aaa = 1; //alert("The Ig type for chain " + chainid + " is " + igTypeArray + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
+            var aaa = 1; //alert("The Ig type(s) for chain " + chainid + " is/are " + igTypeArray + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
             return;
         }
 
@@ -135699,7 +135765,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.49.1';
+    this.REVISION = '3.49.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
