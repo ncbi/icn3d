@@ -63065,7 +63065,7 @@ class SetDialog {
         html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
         html += "</select><br>";
-        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button><br>";
+        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button> <br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
@@ -129104,7 +129104,7 @@ class Diagram2d {
                     let realResn = (resn == 'T') ? 'U' : resn;
 
                     if(resn != oneLetterRes && realResn != oneLetterRes) {
-                        var aaa = 1; //alert("The mouseover text in R2DT didn't match the residue number in 3D view...");
+                        var aaa = 1; //alert("The residue number in R2DT didn't match that in 3D view...");
                     }
                     else {
                         // highlight the selected residue
@@ -129123,18 +129123,6 @@ class Diagram2d {
                 let textElem = clickedElement.querySelector('text');
                 textElem.setAttribute("stroke", "#f8b84e");
                 textElem.setAttribute("stroke-width", "0.5px");
-            }
-
-            // set cursor for all nodes
-            if(!ic.bSetCursor) {
-                ic.bSetCursor = true;
-                let r2dt = document.querySelector('r2dt-web').shadowRoot;
-                let elemArray = r2dt.querySelectorAll('g:has(title)');
-                for(let i = 0, il = elemArray.length; i < il; ++i) {
-                    if(!elemArray[i].hasAttribute('id')) { // skip the main g element
-                        elemArray[i].style.cursor = "pointer";
-                    }
-                }
             }
         }); 
     }
@@ -129371,12 +129359,21 @@ class Diagram2d {
 
         let html = '';
         if(data && data.rnaid) {
-            ic.bSetCursor = false;
-
             html += '<r2dt-web search=\'{"urs": "' + data.rnaid + '"}\' />';
             html += '<script type="text/javascript" src="https://rnacentral.github.io/r2dt-web/dist/r2dt-web.js"></script>';
             $("#" + me.pre + "2ddiagramDiv").html(html);
             me.htmlCls.dialogCls.openDlg('dl_2ddiagram', 'Show R2DT Diagram for chain ' + chainid);
+ 
+            // set cursor for all nodes
+            setTimeout(function(){
+                let r2dt = document.querySelector('r2dt-web').shadowRoot;
+                let elemArray = r2dt.querySelectorAll('g:has(title)');
+                for(let i = 0, il = elemArray.length; i < il; ++i) {
+                    if(!elemArray[i].hasAttribute('id')) { // skip the main g element
+                        elemArray[i].style.cursor = "pointer";
+                    }
+                }
+            }, 1000);
         }
         else {
             var aaa = 1; //alert("No R2DT diagram can be found for chain " + chainid);

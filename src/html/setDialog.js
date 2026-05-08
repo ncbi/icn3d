@@ -660,7 +660,7 @@ class SetDialog {
         html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
         html += "</select><br>";
-        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button><br>";
+        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button> <br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
