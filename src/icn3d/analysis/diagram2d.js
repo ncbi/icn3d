@@ -1022,7 +1022,7 @@ class Diagram2d {
                         elemArray[i].style.cursor = "pointer";
                     }
                 }
-            }, 1000);
+            }, 5000);
         }
         else {
             alert("No R2DT diagram can be found for chain " + chainid);
