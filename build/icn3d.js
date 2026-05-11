@@ -121755,7 +121755,8 @@ void main() {
 	          }
 	          else if(command.indexOf('diagram 2d nucleotide') == 0) {
 	            let paraArray = command.split(' | ');
-	            let chainid = paraArray[1];
+	            let pos = command.lastIndexOf(' ');
+	            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
 
 	            ic.bRender = true;
 	            await ic.diagram2dCls.drawR2dt(chainid);
@@ -121763,7 +121764,8 @@ void main() {
 	          }
 	          else if(command.indexOf('diagram 2d ig') == 0) {
 	            let paraArray = command.split(' | ');
-	            let chainid = paraArray[1];
+	            let pos = command.lastIndexOf(' ');
+	            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
 
 	            ic.bRender = true;
 	            await ic.diagram2dCls.drawIgdgm(chainid);
@@ -129088,7 +129090,6 @@ void main() {
 	            let titleElem = clickedElement.querySelector('title');
 
 	            if(titleElem) {
-	                titleElem.style.cursor = "pointer";
 	                let title = titleElem.textContent; // e.g., 14 (position.label in template: 14.A)
 	                let textArray = title.split(' ');
 	                let position_resn = textArray[textArray.length - 1].split('.');
@@ -129126,6 +129127,12 @@ void main() {
 	                let textElem = clickedElement.querySelector('text');
 	                textElem.setAttribute("stroke", "#f8b84e");
 	                textElem.setAttribute("stroke-width", "0.5px");
+
+	                // add cursor
+	                if(!ic.bAddedCursors) {
+	                    ic.bAddedCursors = true;
+	                    ic.diagram2dCls.makeResiduesClickable();
+	                }
 	            }
 	        }); 
 	    }
@@ -129353,7 +129360,20 @@ void main() {
 	        return html;
 	    }
 
+	    makeResiduesClickable() { let ic = this.icn3d; ic.icn3dui;
+	        let r2dt = document.querySelector('r2dt-web').shadowRoot;
+	        let elemArray = r2dt.querySelectorAll('g:has(title)');
+	        for(let i = 0, il = elemArray.length; i < il; ++i) {
+	            if(!elemArray[i].hasAttribute('id')) { // skip the main g element
+	                elemArray[i].style.cursor = "pointer";
+	            }
+	        }
+	    }
+
 	    async drawR2dt(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+	        let thisClass = this;
+	        ic.bAddedCursors = false;
+
 	        ic.r2dt_chainid = chainid;
 
 	        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid2rnaid=" + chainid;
@@ -129369,14 +129389,9 @@ void main() {
 	 
 	            // set cursor for all nodes
 	            setTimeout(function(){
-	                let r2dt = document.querySelector('r2dt-web').shadowRoot;
-	                let elemArray = r2dt.querySelectorAll('g:has(title)');
-	                for(let i = 0, il = elemArray.length; i < il; ++i) {
-	                    if(!elemArray[i].hasAttribute('id')) { // skip the main g element
-	                        elemArray[i].style.cursor = "pointer";
-	                    }
-	                }
-	            }, 5000);
+	                //ic.bAddedCursors = true;
+	                thisClass.makeResiduesClickable();
+	            }, 3000);
 	        }
 	        else {
 	            alert("No R2DT diagram can be found for chain " + chainid);
@@ -129437,7 +129452,7 @@ void main() {
 	            if(refnumLabel) {
 	                refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
 	                if(!refnum2resn[domainid]) refnum2resn[domainid] = {};
-	                refnum2resn[domainid][refnumStr] = resn;
+	                refnum2resn[domainid][refnumStr] = resn + resid.split('_')[2];
 	            }
 	        }
 
@@ -129449,6 +129464,8 @@ void main() {
 	        }
 
 	        const mainWorkbook = new ExcelJS.Workbook();
+
+	        let ig2width = {'IgC1': 17, 'IgC2': 18, 'IgI': 19, 'IgV': 19};
 
 	        for(let i = 0, il = igArray.length; i < il; ++i) {
 	            let domainid = igArray[i].domainid;
@@ -129467,10 +129484,8 @@ void main() {
 
 	                const newSheet = mainWorkbook.addWorksheet();
 	                // Clone the model to transfer styles and data
-	                newSheet.model = { 
-	                    ...worksheet.model, 
-	                    name: (i + 1) + ". " + igType
-	                };
+	                newSheet.model = worksheet.model;
+	                newSheet.name = (i + 1) + ". " + igType;
 
 	                // Iterate over all rows that have values
 	                newSheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
@@ -129485,8 +129500,28 @@ void main() {
 	                                cell.value = '';
 	                            }
 	                        }
+	                        else if(cell.value == 'NUMBERING') {
+	                            cell.value = '';
+	                        }
 	                    });
 	                });
+
+	                // copy the original data
+	                let colNum = ig2width[igType]; // some extra columns
+	                for(let i = 1; i <= colNum; ++i) {
+	                    const sourceCol = worksheet.getColumn(i);
+
+	                    // Copy values and styles
+	                    sourceCol.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+	                        const targetCell = newSheet.getRow(rowNumber).getCell(colNum + 2 + i);
+	                        
+	                        targetCell.value = cell.value;
+	                        targetCell.style = cell.style; // Copies font, borders, and fills
+	                    });
+
+	                    // reset width for each column
+	                    newSheet.getColumn(colNum + 2 + i).width = worksheet.getColumn(i).width;
+	                }
 	            }
 	        }
 

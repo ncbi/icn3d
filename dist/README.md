@@ -68,7 +68,7 @@
     You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at [pypi.org/project/icn3dpy](https://pypi.org/project/icn3dpy/).
 
 * <b>2D Diagram for Nucleotides and Ig Domains</b>: 
-    You can click the menu "Analysis > 2D Diagram" to show [2D Diagram for Nucleotides (R2DT)](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?50918275b7a3b89f639b141b49452e52), and [2D Diagram for Ig Domains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?9aa324efde6ad033aed6888092fb6a4c). 
+    You can click the menu "Analysis > 2D Diagram" to show [2D Diagram for Nucleotides (R2DT)](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?50918275b7a3b89f639b141b49452e52), and [2D Diagram for Ig Domains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?d37c8bf3ae23e9f07767789ed964c059). 
 
 * <b>2D Cartoons in the chain, domain, and secondary structure levels</b>: 
     You can click the menu "Analysis > 2D Cartoon" to show 2D Cartoons in the [chain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pzmT7EMTAxXKVbZu7), [domain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?Arh4H9VTMuHQURY5A), and [secondary structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?5iZSHNbXcJisp7gQ6) levels.  

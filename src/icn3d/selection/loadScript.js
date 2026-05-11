@@ -298,7 +298,8 @@ class LoadScript {
           }
           else if(command.indexOf('diagram 2d nucleotide') == 0) {
             let paraArray = command.split(' | ');
-            let chainid = paraArray[1];
+            let pos = command.lastIndexOf(' ');
+            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
 
             ic.bRender = true;
             await ic.diagram2dCls.drawR2dt(chainid);
@@ -306,7 +307,8 @@ class LoadScript {
           }
           else if(command.indexOf('diagram 2d ig') == 0) {
             let paraArray = command.split(' | ');
-            let chainid = paraArray[1];
+            let pos = command.lastIndexOf(' ');
+            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
 
             ic.bRender = true;
             await ic.diagram2dCls.drawIgdgm(chainid);
