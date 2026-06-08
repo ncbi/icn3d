@@ -131,6 +131,7 @@ class DefinedSets {
       });
         
       let bFoundNucleotide = false, bFoundProtein = false;
+      let cnt = 0;
       for(let i = 0, il = nameArray.length; i < il; ++i) {
           let name = nameArray[i];
 
@@ -155,16 +156,22 @@ class DefinedSets {
 
           if(bNucleotide && atom) {
             // Handle nucleotide-specific logic
-            if(ic.nucleotides.hasOwnProperty(atom.serial) && name != 'nucleotides' && !ic.structures.hasOwnProperty(name)) {
-                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            if(ic.nucleotides.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+                let selectStr = (cnt == 0) ? "selected" : "";
+
+                html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundNucleotide = true;
+                ++cnt;
             }
           }
           else if(bProtein && atom) {
             // Handle protein-specific logic
-            if(ic.proteins.hasOwnProperty(atom.serial) && name != 'proteins' && !ic.structures.hasOwnProperty(name)) {
-                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            if(ic.proteins.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+                let selectStr = (cnt == 0) ? "selected" : "";
+
+                html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundProtein = true;
+                ++cnt;
             }
           }
           else {
@@ -174,6 +181,7 @@ class DefinedSets {
             else {
                 html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
             }
+            ++cnt;
           }
       }
 

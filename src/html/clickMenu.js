@@ -2450,7 +2450,8 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "2ddgm_r2dt", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
-            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], true);
+            let bNucleotides = true;
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], bNucleotides);
             if($("#" + me.pre + "atomsCustomNucleotide").length && definedAtomsHtml) {
                 $("#" + me.pre + "atomsCustomNucleotide").html(definedAtomsHtml);
                 me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for Nucleotides');

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.50.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.50.0.zip) was release on June 8, 2026. users can choose to use both R2DT and RNAcanvas to show "2D Diagram for Nucleotides" integrated with 3D view. The base pairs are either from Fr3D or extended mmCIF with base pair information.
+
 [icn3d-3.49.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.49.2.zip) was release on May 7, 2026. Updated "2D Diagram for Nucleotides" so that users can click on 2D Diagram to show selection on 3D view.
 
 [icn3d-3.49.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.49.1.zip) was release on May 4, 2026. Upgraded "2D Diagram for Ig Domains" to have one diagram for each Ig domain in a chain.

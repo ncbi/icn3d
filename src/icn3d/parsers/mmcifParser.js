@@ -60,7 +60,8 @@ class MmcifParser {
         if(ic.bAssemblyUseAsu) {
             for(let i = 0, il = data.assembly.length; i < il; ++i) {
                 let mat4 = new THREE.Matrix4();
-                mat4.fromArray(data.assembly[i]);
+                let tmpArray = data.assembly[i].map(x => parseFloat(x)); // some values are string and others are number
+                mat4.fromArray(tmpArray);
     
                 // sometimes an extra matrix as included, e.g., PDb ID 2GTL
                 if(i == 0 && data.assembly[i][0] != 1) continue;
@@ -140,14 +141,14 @@ class MmcifParser {
     async loadMultipleMmcifData(data, mmcifid, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         let bText = true;
         ic.loadCIFCls.loadCIF(data, mmcifid, bText, bAppend);
-        
+
         if(Object.keys(ic.structures).length > 1) {
             ic.opts['color'] = 'structure';
         }
 
         ic.opmParserCls.modifyUIMapAssembly();
 
-        ic.pdbParserCls.addSecondary(bAppend);
+        await ic.pdbParserCls.addSecondary(bAppend);
 
         // ic.setStyleCls.setAtomStyleByOptions(ic.opts);
         // ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);

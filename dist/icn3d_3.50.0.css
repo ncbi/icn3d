@@ -125,7 +125,7 @@ button, select, input { font-size: 10px; }
 .icn3d-nalign {} 
 */
 
-.icn3d-node, .icn3d-ctnode {cursor:pointer!important; } 
+.icn3d-node, .icn3d-ctnode, #rnacanvasSvg text {cursor:pointer!important; } 
 .icn3d-interaction {cursor:pointer!important; } 
 
 /* force-directed graph node text */
@@ -295,6 +295,12 @@ input:checked + .icn3d-slider:before {
 .ncbi-page-header {
   background-color: #369;
   overflow: auto;
+}
+
+svg text {
+  user-select: none!important;
+  -webkit-user-select: none!important;
+  -webkit-tap-highlight-color: transparent!important;
 }
 
 .color-picker,

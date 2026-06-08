@@ -198,7 +198,7 @@ class SaveFile {
         }
     }
 
-    saveSvg(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
+    saveSvg(id, filename, bContactmap, bLigplot, bClassName) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
         
         let width = $("#" + id).width();
@@ -211,17 +211,24 @@ class SaveFile {
             height += ic.len4ang;
         }
 
-        let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot);
+        let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot, bClassName);
+
+        if(id == me.rnacanvasid) { // replace the font to 8
+           svgXml = svgXml.replace('font-size: 18px', 'font-size: 8px');
+        }
 
         let blob = new Blob([svgXml], {type: "image/svg+xml"});
         saveAs(blob, filename);
     }
 
-    getSvgXml(id, width, height, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
+    getSvgXml(id, width, height, bContactmap, bLigplot, bClassName) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
 
         // font is not good
-        let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
+        let svg_data = (!bClassName) ? document.getElementById(id).innerHTML : document.querySelector('.' + id).innerHTML; //put id of your svg element here
+        svg_data = svg_data.replace(/ fill=" #ccc"=""/g, '" fill="#ccc"'); // fix some data
+        svg_data = svg_data.replace(/style="cursor: pointer;"/g, '');
+        svg_data = svg_data.replace(/ font-size="/g, ' style="font-size: ');
 
         let startX = (bLigplot) ? -30 : 0;
         let startY = (bLigplot) ? -30 : 0;
@@ -513,10 +520,10 @@ class SaveFile {
                 for(let n = 0; n < 3; ++n) {
                     let nNum = n + 1;
                     stru2header[stru] += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 0].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 4].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 8].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 12].toFixed(6).toString().padStart(14, ' ') + "\n";
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 0]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 4]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 8]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 12]).toFixed(6).toString().padStart(14, ' ') + "\n";
                 }
             }
         }

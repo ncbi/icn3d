@@ -410,7 +410,7 @@ class SelectByCommand {
            residueAtomArray = Object.keys(atomHash);
        }
 
-       if(commandname != "") {
+       if(!commandname) {
            ic.selectionCls.addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues);
 
            let nameArray = [commandname];          

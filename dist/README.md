@@ -111,7 +111,8 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
 * **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "Analysis > Interactions" is based on Force-Directed Graph.
-* **[R2DT diagram](https://docs.r2dt.bio/en/latest/widget.html)**: R2DT diagram via the menu "Analysis > 2D Diagram > for Nucleotides (R2DT)" uses the R2DT widget from  [RNAcentral](https://rnacentral.org/).
+* **[R2DT diagram](https://docs.r2dt.bio/en/latest/widget.html)**: R2DT diagram via the menu "Analysis > 2D Diagram > for Nucleotides > R2DT Diagram" uses the R2DT widget from  [RNAcentral](https://rnacentral.org/) and [pdb-rna-viewer](https://github.com/PDBeurope/pdb-rna-viewer).
+* **[RNAcanvas](https://rna2drawer.app/)**: 2D diagram via the menu "Analysis > 2D Diagram > for Nucleotides > 2D Diagram with RNAcanvas" uses the RNAcanvas widget.
 
 ## Third-party libraries used in Backend
 
@@ -122,6 +123,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[SymD](https://symd.nci.nih.gov/)**: used to calculate symmetry dynamically.
 * **[scap/Jackal](http://honig.c2b2.columbia.edu/scap)**: used to predict side chain conformation dynamically.
 * **[TM-align](https://zhanggroup.org/TM-align/)**: used to align two chains of 3D structures.
+* **[FR3D](https://rna.bgsu.edu/rna3dhub/pdb/)**: used to retrieve basepairs for PDB structures.
 
 ## Tools based on
 

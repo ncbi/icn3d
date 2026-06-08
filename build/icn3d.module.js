@@ -55558,6 +55558,19 @@ class UtilsCls {
 
       return date.getFullYear().toString() + monthStr + dateStr;
     }
+
+    compMatrix(mat1, mat2, len) { this.icn3dui;
+      let eps = 1e-6;
+      let bEqual = true;
+      for (let i = 0; i < len; i++) {
+        if (Math.abs(mat1.elements[i] - mat2.elements[i]) > eps) {
+            bEqual = false;
+            break;
+        }
+      }
+      
+      return bEqual;
+    }
 }
 
 /**
@@ -59475,7 +59488,8 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "2ddgm_r2dt", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
             thisClass.SetChainsAdvancedMenu();
 
-            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], true);
+            let bNucleotides = true;
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], bNucleotides);
             if($("#" + me.pre + "atomsCustomNucleotide").length && definedAtomsHtml) {
                 $("#" + me.pre + "atomsCustomNucleotide").html(definedAtomsHtml);
                 me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for Nucleotides');
@@ -61407,7 +61421,7 @@ class SetMenu {
 
             html += this.getMenuText('2ddgmwrap', '2D Diagram', undefined, 1, 1);
             html += "<ul>";
-            html += this.getLink('2ddgm_r2dt', 'for Nucleotides (R2DT)' + me.htmlCls.wifiStr, 1, 2);
+            html += this.getLink('2ddgm_r2dt', 'for Nucleotides' + me.htmlCls.wifiStr, 1, 2);
             html += this.getLink('2ddgm_igdgm', 'for Ig Domains' + me.htmlCls.wifiStr, 1, 2);
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
               html += this.getLink('mn2_2ddgm', 'for Chains ' + me.htmlCls.wifiStr, 1, 2);
@@ -61860,6 +61874,7 @@ class Dialog {
         let bLigplot = $('#' + me.pre + 'dl_ligplot').hasClass('ui-dialog-content'); // initialized
         let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
         let b2ddiagram = $('#' + me.pre + 'dl_2ddiagram').hasClass('ui-dialog-content'); // initialized
+        let brnacanvas = $('#' + me.pre + 'dl_rnacanvas').hasClass('ui-dialog-content'); // initialized
         let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
         let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
         let bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
@@ -61880,6 +61895,7 @@ class Dialog {
         id2flag.dl_ligplot = 'bLigplot2';	
         id2flag.dl_contactmap = 'bContactmap2';
         id2flag.dl_2ddiagram = 'b2ddiagram2';
+        id2flag.dl_rnacanvas = 'brnacanvas2';
         id2flag.dl_alignerrormap = 'bAlignerrormap2';
         id2flag.dl_interactionsorted = 'bTable2';
         id2flag.dl_alignment = 'bAlignmentInit2';
@@ -61896,6 +61912,7 @@ class Dialog {
         if(bLigplot) status.bLigplot2 = $('#' + me.pre + 'dl_ligplot').dialog( 'isOpen' );
         if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
         if(b2ddiagram) status.b2ddiagram2 = $('#' + me.pre + 'dl_2ddiagram').dialog( 'isOpen' );
+        if(brnacanvas) status.brnacanvas2 = $('#' + me.pre + 'dl_rnacanvas').dialog( 'isOpen' );
         if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
         if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
         if(bAlignmentInit) status.bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
@@ -61981,7 +61998,7 @@ class Dialog {
 
                   d3.select("#" + me.svgid).attr("width", width).attr("height", height);
               }
-              else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_2ddiagram' || id == me.pre + 'dl_alignerrormap') {
+              else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                   let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                   let ratio = $("#" + id).width() / oriWidth;
 
@@ -62005,10 +62022,6 @@ class Dialog {
                       let width = ic.contactmapWidth * ratio;
                       $("#" + me.contactmapid).attr("width", width);
                   }
-                //   else if(id == me.pre + 'dl_2ddiagram') {
-                //     let width = ic.twoddiagramWidth * ratio;
-                //     $("#" + me.twoddiagramid).attr("width", width);
-                // }
                   else if(id == me.pre + 'dl_alignerrormap') {
                     let width = ic.alignerrormapWidth * ratio;
                     $("#" + me.alignerrormapid).attr("width", width);
@@ -62087,7 +62100,7 @@ class Dialog {
 
         let status = this.getDialogStatus().status;
 
-        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_2ddiagram'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_2ddiagram' || id === me.pre + 'dl_rnacanvas' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
             let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
@@ -62123,17 +62136,18 @@ class Dialog {
                   modal: false,
                   position: position,
                   close: function(e) {
-                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_hbondplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.b2ddiagram2))
-                        ||(id === me.pre + 'dl_2ddiagram' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2))
+                      if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_ligplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_hbondplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.b2ddiagram2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_2ddiagram' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.brnacanvas2))
+                        ||(id === me.pre + 'dl_rnacanvas' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bLigplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2) &&(!status.bHbondplot2) &&(!status.b2ddiagram2))
                         ) {
                           if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                               let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -62159,7 +62173,7 @@ class Dialog {
 
                           d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                       }
-                      else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_2ddiagram' || id == me.pre + 'dl_alignerrormap') {
+                      else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_ligplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                           let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
                           let ratio = $("#" + id).width() / oriWidth;
 
@@ -62179,10 +62193,6 @@ class Dialog {
                               let width = ic.contactmapWidth * ratio;
                               $("#" + me.contactmapid).attr("width", width);
                           }
-                        //   else if(id == me.pre + 'dl_2ddiagram') {
-                        //     let width = ic.twoddiagramWidth * ratio;
-                        //     $("#" + me.twoddiagramid).attr("width", width);
-                        // }
                           else if(id == me.pre + 'dl_alignerrormap') {
                             let width = ic.alignerrormapWidth * ratio;
                             $("#" + me.alignerrormapid).attr("width", width);
@@ -62319,7 +62329,7 @@ class Dialog {
         let width = 400, height = 150;
         let twoddgmWidth = me.htmlCls.width2d + 20;
 
-        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot'  || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_2ddiagram' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot'  || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_2ddiagram'  || id === me.pre + 'dl_rnacanvas' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
             $( "#" + id + "_nb").show();
             $( "#" + id + "_title").html(title);
@@ -62364,11 +62374,6 @@ class Dialog {
 
                       $("#" + me.contactmapid).attr("width", width);
                   }
-                //   else if(id == me.pre + 'dl_2ddiagram') {
-                //       let width = ic.twoddiagramWidth * ratio;
-
-                //       $("#" + me.twoddiagramid).attr("width", width);
-                //   }
                   else if(id == me.pre + 'dl_alignerrormap') {
                     let width = ic.alignerrormapWidth * ratio;
 
@@ -62469,7 +62474,7 @@ class SetDialog {
 
         me.svgid_ct = me.pre + "icn3d_cartoon";
 
-        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
+        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD; margin:1px;" id="';
         let tmpStr = 'icn3d-node-text';
         html += me.htmlCls.divNowrapStr + "Dynamically generated for selected residues. <br>Nodes can be dragged or clicked.</div>";
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.svgid_ct + '_svg">SVG</button>' + me.htmlCls.space2;
@@ -63062,10 +63067,10 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_2ddgm_r2dt' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for Nucleotides (R2DT)');
-        html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
+        html += "1. Select a nucleotide chain to show 2D diagram:<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
         html += "</select><br>";
-        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button> <br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
+        html += "2. " + me.htmlCls.buttonStr + "applyr2dt'>R2DT Diagram</button>" + me.htmlCls.buttonStr + "applyfr3d' style='margin-left:12px'>2D Diagram with RNAcanvas</button><br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
@@ -63404,8 +63409,31 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddiagram' style='background-color:white' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_2ddiagram', '2D Diagram');
-        html += '<div id="' + me.pre + '2ddiagramDiv"></div>';
+        html += this.addNotebookTitle('dl_2ddiagram', 'R2DT Diagram');
+        html += '<div id="' + me.pre + '2ddiagramDiv"></div><br>';
+        html += "<b>Download</b>: " + me.htmlCls.buttonStr + "r2dt_svg'>SVG</button>" + me.htmlCls.buttonStr + "r2dt_dotb' style='margin-left:12px'>Dot-Bracket</button>" + me.htmlCls.buttonStr + "r2dt_seq' style='margin-left:12px'>Sequence</button><br>";
+        html += "</div>";
+
+        me.rnacanvasid = me.pre + 'rancanvas';
+        html += me.htmlCls.divStr + "dl_rnacanvas' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_rnacanvas', '2D Diagram with RNAcanvas');
+
+        me.lwTypes = ['cWW', 'tWW', 'cWH', 'tWH', 'cWS', 'tWS', 'cHH', 'tHH', 'cHS', 'tHS', 'cSS', 'tSS']; // exclude 'cWW'
+        html += "<table><tr><td>Show non-nested BPs:<br>";
+        html += me.htmlCls.divNowrapStr + "<select id='" + me.pre + "basepairType' multiple size='2' style='min-width:130px;'>";
+        html += "<option value='' selected>None</option>";
+        html += "<option value='" + me.lwTypes.join(',') + "'>All</option>";
+        for(let i = 0, il = me.lwTypes.length; i < il; i++) {
+            let name = me.lwTypes[i];
+            html += "<option value='" + name + "'>" + name + "</option>";
+        }
+        html += "</select></td><td valign='top'>"; 
+
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_wconly">Show Only Nested BPs</button><br>';
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_dotb">Download Dot-Bracket</button><br>';
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_fr3d">FR3D Basepairs</button></td></tr></table><br>';
+
+        html += '<div id="' + me.pre + 'rnacanvasDiv"></div>';
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
@@ -66664,10 +66692,22 @@ class Events {
            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+           ic.r2dt_chainid = chainid;
 
            await ic.diagram2dCls.drawR2dt(chainid);
            thisClass.setLogCmd('diagram 2d nucleotide | ' + chainid, true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "applyfr3d", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+
+           await ic.diagram2dCls.drawRnacanvas(chainid);
+           thisClass.setLogCmd('diagram 2d fr3d | ' + chainid, true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -66817,6 +66857,57 @@ class Events {
            $("#" + me.svgid_ct + " text").addClass(className);
            thisClass.setLogCmd("cartoon label " + className, true);
         });
+
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_wconly", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            
+            $('#' + me.pre + 'basepairType').val($('#' + me.pre + 'basepairType option:first').val()).trigger('change');
+        });
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_svg", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           ic.saveFileCls.saveSvg("rnacanvasSvg", ic.inputid + "_rnacanvas.svg");
+        });
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_dotb", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            ic.saveFileCls.saveFile(ic.inputid + "_dot_bracket.txt", "text", [ic.dot_bracket]);
+        });
+
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_fr3d", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let url = 'https://rna.bgsu.edu/rna3dhub/pdb/' + Object.keys(ic.structures)[0] + '/interactions/fr3d/basepairs/';
+
+            window.open(url, '_blank');
+        });
+
+       me.myEventCls.onIds("#" + me.pre + "r2dt_svg", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           let bClassName = true;
+           ic.saveFileCls.saveSvg("rnaTopoSvg", ic.r2dt_chainid + "_r2dt.svg", undefined, undefined, bClassName);
+        });
+        me.myEventCls.onIds("#" + me.pre + "r2dt_dotb", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+            let result = await ic.diagram2dCls.getDotbracket(chainid);
+            ic.saveFileCls.saveFile(chainid + "_dot_bracket.txt", "text", [result.dotb]);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "r2dt_seq", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+            let seq = '';
+            for(let i = 0; i < ic.chainsSeq[chainid].length; ++i) {
+                seq += ic.chainsSeq[chainid][i].name;
+            }
+
+            ic.saveFileCls.saveFile(chainid + "_seq.txt", "text", [seq]);
+        });
+
 
         me.myEventCls.onIds("#" + me.linegraphid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
@@ -78985,7 +79076,7 @@ class Line$1 {
                let radius = (line.radius) ? line.radius : ic.lineRadius;
                let opacity = (line.opacity) ? line.opacity : 1.0;
 
-               let colorStr = '#' + line.color.replace(/\#/g, '');
+               let colorStr = (line.color) ? '#' + line.color.replace(/\#/g, '') : '#000';
 
                let color = me.parasCls.thr(colorStr);
 
@@ -81020,6 +81111,24 @@ class CartoonNucl {
        let colors = [];
        let currentChain, currentResi, currentO3;
        let prevOO = null;
+
+      // add one extra residue for highlighting one residue
+      if(bHighlight === 1) {
+         let residueArray= ic.resid2specCls.atoms2residues(Object.keys(atomlist));
+
+         if(residueArray.length == 1) {
+            let ncbiresid = ic.resid2ncbi[residueArray[0]];
+            ic.firstAtomObjCls.getFirstAtomObj(atomlist); 
+            let ncbiresi = ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1);
+            let ncbiresid2 = ncbiresid.substr(0, ncbiresid.lastIndexOf('_')) + '_' + (parseInt(ncbiresi) + 1).toString();
+            let residueid2 = ic.ncbi2resid[ncbiresid2];
+
+            if(ic.residues.hasOwnProperty(residueid2)) {
+               let atomsAdjust = me.hashUtilsCls.hash2Atoms(ic.residues[residueid2], ic.atoms);
+               atomlist = me.hashUtilsCls.unionHash(atomlist, atomsAdjust);
+            }
+         }
+      }
 
        for (i in atomlist) {
           let atom = atomlist[i];
@@ -84965,7 +85074,7 @@ class ApplyMissingRes {
                     line.serial1 = ic.missingResResid2serial[resid0 + ',' + resid1];
                     line.serial2 = ic.missingResResid2serial[resid1 + ',' + resid0];
 
-                    line.color = (ic.atoms[line.serial1]) ? "#" + ic.atoms[line.serial1].color.getHexString() : undefined;
+                    line.color = (ic.atoms[line.serial1] && ic.atoms[line.serial1].color) ? "#" + ic.atoms[line.serial1].color.getHexString() : undefined;
 
                     line.radius = ic.coilWidth;
 
@@ -87292,7 +87401,7 @@ class Instancing {
         }
     }
 
-    drawSymmetryMatesNoInstancing() {  let ic = this.icn3d; ic.icn3dui;
+    drawSymmetryMatesNoInstancing() {  let ic = this.icn3d, me = ic.icn3dui;
        if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
        let cnt = 1; // itself
        let centerSum = ic.center.clone();
@@ -87310,7 +87419,7 @@ class Instancing {
           if (mat === undefined) continue;
 
           // skip itself
-          if(mat.equals(identity)) continue;
+          if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
 
           let symmetryMate;
 
@@ -87586,7 +87695,7 @@ class Instancing {
        }
     }
 
-    drawSymmetryMatesInstancing() { let ic = this.icn3d; ic.icn3dui;
+    drawSymmetryMatesInstancing() { let ic = this.icn3d, me = ic.icn3dui;
        if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
        let cnt = 1; // itself
        let centerSum = ic.center.clone();
@@ -87608,10 +87717,13 @@ class Instancing {
               let mat = ic.biomtMatrices[i];
               if (mat === undefined) continue;
 
-              let matArray = mat.toArray();
+              let matArray = mat.toArray().map(x => parseFloat(x)); // some values are string and others are number
+              mat.fromArray(matArray); 
 
               // skip itself
-              if(mat.equals(identity)) continue;
+              //if(mat.equals(identity)) continue; // equals seemed to have some problem in comparing two matrices
+              let bEqual = me.utilsCls.compMatrix(mat, identity, 16);
+              if(bEqual) continue;
 
               ic.matricesElements1.push(matArray[0], matArray[1], matArray[2], matArray[3]);
               ic.matricesElements2.push(matArray[4], matArray[5], matArray[6], matArray[7]);
@@ -87619,7 +87731,7 @@ class Instancing {
               ic.matricesElements4.push(matArray[12], matArray[13], matArray[14], matArray[15]);
 
               let center = ic.center.clone();
-              center.applyMatrix4(mat);
+              center.applyMatrix4(mat);           
               centerSum.add(center);
 
               ++cnt;
@@ -87845,7 +87957,7 @@ class Alternate {
         }
 
         ic.setColorCls.applyPrevColor();
-
+ 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {        
             if(ic.bAssembly && Object.keys(ic.structures).length == 1 && ((me.cfg.mmdbid === undefined && me.cfg.bu == 1)
               || (me.cfg.mmdbid !== undefined && me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
@@ -87873,6 +87985,7 @@ class Alternate {
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+
           this.render(bVrAr);
         }
         //ic.impostorCls.clearImpostors();
@@ -98607,6 +98720,8 @@ class ShowAnno {
             ic.maxAnnoLength = ic.maxAnnoLengthOri;
         }
 
+        ic.nucleotide_chainid = nucleotide_chainid;
+
         return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
     }
 
@@ -103816,14 +103931,23 @@ class DrawGraph {
                 }).strength(function(d) { return 0.4; }))
                 .force("x", d3v4.forceX(parentWidth / 2).strength(function(d) { return 0.02; }));
         } else if (me.htmlCls.force == 3) { // circle
+            // me.htmlCls.simulation.force("r", d3v4.forceRadial(function(d) {
+            //     if (d.s == 'a') {
+            //         return 200;
+            //     } else {
+            //         return 100;
+            //     }
+
+            // }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.8; }));
+
             me.htmlCls.simulation.force("r", d3v4.forceRadial(function(d) {
                 if (d.s == 'a') {
-                    return 200;
+                    return 60; //200;
                 } else {
-                    return 100;
+                    return 30; //100;
                 }
 
-            }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.8; }));
+            }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.1; }));
         } else if (me.htmlCls.force == 4) ;
 
         me.htmlCls.simulation
@@ -107109,7 +107233,8 @@ class MmcifParser {
         if(ic.bAssemblyUseAsu) {
             for(let i = 0, il = data.assembly.length; i < il; ++i) {
                 let mat4 = new Matrix4$1();
-                mat4.fromArray(data.assembly[i]);
+                let tmpArray = data.assembly[i].map(x => parseFloat(x)); // some values are string and others are number
+                mat4.fromArray(tmpArray);
     
                 // sometimes an extra matrix as included, e.g., PDb ID 2GTL
                 if(i == 0 && data.assembly[i][0] != 1) continue;
@@ -107189,14 +107314,14 @@ class MmcifParser {
     async loadMultipleMmcifData(data, mmcifid, bAppend) { let ic = this.icn3d; ic.icn3dui;
         let bText = true;
         ic.loadCIFCls.loadCIF(data, mmcifid, bText, bAppend);
-        
+
         if(Object.keys(ic.structures).length > 1) {
             ic.opts['color'] = 'structure';
         }
 
         ic.opmParserCls.modifyUIMapAssembly();
 
-        ic.pdbParserCls.addSecondary(bAppend);
+        await ic.pdbParserCls.addSecondary(bAppend);
 
         // ic.setStyleCls.setAtomStyleByOptions(ic.opts);
         // ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
@@ -109078,7 +109203,8 @@ class PdbParser {
         // DSSP only works for structures with all atoms. The Calpha only structures didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
         let bCalcSecondary = false;
-        if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
+        // if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
+        if(ic.bSecondaryStructure) {
             bCalcSecondary = false;
         }
         else if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
@@ -109086,7 +109212,7 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {  
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) { 
             await this.applyCommandDssp(bAppend);
         }
         else {
@@ -109131,7 +109257,7 @@ class PdbParser {
 
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        if(bAppend && !me.bNode) {
+        if(bAppend && Object.keys(ic.structures).length == 1 && !me.bNode) {
             // show all
             ic.definedSetsCls.setModeAndDisplay('all');
         }
@@ -117208,9 +117334,9 @@ class LoadCIF {
                     if(struct_oper_id == "X0") continue;
 
                     if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new Matrix4$1().identity();
-                    ic.biomtMatrices[i].set(m11Array.getString(i), m12Array.getString(i), m13Array.getString(i), m14Array.getString(i), 
-                        m21Array.getString(i), m22Array.getString(i), m23Array.getString(i), m24Array.getString(i), 
-                        m31Array.getString(i), m32Array.getString(i), m33Array.getString(i), m34Array.getString(i), 
+                    ic.biomtMatrices[i].set(parseFloat(m11Array.getString(i)), parseFloat(m12Array.getString(i)), parseFloat(m13Array.getString(i)), parseFloat(m14Array.getString(i)), 
+                        parseFloat(m21Array.getString(i)), parseFloat(m22Array.getString(i)), parseFloat(m23Array.getString(i)), parseFloat(m24Array.getString(i)), 
+                        parseFloat(m31Array.getString(i)), parseFloat(m32Array.getString(i)), parseFloat(m33Array.getString(i)), parseFloat(m34Array.getString(i)), 
                         0, 0, 0, 1);
                 }
             
@@ -117240,6 +117366,44 @@ class LoadCIF {
 
             if(block.getCategory("_citation")) {
                 ic.pmid = block.getCategory("_citation").getColumn("pdbx_database_id_PubMed").getString(0);
+            }
+
+            // retrieve RNA pair info
+			let pairInfo = block.getCategory("_ndb_base_pair_list");
+
+            if(pairInfo) {
+                let chainArray2, pairidArray, pos1Array, pos2Array, resn1Array, resn2Array;
+                chainArray2 = pairInfo.getColumn("asym_id_1");
+                pairidArray = pairInfo.getColumn("base_pair_id");
+                pos1Array = pairInfo.getColumn("seq_id_1");
+                pos2Array = pairInfo.getColumn("seq_id_2");
+                resn1Array = pairInfo.getColumn("comp_id_1");
+                resn2Array = pairInfo.getColumn("comp_id_2");
+                let pairSize = pairInfo.rowCount;
+
+                let annoInfo = block.getCategory("_ndb_base_pair_annotation");
+
+                let pairidArray2, typeArray;
+                pairidArray2 = annoInfo.getColumn("base_pair_id");
+                typeArray = annoInfo.getColumn("l-w_family");
+
+                ic.chain2pairs_resns_lw = {};
+                for(let i = 0; i < pairSize; ++i) {
+                    if(pairidArray.getString(i) == pairidArray2.getString(i)) {
+                        let chain = chainArray2.getString(i);
+                        let pos1 = pos1Array.getString(i);
+                        let pos2 = pos2Array.getString(i);
+                        let resn1 = resn1Array.getString(i);
+                        let resn2 = resn2Array.getString(i);
+                        let lwtype = typeArray.getString(i);
+                        if(!ic.chain2pairs_resns_lw[chain]) ic.chain2pairs_resns_lw[chain] = [];
+                        ic.chain2pairs_resns_lw[chain].push(pos1);
+                        ic.chain2pairs_resns_lw[chain].push(pos2);
+                        ic.chain2pairs_resns_lw[chain].push(resn1);
+                        ic.chain2pairs_resns_lw[chain].push(resn2);
+                        ic.chain2pairs_resns_lw[chain].push(lwtype);
+                    }
+                }
             }
 
             // Retrieve the table corresponding to the atom_site category, which delineates atomic constituents
@@ -120564,6 +120728,7 @@ class DefinedSets {
       });
         
       let bFoundNucleotide = false, bFoundProtein = false;
+      let cnt = 0;
       for(let i = 0, il = nameArray.length; i < il; ++i) {
           let name = nameArray[i];
 
@@ -120588,16 +120753,22 @@ class DefinedSets {
 
           if(bNucleotide && atom) {
             // Handle nucleotide-specific logic
-            if(ic.nucleotides.hasOwnProperty(atom.serial) && name != 'nucleotides' && !ic.structures.hasOwnProperty(name)) {
-                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            if(ic.nucleotides.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+                let selectStr = (cnt == 0) ? "selected" : "";
+
+                html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundNucleotide = true;
+                ++cnt;
             }
           }
           else if(bProtein && atom) {
             // Handle protein-specific logic
-            if(ic.proteins.hasOwnProperty(atom.serial) && name != 'proteins' && !ic.structures.hasOwnProperty(name)) {
-                html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
+            if(ic.proteins.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+                let selectStr = (cnt == 0) ? "selected" : "";
+
+                html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundProtein = true;
+                ++cnt;
             }
           }
           else {
@@ -120607,6 +120778,7 @@ class DefinedSets {
             else {
                 html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
             }
+            ++cnt;
           }
       }
 
@@ -121759,6 +121931,20 @@ class LoadScript {
             await ic.diagram2dCls.drawR2dt(chainid);
             ic.bRender = false;
           }
+          else if(command.indexOf('diagram 2d fr3d') == 0) {
+            let paraArray = command.split(' | ');
+            let pos = command.lastIndexOf(' ');
+            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
+
+            ic.bRender = true;
+            await ic.diagram2dCls.drawRnacanvas(chainid);
+            ic.bRender = false;
+          }
+          else if(command.indexOf('update rnacanvas') == 0) {
+            let paraArray = command.split(' ');
+            let nonWC = (paraArray.length == 3) ? paraArray[2] : '';
+            ic.diagram2dCls.updateRnacanvas(nonWC);
+          }
           else if(command.indexOf('diagram 2d ig') == 0) {
             let paraArray = command.split(' | ');
             let pos = command.lastIndexOf(' ');
@@ -122882,7 +123068,7 @@ class SelectByCommand {
            residueAtomArray = Object.keys(atomHash);
        }
 
-       if(commandname != "") {
+       if(!commandname) {
            ic.selectionCls.addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues);
 
            let nameArray = [commandname];          
@@ -129078,60 +129264,42 @@ class Diagram2d {
             thisClass.clickNode(this);
         });
 
-        // event for R2DT
-        //document.addEventListener('click', (event) => {
-        $(document).on("click", "r2dt-web", function(e) { let ic = thisClass.icn3d;
-            // The 2nd element in the path is the actual clicked g element
-            const path = e.originalEvent.composedPath();
-            const clickedElement = path[1];
-            let titleElem = clickedElement.querySelector('title');
+        $(document).on("change", "#" + me.pre + "basepairType", function(e) { thisClass.icn3d;
+            let nonWC = $("#" + me.pre + "basepairType").val().join(',');
 
-            if(titleElem) {
-                let title = titleElem.textContent; // e.g., 14 (position.label in template: 14.A)
-                let textArray = title.split(' ');
-                let position_resn = textArray[textArray.length - 1].split('.');
-                let pos = position_resn[0];
-                let resn = position_resn[1].substr(0, position_resn[1].length - 1);
+            thisClass.updateRnacanvas(nonWC);
+            me.htmlCls.clickMenuCls.setLogCmd('update rnacanvas ' + nonWC, true);
+        }); 
 
-                let resid = ic.ncbi2resid[ic.r2dt_chainid + '_' + pos];
-                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+        $(document).on("from_rnacanvas", function(event, data) {
+            let pos_resn = data.split('_');
+            let resn = pos_resn[1];
 
-                if(!atom) {
-                    var aaa = 1; //alert("This residue has no 3D coordinates...");
+            let resid = ic.ncbi2resid[ic.rnacanvas_chainid + '_' + pos_resn[0]];
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+            if(!atom) {
+                var aaa = 1; //alert('This residue has no 3D coordinates...');
+            }
+            else {
+                let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn);
+
+                if(resn != oneLetterRes) {
+                	console.log('The residue name in 2D ' + resn + ' did not match that in 3D view ' + oneLetterRes + '...');
                 }
-                else {
-                    let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn);
-
-                    let realResn = (resn == 'T') ? 'U' : resn;
-
-                    if(resn != oneLetterRes && realResn != oneLetterRes) {
-                        var aaa = 1; //alert("The residue number in R2DT didn't match that in 3D view...");
+                //else {
+                    // highlight the selected residue
+                    if(ic.bCtrl || ic.bShift) {
+                        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
                     }
                     else {
-                        // highlight the selected residue
-                        if(ic.bCtrl || ic.bShift) {
-                            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
-                        }
-                        else {
-                            ic.hAtoms = ic.residues[resid];
-                        }
-
-                        ic.hlUpdateCls.showHighlight();
+                        ic.hAtoms = ic.residues[resid];
                     }
-                }
 
-                // highlight the selected residue in 2D
-                let textElem = clickedElement.querySelector('text');
-                textElem.setAttribute("stroke", "#f8b84e");
-                textElem.setAttribute("stroke-width", "0.5px");
-
-                // add cursor
-                if(!ic.bAddedCursors) {
-                    ic.bAddedCursors = true;
-                    ic.diagram2dCls.makeResiduesClickable();
-                }
+                    ic.hlUpdateCls.showHighlight();
+                //}
             }
-        }); 
+        });
     }
 
     clickNode(node) {  let ic = this.icn3d, me = ic.icn3dui;
@@ -129357,42 +129525,474 @@ class Diagram2d {
         return html;
     }
 
-    makeResiduesClickable() { let ic = this.icn3d; ic.icn3dui;
-        let r2dt = document.querySelector('r2dt-web').shadowRoot;
-        let elemArray = r2dt.querySelectorAll('g:has(title)');
-        for(let i = 0, il = elemArray.length; i < il; ++i) {
-            if(!elemArray[i].hasAttribute('id')) { // skip the main g element
-                elemArray[i].style.cursor = "pointer";
-            }
-        }
-    }
-
     async drawR2dt(chainid) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
         ic.bAddedCursors = false;
 
-        ic.r2dt_chainid = chainid;
+        let pos = chainid.lastIndexOf('_');
+        let pdbid = chainid.substr(0, pos);
+        let chain = chainid.substr(pos + 1);
 
-        let url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid2rnaid=" + chainid;
+		//https://9c5d031c.na-hackathon-2026.pages.dev/api.json
+		//https://www.ebi.ac.uk/pdbe/static/entry/1ffk_2_9.json, or 1ffk_1_0.json [pdbid_molid_chain]
+        if(!ic.chainid2molid) {
+            ic.chainid2molid = {};
 
-        let data = await me.getAjaxPromise(url, 'jsonp');
+            await ic.showAnnoCls.showAnnotations();
+            let molidTmp = 1;
+            for(let id in ic.nucleotide_chainid) {
+                ic.chainid2molid[id] = molidTmp;
+                ++molidTmp;
+            }
+        }
+
+        let molid = ic.chainid2molid[chainid] ? ic.chainid2molid[chainid] : 1;
+
+		let url = "https://www.ebi.ac.uk/pdbe/static/entry/" + pdbid.toLowerCase() + "_" + molid + "_" + chain + ".json";
+		let apiData = await me.getAjaxPromise(url, 'json', undefined, 'The chain ' + chainid + ' with molid ' + molid + ' has no R2DT information in PDBe...');
+
+		//https://9c5d031c.na-hackathon-2026.pages.dev/fr3d.json
+        //https://www.ebi.ac.uk/pdbe/static/entry/1ffk_9_basepair.json
+        let url2 = "https://www.ebi.ac.uk/pdbe/static/entry/" + pdbid.toLowerCase() + "_" + chain + "_basepair.json";
+		let fr3dData = await me.getAjaxPromise(url2, 'json', undefined, 'The chain ' + chainid + ' with molid ' + molid + ' has no FR3D information in PDBe...');
 
         let html = '';
-        if(data && data.rnaid) {
-            html += '<r2dt-web search=\'{"urs": "' + data.rnaid + '"}\' />';
-            html += '<script type="text/javascript" src="https://rnacentral.github.io/r2dt-web/dist/r2dt-web.js"></script>';
-            $("#" + me.pre + "2ddiagramDiv").html(html);
-            me.htmlCls.dialogCls.openDlg('dl_2ddiagram', 'Show R2DT Diagram for chain ' + chainid);
+
+		html += "<link rel='stylesheet' type='text/css' href='./script/pdb-rna-viewer-0.3.0.css'>\n";
+		html += "<div id='pdb-rna-viewer' style='width: " + ($(window).width() / 2 - 150) + "px; height: " + ($(window).height() - 240) + "px'></div>\n";
+		html += "<script type='text/javascript' src='./script/pdb-rna-viewer-plugin-0.3.0.js'></script>\n";
+		html += "<script type='text/javascript'>\n";
+		html += "  var rnaPlugin = new PdbRnaViewerPlugin();\n";
+		html += "  rnaPlugin.render(\n";
+		html += "    document.getElementById('pdb-rna-viewer'),\n";
+		html += "    {\n";
+		html += "      pdbId: '" + pdbid.toLowerCase() + "',\n";
+		html += "      entityId: '1',\n";
+		html += "      chainId: '" + chain + "',\n";
+		html += "      subscribeEvents: true,\n";
+		html += "      apiData: " + JSON.stringify(apiData) + ",\n";
+		html += "      FR3DData: " + JSON.stringify(fr3dData) + ",\n";
+		html += "      theme: { unobservedColor: '#bbbbbb' },\n";
+		html += "    }\n";
+		html += "  );\n";
+		html += "</script>\n";
+
+		$("#" + me.pre + "2ddiagramDiv").html(html);
+
+        setTimeout(function(){
+            // grey out residues without 3D coordinates
+            const unobserved = apiData.unobserved_label_seq_ids || [];
+            const PDB_LOWER = pdbid.toLowerCase();
+            unobserved.forEach((seqId) => {
+              document
+                .querySelectorAll(`text.rnaview_${PDB_LOWER}_${seqId}`)
+                .forEach((el) => { el.setAttribute('fill', '#bbbbbb');});
+            });
+
+            // click 2D to show in 3D
+            document.addEventListener('PDB.RNA.viewer.click', (ev) => {
+            // $(document).on("PDB.RNA.viewer.click", function(ev, data) {
+                let posArray = [];
+                const d = ev.eventData || ev.detail || {};
+                if (Array.isArray(d.label_seq_ids)) posArray = d.label_seq_ids;
+                if (d.label_seq_id !== undefined && d.label_seq_id !== null) posArray = [d.label_seq_id];
+
+                let hAtoms = {};
+                for(let i = 0, il = posArray.length; i < il; ++i) {
+                    let resid = ic.ncbi2resid[chainid + '_' + posArray[i]];                  
+                    // highlight the selected residue
+                    hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.residues[resid]);
+                }
+
+                if(ic.bCtrl || ic.bShift) {
+                    ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, hAtoms);
+                }
+                else {
+                    ic.hAtoms = hAtoms;
+                }
+
+                ic.hlUpdateCls.showHighlight();
+            });
+
+            // click 3D to highlight in 2D
+            $(document).on("icn3d.pick.click", function(ev, data) {
+                // get the residue position in the selection
+                let ncbiresid = data;
+                let pos = ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1);
+
+                document.dispatchEvent(new CustomEvent('protvista-click', {
+                    detail: { start: pos, end: pos }
+                }));
+            });
+
+            $(document).on("icn3d.pick.mouseover", function(ev, data) {
+                // get the residue position in the selection
+                let ncbiresid = data;
+                let pos = ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1);
+
+                document.dispatchEvent(new CustomEvent('protvista-mouseover', {
+                    detail: { start: pos, end: pos }
+                }));
+            });
+
+        }, 1000);
+
+		me.htmlCls.dialogCls.openDlg('dl_2ddiagram', 'Show R2DT Diagram for chain ' + chainid);
+    }
+
+    async getDotbracket(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        let pos = chainid.lastIndexOf('_');
+        let pdbid = chainid.substr(0, pos);
+        let chain = chainid.substr(pos + 1);
+
+        let result;
+        if(ic.chain2pairs_resns_lw) {
+			let pairs_resns_lw = ic.chain2pairs_resns_lw[chain];
+			let pairs = [], lw2pairs = {};
+
+			for(let i = 0, il = pairs_resns_lw.length; i < il; i += 5) {
+				let pos1 = pairs_resns_lw[i];
+				let pos2 = pairs_resns_lw[i + 1];
+				pairs_resns_lw[i + 2];
+				pairs_resns_lw[i + 3];
+				let lw = pairs_resns_lw[i + 4];
+
+				if(lw == 'cWW') {
+					pairs.push([parseInt(pos1), parseInt(pos2)]);
+				}
+				else {
+					if(!lw2pairs[lw]) lw2pairs[lw] = [];
+					lw2pairs[lw].push(parseInt(pos1));
+					lw2pairs[lw].push(parseInt(pos2));
+				}
+			}
+
+			result = this.pairs2dotbracket(pairs, lw2pairs, chainid);
+		}
+		else {
+			let url = "https://rna.bgsu.edu/rna3dhub/pdb/" + pdbid + "/interactions/fr3d/basepairs/tsv";
+
+			let data = await me.getAjaxPromise(url, 'text');
+			if(!data || data == 'Not a valid PDB id.') {
+				var aaa = 1; //alert('The chain ' + chainid + ' has no basepair information in FR3D...');
+				return;
+			}
+
+            let ret2 = this.fr3d2pairs(data, chainid); //pairs_lw2pairs_annotations
+            // annotations = ret2.anno;
+            result = this.pairs2dotbracket(ret2.pairs, ret2.lw2pairs, chainid);
+		}
+
+
+        return result;
+	}
+
+    fr3d2pairs(data, chainid) { let ic = this.icn3d; ic.icn3dui;
+        let pos = chainid.lastIndexOf('_');
+        let chain = chainid.substr(pos + 1);
+
+        let lines = data.split('\n');
+
+        let pairs = []; // 0-based, only for canonical base pairs
+        let lw2pairs = {}; // 1-based, for non-canonical base pairs and base stacking interactions
+        for (let i in lines) {
+            let line = lines[i]; // e.g., 9CFN|1|A|A|2	cWW	9CFN|1|A|U|38	
+            let from_type_to = line.trim().split('\t');
+            if(from_type_to.length != 3) continue;
+
+            let fromArray = from_type_to[0].split('|'), toArray = from_type_to[2].split('|');
+            if(fromArray.length != 5 || toArray.length != 5) continue;
+            if(fromArray[2] != chain || toArray[2] != chain) continue;
+            let resi1 = fromArray[4], resi2 = toArray[4]; 
+            let ncbiResid1 = ic.resid2ncbi[chainid + '_' + resi1], ncbiResid2 = ic.resid2ncbi[chainid + '_' + resi2];
+            let pos1 = parseInt(ncbiResid1.substr(ncbiResid1.lastIndexOf('_') + 1)) - 1, pos2 = parseInt(ncbiResid2.substr(ncbiResid2.lastIndexOf('_') + 1)) - 1;
  
-            // set cursor for all nodes
-            setTimeout(function(){
-                //ic.bAddedCursors = true;
-                thisClass.makeResiduesClickable();
-            }, 3000);
+            if(pos1 > pos2) continue; // each pair is listed twice in FR3D data, with the from and to residues swapped. Only process the one with pos1 < pos2 to avoid duplication.
+
+            if(from_type_to[1] == 'cWW') {
+               if(fromArray[2] == chain && toArray[2] == chain) {
+                    pairs.push([Math.min(pos1, pos2), Math.max(pos1, pos2)]);
+                }
+            }
+            else {
+                let type = from_type_to[1];
+                if(!lw2pairs[type]) lw2pairs[type] = [];
+                
+                lw2pairs[type].push(pos1);
+                lw2pairs[type].push(pos2);
+            }
+
         }
-        else {
-            var aaa = 1; //alert("No R2DT diagram can be found for chain " + chainid);
+
+        return {'pairs': pairs, 'lw2pairs': lw2pairs};
+    }
+
+    isCrossed(pair1, pair2) {
+        let i = pair1[0], j = pair1[1];
+        let k = pair2[0], l = pair2[1];
+        return (i < k && k < j && j < l) || (k < i && i < l && l < j);
+    }
+
+    // modified from a python script by Eugene Baulin (https://imol.institute/leaders/baulin-group/)
+    // pairs: list of (i, j) with 0 <= i < j < length
+    pairs2dotbracket(pairs, lw2pairs, chainid) { let ic = this.icn3d; ic.icn3dui;
+        //Dot-bracket notation for RNA secondary structures with pseudoknots.
+
+        //Positions are 0-indexed. Crossing pairs require different bracket types.
+        //Levels are minimized by greedy coloring of the crossing graph, with pairs
+        //sorted by ascending conflict count so that pairs involved in fewer crossings
+        //(which form larger conflict-free groups) occupy the lower bracket levels.
+
+        //Bracket levels: () [] {} <> Aa Bb Cc ... Zz  (30 levels total).
+
+        let BRACKETS = ['()', '[]', '{}', '<>'];
+        for(let ch of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+            BRACKETS.push(ch + ch.toLowerCase());
         }
+
+        pairs.sort((a, b) => parseInt(a[0]) - parseInt(b[0])); 
+
+        // Pairs with fewer crossings tend to belong to larger conflict-free groups
+        // and should occupy lower levels. Sort ascending by crossing count so they
+        // are placed at level 0 first; break ties by left endpoint for determinism.
+        let pairstr2crosscnt = {};
+        for(let i = 0, il = pairs.length; i < il; ++i) {
+            let pairstr1 = pairs[i][0] + '_' + pairs[i][1];
+            for(let j = i + 1; j < il; ++j) {
+                let pairstr2 = pairs[j][0] + '_' + pairs[j][1];
+                if(this.isCrossed(pairs[i], pairs[j])) {
+                    pairstr2crosscnt[pairstr1] = (pairstr2crosscnt[pairstr1] || 0) + 1;
+                    pairstr2crosscnt[pairstr2] = (pairstr2crosscnt[pairstr2] || 0) + 1;
+                }
+            }
+        }
+
+        let pairsSortbyCross = pairs.sort((a, b) => {
+            let pairstr1 = a[0] + '_' + a[1], pairstr2 = b[0] + '_' + b[1];
+            let crosscnt1 = pairstr2crosscnt[pairstr1] || 0, crosscnt2 = pairstr2crosscnt[pairstr2] || 0;
+            if(crosscnt1 != crosscnt2) {
+                return crosscnt1 - crosscnt2;
+            } else {
+                return a[0] - b[0];
+            }
+        });
+
+        // Greedy level assignment: for each pair (in conflict-count order),
+        // use the lowest level whose existing pairs do not cross it.
+        let levels = []; // each level is an array of pairs
+        for(let index = 0, indexl = pairsSortbyCross.length; index < indexl; ++index) {
+            let pair = pairsSortbyCross[index];
+
+            if(levels.length == 0) {
+                levels.push([pair]);
+                continue;
+            }
+
+            let bCrossed = false;
+            for(let i = 0, il = levels.length; i < il; ++i) {
+                bCrossed = false;
+                
+                let level_pairs = levels[i];
+                
+                for(let j = 0, jl = level_pairs.length; j < jl; ++j) {
+                    if(this.isCrossed(pair, level_pairs[j])) {
+                        bCrossed = true;
+                        break;
+                    }
+                }
+
+                if(!bCrossed) {
+                    levels[i].push(pair);
+                    break;
+                }
+            }
+
+            if(bCrossed) {
+                levels.push([pair]);
+            }
+        }
+
+        // Relabel so larger groups use lower-level brackets, minimising the total
+        // number of characters at higher levels. Bracket types are just labels —
+        // any permutation of levels is valid as long as pairs on the same level
+        // do not cross.
+        levels.sort((a, b) => b.length - a.length); // sort descending by group size
+
+        let dotb = [], seq = '';
+        for(let i = 0; i < ic.chainsSeq[chainid].length; ++i) {
+            dotb.push('.');
+            seq += ic.chainsSeq[chainid][i].name;
+        }
+
+        let type = 'cWW';
+        if(!lw2pairs[type]) lw2pairs[type] = [];
+
+        for(let i = 0, il = levels.length; i < il; ++i) {
+            let pairs = levels[i];
+            for(let j = 0, jl = pairs.length; j < jl; ++j) {
+                dotb[pairs[j][0]] = BRACKETS[i][0];
+                dotb[pairs[j][1]] = BRACKETS[i][1];
+                
+                if(i > 0) { // level 0 is for nested base pairs
+                   lw2pairs[type].push(pairs[j][0] + 1); // 1-based
+                   lw2pairs[type].push(pairs[j][1] + 1);
+                }
+            }
+        }
+
+        return {'dotb': dotb.join(''), 'seq': seq, 'lw2pairs': lw2pairs};
+    }
+
+    async drawRnacanvas(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.bAddedCursors = false;
+
+        ic.rnacanvas_chainid = chainid;
+
+        let pos = chainid.lastIndexOf('_');
+        chainid.substr(0, pos);
+
+        let result = await this.getDotbracket(chainid);
+
+        ic.dot_bracket = result.dotb;
+        ic.rnaseq = result.seq;
+        ic.lw2pairs = result.lw2pairs;
+
+        let nonWC = '';
+        this.updateRnacanvas(nonWC);
+        //me.htmlCls.clickMenuCls.setLogCmd('update forna ' + nonWC, true);
+
+        me.htmlCls.dialogCls.openDlg('dl_rnacanvas', 'Show 2D Diagram for chain ' + chainid + ' with RNAcanvas');
+        $("#" + me.pre + "basepairType").resizable();
+    }
+
+    updateRnacanvas(nonWC) { let ic = this.icn3d, me = ic.icn3dui;
+        let html = '';
+
+		html += "<div id='rnacanvasSvg'></div>\n";
+
+		html += "<script type='module'>\n";       
+		//html += "  import 'https://cdn.jsdelivr.net/npm/@rnacanvas/embedded@3.1.0';\n";
+		html += "  import './script/rnacanvas-4.0.0.js';\n";
+        html += "</script>\n";
+
+        html += "<script type='text/javascript'>\n";
+        html += "var attempts = 0;\n";
+        html += "var tick = () => {\n";
+        html += "   if (typeof RNAcanvas !== 'undefined') {\n";
+
+        // html += "<script type='text/javascript'>\n";
+        // html += "setTimeout(function(){\n";
+		html += "	// create a new RNAcanvas app instance\n";
+        html += "	var rnaCanvas = new RNAcanvas();\n";
+		html += "   // Target your container and append the canvas element\n";
+		html += "	var container = document.getElementById('rnacanvasSvg');\n";
+		html += "	rnaCanvas.appendTo(container);\n";
+		html += "   // control the size of the component\n";
+		html += "	rnaCanvas.domNode.style.width = '" + ($(window).width() / 2 - 150) + "px';\n";
+		html += "	rnaCanvas.domNode.style.height = '" + ($(window).height() - 200) + "px';\n";
+		//html += "	rnaCanvas.domNode.style.width = '600px';\n";
+		//html += "	rnaCanvas.domNode.style.height = '600px';\n";
+		html += "	// Render the structure\n";
+		html += "	rnaCanvas.drawDotBracket('" + ic.rnaseq + "', '" + ic.dot_bracket + "');\n";
+		html += "   // add padding around the drawn structure\n";
+		html += "	rnaCanvas.drawing.setPadding(20);\n";
+		//html += "	rnaCanvas.drawing.setPadding(1000);\n";
+		html += "   // bring the drawn structure into view\n";
+		html += "	rnaCanvas.drawingView.fitToContent();\n";
+		html += "	$('.UDedZ1UaiPZJsRmm1yxA').hide();\n"; // hide the "Powered by RNAcanvas" label
+
+		html += "var pos2node = {}, id2pos = {};\n";
+		html += "var nodes = rnaCanvas.drawing.bases;\n";
+
+		html += "for (var i = 0, il = nodes.length; i < il; i++) {\n";
+		html += "  pos2node[i + 1] = nodes[i];\n";
+		html += "  id2pos[nodes[i].id] = i + 1;\n";
+		html += "}\n";
+
+        html += "$(document).on('click', '#rnacanvasSvg svg text', function(e) {\n";
+        html += "    var id = $(this).attr('id');\n";
+        html += "    // clear all node color\n";
+		html += "    for (var i = 0, il = nodes.length; i < il; i++) {\n";
+		html += "       nodes[i].setAttribute('fill', '#000');\n";
+		html += "    }\n";
+        html += "    $(this)[0].setAttribute('fill', '#f8b84e');\n";
+
+        html += "    var pos = id2pos[id];\n";
+        html += "    var resn = $(this).text().split(' ')[0];\n"; //C Position 8
+        html += "    $(document).trigger('from_rnacanvas', pos + '_' + resn);\n";
+        html += "    document.dispatchEvent(event);\n";
+        html += "});\n";
+
+        html += "$(document).on('mouseover', '#rnacanvasSvg svg text', function(e) {\n";
+        html += "   var id = $(this).attr('id');\n";
+        html += "    $(this)[0].setAttribute('fill', '#f8b84e');\n";
+
+        html += "   if(!$(this)[0].querySelector('title')) {\n";
+        html += "       var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');\n";
+        html += "       title.textContent = ' Position ' + id2pos[id];\n";
+        html += "       $(this)[0].appendChild(title);\n";
+        html += "   }\n";
+        html += "});\n";
+
+        html += "$(document).on('mouseout', '#rnacanvasSvg svg text', function(e) {\n";
+        html += "   var id = $(this).attr('id');\n";
+        html += "    $(this)[0].setAttribute('fill', '#000');\n";
+        html += "});\n";
+
+        // click 3D to highlight in 2D
+        html += "$(document).on('icn3d.pick.click icn3d.pick.mouseover', function(ev, data) {\n";
+        html += "    // get the residues in the selection\n";
+        html += "    var ncbiresid = data;\n";
+        html += "    var pos = ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1);\n";
+
+        html += "    // clear all node color\n";
+		html += "    for (var i = 0, il = nodes.length; i < il; i++) {\n";
+		html += "       nodes[i].setAttribute('fill', '#000');\n";
+		html += "    }\n";
+
+        html += "    var node = pos2node[parseInt(pos)];\n";
+        html += "    node.setAttribute('fill', '#f8b84e');\n";
+        html += "});\n";
+
+        if(nonWC) {
+            let lwTypesTmp = nonWC.split(',');
+            let lwTypes = [...new Set(lwTypesTmp)]; // unique
+
+            for(let i = 0, il = lwTypes.length; i < il; ++i) {
+                let type = lwTypes[i];
+                let pairs = ic.lw2pairs[type];
+                if(!pairs) continue;
+
+                for(let j = 0, jl = pairs.length; j < jl; j += 2) {
+                    let pos1 = pairs[j], pos2 = pairs[j + 1];
+                    html += "if(pos2node[" + pos1 + "] && pos2node[" + pos2 + "]) {\n";
+                    html += "  var node1 = pos2node[" + pos1 + "].centerPoint;\n";
+                    html += "  var node2 = pos2node[" + pos2 + "].centerPoint;\n";
+                    html += "  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');\n";
+					html += "  line.setAttribute('x1', node1.x);\n";
+					html += "  line.setAttribute('y1', node1.y);\n";
+					html += "  line.setAttribute('x2', node2.x);\n";
+					html += "  line.setAttribute('y2', node2.y);\n";
+					html += "  line.setAttribute('stroke', 'black');\n";
+					html += "  line.setAttribute('stroke-width', '1');\n";
+					html += "  line.setAttribute('title', '" + type + "');\n";
+                    html += "  rnaCanvas.drawing.domNode.appendChild(line);";
+                    html += "}\n";
+                }
+            }
+        }
+
+        // html += "}, 10000);\n";
+
+        html += "       return;\n";
+        html += "   }\n";
+        html += "   if (attempts++ > 200) return;\n";
+        html += "   setTimeout(tick, 100);\n";
+        html += "};\n";
+        html += "tick();\n";   
+
+        html += "</script>\n";
+
+        $("#" + me.pre + "rnacanvasDiv").html(html);
     }
 
     async drawIgdgm(chainid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -131567,7 +132167,7 @@ class SaveFile {
         }
     }
 
-    saveSvg(id, filename, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
+    saveSvg(id, filename, bContactmap, bLigplot, bClassName) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
         
         let width = $("#" + id).width();
@@ -131580,17 +132180,24 @@ class SaveFile {
             height += ic.len4ang;
         }
 
-        let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot);
+        let svgXml = this.getSvgXml(id, width, height, bContactmap, bLigplot, bClassName);
+
+        if(id == me.rnacanvasid) { // replace the font to 8
+           svgXml = svgXml.replace('font-size: 18px', 'font-size: 8px');
+        }
 
         let blob = new Blob([svgXml], {type: "image/svg+xml"});
         saveAs(blob, filename);
     }
 
-    getSvgXml(id, width, height, bContactmap, bLigplot) { let ic = this.icn3d, me = ic.icn3dui;
+    getSvgXml(id, width, height, bContactmap, bLigplot, bClassName) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
 
         // font is not good
-        let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
+        let svg_data = (!bClassName) ? document.getElementById(id).innerHTML : document.querySelector('.' + id).innerHTML; //put id of your svg element here
+        svg_data = svg_data.replace(/ fill=" #ccc"=""/g, '" fill="#ccc"'); // fix some data
+        svg_data = svg_data.replace(/style="cursor: pointer;"/g, '');
+        svg_data = svg_data.replace(/ font-size="/g, ' style="font-size: ');
 
         let startX = (bLigplot) ? -30 : 0;
         let startY = (bLigplot) ? -30 : 0;
@@ -131880,10 +132487,10 @@ class SaveFile {
                 for(let n = 0; n < 3; ++n) {
                     let nNum = n + 1;
                     stru2header[stru] += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 0].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 4].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 8].toFixed(6).toString().padStart(9, ' ')
-                        + " " + ic.biomtMatrices[m].elements[n + 12].toFixed(6).toString().padStart(14, ' ') + "\n";
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 0]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 4]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 8]).toFixed(6).toString().padStart(9, ' ')
+                        + " " + parseFloat(ic.biomtMatrices[m].elements[n + 12]).toFixed(6).toString().padStart(14, ' ') + "\n";
                 }
             }
         }
@@ -133324,7 +133931,7 @@ class Export3D {
               let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
-              if(mat.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
               let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
@@ -133366,7 +133973,7 @@ class Export3D {
               let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
-              if(mat.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
               let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
@@ -133483,7 +134090,7 @@ class Export3D {
               if(mat1 === undefined) continue;
 
               // skip itself
-              if(mat1.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat1, identity, 16)) continue;
 
               blobArray = this.processStlMeshGroup( ic.mdl, blobArray, mat1 );
 
@@ -133582,7 +134189,7 @@ class Export3D {
 
     //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
     //Save the VRML file for 3D color printing.
-    saveVrmlFile( mat ){ let ic = this.icn3d; ic.icn3dui;
+    saveVrmlFile( mat ){ let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.dAtoms).length > 50000) {
             var aaa = 1; //alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
             return [''];
@@ -133613,7 +134220,7 @@ class Export3D {
               if(mat1 === undefined) continue;
 
               // skip itself
-              if(mat1.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat1, identity, 16)) continue;
 
                 result = this.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat1 );
                 vrmlStrArray = result.vrmlStrArray;
@@ -134263,6 +134870,9 @@ class Picking {
       this.showPickingBase(atom, x, y);
 
       if(ic.pk != 0) {
+          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;    
+          let ncbiresid = (ic.resid2ncbi[resid]) ? ic.resid2ncbi[resid] : resid;
+
           if(x !== undefined && y !== undefined) { // mouse over
             if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
                 y += me.htmlCls.MENU_HEIGHT;
@@ -134289,6 +134899,8 @@ class Picking {
 
             $("#" + ic.pre + "popup").html(text);
             $("#" + ic.pre + "popup").css("top", y).css("left", x+20).show();
+
+            $(document).trigger('icn3d.pick.mouseover', ncbiresid);
           }
           else {
               // highlight the sequence background
@@ -134301,6 +134913,8 @@ class Picking {
               // update the interaction flag
               ic.bSphereCalc = false;
               ic.bHbondCalc = false;
+
+              $(document).trigger('icn3d.pick.click', ncbiresid);
           }
       }
     }
@@ -135797,7 +136411,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.49.2';
+    this.REVISION = '3.50.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;

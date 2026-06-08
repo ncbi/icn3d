@@ -297,9 +297,9 @@ class LoadCIF {
                     if(struct_oper_id == "X0") continue;
 
                     if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
-                    ic.biomtMatrices[i].set(m11Array.getString(i), m12Array.getString(i), m13Array.getString(i), m14Array.getString(i), 
-                        m21Array.getString(i), m22Array.getString(i), m23Array.getString(i), m24Array.getString(i), 
-                        m31Array.getString(i), m32Array.getString(i), m33Array.getString(i), m34Array.getString(i), 
+                    ic.biomtMatrices[i].set(parseFloat(m11Array.getString(i)), parseFloat(m12Array.getString(i)), parseFloat(m13Array.getString(i)), parseFloat(m14Array.getString(i)), 
+                        parseFloat(m21Array.getString(i)), parseFloat(m22Array.getString(i)), parseFloat(m23Array.getString(i)), parseFloat(m24Array.getString(i)), 
+                        parseFloat(m31Array.getString(i)), parseFloat(m32Array.getString(i)), parseFloat(m33Array.getString(i)), parseFloat(m34Array.getString(i)), 
                         0, 0, 0, 1);
                 }
             
@@ -329,6 +329,44 @@ class LoadCIF {
 
             if(block.getCategory("_citation")) {
                 ic.pmid = block.getCategory("_citation").getColumn("pdbx_database_id_PubMed").getString(0);
+            }
+
+            // retrieve RNA pair info
+			let pairInfo = block.getCategory("_ndb_base_pair_list");
+
+            if(pairInfo) {
+                let chainArray2, pairidArray, pos1Array, pos2Array, resn1Array, resn2Array;
+                chainArray2 = pairInfo.getColumn("asym_id_1");
+                pairidArray = pairInfo.getColumn("base_pair_id");
+                pos1Array = pairInfo.getColumn("seq_id_1");
+                pos2Array = pairInfo.getColumn("seq_id_2");
+                resn1Array = pairInfo.getColumn("comp_id_1");
+                resn2Array = pairInfo.getColumn("comp_id_2");
+                let pairSize = pairInfo.rowCount;
+
+                let annoInfo = block.getCategory("_ndb_base_pair_annotation");
+
+                let pairidArray2, typeArray;
+                pairidArray2 = annoInfo.getColumn("base_pair_id");
+                typeArray = annoInfo.getColumn("l-w_family");
+
+                ic.chain2pairs_resns_lw = {};
+                for(let i = 0; i < pairSize; ++i) {
+                    if(pairidArray.getString(i) == pairidArray2.getString(i)) {
+                        let chain = chainArray2.getString(i);
+                        let pos1 = pos1Array.getString(i);
+                        let pos2 = pos2Array.getString(i);
+                        let resn1 = resn1Array.getString(i);
+                        let resn2 = resn2Array.getString(i);
+                        let lwtype = typeArray.getString(i);
+                        if(!ic.chain2pairs_resns_lw[chain]) ic.chain2pairs_resns_lw[chain] = [];
+                        ic.chain2pairs_resns_lw[chain].push(pos1);
+                        ic.chain2pairs_resns_lw[chain].push(pos2);
+                        ic.chain2pairs_resns_lw[chain].push(resn1);
+                        ic.chain2pairs_resns_lw[chain].push(resn2);
+                        ic.chain2pairs_resns_lw[chain].push(lwtype);
+                    }
+                }
             }
 
             // Retrieve the table corresponding to the atom_site category, which delineates atomic constituents

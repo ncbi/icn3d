@@ -23,7 +23,7 @@ import * as THREE from 'three';
         }
 
         ic.setColorCls.applyPrevColor();
-
+ 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {        
             if(ic.bAssembly && Object.keys(ic.structures).length == 1 && ((me.cfg.mmdbid === undefined && me.cfg.bu == 1)
               || (me.cfg.mmdbid !== undefined && me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
@@ -51,6 +51,7 @@ import * as THREE from 'three';
           }
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+
           this.render(bVrAr);
         }
         //ic.impostorCls.clearImpostors();

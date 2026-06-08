@@ -216,7 +216,7 @@ class Line {
                let radius = (line.radius) ? line.radius : ic.lineRadius;
                let opacity = (line.opacity) ? line.opacity : 1.0;
 
-               let colorStr = '#' + line.color.replace(/\#/g, '');
+               let colorStr = (line.color) ? '#' + line.color.replace(/\#/g, '') : '#000';
 
                let color = me.parasCls.thr(colorStr);
 
