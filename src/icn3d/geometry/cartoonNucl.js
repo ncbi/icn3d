@@ -35,6 +35,24 @@ class CartoonNucl {
        let currentChain, currentResi, currentO3;
        let prevOO = null;
 
+      // add one extra residue for highlighting one residue
+      if(bHighlight === 1) {
+         let residueArray= ic.resid2specCls.atoms2residues(Object.keys(atomlist));
+
+         if(residueArray.length == 1) {
+            let ncbiresid = ic.resid2ncbi[residueArray[0]];
+            let atom = ic.firstAtomObjCls.getFirstAtomObj(atomlist); 
+            let ncbiresi = ncbiresid.substr(ncbiresid.lastIndexOf('_') + 1);
+            let ncbiresid2 = ncbiresid.substr(0, ncbiresid.lastIndexOf('_')) + '_' + (parseInt(ncbiresi) + 1).toString();
+            let residueid2 = ic.ncbi2resid[ncbiresid2];
+
+            if(ic.residues.hasOwnProperty(residueid2)) {
+               let atomsAdjust = me.hashUtilsCls.hash2Atoms(ic.residues[residueid2], ic.atoms);
+               atomlist = me.hashUtilsCls.unionHash(atomlist, atomsAdjust);
+            }
+         }
+      }
+
        for (i in atomlist) {
           let atom = atomlist[i];
           if (atom === undefined) continue;

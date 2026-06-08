@@ -502,6 +502,19 @@ class UtilsCls {
 
       return date.getFullYear().toString() + monthStr + dateStr;
     }
+
+    compMatrix(mat1, mat2, len) { let me = this.icn3dui;
+      let eps = 1e-6;
+      let bEqual = true;
+      for (let i = 0; i < len; i++) {
+        if (Math.abs(mat1.elements[i] - mat2.elements[i]) > eps) {
+            bEqual = false;
+            break;
+        }
+      }
+      
+      return bEqual;
+    }
 }
 
 export {UtilsCls}

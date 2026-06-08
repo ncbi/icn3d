@@ -270,7 +270,7 @@ class Instancing {
           if (mat === undefined) continue;
 
           // skip itself
-          if(mat.equals(identity)) continue;
+          if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
 
           let symmetryMate;
 
@@ -568,10 +568,13 @@ class Instancing {
               let mat = ic.biomtMatrices[i];
               if (mat === undefined) continue;
 
-              let matArray = mat.toArray();
+              let matArray = mat.toArray().map(x => parseFloat(x)); // some values are string and others are number
+              mat.fromArray(matArray); 
 
               // skip itself
-              if(mat.equals(identity)) continue;
+              //if(mat.equals(identity)) continue; // equals seemed to have some problem in comparing two matrices
+              let bEqual = me.utilsCls.compMatrix(mat, identity, 16);
+              if(bEqual) continue;
 
               ic.matricesElements1.push(matArray[0], matArray[1], matArray[2], matArray[3]);
               ic.matricesElements2.push(matArray[4], matArray[5], matArray[6], matArray[7]);
@@ -579,7 +582,7 @@ class Instancing {
               ic.matricesElements4.push(matArray[12], matArray[13], matArray[14], matArray[15]);
 
               let center = ic.center.clone();
-              center.applyMatrix4(mat);
+              center.applyMatrix4(mat);           
               centerSum.add(center);
 
               ++cnt;

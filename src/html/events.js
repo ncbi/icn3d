@@ -2479,10 +2479,22 @@ class Events {
            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+           ic.r2dt_chainid = chainid;
 
            await ic.diagram2dCls.drawR2dt(chainid);
            thisClass.setLogCmd('diagram 2d nucleotide | ' + chainid, true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "applyfr3d", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+
+           await ic.diagram2dCls.drawRnacanvas(chainid);
+           thisClass.setLogCmd('diagram 2d fr3d | ' + chainid, true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2632,6 +2644,57 @@ class Events {
            $("#" + me.svgid_ct + " text").addClass(className);
            thisClass.setLogCmd("cartoon label " + className, true);
         });
+
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_wconly", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            
+            $('#' + me.pre + 'basepairType').val($('#' + me.pre + 'basepairType option:first').val()).trigger('change');
+        });
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_svg", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           ic.saveFileCls.saveSvg("rnacanvasSvg", ic.inputid + "_rnacanvas.svg");
+        });
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_dotb", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            ic.saveFileCls.saveFile(ic.inputid + "_dot_bracket.txt", "text", [ic.dot_bracket]);
+        });
+
+        me.myEventCls.onIds("#" + me.rnacanvasid + "_fr3d", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let url = 'https://rna.bgsu.edu/rna3dhub/pdb/' + Object.keys(ic.structures)[0] + '/interactions/fr3d/basepairs/';
+
+            window.open(url, '_blank')
+        });
+
+       me.myEventCls.onIds("#" + me.pre + "r2dt_svg", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           let bClassName = true;
+           ic.saveFileCls.saveSvg("rnaTopoSvg", ic.r2dt_chainid + "_r2dt.svg", undefined, undefined, bClassName);
+        });
+        me.myEventCls.onIds("#" + me.pre + "r2dt_dotb", "click", async function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+            let result = await ic.diagram2dCls.getDotbracket(chainid);
+            ic.saveFileCls.saveFile(chainid + "_dot_bracket.txt", "text", [result.dotb]);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "r2dt_seq", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+
+            let chainid = $("#" + ic.pre + "atomsCustomNucleotide").val();
+            let seq = '';
+            for(let i = 0; i < ic.chainsSeq[chainid].length; ++i) {
+                seq += ic.chainsSeq[chainid][i].name;
+            }
+
+            ic.saveFileCls.saveFile(chainid + "_seq.txt", "text", [seq]);
+        });
+
 
         me.myEventCls.onIds("#" + me.linegraphid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();

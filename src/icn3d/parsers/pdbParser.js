@@ -179,7 +179,8 @@ class PdbParser {
         // DSSP only works for structures with all atoms. The Calpha only structures didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
         let bCalcSecondary = false;
-        if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
+        // if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
+        if(ic.bSecondaryStructure) {
             bCalcSecondary = false;
         }
         else if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
@@ -187,7 +188,7 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {  
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) { 
             await this.applyCommandDssp(bAppend);
         }
         else {
@@ -232,7 +233,7 @@ class PdbParser {
 
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        if(bAppend && !me.bNode) {
+        if(bAppend && Object.keys(ic.structures).length == 1 && !me.bNode) {
             // show all
             ic.definedSetsCls.setModeAndDisplay('all');
         }

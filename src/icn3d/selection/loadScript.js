@@ -305,6 +305,20 @@ class LoadScript {
             await ic.diagram2dCls.drawR2dt(chainid);
             ic.bRender = false;
           }
+          else if(command.indexOf('diagram 2d fr3d') == 0) {
+            let paraArray = command.split(' | ');
+            let pos = command.lastIndexOf(' ');
+            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
+
+            ic.bRender = true;
+            await ic.diagram2dCls.drawRnacanvas(chainid);
+            ic.bRender = false;
+          }
+          else if(command.indexOf('update rnacanvas') == 0) {
+            let paraArray = command.split(' ');
+            let nonWC = (paraArray.length == 3) ? paraArray[2] : '';
+            ic.diagram2dCls.updateRnacanvas(nonWC);
+          }
           else if(command.indexOf('diagram 2d ig') == 0) {
             let paraArray = command.split(' | ');
             let pos = command.lastIndexOf(' ');

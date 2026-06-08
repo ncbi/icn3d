@@ -21,6 +21,9 @@ class Picking {
       this.showPickingBase(atom, x, y);
 
       if(ic.pk != 0) {
+          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;    
+          let ncbiresid = (ic.resid2ncbi[resid]) ? ic.resid2ncbi[resid] : resid;
+
           if(x !== undefined && y !== undefined) { // mouse over
             if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
                 y += me.htmlCls.MENU_HEIGHT;
@@ -47,6 +50,8 @@ class Picking {
 
             $("#" + ic.pre + "popup").html(text);
             $("#" + ic.pre + "popup").css("top", y).css("left", x+20).show();
+
+            $(document).trigger('icn3d.pick.mouseover', ncbiresid);
           }
           else {
               // highlight the sequence background
@@ -59,6 +64,8 @@ class Picking {
               // update the interaction flag
               ic.bSphereCalc = false;
               ic.bHbondCalc = false;
+
+              $(document).trigger('icn3d.pick.click', ncbiresid);
           }
       }
     }

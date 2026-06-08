@@ -141,6 +141,8 @@ class ShowAnno {
             ic.maxAnnoLength = ic.maxAnnoLengthOri;
         }
 
+        ic.nucleotide_chainid = nucleotide_chainid;
+
         return {'nucleotide_chainid': nucleotide_chainid, 'chemical_chainid': chemical_chainid, 'chemical_set': chemical_set};
     }
 

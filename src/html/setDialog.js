@@ -64,7 +64,7 @@ class SetDialog {
 
         me.svgid_ct = me.pre + "icn3d_cartoon";
 
-        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
+        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD; margin:1px;" id="';
         let tmpStr = 'icn3d-node-text';
         html += me.htmlCls.divNowrapStr + "Dynamically generated for selected residues. <br>Nodes can be dragged or clicked.</div>";
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.svgid_ct + '_svg">SVG</button>' + me.htmlCls.space2;
@@ -657,10 +657,10 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_2ddgm_r2dt' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for Nucleotides (R2DT)');
-        html += "1. Select a nucleotide chain to show R2DT diagram:<br>";
+        html += "1. Select a nucleotide chain to show 2D diagram:<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
         html += "</select><br>";
-        html += me.htmlCls.buttonStr + "applyr2dt'>Show R2DT Diagram</button> <br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
+        html += "2. " + me.htmlCls.buttonStr + "applyr2dt'>R2DT Diagram</button>" + me.htmlCls.buttonStr + "applyfr3d' style='margin-left:12px'>2D Diagram with RNAcanvas</button><br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
@@ -999,8 +999,31 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddiagram' style='background-color:white' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_2ddiagram', '2D Diagram');
-        html += '<div id="' + me.pre + '2ddiagramDiv"></div>';
+        html += this.addNotebookTitle('dl_2ddiagram', 'R2DT Diagram');
+        html += '<div id="' + me.pre + '2ddiagramDiv"></div><br>';
+        html += "<b>Download</b>: " + me.htmlCls.buttonStr + "r2dt_svg'>SVG</button>" + me.htmlCls.buttonStr + "r2dt_dotb' style='margin-left:12px'>Dot-Bracket</button>" + me.htmlCls.buttonStr + "r2dt_seq' style='margin-left:12px'>Sequence</button><br>";
+        html += "</div>";
+
+        me.rnacanvasid = me.pre + 'rancanvas';
+        html += me.htmlCls.divStr + "dl_rnacanvas' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_rnacanvas', '2D Diagram with RNAcanvas');
+
+        me.lwTypes = ['cWW', 'tWW', 'cWH', 'tWH', 'cWS', 'tWS', 'cHH', 'tHH', 'cHS', 'tHS', 'cSS', 'tSS']; // exclude 'cWW'
+        html += "<table><tr><td>Show non-nested BPs:<br>";
+        html += me.htmlCls.divNowrapStr + "<select id='" + me.pre + "basepairType' multiple size='2' style='min-width:130px;'>";
+        html += "<option value='' selected>None</option>";
+        html += "<option value='" + me.lwTypes.join(',') + "'>All</option>";
+        for(let i = 0, il = me.lwTypes.length; i < il; i++) {
+            let name = me.lwTypes[i];
+            html += "<option value='" + name + "'>" + name + "</option>";
+        }
+        html += "</select></td><td valign='top'>"; 
+
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_wconly">Show Only Nested BPs</button><br>';
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_dotb">Download Dot-Bracket</button><br>';
+        html += me.htmlCls.space2 + buttonStrTmp + me.rnacanvasid + '_fr3d">FR3D Basepairs</button></td></tr></table><br>';
+
+        html += '<div id="' + me.pre + 'rnacanvasDiv"></div>';
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";

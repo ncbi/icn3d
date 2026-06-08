@@ -279,14 +279,23 @@ class DrawGraph {
                 }).strength(function(d) { return 0.4; }))
                 .force("x", d3v4.forceX(parentWidth / 2).strength(function(d) { return 0.02; }));
         } else if (me.htmlCls.force == 3) { // circle
+            // me.htmlCls.simulation.force("r", d3v4.forceRadial(function(d) {
+            //     if (d.s == 'a') {
+            //         return 200;
+            //     } else {
+            //         return 100;
+            //     }
+
+            // }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.8; }));
+
             me.htmlCls.simulation.force("r", d3v4.forceRadial(function(d) {
                 if (d.s == 'a') {
-                    return 200;
+                    return 60; //200;
                 } else {
-                    return 100;
+                    return 30; //100;
                 }
 
-            }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.8; }));
+            }, parentWidth / 2, parentHeight / 2).strength(function(d) { return 0.1; }));
         } else if (me.htmlCls.force == 4) { // random
             // do nothing
         }

@@ -39,7 +39,7 @@ class ApplyMissingRes {
                     line.serial1 = ic.missingResResid2serial[resid0 + ',' + resid1];
                     line.serial2 = ic.missingResResid2serial[resid1 + ',' + resid0];
 
-                    line.color = (ic.atoms[line.serial1]) ? "#" + ic.atoms[line.serial1].color.getHexString() : undefined;
+                    line.color = (ic.atoms[line.serial1] && ic.atoms[line.serial1].color) ? "#" + ic.atoms[line.serial1].color.getHexString() : undefined;
 
                     line.radius = ic.coilWidth;
 

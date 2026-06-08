@@ -35,7 +35,7 @@ class Export3D {
               let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
-              if(mat.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
               let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
@@ -77,7 +77,7 @@ class Export3D {
               let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
-              if(mat.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat, identity, 16)) continue;
               let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
@@ -194,7 +194,7 @@ class Export3D {
               if(mat1 === undefined) continue;
 
               // skip itself
-              if(mat1.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat1, identity, 16)) continue;
 
               blobArray = this.processStlMeshGroup( ic.mdl, blobArray, mat1 );
 
@@ -332,7 +332,7 @@ class Export3D {
               if(mat1 === undefined) continue;
 
               // skip itself
-              if(mat1.equals(identity)) continue;
+              if(me.utilsCls.compMatrix(mat1, identity, 16)) continue;
 
                 result = this.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat1 );
                 vrmlStrArray = result.vrmlStrArray;
