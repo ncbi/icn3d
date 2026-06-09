@@ -451,6 +451,7 @@ class MmdbParser {
         //ic.molid2color = molid2color;
         //ic.chain2molid = chain2molid;
         ic.molid2chain = molid2chain;
+
         // small structure with all atoms
         // show surface options
         $("#" + ic.pre + "accordion5").show();
