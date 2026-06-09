@@ -89,7 +89,9 @@ class LoadPDB {
         
         let bHeader = false, bFirstAtom = true;
 
-        let segId, prevSegId;
+        let segId, prevSegId, entityid;
+
+        if(!ic.molid2chain) ic.molid2chain = {};
 
         for (let i in lines) {
             let line = lines[i];
@@ -239,6 +241,17 @@ class LoadPDB {
                 ic.organism = line.substr(28).toLowerCase().trim();
 
                 ic.organism = ic.organism.substr(0, ic.organism.length - 1);
+            } else if (record === 'COMPND') {
+                if(line.indexOf('MOL_ID: ') != -1) { // COMPND    MOL_ID: 1;
+                     let itemArray = line.trim().split(' ');
+                     let lastItem = itemArray[itemArray.length - 1];
+                     entityid = lastItem.substr(0, lastItem.length - 1);
+                }
+                else if(line.indexOf('CHAIN: ') != -1) { // COMPND   3 CHAIN: H;
+                     let itemArray = line.trim().split(' ');
+                     let lastItem = itemArray[itemArray.length - 1];
+                     ic.molid2chain[parseInt(entityid)] = structure + '_' + lastItem.substr(0, lastItem.length - 1);
+                }
             } else if (record === 'ENDMDL') {
                 if(ic.statefileArray) {
                     ic.struct_statefile.push({'structure': structure, 'statefile': ic.statefileArray[moleculeNum - 1]});

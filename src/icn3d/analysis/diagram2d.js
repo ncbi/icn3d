@@ -996,18 +996,13 @@ class Diagram2d {
 
 		//https://9c5d031c.na-hackathon-2026.pages.dev/api.json
 		//https://www.ebi.ac.uk/pdbe/static/entry/1ffk_2_9.json, or 1ffk_1_0.json [pdbid_molid_chain]
-        if(!ic.chainid2molid) {
-            ic.chainid2molid = {};
-
-            await ic.showAnnoCls.showAnnotations();
-            let molidTmp = 1;
-            for(let id in ic.nucleotide_chainid) {
-                ic.chainid2molid[id] = molidTmp;
-                ++molidTmp;
+        let molid = 1;
+        for(let i in ic.molid2chain) {
+            if(ic.molid2chain[i] == chainid) {
+                molid = i;
+                break;
             }
         }
-
-        let molid = ic.chainid2molid[chainid] ? ic.chainid2molid[chainid] : 1;
 
 		let url = "https://www.ebi.ac.uk/pdbe/static/entry/" + pdbid.toLowerCase() + "_" + molid + "_" + chain + ".json";
 		let apiData = await me.getAjaxPromise(url, 'json', undefined, 'The chain ' + chainid + ' with molid ' + molid + ' has no R2DT information in PDBe...');
@@ -1162,7 +1157,7 @@ class Diagram2d {
             if(from_type_to.length != 3) continue;
 
             let fromArray = from_type_to[0].split('|'), toArray = from_type_to[2].split('|');
-            if(fromArray.length != 5 || toArray.length != 5) continue;
+            if(fromArray.length < 5 || toArray.length < 5) continue;
             if(fromArray[2] != chain || toArray[2] != chain) continue;
             let resi1 = fromArray[4], resi2 = toArray[4]; 
             let ncbiResid1 = ic.resid2ncbi[chainid + '_' + resi1], ncbiResid2 = ic.resid2ncbi[chainid + '_' + resi2];
@@ -1362,12 +1357,12 @@ class Diagram2d {
 		html += "	rnaCanvas.drawingView.fitToContent();\n";
 		html += "	$('.UDedZ1UaiPZJsRmm1yxA').hide();\n"; // hide the "Powered by RNAcanvas" label
 
-		html += "var pos2node = {}, id2pos = {};\n";
+		html += "var pos2node = {};\n";
 		html += "var nodes = rnaCanvas.drawing.bases;\n";
 
 		html += "for (var i = 0, il = nodes.length; i < il; i++) {\n";
 		html += "  pos2node[i + 1] = nodes[i];\n";
-		html += "  id2pos[nodes[i].id] = i + 1;\n";
+        html += "  nodes[i].setAttribute('resi', i + 1);\n";
 		html += "}\n";
 
         html += "$(document).on('click', '#rnacanvasSvg svg text', function(e) {\n";
@@ -1378,19 +1373,17 @@ class Diagram2d {
 		html += "    }\n";
         html += "    $(this)[0].setAttribute('fill', '#f8b84e');\n";
 
-        html += "    var pos = id2pos[id];\n";
         html += "    var resn = $(this).text().split(' ')[0];\n"; //C Position 8
-        html += "    $(document).trigger('from_rnacanvas', pos + '_' + resn);\n";
+        html += "    $(document).trigger('from_rnacanvas', $(this).attr('resi') + '_' + resn);\n";
         html += "    document.dispatchEvent(event);\n";
         html += "});\n";
 
         html += "$(document).on('mouseover', '#rnacanvasSvg svg text', function(e) {\n";
         html += "   var id = $(this).attr('id');\n";
         html += "    $(this)[0].setAttribute('fill', '#f8b84e');\n";
-
         html += "   if(!$(this)[0].querySelector('title')) {\n";
         html += "       var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');\n";
-        html += "       title.textContent = ' Position ' + id2pos[id];\n";
+        html += "       title.textContent = ' Position ' + $(this).attr('resi');\n";
         html += "       $(this)[0].appendChild(title);\n";
         html += "   }\n";
         html += "});\n";

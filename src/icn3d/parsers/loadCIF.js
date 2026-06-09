@@ -384,6 +384,7 @@ class LoadCIF {
             let resnArray = atom_site.getColumn("label_comp_id");
             let elemArray = atom_site.getColumn("type_symbol");
             let nameArray = atom_site.getColumn("label_atom_id");
+            let entiyidArray = atom_site.getColumn("label_entity_id");
 
             let chainArray = atom_site.getColumn("auth_asym_id");
 
@@ -405,6 +406,8 @@ class LoadCIF {
             let prevResn, tmpResi = 0;
             let sChain = {};
             let prevModelNum = '';
+            if(!ic.molid2chain) ic.molid2chain = {};
+            
             for (let i = 0; i < atomSize; ++i) {
                 let modelNum = modelNumArray.getString(i);
                 if(i > 0 && modelNum != prevModelNum) {
@@ -423,6 +426,7 @@ class LoadCIF {
                 let resn = resnArray.getString(i);
                 let elem = elemArray.getString(i);
                 let atom = nameArray.getString(i);
+                let entityid = entiyidArray.getString(i);
                 let chain = chainArray.getString(i);
                 let resi = resiArray.getString(i);
                 let oriResi = resiOriArray.getString(i); 
@@ -532,6 +536,8 @@ class LoadCIF {
                     prevResi = 0;
                     // bModifyResi = false;
                 }
+
+                ic.molid2chain[parseInt(entityid)] = chainNum;
 
                 residueNum = chainNum + "_" + resi;
 
