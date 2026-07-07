@@ -656,19 +656,19 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_r2dt' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for Nucleotides (R2DT)');
-        html += "1. Select a nucleotide chain to show 2D diagram:<br>";
+        html += this.addNotebookTitle('dl_2ddgm_r2dt', '2D Diagram for RNAs (R2DT)');
+        html += "1. Select a RNA chain to show 2D diagram:<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomNucleotide' size='5' style='min-width:130px;'>";
         html += "</select><br>";
         html += "2. " + me.htmlCls.buttonStr + "applyr2dt'>R2DT Diagram</button>" + me.htmlCls.buttonStr + "applyfr3d' style='margin-left:12px'>2D Diagram with RNAcanvas</button><br><br>(Hints: Click on Residues in 2D to highlight in 3D. <br>Ctrl + click to select multiple residues.)<br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_2ddgm_igdgm' class='" + dialogClass + "'>";
-        html += this.addNotebookTitle('dl_2ddgm_igdgm', '2D Diagram for Ig Domains (R2DT)');
+        html += this.addNotebookTitle('dl_2ddgm_igdgm', '2D Diagram for Ig Domains');
         html += "1. Select a protein chain to show Ig diagram. An Excel file containing <br>the Ig diagram will be saved to your computer.<br>";
         html += "<select style='max-width:200px' id='" + me.pre + "atomsCustomProtein' size='5' style='min-width:130px;'>";
         html += "</select><br>";
-        html += me.htmlCls.buttonStr + "applyigdgm'>Show Ig Diagram</button><br>";
+        html += "2. " + me.htmlCls.buttonStr + "applyigdgm' style='margin-right:12px;'>Show Ig Diagram</button>" + me.htmlCls.buttonStr + "saveigdgm'>Download Ig Diagrams in Excel</button><br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
@@ -1025,6 +1025,20 @@ class SetDialog {
 
         html += '<div id="' + me.pre + 'rnacanvasDiv"></div>';
         html += "</div>";
+
+
+        me.ig2ddgmid = me.pre + 'ig2ddgm';
+        html += me.htmlCls.divStr + "dl_ig2ddgm' style='background-color:white' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_ig2ddgm', '2D Diagram for Ig domains');
+
+        html += "<table><tr><td>Select an Ig domain:<br>";
+        html += me.htmlCls.divNowrapStr + "<select id='" + me.pre + "iglist' size='2' style='min-width:130px;'>";
+        html += "</select></td><td valign='top'>"; 
+        html += me.htmlCls.space2 + buttonStrTmp + me.ig2ddgmid + '_svg">Download SVG</button></td></tr></table><br>';
+
+        html += '<div id="' + me.pre + 'ig2ddgmDiv"></div>';
+        html += "</div>";
+
 
         html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
         html += this.addNotebookTitle('dl_alignerrormap', 'PAE Map');

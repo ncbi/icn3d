@@ -755,6 +755,74 @@ class Diagram2d {
                 //}
             }
         });
+
+        //$("#" + me.pre + "ig2ddgmDiv").html(svgHtml);
+        $(document).on("change", "#" + me.pre + "iglist", async function(e) { let ic = thisClass.icn3d;
+            let igIndex_igType = $("#" + me.pre + "iglist").val().split('_');
+
+            await thisClass.show2DdgmForIg(igIndex_igType[0], igIndex_igType[1]);
+
+            me.htmlCls.clickMenuCls.setLogCmd('update ig ' + igIndex_igType, true);
+        }); 
+
+        // ig 2D diagram: 2D -> 3D
+        $(document).on('click', '#ig2ddgmSvg .node', function(e) { let ic = thisClass.icn3d;
+            // clear all node color
+            thisClass.resetAllNodes('ig2ddgmSvg');
+
+            $(this).css({'font-size': '20px', 'font-weight': 'bold'});
+
+            //<text x="502.1" y="301.8" class="s9 c8547"><title>Ref. Num. 8547</title> N99 </text>
+            let text = $(this).html().trim();
+            let resnresi = text.substr(text.lastIndexOf(' ') + 1);
+
+            let resid = ic.ncbi2resid[ic.ig2ddgm_chainid + '_' + resnresi.substr(1)];
+
+            // highlight the selected residue
+            if(ic.bCtrl || ic.bShift) {
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
+            }
+            else {
+                ic.hAtoms = ic.residues[resid];
+            }
+
+            ic.hlUpdateCls.showHighlight();
+        });
+
+        // $(document).on('mouseout', '#ig2ddgmSvg .node', function(e) { let ic = thisClass.icn3d;
+        //     thisClass.resetAllNodes('ig2ddgmSvg');
+        // });
+
+        // ig 2D diagram: 3D -> 2D
+        $(document).on('icn3d.pick.click icn3d.pick.mouseover', function(ev, data) { let ic = thisClass.icn3d;
+            // get the residues in the selection
+            let ncbiresid = data;
+            let resid = ic.ncbi2resid[ncbiresid];
+
+            if(ic.ig2ddgm_chainid && ic.resid2refnum && ic.resid2refnum[resid]) {
+                let refnumLabel = ic.resid2refnum[resid];
+                let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
+
+                // clear all node color
+                thisClass.resetAllNodes('ig2ddgmSvg');
+
+                // highlight the residue
+                $("#ig2ddgmSvg .c" + refnumStr).css({'font-size': '20px', 'font-weight': 'bold'});
+            }
+        });        
+    }
+
+    // reset all nodes
+    resetAllNodes(id) { let ic = this.icn3d, me = ic.icn3dui;
+        // Select the SVG container
+        const svg = document.getElementById(id);
+
+        // Select all text-related nodes: <text>
+        const textElements = svg.querySelectorAll('text');
+
+        textElements.forEach((node) => {
+            node.style = {};
+        });
     }
 
     clickNode(node) {  let ic = this.icn3d, me = ic.icn3dui;
@@ -1429,7 +1497,12 @@ class Diagram2d {
 					html += "  line.setAttribute('y2', node2.y);\n";
 					html += "  line.setAttribute('stroke', 'black');\n";
 					html += "  line.setAttribute('stroke-width', '1');\n";
-					html += "  line.setAttribute('title', '" + type + "');\n";
+					//html += "  line.setAttribute('title', '" + type + "');\n";
+
+                    html += "  var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');\n";
+                    html += "  title.textContent = '" + pos1 + " - " + pos2 + "; " + type + "';\n";
+                    html += "  line.appendChild(title);\n";
+
                     html += "  rnaCanvas.drawing.domNode.appendChild(line);";
                     html += "}\n";
                 }
@@ -1450,9 +1523,11 @@ class Diagram2d {
         $("#" + me.pre + "rnacanvasDiv").html(html);
     }
 
-    async drawIgdgm(chainid) { let ic = this.icn3d, me = ic.icn3dui;
+    async drawIgdgm(chainid, bDownload) { let ic = this.icn3d, me = ic.icn3dui;
         // select the current chain
         //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
+
+        ic.ig2ddgm_chainid = chainid;
 
         // run ig detection
         ic.bRunRefnumAgain = true;
@@ -1477,7 +1552,7 @@ class Diagram2d {
             
             let igType = ic.ref2igtype[info.refpdbname];
 
-            if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI') {
+            if(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI' || igType == 'IgFN3') {
                 bFound = true;
             }
 
@@ -1485,12 +1560,12 @@ class Diagram2d {
         }
 
         if(!bFound) {
-            alert("The Ig type(s) for chain " + chainid + " is/are " + igTypeArray + ". Currently only IgV, IgC1, IgC2 and IgI types are supported for drawing Ig diagrams.");
+            alert("The Ig type(s) for chain " + chainid + " is/are " + igTypeArray + ". Currently only IgV, IgC1, IgC2, IgI and IgFN3 types are supported for drawing Ig diagrams.");
             return;
         }
 
         // get the hash of refnum to resn
-        let refnum2resn = {};
+        ic.refnum2resn = {};
         for(let resid in ic.resid2refnum) {
             let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
             if(!atom) continue;
@@ -1503,87 +1578,153 @@ class Diagram2d {
 
             if(refnumLabel) {
                 refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
-                if(!refnum2resn[domainid]) refnum2resn[domainid] = {};
-                refnum2resn[domainid][refnumStr] = resn + resid.split('_')[2];
+                if(!ic.refnum2resn[domainid]) ic.refnum2resn[domainid] = {};
+                ic.refnum2resn[domainid][refnumStr] = resn + resid.split('_')[2];
             }
         }
 
-        if(ic.bXlsx === undefined) {
-            let urlScript = "/Structure/icn3d/script/exceljs.min.js";
-            await me.getAjaxPromise(urlScript, 'script');
+        if(bDownload) {
+            if(ic.bXlsx === undefined) {
+                let urlScript = "/Structure/icn3d/script/exceljs.min.js";
+                await me.getAjaxPromise(urlScript, 'script');
 
-            ic.bXlsx = true;
-        }
-
-        const mainWorkbook = new ExcelJS.Workbook();
-
-        let ig2width = {'IgC1': 17, 'IgC2': 18, 'IgI': 19, 'IgV': 19};
-
-        for(let i = 0, il = igArray.length; i < il; ++i) {
-            let domainid = igArray[i].domainid;
-            let igType = igTypeArray[i];
-            if(!(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI')) {
-                const newSheet = mainWorkbook.addWorksheet((i + 1) + ". " + igType);
+                ic.bXlsx = true;
             }
-            else {
-                let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
-                let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
 
-                const workbook = new ExcelJS.Workbook();
-                // Load the workbook from the buffer
-                await workbook.xlsx.load(arrayBuffer);
-                const worksheet = workbook.getWorksheet(1);
+            const mainWorkbook = new ExcelJS.Workbook();
 
-                const newSheet = mainWorkbook.addWorksheet();
-                // Clone the model to transfer styles and data
-                newSheet.model = worksheet.model;
-                newSheet.name = (i + 1) + ". " + igType;
+            let ig2width = {'IgC1': 17, 'IgC2': 18, 'IgI': 19, 'IgV': 19};
 
-                // Iterate over all rows that have values
-                newSheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-                    // Iterate over all cells in the row
-                    row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                        //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
-                        if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
-                            if(refnum2resn[domainid].hasOwnProperty(cell.value)) {
-                                cell.value = refnum2resn[domainid][cell.value];
+            for(let i = 0, il = igArray.length; i < il; ++i) {
+                let domainid = igArray[i].domainid;
+                let igType = igTypeArray[i];
+                if(!(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI' || igType == 'IgFN3')) {
+                    const newSheet = mainWorkbook.addWorksheet((i + 1) + ". " + igType);
+                }
+                else {
+                    let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".xlsx";
+                    let arrayBuffer = await me.getXMLHttpRqstPromise(url, 'GET', 'arraybuffer', 'xlsx');
+
+                    const workbook = new ExcelJS.Workbook();
+                    // Load the workbook from the buffer
+                    await workbook.xlsx.load(arrayBuffer);
+                    const worksheet = workbook.getWorksheet(1);
+
+                    const newSheet = mainWorkbook.addWorksheet();
+                    // Clone the model to transfer styles and data
+                    newSheet.model = worksheet.model;
+                    newSheet.name = (i + 1) + ". " + igType;
+
+                    // Iterate over all rows that have values
+                    newSheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+                        // Iterate over all cells in the row
+                        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                            //console.log(`Cell [${rowNumber}, ${colNumber}] = ${cell.value}`);
+                            if (cell.value && !isNaN(cell.value) && cell.value > 1000 && cell.value < 10000) {
+                                if(ic.refnum2resn[domainid].hasOwnProperty(cell.value)) {
+                                    cell.value = ic.refnum2resn[domainid][cell.value];
+                                }
+                                else {
+                                    cell.value = '';
+                                }
                             }
-                            else {
+                            else if(cell.value == 'NUMBERING') {
                                 cell.value = '';
                             }
-                        }
-                        else if(cell.value == 'NUMBERING') {
-                            cell.value = '';
-                        }
-                    });
-                });
-
-                // copy the original data
-                let colNum = ig2width[igType]; // some extra columns
-                for(let i = 1; i <= colNum; ++i) {
-                    const sourceCol = worksheet.getColumn(i);
-
-                    // Copy values and styles
-                    sourceCol.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-                        const targetCell = newSheet.getRow(rowNumber).getCell(colNum + 2 + i);
-                        
-                        targetCell.value = cell.value;
-                        targetCell.style = cell.style; // Copies font, borders, and fills
+                        });
                     });
 
-                    // reset width for each column
-                    newSheet.getColumn(colNum + 2 + i).width = worksheet.getColumn(i).width;
+                    // copy the original data
+                    let colNum = ig2width[igType]; // some extra columns
+                    for(let i = 1; i <= colNum; ++i) {
+                        const sourceCol = worksheet.getColumn(i);
+
+                        // Copy values and styles
+                        sourceCol.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+                            const targetCell = newSheet.getRow(rowNumber).getCell(colNum + 2 + i);
+                            
+                            targetCell.value = cell.value;
+                            targetCell.style = cell.style; // Copies font, borders, and fills
+                        });
+
+                        // reset width for each column
+                        newSheet.getColumn(colNum + 2 + i).width = worksheet.getColumn(i).width;
+                    }
                 }
             }
+
+            // Generate the workbook as a Buffer
+            const data = await mainWorkbook.xlsx.writeBuffer();
+
+            // Access the underlying ArrayBuffer
+            ic.saveFileCls.saveFile(ic.inputid + '_ig_diagram.xlsx', 'xlsx', data);
+        }
+        else { // show interactive SVG
+            // generate a dropdown menu
+            let menuHtml = '';
+            for(let i = 0, il = igArray.length; i < il; ++i) {
+                let domainid = igArray[i].domainid;
+                let igType = igTypeArray[i];
+                
+                let selStr = (i == 0) ? ' selected' : '';
+                menuHtml += "<option value='" + i + '_' + igType + "' " + selStr + ">" + (i+1) + ". " + igType + "</option>";
+            }
+            $("#" + me.pre + "iglist").html(menuHtml);
+            
+            await this.show2DdgmForIg(0, igTypeArray[0]); // default
+
+            $("#" + me.pre + "iglist").resizable();
         }
 
-        // Generate the workbook as a Buffer
-        const data = await mainWorkbook.xlsx.writeBuffer();
-
-        // Access the underlying ArrayBuffer
-        ic.saveFileCls.saveFile(ic.inputid + '_ig_diagram.xlsx', 'xlsx', data);
-
         ic.drawCls.draw();
+    }
+
+    async show2DdgmForIg(igIndex, igType) { let ic = this.icn3d, me = ic.icn3dui;
+        if(!(igType == 'IgV' || igType == 'IgC1' || igType == 'IgC2' || igType == 'IgI' || igType == 'IgFN3')) {
+            alert("This Ig type " + igType + "has no 2D template yet...");
+            return '';
+        }
+        else {
+            let url = "/Structure/icn3d/template/igstrand_template_" + igType + ".svg";
+            let svgHtml = await me.getAjaxPromise(url, 'text');
+
+            let igArray = ic.chain2igArray[ic.ig2ddgm_chainid]; 
+            let domainid = igArray[igIndex].domainid;
+
+            // loop through all text node
+            let lineArray = svgHtml.split('\n');
+
+            let html = '';
+            for(let i = 0, il = lineArray.length; i < il; ++i) {
+                let line = lineArray[i];
+                if(line.indexOf('<text ') == 0) { // <text x="502.1" y="301.8" class="s9 c8547"><title>Ref. Num. 8547</title> 8547 </text>
+                    let pos = line.indexOf('</title> ');
+                    let refnumStr = line.substr(pos + 9).split(' ')[0];
+                    let refnum = parseInt(refnumStr);
+
+                    if(!isNaN(refnumStr) && refnum > 1000 && refnum < 10000) {
+                        if(ic.refnum2resn[domainid].hasOwnProperty(refnumStr)) {
+                            let resn = ic.refnum2resn[domainid][refnumStr];
+                            let pos2 = line.indexOf('class=');
+                            html += line.substr(0, pos2) + 'class="node ' + line.substr(pos2 + 7, pos - (pos2 + 7)) + '</title> ' + resn + ' </text>';
+                        }
+                        else {
+                            html += line.substr(0, pos) + '</title>  </text>';
+                        }
+                    }
+                    else {
+                        html += line + '\n';
+                    }
+                }
+                else {
+                    html += line + '\n';
+                }
+            }
+
+            $("#" + me.pre + "ig2ddgmDiv").html(html);
+
+            me.htmlCls.dialogCls.openDlg('dl_ig2ddgm', 'Show 2D diagram for Ig ' + (igIndex + 1) + '.' + igType + ' in '  + ic.ig2ddgm_chainid);
+        }
     }
 }
 

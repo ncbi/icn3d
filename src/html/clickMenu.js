@@ -2454,7 +2454,7 @@ class ClickMenu {
             let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein'], bNucleotides);
             if($("#" + me.pre + "atomsCustomNucleotide").length && definedAtomsHtml) {
                 $("#" + me.pre + "atomsCustomNucleotide").html(definedAtomsHtml);
-                me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for Nucleotides');
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm_r2dt', 'Show R2DT Diagram for RNAs');
                 $("#" + me.pre + "atomsCustomNucleotide").resizable();
             }
             else {

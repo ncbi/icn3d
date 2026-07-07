@@ -67,8 +67,8 @@
 * <b>Use iCn3D in Jupyter Notebook</b>: 
     You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at [pypi.org/project/icn3dpy](https://pypi.org/project/icn3dpy/).
 
-* <b>2D Diagram for Nucleotides and Ig Domains</b>: 
-    You can click the menu "Analysis > 2D Diagram" to show [2D Diagram for Nucleotides (R2DT)](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?50918275b7a3b89f639b141b49452e52), and [2D Diagram for Ig Domains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?d37c8bf3ae23e9f07767789ed964c059). 
+* <b>2D Diagram for RNAs and Ig Domains</b>: 
+    You can click the menu "Analysis > 2D Diagram" to show [2D Diagram for RNAs](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?206e03f7df689c028f9fed32f6807c05), and [2D Diagram for Ig Domains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share2.html?d37c8bf3ae23e9f07767789ed964c059). 
 
 * <b>2D Cartoons in the chain, domain, and secondary structure levels</b>: 
     You can click the menu "Analysis > 2D Cartoon" to show 2D Cartoons in the [chain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?pzmT7EMTAxXKVbZu7), [domain](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?Arh4H9VTMuHQURY5A), and [secondary structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/share.html?5iZSHNbXcJisp7gQ6) levels.  
@@ -111,8 +111,8 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, XYZ, and iCn
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
 * **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "Analysis > Interactions" is based on Force-Directed Graph.
-* **[R2DT diagram](https://docs.r2dt.bio/en/latest/widget.html)**: R2DT diagram via the menu "Analysis > 2D Diagram > for Nucleotides > R2DT Diagram" uses the R2DT widget from  [RNAcentral](https://rnacentral.org/) and [pdb-rna-viewer](https://github.com/PDBeurope/pdb-rna-viewer).
-* **[RNAcanvas](https://rna2drawer.app/)**: 2D diagram via the menu "Analysis > 2D Diagram > for Nucleotides > 2D Diagram with RNAcanvas" uses the RNAcanvas widget.
+* **[R2DT diagram](https://docs.r2dt.bio/en/latest/widget.html)**: R2DT diagram via the menu "Analysis > 2D Diagram > for RNAs > R2DT Diagram" uses the R2DT widget from  [RNAcentral](https://rnacentral.org/) and [pdb-rna-viewer](https://github.com/PDBeurope/pdb-rna-viewer).
+* **[RNAcanvas](https://rna2drawer.app/)**: 2D diagram via the menu "Analysis > 2D Diagram > for RNAs > 2D Diagram with RNAcanvas" uses the RNAcanvas widget.
 
 ## Third-party libraries used in Backend
 
