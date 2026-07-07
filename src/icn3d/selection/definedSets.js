@@ -154,27 +154,31 @@ class DefinedSets {
           let colorStr =(atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
           let color =(atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
-          if(bNucleotide && atom) {
+          if(bNucleotide) {
             // Handle nucleotide-specific logic
-            if(ic.nucleotides.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+            if(atom && ic.nucleotides.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
                 let selectStr = (cnt == 0) ? "selected" : "";
+
+                if(cnt == 0) this.selectSets([name]);
 
                 html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundNucleotide = true;
                 ++cnt;
             }
           }
-          else if(bProtein && atom) {
+          else if(bProtein) {
             // Handle protein-specific logic
-            if(ic.proteins.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
+            if(atom && ic.proteins.hasOwnProperty(atom.serial) && name.split('_').length == 2 && !ic.structures.hasOwnProperty(name)) {
                 let selectStr = (cnt == 0) ? "selected" : "";
+
+                if(cnt == 0) this.selectSets([name]);
 
                 html += "<option value='" + name + "' style='color:#" + color + "' " + selectStr + ">" + name + "</option>";
                 bFoundProtein = true;
                 ++cnt;
             }
           }
-          else {
+          else {   
             if(commandnameArray.indexOf(name) != -1) {
                 html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
             }

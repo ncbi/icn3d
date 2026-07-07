@@ -68,6 +68,7 @@ class Dialog {
         let bLigplot = $('#' + me.pre + 'dl_ligplot').hasClass('ui-dialog-content'); // initialized
         let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
         let b2ddiagram = $('#' + me.pre + 'dl_2ddiagram').hasClass('ui-dialog-content'); // initialized
+        let big2ddgm = $('#' + me.pre + 'dl_ig2ddgm').hasClass('ui-dialog-content'); // initialized
         let brnacanvas = $('#' + me.pre + 'dl_rnacanvas').hasClass('ui-dialog-content'); // initialized
         let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
         let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
@@ -90,6 +91,7 @@ class Dialog {
         id2flag.dl_contactmap = 'bContactmap2';
         id2flag.dl_2ddiagram = 'b2ddiagram2';
         id2flag.dl_rnacanvas = 'brnacanvas2';
+        id2flag.dl_ig2ddgm = 'big2ddgm2';
         id2flag.dl_alignerrormap = 'bAlignerrormap2';
         id2flag.dl_interactionsorted = 'bTable2';
         id2flag.dl_alignment = 'bAlignmentInit2';
@@ -107,6 +109,7 @@ class Dialog {
         if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
         if(b2ddiagram) status.b2ddiagram2 = $('#' + me.pre + 'dl_2ddiagram').dialog( 'isOpen' );
         if(brnacanvas) status.brnacanvas2 = $('#' + me.pre + 'dl_rnacanvas').dialog( 'isOpen' );
+        if(big2ddgm) status.big2ddgm2 = $('#' + me.pre + 'dl_ig2ddgm').dialog( 'isOpen' );
         if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
         if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
         if(bAlignmentInit) status.bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
@@ -294,7 +297,7 @@ class Dialog {
 
         let status = this.getDialogStatus().status;
 
-        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_2ddiagram' || id === me.pre + 'dl_rnacanvas' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+        if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_rmsdplot' || id === me.pre + 'dl_hbondplot' || id === me.pre + 'dl_ligplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_2ddiagram' || id === me.pre + 'dl_rnacanvas' || id === me.pre + 'dl_ig2ddgm' || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
             let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 

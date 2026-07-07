@@ -189,7 +189,7 @@ class ApplyDisplay {
 
         // remove schematic labels
         //if(ic.labels !== undefined) ic.labels['schematic'] = undefined;
-        if(ic.labels !== undefined) delete ic.labels['schematic'];
+        if(!bHighlight && ic.labels !== undefined) delete ic.labels['schematic'];
 
         let bOnlySideChains = false;
 /*
@@ -212,6 +212,7 @@ class ApplyDisplay {
           //var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "P");
           //let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
           let nucleotidesAtoms = me.hashUtilsCls.intHash(atomHash, ic.nucleotides);
+
           let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(nucleotidesAtoms, ic.atoms));
 
           if(style === 'ribbon') {
@@ -250,13 +251,13 @@ class ApplyDisplay {
 
             //if(firstAtom.het) { // chemicals
             if(ic.chemicals.hasOwnProperty(firstAtom.serial)) { // chemicals
-                ic.residueLabelsCls.addNonCarbonAtomLabels(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+                if(!bHighlight) ic.residueLabelsCls.addNonCarbonAtomLabels(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
 
                 let bSchematic = true;
                 ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), chemicalSchematicRadius, chemicalSchematicRadius, undefined, bHighlight, bSchematic);
             }
             else { // nucleotides or proteins
-                ic.residueLabelsCls.addResidueLabels(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), true);
+                if(!bHighlight) ic.residueLabelsCls.addResidueLabels(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), true);
 
                 if(bPhosphorusOnly) {
                     ic.cylinderCls.createCylinderCurve(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ["P"], ic.traceRadius, false, bHighlight);

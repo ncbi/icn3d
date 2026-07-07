@@ -87,6 +87,28 @@ class ApplyClbonds {
         } // if
       } // if
 
+        // add crosslink chemicals to the linked protein/nucleotide residues
+        for(let structure in ic.structures) {
+            let clbondArray = ic.clbondpnts[structure];
+            if(clbondArray === undefined) {
+                break;
+            }
+            for(let i = 0, il = clbondArray.length; i < il; i = i + 2) {
+                let resid1 = clbondArray[i];
+                let resid2 = clbondArray[i+1];
+
+                let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]);
+                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]);
+
+                if((ic.proteins.hasOwnProperty(atom1.serial) || ic.nucleotides.hasOwnProperty(atom1.serial)) && ic.chemicals.hasOwnProperty(atom2.serial)) {
+                    ic.residues[resid1] = me.hashUtilsCls.unionHash(ic.residues[resid1], ic.residues[resid2]);
+                }
+                else if((ic.proteins.hasOwnProperty(atom2.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chemicals.hasOwnProperty(atom1.serial)) {
+                    ic.residues[resid2] = me.hashUtilsCls.unionHash(ic.residues[resid2], ic.residues[resid1]);
+                }
+            }
+        }
+
       return ic.residuesHashClbonds;
     }
 

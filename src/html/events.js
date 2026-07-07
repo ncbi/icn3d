@@ -2495,7 +2495,17 @@ class Events {
            thisClass.setLogCmd('diagram 2d fr3d | ' + chainid, true);
         });
 
-        me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "saveigdgm", "click", async function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           let chainid = $("#" + ic.pre + "atomsCustomProtein").val();
+
+           let bSave = true;
+           await ic.diagram2dCls.drawIgdgm(chainid, bSave);
+           thisClass.setLogCmd('download 2d ig | ' + chainid, true);
+        });
+         me.myEventCls.onIds("#" + me.pre + "applyigdgm", "click", async function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
@@ -2695,6 +2705,11 @@ class Events {
             ic.saveFileCls.saveFile(chainid + "_seq.txt", "text", [seq]);
         });
 
+        me.myEventCls.onIds("#" + me.ig2ddgmid + "_svg", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           
+           ic.saveFileCls.saveSvg("ig2ddgmSvg", ic.ig2ddgm_chainid + "_ig_2d.svg");
+        });
 
         me.myEventCls.onIds("#" + me.linegraphid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();

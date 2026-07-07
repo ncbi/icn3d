@@ -1,0 +1,360 @@
+<svg id="ig2ddgmSvg" x="0" y="0" width="935" height="1210" viewBox="0 0 935 1210" version="1.1" xmlns="http://www.w3.org/2000/svg" style="display: block;margin-left: auto;margin-right: auto;">
+<defs>
+<clipPath id="c_1"><path d="M0,0H935V1210H0Z"/></clipPath>
+<style>
+text { white-space: pre; }
+path, image { pointer-events: none; }
+
+.s0{font-size:12.21px;font-family:LiberationSans-Bold_9r;fill:#000;}
+.s1{font-size:9.16px;font-family:Carlito_a0;fill:#000;}
+.s2{font-size:9.16px;font-family:Carlito-Bold_a5;fill:#FFF;}
+.s3{font-size:12.21px;font-family:DejaVuSans_9w;fill:#000;}
+.s4{font-size:9.16px;font-family:DejaVuSans_9w;fill:#666;}
+.s5{font-size:9.16px;font-family:Carlito-Bold_a5;fill:#0432FF;}
+.s6{font-size:9.16px;font-family:DejaVuSans_9w;fill:#F00;}
+.s7{font-size:9.16px;font-family:Carlito-Bold_a5;fill:#0C5ADB;}
+.s8{font-size:9.16px;font-family:Carlito-Bold_a5;fill:#000;}
+.s9{font-size:9.16px;font-family:Carlito_a0;fill:#FFF;}
+.sa{font-size:9.16px;font-family:DejaVuSans_9w;fill:#000;}
+.sb{font-size:9.16px;font-family:DejaVuSans_9w;fill:#FFF;}
+.sc{font-size:9.16px;font-family:Carlito_a0;fill:#F00;}
+
+.g0{fill:#FFF;}
+.g1{fill:#0F0;}
+.g2{fill:#00FA00;}
+.g3{fill:#F90;}
+.g4{fill:#4A86E8;}
+.g5{fill:#FA72FF;}
+.g6{fill:#D8D8D8;}
+.g7{fill:#F00;}
+.g8{fill:#FF0;}
+.g9{fill:#A437FF;}
+.ga{fill:#D883FF;}
+.gb{fill:#FFD579;}
+.gc{fill:#FF9300;}
+.gd{fill:#0432FF;}
+.ge{fill:#EFEFEF;}
+.gf{fill:none;stroke:#000;stroke-width:1.336;stroke-linejoin:round;}
+.gg{fill:none;stroke:#000;stroke-width:0.572;stroke-linejoin:round;}
+.gh{fill:none;stroke:#000;stroke-width:1.909;stroke-linejoin:round;}
+
+</style>
+
+</defs>
+<path d="M0 0V1210H935V0Z" fill="#FFFFFF" stroke="none"/>
+<g clip-path="url(#c_1)">
+<path fill-rule="evenodd" d="M77 97.5H579.3v-15H77v15Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 109.5H604.9v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 121.6h51.1V109.5H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 121.6H255.9V109.5H128.1v12.1Z" class="g1"/>
+<path fill-rule="evenodd" d="M255.9 121.6H299V109.5H255.9v12.1Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 121.6h149V109.5h-149v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 121.6H579.3V109.5H447.8v12.1Z" class="g3"/>
+<path fill-rule="evenodd" d="M579.3 121.6h25.6V109.5H579.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 145.6h51.1V121.5H77v24.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 145.6H215V121.5H128.1v24.1Z" class="g4"/>
+<path fill-rule="evenodd" d="M215 145.6h84V121.5H215v24.1Z" class="g5"/>
+<path fill-rule="evenodd" d="M298.9 145.6h149V121.5h-149v24.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 145.6h85.5V121.5H447.8v24.1Z" class="g5"/>
+<path fill-rule="evenodd" d="M533.3 145.6h46V121.5h-46v24.1Z" class="g4"/>
+<path fill-rule="evenodd" d="M579.3 145.6h25.6V121.5H579.3v24.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 172.6h51.1v-27H77v27Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 172.6H299v-27H128.1v27Z" class="g1"/>
+<path fill-rule="evenodd" d="M298.9 172.6h149v-27h-149v27Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 172.6H579.3v-27H447.8v27Z" class="g3"/>
+<path fill-rule="evenodd" d="M579.3 172.6h25.6v-27H579.3v27Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 184.7H604.9V172.6H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 196.7h94.2V184.6H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M215 196.7H373.4V184.6H215v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M410.6 196.7h37.3V184.6H410.6v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 196.7h41.7V184.6H447.8v12.1Z" class="g6"/>
+<path fill-rule="evenodd" d="M489.5 196.7H604.9V184.6H489.5v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 208.7H604.9v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 220.7H373.4v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M410.6 220.7h37.3v-12H410.6v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 220.7h41.7v-12H447.8v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M489.5 220.7H604.9v-12H489.5v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 232.7H604.9v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 256.8H447.9V232.7H77v24.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 256.8h41.7V232.7H447.8v24.1Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 256.8H604.9V232.7H489.5v24.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 268.8H447.9V256.7H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 268.8h85.5V256.7H447.8v12.1Z" class="g8"/>
+<path fill-rule="evenodd" d="M533.3 268.8h71.6V256.7H533.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 292.8h51.1v-24H77v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 292.8h43.1v-24H128.1v24Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 292.8H215v-24H171.1v24Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 292.8h40.9v-24H215v24Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 292.8H299v-24H255.9v24Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 292.8h149v-24h-149v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 292.8h41.7v-24H447.8v24Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 292.8h43.8v-24H489.5v24Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 292.8h71.6v-24H533.3v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 304.8h51.1v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 304.8h43.1v-12H128.1v12Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 304.8H215v-12H171.1v12Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 304.8h40.9v-12H215v12Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 304.8H299v-12H255.9v12Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 304.8h149v-12h-149v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 304.8h41.7v-12H447.8v12Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 304.8h43.8v-12H489.5v12Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 304.8h46v-12h-46v12Z" class="gd"/>
+<path fill-rule="evenodd" d="M579.3 304.8h25.6v-12H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 316.9h51.1V304.8H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 316.9h43.1V304.8H128.1v12.1Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 316.9H215V304.8H171.1v12.1Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 316.9h40.9V304.8H215v12.1Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 316.9H299V304.8H255.9v12.1Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 316.9h149V304.8h-149v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 316.9H579.3V304.8H447.8v12.1Z" class="g8"/>
+<path fill-rule="evenodd" d="M579.3 316.9h25.6V304.8H579.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 328.9h51.1V316.8H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 328.9h43.1V316.8H128.1v12.1Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 328.9H215V316.8H171.1v12.1Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 328.9h84V316.8H215v12.1Z" class="g8"/>
+<path fill-rule="evenodd" d="M298.9 328.9h149V316.8h-149v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 328.9h41.7V316.8H447.8v12.1Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 328.9h43.8V316.8H489.5v12.1Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 328.9h46V316.8h-46v12.1Z" class="gd"/>
+<path fill-rule="evenodd" d="M579.3 328.9h25.6V316.8H579.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 340.9h51.1v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 340.9h43.1v-12H128.1v12Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 340.9H215v-12H171.1v12Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 340.9h40.9v-12H215v12Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 340.9H299v-12H255.9v12Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 340.9h149v-12h-149v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 340.9h41.7v-12H447.8v12Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 340.9h43.8v-12H489.5v12Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 340.9h46v-12h-46v12Z" class="gd"/>
+<path fill-rule="evenodd" d="M579.3 340.9h25.6v-12H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 352.9h51.1v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 352.9H215v-12H128.1v12Z" class="g8"/>
+<path fill-rule="evenodd" d="M215 352.9h40.9v-12H215v12Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 352.9H299v-12H255.9v12Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 352.9H579.3v-12H298.9v12Z" class="g8"/>
+<path fill-rule="evenodd" d="M579.3 352.9h25.6v-12H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 376.9h51.1v-24H77v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 376.9h43.1v-24H128.1v24Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 376.9H215v-24H171.1v24Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 376.9h40.9v-24H215v24Z" class="gb"/>
+<path fill-rule="evenodd" d="M255.9 376.9H299v-24H255.9v24Z" class="g2"/>
+<path fill-rule="evenodd" d="M298.9 376.9h149v-24h-149v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 376.9h41.7v-24H447.8v24Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 376.9h43.8v-24H489.5v24Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 376.9h46v-24h-46v24Z" class="gd"/>
+<path fill-rule="evenodd" d="M579.3 376.9h25.6v-24H579.3v24Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 401h51.1V376.9H77V401Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 401h43.1V376.9H128.1V401Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 401H215V376.9H171.1V401Z" class="ga"/>
+<path fill-rule="evenodd" d="M215 401h84V376.9H215V401Z" class="g6"/>
+<path fill-rule="evenodd" d="M298.9 401h149V376.9h-149V401Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 401h41.7V376.9H447.8V401Z" class="g7"/>
+<path fill-rule="evenodd" d="M489.5 401h43.8V376.9H489.5V401Z" class="gc"/>
+<path fill-rule="evenodd" d="M533.3 401h46V376.9h-46V401Z" class="gd"/>
+<path fill-rule="evenodd" d="M579.3 401h25.6V376.9H579.3V401Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 413h51.1V401H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 413h43.1V401H128.1v12Z" class="g9"/>
+<path fill-rule="evenodd" d="M171.1 413H215V401H171.1v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M215 413H447.9V401H215v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 413h85.5V401H447.8v12Z" class="ge"/>
+<path fill-rule="evenodd" d="M533.3 413h46V401h-46v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M579.3 413h25.6V401H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 425h51.1V413H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 425H215V413H128.1v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M215 425h40.9V413H215v12Z" class="g7"/>
+<path fill-rule="evenodd" d="M298.9 425h149V413h-149v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 425h85.5V413H447.8v12Z" class="ge"/>
+<path fill-rule="evenodd" d="M533.3 425h46V413h-46v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M579.3 425h25.6V413H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 437h51.1V425H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 437H215V425H128.1v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M215 437H533.3V425H215v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M533.3 437h46V425h-46v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M579.3 437h25.6V425H579.3v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 449.1h51.1V437H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 449.1H579.3V437H128.1v12.1Z" class="g6"/>
+<path fill-rule="evenodd" d="M579.3 449.1h25.6V437H579.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 461.1h51.1V449H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 461.1h43.1V449H128.1v12.1Z" class="g6"/>
+<path fill-rule="evenodd" d="M171.1 461.1H336.2V449H171.1v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M336.2 461.1h37.2V449H336.2v12.1Z" class="g7"/>
+<path fill-rule="evenodd" d="M410.6 461.1H604.9V449H410.6v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 473.1h51.1V461H77v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 473.1h43.1V461H128.1v12.1Z" class="g6"/>
+<path fill-rule="evenodd" d="M171.1 473.1H215V461H171.1v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M215 473.1h40.9V461H215v12.1Z" class="g7"/>
+<path fill-rule="evenodd" d="M298.9 473.1h149V461h-149v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M447.8 473.1h41.7V461H447.8v12.1Z" class="g7"/>
+<path fill-rule="evenodd" d="M533.3 473.1h71.6V461H533.3v12.1Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 485.1h51.1v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M128.1 485.1h43.1v-12H128.1v12Z" class="g6"/>
+<path fill-rule="evenodd" d="M171.1 485.1H604.9v-12H171.1v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 497.1H604.9v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 509.1H255.9v-12H77v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M298.9 509.1h306v-12h-306v12Z" class="g0"/>
+<path fill-rule="evenodd" d="M77 521.2H604.9V509.1H77v12.1Z" class="g0"/>
+<path d="M170.9 145.6h85.3m-85.1-.3v27.6m84.8-27.6v27.6m233.3-27.3h90.4m-90.1-.3v27.6m89.8-27.6v27.6M170.9 160.6h85.3m233 0h90.4m-408.7 12h85.3m233 0h90.4" class="gg"/>
+<path d="M447.8 184.6v13m41.7-13v13m-234.6-.9H580.2m-324.3-1v25.9m323.4-25.9V450M298 208.7H534.2m-235.3-1v13.9m148.9-13.9v13.9m41.7-13.9v13.9m43.8-13.9V438M127.1 220.7H534.2m-406.1-1V485.1M215 219.7V438m39.9-205.3H490.4m-234.5-.9V388.9m43-157.1V401.9M447.8 231.8V425.9m41.7-194.1V401M171.1 268.8V485.1M214 401h85.9m147 24h87.3M214 437H534.2m-364 12h410" class="gh"/>
+<text x="337" y="94.2" class="s0">IgC1</text>
+<text x="534.1" y="94.2" class="s0">7-Strands</text>
+<text x="177.7" y="118.5" class="s1">SHEET A</text>
+<text x="496.2" y="118.5" class="s1">SHEET B</text>
+<text x="144.8" y="130.5" class="s2">b0</text>
+<text x="188.3" y="130.5" class="s2">b1</text>
+<text x="230.7" y="130.5" class="s2">b6</text>
+<text x="272.6" y="130.5" class="s2">b5</text>
+<text x="463.9" y="130.5" class="s2">b8</text>
+<text x="506.6" y="130.5" class="s2">b7</text>
+<text x="551.5" y="130.5" class="s2">b2</text>
+<text x="145.5" y="142.5" class="s2">↑</text>
+<text x="188.9" y="142.5" class="s2">↓</text>
+<text x="231.3" y="142.5" class="s2">↑</text>
+<text x="273.3" y="142.5" class="s2">↓</text>
+<text x="464.5" y="142.5" class="s2">↑</text>
+<text x="507.2" y="142.5" class="s2">↓</text>
+<text x="552.1" y="142.5" class="s2">↑</text>
+<text x="145.4" y="157" class="s3">A</text>
+<text x="188.9" y="157" class="s3">B</text>
+<text x="231.6" y="157" class="s3">E</text>
+<text x="272.7" y="157" class="s3">D</text>
+<text x="463.9" y="157" class="s3">G</text>
+<text x="507.9" y="157" class="s3">F</text>
+<text x="552" y="157" class="s3">C</text>
+<text x="143.8" y="169.7" class="s4">15</text>
+<text x="187.2" y="169.7" class="s4">25</text>
+<text x="229.6" y="169.7" class="s4">75</text>
+<text x="271.6" y="169.7" class="s4">65</text>
+<text x="462.8" y="169.7" class="s4">95</text>
+<text x="505.5" y="169.7" class="s4">85</text>
+<text x="550.5" y="169.7" class="s4">35</text>
+<text x="464.6" y="181.6" class="s5">Ct</text>
+<text x="151.8" y="193.8" class="s6">A-B</text>
+<text x="344.3" y="193.8" class="s6">C"-D</text>
+<text x="464.5" y="193.6" class="s7">↑</text>
+<text x="316.8" y="205.6" class="s8 c6546"><title>Ref. Num. 6546</title> 6546 </text>
+<text x="345.5" y="205.6" class="s8 c6545"><title>Ref. Num. 6545</title> 6545 </text>
+<text x="382.7" y="205.6" class="s8 c6544"><title>Ref. Num. 6544</title> 6544 </text>
+<text x="425.1" y="205.6" class="s8">←</text>
+<text x="459.4" y="205.6" class="s8 c3559"><title>Ref. Num. 3559</title> 3559 </text>
+<text x="502.1" y="205.6" class="s8 c3558"><title>Ref. Num. 3558</title> 3558 </text>
+<text x="347.6" y="217.8" class="s6">E-F</text>
+<text x="146.5" y="229.7" class="s1">…</text>
+<text x="189.9" y="229.7" class="s1">…</text>
+<text x="268.1" y="229.7" class="s8 c7555"><title>Ref. Num. 7555</title> 7555 </text>
+<text x="308.3" y="229.7" class="s8 c7556"><title>Ref. Num. 7556</title> 7556 </text>
+<text x="350.6" y="229.7" class="s8">→</text>
+<text x="382.7" y="229.7" class="s8 c8542"><title>Ref. Num. 8542</title> 8542 </text>
+<text x="419.9" y="229.7" class="s8 c8543"><title>Ref. Num. 8543</title> 8543 </text>
+<text x="464.5" y="229.7" class="s8">→</text>
+<text x="140.3" y="241.7" class="s8 c1558"><title>Ref. Num. 1558</title> 1558 </text>
+<text x="183.8" y="241.7" class="s8 c2542"><title>Ref. Num. 2542</title> 2542 </text>
+<text x="226.1" y="241.7" class="s8 c7554"><title>Ref. Num. 7554</title> 7554 </text>
+<text x="459.4" y="241.7" class="s9 c9559"><title>Ref. Num. 9559</title> 9559 </text>
+<text x="140.3" y="253.7" class="s8 c1557"><title>Ref. Num. 1557</title> 1557 </text>
+<text x="183.8" y="253.7" class="s8 c2543"><title>Ref. Num. 2543</title> 2543 </text>
+<text x="459.4" y="253.7" class="s9 c9558"><title>Ref. Num. 9558</title> 9558 </text>
+<text x="547" y="253.7" class="s8 c3557"><title>Ref. Num. 3557</title> 3557 </text>
+<text x="140.3" y="265.7" class="s8 c1556"><title>Ref. Num. 1556</title> 1556 </text>
+<text x="183.8" y="265.7" class="s8 c2544"><title>Ref. Num. 2544</title> 2544 </text>
+<text x="457" y="265.9" class="sa c9557"><title>Ref. Num. 9557</title> 9557 </text>
+<text x="499.7" y="265.9" class="s6 c8544"><title>Ref. Num. 8544</title> 8544 </text>
+<text x="547" y="265.7" class="s8 c3556"><title>Ref. Num. 3556</title> 3556 </text>
+<text x="140.3" y="277.7" class="s9 c1555"><title>Ref. Num. 1555</title> 1555 </text>
+<text x="183.8" y="277.7" class="s9 c2545"><title>Ref. Num. 2545</title> 2545 </text>
+<text x="226.1" y="277.7" class="s1 c7553"><title>Ref. Num. 7553</title> 7553 </text>
+<text x="265.8" y="277.9" class="s6 c6547"><title>Ref. Num. 6547</title> 6547 </text>
+<text x="459.4" y="277.7" class="s9 c9556"><title>Ref. Num. 9556</title> 9556 </text>
+<text x="502.1" y="277.7" class="s9 c8545"><title>Ref. Num. 8545</title> 8545 </text>
+<text x="547" y="277.7" class="s8 c3555"><title>Ref. Num. 3555</title> 3555 </text>
+<text x="140.3" y="289.8" class="s9 c1554"><title>Ref. Num. 1554</title> 1554 </text>
+<text x="181.4" y="289.9" class="sb c2546"><title>Ref. Num. 2546</title> 2546 </text>
+<text x="223.8" y="289.9" class="sa c7552"><title>Ref. Num. 7552</title> 7552 </text>
+<text x="265.8" y="289.9" class="sa c6548"><title>Ref. Num. 6548</title> 6548 </text>
+<text x="457" y="289.9" class="sb c9555"><title>Ref. Num. 9555</title> 9555 </text>
+<text x="499.7" y="289.9" class="sb c8546"><title>Ref. Num. 8546</title> 8546 </text>
+<text x="547" y="289.8" class="s8 c3554"><title>Ref. Num. 3554</title> 3554 </text>
+<text x="140.3" y="301.8" class="s9 c1553"><title>Ref. Num. 1553</title> 1553 </text>
+<text x="183.8" y="301.8" class="s9 c2547"><title>Ref. Num. 2547</title> 2547 </text>
+<text x="226.1" y="301.8" class="s1 c7551"><title>Ref. Num. 7551</title> 7551 </text>
+<text x="268.1" y="301.8" class="s1 c6549"><title>Ref. Num. 6549</title> 6549 </text>
+<text x="459.4" y="301.8" class="s9 c9554"><title>Ref. Num. 9554</title> 9554 </text>
+<text x="502.1" y="301.8" class="s9 c8547"><title>Ref. Num. 8547</title> 8547 </text>
+<text x="547" y="301.8" class="s9 c3553"><title>Ref. Num. 3553</title> 3553 </text>
+<text x="457" y="314" class="sa c9553"><title>Ref. Num. 9553</title> 9553 </text>
+<text x="499.7" y="314" class="sa c8548"><title>Ref. Num. 8548</title> 8548 </text>
+<text x="544.6" y="314" class="sa c3552"><title>Ref. Num. 3552</title> 3552 </text>
+<text x="140.3" y="325.8" class="s9 c1552"><title>Ref. Num. 1552</title> 1552 </text>
+<text x="181.4" y="326" class="sb c2548"><title>Ref. Num. 2548</title> 2548 </text>
+<text x="223.8" y="326" class="s6 c7550"><title>Ref. Num. 7550</title> 7550 </text>
+<text x="265.8" y="326" class="s6 c6550"><title>Ref. Num. 6550</title> 6550 </text>
+<text x="459.4" y="325.8" class="s9 c9552"><title>Ref. Num. 9552</title> 9552 </text>
+<text x="502.1" y="325.8" class="s9 c8549"><title>Ref. Num. 8549</title> 8549 </text>
+<text x="547" y="325.8" class="s9 c3551"><title>Ref. Num. 3551</title> 3551 </text>
+<text x="140.3" y="337.8" class="s9 c1551"><title>Ref. Num. 1551</title> 1551 </text>
+<text x="183.8" y="337.8" class="s9 c2549"><title>Ref. Num. 2549</title> 2549 </text>
+<text x="226.1" y="337.8" class="s1 c7549"><title>Ref. Num. 7549</title> 7549 </text>
+<text x="268.1" y="337.8" class="sc c6551"><title>Ref. Num. 6551</title> 6551 </text>
+<text x="459.4" y="337.8" class="s9 c9551"><title>Ref. Num. 9551</title> 9551 </text>
+<text x="138" y="350" class="s6 c1550"><title>Ref. Num. 1550</title> 1550 </text>
+<text x="181.4" y="350" class="s6 c2550"><title>Ref. Num. 2550</title> 2550 </text>
+<text x="223.8" y="350" class="sa c7548"><title>Ref. Num. 7548</title> 7548 </text>
+<text x="265.8" y="350" class="sa c6552"><title>Ref. Num. 6552</title> 6552 </text>
+<text x="315.3" y="349.9" class="s1">*</text>
+<text x="426.9" y="349.9" class="s8">*</text>
+<text x="457" y="350" class="s6 c9550"><title>Ref. Num. 9550</title> 9550 </text>
+<text x="499.7" y="350" class="s6 c8550"><title>Ref. Num. 8550</title> 8550 </text>
+<text x="544.6" y="350" class="s6 c3550"><title>Ref. Num. 3550</title> 3550 </text>
+<text x="140.3" y="361.9" class="s9 c1549"><title>Ref. Num. 1549</title> 1549 </text>
+<text x="183.8" y="361.9" class="s9 c2551"><title>Ref. Num. 2551</title> 2551 </text>
+<text x="226.1" y="361.9" class="s1 c7547"><title>Ref. Num. 7547</title> 7547 </text>
+<text x="138" y="374" class="sb c1548"><title>Ref. Num. 1548</title> 1548 </text>
+<text x="181.4" y="374" class="sb c2552"><title>Ref. Num. 2552</title> 2552 </text>
+<text x="223.8" y="374" class="sa c7546"><title>Ref. Num. 7546</title> 7546 </text>
+<text x="265.8" y="374" class="sa c6553"><title>Ref. Num. 6553</title> 6553 </text>
+<text x="457" y="374" class="sb c9549"><title>Ref. Num. 9549</title> 9549 </text>
+<text x="499.7" y="374" class="sb c8551"><title>Ref. Num. 8551</title> 8551 </text>
+<text x="547" y="373.9" class="s9 c3549"><title>Ref. Num. 3549</title> 3549 </text>
+<text x="140.3" y="385.9" class="s9 c1547"><title>Ref. Num. 1547</title> 1547 </text>
+<text x="183.8" y="385.9" class="s9 c2553"><title>Ref. Num. 2553</title> 2553 </text>
+<text x="226.1" y="385.9" class="s8 c7544"><title>Ref. Num. 7544</title> 7544 </text>
+<text x="268.1" y="385.9" class="s8 c6554"><title>Ref. Num. 6554</title> 6554 </text>
+<text x="459.4" y="385.9" class="s9 c9548"><title>Ref. Num. 9548</title> 9548 </text>
+<text x="502.1" y="385.9" class="s9 c8552"><title>Ref. Num. 8552</title> 8552 </text>
+<text x="547" y="385.9" class="s9 c3548"><title>Ref. Num. 3548</title> 3548 </text>
+<text x="140.3" y="397.9" class="s9 c1546"><title>Ref. Num. 1546</title> 1546 </text>
+<text x="232.2" y="397.9" class="s8">…</text>
+<text x="274.2" y="397.9" class="s8">…</text>
+<text x="459.4" y="397.9" class="s9 c9547"><title>Ref. Num. 9547</title> 9547 </text>
+<text x="502.1" y="397.9" class="s9 c8553"><title>Ref. Num. 8553</title> 8553 </text>
+<text x="547" y="397.9" class="s9 c3547"><title>Ref. Num. 3547</title> 3547 </text>
+<text x="140.3" y="409.9" class="s9 c1545"><title>Ref. Num. 1545</title> 1545 </text>
+<text x="183.8" y="409.9" class="s8 c2554"><title>Ref. Num. 2554</title> 2554 </text>
+<text x="238.5" y="409.9" class="sc">←</text>
+<text x="459.4" y="409.9" class="s8 c9546"><title>Ref. Num. 9546</title> 9546 </text>
+<text x="502.1" y="409.9" class="s8 c8554"><title>Ref. Num. 8554</title> 8554 </text>
+<text x="547" y="409.9" class="s8 c3546"><title>Ref. Num. 3546</title> 3546 </text>
+<text x="140.3" y="422" class="s8 c1544"><title>Ref. Num. 1544</title> 1544 </text>
+<text x="183.8" y="422" class="s8 c2555"><title>Ref. Num. 2555</title> 2555 </text>
+<text x="227.6" y="422" class="s9">HV4</text>
+<text x="465" y="422" class="s8">...</text>
+<text x="507.7" y="422" class="s8">...</text>
+<text x="547" y="422" class="s8 c3545"><title>Ref. Num. 3545</title> 3545 </text>
+<text x="231.3" y="446" class="s8">→</text>
+<text x="268.1" y="446" class="s8 c2556"><title>Ref. Num. 2556</title> 2556 </text>
+<text x="308.3" y="446" class="s8 c2557"><title>Ref. Num. 2557</title> 2557 </text>
+<text x="345.5" y="446" class="s8 c2558"><title>Ref. Num. 2558</title> 2558 </text>
+<text x="382.7" y="446" class="s8 c3542"><title>Ref. Num. 3542</title> 3542 </text>
+<text x="419.9" y="446" class="s8 c3543"><title>Ref. Num. 3543</title> 3543 </text>
+<text x="459.4" y="446" class="s8 c3544"><title>Ref. Num. 3544</title> 3544 </text>
+<text x="507.2" y="446" class="s8">→</text>
+<text x="238.5" y="458" class="sc">←</text>
+<text x="346.8" y="458.2" class="sb">B-C</text>
+<text x="471.7" y="458" class="sc">←</text>
+<text x="227.4" y="470.2" class="sb">D-E</text>
+<text x="460.8" y="470.2" class="sb">F-G</text>
+<text x="145.5" y="494.1" class="s5">↑</text>
+<text x="145" y="506.1" class="s5">Nt</text>
+
+</g>
+
+</svg>

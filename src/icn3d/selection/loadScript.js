@@ -328,6 +328,20 @@ class LoadScript {
             await ic.diagram2dCls.drawIgdgm(chainid);
             ic.bRender = false;
           }
+          else if(command.indexOf('update ig') == 0) {
+            let paraArray = command.split(' ');
+            let igIndex_igType = (paraArray.length == 3) ? paraArray[2] : '';
+            await ic.diagram2dCls.show2DdgmForIg(igIndex_igType[0], igIndex_igType[1]);
+          }
+          else if(command.indexOf('download 2d ig') == 0) {
+            let paraArray = command.split(' | ');
+            let pos = command.lastIndexOf(' ');
+            let chainid = (paraArray.length == 2) ? paraArray[1] : command.substr(pos + 1);
+
+            ic.bRender = true;
+            await ic.diagram2dCls.drawIgdgm(chainid, true);
+            ic.bRender = false;
+          }
           else if(command.indexOf('add msa track') == 0) {
             //add msa track | chainid " + chainid + " | startpos " + startpos + " | type " + type + " | fastaList " + fastaList 
             let paraArray = command.split(' | ');

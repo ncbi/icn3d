@@ -514,7 +514,7 @@ class ApplyCommand {
          ic.definedSetsCls.deleteSelectedSets();
       }
       else if(command == 'view interactions' || command == 'view 2d diagram') {
-         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
+         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.mmdbafid !== undefined) {
              ic.ParserUtilsCls.set2DDiagrams(ic.inputid);
          }
       }

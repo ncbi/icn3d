@@ -123,7 +123,7 @@ class SetOption {
             ic.atoms[i].style2 = style;
           }
       }
-      else {
+      else {  
           for(let i in atoms) {
             ic.atoms[i].style = style;
           }
