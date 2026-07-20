@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.51.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.51.0.zip) was release on July 20, 2026. Updated to include glycans in the linked residues.
+
 [icn3d-3.51.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.51.0.zip) was release on July 6, 2026. Upgraded "2D Diagram for Ig Domains" to allow integrated 2D and 3D views.
 
 [icn3d-3.50.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.50.0.zip) was release on June 8, 2026. users can choose to use both R2DT and RNAcanvas to show "2D Diagram for Nucleotides" integrated with 3D view. The base pairs are either from Fr3D or extended mmCIF with base pair information.

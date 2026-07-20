@@ -216,6 +216,7 @@ class LoadCIF {
                 chain1Array = resi1Array = chain2Array = resi2Array = [];
             }
 
+            // let vBonds = [];
             if(block.getCategory("_struct_conn")) {
                 ic.bSsbondProvided = true;
 
@@ -226,11 +227,13 @@ class LoadCIF {
             
                 let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
                 let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
-                let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
+                let resi1Array = struct_conn.getColumn("ptnr1_auth_seq_id");
+                // let resn1Array = struct_conn.getColumn("ptnr1_auth_comp_id");
             
                 let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
                 let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
-                let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
+                let resi2Array = struct_conn.getColumn("ptnr2_auth_seq_id");
+                // let resn2Array = struct_conn.getColumn("ptnr2_auth_comp_id");
             
                 let connSize = struct_conn.rowCount;
                 for (let i = 0; i < connSize; ++i) {
@@ -239,21 +242,27 @@ class LoadCIF {
                     let chain1 = chain1Array.getString(i);
                     let name1 = name1Array.getString(i);
                     let resi1 = resi1Array.getString(i);
+                    // let resn1 = resn1Array.getString(i);
                     let id1 = structure + '_' + chain1 + "_" + resi1;
+
+                    // let chain1Tmp = (me.parasCls.residueAbbrev.hasOwnProperty(resn1)) ? chain1 : resn1;
+                    // let bondId1 = chain1Tmp + "_" + resi1 + "_" + name1;
                 
                     let chain2 = chain2Array.getString(i);
                     let name2 = name2Array.getString(i);
                     let resi2 = resi2Array.getString(i);
+                    // let resn2 = resn2Array.getString(i);
                     let id2 = structure + '_' + chain2 + "_" + resi2;
-                
-                    // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2
-                
-                    // if (conn_type_id == "covale") {
-                    //     vBonds.push(id1);
-                    //     vBonds.push(id2);
-                    // }
-                    
-                    if(conn_type_id == "disulf") {
+
+                    // let chain2Tmp = (me.parasCls.residueAbbrev.hasOwnProperty(resn2)) ? chain2 : resn2;
+                    // let bondId2 = chain2Tmp + "_" + resi2 + "_" + name2;
+
+                    // Verify that the linkage is covalent, as indicated by the conn_type_id attribute2 
+                    if (conn_type_id == "covale") {
+                        // vBonds.push(bondId1);
+                        // vBonds.push(bondId2);
+                    }
+                    else if(conn_type_id == "disulf") {
                         if(ic.ssbondpnts[structure] === undefined) ic.ssbondpnts[structure] = [];
 
                         ic.ssbondpnts[structure].push(id1);
@@ -386,6 +395,7 @@ class LoadCIF {
             let nameArray = atom_site.getColumn("label_atom_id");
             let entiyidArray = atom_site.getColumn("label_entity_id");
 
+            // check 3QUM
             let chainArray = atom_site.getColumn("auth_asym_id");
 
             let resiArray = atom_site.getColumn("label_seq_id");
@@ -408,6 +418,7 @@ class LoadCIF {
             let prevModelNum = '';
             if(!ic.molid2chain) ic.molid2chain = {};
             
+            let mName2Serial = {}, mId2Set = {};
             for (let i = 0; i < atomSize; ++i) {
                 let modelNum = modelNumArray.getString(i);
                 if(i > 0 && modelNum != prevModelNum) {
@@ -435,7 +446,6 @@ class LoadCIF {
 
                 let autochain = autochainArray.getString(i);
 
-
                 resi = oriResi;
 
                 let molecueType;
@@ -454,7 +464,7 @@ class LoadCIF {
                     }
                     else {
                         molecueType = "ligand"; // ligands or ions
-                        chain = resn;
+                        if(chain == "?" || chain == ".") chain = resn; // check 3QUM
                     }
                 }
                 if(chain === '') chain = 'A';
@@ -547,6 +557,10 @@ class LoadCIF {
                 let y = yArray.getFloat(i);
                 let z = zArray.getFloat(i);
                 let coord = new THREE.Vector3(x, y, z);
+
+                let id = serial.toString();
+                let atomname = chain + "_" + resi + "_" + atom;
+                mName2Serial[atomname] = id;
 
                 let atomDetails = {
                     het: (atom_hetatm == "HETATM"), // optional, used to determine chemicals, water, ions, etc
@@ -704,6 +718,30 @@ class LoadCIF {
             ic.residues[residueNum] = residuesTmp;
             if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {}
             ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
+/*
+            /// add the defined bonds
+            for(let i = 0; i < vBonds.length; i = i + 2) {
+                let id1 = mName2Serial[vBonds[i]];
+                let id2 = mName2Serial[vBonds[i+1]];
+
+                if(!mId2Set.hasOwnProperty(id1)) mId2Set[id1] = {};
+                if(!mId2Set.hasOwnProperty(id2)) mId2Set[id2] = {};
+                mId2Set[id1][id2] = 1;
+                mId2Set[id2][id1] = 1;
+            }
+
+            for(let id in mId2Set) {
+                let sConnId = mId2Set[id];
+                let vConnId = Object.keys(sConnId);
+                let serial = parseInt(id);
+                
+                for(let j = 0, jl = vConnId.length; j < jl; ++j) {
+                    if(vConnId[j] === 'undefined' || !ic.atoms[serial]) continue;
+                    if(!ic.atoms[serial].bonds) ic.atoms[serial].bonds = [];
+                    ic.atoms[serial].bonds.push(parseInt(vConnId[j]));
+                }
+            }
+*/
 
             // clear memory
             atom_hetatmArray = resnArray = elemArray = nameArray = chainArray = resiArray = resiOriArray 
@@ -873,6 +911,41 @@ class LoadCIF {
                 if (atom.name === 'CA') delete ic.calphas[atom.serial];
                 if (atom.name !== 'N' && atom.name !== 'H' && atom.name !== 'CA' && atom.name !== 'HA' && atom.name !== 'C' && atom.name !== 'O') delete ic.sidec[atom.serial];
             }
+        }
+
+        // check the bonds between chemicals and all other atoms
+        let processedChemicals = {};
+        for(let i in ic.chemicals) {
+            console.log(" i = ", i, " processedChemicals = ", processedChemicals);
+            if(processedChemicals.hasOwnProperty(i)) continue;
+
+            let atom = ic.atoms[i];
+            let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+            let radius = 4;
+            let residueAtoms = ic.residues[resid];
+            let otherAtoms = me.hashUtilsCls.exclHash(ic.atoms, residueAtoms);
+            let neighborAtoms = ic.contactCls.getAtomsWithinAtom(otherAtoms, residueAtoms, radius);
+
+            for(let j in residueAtoms) {
+                let startAtom = ic.atoms[j];
+                for(let k in neighborAtoms) {
+                    let neighborAtom = ic.atoms[k];
+                    let neighborResid = neighborAtom.structure + '_' + neighborAtom.chain + '_' + neighborAtom.resi
+                    if(resid === neighborResid) continue;
+
+                    if(me.utilsCls.hasCovalentBond(startAtom, neighborAtom)) {
+                        // Handle covalent bond
+                        if(!startAtom.bonds) startAtom.bonds = [];
+                        if(!neighborAtom.bonds) neighborAtom.bonds = []; 
+                    
+                        startAtom.bonds.push(neighborAtom.serial);
+                        neighborAtom.bonds.push(startAtom.serial);
+                    }
+                }
+            }
+
+            processedChemicals = me.hashUtilsCls.unionHash(processedChemicals, ic.residues[resid]);
         }
 
         ic.pmin = pmin;

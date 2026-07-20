@@ -820,6 +820,10 @@ class LoadPDB {
     setResidMapping() { let ic = this.icn3d, me = ic.icn3dui;
         // set ic.ncbi2resid and ic.resid2ncbi
         for(let chainid in ic.chainsSeq) {
+            if(!ic.chainsSeq[chainid]) {
+                continue;
+            }
+
             for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
                 // NCBI residue number starts from 1 and increases continuously
                 let residNCBI = chainid + '_' + (j+1).toString();

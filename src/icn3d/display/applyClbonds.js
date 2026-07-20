@@ -93,23 +93,74 @@ class ApplyClbonds {
             if(clbondArray === undefined) {
                 break;
             }
-            for(let i = 0, il = clbondArray.length; i < il; i = i + 2) {
-                let resid1 = clbondArray[i];
-                let resid2 = clbondArray[i+1];
 
-                let atom1 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid1]);
-                let atom2 = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid2]);
+            let clusterArray = this.clusterLinkedNodes(clbondArray);
 
-                if((ic.proteins.hasOwnProperty(atom1.serial) || ic.nucleotides.hasOwnProperty(atom1.serial)) && ic.chemicals.hasOwnProperty(atom2.serial)) {
-                    ic.residues[resid1] = me.hashUtilsCls.unionHash(ic.residues[resid1], ic.residues[resid2]);
+            for(let i = 0, il = clusterArray.length; i < il; ++i) {
+                let rootResid = 0;
+                for(let j = 0, jl = clusterArray[i].length; j < jl; ++j) {
+                    let resid = clusterArray[i][j];
+                    let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+                    if(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial)) {
+                        rootResid = resid;
+                        break;
+                    }
                 }
-                else if((ic.proteins.hasOwnProperty(atom2.serial) || ic.nucleotides.hasOwnProperty(atom2.serial)) && ic.chemicals.hasOwnProperty(atom1.serial)) {
-                    ic.residues[resid2] = me.hashUtilsCls.unionHash(ic.residues[resid2], ic.residues[resid1]);
+
+                if(rootResid) {
+                    for(let j = 0, jl = clusterArray[i].length; j < jl; ++j) {
+                        let resid = clusterArray[i][j];
+                        let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+
+                        if(ic.chemicals.hasOwnProperty(atom.serial)) {
+                            ic.residues[rootResid] = me.hashUtilsCls.unionHash(ic.residues[rootResid], ic.residues[resid]);
+                        }
+                    }
                 }
             }
         }
 
       return ic.residuesHashClbonds;
+    }
+
+    clusterLinkedNodes(clbondArray) {  let ic = this.icn3d, me = ic.icn3dui;
+        const parent = new Map();
+
+        // Find the root of a node, with path compression
+        function find(node) {
+            if (!parent.has(node)) parent.set(node, node);
+            if (parent.get(node) !== node) {
+            parent.set(node, find(parent.get(node))); // path compression
+            }
+            return parent.get(node);
+        }
+
+        // Union two nodes into the same cluster
+        function union(a, b) {
+            const rootA = find(a);
+            const rootB = find(b);
+            if (rootA !== rootB) parent.set(rootA, rootB);
+        }
+
+        // Process all pairs
+        // for (const [a, b] of pairs) {
+        //     union(a, b);
+        // }
+        
+        for(let i = 0, il = clbondArray.length; i < il; i = i + 2) {
+            union(clbondArray[i], clbondArray[i+1]);
+        }
+
+        // Group nodes by their root
+        const clusters = new Map();
+        for (const node of parent.keys()) {
+            const root = find(node);
+            if (!clusters.has(root)) clusters.set(root, []);
+            clusters.get(root).push(node);
+        }
+
+        return Array.from(clusters.values());
     }
 
     applyClbondsOptions_base(type) { let ic = this.icn3d, me = ic.icn3dui;

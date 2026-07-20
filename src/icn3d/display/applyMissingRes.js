@@ -60,6 +60,9 @@ class ApplyMissingRes {
             let bStart = false;
             let startResid, currResid, prevResid;
             let bCurrCoord, bPrevCoord = false;
+
+            if(!ic.chainsSeq[chainid]) continue;
+            
             for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
                 currResid = chainid + '_' + ic.chainsSeq[chainid][i].resi;
 
