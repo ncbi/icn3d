@@ -294,11 +294,11 @@ class BcifParser {
 
             let chain1Array = struct_conn.getColumn("ptnr1_auth_asym_id");
             let name1Array = struct_conn.getColumn("ptnr1_label_atom_id");
-            let resi1Array = struct_conn.getColumn("ptnr1_label_seq_id");
+            let resi1Array = struct_conn.getColumn("ptnr1_auth_seq_id");
 
             let chain2Array = struct_conn.getColumn("ptnr2_auth_asym_id");
             let name2Array = struct_conn.getColumn("ptnr2_label_atom_id");
-            let resi2Array = struct_conn.getColumn("ptnr2_label_seq_id");
+            let resi2Array = struct_conn.getColumn("ptnr2_auth_seq_id");
 
             let connSize = struct_conn.rowCount;
             for (let i = 0; i < connSize; ++i) {
@@ -492,7 +492,7 @@ class BcifParser {
                 else {
                     // bond between this atom and all other atom in the same residue
                     for(let j in mResi2Atoms[currResi]) { // j is atom.id
-                        if(this.hasCovalentBond(atom, mResi2Atoms[currResi][j], para)) {
+                        if(this.hasCovalentBond2(atom, mResi2Atoms[currResi][j], para)) {
                             if(!mId2Set.hasOwnProperty(atom.id)) mId2Set[atom.id] = {};
                             if(!mId2Set.hasOwnProperty(mResi2Atoms[currResi][j].id)) mId2Set[mResi2Atoms[currResi][j].id] = {};
                             mId2Set[atom.id][mResi2Atoms[currResi][j].id] = 1;
@@ -505,7 +505,7 @@ class BcifParser {
 
                 // bond between N and previous C
                 if(name == "N" && prevC.id != "") {
-                    if(this.hasCovalentBond(atom, prevC, para)) {
+                    if(this.hasCovalentBond2(atom, prevC, para)) {
                         if(!mId2Set.hasOwnProperty(atom.id)) mId2Set[atom.id] = {};
                         if(!mId2Set.hasOwnProperty(prevC.id)) mId2Set[prevC.id] = {};
                         mId2Set[atom.id][prevC.id] = 1;
@@ -848,7 +848,7 @@ class BcifParser {
         return text;
     }
 
-    hasCovalentBond(atom1, atom2, para) { let ic = this.icn3d, me = ic.icn3dui;
+    hasCovalentBond2(atom1, atom2, para) { let ic = this.icn3d, me = ic.icn3dui;
         let r = this.mElem2Radius[atom1.elem] + this.mElem2Radius[atom2.elem];
 
         let dx = (atom1.x - atom2.x);
