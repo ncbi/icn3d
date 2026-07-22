@@ -101886,6 +101886,8 @@ class GetGraph {
         "#" + ic.hColor.getHexString().toUpperCase();
         let pos = node.id.indexOf('.');
         let nodeName =(pos == -1) ? node.id : node.id.substr(0, pos);
+        if(nodeName.length > 4) nodeName = nodeName.substr(0, 1) + '..' + nodeName.substr(nodeName.length - 2);
+        
         let adjustx = 0, adjusty =(setName == 'a') ? -7 : 10;
         if(i % 2 == 1) adjusty =(setName == 'a') ? adjusty - 7 : adjusty + 7;
 
@@ -136762,7 +136764,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '1';
+    this.REVISION = '3.51.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
