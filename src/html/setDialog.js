@@ -791,10 +791,12 @@ class SetDialog {
         html += "</select></div><br>";
 
         // some issues in aligning 4orz_C and 5esv_H due to insertion code
-        //html += "<div><b>2a</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // html += "<div><b>2</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        //html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
-        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        
+        // html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 

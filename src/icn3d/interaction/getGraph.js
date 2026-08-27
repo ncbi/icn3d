@@ -137,7 +137,7 @@ class GetGraph {
         let pos = node.id.indexOf('.');
         let nodeName =(pos == -1) ? node.id : node.id.substr(0, pos);
         if(nodeName.length > 4) nodeName = nodeName.substr(0, 1) + '..' + nodeName.substr(nodeName.length - 2);
-        
+
         let adjustx = 0, adjusty =(setName == 'a') ? -7 : 10;
         if(i % 2 == 1) adjusty =(setName == 'a') ? adjusty - 7 : adjusty + 7;
 

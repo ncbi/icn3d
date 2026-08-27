@@ -798,6 +798,7 @@ class Diagram2d {
             // get the residues in the selection
             let ncbiresid = data;
             let resid = ic.ncbi2resid[ncbiresid];
+            let resi = resid.substr(resid.lastIndexOf('_') + 1);
 
             if(ic.ig2ddgm_chainid && ic.resid2refnum && ic.resid2refnum[resid]) {
                 let refnumLabel = ic.resid2refnum[resid];
@@ -807,7 +808,7 @@ class Diagram2d {
                 thisClass.resetAllNodes('ig2ddgmSvg');
 
                 // highlight the residue
-                $("#ig2ddgmSvg .c" + refnumStr).css({'font-size': '20px', 'font-weight': 'bold'});
+                $("#ig2ddgmSvg .c" + refnumStr + ":contains('" + resi + "')").css({'font-size': '20px', 'font-weight': 'bold'});
             }
         });        
     }

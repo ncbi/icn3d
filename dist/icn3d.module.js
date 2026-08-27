@@ -63204,10 +63204,12 @@ class SetDialog {
         html += "</select></div><br>";
 
         // some issues in aligning 4orz_C and 5esv_H due to insertion code
-        //html += "<div><b>2a</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // html += "<div><b>2</b>. <div style='display:inline-block; width:170px'>Align to First Chain:</div> " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStructMsa_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStructMsa' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
-        //html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
-        html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        // html += "<div>or <b>2b</b>. <div style='display:inline-block; width:155px'>Align All Chains Pairwise:</div> " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
+        
+        // html += "<div><b>2</b>. " + me.htmlCls.buttonStr + "applyRealignByStruct_tmalign'>Realign with TM-align</button>" + me.htmlCls.buttonStr + "applyRealignByStruct' style='margin-left:30px'>Realign with VAST</button></div><br>";
 
         html += "</div>";
 
@@ -99693,8 +99695,9 @@ class ShowSeq {
         //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
           let resi = ic.ParserUtilsCls.getResi(chnid, i);
           let residueid = chnid + '_' + resi;
+          let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
 
-          if( ic.residues.hasOwnProperty(residueid) ) {
+          if( ic.residues.hasOwnProperty(residueid) && !atom.het ) {
             if(ic.secondaries[residueid] == 'H') {
                 if(i % 2 == 0) {
                     html += '<span class="icn3d-helix">';
@@ -99705,7 +99708,6 @@ class ShowSeq {
                 html += '&nbsp;</span>';
             }
             else if(ic.secondaries[residueid] == 'E') {
-                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
                 if(atom.ssend) {
                     if(ic.sheetcolor == 'green') {
                         html += '<span class="icn3d-sheet2">';
@@ -101887,7 +101889,7 @@ class GetGraph {
         let pos = node.id.indexOf('.');
         let nodeName =(pos == -1) ? node.id : node.id.substr(0, pos);
         if(nodeName.length > 4) nodeName = nodeName.substr(0, 1) + '..' + nodeName.substr(nodeName.length - 2);
-        
+
         let adjustx = 0, adjusty =(setName == 'a') ? -7 : 10;
         if(i % 2 == 1) adjusty =(setName == 'a') ? adjusty - 7 : adjusty + 7;
 
@@ -104503,10 +104505,6 @@ class AlignParser {
         let alignArray = align.split(',');
         //var ids_str =(alignArray.length === 2? 'uids=' : 'ids=') + align;
         let ids_str = 'ids=' + align;
-
-    //    let url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let url1 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
         // combined url1 and url2
         let url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=3&cmd=c&b=1&s=1&w3d&' + ids_str;
@@ -115547,7 +115545,8 @@ class SetSeqAlign {
         if(ic.alnChainsSeq[chainid1]) {
             for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
                 //add gap before the mapping region       
-                if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
+                //if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
+                if(ic.alnChainsSeq[chainid1][j].resi == resi_t) {
                     pos_t = j;
                     break;
                 }
@@ -115675,10 +115674,17 @@ class SetSeqAlign {
 
         let nGapInTemplate = 0; // number of gaps inserted into the template sequence
         let startPosInTemplate = 0; // position in the template sequence to start the mapping
+        
+        // need to improve when tmalign with residue number with postfix such as 52A in 4ORZ_C,5ESV_H
+        // start and end should be positions, not original residue numbers.
+        if(bRealign && me.cfg.aligntool == 'tmalign') {
+            start_t = ic.ParserUtilsCls.getResi(chainid1, start_t);
+            end_t = ic.ParserUtilsCls.getResi(chainid1, end_t);
+        }
 
         for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos;
-            
+          
             if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
@@ -115711,13 +115717,13 @@ class SetSeqAlign {
             if(i == 0) {
                 startPosInTemplate = start1Pos;
 
-                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
-                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
+                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
+                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
                 pos1 = result.pos1;
                 pos2 = result.pos2;
 
-                //if(start1 > start_t) {
-                if(start1Pos > start_t) {
+                if(start1 > start_t) {
+                //if(start1Pos > start_t) {
                     for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
                         ic.alnChainsSeq[chainid2].push(gapResObject2);
                     }
@@ -115730,6 +115736,9 @@ class SetSeqAlign {
                 pos2 = result.pos2;
                 let notAlnLen1 = pos2 - (pos1 + 1);
                 let notAlnLen2 = start2 - (prevIndex2 + 1);
+
+                notAlnLen1 = (notAlnLen1 < 0) ? 0 : notAlnLen1;
+                notAlnLen2 = (notAlnLen2 < 0) ? 0 : notAlnLen2;
 
                 // insert non-aligned residues in query seq
                 this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
@@ -115764,6 +115773,7 @@ class SetSeqAlign {
                 else {                   
                     let resi1 = (bRealign && me.cfg.aligntool == 'tmalign') ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
                     let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+
                     let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
                     let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
 
@@ -116557,7 +116567,8 @@ class LoadPDB {
                 //   bModifyResi = true;
                 // }
 
-                if(bOpm && resn === 'DUM') {
+                // if(bOpm && resn === 'DUM') {
+                if(resn === 'DUM') {
                     elem = atom;
                     chain = 'MEM';
                     resi = 1;
@@ -129562,6 +129573,7 @@ class Diagram2d {
             // get the residues in the selection
             let ncbiresid = data;
             let resid = ic.ncbi2resid[ncbiresid];
+            let resi = resid.substr(resid.lastIndexOf('_') + 1);
 
             if(ic.ig2ddgm_chainid && ic.resid2refnum && ic.resid2refnum[resid]) {
                 let refnumLabel = ic.resid2refnum[resid];
@@ -129571,7 +129583,7 @@ class Diagram2d {
                 thisClass.resetAllNodes('ig2ddgmSvg');
 
                 // highlight the residue
-                $("#ig2ddgmSvg .c" + refnumStr).css({'font-size': '20px', 'font-weight': 'bold'});
+                $("#ig2ddgmSvg .c" + refnumStr + ":contains('" + resi + "')").css({'font-size': '20px', 'font-weight': 'bold'});
             }
         });        
     }
@@ -136764,7 +136776,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.51.1';
+    this.REVISION = '3.51.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
