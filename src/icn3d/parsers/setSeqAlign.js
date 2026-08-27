@@ -892,7 +892,8 @@ class SetSeqAlign {
         if(ic.alnChainsSeq[chainid1]) {
             for(let j = 0, jl = ic.alnChainsSeq[chainid1].length; j < jl; ++j) {
                 //add gap before the mapping region       
-                if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
+                //if(parseInt(ic.alnChainsSeq[chainid1][j].resi) == parseInt(resi_t)) {
+                if(ic.alnChainsSeq[chainid1][j].resi == resi_t) {
                     pos_t = j;
                     break;
                 }
@@ -1026,10 +1027,17 @@ class SetSeqAlign {
 
         let nGapInTemplate = 0; // number of gaps inserted into the template sequence
         let startPosInTemplate = 0; // position in the template sequence to start the mapping
+        
+        // need to improve when tmalign with residue number with postfix such as 52A in 4ORZ_C,5ESV_H
+        // start and end should be positions, not original residue numbers.
+        if(bRealign && me.cfg.aligntool == 'tmalign') {
+            start_t = ic.ParserUtilsCls.getResi(chainid1, start_t);
+            end_t = ic.ParserUtilsCls.getResi(chainid1, end_t);
+        }
 
         for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
             let start1, start2, end1, end2, resiStart1, start1Pos, end1Pos;
-            
+          
             if(bRealign && me.cfg.aligntool == 'tmalign') { // real residue numbers are stored
                 start1 = parseInt(ic.qt_start_end[chainIndex][i].t_start);
                 start2 = parseInt(ic.qt_start_end[chainIndex][i].q_start);
@@ -1063,13 +1071,13 @@ class SetSeqAlign {
             if(i == 0) {
                 startPosInTemplate = start1Pos;
 
-                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
-                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
+                result = this.getTemplatePosFromOriResi(chainid1, start_t, start1, bRealign);
+                //result = this.getTemplatePosFromOriResi(chainid1, start_t, start1Pos, bRealign);
                 pos1 = result.pos1;
                 pos2 = result.pos2;
 
-                //if(start1 > start_t) {
-                if(start1Pos > start_t) {
+                if(start1 > start_t) {
+                //if(start1Pos > start_t) {
                     for(let j = 0, jl = pos2 - pos1; j < jl; ++j) {
                         ic.alnChainsSeq[chainid2].push(gapResObject2);
                     }
@@ -1082,6 +1090,9 @@ class SetSeqAlign {
                 pos2 = result.pos2;
                 let notAlnLen1 = pos2 - (pos1 + 1);
                 let notAlnLen2 = start2 - (prevIndex2 + 1);
+
+                notAlnLen1 = (notAlnLen1 < 0) ? 0 : notAlnLen1;
+                notAlnLen2 = (notAlnLen2 < 0) ? 0 : notAlnLen2;
 
                 // insert non-aligned residues in query seq
                 this.insertNotAlignRes(chainid2, prevIndex2+1, notAlnLen2, bRealign);
@@ -1116,6 +1127,7 @@ class SetSeqAlign {
                 else {                   
                     let resi1 = (bRealign && me.cfg.aligntool == 'tmalign') ? start1 + k : ic.ParserUtilsCls.getResi(chainid1, start1 + k);
                     let resi2 = (bRealign && me.cfg.aligntool == 'tmalign') ? start2 + k : ic.ParserUtilsCls.getResi(chainid2, start2 + k);
+
                     let resn1 = this.getResnFromResi(chainid1, resi1); //this.getResn(chainid1, start1 + k);
                     let resn2 = this.getResnFromResi(chainid2, resi2); //this.getResn(chainid2, start2 + k);
 

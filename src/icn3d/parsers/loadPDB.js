@@ -339,7 +339,8 @@ class LoadPDB {
                 //   bModifyResi = true;
                 // }
 
-                if(bOpm && resn === 'DUM') {
+                // if(bOpm && resn === 'DUM') {
+                if(resn === 'DUM') {
                     elem = atom;
                     chain = 'MEM';
                     resi = 1;

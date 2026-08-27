@@ -162,8 +162,9 @@ class ShowSeq {
         //   let resi =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
           let resi = ic.ParserUtilsCls.getResi(chnid, i);
           let residueid = chnid + '_' + resi;
+          let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
 
-          if( ic.residues.hasOwnProperty(residueid) ) {
+          if( ic.residues.hasOwnProperty(residueid) && !atom.het ) {
             if(ic.secondaries[residueid] == 'H') {
                 if(i % 2 == 0) {
                     html += '<span class="icn3d-helix">';
@@ -174,7 +175,6 @@ class ShowSeq {
                 html += '&nbsp;</span>';
             }
             else if(ic.secondaries[residueid] == 'E') {
-                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
                 if(atom.ssend) {
                     if(ic.sheetcolor == 'green') {
                         html += '<span class="icn3d-sheet2">';
