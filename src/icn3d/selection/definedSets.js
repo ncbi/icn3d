@@ -751,6 +751,7 @@ class DefinedSets {
                }
            }
        //}
+
        return residuesHash;
     }
     

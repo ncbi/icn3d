@@ -301,20 +301,12 @@ class GetGraph {
        let thickness = me.htmlCls.coilValue;
        let prevChain = '', prevResName = '', prevResi = 0, prevAtom;
        // add chemicals as well
-       let residHash = {}
-       for(let i in atomSet) {
-           let atom = ic.atoms[i];
+       let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(atomSet);
+       for(let resid in residHash) {
+           let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
 
-           if(atom.chain != 'DUM' && (bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
-           // starting nucleotide have "P"
-           //if(atom.chain != 'DUM' &&(atom.name == "CA" || atom.name == "P")) {
-               let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-               if(residHash.hasOwnProperty(resid)) {
-                   continue;
-               }
-               else {
-                   residHash[resid] = 1;
-               }
+           //if(atom.chain != 'DUM' && (bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
+           if(atom.chain != 'DUM') {
                let resName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
                if(labelType == 'chain' || labelType == 'structure') resName += '.' + atom.chain;
                if(labelType == 'structure') resName += '.' + atom.structure;
