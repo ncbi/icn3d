@@ -153,6 +153,8 @@ class Selection {
     selectMainChains() { let ic = this.icn3d, me = ic.icn3dui;
         let currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
+        ic.opts.pk = 'atom';
+
         ic.hAtoms = ic.applyDisplayCls.selectMainChainSubset(currHAtoms);
 
         ic.hlUpdateCls.showHighlight();
@@ -161,6 +163,8 @@ class Selection {
     //Select only the side chain atoms of the current selection.
     selectSideChains() { let ic = this.icn3d, me = ic.icn3dui;
         let currHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+
+        ic.opts.pk = 'atom';
 
         ic.hAtoms = this.getSideAtoms(currHAtoms);
         ic.hlUpdateCls.showHighlight();
@@ -182,6 +186,8 @@ class Selection {
 
     selectMainSideChains() { let ic = this.icn3d, me = ic.icn3dui;
         let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+
+        ic.opts.pk = 'residue';
 
         ic.hAtoms = {}
         for(let resid in residHash) {
@@ -359,8 +365,9 @@ class Selection {
             description = name;
         }
 
-        if(Object.keys(ic.selectedResidues).length > 0) {
-            if(ic.pk == 1) {
+        //if(Object.keys(ic.selectedResidues).length > 0) {
+            // if(ic.pk == 1) {
+            if(ic.opts.pk == 'atom') {
                 let bAtom = true;
                 this.selectResidueList(ic.hAtoms, name, description, undefined, undefined, bAtom);
                 //ic.hlUpdateCls.updateHlAll();
@@ -387,7 +394,7 @@ class Selection {
                     me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)), true);
                 }
             }
-        }
+        //}
     }
 
     saveSelInCommand() { let ic = this.icn3d, me = ic.icn3dui;

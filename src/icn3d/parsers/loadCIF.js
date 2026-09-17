@@ -9,6 +9,36 @@ class LoadCIF {
         this.icn3d = icn3d;
     }
 
+    // Fast replacements for ic.loadPDBCls.isSecondary(), which does a linear scan
+    // ($.inArray, or a hand-rolled loop with a substr() per comparison for bNMR) over
+    // residArray - and gets called up to 6 times per atom in the main atom loop below.
+    // buildSecondarySet() precomputes, once per model, exactly what isSecondary would
+    // have compared against on every call (the raw resid strings for non-NMR, or the
+    // structure-prefix-stripped "chain_resi" strings for NMR - matching isSecondary's
+    // two branches exactly), so membership becomes an O(1) Set lookup instead of an
+    // O(residArray.length) scan repeated for every atom. isSecondary's 4th parameter
+    // (bNonFull) is intentionally not replicated here: in the actual implementation
+    // it's dead (the only reference to it is commented out), so it has no behavior to
+    // preserve.
+    buildSecondarySet(residArray, bNMR) {
+        let s = new Set();
+        if(!bNMR) {
+            for(let i = 0, il = residArray.length; i < il; ++i) s.add(residArray[i]);
+        }
+        else {
+            for(let i = 0, il = residArray.length; i < il; ++i) {
+                let r = residArray[i];
+                s.add(r.substr(r.indexOf('_') + 1));
+            }
+        }
+        return s;
+    }
+
+    isSecondaryFast(resid, secondarySet, bNMR) {
+        if(!bNMR) return secondarySet.has(resid);
+        return secondarySet.has(resid.substr(resid.indexOf('_') + 1));
+    }
+
     loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         let hAtoms = {};
 
@@ -398,7 +428,10 @@ class LoadCIF {
             // check 3QUM
             let chainArray = atom_site.getColumn("auth_asym_id");
 
-            let resiArray = atom_site.getColumn("label_seq_id");
+            // label_seq_id used to be fetched into "resiArray" here and decoded into
+            // "resi" below, but that value was always immediately overwritten by
+            // auth_seq_id (oriResi) before being used anywhere - decoding it per atom
+            // was pure wasted work, so it is no longer fetched at all.
             let resiOriArray = atom_site.getColumn("auth_seq_id");
             let altArray = atom_site.getColumn("label_alt_id");
 
@@ -410,6 +443,14 @@ class LoadCIF {
 
             let autochainArray = atom_site.getColumn("label_asym_id");
             let modelNumArray = atom_site.getColumn("pdbx_PDB_model_num");
+
+            // built once per model instead of scanned per atom - see isSecondaryFast()
+            let sheetSet = this.buildSecondarySet(sheetArray, bNMR);
+            let sheetStartSet = this.buildSecondarySet(sheetStart, bNMR);
+            let sheetEndSet = this.buildSecondarySet(sheetEnd, bNMR);
+            let helixSet = this.buildSecondarySet(helixArray, bNMR);
+            let helixStartSet = this.buildSecondarySet(helixStart, bNMR);
+            let helixEndSet = this.buildSecondarySet(helixEnd, bNMR);
 
             // get the bond info
             let ligSeqHash = {}, prevAutochain = '';
@@ -439,14 +480,13 @@ class LoadCIF {
                 let atom = nameArray.getString(i);
                 let entityid = entiyidArray.getString(i);
                 let chain = chainArray.getString(i);
-                let resi = resiArray.getString(i);
                 let oriResi = resiOriArray.getString(i); 
                 let alt = altArray.getString(i);
                 let bFactor = bArray.getString(i);
 
                 let autochain = autochainArray.getString(i);
 
-                resi = oriResi;
+                let resi = oriResi;
 
                 let molecueType;
                 if(atom_hetatm == "ATOM") {
@@ -607,26 +647,26 @@ class LoadCIF {
 
                 // Assign secondary structures from the input
                 // if a residue is assigned both sheet and helix, it is assigned as sheet
-                if(ic.loadPDBCls.isSecondary(residueNum, sheetArray, bNMR, !bFull)) {
+                if(this.isSecondaryFast(residueNum, sheetSet, bNMR)) {
                     ic.atoms[serial].ss = 'sheet';
-                    if(ic.loadPDBCls.isSecondary(residueNum, sheetStart, bNMR, !bFull)) {
+                    if(this.isSecondaryFast(residueNum, sheetStartSet, bNMR)) {
                     ic.atoms[serial].ssbegin = true;
                     }
 
                     // do not use else if. Some residues are both start and end of secondary structure
-                    if(ic.loadPDBCls.isSecondary(residueNum, sheetEnd, bNMR, !bFull)) {
+                    if(this.isSecondaryFast(residueNum, sheetEndSet, bNMR)) {
                     ic.atoms[serial].ssend = true;
                     }
                 }
-                else if(ic.loadPDBCls.isSecondary(residueNum, helixArray, bNMR, !bFull)) {
+                else if(this.isSecondaryFast(residueNum, helixSet, bNMR)) {
                     ic.atoms[serial].ss = 'helix';
 
-                    if(ic.loadPDBCls.isSecondary(residueNum, helixStart, bNMR, !bFull)) {
+                    if(this.isSecondaryFast(residueNum, helixStartSet, bNMR)) {
                     ic.atoms[serial].ssbegin = true;
                     }
 
                     // do not use else if. Some residues are both start and end of secondary structure
-                    if(ic.loadPDBCls.isSecondary(residueNum, helixEnd, bNMR, !bFull)) {
+                    if(this.isSecondaryFast(residueNum, helixEndSet, bNMR)) {
                     ic.atoms[serial].ssend = true;
                     }
                 }
@@ -744,7 +784,7 @@ class LoadCIF {
 */
 
             // clear memory
-            atom_hetatmArray = resnArray = elemArray = nameArray = chainArray = resiArray = resiOriArray 
+            atom_hetatmArray = resnArray = elemArray = nameArray = chainArray = resiOriArray 
                 = altArray = bArray = xArray = yArray = zArray = autochainArray = [];
 
             let mChainSeq = {};
@@ -916,7 +956,6 @@ class LoadCIF {
         // check the bonds between chemicals and all other atoms
         let processedChemicals = {};
         for(let i in ic.chemicals) {
-            console.log(" i = ", i, " processedChemicals = ", processedChemicals);
             if(processedChemicals.hasOwnProperty(i)) continue;
 
             let atom = ic.atoms[i];
