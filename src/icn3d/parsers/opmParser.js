@@ -34,13 +34,13 @@ class OpmParser {
         try {
             if(!pdbid) pdbid = ic.defaultPdbId;
 
-            if(me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined) { // skip opm for bcif files
+            //if(me.cfg.mmtfid === undefined && me.cfg.bcifid === undefined) { // skip opm for bcif files
                 let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
 
                 let opmdata = await me.getAjaxPromise(url, 'jsonp', false);
         
                 this.setOpmData(opmdata); // set ic.bOpm
-            }
+            //}
 
             await this.parseAtomData(data, pdbid, bFull, type, pdbid2, bText);
         }
