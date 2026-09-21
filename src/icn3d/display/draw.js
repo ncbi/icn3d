@@ -3,6 +3,7 @@
  */
 
 import * as THREE from 'three';
+import { WebGLPathTracer } from 'three-gpu-pathtracer';
 
  class Draw {
     constructor(icn3d) {
@@ -10,7 +11,12 @@ import * as THREE from 'three';
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
+    draw(bVrAr, bPathTracer) { let ic = this.icn3d, me = ic.icn3dui;
+        if(bPathTracer) {
+            ic.bImpo = false; // disable impostor for path tracing
+            ic.bInstanced = false; // disable instancing for path tracing
+        }
+
         ic.impostorCls.clearImpostors();
         
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
@@ -52,7 +58,7 @@ import * as THREE from 'three';
 
           this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
 
-          this.render(bVrAr);
+          this.render(bVrAr, bPathTracer);
         }
         //ic.impostorCls.clearImpostors();
 
@@ -93,7 +99,7 @@ import * as THREE from 'three';
     }
 
     //Render the scene and objects into pixels.
-    render(bVrAr) { let ic = this.icn3d, me = ic.icn3dui;
+    render(bVrAr, bPathTracer) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         // setAnimationLoop is required for VR
         if(bVrAr) {
@@ -102,7 +108,7 @@ import * as THREE from 'three';
             });
         }
         else {
-            thisClass.render_base();
+            thisClass.render_base(bPathTracer);
         }
     }
 
@@ -204,7 +210,7 @@ import * as THREE from 'three';
     }
 
     //Render the scene and objects into pixels.
-    render_base() { let ic = this.icn3d, me = ic.icn3dui;
+    render_base(bPathTracer) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         if(me.bNode) return;
@@ -264,7 +270,19 @@ import * as THREE from 'three';
                 ic.effect.render(ic.scene, cam);
             }
             else {
-                ic.renderer.render(ic.scene, cam);
+                if(bPathTracer) {
+                    console.log("###pathTracer");
+                    ic.bImpo = false; // disable impostor for path tracing
+                    const pathTracer = new WebGLPathTracer(ic.renderer);
+                    pathTracer.setScene(ic.scene, cam);
+                    //pathTracer.renderUpdates(); // Updates samples if the scene/camera changes
+                    //pathTracer.render(ic.scene, cam);
+
+                    pathTracer.renderSample();
+                }
+                else {
+                    ic.renderer.render(ic.scene, cam);
+                }
             }           
         }
     }

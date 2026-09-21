@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-3.52.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.52.0.zip) was release on September 17, 2026. SIgnificantly sped up the parsing of binary cif files such as PDB 3J3Q.
+[icn3d-3.53.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.53.0.zip) was release on September 21, 2026. Used pathtracer to improve image quality when saving iCn3D PNG images.
+
+[icn3d-3.52.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.52.0.zip) was release on September 17, 2026. Significantly sped up the parsing of binary cif files such as PDB 3J3Q.
 
 [icn3d-3.51.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.51.2.zip) was release on August 27, 2026. Switched the re-alignment from pairwise alignment to Multiple Sequence Alignment (MSA).
 

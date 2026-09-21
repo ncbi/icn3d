@@ -48,7 +48,20 @@ class SaveFile {
             let height = $("#" + ic.pre + "canvas").height();
             ic.applyCenterCls.setWidthHeight(width, height);
 
-            if(ic.bRender) ic.drawCls.render();
+            // disable path tracing for large structures
+            let bPathTracer = (Object.keys(ic.atoms).length > ic.maxatomcnt) ? false : true;
+
+            if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly 
+                && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
+                bPathTracer = false; // disable path tracing for large assemblies
+            }
+
+            //if(ic.bRender) ic.drawCls.render(undefined, bPathTracer);
+            if(ic.bRender) ic.drawCls.draw(undefined, bPathTracer);
+
+            // reset impostor and instancing
+            ic.bImpo = true; // enable impostor
+            ic.bInstanced = true; // enable instancing
 
             let bAddURL = true;
             if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
