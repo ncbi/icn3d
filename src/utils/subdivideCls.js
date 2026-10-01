@@ -11,30 +11,25 @@ class SubdivideCls {
 
     // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
     // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    subdivide(_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { let me = this.icn3dui;
+    subdivide(_pnts, _clrs, DIV) { let me = this.icn3dui;
 
         let ret = [];
         let pos = [];
         let color = [];
 
+        let pnts_positions = [];
+
+        if(_pnts.length == 0) {
+            pnts_positions.push(ret);
+            pnts_positions.push(pos);
+            pnts_positions.push(color);
+
+            return pnts_positions;
+        }
+
         let pnts = new Array(); // Smoothing test
 
-        let prevoneLen = (prevone !== undefined) ? prevone.length : 0;
-        let nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
-
         let maxDist = 6.0;
-
-        if(prevoneLen > 0
-            && Math.abs(prevone[0].x - _pnts[0].x) <= maxDist
-            && Math.abs(prevone[0].y - _pnts[0].y) <= maxDist
-            && Math.abs(prevone[0].z - _pnts[0].z) <= maxDist
-            ) {
-          pnts.push(prevone[0]);
-          prevoneLen = 1;
-        }
-        else {
-          prevoneLen = 0;
-        }
 
         pnts.push(_pnts[0]);
         for (let i = 1, lim = _pnts.length - 1; i < lim; ++i) {
@@ -43,38 +38,13 @@ class SubdivideCls {
         }
         pnts.push(_pnts[_pnts.length - 1]);
 
-        let nexttwoLen = 0
-        if(nexttwoLenOri > 0
-            && Math.abs(nexttwo[0].x - _pnts[_pnts.length - 1].x) <= maxDist
-            && Math.abs(nexttwo[0].y - _pnts[_pnts.length - 1].y) <= maxDist
-            && Math.abs(nexttwo[0].z - _pnts[_pnts.length - 1].z) <= maxDist
-            ) {
-          pnts.push(nexttwo[0]);
-          ++nexttwoLen;
-        }
-
-        if(nexttwoLenOri > 1
-            && Math.abs(nexttwo[0].x - nexttwo[1].x) <= maxDist
-            && Math.abs(nexttwo[0].y - nexttwo[1].y) <= maxDist
-            && Math.abs(nexttwo[0].z - nexttwo[1].z) <= maxDist
-            ) {
-          pnts.push(nexttwo[1]);
-          ++nexttwoLen;
-        }
-
         let savedPoints = [];
         let savedPos = [];
         let savedColor = [];
 
-        //var nexttwoLen = nexttwoLenOri;
-        if(bExtendLastRes) {
-            nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
-        }
-
         let alpha = 1, newI;
-
         for (let i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
-            newI = i - prevoneLen;
+            newI = i;
             let p0 = pnts[i === -1 ? 0 : i];
             let p1 = pnts[i + 1];
             let p2 = pnts[i + 2];
@@ -89,14 +59,11 @@ class SubdivideCls {
             if(t2 - t1 < 1e-4) t2 = t1 + 1;
             if(t3 - t2 < 1e-4) t3 = t2 + 1;
 
-            //if(i > -1 && bHighlight && bShowArray !== undefined && bShowArray[i + 1]) {
-            if(i > -1 && (bShowArray === undefined || bShowArray[newI + 1]) ) {
+            if(i > -1 ) {
                 // get from previous i for the first half of residue
-                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
-                    ret = ret.concat(savedPoints);
-                    pos = pos.concat(savedPos);
-                    color = color.concat(savedColor);
-                }
+                ret = ret.concat(savedPoints);
+                pos = pos.concat(savedPos);
+                color = color.concat(savedColor);
             }
 
             savedPoints = [];
@@ -110,56 +77,24 @@ class SubdivideCls {
                 let y = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.y, p1.y, p2.y, p3.y);
                 let z = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.z, p1.z, p2.z, p3.z);
 
-                if(!bShowArray) {
-                    if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
-                        ret.push(new THREE.Vector3(x, y, z));
-                        pos.push(newI + 1);
-                        color.push(_clrs[newI+1]);
-                    }
-                }
-                else {
-                    if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
-                        if(bShowArray[newI + 1]) {
-                            if(j <= parseInt((DIV) / 2) ) {
-                                ret.push(new THREE.Vector3(x, y, z));
-                                pos.push(bShowArray[newI + 1]);
-                                color.push(_clrs[newI+1]);
-                            }
-                        }
-                    }
-
-                    if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
-                        if(bShowArray[newI + 2]) {
-                            if(j > parseInt((DIV) / 2) ) {
-                                savedPoints.push(new THREE.Vector3(x, y, z));
-                                savedPos.push(bShowArray[newI + 2]);
-                                savedColor.push(_clrs[newI+2]);
-                            }
-                        }
-                    }
-                } // end else
-
+                ret.push(new THREE.Vector3(x, y, z));
+                pos.push(newI + 1);
+                color.push(_clrs[newI+1]);
             } // end for (let j = 0;
         } // end for (let i = -1;
 
-        if(!bShowArray || bShowArray[newI + 1]) {
-            //if(bHighlight) {
-            ret = ret.concat(savedPoints);
-            pos = pos.concat(savedPos);
-            color = color.concat(savedColor);
-            //}
+        ret = ret.concat(savedPoints);
+        pos = pos.concat(savedPos);
+        color = color.concat(savedColor);
 
-            ret.push(pnts[pnts.length - 1 - nexttwoLen]);
-            pos.push(pnts.length - 1 - nexttwoLen);
-            color.push(_clrs[pnts.length - 1 - nexttwoLen]);
-        }
+        ret.push(pnts[pnts.length - 1]);
+        pos.push(pnts.length - 1);
+        color.push(_clrs[pnts.length - 1]);
 
         savedPoints = [];
         savedPos = [];
         savedColor = [];
         pnts = [];
-
-        let pnts_positions = [];
 
         pnts_positions.push(ret);
         pnts_positions.push(pos);

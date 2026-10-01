@@ -10,45 +10,45 @@ class CurveStripArrow {
     }
 
     createCurveSubArrow(p, width, colors, div, bHighlight, bRibbon, num, positionIndex,
-      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+      pntsCA, prevCOArray, positions, bShowArrow) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
-        let divPoints = [], positions = [];
+        let divPoints = [], linePos = [];
 
         divPoints.push(p);
-        positions.push(positionIndex);
+        linePos.push(positionIndex);
 
-        this.prepareStrand(divPoints, positions, width, colors, div, undefined, bHighlight, bRibbon, num,
-          pntsCA, prevCOArray, false, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo);
+        this.prepareStrand(divPoints, linePos, width, colors, div, undefined, bHighlight, bRibbon, num,
+          pntsCA, prevCOArray, positions, false, bShowArrow);
 
         divPoints = [];
-        positions = [];
+        linePos = [];
     }
 
     createStripArrow(p0, p1, colors, div, thickness, bHighlight, num, start, end,
-      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+      pntsCA, prevCOArray, positions, bShowArrow, ) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
-        let divPoints = [], positions = [];
+        let divPoints = [], linePos = [];
 
         divPoints.push(p0);
         divPoints.push(p1);
-        positions.push(start);
-        positions.push(end);
+        linePos.push(start);
+        linePos.push(end);
 
-        this.prepareStrand(divPoints, positions, undefined, colors, div, thickness, bHighlight, undefined, num,
-          pntsCA, prevCOArray, true, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo);
+        this.prepareStrand(divPoints, linePos, undefined, colors, div, thickness, bHighlight, undefined, num,
+          pntsCA, prevCOArray, positions,true, bShowArrow);
 
         divPoints = [];
-        positions = [];
+        linePos = [];
     }
 
     /**
      * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
      */
 
-    prepareStrand(divPoints, positions, width, colors, div, thickness, bHighlight, bRibbon, num,
-      pntsCA, prevCOArray, bStrip, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+    prepareStrand(divPoints, linePos, width, colors, div, thickness, bHighlight, bRibbon, num,
+      pntsCA, prevCOArray, positions, bStrip, bShowArrow) { let ic = this.icn3d, me = ic.icn3dui;
         if(pntsCA.length === 1) {
             return;
         }
@@ -56,83 +56,47 @@ class CurveStripArrow {
         let oriColors = colors;
         let bHelix = (bShowArrow) ? false : true;
 
-        let colorsLastTwo = [];
-        colorsLastTwo.push(colors[colors.length - 2]);
-        colorsLastTwo.push(colors[colors.length - 1]);
-
         div = div || ic.axisDIV;
         let numM1Inv2 = 2 / (num - 1);
         let delta, lastCAIndex, lastPrevCOIndex, v;
 
         let pnts = {};
-        for(let i = 0, il = positions.length; i < il; ++i) pnts[i] = [];
+        for(let i = 0, il = linePos.length; i < il; ++i) pnts[i] = [];
 
-        // smooth C-alpha
-        let pnts_clrs = me.subdivideCls.subdivide(pntsCA, colors, div, undefined, undefined, prevone, nexttwo);
-        let pntsCASmooth = pnts_clrs[0]; // get all smoothen pnts, do not use 'bShowArray'
-        //colors = pnts_clrs[2];
-
-        if(pntsCASmooth.length === 1) {
-            return;
-        }
+        //let startOffset = Math.floor(ic.axisDIV / 2) + 1; // first residue has floor(DIV/2)+1 points (8 when axisDIV = 15)
 
         // draw the sheet without the last residue
         // use the sheet coord for n-2 residues
         let colorsTmp = [];
-        let i, lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - 2 : pntsCA.length;
+        let extraArrow = (bStrip) ? 2 : 0; // extend the tube by 5 sub-points into a preceding/following helix/sheet
+
+        let i, lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - ic.axisDIV + extraArrow : pntsCA.length;
 
         let il = lastIndex;
+        let posIndex = [], pntsCATmp = [], prevCOArrayTmp = [];
         for (i = 0; i < il; ++i) {
-            for(let index = 0, indexl = positions.length; index < indexl; ++index) {
+            for(let index = 0, indexl = linePos.length; index < indexl; ++index) {
                 pnts[index].push(divPoints[index][i]);
             }
+            pntsCATmp.push(pntsCA[i]);
+            prevCOArrayTmp.push(prevCOArray[i]);
             colorsTmp.push(colors[i]);
-        }
-        colorsTmp.push(colors[i]);
-
-        if(bShowArrow === undefined || bShowArrow) {
-            // assign the sheet coord from C-alpha for the 2nd to the last residue of the sheet
-            for(let i = 0, il = positions.length; i < il; ++i) {
-                delta = -1 + numM1Inv2 * positions[i];
-                lastCAIndex = pntsCASmooth.length - 1 - div;
-                lastPrevCOIndex = pntsCA.length - 2;
-                v = new THREE.Vector3(pntsCASmooth[lastCAIndex].x + prevCOArray[lastPrevCOIndex].x * delta,
-                  pntsCASmooth[lastCAIndex].y + prevCOArray[lastPrevCOIndex].y * delta,
-                  pntsCASmooth[lastCAIndex].z + prevCOArray[lastPrevCOIndex].z * delta);
-                pnts[i].push(v);
-            }
-        }
-
-        let posIndex = [];
-        let results;
-        for(let i = 0, il = positions.length; i < il; ++i) {
-            results = me.subdivideCls.subdivide(pnts[i], colorsTmp, div, bShowArray, bHighlight);
-            pnts[i] = results[0];
-            colors = results[2];
-            if(i === 0) {
-                posIndex = results[1];
-            }
+            posIndex.push(positions[i]); 
         }
 
         if(bStrip) {
             if(bHelix) {
-                if(!ic.bDoublecolor) {
-                    ic.stripCls.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true,
-                      undefined, calphaIdArray, posIndex, prevone, nexttwo, pntsCA, prevCOArray);
-                }
-                else {
-                    ic.stripCls.createStrip(pnts[0], pnts[1], oriColors, div, thickness, bHighlight, true,
-                      undefined, calphaIdArray, posIndex, prevone, nexttwo, pntsCA, prevCOArray);
-                }
+                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                      undefined, posIndex, pntsCATmp, prevCOArrayTmp);
             }
             else {
-                ic.stripCls.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true,
-                  undefined, calphaIdArray, posIndex, prevone, nexttwo);
+                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                  undefined, posIndex);
             }
         }
         else {
-            ic.curveCls.createCurveSub(pnts[0], width, colors, div, bHighlight, bRibbon, true,
-              undefined, calphaIdArray, posIndex, prevone, nexttwo);
+            ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
+              undefined, posIndex);
         }
 
         if(bShowArrow === undefined || bShowArrow) {
@@ -140,59 +104,52 @@ class CurveStripArrow {
             colorsTmp = [];
 
             posIndex = [];
-            for(let index = 0, indexl = positions.length; index < indexl; ++index) {
+            for(let index = 0, indexl = linePos.length; index < indexl; ++index) {
                 pnts[index] = [];
 
-                for (let i = div * (pntsCA.length - 2), il = div * (pntsCA.length - 1);
-                  bShowArray[parseInt(i/div)] && i < il; i = i + div) {
-                    let pos = parseInt(i/div);
-                    for (let j = 0; j < div; ++j) {
-                        let delta = -1 + numM1Inv2 * positions[index];
-                        let scale = 1.8; // scale of the arrow width
-                        delta = delta * scale * (div - j) / div;
-                        let oriIndex = parseInt(i/div);
+                let cnt = 0;
+                for (let i = lastIndex - extraArrow, il = lastIndex - extraArrow + ic.axisDIV; i < il; ++i, ++cnt) {
+                    let pos = positions[i];
+                    let delta = -1 + numM1Inv2 * linePos[index];
+                    let scale = 1.8; // scale of the arrow width
+                    delta = delta * scale * (ic.axisDIV - cnt) / ic.axisDIV;
 
-                        let v = new THREE.Vector3(pntsCASmooth[i+j].x + prevCOArray[oriIndex].x * delta,
-                          pntsCASmooth[i+j].y + prevCOArray[oriIndex].y * delta,
-                          pntsCASmooth[i+j].z + prevCOArray[oriIndex].z * delta);
-                        v.smoothen = true;
-                        pnts[index].push(v);
-                        colorsTmp.push(colorsLastTwo[0]);
-                        if(index === 0) posIndex.push(pos);
-                    }
+                    let v = new THREE.Vector3(pntsCA[i].x + prevCOArray[i].x * delta,
+                        pntsCA[i].y + prevCOArray[i].y * delta,
+                        pntsCA[i].z + prevCOArray[i].z * delta);
+                    //v.smoothen = true;
+                    pnts[index].push(v);
+                    colorsTmp.push(colors[i]);
+                    if(index === 0) posIndex.push(pos);
                 }
-
+                               
                 // last residue
                 // make the arrow end with 0
-                let delta = 0;
-                let lastCAIndex = pntsCASmooth.length - 1;
-                let lastPrevCOIndex = pntsCA.length - 1;
+                let lastCAIndex = pntsCA.length - 1;
+                let delta = -1 + numM1Inv2 * linePos[index];
+                let scale = 1.8; // scale of the arrow width
+                delta = delta * scale / ic.axisDIV;
 
-                //if(bShowArray[lastPrevCOIndex]) {
-                    let v = new THREE.Vector3(pntsCASmooth[lastCAIndex].x + prevCOArray[lastPrevCOIndex].x * delta,
-                      pntsCASmooth[lastCAIndex].y + prevCOArray[lastPrevCOIndex].y * delta,
-                      pntsCASmooth[lastCAIndex].z + prevCOArray[lastPrevCOIndex].z * delta);
-                    v.smoothen = true;
-                    pnts[index].push(v);
-                    colorsTmp.push(colorsLastTwo[1]);
-                    if(index === 0) posIndex.push(lastCAIndex);
-                //}
+                let v = new THREE.Vector3(pntsCA[lastCAIndex].x + prevCOArray[lastCAIndex].x * delta,
+                    pntsCA[lastCAIndex].y + prevCOArray[lastCAIndex].y * delta,
+                    pntsCA[lastCAIndex].z + prevCOArray[lastCAIndex].z * delta);
+
+                pnts[index].push(v);
+                colorsTmp.push(colors[i]);
+                if(index === 0) posIndex.push(positions[lastCAIndex]);
             }
-
-            pntsCASmooth = [];
-
-            //colorsTmp.push(colors[colors.length - 2]);
-            //colorsTmp.push(colors[colors.length - 1]);
 
             if(bStrip) {
                 ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
-                  undefined, undefined, posIndex, prevone, nexttwo);
+                undefined, undefined, posIndex);
             }
             else {
                 ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
-                  undefined, undefined, posIndex, prevone, nexttwo);
+                undefined, undefined, posIndex);
             }
         }
+
+        //pntsCA = [];
 
         for(let i in pnts) {
             for(let j = 0, jl = pnts[i].length; j < jl; ++j) {
@@ -202,7 +159,7 @@ class CurveStripArrow {
         }
 
         pnts = {};
-    }
+    }  
 }
 
 export {CurveStripArrow}

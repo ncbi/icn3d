@@ -10,45 +10,24 @@ class Strip {
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createStrip(p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray,
-      calphaIdArray, positions, prevone, nexttwo, pntsCA, prevCOArray) { let ic = this.icn3d, me = ic.icn3dui;
+    createStrip(p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, 
+      positions, pntsCA, prevCOArray) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         if (p0.length < 2) return;
         div = div || ic.axisDIV;
 
-        // if(pntsCA && ic.bDoublecolor && !ic.bCalphaOnly) {
-        if(pntsCA && ic.bDoublecolor) {
-            let bExtendLastRes = false; //true;
-
-            let pnts_clrs = me.subdivideCls.subdivide(pntsCA, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
-            pntsCA = pnts_clrs[0];
-
-            this.setCalphaDrawnCoord(pntsCA, div, calphaIdArray);
-
-            for(let i = 0, il = prevCOArray.length; i < il; ++i) {
-                prevCOArray[i].normalize();
-            }
-
-            let pnts_clrs2 = me.subdivideCls.subdivide(prevCOArray, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
-            prevCOArray = pnts_clrs2[0];
-
-            colors = pnts_clrs[2];
-        }
-        else {
-
+        if(div != 1) { // not subdivided yet
             if(!bNoSmoothen) {
                 //var bExtendLastRes = true;
                 let bExtendLastRes = false;
-                let pnts_clrs0 = me.subdivideCls.subdivide(p0, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
-                let pnts_clrs1 = me.subdivideCls.subdivide(p1, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+                let pnts_clrs0 = me.subdivideCls.subdivide(p0, colors, div);
+                let pnts_clrs1 = me.subdivideCls.subdivide(p1, colors, div);
                 p0 = pnts_clrs0[0];
                 p1 = pnts_clrs1[0];
                 colors = pnts_clrs0[2];
             }
             if (p0.length < 2) return;
-
-            this.setCalphaDrawnCoord(p0, div, calphaIdArray);
         }
 
         if(bHighlight === 1) {
@@ -75,7 +54,7 @@ class Strip {
                             radiusSegments,
                             closed
                         );
-
+                     
                         let mesh = new THREE.Mesh(geometry0, ic.matShader);
                         mesh.renderOrder = ic.renderOrderPicking;
                         //ic.mdlPicking.add(mesh);
@@ -170,33 +149,29 @@ class Strip {
 
                 if(!p0v || !p1v) continue;
 
-                //vs = vs.concat((p0v).toArray()); // 0
-                //vs = vs.concat((p0v).toArray()); // 1
-                //vs = vs.concat((p1v).toArray()); // 2
-                //vs = vs.concat((p1v).toArray()); // 3
-
-                for(let j = 0; j < 2; ++j) {
-                    vs[offset++] = p0v.x;
-                    vs[offset++] = p0v.y;
-                    vs[offset++] = p0v.z;
-                }
-                for(let j = 0; j < 2; ++j) {
-                    vs[offset++] = p1v.x;
-                    vs[offset++] = p1v.y;
-                    vs[offset++] = p1v.z;
-                }
-
-                if (i < lim - 1) {
+                // compute the thickness direction first
+                if (i < lim - 1 && p0[i + 1]) {
                     axis = p1[i].clone().sub(p0[i]).cross(p0[i + 1].clone().sub(p0[i])).normalize().multiplyScalar(thickness);
                 }
-                a0v = p0[i].clone().add(axis);
-                a1v = p1[i].clone().add(axis);
+                let half = axis.clone().multiplyScalar(0.5);
 
-                //vs = vs.concat((a0v).toArray()); // 4
-                //vs = vs.concat((a0v).toArray()); // 5
-                //vs = vs.concat((a1v).toArray()); // 6
-                //vs = vs.concat((a1v).toArray()); // 7
+                // bottom face: half a thickness below the edge plane
+                let b0v = p0v.clone().sub(half);
+                let b1v = p1v.clone().sub(half);
+                for(let j = 0; j < 2; ++j) {
+                    vs[offset++] = b0v.x;
+                    vs[offset++] = b0v.y;
+                    vs[offset++] = b0v.z;
+                }
+                for(let j = 0; j < 2; ++j) {
+                    vs[offset++] = b1v.x;
+                    vs[offset++] = b1v.y;
+                    vs[offset++] = b1v.z;
+                }
 
+                // top face: half a thickness above the edge plane
+                a0v = p0v.clone().add(half);
+                a1v = p1v.clone().add(half);
                 for(let j = 0; j < 2; ++j) {
                     vs[offset++] = a0v.x;
                     vs[offset++] = a0v.y;
@@ -315,22 +290,6 @@ class Strip {
 
         p0 = null;
         p1 = null;
-    }
-
-    setCalphaDrawnCoord(pnts, div, calphaIdArray) { let ic = this.icn3d, me = ic.icn3dui;
-        let index = 0;
-
-        if(calphaIdArray !== undefined) {
-            for(let i = 0, il = pnts.length; i < il; i += div) { // pnts.length = (calphaIdArray.length - 1) * div + 1
-                let serial = calphaIdArray[index];
-
-                if(ic.atoms.hasOwnProperty(serial)) {
-                    ic.atoms[serial].coord2 = pnts[i].clone();
-                }
-
-                ++index;
-            }
-        }
     }
 }
 

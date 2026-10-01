@@ -13,129 +13,90 @@ class Tube {
     //Create tubes for "atoms" with certain "atomName". "radius" is the radius of the tubes.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be
     //outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createTube(atoms, atomName, radius, bHighlight, bCustom, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
+    createTube(atoms, atomName, radius, bHighlight, bCustom, bNonCoil, tubePosArray, pntsCAAllSub, colorsAllSub) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
-        let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
+        let pnts = [], colors = [], radii = [];
         let currentChain, currentResi;
         let index = 0;
         let maxDist = 6.0;
         let maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
 
-        let pnts_colors_radii_prevone_nexttwo = [];
-        let firstAtom, atom, prevAtom;
+        let pnts_colors_radii = [];
+        let firstAtom, firstPos, prevAtom, prevPos;
+        let half = Math.floor(ic.axisDIV / 2) - 1;
 
-        for (let i in atoms) {
-            atom = atoms[i];
+        for (let i = 0, il = atoms.length; i < il; ++i) {
+            let pos = (tubePosArray) ? tubePosArray[i] : undefined;
+
+            let atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
                 if(index == 0) {
                     firstAtom = atom;
+                    firstPos = pos;
                 }
 
                 let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
 
                 if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
                   || (prevAtom.ssbegin) // e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/?pdbid=7JO8 where a beta sheet has just two residues
-//                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
                   || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
                   ) ) {
                     if(bHighlight !== 2) {
-                        if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
-                            let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
-                            let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
-                            prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
-
-                            let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
-                            let nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
-                            let nextthreeResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
-
-                            if(ic.residues.hasOwnProperty(nextoneResid)) {
-                                let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                                if(nextAtom !== undefined && nextAtom.ssbegin) { // include the residue
-                                    nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
-                                    nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
-
-                                    pnts.push(nextAtom.coord);
-                                    if(bCustom) {
-                                        radii.push(this.getCustomtubesize(nextoneResid));
-                                    }
-                                    else {
-                                        radii.push(this.getRadius(radius, nextAtom));
-                                    }
-                                    colors.push(nextAtom.color);
-                                }
+                        if(tubePosArray) {
+                            let bMissingEnd = ic.missingResEnd[prevAtom.structure + '_' + prevAtom.chain + '_' + prevAtom.resi];
+                            // remove half of the points when missign residues
+                            if(bMissingEnd) {
+                                pnts.splice(-half);
+                                colors.splice(-half);
+                                radii.splice(-half);
                             }
 
-                            // add one more residue if only one residue is available and it's not part of helix/sheet
-                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid) && atom.ss == 'coil') {
-                                let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                            let result = this.closeSegment(firstAtom, firstPos, prevAtom, prevPos, pnts, colors, radii, pntsCAAllSub);
 
-                                if(nextAtom) {
-                                    pnts.push(nextAtom.coord);
-                                    colors.push(nextAtom.color);
-
-                                    let radiusFinal = this.getRadius(radius, atom);
-                                    radii.push(radiusFinal);
-
-                                    nextoneResid = nexttwoResid;
-                                    nexttwoResid = nextthreeResid;
-                                }
-                            }
-
-                            let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
-                            if(nextoneCoord !== undefined) {
-                                nexttwo.push(nextoneCoord);
-                            }
-
-                            let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
-                            if(nexttwoCoord !== undefined) {
-                                nexttwo.push(nexttwoCoord);
-                            }
+                            pnts_colors_radii.push(result);
                         }
-
-                        pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+                        else {
+                            pnts_colors_radii.push({'pnts':pnts, 'colors':colors, 'radii':radii});
+                        }
                     }
-                    pnts = []; colors = []; radii = []; prevone = []; nexttwo = [];
+                    pnts = []; colors = []; radii = [];;
                     firstAtom = atom;
+                    firstPos = pos;
                     index = 0;
                 }
 
-                if(pnts.length == 0 && !isNaN(atom.resi)) {
-                    let prevoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
-                    if(ic.residues.hasOwnProperty(prevoneResid)) {
-                        prevAtom = ic.firstAtomObjCls.getAtomFromResi(prevoneResid, atomName);
-                        if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
-                            pnts.push(prevAtom.coord);
-                            if(bCustom) {
-                                radii.push(this.getCustomtubesize(prevoneResid));
-                            }
-                            else {
-                                radii.push(this.getRadius(radius, prevAtom));
-                            }
-                            colors.push(prevAtom.color);
-                        }
+                if(tubePosArray) { // coil
+                    let bMissingStart = ic.missingResStart[atom.structure + '_' + atom.chain + '_' + atom.resi];
+                    let bMissingEnd = ic.missingResEnd[atom.structure + '_' + atom.chain + '_' + atom.resi];
+
+                    let offsetStart = (bMissingStart) ?  half : 0;
+                    let offsetEnd = (bMissingEnd) ?  half : 0;
+
+                    let indexArray = ic.strandCls.pos2IndexArray(pos, pntsCAAllSub);
+                    for(let j = offsetEnd, jl = indexArray.length - offsetStart; j < jl; ++j) {
+                        pnts.push(pntsCAAllSub[indexArray[j]]);
+                        colors.push(colorsAllSub[indexArray[j]]);
+                        radii.push(ic.coilWidth);
                     }
                 }
+                else { // b factor, etc
+                    pnts.push(atom.coord);
 
-                pnts.push(atom.coord);
+                    let radiusFinal;
+                    if(bCustom) {
+                        radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
+                    }
+                    else {
+                        radiusFinal = this.getRadius(radius, atom);
+                    }
+                    
+                    radii.push(radiusFinal);
 
-                let radiusFinal;
-                if(bCustom) {
-                    radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
+                    colors.push(atom.color);
+                    // the starting residue of a coil uses the color from the next residue to avoid using the color of the last helix/sheet residue
+                    if(index === 1) colors[colors.length - 2] = atom.color;
                 }
-                else {
-                    radiusFinal = this.getRadius(radius, atom);
-                }
-                
-                // draw all atoms in tubes and assign zero radius when the residue is not coil
-                // if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
-
-                //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : ic.coilWidth));
-                radii.push(radiusFinal);
-
-                colors.push(atom.color);
-                // the starting residue of a coil uses the color from the next residue to avoid using the color of the last helix/sheet residue
-                if(index === 1) colors[colors.length - 2] = atom.color;
 
                 currentChain = atom.chain;
                 currentResi = atom.resi;
@@ -148,170 +109,82 @@ class Tube {
                 ++index;
 
                 prevAtom = atom;
+                prevPos = pos;
             }
         }
 
         if(bHighlight !== 2) {
-            prevone = [];
-            if(firstAtom !== undefined && !isNaN(firstAtom.resi)) {
-                let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
-                let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
-                prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
-            }
-
-            nexttwo = [];
-            if(atom !== undefined && !isNaN(atom.resi)) {
-                let nextoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
-                let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
-                let nextthreeResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 3).toString();
-
-                // add one more residue if only one residue is available
-                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
-                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-
-                    if(nextAtom) {
-                        pnts.push(nextAtom.coord);
-                        colors.push(nextAtom.color);
-
-                        let radiusFinal = this.getRadius(radius, atom);
-                        radii.push(radiusFinal);
-
-                        nextoneResid = nexttwoResid;
-                        nexttwoResid = nextthreeResid;
+            if(tubePosArray) {
+                if(prevAtom) {
+                    let bMissingEnd = ic.missingResEnd[prevAtom.structure + '_' + prevAtom.chain + '_' + prevAtom.resi];
+                    if(bMissingEnd) {
+                        pnts.splice(-half);
+                        colors.splice(-half);
+                        radii.splice(-half);
                     }
-                }
 
-                let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
-                if(nextoneCoord !== undefined) {
-                    nexttwo.push(nextoneCoord);
-                }
+                    let result = this.closeSegment(firstAtom, firstPos, prevAtom, prevPos, pnts, colors, radii, pntsCAAllSub);
 
-                let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
-                if(nexttwoCoord !== undefined) {
-                    nexttwo.push(nexttwoCoord);
+                    pnts_colors_radii.push(result);
                 }
             }
-
-            pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+            else {
+                pnts_colors_radii.push({'pnts':pnts, 'colors':colors, 'radii':radii});
+            }
         }
 
-        for(let i = 0, il = pnts_colors_radii_prevone_nexttwo.length; i < il; ++i) {
-            let pnts = pnts_colors_radii_prevone_nexttwo[i].pnts;
-            let colors = pnts_colors_radii_prevone_nexttwo[i].colors;
-            let radii = pnts_colors_radii_prevone_nexttwo[i].radii;
-            let prevone = pnts_colors_radii_prevone_nexttwo[i].prevone;
-            let nexttwo = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
+        for(let i = 0, il = pnts_colors_radii.length; i < il; ++i) {
+            let pnts = pnts_colors_radii[i].pnts;
+            let colors = pnts_colors_radii[i].colors;
+            let radii = pnts_colors_radii[i].radii;
 
-            this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil);
+            this.createTubeSub(pnts, colors, radii, bHighlight, bNonCoil);
         }
 
-        pnts_colors_radii_prevone_nexttwo = [];
+        pnts_colors_radii = [];
     }
 
-/*    
-    createTube(atoms, atomName, radius, bHighlight, bCustom, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
-        if(me.bNode) return;
+    closeSegment(firstAtom, firstPos, prevAtom, prevPos, pnts, colors, radii, pntsCAAllSub) { let ic = this.icn3d, me = ic.icn3dui;
+        if (pnts.length === 0) return {'pnts': [], 'colors': [], 'radii': []};
 
-        let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
-        let currentChain, currentResi;
-        let index = 0;
-        let maxDist = 6.0;
-        let maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
+        let extra = 1; // extend the tube by 5 sub-points into a preceding/following helix/sheet
 
-        let pnts_colors_radii_prevone_nexttwo = [];
-        let firstAtom, atom, prevAtom;
+        // extend backward by one sub-point into a preceding helix/sheet
+        if (!isNaN(firstAtom.resi)) {
+            if(firstAtom.style == 'strand') extra = 0;
 
-        for (let i in atoms) {
-            atom = atoms[i];
-            if ((atom.name === atomName) && !atom.het) {
-                if(index == 0) {
-                    firstAtom = atom;
+            let resid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1);
+            let before = ic.residues.hasOwnProperty(resid) ? ic.firstAtomObjCls.getAtomFromResi(resid, 'CA') : undefined;
+
+            for(let i = 1, il = extra + 1; i < il; ++i) {
+                let idx = ic.strandCls.pos2IndexArray(firstPos, pntsCAAllSub)[0] - i;
+                if (before && (before.ssbegin || before.ssend) && idx >= 0) {
+                    pnts.unshift(pntsCAAllSub[idx]);
+                    colors.unshift(colors[0]);          // keep the coil color
+                    radii.unshift(radii[0]);
                 }
-
-                if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                  || (ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + currentChain, currentResi) + 1 < ic.ParserUtilsCls.getResiNCBI(atom.structure + '_' + atom.chain, atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
-                  ) ) {
-                    if(bHighlight !== 2) {
-                        if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
-                            let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
-                            let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
-                            prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
-
-                            let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
-
-                            // add one more residue if only one residue is available
-                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
-                                let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-
-                                if(nextAtom) {
-                                    pnts.push(nextAtom.coord);
-                                    colors.push(nextAtom.color);
-
-                                    let radiusFinal = this.getRadius(radius, atom);
-                                    radii.push(radiusFinal);
-                                }
-                            }
-                       
-                        }
-
-                        pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
-                    }
-                    pnts = []; colors = []; radii = []; prevone = []; nexttwo = [];
-                    firstAtom = atom;
-                    index = 0;
-                }
-
-                pnts.push(atom.coord);
-
-                let radiusFinal;
-                if(bCustom) {
-                    radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
-                }
-                else {
-                    radiusFinal = this.getRadius(radius, atom);
-                }
-
-                // draw all atoms in tubes and assign zero radius when the residue is not coil
-                if(!bNonCoil && atom.ss != 'coil' && !atom.ssbegin && !atom.ssend ) radiusFinal = 0;
-
-                //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : ic.coilWidth));
-                radii.push(radiusFinal);
-
-                colors.push(atom.color);
-                // the starting residue of a coil uses the color from the next residue to avoid using the color of the last helix/sheet residue
-                if(index === 1) colors[colors.length - 2] = atom.color;
-
-                currentChain = atom.chain;
-                currentResi = atom.resi;
-
-                let scale = 1.2;
-                if(bHighlight === 2 && !atom.ssbegin) {
-                    ic.boxCls.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
-                }
-
-                ++index;
-
-                prevAtom = atom;
             }
         }
 
-        if(bHighlight !== 2) {
-            pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+        // extend forward by one sub-point into a following helix/sheet
+        if (!isNaN(prevAtom.resi)) {
+            if(prevAtom.style == 'strand') extra = 0;
+
+            let resid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1);
+            let after = ic.residues.hasOwnProperty(resid) ? ic.firstAtomObjCls.getAtomFromResi(resid, 'CA') : undefined;
+            let arr = ic.strandCls.pos2IndexArray(prevPos, pntsCAAllSub);
+            for(let i = 1, il = extra + 1; i < il; ++i) {
+                let idx = arr[arr.length - 1] + i;
+                if (after && (after.ssbegin || after.ssend) && idx < pntsCAAllSub.length) {
+                    pnts.push(pntsCAAllSub[idx]);
+                    colors.push(colors[colors.length - 1]);
+                    radii.push(radii[radii.length - 1]);
+                }
+            }
         }
 
-        for(let i = 0, il = pnts_colors_radii_prevone_nexttwo.length; i < il; ++i) {
-            let pnts = pnts_colors_radii_prevone_nexttwo[i].pnts;
-            let colors = pnts_colors_radii_prevone_nexttwo[i].colors;
-            let radii = pnts_colors_radii_prevone_nexttwo[i].radii;
-            let prevone = []; // = pnts_colors_radii_prevone_nexttwo[i].prevone;
-            let nexttwo = []; // = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
-
-            this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil);
-        }
-
-        pnts_colors_radii_prevone_nexttwo = [];    
+        return {'pnts': pnts, 'colors': colors, 'radii': radii};
     }
-*/
 
     getCustomtubesize(resid) { let ic = this.icn3d, me = ic.icn3dui;
         let pos = resid.lastIndexOf('_');
@@ -324,11 +197,11 @@ class Tube {
     };
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createTubeSub(_pnts, colors, radii, bHighlight, prevone, nexttwo, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
+    createTubeSub(_pnts, colors, radii, bHighlight, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         if (_pnts.length < 2) return;
-
+        
         let circleDiv = ic.tubeDIV, axisDiv = ic.axisDIV;
         let circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
         //var geo = new THREE.Geometry();
@@ -336,10 +209,19 @@ class Tube {
         let verticeArray = [], colorArray = [],indexArray = [], color;
         let offset = 0, offset2 = 0, offset3 = 0
 
-        let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
+        let pnts;
+        /*
+        if(!bSubdivided) {
+            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv);
 
-        let pnts = pnts_clrs[0];
-        colors = pnts_clrs[2];
+            pnts = pnts_clrs[0];
+            colors = pnts_clrs[2];
+        }
+        else {
+            pnts = _pnts;
+        }
+        */
+        pnts = _pnts;
 
         let constRadiius;
         // a threshold to stop drawing the tube if it's less than this ratio of radius
@@ -377,6 +259,7 @@ class Tube {
                     }
                 }
             }
+
             let delta, axis1, axis2;
             if (i < lim - 1) {
                 delta = pnts[i].clone().sub(pnts[i + 1]);

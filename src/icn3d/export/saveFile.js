@@ -48,17 +48,30 @@ class SaveFile {
             let height = $("#" + ic.pre + "canvas").height();
             ic.applyCenterCls.setWidthHeight(width, height);
 
+            let bPathTracer = (ic.scaleFactor == 1) ? false : true;
+/*
             // disable path tracing for large structures
-            let bPathTracer = (Object.keys(ic.atoms).length > ic.maxatomcnt) ? false : true;
+            let bPathTracer = (Object.keys(ic.atoms).length > ic.maxatomcnt || ic.scaleFactor == 1) ? false : true;
 
             if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly 
                 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
                 bPathTracer = false; // disable path tracing for large assemblies
             }
+*/
 
-            //if(ic.bRender) ic.drawCls.render(undefined, bPathTracer);
-            if(ic.bRender) ic.drawCls.draw(undefined, bPathTracer);
+            if(bPathTracer) {
+                if(ic.bRender) ic.drawCls.draw(undefined, bPathTracer);
 
+                /*
+                let commandTransformation = ic.commands[ic.commands.length-1].split('|||');
+                ic.transformCls.resetOrientation_base(commandTransformation);
+                if(ic.bRender) ic.drawCls.render(undefined, bPathTracer);
+                */
+            }
+            else {
+                if(ic.bRender) ic.drawCls.render(undefined, bPathTracer);
+            }
+            
             // reset impostor and instancing
             ic.bImpo = true; // enable impostor
             ic.bInstanced = true; // enable instancing

@@ -90,6 +90,9 @@ class ApplyMissingRes {
             }
         }
 
+        if(ic.missingResStart === undefined) ic.missingResStart = {};
+        if(ic.missingResEnd === undefined) ic.missingResEnd = {};
+
         for(let i = 0, il = misingResArray.length; i < il; i += 2) {
             let resid0 = misingResArray[i];
             let resid1 = misingResArray[i + 1];
@@ -105,6 +108,10 @@ class ApplyMissingRes {
                 if(ic.missingResPnts[structure] === undefined) ic.missingResPnts[structure] = [];
                 ic.missingResPnts[structure].push(resid0);
                 ic.missingResPnts[structure].push(resid1);
+
+                ic.missingResStart[resid0] = 1;
+                ic.missingResEnd[resid1] = 1;
+                
 
                 ic.missingResResid2serial[resid0 + ',' + resid1] = atom0.serial;
                 ic.missingResResid2serial[resid1 + ',' + resid0] = atom1.serial;

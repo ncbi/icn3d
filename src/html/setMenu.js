@@ -732,9 +732,8 @@ class SetMenu {
         html += this.getLink('mn1_exportCanvas', 'Original Size & HTML', undefined, 3);
         html += this.getLink('mn1_exportCanvas1', 'Original Size', 1, 3);
 
-        html += this.getLink('mn1_exportCanvas2', '2X Large', undefined, 3);
-        html += this.getLink('mn1_exportCanvas4', '4X Large', undefined, 3);
-        html += this.getLink('mn1_exportCanvas8', '8X Large', undefined, 3);
+        html += this.getLink('mn1_exportCanvas2', '2X for Pub. (Path Tracing)', 1, 3);
+        html += this.getLink('mn1_exportCanvas4', '4X for Pub. (Path Tracing)', undefined, 3);
 
         html += "</ul>";
         html += "</li>";

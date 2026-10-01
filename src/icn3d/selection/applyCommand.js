@@ -1392,16 +1392,6 @@ class ApplyCommand {
         let color = command.substr(command.lastIndexOf(' ') + 1);
         me.htmlCls.setMenuCls.setTheme(color);
       }
-      else if(command.indexOf('set double color') == 0) {
-        let value = command.substr(command.lastIndexOf(' ') + 1);
-        if(value == 'on') {
-            ic.bDoublecolor = true;
-            ic.setOptionCls.setStyle('proteins', 'ribbon');
-        }
-        else if(value == 'off') {
-            ic.bDoublecolor = false;
-        }
-      }
       else if(command.indexOf('adjust dialog') == 0) {
         let id = command.substr(command.lastIndexOf(' ') + 1);
         ic.scapCls.adjust2DWidth(id);
@@ -1868,7 +1858,6 @@ class ApplyCommand {
         else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
         else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
         else if(cmd.indexOf('set theme') !== -1) return 'Style > Theme Color';
-        else if(cmd.indexOf('set double color') !== -1) return 'Style > Two-color Helix';
         else return '';
     }
 }

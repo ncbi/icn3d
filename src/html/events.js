@@ -54,6 +54,11 @@ class Events {
 
     async setRealign(alignType, bMsa) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+
+        if(nameArray.length == 0) {
+            nameArray = $("#" + me.pre + "atomsCustom").val();
+        }
+
         if(nameArray.length > 0) {
             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         }
@@ -339,10 +344,14 @@ class Events {
             upvectorArray = [childNodes[0].textContent, childNodes[1].textContent, childNodes[2].textContent];
 
             ic.cam.position.set(viewpointArray[0], viewpointArray[1], viewpointArray[2]);
-            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(directionArray[0], directionArray[1], directionArray[2]));
             ic.cam.up.set(upvectorArray[0], upvectorArray[1], upvectorArray[2]);
             ic.cam.fov = fov;
             // ic.container.whratio = aspect;
+
+            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(directionArray[0], directionArray[1], directionArray[2]));
+            // let dirVec = new THREE.Vector3(directionArray[0], directionArray[1], directionArray[2]);
+            // ic.cam.lookAt(ic.cam.position.clone().add(dirVec));
+            // ic.cam.updateMatrixWorld(true);
 
             ic.drawCls.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
             ic.drawCls.render();

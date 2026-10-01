@@ -272,10 +272,20 @@ class ApplyDisplay {
             ic.cylinderCls.createCylinderCurve(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ['CA'], ic.traceRadius, false, bHighlight);
           }
           else if(style === 'b factor tube') {
-            ic.tubeCls.createTube(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 'CA', null, bHighlight, false, true);
+            let atomArray = [];
+            for(let i in atomHash) {
+                let atom = ic.atoms[i];
+                atomArray.push(atom);
+            }
+            ic.tubeCls.createTube(atomArray, 'CA', null, bHighlight, false, true);
           }
           else if(style === 'custom tube') {
-            ic.tubeCls.createTube(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 'CA', null, bHighlight, true, true);
+            let atomArray = [];
+            for(let i in atomHash) {
+                let atom = ic.atoms[i];
+                atomArray.push(atom);
+            }
+            ic.tubeCls.createTube(atomArray, 'CA', null, bHighlight, true, true);
           }
           else if(style === 'lines' || style === 'lines2') {
             if(bHighlight === 1) {
