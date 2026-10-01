@@ -30,6 +30,59 @@ class SetSeqAlign {
           ic.nconsHash2 = {}
           ic.nalignHash2 = {}
 
+          let msaSameColor = [];
+          // assume all aligned seq are the same. If any aligned res is different,set it to false (0)
+          for(let i = 0, il = seqalign[0].length; i < il; ++i) {
+            msaSameColor.push(1);
+          }
+
+          for(let i = 0, il = seqalign.length; i < il; ++i) {
+            // first sequence
+            let alignData = seqalign[i][0];
+            let molid1 = alignData.moleculeId;
+
+            let chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
+            chainid1 = mmdbid1 + '_' + chain1;
+
+            let id2aligninfo = {};
+            let start = alignData.sequence.length, end = -1;
+            let bStart = false;
+            for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
+                // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
+                let resi =(ic.bUsePdbNum) ? ic.ParserUtilsCls.getResi(chainid1, alignData.sequence[j][0] - 1) : alignData.sequence[j][0];
+                let resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
+                resn =(resn === ' ' || resn === '') ? 'X' : resn;
+
+                let aligned =(alignData.sequence[j][3]) ? 1 : 0;
+
+                if(aligned == 1) {
+                    if(j < start && !bStart) {
+                        start = j;
+                        bStart = true; // set start just once
+                    }
+                    if(j > end) end = j;
+                }
+
+                id2aligninfo[j] = {"resi": resi, "resn": resn, "aligned": aligned}
+            }
+
+            // second sequence
+            alignData = seqalign[i][1];
+
+            for(let j = start; j <= end; ++j) {
+                // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
+                let alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; 
+
+                let aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
+
+                if(aligned === 2) { // aligned
+                    if(id2aligninfo[j].resn != resn) {
+                        msaSameColor[j] = 0;
+                    }
+                }
+            }
+          }
+
           for(let i = 0, il = seqalign.length; i < il; ++i) {
               // first sequence
               let alignData = seqalign[i][0];
@@ -126,6 +179,8 @@ class SetSeqAlign {
                           ic.nconsHash2[chainid2 + '_' + resi] = 1;
                       }
 
+                      color = (msaSameColor[j] == 0) ? '#0000FF' : '#FF0000';
+
                       // mapping, use the firstsequence as the reference structure
                       ic.chainsMapping[chainid1][chainid1 + '_' + id2aligninfo[j].resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
                       ic.chainsMapping[chainid2][chainid2 + '_' + resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
@@ -142,6 +197,8 @@ class SetSeqAlign {
 
                       ic.nalignHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
                       ic.nalignHash2[chainid2 + '_' + resi] = 1;
+
+                      msaSameColor[j] = 2; // not aligned
                   }
 
                   // chain1
@@ -1270,7 +1327,7 @@ class SetSeqAlign {
             ic.msaSeq[chainid2] += '-';           
         }
     }
-
+/*
     setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let ic = this.icn3d, me = ic.icn3dui;
         //loadSeqAlignment
           let alignedAtoms = {};
@@ -1404,6 +1461,7 @@ class SetSeqAlign {
             let select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
     }
+*/
 
     setSeqPerResi(chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.alnChainsSeq[chainid] === undefined) ic.alnChainsSeq[chainid] = [];

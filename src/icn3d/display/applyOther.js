@@ -229,7 +229,7 @@ class ApplyOther {
                     break;
                 }
                 else if(atom.name === 'CA' && (atom.ss == 'helix' || atom.ss == 'sheet')) { // protein secondary: CA
-                    pos = (ic.atoms[i].coord2 !== undefined) ? ic.atoms[i].coord2 : ic.atoms[i].coord;
+                    pos = ic.atoms[i].coord;
                     break;
                 }
             }

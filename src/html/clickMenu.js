@@ -662,6 +662,7 @@ class ClickMenu {
            //var file_pref =(ic.inputid) ? ic.inputid : "custom";
            //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
            let bPngHtml = true;
+           ic.scaleFactor = 1;
            await ic.shareLinkCls.shareLink(bPngHtml);
         });
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -679,11 +680,11 @@ class ClickMenu {
            ic.scaleFactor = 4;
            await ic.shareLinkCls.shareLink(true, true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-           thisClass.setLogCmd("export canvas 8", true);
-           ic.scaleFactor = 8;
-           await ic.shareLinkCls.shareLink(true, true);
-        });
+      //   me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+      //      thisClass.setLogCmd("export canvas 8", true);
+      //      ic.scaleFactor = 8;
+      //      await ic.shareLinkCls.shareLink(true, true);
+      //   });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCounts", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            thisClass.setLogCmd("export counts", false);

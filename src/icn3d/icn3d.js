@@ -181,8 +181,6 @@ class iCn3D {
 
     this.bInitial = true; // first 3d display
 
-    this.bDoublecolor = false;
-
     this.originSize = 1; // radius
 
     this.ALTERNATE_STRUCTURE = -1;
@@ -259,7 +257,7 @@ class iCn3D {
     //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
     this.lineRadius = 0.1; // hbonds, distance lines
     //This is the coil radius for coils. It's 0.3 by default.
-    this.coilWidth = 0.3; //0.4; // style cartoon-coil
+    this.coilWidth = 0.12; //0.3; // style cartoon-coil
     //This is the stick radius. It's 0.4 by default.
     this.cylinderRadius = 0.4; // style stick
     //This is the cross-linkage radius. It's 0.4 by default.
@@ -274,7 +272,7 @@ class iCn3D {
     this.cylinderHelixRadius = 1.6; // style cylinder and plate
 
     //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
-    this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
+    this.ribbonthickness = 0.35; // 0.2; // style ribbon, nucleotide cartoon, stand thickness
     //This is the width of protein ribbons. It's 1.3 by default.
     this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
     //This is the width of nucleotide ribbons. It's 0.8 by default.

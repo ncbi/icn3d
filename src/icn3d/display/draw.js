@@ -271,7 +271,6 @@ import { WebGLPathTracer } from 'three-gpu-pathtracer';
             }
             else {
                 if(bPathTracer) {
-                    console.log("###pathTracer");
                     ic.bImpo = false; // disable impostor for path tracing
                     const pathTracer = new WebGLPathTracer(ic.renderer);
                     pathTracer.setScene(ic.scene, cam);

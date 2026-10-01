@@ -27,24 +27,31 @@ class Transform {
             }
             else { // |||pos:a,b,c|dir:a,b,c|up:a,b,c|fov:a
                 let bcfArray = commandTransformation[1].split('|');
+                // let dirVec;
                 bcfArray.forEach(item => {
                     let itemArray = item.split(':');
                     if(itemArray[0] == 'fov') {
                         ic.cam.fov = parseFloat(itemArray[1]);
                     }
                     else {
-                        let abc = itemArray[1].split(',');
+                        let abc = itemArray[1].split(',').map(parseFloat);
                         if(itemArray[0] == 'pos') {
-                            ic.cam.position.set(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2]));
+                            ic.cam.position.set(abc[0], abc[1], abc[2]);
                         }
                         else if(itemArray[0] == 'dir') {
-                            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2])));
+                            ic.cam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, -1), new THREE.Vector3(abc[0], abc[1], abc[2]));
+                            // dirVec = new THREE.Vector3(abc[0], abc[1], abc[2]);
                         }
                         else if(itemArray[0] == 'up') {
-                            ic.cam.up.set(parseFloat(abc[0]), parseFloat(abc[1]), parseFloat(abc[2]));
+                            ic.cam.up.set(abc[0], abc[1], abc[2]);
                         }
                     }
                 });
+                // apply after pos and up are known, so the roll follows "up"
+                // if(dirVec) {
+                //     ic.cam.lookAt(ic.cam.position.clone().add(dirVec));
+                //     ic.cam.updateMatrixWorld(true);
+                // }
 
                 // set the aspect ratio
                 if(!ic.container.whratio) {

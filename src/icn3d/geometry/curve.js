@@ -10,15 +10,15 @@ class Curve {
     }
 
     // modified from iview (http://star.cse.cuhk.edu.hk/iview/)
-    createCurveSub(_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+    createCurveSub(_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, positions) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         if (_pnts.length === 0) return;
         div = div || 5;
         let pnts;
-        if(!bNoSmoothen) {
+        if(div != 1 && !bNoSmoothen) {
             let bExtendLastRes = true;
-            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, div);
             pnts = pnts_clrs[0];
             colors = pnts_clrs[2];
         }
@@ -26,8 +26,6 @@ class Curve {
             pnts = _pnts;
         }
         if (pnts.length === 0) return;
-
-        ic.stripCls.setCalphaDrawnCoord(pnts, div, calphaIdArray);
 
         if(bHighlight === 1) {
             let radius = ic.coilWidth / 2;
@@ -155,7 +153,7 @@ class Curve {
         }
 
         pnts = null;
-    }
+    }  
 }
 
 export {Curve}

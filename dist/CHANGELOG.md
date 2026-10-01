@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.54.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.0.zip) was release on October 1, 2026. Improved the connections between coils and helices/sheets in the ribbon style.
+
 [icn3d-3.53.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.53.0.zip) was release on September 21, 2026. Used pathtracer to improve image quality when saving iCn3D PNG images.
 
 [icn3d-3.52.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.52.0.zip) was release on September 17, 2026. Significantly sped up the parsing of binary cif files such as PDB 3J3Q.

@@ -167,12 +167,12 @@ class Cylinder {
 
         let start = null;
         let currentChain, currentResi;
-        let others = {}, beta = {};
+        let others = [], beta = {};
         let i;
         for (i in atoms) {
             let atom = atoms[i];
             if (atom.het) continue;
-            if ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) others[atom.serial] = atom;
+            if ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) others.push(atom);
             if (atom.ss === 'sheet') beta[atom.serial] = atom;
             if (atom.name !== 'CA') continue;
             if (atom.ss === 'helix' && atom.ssend) {

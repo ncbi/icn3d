@@ -77,6 +77,17 @@ class LoadScript {
             nameArray = paraArray[1].split(',');
             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
         }
+        else {
+          let structureHash = {};
+          
+          for(let chainid in ic.chains) {
+              let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+              if(!structureHash.hasOwnProperty(atom.structure) && (ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial))) {
+                  nameArray.push(chainid);
+                  structureHash[atom.structure] = 1;
+              }
+          }    
+        }
 
         return nameArray;
     }

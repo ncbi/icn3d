@@ -160,12 +160,12 @@ class SetHtml {
 
         // type == '3dprint' or 'style'
         let linerad =(type == '3dprint') ? '1' : '0.1';
-        let coilrad =(type == '3dprint') ? '1.2' : '0.3';
+        let coilrad =(type == '3dprint') ? '1.2' : '0.12';
         let stickrad =(type == '3dprint') ? '0.8' : '0.4';
         let crosslinkrad =(type == '3dprint') ? '0.8' : '0.4';
         let tracerad =(type == '3dprint') ? '1' : '0.4';
         let ballscale =(type == '3dprint') ? '0.6' : '0.3';
-        let ribbonthick =(type == '3dprint') ? '1' : '0.2';
+        let ribbonthick =(type == '3dprint') ? '1' : '0.35';
         let prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
         let nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
 
@@ -234,12 +234,12 @@ class SetHtml {
         }
 
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
-        html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
+        html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.12)<br/>";
         html += "<b>Stick Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>" + me.htmlCls.space3 + "(for sticks, default 0.4)<br/>";
         html += "<b>Cross-Linkage Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "crosslinkrad_" + type + "' value='" + crosslinkrad + "' size=4>" + me.htmlCls.space3 + "(for cross-linkages, default 0.4)<br/>";
         html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.4)<br/>";
 
-        html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
+        html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.35)<br/>";
         html += "<b>Protein Ribbon Width</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "prtribbonwidth_" + type + "' value='" + prtribbonwidth + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, default 1.3)<br/>";
         html += "<b>Nucleotide Ribbon Width</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "nucleotideribbonwidth_" + type + "' value='" + nucleotideribbonwidth + "' size=4>" + me.htmlCls.space3 + "(for nucleotide ribbons, default 0.8)<br/>";
 
@@ -893,12 +893,12 @@ class SetHtml {
 
         if(bReset) {
             $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
-            $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
+            $("#" + me.pre + "coilrad_" + postfix ).val(0.12); //0.12; // style cartoon-coil
             $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
             $("#" + me.pre + "crosslinkrad_" + postfix ).val(0.4); //0.4; // cross-linkage
             $("#" + me.pre + "tracerad_" + postfix ).val(0.4); //0.4; // style c alpha trace, nucleotide stick
             $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
-            $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
+            $("#" + me.pre + "ribbonthick_" + postfix ).val(0.35); //0.35; // style ribbon, nucleotide cartoon, stand thickness
             $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
             $("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val(0.8); //0.8; // nucleotide cartoon
         }
