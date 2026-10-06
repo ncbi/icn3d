@@ -69,6 +69,7 @@ class CurveStripArrow {
         // use the sheet coord for n-2 residues
         let colorsTmp = [];
         let extraArrow = (bStrip) ? 2 : 0; // extend the tube by 5 sub-points into a preceding/following helix/sheet
+//        let extraArrow = (bStrip) ? 0 : 0; // extend the tube by 5 sub-points into a preceding/following helix/sheet
 
         let i, lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - ic.axisDIV + extraArrow : pntsCA.length;
 
@@ -84,20 +85,22 @@ class CurveStripArrow {
             posIndex.push(positions[i]); 
         }
 
-        if(bStrip) {
-            if(bHelix) {
-                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
-                      undefined, posIndex, pntsCATmp, prevCOArrayTmp);
+//        if(!(bShowArrow === undefined || bShowArrow)) {
+            if(bStrip) {
+                if(bHelix) {
+                    ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                        undefined, posIndex, pntsCATmp, prevCOArrayTmp);
+                }
+                else {
+                    ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                    undefined, posIndex);
+                }
             }
             else {
-                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
-                  undefined, posIndex);
+                ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
+                undefined, posIndex);
             }
-        }
-        else {
-            ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
-              undefined, posIndex);
-        }
+//        }
 
         if(bShowArrow === undefined || bShowArrow) {
             // draw the arrow
@@ -113,6 +116,8 @@ class CurveStripArrow {
                     let delta = -1 + numM1Inv2 * linePos[index];
                     let scale = 1.8; // scale of the arrow width
                     delta = delta * scale * (ic.axisDIV - cnt) / ic.axisDIV;
+
+                    if(!pntsCA[i] || !prevCOArray[i]) continue;
 
                     let v = new THREE.Vector3(pntsCA[i].x + prevCOArray[i].x * delta,
                         pntsCA[i].y + prevCOArray[i].y * delta,
@@ -135,7 +140,7 @@ class CurveStripArrow {
                     pntsCA[lastCAIndex].z + prevCOArray[lastCAIndex].z * delta);
 
                 pnts[index].push(v);
-                colorsTmp.push(colors[i]);
+                colorsTmp.push(colors[lastCAIndex]);
                 if(index === 0) posIndex.push(positions[lastCAIndex]);
             }
 

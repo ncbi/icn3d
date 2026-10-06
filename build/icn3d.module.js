@@ -57640,7 +57640,7 @@ class SubdivideCls {
 
     // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
     // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    subdivide(_pnts, _clrs, DIV) { let me = this.icn3dui;
+    subdivide(_pnts, _clrs, DIV, bOld) { let me = this.icn3dui;
 
         let ret = [];
         let pos = [];
@@ -57723,6 +57723,16 @@ class SubdivideCls {
         savedColor = [];
         pnts = [];
 
+        // adjust the color
+        if(!bOld) {
+            let half = Math.floor(DIV / 2);
+            for(let i = 0, il = color.length; i < il; ++i) {
+                let j = i + half;
+                if(j > il - 1) j = il - 1;
+                color[i] = color[j];
+            }
+        }
+  
         pnts_positions.push(ret);
         pnts_positions.push(pos);
         pnts_positions.push(color);
@@ -79134,6 +79144,7 @@ class CurveStripArrow {
         // use the sheet coord for n-2 residues
         let colorsTmp = [];
         let extraArrow = (bStrip) ? 2 : 0; // extend the tube by 5 sub-points into a preceding/following helix/sheet
+//        let extraArrow = (bStrip) ? 0 : 0; // extend the tube by 5 sub-points into a preceding/following helix/sheet
 
         let i, lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - ic.axisDIV + extraArrow : pntsCA.length;
 
@@ -79149,20 +79160,22 @@ class CurveStripArrow {
             posIndex.push(positions[i]); 
         }
 
-        if(bStrip) {
-            if(bHelix) {
-                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
-                      undefined, posIndex, pntsCATmp, prevCOArrayTmp);
+//        if(!(bShowArrow === undefined || bShowArrow)) {
+            if(bStrip) {
+                if(bHelix) {
+                    ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                        undefined, posIndex, pntsCATmp, prevCOArrayTmp);
+                }
+                else {
+                    ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
+                    undefined, posIndex);
+                }
             }
             else {
-                ic.stripCls.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true,
-                  undefined, posIndex);
+                ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
+                undefined, posIndex);
             }
-        }
-        else {
-            ic.curveCls.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true,
-              undefined, posIndex);
-        }
+//        }
 
         if(bShowArrow === undefined || bShowArrow) {
             // draw the arrow
@@ -79178,6 +79191,8 @@ class CurveStripArrow {
                     let delta = -1 + numM1Inv2 * linePos[index];
                     let scale = 1.8; // scale of the arrow width
                     delta = delta * scale * (ic.axisDIV - cnt) / ic.axisDIV;
+
+                    if(!pntsCA[i] || !prevCOArray[i]) continue;
 
                     let v = new Vector3$1(pntsCA[i].x + prevCOArray[i].x * delta,
                         pntsCA[i].y + prevCOArray[i].y * delta,
@@ -79200,7 +79215,7 @@ class CurveStripArrow {
                     pntsCA[lastCAIndex].z + prevCOArray[lastCAIndex].z * delta);
 
                 pnts[index].push(v);
-                colorsTmp.push(colors[i]);
+                colorsTmp.push(colors[lastCAIndex]);
                 if(index === 0) posIndex.push(positions[lastCAIndex]);
             }
 
@@ -80833,13 +80848,13 @@ class Tube {
         let maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
 
         let pnts_colors_radii = [];
-        let firstAtom, firstPos, prevAtom, prevPos;
+        let firstAtom, firstPos, atom, prevAtom, prevPos;
         let half = Math.floor(ic.axisDIV / 2) - 1;
 
         for (let i = 0, il = atoms.length; i < il; ++i) {
             let pos = (tubePosArray) ? tubePosArray[i] : undefined;
 
-            let atom = atoms[i];
+            atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
                 if(index == 0) {
                     firstAtom = atom;
@@ -80866,7 +80881,61 @@ class Tube {
 
                             pnts_colors_radii.push(result);
                         }
-                        else {
+                        else {    
+/*                       
+                            if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
+                                let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
+                                let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                                prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+
+                                let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
+                                let nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
+                                let nextthreeResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
+
+                                if(ic.residues.hasOwnProperty(nextoneResid)) {
+                                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                                    if(nextAtom !== undefined && nextAtom.ssbegin) { // include the residue
+                                        nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
+                                        nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
+
+                                        pnts.push(nextAtom.coord);
+                                        if(bCustom) {
+                                            radii.push(this.getCustomtubesize(nextoneResid));
+                                        }
+                                        else {
+                                            radii.push(this.getRadius(radius, nextAtom));
+                                        }
+                                        colors.push(nextAtom.color);
+                                    }
+                                }
+
+                                // add one more residue if only one residue is available and it's not part of helix/sheet
+                                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid) && atom.ss == 'coil') {
+                                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+
+                                    if(nextAtom) {
+                                        pnts.push(nextAtom.coord);
+                                        colors.push(nextAtom.color);
+
+                                        let radiusFinal = this.getRadius(radius, atom);
+                                        radii.push(radiusFinal);
+
+                                        nextoneResid = nexttwoResid;
+                                        nexttwoResid = nextthreeResid;
+                                    }
+                                }
+
+                                let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
+                                if(nextoneCoord !== undefined) {
+                                    nexttwo.push(nextoneCoord);
+                                }
+
+                                let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
+                                if(nexttwoCoord !== undefined) {
+                                    nexttwo.push(nexttwoCoord);
+                                }
+                            }
+*/
                             pnts_colors_radii.push({'pnts':pnts, 'colors':colors, 'radii':radii});
                         }
                     }
@@ -80890,6 +80959,24 @@ class Tube {
                     }
                 }
                 else { // b factor, etc
+/*                    
+                    if(pnts.length == 0 && !isNaN(atom.resi)) {
+                        let prevoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
+                        if(ic.residues.hasOwnProperty(prevoneResid)) {
+                            prevAtom = ic.firstAtomObjCls.getAtomFromResi(prevoneResid, atomName);
+                            if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
+                                pnts.push(prevAtom.coord);
+                                if(bCustom) {
+                                    radii.push(this.getCustomtubesize(prevoneResid));
+                                }
+                                else {
+                                    radii.push(this.getRadius(radius, prevAtom));
+                                }
+                                colors.push(prevAtom.color);
+                            }
+                        }
+                    }
+*/
                     pnts.push(atom.coord);
 
                     let radiusFinal;
@@ -80938,6 +81025,47 @@ class Tube {
                 }
             }
             else {
+/*               
+                prevone = [];
+                if(firstAtom !== undefined && !isNaN(firstAtom.resi)) {
+                    let prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
+                    let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                    prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+                }
+
+                nexttwo = [];
+                if(atom !== undefined && !isNaN(atom.resi)) {
+                    let nextoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+                    let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
+                    let nextthreeResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 3).toString();
+
+                    // add one more residue if only one residue is available
+                    if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                        let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+
+                        if(nextAtom) {
+                            pnts.push(nextAtom.coord);
+                            colors.push(nextAtom.color);
+
+                            let radiusFinal = this.getRadius(radius, atom);
+                            radii.push(radiusFinal);
+
+                            nextoneResid = nexttwoResid;
+                            nexttwoResid = nextthreeResid;
+                        }
+                    }
+
+                    let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
+                    if(nextoneCoord !== undefined) {
+                        nexttwo.push(nextoneCoord);
+                    }
+
+                    let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
+                    if(nexttwoCoord !== undefined) {
+                        nexttwo.push(nexttwoCoord);
+                    }
+                }
+*/
                 pnts_colors_radii.push({'pnts':pnts, 'colors':colors, 'radii':radii});
             }
         }
@@ -80947,7 +81075,12 @@ class Tube {
             let colors = pnts_colors_radii[i].colors;
             let radii = pnts_colors_radii[i].radii;
 
-            this.createTubeSub(pnts, colors, radii, bHighlight, bNonCoil);
+            if(tubePosArray) {
+                this.createTubeSub(pnts, colors, radii, bHighlight, bNonCoil);
+            }
+            else {
+                this.createTubeSub(pnts, colors, radii, bHighlight, bNonCoil, true);
+            }
         }
 
         pnts_colors_radii = [];
@@ -81006,7 +81139,7 @@ class Tube {
     };
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createTubeSub(_pnts, colors, radii, bHighlight, bNonCoil) { let ic = this.icn3d, me = ic.icn3dui;
+    createTubeSub(_pnts, colors, radii, bHighlight, bNonCoil, bSubdivide) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         if (_pnts.length < 2) return;
@@ -81019,9 +81152,10 @@ class Tube {
         let offset = 0, offset2 = 0, offset3 = 0;
 
         let pnts;
-        /*
-        if(!bSubdivided) {
-            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv);
+
+        if(bSubdivide) {
+            let bOld = true;
+            let pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, bOld);
 
             pnts = pnts_clrs[0];
             colors = pnts_clrs[2];
@@ -81029,8 +81163,6 @@ class Tube {
         else {
             pnts = _pnts;
         }
-        */
-        pnts = _pnts;
 
         let constRadiius;
         // a threshold to stop drawing the tube if it's less than this ratio of radius
@@ -81270,7 +81402,7 @@ class Strand {
         let pntsCAAllSub = [], prevCOArrayAllSub = [], positionsSub = [], colorsAllSub = [];
 
         let currentChain, currentStyle, currentCA = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
-        let prevCO = null, ss = null, ssend = false, ssJoint = false, prevResi = null, prevResid = null;
+        let prevCO = null, ss = null, ssend = false, prevResi = null, prevResid = null;
         let strandWidth, bSheetSegment = false, bHelixSegment = false;
         let atom, tubeAtoms = [];
 
@@ -81372,10 +81504,15 @@ class Strand {
                         let delta = -1 + numM1Inv2 * j;
                         let v = new Vector3$1(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
                         // no smoothen for the last two residues in sheet
-                        if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(atom.ssend)) v.smoothen = true;
+                        // if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(atom.ssend)) v.smoothen = true;
+                        if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
                         pntsAll[j].push(v);
                     }
 
+                    if (!doNotSmoothen && ss === 'sheet') {
+                        prevCoorCA.smoothen = true;
+                        prevCO.smoothen = true;
+                    }
                     pntsCAAll.push(prevCoorCA);
                     prevCOArrayAll.push(prevCO);
                 }
@@ -81389,7 +81526,7 @@ class Strand {
 
                 ss = atom.ss;
                 ssend = atom.ssend;
-                ssJoint = atom.ssbegin || atom.ssend;
+                atom.ssbegin || atom.ssend;
             } // end if (atom.name === 'O' || (ic.bCalphaOnly && atom.name === 'CA') ) {
           } // end if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
         } // end for
@@ -81403,8 +81540,13 @@ class Strand {
             let delta = -1 + numM1Inv2 * j;
             let v = new Vector3$1(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
             // no smoothen for the last two residues in sheet
-            if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(ssend)) v.smoothen = true;
+            //if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(ssend)) v.smoothen = true;
+            if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
             pntsAll[j].push(v);
+        }
+        if (!doNotSmoothen && ss === 'sheet') {
+            prevCoorCA.smoothen = true;
+            prevCO.smoothen = true;
         }
         pntsCAAll.push(prevCoorCA);
         prevCOArrayAll.push(prevCO);
@@ -81429,7 +81571,6 @@ class Strand {
         prevCoorCA = null;
         ss = null;
         ssend = false;
-        ssJoint = false;
 
         index = 0;
         let bLastResDrawn = false;
@@ -81513,7 +81654,10 @@ class Strand {
 
                     bSheetSegment = prevCoorO ? (ss === 'sheet') : (atom.ss === 'sheet');
                     bHelixSegment = prevCoorO ? (ss === 'helix') : (atom.ss === 'helix');
-                    this.createStrand_base(posArray, pntsAllSub, pntsCAAllSub, prevCOArrayAllSub, colorsAllSub, positionsSub, missingResArray, fill, bHighlight, bRibbon, num, bSheetSegment, bHelixSegment, bFullAtom, thickness);
+                    // skip the 2-residue joint between two adjacent SS (sheet end -> helix begin)
+                    if(!(ssend && atom.ssbegin)) {
+                        this.createStrand_base(posArray, pntsAllSub, pntsCAAllSub, prevCOArrayAllSub, colorsAllSub, positionsSub, missingResArray, fill, bHighlight, bRibbon, num, bSheetSegment, bHelixSegment, bFullAtom, thickness);
+                    }
                     posArray = [];
                     missingResArray = [];
                 } // end if (atom.ssbegin || atom.ssend)
@@ -105582,9 +105726,37 @@ class WebGLPathTracer {
         ic.impostorCls.clearImpostors();
         
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+/*
+        // save the current view when the URL used |||pos:...
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
+        let controls = (ic.bControlGl && !me.bNode) ? window.controls : ic.controls;
+        let bKeepCamera = (!ic.bSetCamera || ic.bKeepCamera) && cam && controls && !me.bNode;
 
+        let camState;
+        if(bKeepCamera) {
+            camState = {
+                pos: cam.position.clone(), up: cam.up.clone(), quat: cam.quaternion.clone(),
+                target: controls.target.clone(), fov: cam.fov, zoom: cam.zoom,
+                left: cam.left, right: cam.right, top: cam.top, bottom: cam.bottom
+            };
+        }
+*/
         ic.sceneCls.rebuildScene();
-
+/*
+        // restore the saved  cam state
+        if(bKeepCamera) {
+            // setCamera() created new controls, so re-read them
+            //controls = (ic.bControlGl && !me.bNode) ? window.controls : ic.controls;
+            cam.position.copy(camState.pos);
+            cam.up.copy(camState.up);
+            cam.quaternion.copy(camState.quat);
+            controls.target.copy(camState.target);
+            cam.zoom = camState.zoom;
+            if(cam.isPerspectiveCamera) cam.fov = camState.fov;
+            cam.updateProjectionMatrix();
+            cam.updateMatrixWorld(true);
+        }
+*/
         // Impostor display using the saved arrays
         if(ic.bImpo) {
             ic.impostorCls.drawImpostorShader(); // target
@@ -105618,7 +105790,13 @@ class WebGLPathTracer {
               if($("#" + ic.pre + "cmdlog")) $("#" + ic.pre + "cmdlog").show();
           }
 
-          this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+          if(ic.bSetCamera) {
+            this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+          }
+          else {
+            let commandTransformation = ic.commands[ic.commands.length-1].split('|||');
+            ic.transformCls.resetOrientation_base(commandTransformation);
+          }
 
           this.render(bVrAr, bPathTracer);
         }
