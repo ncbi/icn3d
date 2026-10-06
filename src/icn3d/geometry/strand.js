@@ -192,10 +192,15 @@ class Strand {
                         let delta = -1 + numM1Inv2 * j;
                         let v = new THREE.Vector3(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
                         // no smoothen for the last two residues in sheet
-                        if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(atom.ssend)) v.smoothen = true;
+                        // if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(atom.ssend)) v.smoothen = true;
+                        if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
                         pntsAll[j].push(v);
                     }
 
+                    if (!doNotSmoothen && ss === 'sheet') {
+                        prevCoorCA.smoothen = true;
+                        prevCO.smoothen = true;
+                    }
                     pntsCAAll.push(prevCoorCA);
                     prevCOArrayAll.push(prevCO);
                 }
@@ -223,8 +228,13 @@ class Strand {
             let delta = -1 + numM1Inv2 * j;
             let v = new THREE.Vector3(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
             // no smoothen for the last two residues in sheet
-            if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(ssend)) v.smoothen = true;
+            //if (!doNotSmoothen && ss === 'sheet' && !ssJoint && !(ssend)) v.smoothen = true;
+            if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
             pntsAll[j].push(v);
+        }
+        if (!doNotSmoothen && ss === 'sheet') {
+            prevCoorCA.smoothen = true;
+            prevCO.smoothen = true;
         }
         pntsCAAll.push(prevCoorCA);
         prevCOArrayAll.push(prevCO);
@@ -334,7 +344,10 @@ class Strand {
 
                     bSheetSegment = prevCoorO ? (ss === 'sheet') : (atom.ss === 'sheet');
                     bHelixSegment = prevCoorO ? (ss === 'helix') : (atom.ss === 'helix');
-                    this.createStrand_base(posArray, pntsAllSub, pntsCAAllSub, prevCOArrayAllSub, colorsAllSub, positionsSub, missingResArray, fill, bHighlight, bRibbon, num, bSheetSegment, bHelixSegment, bFullAtom, thickness);
+                    // skip the 2-residue joint between two adjacent SS (sheet end -> helix begin)
+                    if(!(ssend && atom.ssbegin)) {
+                        this.createStrand_base(posArray, pntsAllSub, pntsCAAllSub, prevCOArrayAllSub, colorsAllSub, positionsSub, missingResArray, fill, bHighlight, bRibbon, num, bSheetSegment, bHelixSegment, bFullAtom, thickness);
+                    }
                     posArray = [];
                     missingResArray = [];
                 } // end if (atom.ssbegin || atom.ssend)

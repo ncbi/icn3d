@@ -11,7 +11,7 @@ class SubdivideCls {
 
     // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
     // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    subdivide(_pnts, _clrs, DIV) { let me = this.icn3dui;
+    subdivide(_pnts, _clrs, DIV, bOld) { let me = this.icn3dui;
 
         let ret = [];
         let pos = [];
@@ -96,6 +96,16 @@ class SubdivideCls {
         savedColor = [];
         pnts = [];
 
+        // adjust the color
+        if(!bOld) {
+            let half = Math.floor(DIV / 2);
+            for(let i = 0, il = color.length; i < il; ++i) {
+                let j = i + half;
+                if(j > il - 1) j = il - 1;
+                color[i] = color[j];
+            }
+        }
+  
         pnts_positions.push(ret);
         pnts_positions.push(pos);
         pnts_positions.push(color);

@@ -20,9 +20,37 @@ import { WebGLPathTracer } from 'three-gpu-pathtracer';
         ic.impostorCls.clearImpostors();
         
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+/*
+        // save the current view when the URL used |||pos:...
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
+        let controls = (ic.bControlGl && !me.bNode) ? window.controls : ic.controls;
+        let bKeepCamera = (!ic.bSetCamera || ic.bKeepCamera) && cam && controls && !me.bNode;
 
+        let camState;
+        if(bKeepCamera) {
+            camState = {
+                pos: cam.position.clone(), up: cam.up.clone(), quat: cam.quaternion.clone(),
+                target: controls.target.clone(), fov: cam.fov, zoom: cam.zoom,
+                left: cam.left, right: cam.right, top: cam.top, bottom: cam.bottom
+            };
+        }
+*/
         ic.sceneCls.rebuildScene();
-
+/*
+        // restore the saved  cam state
+        if(bKeepCamera) {
+            // setCamera() created new controls, so re-read them
+            //controls = (ic.bControlGl && !me.bNode) ? window.controls : ic.controls;
+            cam.position.copy(camState.pos);
+            cam.up.copy(camState.up);
+            cam.quaternion.copy(camState.quat);
+            controls.target.copy(camState.target);
+            cam.zoom = camState.zoom;
+            if(cam.isPerspectiveCamera) cam.fov = camState.fov;
+            cam.updateProjectionMatrix();
+            cam.updateMatrixWorld(true);
+        }
+*/
         // Impostor display using the saved arrays
         if(ic.bImpo) {
             ic.impostorCls.drawImpostorShader(); // target
@@ -56,7 +84,13 @@ import { WebGLPathTracer } from 'three-gpu-pathtracer';
               if($("#" + ic.pre + "cmdlog")) $("#" + ic.pre + "cmdlog").show();
           }
 
-          this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+          if(ic.bSetCamera) {
+            this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+          }
+          else {
+            let commandTransformation = ic.commands[ic.commands.length-1].split('|||');
+            ic.transformCls.resetOrientation_base(commandTransformation);
+          }
 
           this.render(bVrAr, bPathTracer);
         }
