@@ -105949,14 +105949,7 @@ class WebGLPathTracer {
         ic.setOptionCls.setStyle("proteins", atom.style);
     }
 
-    //Render the scene and objects into pixels.
-    render_base(bPathTracer) { let ic = this.icn3d, me = ic.icn3dui;
-        let thisClass = this;
-
-        if(me.bNode) return;
-
-        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
-
+    setDirectLight(cam) { let ic = this.icn3d; ic.icn3dui;
         if(ic.directionalLight) {
             let quaternion = new Quaternion();
             quaternion.setFromUnitVectors( new Vector3$1(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
@@ -105970,6 +105963,19 @@ class WebGLPathTracer {
             ic.directionalLight2.applyMatrix4(cam.matrixWorld);
             ic.directionalLight3.applyMatrix4(cam.matrixWorld);
         }
+
+        return cam;
+    }
+
+    //Render the scene and objects into pixels.
+    render_base(bPathTracer) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        if(me.bNode) return;
+
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
+
+        cam = this.setDirectLight(cam);
 
         if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
@@ -106012,8 +106018,13 @@ class WebGLPathTracer {
             else {
                 if(bPathTracer) {
                     ic.bImpo = false; // disable impostor for path tracing
+                    ic.selectionCls.selectAll(); // remove the highlights since they are not 3D objects
+
                     const pathTracer = new WebGLPathTracer(ic.renderer);
                     pathTracer.setScene(ic.scene, cam);
+
+                    cam = this.setDirectLight(cam);
+                    
                     //pathTracer.renderUpdates(); // Updates samples if the scene/camera changes
                     //pathTracer.render(ic.scene, cam);
 
@@ -154621,7 +154632,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.54.0';
+    this.REVISION = '3.54.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
     this.bNode = (Object.keys(window).length < 3) ? true : false;
