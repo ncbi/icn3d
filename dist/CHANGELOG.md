@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.54.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.1.zip) was release on October 8, 2026. Fixed the light and highlight when exporting iCn3D images using path tracing.
+
 [icn3d-3.54.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.0.zip) was release on October 1, 2026. Improved the connections between coils and helices/sheets in the ribbon style.
 
 [icn3d-3.53.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.53.0.zip) was release on September 21, 2026. Used pathtracer to improve image quality when saving iCn3D PNG images.
