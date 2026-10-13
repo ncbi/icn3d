@@ -165,6 +165,12 @@ class ApplyCommand {
         ic.opts['axis'] = 'no';
         ic.pc1 = false;
       }
+      else if(command == 'set unitcell on') {
+        ic.opts['unitcell'] = 'yes';
+      }
+      else if(command == 'set unitcell off') {
+        ic.opts['unitcell'] = 'no';
+      }
       else if(command == 'set fog on') {
         ic.opts['fog'] = 'yes';
         ic.fogCls.setFog(true);

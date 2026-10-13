@@ -1009,7 +1009,8 @@ class SaveFile {
                 idName = "PDB ID";
             }
             else if(bAlphaFold) {
-                idName = "AlphaFold ID";
+                // idName = "AlphaFold ID";
+                idName = "ID";
             }
 
             if(structureidArray.length > 1) {

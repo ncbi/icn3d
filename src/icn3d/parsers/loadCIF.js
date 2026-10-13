@@ -346,6 +346,16 @@ class LoadCIF {
                 = m24Array = m31Array = m32Array = m33Array = m34Array = [];
             }
 
+            if(block.getCategory("_cell")) {
+                ic.cell = {};
+                ic.cell.length_a = parseFloat(block.getCategory("_cell").getColumn("length_a").getString(0));
+                ic.cell.length_b = parseFloat(block.getCategory("_cell").getColumn("length_b").getString(0));
+                ic.cell.length_c = parseFloat(block.getCategory("_cell").getColumn("length_c").getString(0));
+                ic.cell.angle_alpha = parseFloat(block.getCategory("_cell").getColumn("angle_alpha").getString(0));
+                ic.cell.angle_beta = parseFloat(block.getCategory("_cell").getColumn("angle_beta").getString(0));
+                ic.cell.angle_gamma = parseFloat(block.getCategory("_cell").getColumn("angle_gamma").getString(0));
+            }
+
             // if (record === 'ENDMDL') {
             //     ++moleculeNum;
             //     id = ic.defaultPdbId;

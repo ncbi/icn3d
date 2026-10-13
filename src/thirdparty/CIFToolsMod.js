@@ -1285,7 +1285,147 @@ var CIFTools;
             }
             return result(file);
         }
+        /**
+         * Small-molecule / crystallographic ("core") CIF support, e.g. files from COD.
+         * Core CIF uses underscore names (_atom_site_label, _atom_site_fract_x) and fractional
+         * coordinates, while iCn3D's loadCIF expects mmCIF names (_atom_site.label_atom_id)
+         * and Cartesian coordinates. Without conversion getCategory("_atom_site") returns undefined.
+         * This converts such a file to a minimal mmCIF text before it is parsed.
+         */
+        function isCoreCif(data) {
+            return /^\s*_atom_site_fract_x\b/m.test(data) && !/^\s*_atom_site\./m.test(data);
+        }
+        // tokenize one CIF text keeping quotes; returns {tags:[...], loops:[{cols, rows}], singles:{}}
+        function coreTokens(data) {
+            var tokens = [], lines = data.split(/\r?\n/), i, line, m, re = /'([^']*)'(?=\s|$)|"([^"]*)"(?=\s|$)|(\S+)/g;
+            for (i = 0; i < lines.length; i++) {
+                line = lines[i];
+                if (line.charAt(0) === ';') { // multi-line text field, skip it
+                    i++;
+                    while (i < lines.length && lines[i].charAt(0) !== ';') i++;
+                    tokens.push({ v: '?', t: 'text' });
+                    continue;
+                }
+                re.lastIndex = 0;
+                while ((m = re.exec(line)) !== null) {
+                    if (m[3] !== undefined && m[3].charAt(0) === '#') break; // comment
+                    tokens.push(m[3] !== undefined ? { v: m[3] } : { v: (m[1] !== undefined ? m[1] : m[2]), t: 'quoted' });
+                }
+            }
+            return tokens;
+        }
+        function coreToNumber(s) {
+            var v = parseFloat(String(s).replace(/\(\d+\)$/, '')); // 0.7556(3) -> 0.7556
+            return isNaN(v) ? 0 : v;
+        }
+        // symmetry operator like "1/2-x,y,1/2+z" -> function(frac) -> frac
+        function coreSymop(str) {
+            var parts = str.replace(/\s+/g, '').toLowerCase().split(','), rows = [], p, k, re = /([+-]?)(?:(\d+(?:\.\d+)?)(?:\/(\d+))?|([xyz]))/g, m, row, c;
+            if (parts.length !== 3) return null;
+            for (p = 0; p < 3; p++) {
+                row = [0, 0, 0, 0]; // x y z const
+                re.lastIndex = 0;
+                while ((m = re.exec(parts[p])) !== null) {
+                    c = (m[1] === '-') ? -1 : 1;
+                    if (m[4]) { row['xyz'.indexOf(m[4])] += c; }
+                    else { row[3] += c * parseFloat(m[2]) / (m[3] ? parseFloat(m[3]) : 1); }
+                }
+                rows.push(row);
+            }
+            return function (f) {
+                var out = [];
+                for (k = 0; k < 3; k++) out.push(rows[k][0] * f[0] + rows[k][1] * f[1] + rows[k][2] * f[2] + rows[k][3]);
+                return out;
+            };
+        }
+        function convertCoreCif(data) {
+            var tk = coreTokens(data), i = 0, n = tk.length, single = {}, loops = [], name = 'data_core', t, cols, rows, cur;
+            function isTag(x) { return x && !x.t && x.v.charAt(0) === '_'; }
+            while (i < n) {
+                t = tk[i];
+                if (!t.t && /^data_/i.test(t.v)) { name = t.v; i++; }
+                else if (!t.t && /^loop_$/i.test(t.v)) {
+                    i++; cols = []; rows = [];
+                    while (i < n && isTag(tk[i])) cols.push(tk[i++].v.toLowerCase());
+                    cur = [];
+                    while (i < n && !isTag(tk[i]) && !(/^(loop_|data_)/i.test(tk[i].v) && !tk[i].t)) {
+                        cur.push(tk[i++].v);
+                        if (cur.length === cols.length) { rows.push(cur); cur = []; }
+                    }
+                    loops.push({ cols: cols, rows: rows });
+                }
+                else if (isTag(t)) { single[t.v.toLowerCase()] = (tk[i + 1] ? tk[i + 1].v : '?'); i += 2; }
+                else i++;
+            }
+            var atoms = null, symops = [], l, c;
+            for (l = 0; l < loops.length; l++) {
+                if (loops[l].cols.indexOf('_atom_site_fract_x') >= 0) atoms = loops[l];
+                c = loops[l].cols.indexOf('_symmetry_equiv_pos_as_xyz');
+                if (c < 0) c = loops[l].cols.indexOf('_space_group_symop_operation_xyz');
+                if (c >= 0) loops[l].rows.forEach(function (r) { var f = coreSymop(r[c]); if (f) symops.push(f); });
+            }
+            if (!atoms) return null;
+            if (!symops.length) symops.push(coreSymop('x,y,z'));
+
+            // orthogonalization matrix (a along x, c* along z)
+            var a = coreToNumber(single['_cell_length_a']), b = coreToNumber(single['_cell_length_b']), cc = coreToNumber(single['_cell_length_c']);
+            var al = coreToNumber(single['_cell_angle_alpha'] || 90) * Math.PI / 180, be = coreToNumber(single['_cell_angle_beta'] || 90) * Math.PI / 180, ga = coreToNumber(single['_cell_angle_gamma'] || 90) * Math.PI / 180;
+            var cosa = Math.cos(al), cosb = Math.cos(be), cosg = Math.cos(ga), sing = Math.sin(ga);
+            var vol = Math.sqrt(1 - cosa * cosa - cosb * cosb - cosg * cosg + 2 * cosa * cosb * cosg);
+            function toCart(f) {
+                return [a * f[0] + b * cosg * f[1] + cc * cosb * f[2],
+                        b * sing * f[1] + cc * (cosa - cosb * cosg) / sing * f[2],
+                        cc * vol / sing * f[2]];
+            }
+            var col = {}; atoms.cols.forEach(function (x, k) { col[x] = k; });
+            function get(r, key) { return (col[key] === undefined) ? '?' : r[col[key]]; }
+
+            var out = [name, '#', '_entry.id ' + name.substr(5), '#'];
+            // core CIF "_cell_length_a" -> mmCIF "_cell.length_a" so iCn3D can parse the unit cell
+            Object.keys(single).forEach(function (key) {
+                if (/^_cell_/.test(key)) out.push(key.replace(/^_cell_/, '_cell.') + ' ' + String(single[key]).replace(/\(\d+\)$/, ''));
+            });
+            out.push('#');
+            out.push(
+                'loop_', '_atom_site.group_PDB', '_atom_site.id', '_atom_site.type_symbol', '_atom_site.label_atom_id', '_atom_site.label_alt_id',
+                '_atom_site.label_comp_id', '_atom_site.label_asym_id', '_atom_site.label_entity_id', '_atom_site.label_seq_id',
+                '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.occupancy', '_atom_site.B_iso_or_equiv',
+                '_atom_site.auth_seq_id', '_atom_site.auth_asym_id', '_atom_site.pdbx_PDB_model_num');
+            var serial = 0, seen = [], r, s, f, g, k, dup, j, sym, el, lab, cart;
+            for (r = 0; r < atoms.rows.length; r++) {
+                var row = atoms.rows[r];
+                if (get(row, '_atom_site_calc_flag') === 'dum') continue; // dummy atoms
+                f = [coreToNumber(get(row, '_atom_site_fract_x')), coreToNumber(get(row, '_atom_site_fract_y')), coreToNumber(get(row, '_atom_site_fract_z'))];
+                lab = get(row, '_atom_site_label');
+                sym = get(row, '_atom_site_type_symbol'); if (sym === '?') sym = lab;
+                el = (sym.match(/^[A-Za-z]{1,2}/) || ['X'])[0];
+                el = el.charAt(0).toUpperCase() + el.substr(1).toLowerCase();
+                var mySeen = [];
+                for (s = 0; s < symops.length; s++) {
+                    g = symops[s](f).map(function (v) { return v - Math.floor(v + 1e-6); });
+                    dup = false;
+                    for (j = 0; j < mySeen.length; j++) {
+                        if (Math.abs(mySeen[j][0] - g[0]) < 1e-3 && Math.abs(mySeen[j][1] - g[1]) < 1e-3 && Math.abs(mySeen[j][2] - g[2]) < 1e-3) { dup = true; break; }
+                    }
+                    if (dup) continue;
+                    mySeen.push(g);
+                    cart = toCart(g);
+                    out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
+                        coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                }
+            }
+            out.push('#');
+            return out.join('\n') + '\n';
+        }
         function parse(data) {
+            if (isCoreCif(data)) {
+                var converted = convertCoreCif(data);
+                if (converted) data = converted;
+            }
+            else {
+                // "_cell_angle_alpha" -> "_cell.angle_alpha"
+                data = data.replace(/^(\s*_cell)_(?=\w)/gm, '$1.');
+            }
             return parseInternal(data);
         }
         Text.parse = parse;

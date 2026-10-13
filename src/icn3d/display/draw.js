@@ -312,13 +312,14 @@ import { WebGLPathTracer } from 'three-gpu-pathtracer';
             else {
                 if(bPathTracer) {
                     ic.bImpo = false; // disable impostor for path tracing
-                    ic.selectionCls.selectAll(); // remove the highlights since they are not 3D objects
+                    // remove the highlights since they are not 3D objects
+                    ic.hlUpdateCls.clearHighlight();
 
                     const pathTracer = new WebGLPathTracer(ic.renderer);
                     pathTracer.setScene(ic.scene, cam);
 
                     cam = this.setDirectLight(cam);
-                    
+
                     //pathTracer.renderUpdates(); // Updates samples if the scene/camera changes
                     //pathTracer.render(ic.scene, cam);
 

@@ -798,9 +798,10 @@ class Diagram2d {
             // get the residues in the selection
             let ncbiresid = data;
             let resid = ic.ncbi2resid[ncbiresid];
-            let resi = resid.substr(resid.lastIndexOf('_') + 1);
 
-            if(ic.ig2ddgm_chainid && ic.resid2refnum && ic.resid2refnum[resid]) {
+            if(resid && ic.ig2ddgm_chainid && ic.resid2refnum && ic.resid2refnum[resid]) {
+                let resi = resid.substr(resid.lastIndexOf('_') + 1);
+
                 let refnumLabel = ic.resid2refnum[resid];
                 let refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
 
