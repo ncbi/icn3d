@@ -352,6 +352,7 @@ class iCn3D {
     this.radiusArraySphere = new Array();
 
     this.axis = false;  // used to turn on and off xyz axes
+    this.unitcell = false;  // used to turn on and off unit cell
 
     // pk
     //If its value is 1, selecting an atom will select the atom. If its value is 2, selecting an atom
@@ -473,6 +474,7 @@ class iCn3D {
     this.optsOri['clbonds']            = 'yes';                 //yes, no
     this.optsOri['rotationcenter']     = 'molecule center';    //molecule center, pick center, display center
     this.optsOri['axis']               = 'no';                 //yes, no
+    this.optsOri['unitcell']           = 'no';                 //yes, no
     this.optsOri['fog']                = 'no';                 //yes, no
     this.optsOri['slab']               = 'no';                 //yes, no
     this.optsOri['pk']                 = 'residue';            //no, atom, residue, strand, chain

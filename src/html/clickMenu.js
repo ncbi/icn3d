@@ -2401,6 +2401,16 @@ class ClickMenu {
            thisClass.setLogCmd('set axis off', true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn6_showucYes", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           ic.setOptionCls.setOption('unitcell', 'yes');
+           thisClass.setLogCmd('set unitcell on', true);
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_showucNo", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           ic.setOptionCls.setOption('unitcell', 'no');
+           thisClass.setLogCmd('set unitcell off', true);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
            ic.bAxisOnly = false;
            await ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);

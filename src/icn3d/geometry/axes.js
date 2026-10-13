@@ -240,6 +240,57 @@ class Axes {
 
        return axisPos;
     }
+
+    buildUnitcell() { let ic = this.icn3d, me = ic.icn3dui;
+        if(!ic.cell) {
+            alert("Unit cell information is available for structures from mmCIF files. Please load a structure from mmCIF file.");
+            return;
+        }
+
+        let a = ic.cell.length_a;
+        let b = ic.cell.length_b;
+        let c = ic.cell.length_c;
+        let alpha = ic.cell.angle_alpha;
+        let beta = ic.cell.angle_beta;
+        let gamma = ic.cell.angle_gamma;
+        
+        const rad = d => d * Math.PI / 180;
+        const ca = Math.cos(rad(alpha));
+        const cb = Math.cos(rad(beta));
+        const cg = Math.cos(rad(gamma));
+        const sg = Math.sin(rad(gamma));
+
+        // Lattice vectors
+        const va = [a, 0, 0];
+        const vb = [b * cg, b * sg, 0];
+        const cx = c * cb;
+        const cy = c * (ca - cb * cg) / sg;
+        const cz = Math.sqrt(c * c - cx * cx - cy * cy);
+        const vc = [cx, cy, cz];
+
+        // 8 corners, indexed by bits (i, j, k) -> i*va + j*vb + k*vc
+        const corner = (i, j, k) => [0, 1, 2].map(n => i * va[n] + j * vb[n] + k * vc[n]);
+
+        let color = me.htmlCls.ORANGE, radius = 0.1;
+        let atomColor = me.parasCls.thr(color);
+
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                ic.analysisCls.addLine(corner(0, i, j)[0], corner(0, i, j)[1], corner(0, i, j)[2], corner(1, i, j)[0], corner(1, i, j)[1], corner(1, i, j)[2], color, false, 'unitcell', radius); // edges along a
+                ic.analysisCls.addLine(corner(i, 0, j)[0], corner(i, 0, j)[1], corner(i, 0, j)[2], corner(i, 1, j)[0], corner(i, 1, j)[1], corner(i, 1, j)[2], color, false, 'unitcell', radius); // edges along b
+                ic.analysisCls.addLine(corner(i, j, 0)[0], corner(i, j, 0)[1], corner(i, j, 0)[2], corner(i, j, 1)[0], corner(i, j, 1)[1], corner(i, j, 1)[2], color, false, 'unitcell', radius); // edges along c
+            }
+        }
+
+        // add sphere at each corner
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                for (let k = 0; k < 2; k++) {
+                    ic.sphereCls.createSphereBase(new THREE.Vector3(corner(i, j, k)[0], corner(i, j, k)[1], corner(i, j, k)[2]), atomColor, radius, 1, false, false, 1);
+                }   
+            }
+        }
+    }
 }
 
 export {Axes}

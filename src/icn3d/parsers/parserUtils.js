@@ -598,6 +598,7 @@ class ParserUtils {
               let angle = -0.5 * Math.PI;
               ic.transformCls.setRotation(axis, angle);
           }
+
           //if(Object.keys(ic.structures).length > 1) {
           //    $("#" + ic.pre + "alternate").show();
           //}

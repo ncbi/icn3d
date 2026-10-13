@@ -231,7 +231,10 @@ class PdbParser {
 
         ic.saveFileCls.showTitle();
 
-        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+        // if(me.cfg.rotate !== undefined) {
+        if(me.cfg.rotate !== undefined && !(me.cfg.url && me.cfg.url.indexOf('membranome') != -1)) {
+            ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+        }
 
         if(bAppend && Object.keys(ic.structures).length == 1 && !me.bNode) {
             // show all

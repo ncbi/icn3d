@@ -1019,6 +1019,15 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        // if(me.cfg.mmcifid !== undefined) {
+            html += this.getMenuText('mn2_unitcell', 'Unit Cell', undefined, undefined, 1);
+            html += "<ul>";
+            html += this.getRadio('mn6_showuc', 'mn6_showucYes', 'Show', undefined, undefined, 2);
+            html += this.getRadio('mn6_showuc', 'mn6_showucNo', 'Hide', true, undefined, 2);
+            html += "</ul>";
+            html += "</li>";
+        // }
+
         html += this.getMenuSep();
 
         html += this.getMenuText('mn2_resetwrap', 'Reset', undefined, 1, 1);

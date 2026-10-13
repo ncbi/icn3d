@@ -130,7 +130,7 @@ class ApplyOther {
         ic.applyCenterCls.applyCenterOptions(options);
 
         ic.axesCls.buildAllAxes(undefined, true);
-
+        
         switch (options.axis.toLowerCase()) {
             case 'yes':
                 ic.axis = true;
@@ -139,6 +139,19 @@ class ApplyOther {
                 break;
             case 'no':
                 ic.axis = false;
+                break;
+        }
+
+        ic.lines['unitcell'] = []; // reset
+
+        switch (options.unitcell.toLowerCase()) {
+            case 'yes':
+                ic.unitcell = true;
+                ic.axesCls.buildUnitcell();
+
+                break;
+            case 'no':
+                ic.unitcell = false;
                 break;
         }
         switch (options.pk.toLowerCase()) {
