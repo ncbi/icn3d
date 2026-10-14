@@ -82722,7 +82722,7 @@ void main() {
 
 	    buildUnitcell() { let ic = this.icn3d, me = ic.icn3dui;
 	        if(!ic.cell) {
-	            alert("Unit cell information is available for structures from mmCIF files. Please load a structure from mmCIF file.");
+	            alert("Unit cell information is available for structures from mmCIF files. Please load a structure with 'mmcifid=', 'bcifid=', or from a mmCIF file.");
 	            return;
 	        }
 
@@ -116672,7 +116672,8 @@ bool bvhIntersectFogVolumeHit(
 	        }
 
 	        let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {};
-	        //ic.protein_chainid = {};
+	        // ic.protein_chainid = {};
+
 
 	        if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
 	            ic.protein_chainid = {};
@@ -116699,7 +116700,7 @@ bool bvhIntersectFogVolumeHit(
 	                dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
 	            }
 	            ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
-	            
+	 
 	            for(let i = 0, il = chainArray.length; i < il; ++i) {
 	                if(!ic.chainsSeq[chainArray[i]]) continue; // skip empty chain
 
@@ -116809,8 +116810,8 @@ bool bvhIntersectFogVolumeHit(
 
 	                        await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
 	                    }
-	                    
-	                    await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+	                  
+	                    await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);               
 	               }
 	            }
 	            else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
@@ -135651,6 +135652,7 @@ bool bvhIntersectFogVolumeHit(
 	            let sChain = {};
 	            let prevModelNum = '';
 	            if(!ic.molid2chain) ic.molid2chain = {};
+
 	            for (let i = 0; i < atomSize; ++i) {
 	                let modelNum = modelNumArray.getString(i);
 	                if(i > 0 && modelNum != prevModelNum) {
@@ -135881,7 +135883,7 @@ bool bvhIntersectFogVolumeHit(
 	                // if(oriResidueNum !== prevOriResidueNum) {
 	                if(oriResidueNum !== prevOriResidueNum || chain + "_" + resn != prevResn || prevAutochain != autochain) {
 	                    let residue = me.utilsCls.residueName2Abbr(resn);
-	                    
+	                   
 	                    ic.residueId2Name[residueNum] = residue;
 
 	                    if(serial !== 1 && prevResidueNum !== '') {
@@ -136006,7 +136008,7 @@ bool bvhIntersectFogVolumeHit(
 
 	                resiArray = oriResiArray = resnArray = chainArray = [];
 	            }
-	            
+	  
 	            this.setSeq(structure, sChain, mChainSeq, ligSeqHash);
 	        }
 
@@ -136208,17 +136210,22 @@ bool bvhIntersectFogVolumeHit(
 	    }
 
 	    setSeq(structure, sChain, mChainSeq, ligSeqHash) { let ic = this.icn3d; ic.icn3dui;
+	        // sometimes a chain appears in both ligSeqHash and mChainSeq, e.g., mmcif data for 1TOP
+	/*
 	        for(let chain in sChain) {
 	            let chainNum = structure + '_' + chain;
 
-	            if(ligSeqHash.hasOwnProperty(chain)) {
+	            if(mChainSeq.hasOwnProperty(chain)) {
+	                ic.chainsSeq[chainNum] = mChainSeq[chain];
+	            }
+	            else if(ligSeqHash.hasOwnProperty(chain)) {
 	                ic.chainsSeq[chainNum] = ligSeqHash[chain];
 	            }
 	            else {
 	                ic.chainsSeq[chainNum] = mChainSeq[chain];
 	            }
 	        }
-
+	*/
 	        ic.loadPDBCls.setResidMapping();
 	    }
 	}
@@ -137159,9 +137166,11 @@ bool bvhIntersectFogVolumeHit(
 	      }
 	      else if(command == 'set unitcell on') {
 	        ic.opts['unitcell'] = 'yes';
+	        ic.drawCls.draw();
 	      }
 	      else if(command == 'set unitcell off') {
 	        ic.opts['unitcell'] = 'no';
+	        ic.drawCls.draw();
 	      }
 	      else if(command == 'set fog on') {
 	        ic.opts['fog'] = 'yes';

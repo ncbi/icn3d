@@ -470,6 +470,7 @@ class LoadCIF {
             if(!ic.molid2chain) ic.molid2chain = {};
             
             let mName2Serial = {}, mId2Set = {};
+
             for (let i = 0; i < atomSize; ++i) {
                 let modelNum = modelNumArray.getString(i);
                 if(i > 0 && modelNum != prevModelNum) {
@@ -706,7 +707,7 @@ class LoadCIF {
                 // if(oriResidueNum !== prevOriResidueNum) {
                 if(oriResidueNum !== prevOriResidueNum || chain + "_" + resn != prevResn || prevAutochain != autochain) {
                     let residue = me.utilsCls.residueName2Abbr(resn);
-                    
+                   
                     ic.residueId2Name[residueNum] = residue;
 
                     if(serial !== 1 && prevResidueNum !== '') {
@@ -831,7 +832,7 @@ class LoadCIF {
 
                 resiArray = oriResiArray = resnArray = chainArray = [];
             }
-            
+  
             this.setSeq(structure, sChain, mChainSeq, ligSeqHash);
         }
 
@@ -1033,17 +1034,22 @@ class LoadCIF {
     }
 
     setSeq(structure, sChain, mChainSeq, ligSeqHash) { let ic = this.icn3d, me = ic.icn3dui;
+        // sometimes a chain appears in both ligSeqHash and mChainSeq, e.g., mmcif data for 1TOP
+/*
         for(let chain in sChain) {
             let chainNum = structure + '_' + chain;
 
-            if(ligSeqHash.hasOwnProperty(chain)) {
+            if(mChainSeq.hasOwnProperty(chain)) {
+                ic.chainsSeq[chainNum] = mChainSeq[chain];
+            }
+            else if(ligSeqHash.hasOwnProperty(chain)) {
                 ic.chainsSeq[chainNum] = ligSeqHash[chain];
             }
             else {
                 ic.chainsSeq[chainNum] = mChainSeq[chain];
             }
         }
-
+*/
         ic.loadPDBCls.setResidMapping();
     }
 }
