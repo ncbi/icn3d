@@ -243,7 +243,7 @@ class Axes {
 
     buildUnitcell() { let ic = this.icn3d, me = ic.icn3dui;
         if(!ic.cell) {
-            alert("Unit cell information is available for structures from mmCIF files. Please load a structure from mmCIF file.");
+            alert("Unit cell information is available for structures from mmCIF files. Please load a structure with 'mmcifid=', 'bcifid=', or from a mmCIF file.");
             return;
         }
 

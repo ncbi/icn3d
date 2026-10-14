@@ -167,9 +167,11 @@ class ApplyCommand {
       }
       else if(command == 'set unitcell on') {
         ic.opts['unitcell'] = 'yes';
+        ic.drawCls.draw();
       }
       else if(command == 'set unitcell off') {
         ic.opts['unitcell'] = 'no';
+        ic.drawCls.draw();
       }
       else if(command == 'set fog on') {
         ic.opts['fog'] = 'yes';

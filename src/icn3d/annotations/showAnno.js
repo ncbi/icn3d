@@ -32,7 +32,8 @@ class ShowAnno {
         }
 
         let nucleotide_chainid = {}, chemical_chainid = {}, chemical_set = {}
-        //ic.protein_chainid = {};
+        // ic.protein_chainid = {};
+
 
         if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             ic.protein_chainid = {};
@@ -59,7 +60,7 @@ class ShowAnno {
                 dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
             }
             ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
-            
+ 
             for(let i = 0, il = chainArray.length; i < il; ++i) {
                 if(!ic.chainsSeq[chainArray[i]]) continue; // skip empty chain
 
@@ -169,8 +170,8 @@ class ShowAnno {
 
                         await ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid');
                     }
-                    
-                    await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                  
+                    await this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);               
                }
             }
             else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm && !ic.bLocalSmithwm) { // align sequence to structure
