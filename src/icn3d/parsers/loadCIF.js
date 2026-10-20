@@ -39,7 +39,20 @@ class LoadCIF {
         return secondarySet.has(resid.substr(resid.indexOf('_') + 1));
     }
 
-    loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+    loadCIF(bcifData, bcifid, bText, bAppend, supercell) { let ic = this.icn3d, me = ic.icn3dui;
+        ic.cifText = bText;
+        ic.cifData = bcifData;
+        
+        if(supercell === undefined) {
+            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+        }
+        else if(supercell === 0) {
+            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: false };
+        }
+        else {
+            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true };
+        }
+
         let hAtoms = {};
 
         let bNMR = false;
@@ -99,7 +112,6 @@ class LoadCIF {
             // }
 
             bHeader = false; // reinitialize to read structure name from the header
-
 
             // bcifData could be binary or text
             let parsed = (bText) ? CIFTools.Text.parse(cifArray[index]) : CIFTools.Binary.parse(cifArray[index]);
@@ -913,17 +925,19 @@ class LoadCIF {
               }
             }
             else if(atom.het) {
+              let resnSimple = atom.resn.trim().replace(/\d+$/, '').toUpperCase();
+
               if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
                 ic.water[atom.serial] = 1;
               }
-              else if($.inArray(atom.resn, me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+              else if($.inArray(resnSimple, me.parasCls.ionsArray) !== -1 || $.inArray(atom.elem.trim().toUpperCase(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
                 ic.ions[atom.serial] = 1;
               }
               else {
                 ic.chemicals[atom.serial] = 1;
               }
 
-              atom.color = me.parasCls.atomColors[atom.elem];
+              atom.color = me.parasCls.atomColors[atom.elem.toUpperCase()];
             }
 
             if(!(curChain === atom.chain && curResi === atom.resi)) {
@@ -943,6 +957,13 @@ class LoadCIF {
                 prevCarbonArray.push(atom);
             }
         } // end of for
+
+        if(Object.keys(ic.ions).length > 0 && Object.keys(ic.proteins).length == 0 && Object.keys(ic.nucleotides).length == 0 && Object.keys(ic.chemicals).length == 0 && Object.keys(ic.water).length == 0) {
+            for(let serial in ic.ions) {
+                let atom = ic.atoms[serial];
+                me.parasCls.vdwRadii[atom.elem.toUpperCase()] = me.parasCls.ionRadii[atom.elem.toUpperCase()];
+            }
+        }
 
         // last residue
         //refreshBonds();

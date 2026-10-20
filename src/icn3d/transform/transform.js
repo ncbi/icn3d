@@ -78,7 +78,7 @@ class Transform {
 
         //reset ic.maxD
         ic.maxD = ic.oriMaxD;
-        ic.center = ic.oriCenter.clone();
+        ic.center = (ic.oriCenter) ? ic.oriCenter.clone() : new THREE.Vector3(0, 0, 0);
 
         if(ic.ori_chemicalbinding == 'show') {
             ic.bSkipChemicalbinding = false;

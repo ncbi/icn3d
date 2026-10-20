@@ -97,7 +97,7 @@ class Events {
         }
     }
 
-    async readFile(bAppend, files, index, dataStrAll, bmmCIF, bPng) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+    async readFile(bAppend, files, index, dataStrAll, bmmCIF, bPng, fileType) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
         let file = files[index];
         let commandName = (bAppend) ? 'append': 'load';
         commandName += (bmmCIF) ? ' mmcif file ' : (bPng) ? ' png file ' : ' pdb file ';
@@ -147,7 +147,7 @@ class Events {
                     ic.dAtoms = {};
                 }
                 if(bmmCIF) {
-                    await ic.mmcifParserCls.loadMultipleMmcifData(dataStrAll, undefined, bAppend); 
+                    await ic.mmcifParserCls.loadMultipleMmcifData(dataStrAll, undefined, bAppend, fileType); 
                 }
                 else {
                 	await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
@@ -173,7 +173,12 @@ class Events {
         }
 
         if (typeof file === "object") {
-            reader.readAsText(file);
+            if(bmmCIF && fileType == 'bcif') {
+                reader.readAsArrayBuffer(file);
+            }
+            else {
+                reader.readAsText(file);
+            }
         }
     }
 
@@ -3710,8 +3715,8 @@ class Events {
               let fileName = file.name;
 
               let fileType = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
-              if(fileType == 'pdb' || fileType == 'mmcif' || fileType == 'png') {
-                await me.htmlCls.eventsCls.readFile(true, files, i, '', (fileType == 'mmcif'), (fileType == 'png'));
+              if(fileType == 'pdb' || fileType == 'mmcif' || fileType == 'cif' || fileType == 'bcif' || fileType == 'png') {
+                await me.htmlCls.eventsCls.readFile(true, files, i, '', (fileType == 'mmcif' || fileType == 'cif' || fileType == 'bcif'), (fileType == 'png'), fileType);
               }
               else if(fileType == 'bcf') {
                 await thisClass.openBcf(file);

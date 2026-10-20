@@ -199,6 +199,12 @@ class ApplyCommand {
       else if(command == 'set assembly off') {
         ic.bAssembly = false;
       }
+      else if(command.indexOf('set supercell') !== -1) {
+        let pos = command.lastIndexOf(' ');
+        let supercell = parseInt(command.substr(pos + 1));
+
+        await me.htmlCls.clickMenuCls.setSupercell(supercell);
+      }
       else if(command == 'set chemicalbinding show') {
         ic.setOptionCls.setOption('chemicalbinding', 'show');
       }

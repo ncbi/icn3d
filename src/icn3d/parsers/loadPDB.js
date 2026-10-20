@@ -603,11 +603,14 @@ class LoadPDB {
                 prevCarbonArray.push(atom);
             }
 
+            // remove trailing digits in the residue name, e.g., "Na1" -> "NA"
+            let resnSimple = atom.resn.trim().replace(/\d+$/, '').toUpperCase();
+
             if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
                 ic.water[atom.serial] = 1;
                 atom.color = me.parasCls.atomColors[atom.elem];
             }
-            else if($.inArray(atom.resn.trim(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+            else if($.inArray(resnSimple, me.parasCls.ionsArray) !== -1 || $.inArray(atom.elem.trim().toUpperCase(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
                 ic.ions[atom.serial] = 1;
                 atom.color = me.parasCls.atomColors[atom.elem];
             }
@@ -657,6 +660,13 @@ class LoadPDB {
                 prevCarbonArray.push(atom);
             }
         } // end of for
+
+        if(Object.keys(ic.ions).length > 0 && Object.keys(ic.proteins).length == 0 && Object.keys(ic.nucleotides).length == 0 && Object.keys(ic.chemicals).length == 0 && Object.keys(ic.water).length == 0) {
+            for(let serial in ic.ions) {
+                let atom = ic.atoms[serial];
+                me.parasCls.vdwRadii[atom.elem.toUpperCase()] = me.parasCls.ionRadii[atom.elem.toUpperCase()];
+            }
+        }
 
         // last residue
         //refreshBonds();

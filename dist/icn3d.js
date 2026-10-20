@@ -2603,6 +2603,31 @@ var CIFTools;
                 return out;
             };
         }
+        /**
+         * Options for filling the unit cell of a core CIF by lattice translation
+         * (applied after the symmetry operators have generated the contents of one cell).
+         *   nx, ny, nz : number of unit cells along a, b, c (supercell); default 1 1 1
+         *   boundary   : also emit the periodic image of every atom lying on a cell face/edge/corner
+         *                (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl); default true.
+         *                Set to false to get the original behavior (atoms wrapped into [0,1) only).
+         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, boundary: true};
+         */
+        Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+        // g: fractional coordinates wrapped into [0,1). Returns all translated copies of g.
+        function coreLatticeImages(g, nx, ny, nz, bBoundary) {
+            var eps = 1e-3, n = [nx, ny, nz], ranges = [], out = [], k, i, r, x, y, z;
+            for (k = 0; k < 3; k++) {
+                r = [];
+                for (i = 0; i < n[k]; i++) r.push(g[k] + i);
+                if (bBoundary && Math.abs(g[k]) < eps) r.push(g[k] + n[k]); // atom on the 0-face also sits on the far face
+                ranges.push(r);
+            }
+            for (x = 0; x < ranges[0].length; x++)
+                for (y = 0; y < ranges[1].length; y++)
+                    for (z = 0; z < ranges[2].length; z++)
+                        out.push([ranges[0][x], ranges[1][y], ranges[2][z]]);
+            return out;
+        }
         function convertCoreCif(data) {
             var tk = coreTokens(data), i = 0, n = tk.length, single = {}, loops = [], name = 'data_core', t, cols, rows, cur;
             function isTag(x) { return x && !x.t && x.v.charAt(0) === '_'; }
@@ -2657,6 +2682,11 @@ var CIFTools;
                 '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.occupancy', '_atom_site.B_iso_or_equiv',
                 '_atom_site.auth_seq_id', '_atom_site.auth_asym_id', '_atom_site.pdbx_PDB_model_num');
             var serial = 0, seen = [], r, s, f, g, k, dup, j, sym, el, lab, cart;
+            var o = Text.coreCifOptions || {}, images, im;
+            var opt = {
+                nx: Math.max(1, parseInt(o.nx) || 1), ny: Math.max(1, parseInt(o.ny) || 1), nz: Math.max(1, parseInt(o.nz) || 1),
+                boundary: (o.boundary === undefined) ? true : !!o.boundary
+            };
             for (r = 0; r < atoms.rows.length; r++) {
                 var row = atoms.rows[r];
                 if (get(row, '_atom_site_calc_flag') === 'dum') continue; // dummy atoms
@@ -2674,9 +2704,13 @@ var CIFTools;
                     }
                     if (dup) continue;
                     mySeen.push(g);
-                    cart = toCart(g);
-                    out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
-                        coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    // fill the cell (and optional supercell) by lattice translation of the symmetry-generated site
+                    images = coreLatticeImages(g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                    for (im = 0; im < images.length; im++) {
+                        cart = toCart(images[im]);
+                        out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
+                            coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    }
                 }
             }
             out.push('#');
@@ -56778,6 +56812,29 @@ void main() {
 	             CM: 1.69
 	        };
 
+	        this.ionRadii = { // https://en.wikipedia.org/wiki/Ionic_radius
+	             H: 1.40,           HE: 0.28,           LI: 0.76,           BE: 0.45,            B: 0.27,
+	             C: 0.16,            N: 1.46,            O: 1.40,            F: 1.33,           NE: 0.58,
+	             NA: 1.02,          MG: 0.72,           AL: 0.54,           SI: 0.40,            P: 0.38,
+	             S: 1.84,           CL: 1.81,           AR: 1.06,            K: 1.38,           CA: 1.00,
+	             SC: 0.75,          TI: 0.86,            V: 0.79,           CR: 0.73,           MN: 0.67,
+	             FE: 0.55,          CO: 0.65,           NI: 0.69,           CU: 0.73,           ZN: 0.74,
+	             GA: 0.62,          GE: 0.73,           AS: 0.58,           SE: 1.98,           BR: 1.96,
+	             KR: 1.16,          RB: 1.52,           SR: 1.18,            Y: 0.90,           ZR: 0.72,
+	             NB: 0.72,          MO: 0.69,           TC: 0.65,           RU: 0.68,           RH: 0.67,
+	             PD: 0.86,          AG: 1.15,           CD: 0.95,           IN: 0.80,           SN: 1.02,
+	             SB: 0.76,          TE: 0.97,            I: 2.20,           XE: 0.48,           CS: 1.67,
+	             BA: 1.35,          LA: 1.03,           CE: 1.01,           PR: 0.99,           ND: 1.29,
+	             PM: 0.97,          SM: 1.22,           EU: 1.17,           GD: 0.94,           TB: 0.92,
+	             DY: 1.07,          HO: 0.90,           ER: 0.89,           TM: 1.03,           YB: 1.02,
+	             LU: 0.86,          HF: 0.71,           TA: 0.72,            W: 0.66,           RE: 0.63,
+	             OS: 0.63,          IR: 0.68,           PT: 0.80,           AU: 1.37,           HG: 1.19,
+	             TL: 1.50,          PB: 1.19,           BI: 1.03,           PO: 0.94,           AT: 0.62,
+	             RN: 1.50,          FR: 1.80,           RA: 1.48,           AC: 1.07,           TH: 0.94,
+	             PA: 1.04,           U: 1.03,           NP: 1.10,           PU: 1.00,           AM: 1.26,
+	             CM: 0.97
+	        };
+
 	    /*
 	        this.surfaces = {
 	            1: undefined,
@@ -59961,6 +60018,19 @@ void main() {
 
 	    }
 
+	    async setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
+	      ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
+
+	      if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
+	        ic.pk = 1;
+	        ic.opts['pk'] = 'atom';
+	      }
+	      
+	      ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+	      ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+	      await ic.ParserUtilsCls.renderStructure();
+	    }
+
 	    clickMenu6() { let me = this.icn3dui, ic = me.icn3d;
 	        if(me.bNode) return;
 
@@ -59976,6 +60046,23 @@ void main() {
 	           ic.bAssembly = false;
 	           thisClass.setLogCmd('set assembly off', true);
 	           ic.drawCls.draw();
+	        });
+
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", async function(e) { me.icn3d; //e.preventDefault();
+	           await thisClass.setSupercell(0);
+	           thisClass.setLogCmd('set supercell 0', true);
+	        });
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", async function(e) { me.icn3d; //e.preventDefault();
+	           await thisClass.setSupercell(1);
+	           thisClass.setLogCmd('set supercell 1', true);
+	        });
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", async function(e) { me.icn3d; //e.preventDefault();
+	           await thisClass.setSupercell(2);
+	           thisClass.setLogCmd('set supercell 2', true);
+	        });
+	        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", async function(e) { me.icn3d; //e.preventDefault();
+	           await thisClass.setSupercell(3);
+	           thisClass.setLogCmd('set supercell 3', true);
 	        });
 
 	        me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
@@ -62572,13 +62659,19 @@ void main() {
 
 	            html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
 
-	            let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+	            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
-	            if(bOnePdb) {
+	            //if(bInputid) {
 	              html += this.getMenuText('assemblyWrapper', 'Assembly', undefined, 1, 1);
 	              html += "<ul>";
 
-	              if(!me.cfg.bu) {
+	              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined) { // e.g., cif file input
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Original Assembly', undefined, 1, 2);
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly1', '1 x 1 x 1', true, 1, 2);
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, 1, 2);
+	                html += this.getRadio('mn6_assembly', 'mn6_assembly3', '3 x 3 x 3', undefined, 1, 2);
+	              }
+	              else if(!me.cfg.bu) {
 	                html += this.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', undefined, 1, 2);
 	                html += this.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true, 1, 2);
 	              }
@@ -62589,12 +62682,12 @@ void main() {
 
 	              html += "</ul>";
 	              html += "</li>";
-	            }
+	            //}
 
 	            html += this.getMenuText('mn6_symmetrywrap', 'Symmetry', undefined, undefined, 1);
 
 	            html += "<ul>";
-	            if(bOnePdb) html += this.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
+	            if(bInputid) html += this.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
 
 	            html += this.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr, undefined, 2);
 	            html += this.getLink('mn6_clear_sym', 'Clear SymD Symmetry', undefined, 2);
@@ -65327,7 +65420,7 @@ void main() {
 	        }
 	    }
 
-	    async readFile(bAppend, files, index, dataStrAll, bmmCIF, bPng) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
+	    async readFile(bAppend, files, index, dataStrAll, bmmCIF, bPng, fileType) { let me = this.icn3dui, ic = me.icn3d, thisClass = this;
 	        let file = files[index];
 	        let commandName = (bAppend) ? 'append': 'load';
 	        commandName += (bmmCIF) ? ' mmcif file ' : (bPng) ? ' png file ' : ' pdb file ';
@@ -65377,7 +65470,7 @@ void main() {
 	                    ic.dAtoms = {};
 	                }
 	                if(bmmCIF) {
-	                    await ic.mmcifParserCls.loadMultipleMmcifData(dataStrAll, undefined, bAppend); 
+	                    await ic.mmcifParserCls.loadMultipleMmcifData(dataStrAll, undefined, bAppend, fileType); 
 	                }
 	                else {
 	                	await ic.pdbParserCls.loadPdbData(dataStrAll, undefined, undefined, bAppend);
@@ -65403,7 +65496,12 @@ void main() {
 	        };
 
 	        if (typeof file === "object") {
-	            reader.readAsText(file);
+	            if(bmmCIF && fileType == 'bcif') {
+	                reader.readAsArrayBuffer(file);
+	            }
+	            else {
+	                reader.readAsText(file);
+	            }
 	        }
 	    }
 
@@ -68938,8 +69036,8 @@ void main() {
 	              let fileName = file.name;
 
 	              let fileType = fileName.substr(fileName.lastIndexOf('.') + 1).toLowerCase();
-	              if(fileType == 'pdb' || fileType == 'mmcif' || fileType == 'png') {
-	                await me.htmlCls.eventsCls.readFile(true, files, i, '', (fileType == 'mmcif'), (fileType == 'png'));
+	              if(fileType == 'pdb' || fileType == 'mmcif' || fileType == 'cif' || fileType == 'bcif' || fileType == 'png') {
+	                await me.htmlCls.eventsCls.readFile(true, files, i, '', (fileType == 'mmcif' || fileType == 'cif' || fileType == 'bcif'), (fileType == 'png'), fileType);
 	              }
 	              else if(fileType == 'bcf') {
 	                await thisClass.openBcf(file);
@@ -125363,8 +125461,9 @@ bool bvhIntersectFogVolumeHit(
 	        }
 	    }
 
-	    async loadMultipleMmcifData(data, mmcifid, bAppend) { let ic = this.icn3d; ic.icn3dui;
-	        let bText = true;
+	    async loadMultipleMmcifData(data, mmcifid, bAppend, fileType) { let ic = this.icn3d; ic.icn3dui;
+	        let bText = (fileType == 'bcif') ? false : true;
+
 	        ic.loadCIFCls.loadCIF(data, mmcifid, bText, bAppend);
 
 	        if(Object.keys(ic.structures).length > 1) {
@@ -134832,11 +134931,14 @@ bool bvhIntersectFogVolumeHit(
 	                prevCarbonArray.push(atom);
 	            }
 
+	            // remove trailing digits in the residue name, e.g., "Na1" -> "NA"
+	            let resnSimple = atom.resn.trim().replace(/\d+$/, '').toUpperCase();
+
 	            if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
 	                ic.water[atom.serial] = 1;
 	                atom.color = me.parasCls.atomColors[atom.elem];
 	            }
-	            else if($.inArray(atom.resn.trim(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+	            else if($.inArray(resnSimple, me.parasCls.ionsArray) !== -1 || $.inArray(atom.elem.trim().toUpperCase(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
 	                ic.ions[atom.serial] = 1;
 	                atom.color = me.parasCls.atomColors[atom.elem];
 	            }
@@ -134886,6 +134988,13 @@ bool bvhIntersectFogVolumeHit(
 	                prevCarbonArray.push(atom);
 	            }
 	        } // end of for
+
+	        if(Object.keys(ic.ions).length > 0 && Object.keys(ic.proteins).length == 0 && Object.keys(ic.nucleotides).length == 0 && Object.keys(ic.chemicals).length == 0 && Object.keys(ic.water).length == 0) {
+	            for(let serial in ic.ions) {
+	                let atom = ic.atoms[serial];
+	                me.parasCls.vdwRadii[atom.elem.toUpperCase()] = me.parasCls.ionRadii[atom.elem.toUpperCase()];
+	            }
+	        }
 
 	        // last residue
 	        //refreshBonds();
@@ -135236,7 +135345,20 @@ bool bvhIntersectFogVolumeHit(
 	        return secondarySet.has(resid.substr(resid.indexOf('_') + 1));
 	    }
 
-	    loadCIF(bcifData, bcifid, bText, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
+	    loadCIF(bcifData, bcifid, bText, bAppend, supercell) { let ic = this.icn3d, me = ic.icn3dui;
+	        ic.cifText = bText;
+	        ic.cifData = bcifData;
+	        
+	        if(supercell === undefined) {
+	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+	        }
+	        else if(supercell === 0) {
+	            CIFTools.Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: false };
+	        }
+	        else {
+	            CIFTools.Text.coreCifOptions = { nx: supercell, ny: supercell, nz: supercell, boundary: true };
+	        }
+
 	        let hAtoms = {};
 
 	        let bNMR = false;
@@ -135288,7 +135410,6 @@ bool bvhIntersectFogVolumeHit(
 	                helixArray = [];
 	                helixStart = [];
 	                helixEnd = [];
-
 
 	            // bcifData could be binary or text
 	            let parsed = (bText) ? CIFTools.Text.parse(cifArray[index]) : CIFTools.Binary.parse(cifArray[index]);
@@ -136089,17 +136210,19 @@ bool bvhIntersectFogVolumeHit(
 	              }
 	            }
 	            else if(atom.het) {
+	              let resnSimple = atom.resn.trim().replace(/\d+$/, '').toUpperCase();
+
 	              if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
 	                ic.water[atom.serial] = 1;
 	              }
-	              else if($.inArray(atom.resn, me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
+	              else if($.inArray(resnSimple, me.parasCls.ionsArray) !== -1 || $.inArray(atom.elem.trim().toUpperCase(), me.parasCls.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
 	                ic.ions[atom.serial] = 1;
 	              }
 	              else {
 	                ic.chemicals[atom.serial] = 1;
 	              }
 
-	              atom.color = me.parasCls.atomColors[atom.elem];
+	              atom.color = me.parasCls.atomColors[atom.elem.toUpperCase()];
 	            }
 
 	            if(!(curChain === atom.chain && curResi === atom.resi)) {
@@ -136119,6 +136242,13 @@ bool bvhIntersectFogVolumeHit(
 	                prevCarbonArray.push(atom);
 	            }
 	        } // end of for
+
+	        if(Object.keys(ic.ions).length > 0 && Object.keys(ic.proteins).length == 0 && Object.keys(ic.nucleotides).length == 0 && Object.keys(ic.chemicals).length == 0 && Object.keys(ic.water).length == 0) {
+	            for(let serial in ic.ions) {
+	                let atom = ic.atoms[serial];
+	                me.parasCls.vdwRadii[atom.elem.toUpperCase()] = me.parasCls.ionRadii[atom.elem.toUpperCase()];
+	            }
+	        }
 
 	        // last residue
 	        //refreshBonds();
@@ -137197,6 +137327,12 @@ bool bvhIntersectFogVolumeHit(
 	      }
 	      else if(command == 'set assembly off') {
 	        ic.bAssembly = false;
+	      }
+	      else if(command.indexOf('set supercell') !== -1) {
+	        let pos = command.lastIndexOf(' ');
+	        let supercell = parseInt(command.substr(pos + 1));
+
+	        await me.htmlCls.clickMenuCls.setSupercell(supercell);
 	      }
 	      else if(command == 'set chemicalbinding show') {
 	        ic.setOptionCls.setOption('chemicalbinding', 'show');
@@ -141853,7 +141989,7 @@ bool bvhIntersectFogVolumeHit(
 
 	    resetAll() { let ic = this.icn3d, me = ic.icn3dui;
 	        ic.maxD = ic.oriMaxD;
-	        ic.center = ic.oriCenter.clone();
+	        ic.center = (ic.oriCenter) ? ic.oriCenter.clone() : new THREE.Vector3(0, 0, 0);
 
 	        ic.opts = me.hashUtilsCls.cloneHash(ic.optsOri);
 
@@ -150158,7 +150294,7 @@ bool bvhIntersectFogVolumeHit(
 
 	        //reset ic.maxD
 	        ic.maxD = ic.oriMaxD;
-	        ic.center = ic.oriCenter.clone();
+	        ic.center = (ic.oriCenter) ? ic.oriCenter.clone() : new Vector3$1(0, 0, 0);
 
 	        if(ic.ori_chemicalbinding == 'show') {
 	            ic.bSkipChemicalbinding = false;
@@ -154892,7 +155028,7 @@ bool bvhIntersectFogVolumeHit(
 	    //even when multiple iCn3D viewers are shown together.
 	    this.pre = this.cfg.divid + "_";
 
-	    this.REVISION = '3.54.2';
+	    this.REVISION = '3.54.3';
 
 	    // In nodejs, iCn3D defines "window = {navigator: {}}", and added window = {navigator: {}, "__THREE__":"177"}
 	    this.bNode = (Object.keys(window).length < 3) ? true : false;
