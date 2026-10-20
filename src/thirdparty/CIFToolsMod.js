@@ -1338,6 +1338,31 @@ var CIFTools;
                 return out;
             };
         }
+        /**
+         * Options for filling the unit cell of a core CIF by lattice translation
+         * (applied after the symmetry operators have generated the contents of one cell).
+         *   nx, ny, nz : number of unit cells along a, b, c (supercell); default 1 1 1
+         *   boundary   : also emit the periodic image of every atom lying on a cell face/edge/corner
+         *                (e.g. NaCl -> 14 Na + 13 Cl instead of 4 Na + 4 Cl); default true.
+         *                Set to false to get the original behavior (atoms wrapped into [0,1) only).
+         * Usage (before loading the file):  CIFTools.Text.coreCifOptions = {nx: 2, ny: 2, nz: 2, boundary: true};
+         */
+        Text.coreCifOptions = { nx: 1, ny: 1, nz: 1, boundary: true };
+        // g: fractional coordinates wrapped into [0,1). Returns all translated copies of g.
+        function coreLatticeImages(g, nx, ny, nz, bBoundary) {
+            var eps = 1e-3, n = [nx, ny, nz], ranges = [], out = [], k, i, r, x, y, z;
+            for (k = 0; k < 3; k++) {
+                r = [];
+                for (i = 0; i < n[k]; i++) r.push(g[k] + i);
+                if (bBoundary && Math.abs(g[k]) < eps) r.push(g[k] + n[k]); // atom on the 0-face also sits on the far face
+                ranges.push(r);
+            }
+            for (x = 0; x < ranges[0].length; x++)
+                for (y = 0; y < ranges[1].length; y++)
+                    for (z = 0; z < ranges[2].length; z++)
+                        out.push([ranges[0][x], ranges[1][y], ranges[2][z]]);
+            return out;
+        }
         function convertCoreCif(data) {
             var tk = coreTokens(data), i = 0, n = tk.length, single = {}, loops = [], name = 'data_core', t, cols, rows, cur;
             function isTag(x) { return x && !x.t && x.v.charAt(0) === '_'; }
@@ -1392,6 +1417,11 @@ var CIFTools;
                 '_atom_site.Cartn_x', '_atom_site.Cartn_y', '_atom_site.Cartn_z', '_atom_site.occupancy', '_atom_site.B_iso_or_equiv',
                 '_atom_site.auth_seq_id', '_atom_site.auth_asym_id', '_atom_site.pdbx_PDB_model_num');
             var serial = 0, seen = [], r, s, f, g, k, dup, j, sym, el, lab, cart;
+            var o = Text.coreCifOptions || {}, images, im;
+            var opt = {
+                nx: Math.max(1, parseInt(o.nx) || 1), ny: Math.max(1, parseInt(o.ny) || 1), nz: Math.max(1, parseInt(o.nz) || 1),
+                boundary: (o.boundary === undefined) ? true : !!o.boundary
+            };
             for (r = 0; r < atoms.rows.length; r++) {
                 var row = atoms.rows[r];
                 if (get(row, '_atom_site_calc_flag') === 'dum') continue; // dummy atoms
@@ -1409,9 +1439,13 @@ var CIFTools;
                     }
                     if (dup) continue;
                     mySeen.push(g);
-                    cart = toCart(g);
-                    out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
-                        coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    // fill the cell (and optional supercell) by lattice translation of the symmetry-generated site
+                    images = coreLatticeImages(g, opt.nx, opt.ny, opt.nz, opt.boundary);
+                    for (im = 0; im < images.length; im++) {
+                        cart = toCart(images[im]);
+                        out.push(['HETATM', ++serial, el, lab, '.', 'MOL', 'A', 1, '.', cart[0].toFixed(3), cart[1].toFixed(3), cart[2].toFixed(3),
+                            coreToNumber(get(row, '_atom_site_occupancy') === '?' ? 1 : get(row, '_atom_site_occupancy')), '0.00', 1, 'A', 1].join(' '));
+                    }
                 }
             }
             out.push('#');

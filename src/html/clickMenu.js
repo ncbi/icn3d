@@ -1942,6 +1942,19 @@ class ClickMenu {
 
     }
 
+    async setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
+      ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
+
+      if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
+        ic.pk = 1;
+        ic.opts['pk'] = 'atom';
+      }
+      
+      ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+      ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+      await ic.ParserUtilsCls.renderStructure();
+    }
+
     clickMenu6() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
@@ -1957,6 +1970,23 @@ class ClickMenu {
            ic.bAssembly = false;
            thisClass.setLogCmd('set assembly off', true);
            ic.drawCls.draw();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await thisClass.setSupercell(0);
+           thisClass.setLogCmd('set supercell 0', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await thisClass.setSupercell(1);
+           thisClass.setLogCmd('set supercell 1', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await thisClass.setSupercell(2);
+           thisClass.setLogCmd('set supercell 2', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
+           await thisClass.setSupercell(3);
+           thisClass.setLogCmd('set supercell 3', true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_igrefYes", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();

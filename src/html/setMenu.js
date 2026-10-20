@@ -1844,13 +1844,19 @@ class SetMenu {
 
             html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
 
-            let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
-            if(bOnePdb) {
+            //if(bInputid) {
               html += this.getMenuText('assemblyWrapper', 'Assembly', undefined, 1, 1);
               html += "<ul>";
 
-              if(!me.cfg.bu) {
+              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined) { // e.g., cif file input
+                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Original Assembly', undefined, 1, 2);
+                html += this.getRadio('mn6_assembly', 'mn6_assembly1', '1 x 1 x 1', true, 1, 2);
+                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, 1, 2);
+                html += this.getRadio('mn6_assembly', 'mn6_assembly3', '3 x 3 x 3', undefined, 1, 2);
+              }
+              else if(!me.cfg.bu) {
                 html += this.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', undefined, 1, 2);
                 html += this.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true, 1, 2);
               }
@@ -1861,12 +1867,12 @@ class SetMenu {
 
               html += "</ul>";
               html += "</li>";
-            }
+            //}
 
             html += this.getMenuText('mn6_symmetrywrap', 'Symmetry', undefined, undefined, 1);
 
             html += "<ul>";
-            if(bOnePdb) html += this.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
+            if(bInputid) html += this.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr, undefined, 2);
 
             html += this.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr, undefined, 2);
             html += this.getLink('mn6_clear_sym', 'Clear SymD Symmetry', undefined, 2);

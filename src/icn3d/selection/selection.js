@@ -442,7 +442,7 @@ class Selection {
 
     resetAll() { let ic = this.icn3d, me = ic.icn3dui;
         ic.maxD = ic.oriMaxD;
-        ic.center = ic.oriCenter.clone();
+        ic.center = (ic.oriCenter) ? ic.oriCenter.clone() : new THREE.Vector3(0, 0, 0);
 
         ic.opts = me.hashUtilsCls.cloneHash(ic.optsOri);
 

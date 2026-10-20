@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.54.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.3.zip) was release on October 20, 2026. Showed different super cells for mmCIF files via the menu "Analysis > Assembly".
+
 [icn3d-3.54.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.2.zip) was release on October 13, 2026. Added the feature to show the unit cell if the input is a mmCIF file.
 
 [icn3d-3.54.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.1.zip) was release on October 8, 2026. Fixed the light and highlight when exporting iCn3D images using path tracing.

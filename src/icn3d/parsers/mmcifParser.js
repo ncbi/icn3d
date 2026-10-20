@@ -138,8 +138,9 @@ class MmcifParser {
         }
     }
 
-    async loadMultipleMmcifData(data, mmcifid, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
-        let bText = true;
+    async loadMultipleMmcifData(data, mmcifid, bAppend, fileType) { let ic = this.icn3d, me = ic.icn3dui;
+        let bText = (fileType == 'bcif') ? false : true;
+
         ic.loadCIFCls.loadCIF(data, mmcifid, bText, bAppend);
 
         if(Object.keys(ic.structures).length > 1) {
