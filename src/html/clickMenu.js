@@ -341,6 +341,9 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_mmcifid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmcifid', 'Please input mmCIF ID');
         });
+        me.myEventCls.onIds("#" + me.pre + "mn1_codid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           me.htmlCls.dialogCls.openDlg('dl_codid', 'Please input COD ID');
+        });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_mmdbid", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
            me.htmlCls.dialogCls.openDlg('dl_mmdbid', 'Please input MMDB or PDB ID');
@@ -880,7 +883,7 @@ class ClickMenu {
                        thisClass.setLogCmd("link to compounds with structure similar to CID " + ic.inputid + ": " + url, false);
                }
                else {
-                   let idArray = ic.inputid.split('_');
+                   let idArray = me.utilsCls.getIdArray(ic.inputid);
                    
                    if(idArray.length === 1) {
                        url = me.htmlCls.baseUrl + "vastplus/vastplus.cgi?uid=" + ic.inputid;
@@ -1942,17 +1945,14 @@ class ClickMenu {
 
     }
 
-    async setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
-      ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
-
-      if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
-        ic.pk = 1;
-        ic.opts['pk'] = 'atom';
+    setSupercell(n) { let me = this.icn3dui, ic = me.icn3d;
+      if(ic.cifData) {
+         ic.loadCIFCls.loadCIF(ic.cifData, undefined, ic.cifText, false, n);
+         
+         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
+         ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+         ic.drawCls.draw();
       }
-      
-      ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-      ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
-      await ic.ParserUtilsCls.renderStructure();
     }
 
     clickMenu6() { let me = this.icn3dui, ic = me.icn3d;
@@ -1972,20 +1972,20 @@ class ClickMenu {
            ic.drawCls.draw();
         });
 
-        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-           await thisClass.setSupercell(0);
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly0", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           thisClass.setSupercell(0);
            thisClass.setLogCmd('set supercell 0', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-           await thisClass.setSupercell(1);
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly1", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           thisClass.setSupercell(1);
            thisClass.setLogCmd('set supercell 1', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-           await thisClass.setSupercell(2);
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly2", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           thisClass.setSupercell(2);
            thisClass.setLogCmd('set supercell 2', true);
         });
-        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", async function(e) { let ic = me.icn3d; //e.preventDefault();
-           await thisClass.setSupercell(3);
+        me.myEventCls.onIds("#" + me.pre + "mn6_assembly3", "click", function(e) { let ic = me.icn3d; //e.preventDefault();
+           thisClass.setSupercell(3);
            thisClass.setLogCmd('set supercell 3', true);
         });
 

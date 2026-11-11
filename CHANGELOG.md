@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.54.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.4.zip) was release on November 11, 2026. Fixed an sequence display issue in MSA.
+
 [icn3d-3.54.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.3.zip) was release on October 20, 2026. Showed different super cells for mmCIF files via the menu "Analysis > Assembly".
 
 [icn3d-3.54.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.54.2.zip) was release on October 13, 2026. Added the feature to show the unit cell if the input is a mmCIF file.

@@ -86,7 +86,7 @@ class SelectByCommand {
 
            // convert 1TOP_A:20 to $1TOP.A:20
            if(commandArray[i].indexOf('_') !== -1) {
-             let itemArray = commandArray[i].split('_');
+             let itemArray = me.utilsCls.getIdArray(commandArray[i]);
              if(itemArray.length ==2 ) {
               commandArray[i] = '$' + itemArray[0] + '.' + itemArray[1];
              }

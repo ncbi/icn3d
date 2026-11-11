@@ -1581,7 +1581,8 @@ class Diagram2d {
             if(refnumLabel) {
                 refnumStr = ic.refnumCls.rmStrandFromRefnumlabel(refnumLabel);
                 if(!ic.refnum2resn[domainid]) ic.refnum2resn[domainid] = {};
-                ic.refnum2resn[domainid][refnumStr] = resn + resid.split('_')[2];
+                let idArray = me.utilsCls.getIdArray(resid);
+                ic.refnum2resn[domainid][refnumStr] = resn + idArray[2];
             }
         }
 

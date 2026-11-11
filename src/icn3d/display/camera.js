@@ -203,6 +203,43 @@ class Camera {
     //    }
     }
 
+    // Keep the slab plane at the same position relative to the molecule when zooming.
+    // In perspective mode zooming moves the camera along the view direction, so the near plane
+    // (distance from the camera) has to move with it. In orthographic mode zooming only changes
+    // the frustum size and the camera does not move, so the slab plane already stays fixed.
+    updateSlabByZoom() { let ic = this.icn3d, me = ic.icn3dui;
+        if(ic.opts['slab'] !== 'yes' || me.bNode) return;
+        if(ic.opts.camera.toLowerCase() !== 'perspective') return;
+
+        let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+        if(bInstance) return; // near plane is fixed at 0.1 for instancing
+
+        let cam = (ic.bControlGl) ? window.cam : ic.cam;
+        let controls = (ic.bControlGl) ? window.controls : ic.controls;
+ 
+        // at zoom = 1 the slab plane is ic.maxD * camMaxDFactor from the camera, i.e. the plane through
+        // the center (or 10 angstroms in front of it when fog is on to keep some surrounding residues)
+        let offset = (ic.camMaxDFactorFog !== undefined) ? 10 : 0;
+
+        // current distance from the camera to the center of rotation, which changes with zooming
+        let dist = cam.position.distanceTo(controls.target);
+
+        // keep the plane at the same position relative to the molecule
+        let nearClip = Math.max(0.1, dist - offset);
+
+        if(Math.abs(cam.near - nearClip) > 1e-6) {
+            cam.near = nearClip;
+            cam.updateProjectionMatrix();
+            if(ic.cam && ic.cam !== cam) {
+                ic.cam.near = nearClip;
+                ic.cam.updateProjectionMatrix();
+            }
+        }
+
+        // the impostor shaders (spheres, cylinders) clip with the nearClip uniform
+        if(ic.uniforms && ic.uniforms.nearClip) ic.uniforms.nearClip.value = nearClip;
+    }
+
     setSlab() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bControlGl && !me.bNode) {
             let maxD = ic.maxD;

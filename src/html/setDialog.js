@@ -420,6 +420,12 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_mmcif'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_codid' class='" + dialogClass + "'>";
+        html += this.addNotebookTitle('dl_codid', 'Please input a COD ID');
+        html += "COD ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "codid' value='1000041' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_cod'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
         html += this.addNotebookTitle('dl_mmdbid', 'Please input an MMDB ID');
         html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";

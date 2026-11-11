@@ -276,7 +276,8 @@ class AnnoCddSite {
             let resid = ic.ncbi2resid[residNCBI];
             if(!resid) resid = residNCBI; // this happens sometimes, e.g., Q9Y4K1
 
-            let resi = resid.split('_')[2];
+            let idArray = me.utilsCls.getIdArray(resid);
+            let resi = idArray[2];
             if(i > 0) resiArrayStr += ',';
             resiArrayStr += resi;
         }

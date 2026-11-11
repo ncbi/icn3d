@@ -63,7 +63,7 @@ class Scap {
         let snpArray = snp.split(','); //stru_chain_resi_snp
         let atomHash = {}, snpResidArray = [], chainResi2pdb = {};
         for(let i = 0, il = snpArray.length; i < il; ++i) {
-            let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
+            let idArray = me.utilsCls.getIdArray(snpArray[i]); //stru_chain_resi_snp
 
             let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
             atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);

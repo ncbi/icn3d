@@ -60,6 +60,8 @@ class ApplyClbonds {
                     // only apply to displayed atoms
                     // if(!ic.dAtoms.hasOwnProperty(line.serial1) || !ic.dAtoms.hasOwnProperty(line.serial2)) continue;
 
+                    if(!ic.atoms[line.serial1] || !ic.atoms[line.serial2]) continue;
+
                     line.position1 = ic.atoms[line.serial1].coord;
                     line.position2 = ic.atoms[line.serial2].coord;
 
@@ -190,6 +192,7 @@ class ApplyClbonds {
                         if(type == 'chemical') continue; // just connect checmicals together
 
                         if(ic.clbondpnts[atom0.structure] === undefined) ic.clbondpnts[atom0.structure] = [];
+                        if(ic.clbondpnts[atom1.structure] === undefined) ic.clbondpnts[atom1.structure] = [];
                         ic.clbondpnts[atom0.structure].push(resid0);
                         ic.clbondpnts[atom1.structure].push(resid1);
 

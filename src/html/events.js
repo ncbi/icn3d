@@ -263,7 +263,7 @@ class Events {
         let idArray = ids.split(',');
 
         if(!bAppend) {
-            if(idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+            if(idArray.length == 1 && (idArray[0].length == 4 || idArray[0].indexOf('pdb_') == 0 || !isNaN(idArray[0])) ) {
                 thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
@@ -275,8 +275,8 @@ class Events {
             }
         }
         else {
-            // single MMDB ID could show memebranes
-            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || !isNaN(idArray[0])) ) {
+            // single MMDB ID could show membranes
+            if(!ic.structures && idArray.length == 1 && (idArray[0].length == 4 || idArray[0].indexOf('pdb_') == 0 || !isNaN(idArray[0])) ) {
                 thisClass.setLogCmd("load mmdb" + flag + " " + ids, false);
                 let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                 window.open(hostUrl + '?mmdbid=' + ids + '&bu=' + flag, urlTarget);
@@ -764,7 +764,7 @@ class Events {
                if(!me.cfg.notebook) dialog.dialog( "close" );
                thisClass.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
-               window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
+               window.open(hostUrl + '?bcifid=' + $("#" + me.pre + "mmtfid").val(), urlTarget);
            }
         });
 
@@ -1108,7 +1108,7 @@ class Events {
                 await ic.scapCls.retrieveScap(snp, bInteraction);
                 thisClass.setLogCmd('scap interaction ' + snp, true);
 
-                let idArray = snp.split('_'); //stru_chain_resi_snp
+                let idArray = me.utilsCls.getIdArray(snp); //stru_chain_resi_snp
                 let select = '.' + idArray[1] + ':' + idArray[2];
                 let name = 'snp_' + idArray[1] + '_' + idArray[2];
                 thisClass.setLogCmd("select " + select + " | name " + name, true);
@@ -1147,7 +1147,6 @@ class Events {
            let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
            window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
         });
-
         me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
@@ -1155,6 +1154,23 @@ class Events {
                thisClass.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
                let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
                window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), urlTarget);
+           }
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_cod", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           thisClass.setLogCmd("load cod " + $("#" + me.pre + "codid").val(), false);
+           let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+           window.open(hostUrl + '?codid=' + $("#" + me.pre + "codid").val(), urlTarget);
+        });
+        me.myEventCls.onIds("#" + me.pre + "codid", "keyup", function(e) { let ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               thisClass.setLogCmd("load cod " + $("#" + me.pre + "codid").val(), false);
+               let urlTarget = (ic.structures && Object.keys(ic.structures).length > 0) ? '_blank' : '_self';
+               window.open(hostUrl + '?codid=' + $("#" + me.pre + "codid").val(), urlTarget);
            }
         });
 
@@ -3745,7 +3761,7 @@ class Events {
             await ic.scapCls.retrieveScap(snp, bInteraction);
             thisClass.setLogCmd('scap interaction ' + snp, true);
 
-            let idArray = snp.split('_'); //stru_chain_resi_snp
+            let idArray = me.utilsCls.getIdArray(snp); //stru_chain_resi_snp
             let select = '.' + idArray[1] + ':' + idArray[2];
             let name = 'snp_' + idArray[1] + '_' + idArray[2];
             thisClass.setLogCmd("select " + select + " | name " + name, true);

@@ -602,6 +602,7 @@ class SetMenu {
         html += this.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr, undefined, 2);
         html += this.getLink('mn1_mmcifid', 'RCSB mmCIF ID ' + me.htmlCls.wifiStr, undefined, 2);
         //html += this.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr, undefined, 2);
+//        html += this.getLink('mn1_codid', 'COD ID ' + me.htmlCls.wifiStr, 1, 2);
 
         html += this.getLink('mn1_cid', 'PubChem CID/Name/InChI ' + me.htmlCls.wifiStr, 1, 2);
         html += this.getLink('mn1_smiles', 'Chemical SMILES ', undefined, 2);
@@ -1844,16 +1845,17 @@ class SetMenu {
 
             html += this.getLink('mn6_DSSP', 'DSSP Secondary', undefined, 1);
 
-            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+            let bInputid = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined  || me.cfg.mmtfid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.mmdbafid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
 
             //if(bInputid) {
               html += this.getMenuText('assemblyWrapper', 'Assembly', undefined, 1, 1);
               html += "<ul>";
 
-              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined) { // e.g., cif file input
-                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Original Assembly', undefined, 1, 2);
+              if(!bInputid || me.cfg.mmcifid !== undefined || me.cfg.bcifid !== undefined || me.cfg.mmtfid !== undefined) { // e.g., cif file input
+                html += this.getRadio('mn6_assembly', 'mn6_assembly0', 'Biological Assembly', undefined, 1, 2);
+                html += this.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', undefined, 1, 2);
                 html += this.getRadio('mn6_assembly', 'mn6_assembly1', '1 x 1 x 1', true, 1, 2);
-                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, 1, 2);
+                html += this.getRadio('mn6_assembly', 'mn6_assembly2', '2 x 2 x 2', undefined, undefined, 2);
                 html += this.getRadio('mn6_assembly', 'mn6_assembly3', '3 x 3 x 3', undefined, 1, 2);
               }
               else if(!me.cfg.bu) {

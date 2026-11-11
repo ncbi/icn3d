@@ -34,6 +34,19 @@ class MmcifParser {
         await ic.opmParserCls.loadOpmData(data, mmcifid, undefined, 'mmcif', undefined, bText);
     }
 
+    async downloadCod(codid) { let ic = this.icn3d, me = ic.icn3dui;
+        //ic.bCid = undefined;
+
+        ic.ParserUtilsCls.setYourNote(codid.toUpperCase() + '(COD) in iCn3D');
+
+        let url = "https://www.crystallography.net/cod/" + codid + ".cif";
+        // let url = "https://www.crystallography.net/cif/1/00/00/1000041.cif";
+        let data = await me.getAjaxPromise(url, 'text', true);
+
+        let bText = true;
+        ic.loadCIFCls.loadCIF(data, codid, bText);
+    }
+
     async downloadMmcifSymmetry(mmcifid, type) { let ic = this.icn3d, me = ic.icn3dui;
       try {
         // let url = "https://files.rcsb.org/download/" + mmcifid + ".cif";
@@ -145,6 +158,11 @@ class MmcifParser {
 
         if(Object.keys(ic.structures).length > 1) {
             ic.opts['color'] = 'structure';
+        }
+
+        if(Object.keys(ic.proteins).length == 0 || Object.keys(ic.nucleotides).length == 0) {
+            ic.pk = 1;
+            ic.opts['pk'] = 'atom';
         }
 
         ic.opmParserCls.modifyUIMapAssembly();

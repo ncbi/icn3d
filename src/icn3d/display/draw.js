@@ -271,6 +271,9 @@ import { WebGLPathTracer } from 'three-gpu-pathtracer';
 
         cam = this.setDirectLight(cam);
 
+        // move the slab plane according to the zoom
+	    if(ic.opts['slab'] === 'yes') ic.cameraCls.updateSlabByZoom();
+
         if(!ic.bVr) ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
 
         if(ic.bVr) {

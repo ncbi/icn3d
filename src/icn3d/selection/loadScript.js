@@ -583,7 +583,7 @@ class LoadScript {
 
         // load pdb, mmcif, mmdb, cid
         let id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
-        if(id.length == 4) id = id.toUpperCase();
+        if(id.length == 4 || id.indexOf('pdb_') == 0) id = id.toUpperCase();
 
         // skip loading the structure if 
         // 1. PDB was in the iCn3D PNG Image file
@@ -629,6 +629,10 @@ class LoadScript {
         else if(command.indexOf('load mmcif') !== -1) {
           me.cfg.mmcifid = id;
           await ic.mmcifParserCls.downloadMmcif(id);
+        }
+        else if(command.indexOf('load cod') !== -1) {
+          me.cfg.codid = id;
+          await ic.mmcifParserCls.downloadCod(id);
         }
         else if(command.indexOf('load mmdb ') !== -1 || command.indexOf('load mmdb1 ') !== -1) {
           me.cfg.mmdbid = id;

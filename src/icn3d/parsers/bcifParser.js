@@ -140,7 +140,7 @@ class BcifParser {
 
         if (parsed.isError) {
             // report error:
-            alert("The Binary CIF data can NOT be parsed: " + parsed.toString());
+            alert("1 The Binary CIF data can NOT be parsed: " + parsed.toString());
             return;
         }
 

@@ -356,9 +356,6 @@ class LoadAtomData {
                 atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
             }
 
-            // let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
-            let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn);
-
             if((type === 'mmdbid' || type === 'align') && ic.bFullUi ) {
                 // set ic.mmdbMolidResid2mmdbChainResi
                 if(ic.mmdbMolidResid2mmdbChainResi === undefined) ic.mmdbMolidResid2mmdbChainResi = {}
@@ -504,6 +501,8 @@ class LoadAtomData {
                 }
             }
 
+            // let oneLetterRes = me.utilsCls.residueName2Abbr(atm.resn.substr(0, 3));
+            let oneLetterRes = (atm.het) ? me.utilsCls.residueName2Abbr(atm.resn) : me.utilsCls.residueName2Abbr(atm.resn, true);
             ic.residueId2Name[residueid] = oneLetterRes;
 
             let secondaries = '-';

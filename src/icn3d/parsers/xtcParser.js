@@ -407,7 +407,7 @@ class XtcParser {
             }
 
             for(let j in residuesOri) {
-                let idArray = j.split('_');
+                let idArray = me.utilsCls.getIdArray(j);
                 let structure2 = idArray[0] + molNum;
                 let residid2 = structure2 + '_' + idArray[1] + '_' + idArray[2];
                 ic.residues[residid2] = {};
@@ -418,7 +418,7 @@ class XtcParser {
             }
 
             for(let j in chainsOri) {
-                let idArray = j.split('_');
+                let idArray = me.utilsCls.getIdArray(j);
                 let structure2 = idArray[0] + molNum;
                 let chainid2 = structure2 + '_' + idArray[1];
                 
@@ -449,7 +449,7 @@ class XtcParser {
 
             // set ic.ncbi2resid and ic.resid2ncbi
             for(let chainid in chainsOri) {
-                let idArray = chainid.split('_');
+                let idArray = me.utilsCls.getIdArray(chainid);
                 let structure2 = idArray[0] + molNum;
                 let chainid2 = structure2 + '_' + idArray[1];
 

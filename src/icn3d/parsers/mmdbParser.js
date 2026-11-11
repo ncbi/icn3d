@@ -80,9 +80,10 @@ class MmdbParser {
         me.cfg.query_id = idArray[0];
         me.cfg.blast_rep_id = idArray[1];
 
-        let mmdbid = me.cfg.blast_rep_id.split('_')[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
+        let textArray = me.utilsCls.getIdArray(me.cfg.blast_rep_id);
+        let mmdbid = textArray[0]; // 1TSR_A, XP_003256700.1, Q9H3D4.1
 
-        if(mmdbid.length == 4) { // pdb
+        if(mmdbid.length == 4 || mmdbid.indexOf('pdb_') == 0) { // pdb
             await this.downloadMmdb(mmdbid);
         }
         else {
@@ -234,7 +235,7 @@ class MmdbParser {
                 if(ic.chainid2sid[chainid] == me.cfg.ligand.substr(3)) {
                     // save a set named me.cfg.ligand
                     let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.chains[chainid]);
-                    let idArray = Object.keys(residueHash)[0].split('_');
+                    let idArray = me.utilsCls.getIdArray(Object.keys(residueHash)[0]);
                     let select = '.' + idArray[1] + ':' + idArray[2];
 
                     await ic.selByCommCls.selectByCommand(select, me.cfg.ligand, me.cfg.ligand);

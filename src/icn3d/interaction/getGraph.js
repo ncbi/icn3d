@@ -252,7 +252,6 @@ class GetGraph {
           for(let i = 0, il = graphJson.nodes.length; i < il; ++i) {
               let node = graphJson.nodes[i];
               //node.r: 1_1_1KQ2_A_1
-              //var idArray = node.r.split('_');
               let idArray = [];
               idArray.push('');
               idArray.push('');
@@ -432,8 +431,8 @@ class GetGraph {
     compNode(a, b, bReverseChain) { let ic = this.icn3d, me = ic.icn3dui;
       let resid1 = a.r.substr(4); // 1_1_1KQ2_A_1
       let resid2 = b.r.substr(4); // 1_1_1KQ2_A_1
-      let aIdArray = me.utilsCls.getIdArray(resid1); //resid1.split('_');
-      let bIdArray = me.utilsCls.getIdArray(resid2); //resid2.split('_');
+      let aIdArray = me.utilsCls.getIdArray(resid1);
+      let bIdArray = me.utilsCls.getIdArray(resid2);
       let aChainid = aIdArray[0] + '_' + aIdArray[1];
       let bChainid = bIdArray[0] + '_' + bIdArray[1];
       let aResi = parseInt(aIdArray[2]);
